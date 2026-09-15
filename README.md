@@ -62,16 +62,6 @@ Whether you're packaging enterprise simulation expertise into a repeatable workf
 
 ## Contribute
 
-### Mono-Repository Architecture
-
-The [`architecture/`](architecture/) directory contains detailed documentation on how this monorepo is structured and operated:
-
-- [architecture.md](architecture/architecture.md) — Overview of the monorepo approach, package layout, and governance model.
-- [adding-a-new-library.md](architecture/adding-a-new-library.md) — Step-by-step guide for adding a new library/package to the repository.
-- [ci-code-style-execution.md](architecture/ci-code-style-execution.md) — How code style and quality checks run in CI.
-- [ci-label-selection.md](architecture/ci-label-selection.md) — How PR labels are used to select CI work.
-- [ci-test-execution.md](architecture/ci-test-execution.md) — How tests are executed in CI.
-
 ### Prerequisites
 
 #### Enable long paths

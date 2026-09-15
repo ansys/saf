@@ -107,14 +107,3 @@ Other libraries
 
 There are many other libraries available for Dash, each with its own set of features and capabilities. You can find a comprehensive list of Dash libraries
 in the `Community Components Index <https://community.plotly.com/t/community-components-index/60098>`_.
-
-.. only:: internal
-
-    Ansys libraries
-    ===============
-
-    Ansys Web Components (AWC) is a web UI toolkit that provides a collection of reusable, framework-agnostic, and accessible Web Components that are designed
-    to work with any modern web framework. There is a Dash wrapper for AWC that allows you to use AWC components in your Dash applications.
-    You can find more information about AWC and its components in the `AWC documentation <https://prerelease.awc.ansys.com/#/d/home>`_.
-    You can also find the Dash wrapper for AWC in the `Dash AWC Components <https://github.com/ansys-internal/ansys-web-components-dash/releases>`_
-    GitHub repository.

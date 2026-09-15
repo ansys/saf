@@ -207,7 +207,7 @@ jobs:
           poetry-install-args: "--all-extras"
 
       - name: Check licenses
-        uses: ansys/actions/check-licenses@3ad3b285bd9b67045477dafc7f9865a3aa39f692 # v11.0.6
+        uses: ansys/actions/check-licenses@7410037bfb276c79ae91eb3617b9f5d2876f0c94 # v11.0.8
         with:
           python-version: ${{ vars.PYTHON_VERSION }}
           target: "all"
@@ -313,7 +313,7 @@ jobs:
       matrix: ${{ fromJson(needs.ci-cd-config.outputs.packages-matrix) }}
     steps:
       - name: "Build wheel"
-        uses: ansys/actions/build-library@3ad3b285bd9b67045477dafc7f9865a3aa39f692 # v11.0.6
+        uses: ansys/actions/build-library@7410037bfb276c79ae91eb3617b9f5d2876f0c94 # v11.0.8
         with:
           library-name: ${{ matrix.library-name }}
           working-directory: packages/${{ matrix.library-name }}

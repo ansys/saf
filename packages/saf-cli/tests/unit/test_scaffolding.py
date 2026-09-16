@@ -14,15 +14,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import importlib.metadata
 from pathlib import Path
-import platform
-import subprocess
 import sys
 
 import pytest
 import pytest_mock
 
 from ansys.saf.cli._config.const import DEFAULT_SOLUTION_NAMESPACE, SOLUTION_TEMPLATE_PATH
+from ansys.saf.cli._solutions.backend_detection import SolutionBackend, parse_solution_backend
 from ansys.saf.cli._solutions.scaffolding import create_solution
 from ansys.saf.cli._utilities.conversion import namespace_to_path, namespace_to_pkg_name
 from tests.outcome_checks import check_agents_file, check_scaffolded_solution_files
@@ -45,8 +45,7 @@ def test_create_solution_sets_proper_cookiecutter_args(
     expected_solution_definition_class_name = "MySolutionWithoutUiSolution"
     expected_version = "0.0.0"
     expected_docker_name = "my-solution-without-ui_0-0-0"
-    saf_executable = Path(sys.executable).parent / ("saf.exe" if platform.system() == "Windows" else "saf")
-    expected_saf_cli_version = subprocess.check_output([saf_executable, "--version"], text=True).strip()
+    expected_saf_cli_version = importlib.metadata.version("ansys-saf-cli")
 
     mock_cookiecutter = mocker.patch("ansys.saf.cli._solutions.scaffolding.cookiecutter")
 
@@ -90,8 +89,7 @@ def test_create_solution(tmp_path: Path, ui_framework: str, namespace: str):
     expected_solution_definition_class_name = "MySolutionWithoutUiSolution"
     expected_version = "0.0.0"
     expected_docker_name = "my-solution-without-ui_0-0-0"
-    saf_executable = Path(sys.executable).parent / ("saf.exe" if platform.system() == "Windows" else "saf")
-    expected_saf_cli_version = subprocess.check_output([saf_executable, "--version"], text=True).strip()
+    expected_saf_cli_version = importlib.metadata.version("ansys-saf-cli")
 
     create_solution(solution_name, solution_display_name, ui_framework, namespace)
 
@@ -130,7 +128,15 @@ def test_create_solution(tmp_path: Path, ui_framework: str, namespace: str):
     pyproject_content = pyproject_file.read_text()
     assert f'name = "{namespace_to_pkg_name(namespace)}-{expected_solution_package_name}"' in pyproject_content
     assert f'version = "{expected_version}"' in pyproject_content
-    assert f'[saf-cli-version]\nsaf-cli-version = "{expected_saf_cli_version}"'
+    assert "[project]" in pyproject_content
+    assert "[tool.poetry]" not in pyproject_content
+    assert "[tool.uv]" in pyproject_content
+    assert f'[saf-cli-version]\nsaf-cli-version = "{expected_saf_cli_version}"' in pyproject_content
+    backend = parse_solution_backend(tmp_path / solution_name)
+    assert backend.backend is SolutionBackend.UV
+    assert backend.lockfile_path == tmp_path / solution_name / "uv.lock"
+    uv_lock_content = (tmp_path / solution_name / "uv.lock").read_text()
+    assert f'name = "{namespace_to_pkg_name(namespace)}-{expected_solution_package_name}"' in uv_lock_content
 
     # Check content of docker-compose.yaml and .env
     for configuration in [

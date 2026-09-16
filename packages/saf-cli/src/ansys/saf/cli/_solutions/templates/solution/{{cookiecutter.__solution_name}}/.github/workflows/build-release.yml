@@ -14,7 +14,6 @@ on:
 
 env:
   MAIN_PYTHON_VERSION: "3.12"
-  POETRY_VERSION: "2.3.2"
   DOCUMENTATION_CNAME: "" # Replace with the CNAME of the documentation
   WHEEL: "{{ cookiecutter.__solution_name }}"
   HTML_DOCUMENTATION_ARTIFACT: "{{ cookiecutter.__solution_name }}-documentation"
@@ -55,7 +54,7 @@ jobs:
         uses: ansys/saf-devops/saf-build@v1
         with:
           python-version: {{ "${{ env.MAIN_PYTHON_VERSION }}" }}
-          poetry-version: {{ "${{ env.POETRY_VERSION }}" }}
+          use-uv: true
           dependencies-source: "build-system"
           artifact-name: {{ "${{ env.WHEEL }}-${{ runner.os }}" }}
           build-result: executable
@@ -89,9 +88,9 @@ jobs:
         with:
           python-version: {{ "${{ matrix.python-version }}" }}
 {% if cookiecutter.__ui_framework != "none" %}
-          optional-dependencies-name: "tests,ui"
+          group-dependencies-name: "tests,ui"
 {% else %}
-          optional-dependencies-name: "tests"
+          group-dependencies-name: "tests"
 {% endif %}
 
   check-licenses:
@@ -110,9 +109,9 @@ jobs:
         uses: ansys/saf-devops/prepare-python-environment@v1
         with:
           python-version: {{ "${{ env.MAIN_PYTHON_VERSION }}" }}
-          poetry-version: {{ "${{ env.POETRY_VERSION }}" }}
           python-project-path: "."
-          poetry-install-args: "--all-extras"
+          use-uv: true
+          uv-install-args: "--group doc"
 
       - name: Check licenses
         uses: ansys/actions/check-licenses@73fa84c704bb6691f254cfe4d4b928c338b0d4da # v10.3.0
@@ -122,7 +121,7 @@ jobs:
           target: "all"
           skip-install: true
           activate-venv: "source {{ "${{ steps.python-setup.outputs.venv-exe-location }}" }}/activate"
-          use-uv: false
+          use-uv: true
 
   build-doc:
     name: Build documentation

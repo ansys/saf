@@ -4,7 +4,7 @@ requires = [ "poetry-core>=2.0.0", "setuptools>=67.0" ]
 
 [tool.poetry]
 name = "ansys-saf-desktop-orchestrator"
-version = "1.14.0"
+version = "1.14.1"
 description = "Solution Application Framework (SAF) Desktop Orchestrator"
 license = "Apache-2.0"
 authors = [ "ANSYS, Inc. <pyansys-core@synopsys.com>" ]

@@ -4,7 +4,7 @@ requires = [ "poetry-core>=2.0.0" ]
 
 [project]
 name = "ansys-saf-templates"
-version = "0.3.0"
+version = "0.3.1"
 description = "Collection of templates to develop in SAF solutions."
 readme = "README.rst"
 license = "Apache-2.0"

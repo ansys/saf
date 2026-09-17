@@ -4,7 +4,7 @@ requires = [ "poetry-core>=2.0.0", "setuptools>=67.0" ]
 
 [tool.poetry]
 name = "ansys-saf-product-configuration"
-version = "0.26.0"
+version = "0.26.1"
 description = "A Python package for providing configuration information about Ansys products to SAF solutions."
 license = "Apache-2.0"
 authors = [ "ANSYS, Inc. <pyansys-core@synopsys.com>" ]

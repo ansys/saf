@@ -4,7 +4,7 @@ requires = [ "poetry-core>=2.0.0", "setuptools>=67.0" ]
 
 [tool.poetry]
 name = "ansys-saf-desktop-installer"
-version = "1.17.0"
+version = "1.17.1"
 description = "SAF desktop installer"
 license = "Apache-2.0"
 authors = [ "ANSYS, Inc. <solution-applications.maintainers@ansys.com>" ]

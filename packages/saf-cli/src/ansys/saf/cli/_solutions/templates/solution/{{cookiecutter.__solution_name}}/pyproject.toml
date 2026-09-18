@@ -121,6 +121,7 @@ namespaces = true
 [tool.uv]
 package = true
 prerelease = "if-necessary"
+constraint-dependencies = ["gql<3.6"]
 
 [tool.black]
 line-length = 120

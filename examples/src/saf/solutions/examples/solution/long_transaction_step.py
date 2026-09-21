@@ -23,28 +23,47 @@ import time
 
 from ansys.saf.glow.solution import StepModel, StepSpec, long_running, transaction
 
+PROGRESS_STREAM_NAME = "long-transaction-progress"
+"""Name of the event stream carrying the progress updates of the ``stream_updates`` method."""
+
+TERMINATION_STREAM_NAME = "stream-updates"
+"""Name of the event stream carrying the termination event of the ``stream_updates`` method.
+
+The termination event stream is named after the transaction method, with underscores replaced by hyphens.
+"""
+
 
 class LongTransactionStep(StepModel):
     """Long transaction example step model."""
 
     status: str = "[]"
-    processing: bool = False
-    number_of_increments: int = 50
+    number_of_increments: int = 30
     current_increment: int = -1
 
     @long_running
     @transaction(
         self=StepSpec(
-            download=["processing", "number_of_increments"],
+            download=["number_of_increments"],
             upload=["status", "current_increment"],
-        )
+        ),
+        enable_termination_event=True,
     )
     def stream_updates(self) -> None:
-        """Stream updates to the frontend."""
+        """Stream progress updates to the frontend through backend events."""
         for i in range(self.number_of_increments):
-            self.status = f"Update {i} at  {_now()}"
+            self.status = f"Update {i} at {_now()}"
             self.current_increment = i
-            self.transaction.upload(["status", "current_increment"])
+            self.transaction.raise_event(
+                message={
+                    "status": self.status,
+                    "current_increment": self.current_increment,
+                    "number_of_increments": self.number_of_increments,
+                },
+                stream_name=PROGRESS_STREAM_NAME,
+            )
+            # Progress and termination events travel on two independent streams, so they are not
+            # ordered relative to each other. Pacing the progress events leaves the progress stream
+            # enough time to drain before the transaction ends.
             time.sleep(1)
         self.status = f"Last updated at {_now()}"
 

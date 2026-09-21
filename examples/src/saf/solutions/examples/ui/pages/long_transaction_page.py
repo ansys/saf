@@ -58,7 +58,7 @@ def layout(project: ExamplesSolution) -> html.Div:
     """Layout of the long transaction example page."""
     step = project.steps.long_transaction_step
     is_running = step.get_long_running_method_state("stream_updates").status == MethodStatus.Running
-    completed_increments = step.current_increment + 1 if is_running else 0
+    completed_increments = max(step.current_increment + 1, 0)
     progress = _to_percentage(completed_increments, step.number_of_increments)
 
     return html.Div(

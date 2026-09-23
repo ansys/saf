@@ -51,3 +51,4 @@ ansys-bdm-api = { workspace = true }
 
 [tool.uv.build-backend]
 module-name = "ansys.bdm"
+namespace = true

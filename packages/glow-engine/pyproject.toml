@@ -4,7 +4,7 @@ requires = [ "poetry-core>=2.0.0", "setuptools>=67.0" ]
 
 [tool.poetry]
 name = "ansys-saf-glow-engine"
-version = "2.4.dev1"
+version = "2.4.0"
 description = "Solution Application Framework / Guided Low-Code Workflow (SAF GLOW) engine"
 license = "Apache-2.0"
 authors = [ "ANSYS, Inc. <pyansys-core@synopsys.com>" ]

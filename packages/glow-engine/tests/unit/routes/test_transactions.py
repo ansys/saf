@@ -39,6 +39,13 @@ from ansys.saf.glow._config.const import DatabaseType, Deployment, ProductInstan
 from ansys.saf.glow._config.settings import Settings
 from ansys.saf.glow._core.exceptions import SolutionLoadException
 from ansys.saf.glow._executor.transaction import VALID_URL_CHARACTERS, Transaction
+from ansys.saf.glow._hps_auth.hps_authenticator import NullHpsAuthenticator
+from ansys.saf.glow._hps_parametric_studies.api import HpsParametricStudyProject, HpsSimpleProject
+from ansys.saf.glow._hps_parametric_studies.base import (
+    DynamicHpsParametricStudyProject,
+    DynamicHpsProject,
+    DynamicHpsSimpleProject,
+)
 from ansys.saf.glow._server.dependencies import get_method_url, oidc_scheme
 from ansys.saf.glow._server.exceptions import INTERNAL_ERROR_MESSAGE
 from ansys.saf.glow._server.server import create_app
@@ -156,6 +163,93 @@ def test_method_transaction_download_updated_x_upload_y(project_fixture: Project
     response = project_fixture.client.get(step_url)
     assert response.json()["x"] == 56
     assert response.json()["y"] == 56
+
+
+def test_hps_project_collections_are_persisted_and_rehydrated(
+    mocker: MockerFixture,
+    project_fixture: ProjectFixture,
+    hps_blob_manager: Any,
+):
+    simple_identifiers = ["simple-list-1", "simple-list-2", "simple-dict-1", "simple-dict-2"]
+    study_identifiers = ["study-list-1", "study-list-2", "study-dict-1", "study-dict-2"]
+    authenticator = NullHpsAuthenticator()
+    simple_projects = [
+        DynamicHpsSimpleProject(
+            HpsSimpleProject(hps_project_identifier=identifier),
+            hps_blob_manager,
+            authenticator,
+        )
+        for identifier in simple_identifiers
+    ]
+    study_projects = [
+        DynamicHpsParametricStudyProject(
+            HpsParametricStudyProject(hps_project_identifier=identifier),
+            hps_blob_manager,
+            authenticator,
+        )
+        for identifier in study_identifiers
+    ]
+    mocker.patch.object(HpsSimpleProject, "start_hps_job", side_effect=simple_projects)
+    mocker.patch.object(HpsParametricStudyProject, "start_hps_parametric_study", side_effect=study_projects)
+
+    project_name = project_fixture.properties["name"]
+    step_url = f"{project_name}/steps/transaction-step"
+    response = project_fixture.client.post(f"{step_url}:append-hps-project-collections")
+
+    assert response.status_code == status.HTTP_200_OK, response.content
+    persisted_step = project_fixture.client.get(step_url).json()
+    assert [project["hps_project_identifier"] for project in persisted_step["simple_projects"]] == simple_identifiers[
+        :2
+    ]
+    assert [project["hps_project_identifier"] for project in persisted_step["study_projects"]] == study_identifiers[:2]
+    assert {
+        key: project["hps_project_identifier"] for key, project in persisted_step["simple_projects_by_name"].items()
+    } == {"first": simple_identifiers[2], "second": simple_identifiers[3]}
+    assert {
+        key: project["hps_project_identifier"] for key, project in persisted_step["study_projects_by_name"].items()
+    } == {"first": study_identifiers[2], "second": study_identifiers[3]}
+
+    hps_project = mocker.MagicMock()
+    hps_project.ui_url = "https://hps.example/projects/test"
+    hps_project.finished = True
+    hps_project.exists = True
+    hps_project.get_status_of_design_points.return_value = [mocker.MagicMock()]
+    hps_project.fetch_values_of_parameters.return_value = [[42]]
+    mocker.patch.object(DynamicHpsProject, "_get_project", return_value=hps_project)
+
+    response = project_fixture.client.post(f"{step_url}:inspect-hps-project-collections")
+
+    assert response.status_code == status.HTTP_200_OK, response.content
+    assert response.json() == {
+        "all_simple_projects_are_dynamic": True,
+        "all_study_projects_are_dynamic": True,
+        "identifiers": [
+            *simple_identifiers[:2],
+            *simple_identifiers[2:],
+            *study_identifiers[:2],
+            *study_identifiers[2:],
+        ],
+        "dictionary_keys": ["first", "second", "first", "second"],
+        "ui_urls": ["https://hps.example/projects/test"] * 8,
+        "finished": [True] * 8,
+        "exists": [True] * 8,
+        "status_counts": [1] * 4,
+        "parameter_values": [[[42]]] * 4,
+    }
+
+
+@pytest.mark.parametrize("settings", [{"glow_debug": "True"}], indirect=True)
+def test_hps_project_collections_reject_raw_projects(project_fixture: ProjectFixture):
+    project_name = project_fixture.properties["name"]
+
+    response = project_fixture.client.post(
+        f"{project_name}/steps/transaction-step:append-raw-hps-project-to-collection",
+    )
+
+    assert response.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
+    assert "simple_projects" in response.json()["detail"]
+    assert "HPS project handle" in response.json()["detail"]
+    assert "start_hps_job" in response.json()["detail"]
 
 
 def test_method_transaction_increment_other_step_field(project_fixture: ProjectFixture):

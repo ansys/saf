@@ -26,6 +26,10 @@ from typing import Annotated, Any, ClassVar
 import psutil
 from pydantic import BaseModel, Field
 
+from ansys.saf.glow._hps_parametric_studies.base import (
+    DynamicHpsParametricStudyProject,
+    DynamicHpsSimpleProject,
+)
 from ansys.saf.glow._hps_parametric_studies.system import HpsParametricStudySystem
 from ansys.saf.glow.solution import (
     NO_ENTITY,
@@ -38,6 +42,7 @@ from ansys.saf.glow.solution import (
     long_running,
     transaction,
 )
+from ansys.saf.glow.solution.hps import HpsParametricStudyProject, HpsSimpleProject
 
 logger = logging.getLogger(__name__)
 
@@ -89,6 +94,10 @@ class TransactionStep(StepModel):
     my_enum: MyEnum = MyEnum.a
     inputs_as_json: str = ""
     stored_entity: EntityHandle = NO_ENTITY
+    simple_projects: list[HpsSimpleProject] = []
+    study_projects: list[HpsParametricStudyProject] = []
+    simple_projects_by_name: dict[str, HpsSimpleProject] = {}
+    study_projects_by_name: dict[str, HpsParametricStudyProject] = {}
     # this is not part of the schema for this step see
     # https://docs.pydantic.dev/usage/models/#automatically-excluded-attributes
     INFORMATION_LOGGED_BY_LOG_METHOD: ClassVar[str] = "information logged by log method"
@@ -409,6 +418,50 @@ class TransactionStep(StepModel):
             client_id="custom_client",
         ):
             return "ok"
+
+    @transaction(
+        self=StepSpec(
+            upload=["simple_projects", "study_projects", "simple_projects_by_name", "study_projects_by_name"],
+        ),
+    )
+    def append_hps_project_collections(self) -> None:
+        self.simple_projects.append(HpsSimpleProject.start_hps_job({}, {}))
+        self.simple_projects.append(HpsSimpleProject.start_hps_job({}, {}))
+        self.study_projects.append(HpsParametricStudyProject.start_hps_parametric_study({}, {}, {}))
+        self.study_projects.append(HpsParametricStudyProject.start_hps_parametric_study({}, {}, {}))
+        self.simple_projects_by_name["first"] = HpsSimpleProject.start_hps_job({}, {})
+        self.simple_projects_by_name["second"] = HpsSimpleProject.start_hps_job({}, {})
+        self.study_projects_by_name["first"] = HpsParametricStudyProject.start_hps_parametric_study({}, {}, {})
+        self.study_projects_by_name["second"] = HpsParametricStudyProject.start_hps_parametric_study({}, {}, {})
+
+    @transaction(
+        self=StepSpec(
+            download=["simple_projects", "study_projects", "simple_projects_by_name", "study_projects_by_name"],
+        ),
+    )
+    def inspect_hps_project_collections(self) -> dict[str, Any]:
+        simple_projects = [*self.simple_projects, *self.simple_projects_by_name.values()]
+        study_projects = [*self.study_projects, *self.study_projects_by_name.values()]
+        all_projects = [*simple_projects, *study_projects]
+        return {
+            "all_simple_projects_are_dynamic": all(
+                isinstance(project, DynamicHpsSimpleProject) for project in simple_projects
+            ),
+            "all_study_projects_are_dynamic": all(
+                isinstance(project, DynamicHpsParametricStudyProject) for project in study_projects
+            ),
+            "identifiers": [project.hps_project_identifier for project in all_projects],
+            "dictionary_keys": [*self.simple_projects_by_name, *self.study_projects_by_name],
+            "ui_urls": [project.ui_url for project in all_projects],
+            "finished": [project.finished for project in all_projects],
+            "exists": [project.exists for project in all_projects],
+            "status_counts": [len(project.get_status_of_design_points()) for project in study_projects],
+            "parameter_values": [project.fetch_values_of_parameters(["result"]) for project in study_projects],
+        }
+
+    @transaction(self=StepSpec(upload=["simple_projects"]))
+    def append_raw_hps_project_to_collection(self) -> None:
+        self.simple_projects.append(HpsSimpleProject(hps_project_identifier="raw-project"))
 
     @long_running
     @transaction(self=StepSpec(upload=["stored_entity"]))

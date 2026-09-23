@@ -25,7 +25,9 @@ import pytest
 from pytest_mock.plugin import MockerFixture
 
 from ansys.saf.glow.client import Client
+from ansys.saf.glow.solution.hps import HpsParametricStudyProject, HpsSimpleProject
 from tests.mocks.solutions.minimal_solution import MinimalSolution
+from tests.mocks.solutions.transactions import TransactionsSolution
 
 VALID_API_URLS = [
     "http://127.0.0.1:5432",
@@ -76,6 +78,108 @@ def test_get_field(monkeypatch: pytest.MonkeyPatch, mocker: MockerFixture):
 
     # AND - the returned value should be the expected result
     assert returned_value == expected_result
+
+
+@pytest.mark.parametrize(
+    ("field_name", "server_value", "collection_key", "project_type"),
+    [
+        (
+            "simple_projects",
+            [{"hps_project_identifier": "simple-project"}],
+            0,
+            HpsSimpleProject,
+        ),
+        (
+            "study_projects",
+            [{"hps_project_identifier": "study-project"}],
+            0,
+            HpsParametricStudyProject,
+        ),
+        (
+            "simple_projects_by_name",
+            {"project_1": {"hps_project_identifier": "simple-project"}},
+            "project_1",
+            HpsSimpleProject,
+        ),
+        (
+            "study_projects_by_name",
+            {"project_1": {"hps_project_identifier": "study-project"}},
+            "project_1",
+            HpsParametricStudyProject,
+        ),
+    ],
+)
+def test_get_hps_project_collection_field(
+    mocker: MockerFixture,
+    field_name: str,
+    server_value: list[dict[str, str]] | dict[str, dict[str, str]],
+    collection_key: int | str,
+    project_type: type[HpsSimpleProject] | type[HpsParametricStudyProject],
+):
+    client = Client(TransactionsSolution, "http://127.0.0.1:5432")
+    step = client.get_project("projects/my_project_id").steps.transaction_step
+    mocker.patch.object(
+        httpx2.Client,
+        "get",
+        return_value=httpx2.Response(200, json={field_name: server_value}),
+    )
+
+    collection = getattr(step, field_name)
+    project = collection[collection_key]
+
+    assert isinstance(project, project_type)
+    assert project.hps_project_identifier in ("simple-project", "study-project")
+
+
+@pytest.mark.parametrize(
+    ("field_name", "server_value", "collection_key", "project_type"),
+    [
+        (
+            "simple_projects",
+            [{"hps_project_identifier": "simple-project"}],
+            0,
+            HpsSimpleProject,
+        ),
+        (
+            "study_projects",
+            [{"hps_project_identifier": "study-project"}],
+            0,
+            HpsParametricStudyProject,
+        ),
+        (
+            "simple_projects_by_name",
+            {"project_1": {"hps_project_identifier": "simple-project"}},
+            "project_1",
+            HpsSimpleProject,
+        ),
+        (
+            "study_projects_by_name",
+            {"project_1": {"hps_project_identifier": "study-project"}},
+            "project_1",
+            HpsParametricStudyProject,
+        ),
+    ],
+)
+def test_get_fields_returns_hps_project_collections(
+    mocker: MockerFixture,
+    field_name: str,
+    server_value: list[dict[str, str]] | dict[str, dict[str, str]],
+    collection_key: int | str,
+    project_type: type[HpsSimpleProject] | type[HpsParametricStudyProject],
+):
+    client = Client(TransactionsSolution, "http://127.0.0.1:5432")
+    step = client.get_project("projects/my_project_id").steps.transaction_step
+    mocker.patch.object(
+        httpx2.Client,
+        "get",
+        return_value=httpx2.Response(200, json={field_name: server_value}),
+    )
+
+    collection = step.get_fields([field_name])[field_name]
+    project = collection[collection_key]
+
+    assert isinstance(project, project_type)
+    assert project.hps_project_identifier in ("simple-project", "study-project")
 
 
 @pytest.mark.parametrize(

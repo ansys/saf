@@ -19,7 +19,7 @@ import json
 import logging
 import string
 from types import MethodType
-from typing import Any, ClassVar, get_type_hints
+from typing import Any, ClassVar, cast, get_args, get_origin, get_type_hints
 from urllib.parse import urlparse, urlunparse
 
 from ansys.bdm.api import EntityHandle, IStorageScope
@@ -36,6 +36,7 @@ from ansys.saf.glow._core.gql_helper import perform_update_via_graphql
 from ansys.saf.glow._core.step_model import StepModel
 from ansys.saf.glow._core.step_spec import StepSpec
 from ansys.saf.glow._hps_auth.hps_authenticator import create_hps_authenticator
+from ansys.saf.glow._hps_auth.ihps_authenticator import IHpsAuthenticator
 from ansys.saf.glow._hps_parametric_studies.base import (
     DynamicHpsParametricStudyProject,
     DynamicHpsProject,
@@ -58,6 +59,46 @@ class MethodURLParts(BaseModel):
 
 
 VALID_URL_CHARACTERS = string.ascii_lowercase + string.digits + "-"
+
+
+def _safe_issubclass(candidate: Any, classinfo: type | tuple[type, ...]) -> bool:
+    try:
+        return issubclass(candidate, classinfo)
+    except TypeError:
+        return False
+
+
+def _is_hps_project_collection(field_type: Any) -> bool:
+    origin = get_origin(field_type)
+    type_arguments = get_args(field_type)
+    if origin is list and len(type_arguments) == 1:
+        project_type = type_arguments[0]
+    elif origin is dict and len(type_arguments) == 2 and type_arguments[0] is str:
+        project_type = type_arguments[1]
+    else:
+        return False
+    return _safe_issubclass(project_type, (HpsParametricStudyProjectBase, HpsSimpleProjectBase))
+
+
+def _get_persisted_hps_project(project: Any, field_name: str) -> Any:
+    if not isinstance(project, DynamicHpsProject):
+        raise MalformedSolutionError(
+            f"Field '{field_name}' contains an invalid HPS project handle. "
+            "Use HpsSimpleProject.start_hps_job() or "
+            "HpsParametricStudyProject.start_hps_parametric_study() to create collection elements.",
+        )
+    return project.persisted_project
+
+
+def _get_persisted_hps_project_collection(field_value: Any, field_name: str) -> list[Any] | dict[str, Any]:
+    if isinstance(field_value, list):
+        return [_get_persisted_hps_project(project, field_name) for project in cast("list[Any]", field_value)]
+    if isinstance(field_value, dict):
+        return {
+            key: _get_persisted_hps_project(project, field_name)
+            for key, project in cast("dict[str, Any]", field_value).items()
+        }
+    raise MalformedSolutionError(f"Field '{field_name}' must be a list or dictionary of HPS project handles.")
 
 
 class Transaction:
@@ -190,12 +231,13 @@ class TransactionStepModel:
         self._graphql_client = graphql_client
         self._hps_blob_manager = hps_blob_manager
         self._access_token = access_token
+        self._step_type_hints = get_type_hints(step_type)
 
         # Assign default step field attribute to this object.
         step_model = step_type()
         for field_name in self._download_fields + self._upload_fields:
             self._assign_step_value(step_model, field_name)
-        for var_name, var_type in get_type_hints(step_type).items():
+        for var_name, var_type in self._step_type_hints.items():
             if hasattr(var_type, "__origin__") and var_type.__origin__ == ClassVar:
                 self._assign_step_value(step_model, var_name)
         self._assign_step_method(step_model)
@@ -221,13 +263,40 @@ class TransactionStepModel:
         so that the field can be used only in the case of an
         upload."""
         field_value = getattr(step_model, field_name)
+        hps_authenticator = None
         if isinstance(field_value, HpsParametricStudyProjectBase):
             hps_authenticator = create_hps_authenticator(self._settings, self._access_token)
             field_value = DynamicHpsParametricStudyProject(field_value, self._hps_blob_manager, hps_authenticator)
         elif isinstance(field_value, HpsSimpleProjectBase):
             hps_authenticator = create_hps_authenticator(self._settings, self._access_token)
             field_value = DynamicHpsSimpleProject(field_value, self._hps_blob_manager, hps_authenticator)
+        elif _is_hps_project_collection(self._step_type_hints.get(field_name)):
+            hps_authenticator = create_hps_authenticator(self._settings, self._access_token)
+            if isinstance(field_value, list):
+                field_value = [
+                    self._wrap_hps_project(project, field_name, hps_authenticator)
+                    for project in cast("list[Any]", field_value)
+                ]
+            elif isinstance(field_value, dict):
+                field_value = {
+                    key: self._wrap_hps_project(project, field_name, hps_authenticator)
+                    for key, project in cast("dict[str, Any]", field_value).items()
+                }
+            else:
+                raise MalformedSolutionError(f"Field '{field_name}' must be a list or dictionary of HPS projects.")
         setattr(self, field_name, field_value)
+
+    def _wrap_hps_project(
+        self,
+        project: Any,
+        field_name: str,
+        hps_authenticator: IHpsAuthenticator,
+    ) -> DynamicHpsProject:
+        if isinstance(project, HpsParametricStudyProjectBase):
+            return DynamicHpsParametricStudyProject(project, self._hps_blob_manager, hps_authenticator)
+        if not isinstance(project, HpsSimpleProjectBase):
+            raise MalformedSolutionError(f"Field '{field_name}' contains an invalid HPS project handle.")
+        return DynamicHpsSimpleProject(project, self._hps_blob_manager, hps_authenticator)
 
     def _assign_step_method(self, step_model: StepModel):
         step_methods = {
@@ -283,6 +352,8 @@ class TransactionStepModel:
             field_value = getattr(self, field_name)
             if isinstance(field_value, DynamicHpsProject):
                 fields[field_name] = jsonable_encoder(field_value.persisted_project)
+            elif _is_hps_project_collection(self._step_type_hints.get(field_name)):
+                fields[field_name] = jsonable_encoder(_get_persisted_hps_project_collection(field_value, field_name))
             else:
                 fields[field_name] = jsonable_encoder(field_value)
 

@@ -2,8 +2,7 @@
 from __future__ import annotations
 
 from pathlib import Path
-import shutil
-from typing import TYPE_CHECKING, Any, BinaryIO
+from typing import TYPE_CHECKING, Any
 
 from pydantic_core import core_schema
 
@@ -15,9 +14,11 @@ if TYPE_CHECKING:
 
 
 class LiveFile(str):
-    """Relative path to a mutable file in a GLOW project.
+    """Relative path to a file in a GLOW project.
 
-    This class represents a file that can be read while being written.
+    This class represents a file that can be read while being written. It only
+    carries and validates the relative path; concrete subclasses resolve it to a
+    location on disk.
     """
 
     def __new__(cls, value: str):
@@ -82,33 +83,14 @@ class LiveFile(str):
         return self._absolute_path.read_bytes()
 
     def exists(self) -> bool:
-        raise NotImplementedError()
-
-    def write(self, binary_fileobj: BinaryIO, mode: str = "wb") -> None:
-        raise NotImplementedError()
-
-    def write_from_file(self, data_file: str | Path | LiveFile, mode: str = "wb") -> None:
-        raise NotImplementedError()
-
-    def write_text(self, text: str, encoding: str = "utf-8", mode: str = "w") -> None:
-        raise NotImplementedError()
-
-    def write_bytes(self, data: bytes, mode: str = "wb") -> None:
-        raise NotImplementedError()
-
-    def delete(self) -> None:
-        raise NotImplementedError()
-
-    @property
-    def path(self) -> Path:
-        raise NotImplementedError()
+        return self._absolute_path.exists()
 
 
 class TransactionLiveFile(LiveFile):
-    """Transaction-scoped mutable file for the current project.
+    """Transaction-scoped view of a file for the current project.
 
-    The relative path is resolved from ``project_files_dir / project_id``.
-    This class supports both reading and writing file content.
+    The relative path is resolved from ``project_files_dir / project_id``. This class
+    provides read access and exposes the resolved filesystem path through ``path``.
     """
 
     def __new__(cls, value: str, project_files_dir: Path):
@@ -125,43 +107,12 @@ class TransactionLiveFile(LiveFile):
     def path(self) -> Path:
         return self._absolute_path
 
-    def _ensure_parent_directory(self) -> None:
-        self._absolute_path.parent.mkdir(parents=True, exist_ok=True)
-
-    def write(self, binary_fileobj: BinaryIO, mode: str = "wb") -> None:
-        self._ensure_parent_directory()
-        with self._absolute_path.open(mode) as destination_buffer:
-            shutil.copyfileobj(binary_fileobj, destination_buffer)
-
-    def write_from_file(self, data_file: str | Path | LiveFile, mode: str = "wb") -> None:
-        source_bytes = data_file.read_bytes() if isinstance(data_file, LiveFile) else Path(data_file).read_bytes()
-        self._ensure_parent_directory()
-        with self._absolute_path.open(mode) as destination_buffer:
-            destination_buffer.write(source_bytes)
-
-    def write_text(self, text: str, encoding: str = "utf-8", mode: str = "w") -> None:
-        self._ensure_parent_directory()
-        with self._absolute_path.open(mode, encoding=encoding) as destination_buffer:
-            destination_buffer.write(text)
-
-    def write_bytes(self, data: bytes, mode: str = "wb") -> None:
-        self._ensure_parent_directory()
-        with self._absolute_path.open(mode) as destination_buffer:
-            destination_buffer.write(data)
-
-    def delete(self) -> None:
-        if self._absolute_path.exists():
-            self._absolute_path.unlink()
-
-    def exists(self) -> bool:
-        return self._absolute_path.exists()
-
 
 class LiveFileProxy(LiveFile):
     """Client-side read-only view of a LiveFile.
 
-    The relative path is resolved from ``project_files_dir / project_id``.
-    This class allows reading file content while blocking all mutation operations.
+    The relative path is resolved from ``project_files_dir / project_id``. This class
+    allows reading file content and does not expose the resolved filesystem path.
     """
 
     def __new__(cls, value: str, project_files_dir: Path):
@@ -173,24 +124,3 @@ class LiveFileProxy(LiveFile):
     @property
     def _absolute_path(self) -> Path:
         return self._project_files_dir / self._relative_path
-
-    def _raise_read_only(self) -> None:
-        raise PermissionError("The content of a LiveFile cannot be mutated from the Client scope.")
-
-    def write(self, binary_fileobj: BinaryIO, mode: str = "wb") -> None:
-        self._raise_read_only()
-
-    def write_from_file(self, data_file: str | Path | LiveFile, mode: str = "wb") -> None:
-        self._raise_read_only()
-
-    def write_text(self, text: str, encoding: str = "utf-8", mode: str = "w") -> None:
-        self._raise_read_only()
-
-    def write_bytes(self, data: bytes, mode: str = "wb") -> None:
-        self._raise_read_only()
-
-    def delete(self) -> None:
-        self._raise_read_only()
-
-    def exists(self) -> bool:
-        return self._absolute_path.exists()

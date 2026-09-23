@@ -170,7 +170,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Generate release notes
-        uses: ansys/saf-devops/generate-release-notes@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
+        uses: ansys/saf-devops/generate-release-notes@5d9e84af215372b7b125bbf12f5b0093600eb06d # v1.2.0
         with:
           tag-name: ${{ needs.release-information.outputs.release-name }}-${{ inputs.library
             }}

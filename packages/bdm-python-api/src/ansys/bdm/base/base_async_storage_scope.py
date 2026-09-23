@@ -14,10 +14,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from anyio import EndOfStream
+
 from ansys.bdm.api.entity_handle import EntityHandle
 from ansys.bdm.api.iasync_storage_scope import IAsyncStorageScope
 from ansys.bdm.base.encoder import encode_text
-from anyio import EndOfStream
 
 
 class AsyncStorageScopeBase(IAsyncStorageScope):

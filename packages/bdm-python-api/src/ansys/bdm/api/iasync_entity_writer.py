@@ -17,8 +17,9 @@
 from types import TracebackType
 from typing import Protocol
 
-from ansys.bdm.api.entity_handle import EntityHandle
 from anyio.abc import ByteSendStream
+
+from ansys.bdm.api.entity_handle import EntityHandle
 
 
 class IAsyncEntityWriter(Protocol):

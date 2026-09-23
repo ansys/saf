@@ -170,7 +170,12 @@ def test_hps_project_collections_are_persisted_and_rehydrated(
     project_fixture: ProjectFixture,
     hps_blob_manager: Any,
 ):
-    simple_identifiers = ["simple-list-1", "simple-list-2", "simple-dict-1", "simple-dict-2"]
+    simple_identifiers = [
+        "simple-list-1",
+        "simple-list-2",
+        "simple-dict-1",
+        "simple-dict-2",
+    ]
     study_identifiers = ["study-list-1", "study-list-2", "study-dict-1", "study-dict-2"]
     authenticator = NullHpsAuthenticator()
     simple_projects = [
@@ -208,6 +213,10 @@ def test_hps_project_collections_are_persisted_and_rehydrated(
     assert {
         key: project["hps_project_identifier"] for key, project in persisted_step["study_projects_by_name"].items()
     } == {"first": study_identifiers[2], "second": study_identifiers[3]}
+    assert {
+        key: [project["hps_project_identifier"] for project in projects]
+        for key, projects in persisted_step["nested_simple_projects"].items()
+    } == {"group_1": simple_identifiers[:2]}
 
     hps_project = mocker.MagicMock()
     hps_project.ui_url = "https://hps.example/projects/test"
@@ -226,13 +235,15 @@ def test_hps_project_collections_are_persisted_and_rehydrated(
         "identifiers": [
             *simple_identifiers[:2],
             *simple_identifiers[2:],
+            *simple_identifiers[:2],
             *study_identifiers[:2],
             *study_identifiers[2:],
         ],
         "dictionary_keys": ["first", "second", "first", "second"],
-        "ui_urls": ["https://hps.example/projects/test"] * 8,
-        "finished": [True] * 8,
-        "exists": [True] * 8,
+        "nested_dictionary_keys": ["group_1"],
+        "ui_urls": ["https://hps.example/projects/test"] * 10,
+        "finished": [True] * 10,
+        "exists": [True] * 10,
         "status_counts": [1] * 4,
         "parameter_values": [[[42]]] * 4,
     }

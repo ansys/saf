@@ -75,6 +75,43 @@ optional = true
 [tool.setuptools]
 py-modules = [  ]
 
+[tool.ruff]
+target-version = "py312"
+line-length = 120
+extend-exclude = [
+  "conf.py",
+]
+
+# in same order as in https://docs.astral.sh/ruff/rules
+lint.select = [
+  "A",      # flake8-builtins
+  "ASYNC",  # flake8-async
+  "B",      # flake8-bugbear
+  "C4",     # flake8-comprehensions
+  "C90",    # mccabe
+  "COM",    # flake8-commas
+  "E",      # pycodestyle - error
+  "F",      # pyflakes
+  "FAST",   # fastapi
+  "I",      # isort
+  "LOG",    # flake8-logging
+  "N",      # pep8-naming
+  "PIE",    # flake8-pie
+  "PT",     # flake8-pytest-style
+  "PTH",    # flake8-use-pathlib
+  "PYI",    # flake8-pyi
+  "Q",      # flake8-quotes
+  "RUF100", # ruff-specific rules: unused noqa
+  "SIM",    # flake8-simplify
+  "TC",     # flake8-type-checking
+  "UP",     # pyupgrade
+  "W",      # pycodestyle - warning
+]
+lint.ignore = [ "PYI034" ]
+lint.flake8-pytest-style.mark-parentheses = false
+lint.isort.force-sort-within-sections = true
+lint.isort.known-first-party = [ "packages/*/src", "packages/*/doc", "packages/*/tests" ]
+
 [tool.coverage.report]
 show_missing = true
 

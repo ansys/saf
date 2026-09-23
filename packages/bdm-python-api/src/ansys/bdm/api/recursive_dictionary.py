@@ -17,10 +17,9 @@
 import re
 from typing import Any
 
+from ansys.bdm.api.entity_handle import EntityHandle
 from pydantic import GetCoreSchemaHandler
 from pydantic_core import CoreSchema, core_schema
-
-from ansys.bdm.api.entity_handle import EntityHandle
 
 
 class RecursiveDictionaryOfEntityHandles(

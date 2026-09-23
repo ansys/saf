@@ -79,9 +79,7 @@ project_a.delete()
 # ----
 
 # Import the project
-project_b = client.import_project(
-    safx_path=Path.cwd() / "Project A.safx", display_name="Project B"
-)
+project_b = client.import_project(safx_path=Path.cwd() / "Project A.safx", display_name="Project B")
 # ----
 
 # Access the project properties

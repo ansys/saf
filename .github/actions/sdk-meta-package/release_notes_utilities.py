@@ -14,19 +14,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
+from pathlib import Path
+import re
+
+from azdo_feed_fetch_version import get_latest_versions
 from constants import (
     INITIAL_META_PACKAGE_VERSION,
     META_PACKAGE_NAME,
     PACKAGE_LIBRARY_DIRS,
     REPO_ROOT,
 )
-import os
-import re
-from pathlib import Path
-
 import requests
-
-from azdo_feed_fetch_version import get_latest_versions
 
 RELEASE_NOTES_FILE = REPO_ROOT / "release_notes.md"
 GITHUB_RELEASE_URL = "https://api.github.com/repos/ansys/saf/releases/tags/{tag}"
@@ -75,9 +74,7 @@ def get_release_notes(package: str, version: str) -> str | None:
     if token:
         headers["Authorization"] = f"Bearer {token}"
 
-    response = requests.get(
-        GITHUB_RELEASE_URL.format(tag=tag), headers=headers, timeout=10
-    )
+    response = requests.get(GITHUB_RELEASE_URL.format(tag=tag), headers=headers, timeout=10)
     if response.status_code == 404:
         return None
     response.raise_for_status()
@@ -86,9 +83,7 @@ def get_release_notes(package: str, version: str) -> str | None:
         return None
 
     body = re.sub(r"<!--.*?-->", "", body, flags=re.DOTALL).strip()
-    match = re.search(
-        r"^#{1,6}\s*what's changed\s*$", body, flags=re.IGNORECASE | re.MULTILINE
-    )
+    match = re.search(r"^#{1,6}\s*what's changed\s*$", body, flags=re.IGNORECASE | re.MULTILINE)
     notes = body[match.end() :].lstrip("\n").strip() if match else body
     return notes or None
 
@@ -134,7 +129,7 @@ def generate_release_notes(
             "| --- | --- |",
             *rows,
             "",
-        ]
+        ],
     )
 
     private_package_versions = get_latest_versions(PRIVATE_PACKAGES)
@@ -144,19 +139,13 @@ def generate_release_notes(
                 "",
                 "| Private Package | Version |",
                 "| --- | --- |",
-                *[
-                    f"| `{package}` | `{version}` |"
-                    for package, version in private_package_versions.items()
-                ],
+                *[f"| `{package}` | `{version}` |" for package, version in private_package_versions.items()],
                 "---",
-            ]
+            ],
         )
 
     for package in PACKAGES:
-        if (
-            versions[package] == current_versions[package]
-            and meta_package_version != INITIAL_META_PACKAGE_VERSION
-        ):
+        if versions[package] == current_versions[package] and meta_package_version != INITIAL_META_PACKAGE_VERSION:
             package_notes = "No changes"
         else:
             package_notes = get_release_notes(package, versions[package])
@@ -168,7 +157,7 @@ def generate_release_notes(
                     "",
                     package_notes,
                     "",
-                ]
+                ],
             )
 
     RELEASE_NOTES_FILE.write_text(content, encoding="utf-8")

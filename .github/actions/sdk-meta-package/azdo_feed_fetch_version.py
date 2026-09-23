@@ -44,11 +44,10 @@ AZURE_DEVOPS_PAT
 import argparse
 import os
 
-import requests
+from github_utilities import write_github_output
 from packaging.version import parse as parse_version
 from pydantic import SecretStr
-
-from github_utilities import write_github_output
+import requests
 
 
 def _get_package_data(package_name: str) -> dict[str, object]:
@@ -74,9 +73,7 @@ def _get_package_data(package_name: str) -> dict[str, object]:
         response.raise_for_status()
         return response.json()
     except requests.RequestException as error:
-        raise ValueError(
-            f"Failed to fetch package data for '{package_name}'"
-        ) from error
+        raise ValueError(f"Failed to fetch package data for '{package_name}'") from error
 
 
 def get_latest_versions(packages: list[str]) -> dict[str, str]:
@@ -85,30 +82,18 @@ def get_latest_versions(packages: list[str]) -> dict[str, str]:
         data = _get_package_data(package_name)
 
         packages = data.get("value", [])
-        matching_package = next(
-            (pkg for pkg in packages if pkg.get("name") == package_name), None
-        )
+        matching_package = next((pkg for pkg in packages if pkg.get("name") == package_name), None)
 
         if not matching_package or "versions" not in matching_package:
-            raise ValueError(
-                f"Package '{package_name}' not found or has no versions in the feed."
-            )
+            raise ValueError(f"Package '{package_name}' not found or has no versions in the feed.")
 
         # Loop through the version objects and filter out any where 'isDeleted' is true to skip yanked versions
-        active_versions = [
-            version
-            for version in matching_package["versions"]
-            if not version.get("isDeleted", False)
-        ]
+        active_versions = [version for version in matching_package["versions"] if not version.get("isDeleted", False)]
 
         if not active_versions:
-            raise ValueError(
-                f"All versions for '{package_name}' have been yanked or deleted."
-            )
+            raise ValueError(f"All versions for '{package_name}' have been yanked or deleted.")
 
-        parsed_versions = [
-            parse_version(version["version"]) for version in active_versions
-        ]
+        parsed_versions = [parse_version(version["version"]) for version in active_versions]
         stable_versions = [v for v in parsed_versions if not v.is_prerelease]
 
         if stable_versions:
@@ -118,13 +103,9 @@ def get_latest_versions(packages: list[str]) -> dict[str, str]:
         else:
             # 2nd Priority Fallback: Return the highest pre-release/dev version
             latest_version = max(parsed_versions)
-            print(
-                f"No stable versions found. Latest pre-release/dev version (excluding yanked): {latest_version}"
-            )
+            print(f"No stable versions found. Latest pre-release/dev version (excluding yanked): {latest_version}")
         versions[package_name] = str(latest_version)
-        write_github_output(
-            f"{package_name.replace('-', '_').lower()}_version", str(latest_version)
-        )
+        write_github_output(f"{package_name.replace('-', '_').lower()}_version", str(latest_version))
     return versions
 
 

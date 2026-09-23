@@ -16,9 +16,8 @@
 
 """Tests for validate_path_component function."""
 
-import pytest
-
 from ansys.bdm.api.recursive_dictionary import validate_path_component
+import pytest
 
 
 @pytest.mark.parametrize(

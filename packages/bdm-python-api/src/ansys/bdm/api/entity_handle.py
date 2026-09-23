@@ -15,6 +15,7 @@
 # limitations under the License.
 
 from uuid import UUID
+
 from pydantic import BaseModel
 
 
@@ -81,10 +82,7 @@ class EntityHandle(BaseModel, frozen=True):
         __value: object,
         /,
     ) -> bool:
-        return (
-            isinstance(__value, EntityHandle)
-            and self.opaque_identifier == __value.opaque_identifier
-        )
+        return isinstance(__value, EntityHandle) and self.opaque_identifier == __value.opaque_identifier
 
     def __hash__(self) -> int:
         return self.opaque_identifier.__hash__()

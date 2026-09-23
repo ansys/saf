@@ -90,7 +90,7 @@ activate the virtual environment, and build the documentation:
 
 The generated documentation is available in the ``doc/build/html`` directory.
 Open the ``doc/build/html/index.html`` file in a web browser to review it.
-The search bar and he version selector are not available in the local build.
+The search bar and the version selector are not available in the local build.
 
 API documentation of a package
 ------------------------------

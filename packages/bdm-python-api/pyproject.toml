@@ -1,6 +1,6 @@
 [build-system]
 build-backend = "uv_build"
-requires = [ "uv-build>=0.11.27,<0.12" ]
+requires = [ "uv-build>=0.12.18,<0.13" ]
 
 [project]
 name = "ansys-bdm-api"
@@ -8,13 +8,13 @@ version = "0.6.dev0"
 description = "Python API for BDM"
 readme = "README.rst"
 license = "Apache-2.0"
+license-files = [ "LICENSE" ]
 maintainers = [ { name = "ANSYS, Inc.", email = "pyansys-core@synopsys.com" } ]
 authors = [ { name = "ANSYS, Inc.", email = "pyansys-core@synopsys.com" } ]
 requires-python = ">=3.11,<4"
 classifiers = [
   "Development Status :: 3 - Alpha",
   "Intended Audience :: Science/Research",
-  "License :: OSI Approved :: Apache Software License",
   "Natural Language :: English",
   "Programming Language :: Python :: 3 :: Only",
   "Programming Language :: Python :: 3.11",
@@ -42,7 +42,7 @@ pythonVersion = "3.12"
 extraPaths = [ "src" ]
 include = [ "src", "tests" ]
 exclude = [ "**/*_pb2.py", "**/*_pb2_grpc.py" ]
-strict = [ "src" ]
+strict = [ "src", "tests" ]
 venvPath = "../.."
 venv = ".venv"
 
@@ -50,4 +50,4 @@ venv = ".venv"
 ansys-bdm-api = { workspace = true }
 
 [tool.uv.build-backend]
-module-name = "ansys.bdm.api"
+module-name = "ansys.bdm"

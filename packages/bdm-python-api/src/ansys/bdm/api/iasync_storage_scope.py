@@ -20,9 +20,6 @@ from types import NotImplementedType, TracebackType
 from typing import TYPE_CHECKING, Protocol
 
 import aioshutil
-import anyio
-from anyio.abc import ByteReceiveStream
-
 from ansys.bdm.api.entity_handle import EntityHandle
 from ansys.bdm.api.iasync_entity_writer import IAsyncEntityWriter
 from ansys.bdm.api.recursive_dictionary import (
@@ -31,6 +28,8 @@ from ansys.bdm.api.recursive_dictionary import (
     validate_path_component,
 )
 from ansys.bdm.api.storage_exceptions import NotFoundInLocalStorageRootError
+import anyio
+from anyio.abc import ByteReceiveStream
 
 if TYPE_CHECKING:
     from os import PathLike

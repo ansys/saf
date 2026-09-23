@@ -16,9 +16,8 @@
 
 import uuid
 
-from pydantic import BaseModel
-
 from ansys.bdm.api import EntityHandle, RecursiveDictionaryOfEntityHandles
+from pydantic import BaseModel
 
 
 def test_recursive_dictionary_can_be_serialized_and_deserialized():

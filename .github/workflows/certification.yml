@@ -267,9 +267,9 @@ jobs:
           poetry-parent-directory: packages/${{ needs.pre-certification.outputs.library-name
             }}
           max-allowed-severity: medium
-          skip-install: ${{ env.USE_MOON }}
+          skip-install: ${{ env.USE_MOON == 'true' }}
           checkout: false
-          requirements-file: ${{ env.USE_MOON && format('{0}/dist/packages/{1}-requirements.txt',
+          requirements-file: ${{ env.USE_MOON == 'true' && format('{0}/dist/packages/{1}-requirements.txt',
             github.workspace, needs.pre-certification.outputs.library-name) || 'dependencies.txt'
             }}
         env:

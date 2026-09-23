@@ -1,7 +1,7 @@
 tasks:
   pre-commit:
     description: "Run pre-commit against this package's files and root-level files only (other packages are not yet converted)"
-    script: 'uv run pre-commit run --files $(git ls-files -- "*" ":!:*/*") $(git ls-files -- ".github") $(git ls-files -- "doc") $(git ls-files -- "$projectSource")'
+    script: 'uv run pre-commit run --files $(git ls-files -- ":(top,glob)*" ":(top).github/**" ":(top)doc/**" ":(top,glob)$projectSource/**")'
     inputs:
       - 'src/**/*'
       - 'tests/**/*'

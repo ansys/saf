@@ -218,6 +218,27 @@ within SAF solutions.
   - Integration with SAF GLOW Engine for lifecycle management
 
 
+.. _components_projects_dashboard:
+
+SAF Projects Dashboard
+----------------------
+
+Provides out-of-the-box PyAnsys-powered managers to launch and control Ansys project instances
+within SAF solutions.
+
+- **Package name**: ``ansys-saf-projects-dashboard``
+- **Key features**:
+
+  - Project listing with server-backed pagination and configurable page sizes
+  - Search and date-range filtering by creation and modification dates
+  - Create and edit project forms with names, descriptions, and custom icons
+  - Project detail information displayed in a modal
+  - Delete and project-upgrade confirmation workflows
+  - Import and export support for .safx project files
+  - Notifications, loading states, error handling, and CRUD action results exposed to Dash callbacks
+  - Light and dark theme support, including integration with external theme providers
+  - Reusable Dash subcomponents for project lists, tables, filters, pagination, forms, menus, and metadata
+
 .. _components_bdm_python_api:
 
 SAF BDM Python API
@@ -367,6 +388,7 @@ Installing ``ansys-saf-sdk`` installs these packages by default:
 * ``ansys-iam-oidc`` (see :ref:`components_iam_oidc`)
 * ``ansys-saf-product-configuration`` (see :ref:`components_product_configuration`)
 * ``ansys-saf-product-manager`` (see :ref:`components_product_manager`)
+* ``ansys-saf-projects-dashboard`` (see :ref:`components_projects_dashboard`)
 
 The following diagram shows what the meta-package pulls in. Solid arrows are the core dependencies,
 installed by default; dashed arrows are packages added by an optional extra.

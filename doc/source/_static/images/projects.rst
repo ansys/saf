@@ -175,51 +175,14 @@ The image container uses a responsive 16:9 aspect ratio.
 
 .. rubric:: Default project placeholder
 
-.. figure:: /_static/images/projects_delete_project.png
+.. figure:: /_static/project-default-icon.png
     :width: 65%
 
 .. rubric:: Custom project icon
 
-.. figure:: /_static/images/projects_custom_icon.png
+.. figure:: /_static/project-custom-icon.png
     :width: 65%
 
-Projects Metadata
-=================
-
-The solution header displays image and description content above the project
-list.
-
-Image behavior:
-
-1. Uses `solutionImageUrl` when you want to load a custom image of your solution.
-2. If there is no image path provided, falls back to bundled inline SVG if omitted or load fails.
-
-Description behavior:
-
-1. Uses `solutionDescription` when you want to add a custom description of your solution.
-2. Falls back to a default placeholder when omitted
-
-.. code-block:: python
-
-      return html.Div(
-          [
-              ansys_saf_projects_dashboard.ProjectsDashboard(
-                  id="projects-dashboard",
-                  apiBaseUrl=API_BASE_URL,
-                  # Optional: solutionImageUrl & solutionDescription shown above the header
-                  solutionImageUrl="<my_path/assets/image.application.svg>",
-                  solutionDescription="My solution description...",
-              ),
-          ]
-      )
-
-The image container uses a responsive 16:9 aspect ratio.
-
-.. rubric:: Default metadata placeholders
-
-.. figure:: /_static/images/projects_metadata_default.png
-    :width: 65%
-    
 
 Project files location
 ======================

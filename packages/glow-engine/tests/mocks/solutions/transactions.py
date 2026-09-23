@@ -457,9 +457,7 @@ class TransactionStep(StepModel):
         ),
     )
     def inspect_hps_project_collections(self) -> dict[str, Any]:
-        nested_simple_projects = [
-            project for projects in self.nested_simple_projects.values() for project in projects
-        ]
+        nested_simple_projects = [project for projects in self.nested_simple_projects.values() for project in projects]
         simple_projects = [*self.simple_projects, *self.simple_projects_by_name.values(), *nested_simple_projects]
         study_projects = [*self.study_projects, *self.study_projects_by_name.values()]
         all_projects = [*simple_projects, *study_projects]

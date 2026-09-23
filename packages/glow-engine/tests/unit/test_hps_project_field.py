@@ -14,8 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from collections.abc import Callable
-from typing import Any
+from typing import TYPE_CHECKING, Any
 from unittest.mock import MagicMock
 
 import pytest
@@ -31,6 +30,9 @@ from ansys.saf.glow._hps_parametric_studies.base import (
     HpsProject,
 )
 from ansys.saf.glow._server.exceptions import MalformedSolutionError
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 ProjectCase = tuple[
     type[HpsProject],
@@ -51,9 +53,7 @@ def _dynamic_project(project: HpsProject, dynamic_type: type[DynamicHpsProject])
 def _wrapper_factory(project: HpsProject, context: str) -> DynamicHpsProject:
     del context
     dynamic_type = (
-        DynamicHpsParametricStudyProject
-        if isinstance(project, HpsParametricStudyProject)
-        else DynamicHpsSimpleProject
+        DynamicHpsParametricStudyProject if isinstance(project, HpsParametricStudyProject) else DynamicHpsSimpleProject
     )
     return _dynamic_project(project, dynamic_type)
 
@@ -154,8 +154,7 @@ def test_hps_project_dictionary_preserves_keys_and_values():
         "second": HpsParametricStudyProject(hps_project_identifier="second"),
     }
     dynamic_projects = {
-        key: _dynamic_project(project, DynamicHpsParametricStudyProject)
-        for key, project in persisted_projects.items()
+        key: _dynamic_project(project, DynamicHpsParametricStudyProject) for key, project in persisted_projects.items()
     }
     transformer = HpsProjectFieldTransformerBuilder().build(dict[str, HpsParametricStudyProject])
 

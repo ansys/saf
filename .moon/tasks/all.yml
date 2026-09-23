@@ -1,0 +1,213 @@
+tasks:
+  pre-commit:
+    description: "Run pre-commit against this package's files and root-level files only (other packages are not yet converted)"
+    script: 'uv run pre-commit run --files $(git ls-files -- "*" ":!:*/*") $(git ls-files -- ".github") $(git ls-files -- "doc") $(git ls-files -- "$projectSource")'
+    inputs:
+      - 'src/**/*'
+      - 'tests/**/*'
+      - '/.pre-commit-config.yaml'
+      - 'pyproject.toml'
+      - 'uv.lock'
+    options:
+      runFromWorkspaceRoot: true
+
+  build:
+    description: "Build wheel"
+    command:
+      - "uv"
+      - "build"
+      - "--package"
+      - "$projectAlias"
+    inputs:
+      - "src/**/*"
+      - "pyproject.toml"
+      - "/.python-version"
+    outputs:
+      - "/dist"
+    tags:
+      - "ubuntu-latest"
+    options:
+      runFromWorkspaceRoot: true
+
+  twine-check:
+    description: "Check distribution with twine"
+    command: "uv"
+    args:
+      - "run"
+      - "twine"
+      - "check"
+      - "dist/*"
+    inputs:
+      - "dist/*"
+    options:
+      runFromWorkspaceRoot: true
+
+  test:
+    command: 'noop'
+    deps:
+      - '~:pytest-windows'
+      - '~:pytest-linux'
+
+  pytest-windows:
+    description: "Run pytest on Windows"
+    command: 'uv'
+    args:
+      - "run"
+      - "--package"
+      - "$projectAlias"
+      - "--all-extras"
+      - "pytest"
+      - "-p"
+      - "no:faulthandler"
+      - "--cov=."
+      - "--cov-report=term"
+      - "--cov-report=xml"
+      - "--cov-report=html"
+    options:
+      os: 'windows'
+    env:
+      PYTEST_DEBUG_TEMPROOT: 'C:/'
+    inputs:
+      - "src/**/*"
+      - "tests/**/*"
+      - "pyproject.toml"
+      - "/.python-version"
+
+  pytest-linux:
+    description: "Run pytest on Linux"
+    command: 'uv'
+    args:
+      - "run"
+      - "--package"
+      - "$projectAlias"
+      - "--all-extras"
+      - "pytest"
+      - "-p"
+      - "no:faulthandler"
+      - "--cov=."
+      - "--cov-report=term"
+      - "--cov-report=xml"
+      - "--cov-report=html"
+    options:
+      os: 'linux'
+    inputs:
+      - "src/**/*"
+      - "tests/**/*"
+      - "pyproject.toml"
+      - "/.python-version"
+
+  build-doc:
+    description: "Build general documentation"
+    command: 'uv'
+    args:
+      - "run"
+      - "sphinx-build"
+      - "-M"
+      - "html"
+      - "doc/source"
+      - "doc/_build"
+      - "-j"
+      - "auto"
+      - "--keep-going"
+      - "-v"
+    env:
+      DISABLE_INTERSPHINX: 'true'
+    inputs:
+      - "doc/**/*"
+      - "pyproject.toml"
+      - "/.python-version"
+    options:
+      runFromWorkspaceRoot: true
+
+  build-api-doc:
+    description: "Build API documentation"
+    command: 'uv'
+    args:
+      - "run"
+      - "sphinx-build"
+      - "-M"
+      - "html"
+      - "$projectSource/doc/source"
+      - "$projectSource/doc/_build"
+      - "-j"
+      - "auto"
+      - "--keep-going"
+      - "-v"
+    env:
+      DISABLE_INTERSPHINX: 'true'
+    inputs:
+      - "doc/**/*"
+      - "pyproject.toml"
+      - "/.python-version"
+    options:
+      runFromWorkspaceRoot: true
+
+  export:
+    description: "Export the project"
+    command: 'uv'
+    args:
+      - "export"
+      - "--package"
+      - "$projectAlias"
+      - "--no-emit-project"
+      - "--no-hashes"
+      - "--format"
+      - "requirements-txt"
+      - "--output-file"
+      - "dist/$projectSource-requirements.txt"
+    inputs:
+      - "src/**/*"
+      - "pyproject.toml"
+      - "/.python-version"
+      - "uv.lock"
+    outputs:
+      - "/dist/$projectSource-requirements.txt"
+    options:
+      runFromWorkspaceRoot: true
+
+  sbom:
+    description: "Export sbom"
+    command: 'uv'
+    args:
+      - "export"
+      - "--package"
+      - "$projectAlias"
+      - "--format"
+      - "cyclonedx1.5"
+      - "--output-file"
+      - "dist/$projectSource-sbom.json"
+      - "--preview-features"
+      - "sbom-export"
+    inputs:
+      - "src/**/*"
+      - "pyproject.toml"
+      - "/.python-version"
+      - "/uv.lock"
+    outputs:
+      - "/dist/$projectSource-sbom.json"
+    options:
+      runFromWorkspaceRoot: true
+
+  vulnerability-check:
+    description: "Audit production dependencies for known vulnerabilities"
+    command: 'uvx'
+    args:
+      - "--from"
+      - "pip-audit==2.10.1"
+      - "pip-audit"
+      - "--requirement"
+      - "dist/$projectSource-requirements.txt"
+      - "--desc"
+      - "on"
+      - "--strict"
+    env:
+      UV_MALWARE_CHECK: '1'
+    deps:
+      - '~:export'
+    inputs:
+      - "pyproject.toml"
+      - "/pyproject.toml"
+      - "/uv.lock"
+      - "dist/$projectSource-requirements.txt"
+    options:
+      runFromWorkspaceRoot: true

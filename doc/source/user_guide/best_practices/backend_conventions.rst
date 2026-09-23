@@ -20,6 +20,7 @@ in multi-process deployments.
    # Breaks in multi-process deployment
    _cache = {}  # Module-level mutable state — never shared across processes
 
+
    class AnalysisStep(StepModel):
        temperature: float = 20.0
 
@@ -51,6 +52,7 @@ per-user or per-project data. SAF GLOW Engine persists all state through step fi
    :caption: Incorrect — in-memory session store
 
    _sessions = {}  # Lost on restart, not shared across workers
+
 
    class SessionStep(StepModel):
        user_id: str = ""
@@ -102,8 +104,8 @@ serialization failures when SAF GLOW Engine creates a new project.
    :caption: Incorrect — missing defaults
 
    class AnalysisStep(StepModel):
-       temperature: float           # No default — will fail on project creation
-       results: list[float]         # No default — will fail on project creation
+       temperature: float  # No default — will fail on project creation
+       results: list[float]  # No default — will fail on project creation
 
 .. code-block:: python
    :caption: Correct — explicit defaults for every field
@@ -150,6 +152,7 @@ SAF GLOW Engine's solution analysis phase.
    :caption: Module-level import when used in multiple methods
 
    import numpy as np  # Used in multiple methods below
+
 
    class SimulationStep(StepModel):
        """Step where NumPy is used across several transactions."""

@@ -256,31 +256,18 @@ jobs:
       - prepare-release
       - certification
     if: ${{ always() && needs.certification.result == 'success' }}
-    runs-on: ubuntu-latest
     permissions:
       attestations: write # Write attestation for uploaded distribution artifacts
       contents: read # Read the source code of the project
       id-token: write # Write access to a temporary token for signing attestations
-    steps:
-      - name: checkout
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          token: ${{ secrets.PYANSYS_CI_BOT_TOKEN || github.token }}
-          ref: ${{ inputs.dev-release && 'main' || needs.release-information.outputs.release-branch-name
-            }}
-          persist-credentials: false
-
-      - name: "Build wheel"
-        uses: ansys/actions/build-library@7410037bfb276c79ae91eb3617b9f5d2876f0c94 # v11.0.8
-        with:
-          library-name: ${{ inputs.library }}-${{ needs.release-information.outputs.release-name
-            }}
-          working-directory: packages/${{ inputs.library }}
-          python-version: ${{ vars.PYTHON_VERSION }}
-          attest-provenance: true
-          validate-build: true
-          checkout: false
-          use-uv: false
+    uses: ./.github/workflows/_build.yml
+    with:
+      library-name: ${{ inputs.library }}-${{ needs.release-information.outputs.release-name
+        }}
+      python-version: ${{ vars.PYTHON_VERSION }}
+      use-moon: ${{ inputs.library == 'bdm-python-api' }}
+      artifact-name: ${{ inputs.library }}-${{ needs.release-information.outputs.release-name
+        }}${{ inputs.library == 'bdm-python-api'  && '-artifacts' || '' }}
 
   bump-version:
     name: Bump Version

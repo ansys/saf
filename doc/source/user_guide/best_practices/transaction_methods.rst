@@ -193,6 +193,7 @@ Rules:
        def a_method(self, b_step: "BStep") -> None:
            self.a2 = self.a1 + b_step.b1
 
+
    class BStep(StepModel):
        b1: int = 88
 

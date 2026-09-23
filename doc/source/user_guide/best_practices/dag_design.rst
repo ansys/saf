@@ -109,6 +109,7 @@ invalidates every step below it. Keep the DAG as flat as possible.
        def solve(self, setup: SetupStep) -> None:
            self.solver_result = setup.temperature * 1.5
 
+
    class ResultsStep(StepModel):
        report: str = ""
 

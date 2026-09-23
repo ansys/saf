@@ -172,6 +172,7 @@ of the SVG path, as done in the ``svg_icons`` module:
 
     import base64
 
+
     def create_icon(color: str = "#000000") -> str:
         svg = (
             f"""<svg xmlns="http://www.w3.org/2000/svg" """
@@ -182,6 +183,7 @@ of the SVG path, as done in the ``svg_icons`` module:
         )
         encoded = base64.b64encode(svg.encode())
         return f"data:image/svg+xml;base64,{encoded.decode()}"
+
 
     icon = create_icon(color="#adb5bd")
 

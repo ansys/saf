@@ -386,7 +386,7 @@ In ``display_initial_state``, that declaration reads:
 
 .. code-block:: python
 
-    self=StepSpec(
+    self = StepSpec(
         upload=["initial_grid_state"],
         download=["selected_pattern", "grid_size"],
     )
@@ -477,8 +477,7 @@ The ``@long_running`` decorator
 
         @transaction(...)
         @long_running
-        def simulate(self) -> None:
-            ...
+        def simulate(self) -> None: ...
 
     Swap the two and the runtime cannot see the long-running semantics.
 

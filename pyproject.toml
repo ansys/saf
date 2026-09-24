@@ -5,6 +5,13 @@ maintainers = [ { name = "ANSYS, Inc.", email = "pyansys-core@synopsys.com" } ]
 authors = [ { name = "ANSYS, Inc.", email = "pyansys-core@synopsys.com" } ]
 requires-python = ">=3.11,<4.0"
 
+classifiers = [
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
+]
 dependencies = [
   "ansys-bdm-api",
   "ansys-bdm-shared-volume",

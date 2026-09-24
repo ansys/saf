@@ -1,6 +1,6 @@
 [project]
 name = "ansys-saf-workspace"
-version = "0.2.0"
+version = "0.3.0"
 description = "SAF Root workspace for my multi-package repository"
 readme = "README.md"
 maintainers = [ { name = "ANSYS, Inc.", email = "pyansys-core@synopsys.com" } ]

@@ -4,7 +4,7 @@ requires = [ "setuptools>=69", "wheel" ]
 
 [project]
 name = "ansys-saf-sdk"
-version = "0.2.0"
+version = "0.3.0"
 description = "SAF SDK Bundle"
 readme = "README.md"
 requires-python = ">=3.11,<3.15"
@@ -29,7 +29,7 @@ classifiers = [
 dependencies = [
   "ansys-bdm-api==0.5.0",
   "ansys-bdm-shared-volume==0.4.0",
-  "ansys-saf-glow-engine==2.3.0",
+  "ansys-saf-glow-engine==2.4.0",
   "ansys-iam-oidc==0.9.0",
   "ansys-saf-product-configuration==0.26.0",
   "ansys-saf-product-manager==0.5.0",
@@ -37,22 +37,22 @@ dependencies = [
 
 [project.optional-dependencies]
 core-dash = [
-  "ansys-saf-glow-engine[dash]==2.3.0",
+  "ansys-saf-glow-engine[dash]==2.4.0",
 ]
 core-pim = [
-  "ansys-saf-glow-engine[pim]==2.3.0",
+  "ansys-saf-glow-engine[pim]==2.4.0",
 ]
 core-hps = [
-  "ansys-saf-glow-engine[hps]==2.3.0",
+  "ansys-saf-glow-engine[hps]==2.4.0",
 ]
 core-test = [
-  "ansys-saf-glow-engine[test]==2.3.0",
+  "ansys-saf-glow-engine[test]==2.4.0",
 ]
 core-mcp = [
-  "ansys-saf-glow-engine[mcp]==2.3.0",
+  "ansys-saf-glow-engine[mcp]==2.4.0",
 ]
 core-all = [
-  "ansys-saf-glow-engine[all]==2.3.0",
+  "ansys-saf-glow-engine[all]==2.4.0",
   "ansys-saf-product-configuration[all]==0.26.0",
   "ansys-saf-product-manager[all]==0.5.0",
 ]
@@ -95,7 +95,7 @@ build = [
   "ansys-saf-desktop-installer==1.17.0",
 ]
 all = [
-  "ansys-saf-glow-engine[all]==2.3.0",
+  "ansys-saf-glow-engine[all]==2.4.0",
   "ansys-saf-product-configuration[all]==0.26.0",
   "ansys-saf-product-manager[all]==0.5.0",
   "ansys-saf-desktop-installer==1.17.0",

@@ -83,7 +83,7 @@ def layout(project: ExamplesSolution) -> html.Div:
                 n_clicks=0,
                 disabled=is_running,
                 loading=is_running,
-                style={"font-size": "16px", "background-color": "#2790F1"},
+                style={"font-size": "16px", "background-color": "#2790F1", "width": "20%"},
             ),
             html.Br(),
             html.Br(),

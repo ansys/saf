@@ -37,30 +37,6 @@ In this example, you learn how to:
 - :material-outlined:`notifications;1.25em;saf-objective-icon` Drive **button states and
   notifications** from the event stream, then shut the instance down.
 
-When you complete this example, you can expect the following output in the solution UI:
-
-.. _saf-ex-geometry-product-instance-output-1:
-
-.. figure:: /_static/images/usage_saf_ex_geometry_product_instance_output_1.png
-  :width: 100%
-
-  Status before the initialization of the product instance
-
-.. figure:: /_static/images/usage_saf_ex_geometry_product_instance_output_2.png
-  :width: 100%
-
-  Status after the initialization of the product instance
-
-.. figure:: /_static/images/usage_saf_ex_geometry_product_instance_output_3.png
-  :width: 100%
-
-  Status after calling the ``extrude_slot`` and ``get_active_design`` methods of the product instance
-
-.. figure:: /_static/images/usage_saf_ex_geometry_product_instance_output_4.png
-  :width: 100%
-
-  Status after shutting down the product instance
-
 
 .. _saf-ex-geometry-product-instance-prerequisites:
 

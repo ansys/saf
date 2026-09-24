@@ -37,30 +37,6 @@ In this example, you learn how to:
 - :material-outlined:`bolt;1.25em;saf-objective-icon` Wire one **callback** per button and use
   **event listeners** to refresh the console logs and the notifications.
 
-When you complete this example, you can expect the following output in the solution UI:
-
-.. _saf-ex-mechanical-product-instance-output-1:
-
-.. figure:: /_static/images/usage_saf_ex_mechanical_product_instance_output_1.png
-  :width: 100%
-
-  Status before the initialization of the product instance
-
-.. figure:: /_static/images/usage_saf_ex_mechanical_product_instance_output_2.png
-  :width: 100%
-
-  Status after the initialization of the product instance
-
-.. figure:: /_static/images/usage_saf_ex_mechanical_product_instance_output_3.png
-  :width: 100%
-
-  Status after calling the ``run_script`` and ``download_output_solve`` methods of the product instance
-
-.. figure:: /_static/images/usage_saf_ex_mechanical_product_instance_output_4.png
-  :width: 100%
-
-  Status after shutting down the product instance
-
 
 .. _saf-ex-mechanical-product-instance-prerequisites:
 

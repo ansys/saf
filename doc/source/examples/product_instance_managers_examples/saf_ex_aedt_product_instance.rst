@@ -35,30 +35,6 @@ In this example, you learn how to:
 - :material-outlined:`bolt;1.25em;saf-objective-icon` Wire one **callback** per button so the UI
   triggers a transaction and reports its outcome.
 
-When you complete this example, you can expect the following output in the solution UI:
-
-.. _saf-ex-aedt-product-instance-output-1:
-
-.. figure:: /_static/images/usage_saf_ex_aedt_product_instance_output_1.png
-  :width: 100%
-
-  Status before the initialization of the product instance.
-
-.. figure:: /_static/images/usage_saf_ex_aedt_product_instance_output_2.png
-  :width: 100%
-
-  Status after the initialization of the product instance.
-
-.. figure:: /_static/images/usage_saf_ex_aedt_product_instance_output_3.png
-  :width: 100%
-
-  Status after calling the ``add_rectangle`` and analyze methods of the product instance.
-
-.. figure:: /_static/images/usage_saf_ex_aedt_product_instance_output_4.png
-  :width: 100%
-
-  Status after shutting down the product instance.
-
 
 .. _saf-ex-aedt-product-instance-prerequisites:
 

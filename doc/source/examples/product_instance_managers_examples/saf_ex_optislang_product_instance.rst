@@ -38,25 +38,6 @@ This example demonstrates how to create a product instance manager for optiSLang
        * Button to evaluate a design.
        * Button to refine a design.
 
-.. figure:: /_static/images/usage_saf_ex_optislang_product_instance_output_1.png
-  :width: 100%
-
-  Status before the initialization of the product instance
-
-.. figure:: /_static/images/usage_saf_ex_optislang_product_instance_output_2.png
-  :width: 100%
-
-  Status after the initialization of the product instance
-
-.. figure:: /_static/images/usage_saf_ex_optislang_product_instance_output_3.png
-  :width: 100%
-
-  Status after calling the ``evaluate_design`` and ``refine_design`` methods of the product instance
-
-.. figure:: /_static/images/usage_saf_ex_optislang_product_instance_output_4.png
-  :width: 100%
-
-  Status after shutting down the product instance
 
 .. _saf-ex-optislang-product-instance-prerequisites:
 

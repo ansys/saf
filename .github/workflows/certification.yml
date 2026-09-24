@@ -221,20 +221,13 @@ jobs:
     env:
       USE_MOON: ${{ contains('bdm-python-api,bdm-python-shared-volume', needs.pre-certification.outputs.library-name)
         }}
+      PACKAGE: ${{ needs.pre-certification.outputs.library-name }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
           fetch-depth: 0
-
-      - name: Set up uv
-        if: ${{ env.USE_MOON == 'true' }}
-        uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
-        with:
-          enable-cache: false
-          python-version: ${{ vars.PYTHON_VERSION }}
-          activate-environment: true
 
       - name: Setup Moon Toolchain
         if: ${{ env.USE_MOON == 'true' }}
@@ -243,9 +236,6 @@ jobs:
       - name: Vulnerability Check
         if: ${{ env.USE_MOON == 'true' }}
         shell: bash
-        env:
-          MOON_TOOLCHAIN_FORCE_GLOBALS: 'uv'
-          PACKAGE: ${{ needs.pre-certification.outputs.library-name }}
         run: moon run ${PACKAGE}:vulnerability-check
 
       - uses: ansys/saf-devops/check-deps-vulnerabilities@5d9e84af215372b7b125bbf12f5b0093600eb06d # v1.2.0
@@ -462,8 +452,7 @@ jobs:
       use-moon: ${{ contains('bdm-python-api,bdm-python-shared-volume', needs.pre-certification.outputs.library-name)
         }}
       artifact-name: ${{ needs.pre-certification.outputs.library-name }}-${{ matrix.python-version
-        }}${{ case(contains('bdm-python-api,bdm-python-shared-volume', needs.pre-certification.outputs.library-name),
-        '-artifacts', '') }}
+        }}${{ case(contains('bdm-python-api,bdm-python-shared-volume', needs.pre-certification.outputs.library-name), '-artifacts', '') }}
 
   check-wheel-can-be-pip-installed:
     name: "Check wheel can be pip installed"

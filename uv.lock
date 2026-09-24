@@ -87,7 +87,6 @@ requires-dist = [
 
 [[package]]
 name = "ansys-saf-workspace"
-version = "0.2.0"
 source = { virtual = "." }
 dependencies = [
     { name = "ansys-bdm-api" },

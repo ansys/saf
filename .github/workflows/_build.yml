@@ -76,7 +76,7 @@ jobs:
         shell: bash
         env:
           PACKAGE: ${{ inputs.library-name }}
-          MOON_TOOLCHAIN_FORCE_GLOBALS: 'uv'
+          # MOON_TOOLCHAIN_FORCE_GLOBALS: 'uv'
         run: |
           # export UV_PYTHON="$VIRTUAL_ENV/bin/python"
           moon run $PACKAGE:build
@@ -85,7 +85,7 @@ jobs:
         shell: bash
         env:
           PACKAGE: ${{ inputs.library-name }}
-          MOON_TOOLCHAIN_FORCE_GLOBALS: 'uv'
+          # MOON_TOOLCHAIN_FORCE_GLOBALS: 'uv'
         run: |
           # export UV_PYTHON="$VIRTUAL_ENV/bin/python"
           moon run $PACKAGE:twine-check

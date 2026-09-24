@@ -76,7 +76,7 @@ jobs:
           PACKAGE: ${{ inputs.library-name }}
           MOON_TOOLCHAIN_FORCE_GLOBALS: 'uv'
         run: |
-          # export UV_PYTHON="$VIRTUAL_ENV/bin/python"
+          export UV_PYTHON="$VIRTUAL_ENV/bin/python"
           moon run $PACKAGE:build
 
       - name: Twine check (Moon)
@@ -85,7 +85,7 @@ jobs:
           PACKAGE: ${{ inputs.library-name }}
           MOON_TOOLCHAIN_FORCE_GLOBALS: 'uv'
         run: |
-          # export UV_PYTHON="$VIRTUAL_ENV/bin/python"
+          export UV_PYTHON="$VIRTUAL_ENV/bin/python"
           moon run $PACKAGE:twine-check
 
       - name: "Upload distribution artifacts to GitHub artifacts"

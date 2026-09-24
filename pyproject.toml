@@ -1,11 +1,7 @@
-[build-system]
-build-backend = "setuptools.build_meta"
-requires = [ "setuptools>=69", "wheel" ]
-
 [project]
-name = "ansys-saf-development"
+name = "ansys-saf-workspace"
 version = "0.2.0"
-description = "SAF Development Project"
+description = "SAF Root workspace for my multi-package repository"
 readme = "README.md"
 maintainers = [ { name = "ANSYS, Inc.", email = "pyansys-core@synopsys.com" } ]
 authors = [ { name = "ANSYS, Inc.", email = "pyansys-core@synopsys.com" } ]
@@ -21,10 +17,34 @@ classifiers = [
   "Programming Language :: Python :: 3.14",
   "Topic :: Scientific/Engineering :: Information Analysis",
 ]
+dependencies = [
+  "ansys-bdm-api",
+]
 
 [dependency-groups]
+dev = [
+  "bandit[toml]==1.9.4",
+  "pre-commit==4.6.0",
+  { include-group = "build" },
+  { include-group = "doc" },
+  { include-group = "tests" },
+]
+tests = [
+  "coverage>=6.4.1,<7",
+  "filelock>=3.8.0,<4",
+  "mock>=4.0.3,<5",
+  "pytest>=9.0.3,<10",
+  "pytest-asyncio>=1.3.0,<2",
+  "pytest-cov>=4.0.0,<5",
+  "pytest-html>=4.1.1,<5",
+  "pytest-md>=0.2.0,<1",
+  "pytest-mock>=3.10.0,<4",
+  "pytest-timeout>=2.3.1,<3",
+  "pytest-xdist>=3.6.1,<4",
+]
 doc = [
-  "ansys-sphinx-theme>=1.9; python_version>='3.12'",
+  "ansys-sphinx-theme[autoapi]>=1.9; python_version>='3.12'",
+  "autodoc-pydantic>=2.2.0; python_version>='3.12'",
   "click>=8.3.2; python_version>='3.12'",
   "docutils>=0.21; python_version>='3.12' and python_version<'4.0'",
   "linkchecker>=10.6.0; python_version>='3.12'",
@@ -45,9 +65,9 @@ doc = [
   "sphinxemoji>=0.2; python_version>='3.12'",
   "toml>=0.10.2; python_version>='3.12'",
 ]
-
-[tool.poetry]
-package-mode = false
+build = [
+  "twine==7.0.0",
+]
 
 [tool.poetry.group.doc]
 optional = true
@@ -55,6 +75,48 @@ optional = true
 [tool.setuptools]
 py-modules = [  ]
 
-[tool.uv]
-package = false
-link-mode = "copy"
+[tool.ruff]
+target-version = "py312"
+line-length = 120
+src = [ "packages/*/doc", "packages/*/src", "packages/*/tests" ]
+extend-exclude = [
+  "conf.py",
+]
+
+# in same order as in https://docs.astral.sh/ruff/rules
+lint.select = [
+  "A",      # flake8-builtins
+  "ASYNC",  # flake8-async
+  "B",      # flake8-bugbear
+  "C4",     # flake8-comprehensions
+  "C90",    # mccabe
+  "COM",    # flake8-commas
+  "E",      # pycodestyle - error
+  "F",      # pyflakes
+  "FAST",   # fastapi
+  "I",      # isort
+  "LOG",    # flake8-logging
+  "N",      # pep8-naming
+  "PIE",    # flake8-pie
+  "PT",     # flake8-pytest-style
+  "PTH",    # flake8-use-pathlib
+  "PYI",    # flake8-pyi
+  "Q",      # flake8-quotes
+  "RUF100", # ruff-specific rules: unused noqa
+  "SIM",    # flake8-simplify
+  "TC",     # flake8-type-checking
+  "UP",     # pyupgrade
+  "W",      # pycodestyle - warning
+]
+lint.ignore = [ "PYI034" ]
+lint.flake8-pytest-style.mark-parentheses = false
+lint.isort.force-sort-within-sections = true
+
+[tool.coverage.report]
+show_missing = true
+
+[tool.uv.sources]
+ansys-bdm-api = { workspace = true }
+
+[tool.uv.workspace]
+members = [ "packages/bdm-python-api" ]

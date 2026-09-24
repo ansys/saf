@@ -20,11 +20,13 @@ Data model rules
    from ansys.bdm.api import EntityHandle, NO_ENTITY, RecursiveDictionaryOfEntityHandles
    from ansys.saf.glow.solution import StepModel
 
+
    class SolverType(Enum):
        """Available solver types."""
 
        DIRECT = "direct"
        ITERATIVE = "iterative"
+
 
    class MeshSettings(BaseModel):
        """Mesh configuration — structured data with a predictable shape."""
@@ -32,13 +34,14 @@ Data model rules
        element_size: float = 1.0
        refinement_level: int = 2
 
+
    class BeamBendingStep(StepModel):
        """Step model with representative field types."""
 
        # Primitives with defaults
-       length: float = 1000.0                     # mm
-       diameter: float = 50.0                      # mm
-       load: float = 10e3                           # N
+       length: float = 1000.0  # mm
+       diameter: float = 50.0  # mm
+       load: float = 10e3  # N
        num_elements: int = 4
        is_nonlinear: bool = False
 

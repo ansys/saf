@@ -16,14 +16,13 @@
 
 from __future__ import annotations
 
-from pathlib import Path
 import os
+from pathlib import Path
 import tempfile
 from unittest.mock import patch
 
-import pytest
-
 import branch
+import pytest
 
 
 def test_branch_parses_release_branch() -> None:
@@ -64,12 +63,14 @@ def test_branch_rejects_release_branch_outside_workflow_dispatch() -> None:
         "GITHUB_EVENT_NAME": "push",
         "IS_FOR_PYPI_RELEASE": "false",
     }
-    with patch.dict(os.environ, environment, clear=True):
-        with pytest.raises(
+    with (
+        patch.dict(os.environ, environment, clear=True),
+        pytest.raises(
             ValueError,
             match="^Release branch is only allowed on workflow dispatch, but got push$",
-        ):
-            branch.Branch()
+        ),
+    ):
+        branch.Branch()
 
 
 def test_branch_rejects_pypi_release_from_non_release_branch() -> None:
@@ -78,12 +79,14 @@ def test_branch_rejects_pypi_release_from_non_release_branch() -> None:
         "GITHUB_EVENT_NAME": "workflow_dispatch",
         "IS_FOR_PYPI_RELEASE": "true",
     }
-    with patch.dict(os.environ, environment, clear=True):
-        with pytest.raises(
+    with (
+        patch.dict(os.environ, environment, clear=True),
+        pytest.raises(
             ValueError,
             match=r"^PyPI release is only allowed on main or release branches\.$",
-        ):
-            branch.Branch()
+        ),
+    ):
+        branch.Branch()
 
 
 def test_branch_properties_are_read_only() -> None:

@@ -15,6 +15,7 @@
 # limitations under the License.
 
 import os
+from pathlib import Path
 
 
 def write_github_output(name: str, value: str) -> None:
@@ -34,5 +35,5 @@ def write_github_output(name: str, value: str) -> None:
     """
     github_output_path = os.environ.get("GITHUB_OUTPUT")
     if github_output_path:
-        with open(github_output_path, "a", encoding="utf-8") as f:
+        with Path(github_output_path).open("a", encoding="utf-8") as f:
             f.write(f"{name}={value}\n")

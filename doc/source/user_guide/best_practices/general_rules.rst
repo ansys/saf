@@ -22,17 +22,18 @@ immediately. This causes side effects, slows startup, and can break the framewor
    # setup_step.py
    import numpy as np
 
-   data = np.zeros(100)          # Runs on import — breaks GLOW
-   result = expensive_function() # Side effect on import
+   data = np.zeros(100)  # Runs on import — breaks GLOW
+   result = expensive_function()  # Side effect on import
 
-   class SetupStep(StepModel):
-       ...
+
+   class SetupStep(StepModel): ...
 
 .. code-block:: python
    :caption: Correct — all logic inside class methods
 
    # setup_step.py
    from ansys.saf.glow.solution import StepModel, StepSpec, transaction
+
 
    class SetupStep(StepModel):
        """Setup step — no code runs on import."""
@@ -74,6 +75,7 @@ without the overhead of the full framework.
    # tests/test_beam_solver.py
    from logic.beam_solver import compute_deflection
 
+
    def test_compute_deflection():
        result = compute_deflection(length=1.0, load=100.0, modulus=200e9)
        assert result > 0
@@ -84,6 +86,7 @@ without the overhead of the full framework.
    from ansys.saf.glow.solution import StepModel, StepSpec, transaction
    from logic.beam_solver import compute_deflection
 
+
    class BeamStep(StepModel):
        """Beam analysis step."""
 
@@ -92,9 +95,7 @@ without the overhead of the full framework.
        modulus: float = 200e9
        deflection: float = 0.0
 
-       @transaction(
-           self=StepSpec(download=["length", "load", "modulus"], upload=["deflection"])
-       )
+       @transaction(self=StepSpec(download=["length", "load", "modulus"], upload=["deflection"]))
        def solve(self) -> None:
            self.deflection = compute_deflection(self.length, self.load, self.modulus)
 

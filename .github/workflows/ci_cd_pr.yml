@@ -98,6 +98,8 @@ jobs:
     outputs:
       pr-changes: ${{ steps.info.outputs.pr-changes }}
       packages-matrix: ${{ steps.info.outputs.packages-matrix }}
+      poetry-packages-matrix: ${{ steps.info.outputs.poetry-packages-matrix }}
+      moon-packages-matrix: ${{ steps.info.outputs.moon-packages-matrix }}
       code-style-matrix: ${{ steps.info.outputs.code-style-matrix }}
       compatibility-matrix: ${{ steps.info.outputs.compatibility-matrix }}
       tests-matrix: ${{ steps.info.outputs.tests-matrix }}
@@ -170,8 +172,37 @@ jobs:
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.ci-cd-config.outputs.packages-matrix) }}
+    env:
+      USE_MOON: ${{ contains(needs.ci-cd-config.outputs.moon-packages-matrix, matrix.library-name)
+        }}
     steps:
-      - uses: ansys/saf-devops/check-deps-vulnerabilities@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Set up uv
+        if: ${{ env.USE_MOON == 'true' }}
+        uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
+        with:
+          enable-cache: false
+          python-version: ${{ vars.PYTHON_VERSION }}
+          activate-environment: true
+
+      - name: Setup Moon Toolchain
+        if: ${{ env.USE_MOON == 'true' }}
+        uses: moonrepo/setup-toolchain@261c62cb5b0f580c7be7c8cd0f023a2e96756095 # v0.6.4
+
+      - name: Vulnerability Check
+        if: ${{ env.USE_MOON == 'true' }}
+        shell: bash
+        env:
+          PACKAGE: ${{ matrix.library-name }}
+          MOON_TOOLCHAIN_FORCE_GLOBALS: 'uv'
+        run: moon run ${PACKAGE}:vulnerability-check
+
+      - uses: ansys/saf-devops/check-deps-vulnerabilities@5d9e84af215372b7b125bbf12f5b0093600eb06d # v1.2.0
         with:
           python-version: ${{ vars.PYTHON_VERSION }}
           poetry-version: ${{ vars.POETRY_VERSION }}
@@ -179,6 +210,12 @@ jobs:
           upgrade-pip: true
           poetry-parent-directory: packages/${{ matrix.library-name }}
           max-allowed-severity: medium
+          skip-install: ${{ env.USE_MOON == 'true' }}
+          checkout: false
+          requirements-file: ${{ env.USE_MOON == 'true' && format('{0}/dist/packages/{1}-requirements.txt',
+            github.workspace, matrix.library-name) || 'dependencies.txt' }}
+        env:
+          UV_VENV_CLEAR: ${{ env.USE_MOON == 'true' }}
 
   check-dependencies-licenses:
     name: "Check dependencies licenses"
@@ -190,21 +227,44 @@ jobs:
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.ci-cd-config.outputs.packages-matrix) }}
+    env:
+      USE_MOON: ${{ contains( needs.ci-cd-config.outputs.moon-packages-matrix, matrix.library-name)
+        }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-          sparse-checkout: packages/${{ matrix.library-name }}
+          sparse-checkout: ${{ case(env.USE_MOON == 'true', '', format('packages/{0}/',
+            matrix.library-name)) }}
+          fetch-depth: 0
+
+      - name: Set up uv
+        if: ${{ env.USE_MOON == 'true' }}
+        uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
+        with:
+          enable-cache: false
+          python-version: ${{ vars.PYTHON_VERSION }}
+          activate-environment: true
+
+      - name: Setup Moon Toolchain
+        if: ${{ env.USE_MOON == 'true' }}
+        uses: moonrepo/setup-toolchain@261c62cb5b0f580c7be7c8cd0f023a2e96756095 # v0.6.4
 
       - name: Prepare python environment of the solution
         id: python-setup
+        if: ${{ env.USE_MOON != 'true' }}
         uses: ansys/saf-devops/prepare-python-environment@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
         with:
           python-version: ${{ vars.PYTHON_VERSION }}
           poetry-version: ${{ vars.POETRY_VERSION }}
           python-project-path: "packages/${{ matrix.library-name }}"
           poetry-install-args: "--all-extras"
+
+      - name: Install dependencies (Moon)
+        if: ${{ env.USE_MOON == 'true' }}
+        shell: bash
+        run: uv sync --no-dev
 
       - name: Check licenses
         uses: ansys/actions/check-licenses@7410037bfb276c79ae91eb3617b9f5d2876f0c94 # v11.0.8
@@ -214,9 +274,38 @@ jobs:
           whitelist-license-check: ${{ vars.WHITELIST_LICENSE_CHECK }}
           skip-install: true
           use-uv: false
-          activate-venv: "source packages/${{ matrix.library-name }}/${{ steps.python-setup.outputs.venv-exe-location
-            }}/activate"
+          activate-venv: "source ${{ case(env.USE_MOON == 'true', '', format('packages/{0}/',
+            matrix.library-name)) }}.venv/bin/activate"
           checkout: false
+
+  code-style-moon:
+    name: "Check code style (moon)"
+    permissions:
+      contents: read
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout repository"
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
+        with:
+          enable-cache: false
+          python-version: ${{ vars.PYTHON_VERSION }}
+          activate-environment: true
+
+      - name: Setup Moon Toolchain
+        uses: moonrepo/setup-toolchain@261c62cb5b0f580c7be7c8cd0f023a2e96756095 # v0.6.4
+
+      - name: Run pre-commit (Moon)
+        shell: bash
+        env:
+          PACKAGE: bdm-python-api
+          MOON_TOOLCHAIN_FORCE_GLOBALS: 'uv'
+        run: moon run $PACKAGE:pre-commit
 
   code-style:
     name: "Check code style"
@@ -224,6 +313,7 @@ jobs:
     permissions:
       contents: read
     runs-on: ubuntu-latest
+    if: ${{ needs.ci-cd-config.outputs.code-style-matrix != '{}' }}
     strategy:
       matrix: ${{ fromJson(needs.ci-cd-config.outputs.code-style-matrix) }}
       fail-fast: false
@@ -243,7 +333,6 @@ jobs:
             ${{ matrix.target-directory == 'packages/glow-engine' && '.github/scripts/' || '' }}
 
       - uses: ansys/saf-devops/prepare-python-environment@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
-        if: ${{ matrix.dependency-manager == 'poetry' }}
         id: prepare-python
         with:
           python-version: ${{ vars.PYTHON_VERSION }}
@@ -261,25 +350,8 @@ jobs:
           ${PYTHON_CMD} -m pip install --upgrade pip
           ${PYTHON_CMD} -m pip install pre-commit
 
-      - name: Install uv
-        if: ${{ matrix.dependency-manager == 'uv' }}
-        uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
-        with:
-          python-version: ${{ vars.PYTHON_VERSION }}
-          enable-cache: false
-
-      - name: Install dependencies
-        if: ${{ matrix.dependency-manager == 'uv' }}
-        env:
-          PYTHON_VERSION: ${{ vars.PYTHON_VERSION }}
-        shell: bash
-        run: |
-          uv venv .venv --python ${PYTHON_VERSION}
-          uv pip install pre-commit
-
       - name: Run pre-commit
-        working-directory: ${{ matrix.dependency-manager == 'poetry' && matrix.target-directory
-          || '.' }}
+        working-directory: ${{ matrix.target-directory }}
         env:
           ACTIVATE_CMD: '.venv/bin/activate'
         shell: bash
@@ -299,10 +371,9 @@ jobs:
       PYANSYS_CI_BOT_TOKEN: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
 
   build-wheel:
-    name: "Wheel"
+    name: "Build wheel"
     needs: ci-cd-config
     if: ${{ needs.ci-cd-config.outputs.packages-matrix != '{}' }}
-    runs-on: ubuntu-latest
     permissions:
       attestations: write # Write attestation for uploaded distribution artifacts
       contents: read # Read the source code of the project
@@ -310,16 +381,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.ci-cd-config.outputs.packages-matrix) }}
-    steps:
-      - name: "Build wheel"
-        uses: ansys/actions/build-library@7410037bfb276c79ae91eb3617b9f5d2876f0c94 # v11.0.8
-        with:
-          library-name: ${{ matrix.library-name }}
-          working-directory: packages/${{ matrix.library-name }}
-          python-version: ${{ vars.PYTHON_VERSION }}
-          attest-provenance: true
-          validate-build: true
-          use-uv: false
+    uses: ./.github/workflows/_build.yml
+    with:
+      library-name: ${{ matrix.library-name }}
+      python-version: ${{ vars.PYTHON_VERSION }}
+      use-moon: ${{ contains(needs.ci-cd-config.outputs.moon-packages-matrix, matrix.library-name)
+        }}
+      artifact-name: ${{ matrix.library-name }}-${{ vars.PYTHON_VERSION }}${{ contains(needs.ci-cd-config.outputs.moon-packages-matrix,
+        matrix.library-name) && '-artifacts' || '' }}
 
   check-wheel-can-be-pip-installed:
     name: "Check wheel can be pip installed"
@@ -338,7 +407,7 @@ jobs:
         uses: ansys/saf-devops/pip-install-production-wheel@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
         with:
           python-version: ${{ vars.PYTHON_VERSION }}
-          wheel-artifact: '${{ matrix.library-name }}-artifacts'
+          wheel-artifact: '${{ matrix.library-name }}-${{ vars.PYTHON_VERSION }}-artifacts'
 
   compatibility-tests:
     name: Run compatibility tests
@@ -356,7 +425,8 @@ jobs:
         with:
           python-version: ${{ vars.PYTHON_VERSION }}
           compatibility-packages: 'git+https://github.com/ansys/pyansys.git'
-          wheel-artifact-name: '${{ matrix.library-name }}-artifacts'
+          wheel-artifact-name: '${{ matrix.library-name }}-${{ vars.PYTHON_VERSION
+            }}-artifacts'
         timeout-minutes: 15
 
   sbom:
@@ -369,12 +439,52 @@ jobs:
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.ci-cd-config.outputs.packages-matrix) }}
+    env:
+      USE_MOON: ${{ contains(needs.ci-cd-config.outputs.moon-packages-matrix, matrix.library-name)
+        }}
     steps:
+      - name: Checkout repository
+        if: ${{ env.USE_MOON == 'true' }}
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
       - name: generate sbom
+        if: ${{ env.USE_MOON == 'false' }}
         uses: ansys/saf-devops/generate-sbom@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
         with:
           poetry-version: ${{ vars.POETRY_VERSION }}
           poetry-parent-directory: packages/${{ matrix.library-name }}
+
+      - name: Set up uv
+        if: ${{ env.USE_MOON == 'true' }}
+        uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
+        with:
+          enable-cache: false
+          python-version: ${{ vars.PYTHON_VERSION }}
+          activate-environment: true
+
+      - name: Setup Moon Toolchain
+        if: ${{ env.USE_MOON == 'true' }}
+        uses: moonrepo/setup-toolchain@261c62cb5b0f580c7be7c8cd0f023a2e96756095 # v0.6.4
+
+      - name: generate sbom with Moon
+        if: ${{ env.USE_MOON == 'true' }}
+        shell: bash
+        env:
+          MOON_TOOLCHAIN_FORCE_GLOBALS: 'uv'
+          PACKAGE: ${{ matrix.library-name }}
+        run: moon run ${PACKAGE}:sbom
+
+      - name: Publish SBOM
+        if: ${{ env.USE_MOON == 'true' }}
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: sbom-${{ matrix.library-name }}
+          path: dist/packages/${{ matrix.library-name }}-sbom.json
+          overwrite: true
+          if-no-files-found: error
 
   run-tests:
     needs: ci-cd-config
@@ -391,6 +501,8 @@ jobs:
       python-version: ${{ vars.PYTHON_VERSION }}
       tests-groups-file-path: ${{ matrix.tests-groups-file-path }}
       working-directory: ${{ matrix.working-directory }}
+      use-moon: ${{ contains(needs.ci-cd-config.outputs.moon-packages-matrix, matrix.library-name)
+        }}
     secrets:
       ANS_MINERVA_URL: ${{ secrets.ANS_MINERVA_URL }}
       TEST_REP_CLIENT_SECRET: ${{ secrets.TEST_REP_CLIENT_SECRET }}
@@ -476,6 +588,7 @@ jobs:
       - validate-issue-template-labels
       - github-workflows-lint
       - vulnerabilities
+      - code-style-moon
       - code-style
       - check-dependencies-licenses
       - build-wheel

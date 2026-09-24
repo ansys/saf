@@ -1347,6 +1347,97 @@ body:not(.page-index) .bd-header-article {
 }
 
 
+/* =========================================== RESPONSIVE / MOBILE =========================================== */
+
+/* Most `.. grid::` directives in this doc set are written with a single column
+   count (e.g. `.. grid:: 3`). sphinx-design turns that into a breakpoint-agnostic
+   `sd-row-cols-3`, so the grid stays 3-up even on a 360px phone and the cards
+   collapse into each other. These rules re-introduce the breakpoints the
+   directives never declared. (The cleaner long-term fix is to write the
+   directives responsively, e.g. `.. grid:: 1 2 2 3`.) */
+
+/* Phones: always one card per row. */
+@media (max-width: 575.98px) {
+    .bd-content .sd-row[class*="sd-row-cols-"] > .sd-col {
+        flex: 0 0 100% !important;
+        max-width: 100% !important;
+        width: 100% !important;
+    }
+}
+
+/* Small tablets / large phones in landscape: cap at two cards per row. */
+@media (min-width: 576px) and (max-width: 991.98px) {
+    .bd-content .sd-row[class*="sd-row-cols-3"] > .sd-col,
+    .bd-content .sd-row[class*="sd-row-cols-4"] > .sd-col,
+    .bd-content .sd-row[class*="sd-row-cols-5"] > .sd-col {
+        flex: 0 0 50% !important;
+        max-width: 50% !important;
+        width: 50% !important;
+    }
+}
+
+/* Once cards stack, the outward glow on `.highlight-card` (a 40px blur with a
+   16px spread) reaches ~56px past the card edge, while
+   `.sd-card.sd-w-100.highlight-card` zeroes out `margin-bottom`. The grid gutter
+   hides that on desktop; stacked on mobile the glows overlap the neighbouring
+   card. Tame the glow and restore vertical separation. */
+@media (max-width: 991.98px) {
+    .highlight-card,
+    .onboarding-cards .highlight-card,
+    .bd-content .sd-card.sd-w-100.highlight-card {
+        box-shadow:
+            inset 0 2px 0 0 rgba(138, 88, 182, 0.55),
+            0 2px 10px 0 rgba(37, 37, 37, 0.35) !important;
+        margin-bottom: 1.25rem !important;
+    }
+
+    .bd-content .sd-shadow-sm,
+    .bd-content .sd-shadow-md,
+    .bd-content .sd-shadow-lg {
+        box-shadow:
+            inset 0 2px 0 0 rgba(138, 88, 182, 0.55),
+            0 2px 10px 0 rgba(37, 37, 37, 0.35) !important;
+    }
+}
+
+/* The landing page uses several `width: 100vw` full-bleed breakouts. `100vw`
+   includes the classic scrollbar gutter, so on narrow viewports those elements
+   are wider than the document and produce a horizontal scrollbar, which shifts
+   the card grid sideways. Clamp the page instead. */
+@media (max-width: 991.98px) {
+    html,
+    body.page-index {
+        overflow-x: hidden;
+    }
+
+    body.page-index .bd-content,
+    body.page-index .bd-article-container,
+    body.page-index .bd-article {
+        overflow-x: clip !important;
+    }
+}
+
+/* Card images scale with the card instead of forcing a minimum column width. */
+@media (max-width: 991.98px) {
+    .bd-content .sd-card .sd-card-img-top,
+    .bd-content .sd-card img {
+        max-width: 100% !important;
+        height: auto !important;
+    }
+}
+
+/* Long code samples and wide tables are the other common source of sideways
+   drift on phones; let them scroll inside their own box. */
+@media (max-width: 767.98px) {
+    .bd-article div[class^="highlight-"],
+    .bd-article div.highlight,
+    .bd-article table.docutils {
+        max-width: 100%;
+        overflow-x: auto;
+    }
+}
+
+
 /* ---- SAF Hero ---- */
 .saf-hero {
   background: linear-gradient(135deg, #010009 0%, #493260 100%);

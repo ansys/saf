@@ -89,8 +89,8 @@ jobs:
 
   ci-cd-config:
     name: Get CI/CD configuration
-    if: github.event_name == 'pull_request' && github.event.pull_request.draft ==
-      false
+    # if: github.event_name == 'pull_request' && github.event.pull_request.draft ==
+    #   false
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -175,20 +175,13 @@ jobs:
     env:
       USE_MOON: ${{ contains(needs.ci-cd-config.outputs.moon-packages-matrix, matrix.library-name)
         }}
+      PACKAGE: ${{ matrix.library-name }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
           fetch-depth: 0
-
-      - name: Set up uv
-        if: ${{ env.USE_MOON == 'true' }}
-        uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
-        with:
-          enable-cache: false
-          python-version: ${{ vars.PYTHON_VERSION }}
-          activate-environment: true
 
       - name: Setup Moon Toolchain
         if: ${{ env.USE_MOON == 'true' }}
@@ -197,9 +190,6 @@ jobs:
       - name: Vulnerability Check
         if: ${{ env.USE_MOON == 'true' }}
         shell: bash
-        env:
-          PACKAGE: ${{ matrix.library-name }}
-          MOON_TOOLCHAIN_FORCE_GLOBALS: 'uv'
         run: moon run ${PACKAGE}:vulnerability-check
 
       - uses: ansys/saf-devops/check-deps-vulnerabilities@5d9e84af215372b7b125bbf12f5b0093600eb06d # v1.2.0
@@ -239,14 +229,6 @@ jobs:
             matrix.library-name)) }}
           fetch-depth: 0
 
-      - name: Set up uv
-        if: ${{ env.USE_MOON == 'true' }}
-        uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
-        with:
-          enable-cache: false
-          python-version: ${{ vars.PYTHON_VERSION }}
-          activate-environment: true
-
       - name: Setup Moon Toolchain
         if: ${{ env.USE_MOON == 'true' }}
         uses: moonrepo/setup-toolchain@261c62cb5b0f580c7be7c8cd0f023a2e96756095 # v0.6.4
@@ -261,10 +243,10 @@ jobs:
           python-project-path: "packages/${{ matrix.library-name }}"
           poetry-install-args: "--all-extras"
 
-      - name: Install dependencies (Moon)
-        if: ${{ env.USE_MOON == 'true' }}
-        shell: bash
-        run: uv sync --no-dev
+      # - name: Install dependencies (Moon)
+      #   if: ${{ env.USE_MOON == 'true' }}
+      #   shell: bash
+      #   run: uv sync --no-dev
 
       - name: Check licenses
         uses: ansys/actions/check-licenses@7410037bfb276c79ae91eb3617b9f5d2876f0c94 # v11.0.8
@@ -290,22 +272,12 @@ jobs:
           persist-credentials: false
           fetch-depth: 0
 
-      - name: Set up uv
-        uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
-        with:
-          enable-cache: false
-          python-version: ${{ vars.PYTHON_VERSION }}
-          activate-environment: true
-
       - name: Setup Moon Toolchain
         uses: moonrepo/setup-toolchain@261c62cb5b0f580c7be7c8cd0f023a2e96756095 # v0.6.4
 
       - name: Run pre-commit (Moon)
         shell: bash
-        env:
-          PACKAGE: bdm-python-api
-          MOON_TOOLCHAIN_FORCE_GLOBALS: 'uv'
-        run: moon run $PACKAGE:pre-commit
+        run: moon run :pre-commit
 
   code-style:
     name: "Check code style"
@@ -442,6 +414,7 @@ jobs:
     env:
       USE_MOON: ${{ contains(needs.ci-cd-config.outputs.moon-packages-matrix, matrix.library-name)
         }}
+      PACKAGE: ${{ matrix.library-name }}
     steps:
       - name: Checkout repository
         if: ${{ env.USE_MOON == 'true' }}
@@ -457,14 +430,6 @@ jobs:
           poetry-version: ${{ vars.POETRY_VERSION }}
           poetry-parent-directory: packages/${{ matrix.library-name }}
 
-      - name: Set up uv
-        if: ${{ env.USE_MOON == 'true' }}
-        uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
-        with:
-          enable-cache: false
-          python-version: ${{ vars.PYTHON_VERSION }}
-          activate-environment: true
-
       - name: Setup Moon Toolchain
         if: ${{ env.USE_MOON == 'true' }}
         uses: moonrepo/setup-toolchain@261c62cb5b0f580c7be7c8cd0f023a2e96756095 # v0.6.4
@@ -472,9 +437,6 @@ jobs:
       - name: generate sbom with Moon
         if: ${{ env.USE_MOON == 'true' }}
         shell: bash
-        env:
-          MOON_TOOLCHAIN_FORCE_GLOBALS: 'uv'
-          PACKAGE: ${{ matrix.library-name }}
         run: moon run ${PACKAGE}:sbom
 
       - name: Publish SBOM
@@ -503,6 +465,7 @@ jobs:
       working-directory: ${{ matrix.working-directory }}
       use-moon: ${{ contains(needs.ci-cd-config.outputs.moon-packages-matrix, matrix.library-name)
         }}
+      library-name: ${{ matrix.library-name }}
     secrets:
       ANS_MINERVA_URL: ${{ secrets.ANS_MINERVA_URL }}
       TEST_REP_CLIENT_SECRET: ${{ secrets.TEST_REP_CLIENT_SECRET }}

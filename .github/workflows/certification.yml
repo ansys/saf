@@ -219,8 +219,8 @@ jobs:
     permissions:
       contents: read # Read the dependencies and source code of the library
     env:
-        USE_MOON: ${{ contains('bdm-python-api,bdm-python-shared-volume', needs.pre-certification.outputs.library-name)
-          }}
+      USE_MOON: ${{ contains('bdm-python-api,bdm-python-shared-volume', needs.pre-certification.outputs.library-name)
+        }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -315,6 +315,7 @@ jobs:
         }}
       use-moon: ${{ contains('bdm-python-api,bdm-python-shared-volume', needs.pre-certification.outputs.library-name)
         }}
+      library-name: ${{ needs.pre-certification.outputs.library-name }}
     secrets:
       ANS_MINERVA_URL: ${{ secrets.ANS_MINERVA_URL }}
       TEST_REP_CLIENT_SECRET: ${{ secrets.TEST_REP_CLIENT_SECRET }}
@@ -352,6 +353,7 @@ jobs:
       working-directory: packages/${{ needs.pre-certification.outputs.library-name
         }}
       use-moon: false
+      library-name: ${{ needs.pre-certification.outputs.library-name }}
     secrets:
       ANS_MINERVA_URL: ${{ secrets.ANS_MINERVA_URL }}
       TEST_REP_CLIENT_SECRET: ${{ secrets.TEST_REP_CLIENT_SECRET }}
@@ -394,6 +396,7 @@ jobs:
       working-directory: packages/${{ needs.pre-certification.outputs.library-name
         }}
       use-moon: false
+      library-name: ${{ needs.pre-certification.outputs.library-name }}
     secrets:
       ANS_MINERVA_URL: ${{ secrets.ANS_MINERVA_URL }}
       TEST_REP_CLIENT_SECRET: ${{ secrets.TEST_REP_CLIENT_SECRET }}
@@ -459,7 +462,8 @@ jobs:
       use-moon: ${{ contains('bdm-python-api,bdm-python-shared-volume', needs.pre-certification.outputs.library-name)
         }}
       artifact-name: ${{ needs.pre-certification.outputs.library-name }}-${{ matrix.python-version
-        }}${{ case(contains('bdm-python-api,bdm-python-shared-volume', needs.pre-certification.outputs.library-name), '-artifacts', '') }}
+        }}${{ case(contains('bdm-python-api,bdm-python-shared-volume', needs.pre-certification.outputs.library-name),
+        '-artifacts', '') }}
 
   check-wheel-can-be-pip-installed:
     name: "Check wheel can be pip installed"

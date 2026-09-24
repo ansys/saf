@@ -4,6 +4,7 @@ tasks:
     script: 'uv run pre-commit run --files $(git ls-files -- ":(top,glob)$projectSource/**")'
     deps:
       - '~:pyright'
+      - '~:bandit'
     inputs:
       - 'src/**/*'
       - 'tests/**/*'
@@ -25,6 +26,26 @@ tasks:
       - "--all-extras"
       - "pyright"
       - "$projectSource"
+    inputs:
+      - "src/**/*"
+      - "tests/**/*"
+      - "pyproject.toml"
+      - "/.python-version"
+    options:
+      runFromWorkspaceRoot: true
+
+  bandit:
+    description: "Run bandit"
+    command:
+      - "uv"
+      - "run"
+      - "--package"
+      - "$projectAlias"
+      - "--all-extras"
+      - "bandit"
+      - "-r"
+      - "$projectSource/src"
+      - "--severity-level=high"
     inputs:
       - "src/**/*"
       - "tests/**/*"

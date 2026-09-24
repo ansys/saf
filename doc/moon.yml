@@ -4,4 +4,5 @@ workspace:
   inheritedTasks:
     exclude:
       - 'pyright'
+      - 'bandit'
       - 'pre-commit'

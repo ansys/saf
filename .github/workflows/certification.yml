@@ -309,7 +309,7 @@ jobs:
         }}.json
       working-directory: packages/${{ needs.pre-certification.outputs.library-name
         }}
-      use-moon: ${{ needs.pre-certification.outputs.use-moon }}
+      use-moon: ${{ needs.pre-certification.outputs.use-moon == 'true' }}
       library-name: ${{ needs.pre-certification.outputs.library-name }}
     secrets:
       ANS_MINERVA_URL: ${{ secrets.ANS_MINERVA_URL }}
@@ -454,7 +454,7 @@ jobs:
     with:
       library-name: ${{ needs.pre-certification.outputs.library-name }}
       python-version: ${{ matrix.python-version }}
-      use-moon: ${{ needs.pre-certification.outputs.use-moon }}
+      use-moon: ${{ needs.pre-certification.outputs.use-moon == 'true' }}
       artifact-name: ${{ needs.pre-certification.outputs.library-name }}-${{ matrix.python-version
         }}${{ case(contains('bdm-python-api,bdm-python-shared-volume,saf-iam-oidc',
         needs.pre-certification.outputs.library-name), '-artifacts', '') }}

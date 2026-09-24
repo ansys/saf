@@ -452,7 +452,8 @@ jobs:
       use-moon: ${{ contains('bdm-python-api,bdm-python-shared-volume', needs.pre-certification.outputs.library-name)
         }}
       artifact-name: ${{ needs.pre-certification.outputs.library-name }}-${{ matrix.python-version
-        }}${{ case(contains('bdm-python-api,bdm-python-shared-volume', needs.pre-certification.outputs.library-name), '-artifacts', '') }}
+        }}${{ case(contains('bdm-python-api,bdm-python-shared-volume', needs.pre-certification.outputs.library-name),
+        '-artifacts', '') }}
 
   check-wheel-can-be-pip-installed:
     name: "Check wheel can be pip installed"

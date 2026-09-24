@@ -218,7 +218,36 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read # Read the dependencies and source code of the library
+    env:
+      USE_MOON: ${{ needs.pre-certification.outputs.library-name == 'bdm-python-api'
+        }}
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Set up uv
+        if: ${{ env.USE_MOON == 'true' }}
+        uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
+        with:
+          enable-cache: false
+          python-version: ${{ vars.PYTHON_VERSION }}
+          activate-environment: true
+
+      - name: Setup Moon Toolchain
+        if: ${{ env.USE_MOON == 'true' }}
+        uses: moonrepo/setup-toolchain@261c62cb5b0f580c7be7c8cd0f023a2e96756095 # v0.6.4
+
+      - name: Export Requirements
+        if: ${{ env.USE_MOON == 'true' }}
+        shell: bash
+        env:
+          MOON_TOOLCHAIN_FORCE_GLOBALS: 'uv'
+          PACKAGE: ${{ needs.pre-certification.outputs.library-name }}
+        run: moon run ${PACKAGE}:export
+
       - name: Check vulnerabilities
         uses: ansys/saf-devops/check-deps-vulnerabilities@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
         with:
@@ -230,7 +259,33 @@ jobs:
             }}
           max-allowed-severity: medium
 
+      - uses: ansys/saf-devops/check-deps-vulnerabilities@5d9e84af215372b7b125bbf12f5b0093600eb06d # v1.2.0
+        with:
+          python-version: ${{ vars.PYTHON_VERSION }}
+          poetry-version: ${{ vars.POETRY_VERSION }}
+          poetry-install-args: '--all-extras'
+          upgrade-pip: true
+          poetry-parent-directory: packages/${{ needs.pre-certification.outputs.library-name
+            }}
+          max-allowed-severity: medium
+          skip-install: ${{ env.USE_MOON == 'true' }}
+          checkout: false
+          requirements-file: ${{ env.USE_MOON == 'true' && format('{0}/dist/packages/{1}-requirements.txt',
+            github.workspace, needs.pre-certification.outputs.library-name) || 'dependencies.txt'
+            }}
+        env:
+          UV_VENV_CLEAR: ${{ env.USE_MOON == 'true' }}
+
+      - name: Vulnerability Check
+        if: ${{ env.USE_MOON == 'true' }}
+        shell: bash
+        env:
+          MOON_TOOLCHAIN_FORCE_GLOBALS: 'uv'
+          PACKAGE: ${{ needs.pre-certification.outputs.library-name }}
+        run: moon run ${PACKAGE}:vulnerability-check
+
   dependabot-alerts:
+    if: ${{ needs.pre-certification.outputs.library-name != 'bdm-python-api' }}
     permissions:
       contents: read
       security-events: read # For Dependabot alerts
@@ -277,6 +332,8 @@ jobs:
         }}.json
       working-directory: packages/${{ needs.pre-certification.outputs.library-name
         }}
+      use-moon: ${{ needs.pre-certification.outputs.library-name == 'bdm-python-api'
+        }}
     secrets:
       ANS_MINERVA_URL: ${{ secrets.ANS_MINERVA_URL }}
       TEST_REP_CLIENT_SECRET: ${{ secrets.TEST_REP_CLIENT_SECRET }}
@@ -313,6 +370,7 @@ jobs:
         }}-extended.json
       working-directory: packages/${{ needs.pre-certification.outputs.library-name
         }}
+      use-moon: false
     secrets:
       ANS_MINERVA_URL: ${{ secrets.ANS_MINERVA_URL }}
       TEST_REP_CLIENT_SECRET: ${{ secrets.TEST_REP_CLIENT_SECRET }}
@@ -347,7 +405,6 @@ jobs:
           - mechanical
           - optislang
           - visor
-
     uses: ./.github/workflows/_test.yml
     with:
       python-version: ${{ matrix.python-version }}
@@ -355,6 +412,7 @@ jobs:
         }}-${{ matrix.flagship }}.json
       working-directory: packages/${{ needs.pre-certification.outputs.library-name
         }}
+      use-moon: false
     secrets:
       ANS_MINERVA_URL: ${{ secrets.ANS_MINERVA_URL }}
       TEST_REP_CLIENT_SECRET: ${{ secrets.TEST_REP_CLIENT_SECRET }}
@@ -401,7 +459,6 @@ jobs:
   build-wheel:
     name: "Wheel ${{ matrix.python-version }}"
     needs: pre-certification
-    runs-on: ubuntu-latest
     permissions:
       attestations: write # Write attestation for uploaded distribution artifacts
       contents: read # Read the source code of the project
@@ -414,16 +471,15 @@ jobs:
           - "3.12"
           - "3.13"
           - "3.14"
-    steps:
-      - uses: ansys/actions/build-library@7410037bfb276c79ae91eb3617b9f5d2876f0c94 # v11.0.8
-        with:
-          library-name: ${{ needs.pre-certification.outputs.library-name }}-${{ matrix.python-version
-            }}
-          working-directory: packages/${{ needs.pre-certification.outputs.library-name
-            }}
-          python-version: ${{ matrix.python-version }}
-          attest-provenance: true
-          validate-build: true
+    uses: ./.github/workflows/_build.yml
+    with:
+      library-name: ${{ needs.pre-certification.outputs.library-name }}
+      python-version: ${{ matrix.python-version }}
+      use-moon: ${{ needs.pre-certification.outputs.library-name == 'bdm-python-api'
+        }}
+      artifact-name: ${{ needs.pre-certification.outputs.library-name }}-${{ matrix.python-version
+        }}${{ needs.pre-certification.outputs.library-name == 'bdm-python-api' &&
+        '-artifacts' || '' }}
 
   check-wheel-can-be-pip-installed:
     name: "Check wheel can be pip installed"

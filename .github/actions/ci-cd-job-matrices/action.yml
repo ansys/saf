@@ -24,6 +24,10 @@ outputs:
     value: ${{ steps.script.outputs.pr_changes }}
   packages-matrix:
     value: ${{ steps.script.outputs.packages_matrix }}
+  poetry-packages-matrix:
+    value: ${{ steps.script.outputs.poetry_packages_matrix }}
+  moon-packages-matrix:
+    value: ${{ steps.script.outputs.moon_packages_matrix }}
   code-style-matrix:
     value: ${{ steps.script.outputs.code_style_matrix }}
   compatibility-matrix:

@@ -22,9 +22,9 @@
 
 import os
 import re
-import tomlkit
 
 from constants import PYPROJECT_PATH
+import tomlkit
 
 
 class Branch:
@@ -55,21 +55,15 @@ class Branch:
         event_name = os.environ.get("GITHUB_EVENT_NAME", "pull_request")
         is_for_pypi_release = os.environ.get("IS_FOR_PYPI_RELEASE", "false") == "true"
 
-        match = re.fullmatch(
-            r"release/v(?P<version>\d+\.\d+\.\d+)/saf-sdk", branch_name
-        )
+        match = re.fullmatch(r"release/v(?P<version>\d+\.\d+\.\d+)/saf-sdk", branch_name)
         if match:
             if event_name != "workflow_dispatch":
-                raise ValueError(
-                    f"Release branch is only allowed on workflow dispatch, but got {event_name}"
-                )
+                raise ValueError(f"Release branch is only allowed on workflow dispatch, but got {event_name}")
             is_release_branch = True
             version = match["version"]
         else:
             if is_for_pypi_release and branch_name != "main":
-                raise ValueError(
-                    "PyPI release is only allowed on main or release branches."
-                )
+                raise ValueError("PyPI release is only allowed on main or release branches.")
             is_release_branch = False
             version = self._get_meta_package_version_from_pyproject()
         self._is_release_branch = is_release_branch

@@ -36,12 +36,14 @@ flexible:
        diameter: float = 50.0
        material: str = "steel"
 
+
    class SolvingStep(StepModel):
        """Owns solver execution and progress tracking."""
 
        solver_type: str = "direct"
        progress: float = 0.0
        is_running: bool = False
+
 
    class ResultsStep(StepModel):
        """Owns computed outputs and report generation."""
@@ -105,6 +107,7 @@ Split when:
        @transaction(self=StepSpec(download=["frequency"], upload=["power_loss"]))
        def solve_em(self) -> None:
            self.power_loss = compute_em_losses(self.frequency)
+
 
    class ThermalStep(StepModel):
        """Thermal simulation — owned by mechanical engineer."""

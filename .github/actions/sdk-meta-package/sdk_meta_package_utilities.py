@@ -23,28 +23,28 @@
 # ]
 # ///
 
-"""Utilities for updating the ansys-saf-sdk meta-package version and its dependencies in packages/saf-sdk/pyproject.toml."""
+"""Utilities for updating the ansys-saf-sdk meta-package version and dependencies in packages/saf-sdk/pyproject.toml."""
 
 from __future__ import annotations
 
 import subprocess
-import tomlkit
 
 from branch import Branch
-from github_utilities import write_github_output
-from release_notes_utilities import generate_release_notes
-from version_utilities import (
-    UpdateType,
-    validate_user_selected_update_type,
-    get_current_dependency_versions,
-    determine_update_type,
-    get_latest_stable_versions,
-    get_meta_package_version,
-    get_dependency_pinning,
-    build_updated_requirement,
-)
 from constants import (
     PYPROJECT_PATH,
+)
+from github_utilities import write_github_output
+from release_notes_utilities import generate_release_notes
+import tomlkit
+from version_utilities import (
+    UpdateType,
+    build_updated_requirement,
+    determine_update_type,
+    get_current_dependency_versions,
+    get_dependency_pinning,
+    get_latest_stable_versions,
+    get_meta_package_version,
+    validate_user_selected_update_type,
 )
 
 
@@ -86,9 +86,7 @@ def update_pyproject(branch: Branch, user_selected_update_type: UpdateType) -> N
     latest_versions = get_latest_stable_versions(current_versions.keys())
     pinning = get_dependency_pinning()
 
-    update_type = determine_update_type(
-        user_selected_update_type, current_versions, latest_versions
-    )
+    update_type = determine_update_type(user_selected_update_type, current_versions, latest_versions)
 
     write_github_output("update_type", update_type.value)
     project_version = get_meta_package_version(update_type)
@@ -97,14 +95,10 @@ def update_pyproject(branch: Branch, user_selected_update_type: UpdateType) -> N
     dependencies = project["dependencies"]
 
     updated_dependencies = [
-        build_updated_requirement(requirement, latest_versions, pinning)
-        for requirement in dependencies
+        build_updated_requirement(requirement, latest_versions, pinning) for requirement in dependencies
     ]
     updated_optional_dependencies = {
-        group: [
-            build_updated_requirement(requirement, latest_versions, pinning)
-            for requirement in requirements
-        ]
+        group: [build_updated_requirement(requirement, latest_versions, pinning) for requirement in requirements]
         for group, requirements in project["optional-dependencies"].items()
     }
     requirements_changed = list(dependencies) != updated_dependencies or any(
@@ -115,9 +109,7 @@ def update_pyproject(branch: Branch, user_selected_update_type: UpdateType) -> N
     write_github_output("changed", str(changed).lower())
 
     if not changed:
-        print(
-            "No updates found for any dependencies. No changes will be made to pyproject.toml."
-        )
+        print("No updates found for any dependencies. No changes will be made to pyproject.toml.")
     else:
         print(f"Updating dependencies with {pinning.value} pinning...")
         if update_type != UpdateType.NO_UPDATE:
@@ -134,7 +126,7 @@ def update_pyproject(branch: Branch, user_selected_update_type: UpdateType) -> N
         PYPROJECT_PATH.write_text(tomlkit.dumps(document), encoding="utf-8")
 
         print(
-            f"Successfully updated meta-package version to {project['version']} and dependencies in {PYPROJECT_PATH}."
+            f"Successfully updated meta-package version to {project['version']} and dependencies in {PYPROJECT_PATH}.",
         )
 
         run_uv_lock()

@@ -16,8 +16,8 @@
 
 from __future__ import annotations
 
-from pathlib import Path
 import os
+from pathlib import Path
 import tempfile
 from unittest.mock import patch
 

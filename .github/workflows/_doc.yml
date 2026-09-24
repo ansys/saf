@@ -70,22 +70,113 @@ jobs:
           vale-version: '2.30.0'
 
       - name: Checkout repository
-        if: ${{ startsWith(github.ref_name, 'release') && github.ref_name != 'main'}}
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-          ref: main
+          ref: ${{ startsWith(github.ref_name, 'release') && 'main' || github.ref
+            }}
+          fetch-depth: 0
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
+        with:
+          enable-cache: false
+          python-version: ${{ vars.PYTHON_VERSION }}
+          activate-environment: true
+
+      - name: Setup Moon Toolchain
+        uses: moonrepo/setup-toolchain@261c62cb5b0f580c7be7c8cd0f023a2e96756095 # v0.6.4
 
       - name: Build centralized documentation
-        uses: ansys/actions/doc-build@7410037bfb276c79ae91eb3617b9f5d2876f0c94 # v11.0.8
+        shell: bash
+        env:
+          MOON_TOOLCHAIN_FORCE_GLOBALS: 'uv'
+        run: moon run doc:build-doc
+
+      - name: Upload HTML documentation artifact
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
+          name: ${{ vars.DOC_ARTIFACT }}-html
+          path: doc/_build/html
+          retention-days: 7
+
+  doc-api-build-moon:
+    name: "API documentation building (Moon)"
+    needs: doc-get-changes
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        package:
+          - bdm-python-api
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          ref: ${{ (inputs.ref != '' && contains(inputs.ref, matrix.package)) && inputs.ref
+            || (inputs.ref != '' && 'main' || github.ref) }}
+          fetch-depth: 0
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
+        with:
+          enable-cache: false
           python-version: ${{ vars.PYTHON_VERSION }}
-          check-links: false # To set to true when the repo is public
-          group-dependencies-name: ${{ vars.DOC_GROUP_DEPENDENCIES_NAME }}
-          uploaded-artifact-name-prefix: ${{ vars.DOC_ARTIFACT }}
-          checkout: ${{ !(startsWith(github.ref_name, 'release') && github.ref_name
-            != 'main')}}
-          skip-latex-install: true
+          activate-environment: true
+
+      - name: Setup Moon Toolchain
+        uses: moonrepo/setup-toolchain@261c62cb5b0f580c7be7c8cd0f023a2e96756095 # v0.6.4
+
+      - name: Build centralized documentation
+        shell: bash
+        env:
+          MOON_TOOLCHAIN_FORCE_GLOBALS: 'uv'
+          PACKAGE: ${{ matrix.package }}
+        run: moon run $PACKAGE:build-api-doc
+
+      - name: Upload HTML documentation artifact
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: ${{ vars.DOC_ARTIFACT }}-${{ matrix.package }}-html
+          path: packages/${{ matrix.package }}/doc/_build/html
+          overwrite: true
+          if-no-files-found: error
+
+      - name: Get version
+        id: info
+        uses: ansys/saf-devops/get-information-from-pyproject@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
+        with:
+          pyproject-path: packages/${{ matrix.package }}/pyproject.toml
+
+      - name: Deploy dev doc
+        if: ${{ contains(steps.info.outputs.patch-version, 'dev') }}
+        uses: ansys/actions/doc-deploy-dev@7410037bfb276c79ae91eb3617b9f5d2876f0c94 # v11.0.8
+        with:
+          cname: ${{ vars.CNAME }}
+          token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
+          doc-artifact-name: ${{ vars.DOC_ARTIFACT }}-${{ matrix.package }}-html
+          bot-user: "github-actions"
+          bot-email: "github-actions@github.com"
+          repository: ${{ github.repository }}
+          branch: gh-pages-${{ matrix.package }}
+
+      - name: Deploy stable doc
+        if: ${{ !contains(steps.info.outputs.patch-version, 'dev') }}
+        uses: ansys/saf-devops/doc-deploy-stable@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
+        with:
+          cname: ${{ vars.CNAME }}
+          token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
+          render-last: "5"
+          doc-artifact-name: ${{ vars.DOC_ARTIFACT }}-${{ matrix.package }}-html
+          bot-user: "github-actions"
+          bot-email: "github-actions@github.com"
+          version: ${{ steps.info.outputs.major-version }}.${{ steps.info.outputs.minor-version
+            }}
+          repository: ${{ github.repository }}
+          branch: gh-pages-${{ matrix.package }}
 
   doc-api-build:
     name: "API documentation building"
@@ -96,7 +187,6 @@ jobs:
       fail-fast: false
       matrix:
         package:
-          - bdm-python-api
           - dash-super-components
           - glow-engine
           - saf-product-configuration
@@ -174,6 +264,7 @@ jobs:
     name: "Merge documentation"
     needs:
       - doc-centralized-build
+      - doc-api-build-moon
       - doc-api-build
     permissions:
       contents: read

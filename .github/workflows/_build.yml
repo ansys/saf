@@ -1,0 +1,95 @@
+name: Build
+
+on:
+  workflow_call:
+    inputs:
+      library-name:
+        required: true
+        type: string
+      python-version:
+        required: true
+        type: string
+      artifact-name:
+        required: true
+        type: string
+      use-moon:
+        required: true
+        type: boolean
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}-build-${{ inputs.library-name }}-${{
+    inputs.python-version }}-${{ inputs.use-moon }}-${{ inputs.artifact-name }}
+  cancel-in-progress: true
+
+permissions: {}
+
+jobs:
+  build-wheel:
+    name: "Build"
+    runs-on: ubuntu-latest
+    permissions:
+      attestations: write # Write attestation for uploaded distribution artifacts
+      contents: read # Read the source code of the project
+      id-token: write # Write access to a temporary token for signing attestations
+    if: ${{ ! inputs.use-moon }}
+    steps:
+      - name: "Build"
+        uses: ansys/actions/build-library@7410037bfb276c79ae91eb3617b9f5d2876f0c94 # v11.0.8
+        with:
+          library-name: ${{ inputs.artifact-name }}
+          working-directory: packages/${{ inputs.library-name }}
+          python-version: ${{ inputs.python-version }}
+          attest-provenance: true
+          validate-build: true
+          use-uv: false
+
+  build:
+    name: "Build (Moon)"
+    permissions:
+      attestations: write # Write attestation for uploaded distribution artifacts
+      contents: read # Read the source code of the project
+      id-token: write # Write access to a temporary token for signing attestations
+    runs-on: ubuntu-latest
+    if: ${{ inputs.use-moon }}
+    steps:
+      - name: "Checkout repository"
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
+        with:
+          enable-cache: false
+          python-version: ${{ inputs.python-version }}
+          activate-environment: true
+
+      - name: Setup Moon Toolchain
+        uses: moonrepo/setup-toolchain@261c62cb5b0f580c7be7c8cd0f023a2e96756095 # v0.6.4
+
+      - name: Build (Moon)
+        shell: bash
+        env:
+          PACKAGE: ${{ inputs.library-name }}
+          MOON_TOOLCHAIN_FORCE_GLOBALS: 'uv'
+        run: moon run $PACKAGE:build
+
+      - name: Twine check (Moon)
+        shell: bash
+        env:
+          PACKAGE: ${{ inputs.library-name }}
+          MOON_TOOLCHAIN_FORCE_GLOBALS: 'uv'
+        run: moon run $PACKAGE:twine-check
+
+      - name: "Upload distribution artifacts to GitHub artifacts"
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: ${{ inputs.artifact-name }}
+          path: dist/
+          retention-days: 7
+
+      - name: Generate build provenance attestation
+        uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4.2.2
+        with:
+          subject-path: dist/

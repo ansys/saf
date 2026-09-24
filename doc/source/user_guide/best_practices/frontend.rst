@@ -25,6 +25,7 @@ automatically. The parameter type must be your ``Solution`` class (not ``StepMod
    from ansys.saf.glow.client import callback
    from dash_extensions.enrich import Input, Output, State
 
+
    @callback(
        Output("result-output", "children"),
        Input("compute-btn", "n_clicks"),
@@ -130,9 +131,9 @@ value, modify the copy, and write the whole value back.
    :caption: Correct — read, modify, write back
 
    step = project.steps.my_step
-   data = step.data_form             # Read the whole dict
+   data = step.data_form  # Read the whole dict
    data["number_input"] = new_value  # Modify the copy
-   step.data_form = data             # Write the whole dict back
+   step.data_form = data  # Write the whole dict back
 
 
 .. _best_practices_component_priority:

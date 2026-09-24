@@ -14,16 +14,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from pathlib import Path
 import os
+from pathlib import Path
 
 META_PACKAGE_NAME = "ansys-saf-sdk"
 INITIAL_META_PACKAGE_VERSION = "0.1.0"
 
 REPO_ROOT = (
-    Path(os.environ["GITHUB_WORKSPACE"])
-    if os.environ.get("GITHUB_WORKSPACE")
-    else Path(__file__).resolve().parents[3]
+    Path(os.environ["GITHUB_WORKSPACE"]) if os.environ.get("GITHUB_WORKSPACE") else Path(__file__).resolve().parents[3]
 )
 PYPROJECT_PATH = REPO_ROOT / "packages" / "saf-sdk" / "pyproject.toml"
 

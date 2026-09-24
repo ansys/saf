@@ -199,9 +199,7 @@ Update your main callbacks and layout in ``page.py``
                 return no_update
             page = pages[item_index]
             # Add GLOW_UI_PATH_PREFIX to the path returned to the browser
-            target_path = dash.get_relative_path(
-                page["path_template"].replace("<project_id>", project_id)
-            )
+            target_path = dash.get_relative_path(page["path_template"].replace("<project_id>", project_id))
             if target_path == pathname:
                 return no_update
             return target_path

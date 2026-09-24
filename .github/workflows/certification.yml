@@ -219,8 +219,9 @@ jobs:
     permissions:
       contents: read # Read the dependencies and source code of the library
     env:
-      USE_MOON: ${{ needs.pre-certification.outputs.library-name == 'bdm-python-api'
+      USE_MOON: ${{ contains('bdm-python-api,bdm-python-shared-volume', needs.pre-certification.outputs.library-name)
         }}
+      PACKAGE: ${{ needs.pre-certification.outputs.library-name }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -228,36 +229,14 @@ jobs:
           persist-credentials: false
           fetch-depth: 0
 
-      - name: Set up uv
-        if: ${{ env.USE_MOON == 'true' }}
-        uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
-        with:
-          enable-cache: false
-          python-version: ${{ vars.PYTHON_VERSION }}
-          activate-environment: true
-
       - name: Setup Moon Toolchain
         if: ${{ env.USE_MOON == 'true' }}
         uses: moonrepo/setup-toolchain@261c62cb5b0f580c7be7c8cd0f023a2e96756095 # v0.6.4
 
-      - name: Export Requirements
+      - name: Vulnerability Check
         if: ${{ env.USE_MOON == 'true' }}
         shell: bash
-        env:
-          MOON_TOOLCHAIN_FORCE_GLOBALS: 'uv'
-          PACKAGE: ${{ needs.pre-certification.outputs.library-name }}
-        run: moon run ${PACKAGE}:export
-
-      - name: Check vulnerabilities
-        uses: ansys/saf-devops/check-deps-vulnerabilities@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
-        with:
-          python-version: ${{ vars.PYTHON_VERSION }}
-          poetry-version: ${{ vars.POETRY_VERSION }}
-          poetry-install-args: '--all-extras'
-          upgrade-pip: true
-          poetry-parent-directory: packages/${{ needs.pre-certification.outputs.library-name
-            }}
-          max-allowed-severity: medium
+        run: moon run ${PACKAGE}:vulnerability-check
 
       - uses: ansys/saf-devops/check-deps-vulnerabilities@5d9e84af215372b7b125bbf12f5b0093600eb06d # v1.2.0
         with:
@@ -275,14 +254,6 @@ jobs:
             }}
         env:
           UV_VENV_CLEAR: ${{ env.USE_MOON == 'true' }}
-
-      - name: Vulnerability Check
-        if: ${{ env.USE_MOON == 'true' }}
-        shell: bash
-        env:
-          MOON_TOOLCHAIN_FORCE_GLOBALS: 'uv'
-          PACKAGE: ${{ needs.pre-certification.outputs.library-name }}
-        run: moon run ${PACKAGE}:vulnerability-check
 
   dependabot-alerts:
     if: ${{ needs.pre-certification.outputs.library-name != 'bdm-python-api' }}
@@ -332,8 +303,9 @@ jobs:
         }}.json
       working-directory: packages/${{ needs.pre-certification.outputs.library-name
         }}
-      use-moon: ${{ needs.pre-certification.outputs.library-name == 'bdm-python-api'
+      use-moon: ${{ contains('bdm-python-api,bdm-python-shared-volume', needs.pre-certification.outputs.library-name)
         }}
+      library-name: ${{ needs.pre-certification.outputs.library-name }}
     secrets:
       ANS_MINERVA_URL: ${{ secrets.ANS_MINERVA_URL }}
       TEST_REP_CLIENT_SECRET: ${{ secrets.TEST_REP_CLIENT_SECRET }}
@@ -371,6 +343,7 @@ jobs:
       working-directory: packages/${{ needs.pre-certification.outputs.library-name
         }}
       use-moon: false
+      library-name: ${{ needs.pre-certification.outputs.library-name }}
     secrets:
       ANS_MINERVA_URL: ${{ secrets.ANS_MINERVA_URL }}
       TEST_REP_CLIENT_SECRET: ${{ secrets.TEST_REP_CLIENT_SECRET }}
@@ -413,6 +386,7 @@ jobs:
       working-directory: packages/${{ needs.pre-certification.outputs.library-name
         }}
       use-moon: false
+      library-name: ${{ needs.pre-certification.outputs.library-name }}
     secrets:
       ANS_MINERVA_URL: ${{ secrets.ANS_MINERVA_URL }}
       TEST_REP_CLIENT_SECRET: ${{ secrets.TEST_REP_CLIENT_SECRET }}
@@ -475,11 +449,11 @@ jobs:
     with:
       library-name: ${{ needs.pre-certification.outputs.library-name }}
       python-version: ${{ matrix.python-version }}
-      use-moon: ${{ needs.pre-certification.outputs.library-name == 'bdm-python-api'
+      use-moon: ${{ contains('bdm-python-api,bdm-python-shared-volume', needs.pre-certification.outputs.library-name)
         }}
       artifact-name: ${{ needs.pre-certification.outputs.library-name }}-${{ matrix.python-version
-        }}${{ needs.pre-certification.outputs.library-name == 'bdm-python-api' &&
-        '-artifacts' || '' }}
+        }}${{ case(contains('bdm-python-api,bdm-python-shared-volume', needs.pre-certification.outputs.library-name),
+        '-artifacts', '') }}
 
   check-wheel-can-be-pip-installed:
     name: "Check wheel can be pip installed"

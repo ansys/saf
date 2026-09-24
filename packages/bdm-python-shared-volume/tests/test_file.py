@@ -18,12 +18,12 @@ from io import BytesIO
 import locale
 from pathlib import Path
 
+import pytest
+
 from ansys.bdm.api import (
     EntityHandle,
     NotFoundInLocalStorageRootError,
 )
-import pytest
-
 from tests.bytes_receive_stream import BytesReceiveStream
 from tests.conftest import SimpleAsyncStorageScopeFactory, SimpleStorageScopeFactory
 from tests.content import CONTENT

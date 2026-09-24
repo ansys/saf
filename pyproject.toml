@@ -1,24 +1,20 @@
 [project]
 name = "ansys-saf-workspace"
 version = "0.3.0"
-description = "SAF Root workspace for my multi-package repository"
-readme = "README.md"
 maintainers = [ { name = "ANSYS, Inc.", email = "pyansys-core@synopsys.com" } ]
 authors = [ { name = "ANSYS, Inc.", email = "pyansys-core@synopsys.com" } ]
 requires-python = ">=3.11,<4.0"
+
 classifiers = [
-  "Intended Audience :: Science/Research",
-  "License :: OSI Approved :: Apache Software License",
-  "Operating System :: OS Independent",
   "Programming Language :: Python :: 3 :: Only",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
   "Programming Language :: Python :: 3.14",
-  "Topic :: Scientific/Engineering :: Information Analysis",
 ]
 dependencies = [
   "ansys-bdm-api",
+  "ansys-bdm-shared-volume",
 ]
 
 [dependency-groups]
@@ -30,7 +26,7 @@ dev = [
   { include-group = "tests" },
 ]
 tests = [
-  "coverage>=6.4.1,<7",
+  "coverage>=7,<8",
   "filelock>=3.8.0,<4",
   "mock>=4.0.3,<5",
   "pytest>=9.0.3,<10",
@@ -115,8 +111,15 @@ lint.isort.force-sort-within-sections = true
 [tool.coverage.report]
 show_missing = true
 
+[tool.uv]
+package = false
+
 [tool.uv.sources]
 ansys-bdm-api = { workspace = true }
+ansys-bdm-shared-volume = { workspace = true }
 
 [tool.uv.workspace]
-members = [ "packages/bdm-python-api" ]
+members = [
+  "packages/bdm-python-api",
+  "packages/bdm-python-shared-volume",
+]

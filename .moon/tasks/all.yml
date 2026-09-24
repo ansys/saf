@@ -1,15 +1,17 @@
 tasks:
   pre-commit:
-    description: "Run pre-commit against this package's files and root-level files only (other packages are not yet converted)"
-    script: 'uv run pre-commit run --files $(git ls-files -- ":(top,glob)*" ":(top).github/**" ":(top)doc/**" ":(top,glob)$projectSource/**")'
+    description: "Run pre-commit against this package's files only (root-level files are handled by root:pre-commit)"
+    script: 'uv run pre-commit run --files $(git ls-files -- ":(top,glob)$projectSource/**")'
     inputs:
       - 'src/**/*'
       - 'tests/**/*'
       - '/.pre-commit-config.yaml'
       - 'pyproject.toml'
-      - 'uv.lock'
+      - '/.uv.lock'
     options:
       runFromWorkspaceRoot: true
+      # Shared pre-commit hook envs aren't safe for concurrent invocation across projects.
+      mutex: 'pre-commit'
 
   build:
     description: "Build wheel"
@@ -36,9 +38,11 @@ tasks:
       - "run"
       - "twine"
       - "check"
-      - "dist/*"
+      - "dist/*.whl"
+      - "dist/*.tar.gz"
     inputs:
-      - "dist/*"
+      - "dist/*.whl"
+      - "dist/*.tar.gz"
     options:
       runFromWorkspaceRoot: true
 
@@ -149,7 +153,7 @@ tasks:
       - "export"
       - "--package"
       - "$projectAlias"
-      - "--no-emit-project"
+      - "--no-emit-workspace"
       - "--no-hashes"
       - "--format"
       - "requirements-txt"

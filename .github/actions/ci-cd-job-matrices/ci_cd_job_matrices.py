@@ -84,6 +84,7 @@ TESTS_DEFINITIONS_PER_TARGET = {
 UV_PACKAGES = [
     "bdm-python-api",
     "bdm-python-shared-volume",
+    "saf-iam-oidc",
 ]
 
 

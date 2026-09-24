@@ -161,6 +161,8 @@ jobs:
       commit-is-already-tagged: ${{ steps.verify-tag.outputs.commit-is-already-tagged
         }}
       library-name: ${{ steps.library-name.outputs.library-name }}
+      use-moon: ${{ contains('bdm-python-api,bdm-python-shared-volume,saf-iam-oidc',
+        steps.library-name.outputs.library-name) }}
 
   check-package-changes:
     name: "Check if package files changed since certification"
@@ -219,8 +221,7 @@ jobs:
     permissions:
       contents: read # Read the dependencies and source code of the library
     env:
-      USE_MOON: ${{ contains('bdm-python-api,bdm-python-shared-volume', needs.pre-certification.outputs.library-name)
-        }}
+      USE_MOON: ${{ needs.pre-certification.outputs.use-moon }}
       PACKAGE: ${{ needs.pre-certification.outputs.library-name }}
     steps:
       - name: Checkout repository
@@ -256,7 +257,6 @@ jobs:
           UV_VENV_CLEAR: ${{ env.USE_MOON == 'true' }}
 
   dependabot-alerts:
-    if: ${{ needs.pre-certification.outputs.library-name != 'bdm-python-api' }}
     permissions:
       contents: read
       security-events: read # For Dependabot alerts
@@ -265,6 +265,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Get production dependencies
+        if: ${{ contains(env.UV_BASED_PACKAGES, needs.pre-certification.outputs.library-name)
+          }}
         uses: ansys/saf-devops/get-production-dependencies@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
         with:
           poetry-version: ${{ vars.POETRY_VERSION }}
@@ -273,6 +275,8 @@ jobs:
           python-version: ${{ vars.PYTHON_VERSION }}
 
       - name: Analyze Dependabot Alerts
+        if: ${{ contains(env.UV_BASED_PACKAGES, needs.pre-certification.outputs.library-name)
+          }}
         id: analyze-dependabot
         uses: ansys/saf-devops/analyze-dependabot-alerts@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
         with:
@@ -283,7 +287,9 @@ jobs:
 
   run-tests:
     name: Tests ${{ matrix.python-version }}
-    needs: [pre-certification, check-package-changes]
+    needs:
+      - pre-certification
+      - check-package-changes
     permissions:
       contents: read
       packages: write # Allows this job to publish packages
@@ -303,8 +309,7 @@ jobs:
         }}.json
       working-directory: packages/${{ needs.pre-certification.outputs.library-name
         }}
-      use-moon: ${{ contains('bdm-python-api,bdm-python-shared-volume', needs.pre-certification.outputs.library-name)
-        }}
+      use-moon: ${{ needs.pre-certification.outputs.use-moon }}
       library-name: ${{ needs.pre-certification.outputs.library-name }}
     secrets:
       ANS_MINERVA_URL: ${{ secrets.ANS_MINERVA_URL }}
@@ -449,8 +454,7 @@ jobs:
     with:
       library-name: ${{ needs.pre-certification.outputs.library-name }}
       python-version: ${{ matrix.python-version }}
-      use-moon: ${{ contains('bdm-python-api,bdm-python-shared-volume', needs.pre-certification.outputs.library-name)
-        }}
+      use-moon: ${{ needs.pre-certification.outputs.use-moon }}
       artifact-name: ${{ needs.pre-certification.outputs.library-name }}-${{ matrix.python-version
         }}${{ case(contains('bdm-python-api,bdm-python-shared-volume', needs.pre-certification.outputs.library-name),
         '-artifacts', '') }}

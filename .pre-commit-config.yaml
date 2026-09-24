@@ -52,13 +52,7 @@ repos:
     rev: 69b77b8d2436cb00c886f129dda7f68f3b2909ac # v2.11.0
     hooks:
       - id: pyproject-fmt
-        name: pyproject-fmt (bdm-python-api)
-        files: ^(pyproject\.toml|packages/bdm-python-api/pyproject\.toml)$
-        args: [--keep-full-version]
-
-      - id: pyproject-fmt
-        name: pyproject-fmt (bdm-python-shared-volume)
-        files: ^(pyproject\.toml|packages/bdm-python-shared-volume/pyproject\.toml)$
+        files: ^(pyproject\.toml|packages/[^/]+/pyproject\.toml)$
         args: [--keep-full-version]
 
   # NOTE: Ruff does not check for python code in some part of the documentation,
@@ -69,25 +63,6 @@ repos:
       - id: blacken-docs
         additional_dependencies: [black==25.1.0]
         args: ["--line-length=120"]
-
-  # NOTE: pyright needs one hook entry per converted package below, each scoped
-  # via "files" to its own package and pointing "--project"/"--venvpath" at it.
-  # Add a new entry here (and a matching [tool.pyright] in that package's
-  # pyproject.toml with venvPath = "../..") when converting another package.
-  - repo: https://github.com/RobertCraigie/pyright-python
-    rev: 81b795a41ddcc3c77218d8c8e406983e39852285 # v1.1.408
-    hooks:
-      - id: pyright
-        name: pyright (bdm-python-api)
-        files: ^packages/bdm-python-api/
-        args: [--project, packages/bdm-python-api, --venvpath, .]
-        exclude: ^packages/bdm-python-api/(doc/source/conf.py)$
-
-      - id: pyright
-        name: pyright (bdm-python-shared-volume)
-        files: ^packages/bdm-python-shared-volume/
-        args: [--project, packages/bdm-python-shared-volume, --venvpath, .]
-        exclude: ^packages/bdm-python-shared-volume/(doc/source/conf.py)$
 
   # NOTE: bandit needs one hook entry per converted package below, each scoped
   # via "files" and "-r" to its own package and "-c" pointing at its pyproject.toml.

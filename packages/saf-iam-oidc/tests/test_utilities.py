@@ -34,7 +34,7 @@ def test_encode_decode_round_trip_special_and_unicode_characters() -> None:
 
 
 def test_encoded_token_has_no_padding() -> None:
-    token = "a"  # noqa: S105
+    token = "a"
     encoded = base64.b64encode(token.encode("utf-8")).decode("utf-8")
     assert "=" in encoded
     assert len(encoded) % 4 == 0
@@ -44,7 +44,7 @@ def test_encoded_token_has_no_padding() -> None:
 
 
 def test_encoded_token_is_url_safe() -> None:
-    token = "This string contains characters that will produce + and / in standard base64 encoding: >>>???"  # noqa: S105
+    token = "This string contains characters that will produce + and / in standard base64 encoding: >>>???"
     default_encoded = base64.b64encode(token.encode("utf-8")).decode("utf-8")
     assert "+" in default_encoded
     assert "/" in default_encoded

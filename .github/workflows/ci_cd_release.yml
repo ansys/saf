@@ -262,15 +262,15 @@ jobs:
       id-token: write # Write access to a temporary token for signing attestations
     uses: ./.github/workflows/_build.yml
     with:
-      library-name: ${{ inputs.library }}${{ case(contains('bdm-python-api,bdm-python-shared-volume',
+      library-name: ${{ inputs.library }}${{ case(contains('bdm-python-api,bdm-python-shared-volume,saf-iam-oidc',
         inputs.library), '', format('-{0}', needs.release-information.outputs.release-name))
         }}
       python-version: ${{ vars.PYTHON_VERSION }}
-      use-moon: ${{ contains('bdm-python-api,bdm-python-shared-volume', inputs.library)
-        }}
+      use-moon: ${{ contains('bdm-python-api,bdm-python-shared-volume,saf-iam-oidc',
+        inputs.library) }}
       artifact-name: ${{ inputs.library }}-${{ needs.release-information.outputs.release-name
-        }}${{ case(contains('bdm-python-api,bdm-python-shared-volume', inputs.library),
-        '-artifacts', '') }}
+        }}${{ case(contains('bdm-python-api,bdm-python-shared-volume,saf-iam-oidc',
+        inputs.library), '-artifacts', '') }}
 
   bump-version:
     name: Bump Version

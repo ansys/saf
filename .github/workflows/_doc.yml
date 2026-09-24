@@ -101,6 +101,7 @@ jobs:
       matrix:
         package:
           - bdm-python-api
+          - saf-iam-oidc
     env:
       PACKAGE: ${{ matrix.package }}
     runs-on: ubuntu-latest
@@ -173,7 +174,6 @@ jobs:
           - dash-super-components
           - glow-engine
           - saf-product-configuration
-          - saf-iam-oidc
           - saf-product-manager
     runs-on: ubuntu-latest
     steps:

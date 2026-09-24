@@ -443,7 +443,7 @@ class TestGetCodeStyleMatrixEntries:
     def test_get_code_style_matrix_multiple_packages(self, github_env: tuple[Path, Path]):
         """Multiple packages are all included."""
         output_file, _ = github_env
-        get_code_style_matrix_entries(["glow-engine", "saf-iam-oidc"])
+        get_code_style_matrix_entries(["glow-engine", "saf-testing"])
 
         outputs = parse_outputs(output_file)
         matrix = json.loads(outputs["code_style_matrix"])
@@ -472,7 +472,7 @@ class TestGetCodeStyleMatrixEntries:
     def test_get_code_style_matrix_multiple_packages_custom_args(self, github_env: tuple[Path, Path]):
         """Multiple packages with different custom args are handled correctly."""
         output_file, _ = github_env
-        get_code_style_matrix_entries(["glow-engine", "saf-iam-oidc", "saf-desktop-orchestrator"])
+        get_code_style_matrix_entries(["glow-engine", "saf-testing", "saf-desktop-orchestrator"])
 
         outputs = parse_outputs(output_file)
         matrix = json.loads(outputs["code_style_matrix"])
@@ -481,9 +481,9 @@ class TestGetCodeStyleMatrixEntries:
         glow_entry = [e for e in matrix["include"] if e["target-directory"] == "packages/glow-engine"][0]
         assert glow_entry["poetry-install-args"] == "--with tests,style --all-extras"
 
-        # Check saf-iam-oidc entry (default args)
-        iam_entry = [e for e in matrix["include"] if e["target-directory"] == "packages/saf-iam-oidc"][0]
-        assert iam_entry["poetry-install-args"] == "--with tests --all-extras"
+        # Check saf-testing entry (default args)
+        testing_entry = [e for e in matrix["include"] if e["target-directory"] == "packages/saf-testing"][0]
+        assert testing_entry["poetry-install-args"] == "--with tests --all-extras"
 
         # Check saf-desktop-orchestrator entry (custom args)
         desktop_entry = [e for e in matrix["include"] if e["target-directory"] == "packages/saf-desktop-orchestrator"][

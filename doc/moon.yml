@@ -1,0 +1,7 @@
+# packages/your-package-name/moon.yml
+
+workspace:
+  inheritedTasks:
+    exclude:
+      - 'pyright'
+      - 'pre-commit'

@@ -456,8 +456,8 @@ jobs:
       python-version: ${{ matrix.python-version }}
       use-moon: ${{ needs.pre-certification.outputs.use-moon }}
       artifact-name: ${{ needs.pre-certification.outputs.library-name }}-${{ matrix.python-version
-        }}${{ case(contains('bdm-python-api,bdm-python-shared-volume', needs.pre-certification.outputs.library-name),
-        '-artifacts', '') }}
+        }}${{ case(contains('bdm-python-api,bdm-python-shared-volume,saf-iam-oidc',
+        needs.pre-certification.outputs.library-name), '-artifacts', '') }}
 
   check-wheel-can-be-pip-installed:
     name: "Check wheel can be pip installed"

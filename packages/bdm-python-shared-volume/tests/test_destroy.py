@@ -16,9 +16,9 @@
 
 from pathlib import Path
 
-from ansys.bdm.api import EntityHandle, EntityNotFoundInBlobStorageError
 import pytest
 
+from ansys.bdm.api import EntityHandle, EntityNotFoundInBlobStorageError
 from tests.conftest import SimpleAsyncStorageScopeFactory, SimpleStorageScopeFactory
 from tests.content import create_directory_content
 

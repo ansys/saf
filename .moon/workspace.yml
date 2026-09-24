@@ -2,8 +2,13 @@
 # Accepts a list of globs, a mapping of projects to relative file paths,
 # or both values.
 projects:
-  - "packages/bdm-python-api"
-  - "doc"
+  globs:
+    - "packages/bdm-python-api"
+    - "packages/bdm-python-shared-volume"
+    - "doc"
+  # Root-level project for workspace-wide, run-once tasks.
+  sources:
+    root: ".moon"
 
 # Configures the version control system (VCS). Also known as
 # source code management (SCM).

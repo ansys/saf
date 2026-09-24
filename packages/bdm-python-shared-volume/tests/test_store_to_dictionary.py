@@ -16,6 +16,8 @@
 
 from pathlib import Path
 
+import pytest
+
 from ansys.bdm.api import (
     EntityHandle,
     IAsyncStorageScope,
@@ -23,8 +25,6 @@ from ansys.bdm.api import (
     NotFoundInLocalStorageRootError,
     RecursiveDictionaryOfEntityHandles,
 )
-import pytest
-
 from tests.content import CONTENT
 
 

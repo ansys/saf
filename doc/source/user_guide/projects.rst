@@ -24,7 +24,7 @@ You can create a project either from SAF Portal or via SAF CLI.
     #. Click :guilabel:`New project`.
     #. Enter a display name for the project.
     #. Fill the description for the project. (optional)
-    #. Click :guilabel:`Create`.    
+    #. Click :guilabel:`Create`.
 
     SAF Portal automatically launches the Solution UI for the new project.
 

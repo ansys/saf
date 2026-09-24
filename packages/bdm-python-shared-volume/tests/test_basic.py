@@ -16,13 +16,13 @@
 
 from pathlib import Path
 
+import pytest
+
 from ansys.bdm.api import (
     InvalidContextError,
     IStorageScopeFactory,
     NotFoundInLocalStorageRootError,
 )
-import pytest
-
 from tests.conftest import SimpleAsyncStorageScopeFactory, SimpleStorageScopeFactory
 
 

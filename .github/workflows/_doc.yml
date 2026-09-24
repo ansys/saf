@@ -358,7 +358,7 @@ jobs:
         id: info
         uses: ansys/saf-devops/get-information-from-pyproject@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
         with:
-          pyproject-path: pyproject.toml
+          pyproject-path: packages/saf-sdk/pyproject.toml
 
       - name: Deploy stable doc
         uses: ansys/saf-devops/doc-deploy-stable@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0

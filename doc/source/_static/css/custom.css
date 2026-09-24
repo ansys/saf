@@ -1405,15 +1405,13 @@ body:not(.page-index) .bd-header-article {
    are wider than the document and produce a horizontal scrollbar, which shifts
    the card grid sideways. Clamp the page instead. */
 @media (max-width: 991.98px) {
-    html,
+    /* Scoped to the landing page only. `body.page-index` exists on no other page,
+       and because the root element's overflow stays `visible`, the body's
+       `overflow-x` propagates to the viewport — so this clamps the landing page
+       without touching `html` globally. Other pages keep their default
+       horizontal scrolling, which wide code samples and tables rely on. */
     body.page-index {
         overflow-x: hidden;
-    }
-
-    body.page-index .bd-content,
-    body.page-index .bd-article-container,
-    body.page-index .bd-article {
-        overflow-x: clip !important;
     }
 }
 

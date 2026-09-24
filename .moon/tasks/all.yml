@@ -2,6 +2,9 @@ tasks:
   pre-commit:
     description: "Run pre-commit against this package's files only (root-level files are handled by root:pre-commit)"
     script: 'uv run pre-commit run --files $(git ls-files -- ":(top,glob)$projectSource/**")'
+    deps:
+      - '~:pyright'
+      - '~:bandit'
     inputs:
       - 'src/**/*'
       - 'tests/**/*'
@@ -12,6 +15,46 @@ tasks:
       runFromWorkspaceRoot: true
       # Shared pre-commit hook envs aren't safe for concurrent invocation across projects.
       mutex: 'pre-commit'
+
+  pyright:
+    description: "Run pyright"
+    command:
+      - "uv"
+      - "run"
+      - "--package"
+      - "$projectAlias"
+      - "--all-extras"
+      - "pyright"
+      - "$projectSource"
+    inputs:
+      - "src/**/*"
+      - "tests/**/*"
+      - "pyproject.toml"
+      - "/.python-version"
+    options:
+      runFromWorkspaceRoot: true
+
+  bandit:
+    description: "Run bandit"
+    command:
+      - "uv"
+      - "run"
+      - "--package"
+      - "$projectAlias"
+      - "--all-extras"
+      - "bandit"
+      - "-r"
+      - "$projectSource/src"
+      - "--severity-level=high"
+    inputs:
+      - "src/**/*"
+      - "tests/**/*"
+      - "pyproject.toml"
+      - "/.python-version"
+    tags:
+      - "ubuntu-latest"
+    options:
+      runFromWorkspaceRoot: true
 
   build:
     description: "Build wheel"

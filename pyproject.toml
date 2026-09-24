@@ -15,19 +15,23 @@ classifiers = [
 dependencies = [
   "ansys-bdm-api",
   "ansys-bdm-shared-volume",
+  "ansys-iam-oidc",
 ]
 
 [dependency-groups]
 dev = [
   "bandit[toml]==1.9.4",
   "pre-commit==4.6.0",
+  "pyright==1.1.408",
   { include-group = "build" },
   { include-group = "doc" },
   { include-group = "tests" },
 ]
 tests = [
+  "authlib>=1.8.0,<2",
   "coverage>=7,<8",
   "filelock>=3.8.0,<4",
+  "httpx2-pytest>=1.0,<2",
   "mock>=4.0.3,<5",
   "pytest>=9.0.3,<10",
   "pytest-asyncio>=1.3.0,<2",
@@ -54,6 +58,7 @@ doc = [
   "sphinx-copybutton>=0.5.2; python_version>='3.12'",
   "sphinx-design>=0.7.0; python_version>='3.12'",
   "sphinx-gallery>=0.15.0; python_version>='3.12'",
+  "sphinx-jinja>=2.0.0; python_version>='3.12'",
   "sphinx-markdown-builder>=0.6; python_version>='3.12'",
   "sphinx-tabs>=3.5.0; python_version>='3.12'",
   "sphinx-toolbox>=4.2.0; python_version>='3.12'",
@@ -117,9 +122,11 @@ package = false
 [tool.uv.sources]
 ansys-bdm-api = { workspace = true }
 ansys-bdm-shared-volume = { workspace = true }
+ansys-iam-oidc = { workspace = true }
 
 [tool.uv.workspace]
 members = [
   "packages/bdm-python-api",
   "packages/bdm-python-shared-volume",
+  "packages/saf-iam-oidc",
 ]

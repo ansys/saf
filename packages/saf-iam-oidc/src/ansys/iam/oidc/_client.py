@@ -103,7 +103,7 @@ class OidcClientBase:
             )
         return fields
 
-    def _token_field_is_valid(self, value: str | bool | None) -> bool:  # noqa: FBT001
+    def _token_field_is_valid(self, value: str | bool | None) -> bool:
         """Check if a value is valid (not None and not empty string)."""
         return value is not None and value != ""
 
@@ -354,7 +354,7 @@ class AsyncOidcClient(OidcClientBase):
             If the requested fields are not present in the token and the issuer URL is not set,
             preventing retrieval from the identity provider.
 
-        """  # noqa: D205
+        """
         fields = self._validate_requested_fields(fields)
 
         openid_config: dict[str, Any] | None = None
@@ -551,7 +551,7 @@ class OidcClient(OidcClientBase):
             If the requested fields are not present in the token and the issuer URL is not set,
             preventing retrieval from the identity provider.
 
-        """  # noqa: D205
+        """
         fields = self._validate_requested_fields(fields)
 
         openid_config: dict[str, Any] | None = None

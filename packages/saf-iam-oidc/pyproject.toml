@@ -77,11 +77,6 @@ pytest-xdist = "^3.6.1"
 httpx2-pytest = "^1.0.0"
 pytest-asyncio = "^1.3.0"
 
-[tool.poetry.urls]
-Homepage = "https://github.com/ansys/saf"
-Documentation = "https://ansys-iam-oidc.docs.solutions.ansys.com/"
-Repository = "https://github.com/ansys/saf"
-Issues = "https://github.com/ansys/saf/issues"
 
 [tool.ruff]
 target-version = "py311"

@@ -5,6 +5,7 @@ projects:
   globs:
     - "packages/bdm-python-api"
     - "packages/bdm-python-shared-volume"
+    - "packages/saf-iam-oidc"
     - "doc"
   # Root-level project for workspace-wide, run-once tasks.
   sources:

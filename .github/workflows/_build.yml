@@ -60,15 +60,17 @@ jobs:
           persist-credentials: false
           fetch-depth: 0
 
-      - name: Set up uv
-        uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
-        with:
-          enable-cache: false
-          python-version: ${{ inputs.python-version }}
-          activate-environment: true
+      # - name: Set up uv
+      #   uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
+      #   with:
+      #     enable-cache: false
+      #     python-version: ${{ inputs.python-version }}
+      #     activate-environment: true
 
       - name: Setup Moon Toolchain
         uses: moonrepo/setup-toolchain@261c62cb5b0f580c7be7c8cd0f023a2e96756095 # v0.6.4
+        env:
+          MOON_PYTHON_VERSION: ${{ inputs.python-version }}
 
       - name: Build (Moon)
         shell: bash
@@ -76,7 +78,7 @@ jobs:
           PACKAGE: ${{ inputs.library-name }}
           MOON_TOOLCHAIN_FORCE_GLOBALS: 'uv'
         run: |
-          export UV_PYTHON="$VIRTUAL_ENV/bin/python"
+          # export UV_PYTHON="$VIRTUAL_ENV/bin/python"
           moon run $PACKAGE:build
 
       - name: Twine check (Moon)
@@ -85,7 +87,7 @@ jobs:
           PACKAGE: ${{ inputs.library-name }}
           MOON_TOOLCHAIN_FORCE_GLOBALS: 'uv'
         run: |
-          export UV_PYTHON="$VIRTUAL_ENV/bin/python"
+          # export UV_PYTHON="$VIRTUAL_ENV/bin/python"
           moon run $PACKAGE:twine-check
 
       - name: "Upload distribution artifacts to GitHub artifacts"

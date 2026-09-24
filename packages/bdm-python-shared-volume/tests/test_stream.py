@@ -18,6 +18,11 @@ import contextlib
 from io import BytesIO, FileIO
 from pathlib import Path
 
+from anyio import EndOfStream
+from anyio.abc import ByteReceiveStream
+from anyio.streams.file import FileReadStream
+import pytest
+
 from ansys.bdm.api import (
     CannotGenerateStreamForDirectoryError,
     EntityHandle,
@@ -27,11 +32,6 @@ from ansys.bdm.api import (
     EntityWriterIsNotWritingDataError,
     NotFoundInLocalStorageRootError,
 )
-from anyio import EndOfStream
-from anyio.abc import ByteReceiveStream
-from anyio.streams.file import FileReadStream
-import pytest
-
 from tests.bytes_receive_stream import BytesReceiveStream
 from tests.conftest import SimpleAsyncStorageScopeFactory, SimpleStorageScopeFactory
 from tests.content import CONTENT

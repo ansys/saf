@@ -31,7 +31,6 @@ from ansys.bdm.api import (
     NotFoundInLocalStorageRootError,
 )
 from ansys.bdm.base.base_storage_scope import StorageScopeBase
-
 from ansys.bdm.shared_volume.entity_tracker import EntityTracker
 from ansys.bdm.shared_volume.entity_writer import EntityWriter
 from ansys.bdm.shared_volume.identifier_parser import IdentifierParser
@@ -43,7 +42,7 @@ class StorageScope(StorageScopeBase):
     def __init__(self, entity_tracker: EntityTracker):
         self._entity_tracker = entity_tracker
 
-    def __enter__(self) -> "StorageScope":  # noqa: PYI034
+    def __enter__(self) -> "StorageScope":
         return self
 
     def __exit__(

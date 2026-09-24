@@ -19,6 +19,7 @@ classifiers = [
 ]
 dependencies = [
   "ansys-bdm-api",
+  "ansys-bdm-shared-volume",
 ]
 
 [dependency-groups]
@@ -30,7 +31,7 @@ dev = [
   { include-group = "tests" },
 ]
 tests = [
-  "coverage>=6.4.1,<7",
+  "coverage>=7,<8",
   "filelock>=3.8.0,<4",
   "mock>=4.0.3,<5",
   "pytest>=9.0.3,<10",
@@ -117,6 +118,10 @@ show_missing = true
 
 [tool.uv.sources]
 ansys-bdm-api = { workspace = true }
+ansys-bdm-shared-volume = { workspace = true }
 
 [tool.uv.workspace]
-members = [ "packages/bdm-python-api" ]
+members = [
+  "packages/bdm-python-api",
+  "packages/bdm-python-shared-volume",
+]

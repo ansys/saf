@@ -51,6 +51,8 @@ jobs:
       id-token: write # Write access to a temporary token for signing attestations
     runs-on: ubuntu-latest
     if: ${{ inputs.use-moon }}
+    env:
+      MOON_PYTHON_VERSION: ${{ inputs.python-version }}
     steps:
       - name: "Checkout repository"
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -73,14 +75,18 @@ jobs:
         env:
           PACKAGE: ${{ inputs.library-name }}
           MOON_TOOLCHAIN_FORCE_GLOBALS: 'uv'
-        run: moon run $PACKAGE:build
+        run: |
+          # export UV_PYTHON="$VIRTUAL_ENV/bin/python"
+          moon run $PACKAGE:build
 
       - name: Twine check (Moon)
         shell: bash
         env:
           PACKAGE: ${{ inputs.library-name }}
           MOON_TOOLCHAIN_FORCE_GLOBALS: 'uv'
-        run: moon run $PACKAGE:twine-check
+        run: |
+          # export UV_PYTHON="$VIRTUAL_ENV/bin/python"
+          moon run $PACKAGE:twine-check
 
       - name: "Upload distribution artifacts to GitHub artifacts"
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1

@@ -3,6 +3,7 @@
 # or both values.
 projects:
   - "packages/bdm-python-api"
+  - "packages/bdm-python-shared-volume"
   - "doc"
 
 # Configures the version control system (VCS). Also known as

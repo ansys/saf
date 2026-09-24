@@ -36,9 +36,11 @@ tasks:
       - "run"
       - "twine"
       - "check"
-      - "dist/*"
+      - "dist/*.whl"
+      - "dist/*.tar.gz"
     inputs:
-      - "dist/*"
+      - "dist/*.whl"
+      - "dist/*.tar.gz"
     options:
       runFromWorkspaceRoot: true
 
@@ -149,7 +151,7 @@ tasks:
       - "export"
       - "--package"
       - "$projectAlias"
-      - "--no-emit-project"
+      - "--no-emit-workspace"
       - "--no-hashes"
       - "--format"
       - "requirements-txt"

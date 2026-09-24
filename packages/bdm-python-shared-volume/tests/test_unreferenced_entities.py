@@ -19,10 +19,10 @@ import re
 import shutil
 from uuid import UUID
 
-from ansys.bdm.api.entity_handle import NO_ENTITY, EntityHandle
-from ansys.bdm.api.storage_exceptions import EntityNotFoundInBlobStorageError
 import pytest
 
+from ansys.bdm.api.entity_handle import NO_ENTITY, EntityHandle
+from ansys.bdm.api.storage_exceptions import EntityNotFoundInBlobStorageError
 from tests.conftest import SimpleAsyncStorageScopeFactory, SimpleStorageScopeFactory
 from tests.content import CONTENT
 

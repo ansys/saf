@@ -118,7 +118,7 @@ lint.select = [
   "UP",     # pyupgrade
   "W",      # pycodestyle - warning
 ]
-lint.ignore = [ "COM812", "PTH207", "S112", "S603", "PYI034" ]
+lint.ignore = [ "COM812", "PTH207", "PYI034", "S112", "S603" ]
 lint.per-file-ignores.".github/**" = [ "S" ]
 lint.per-file-ignores.".venv/**" = [ "S" ]
 lint.per-file-ignores."benchmarks/**" = [ "S" ]

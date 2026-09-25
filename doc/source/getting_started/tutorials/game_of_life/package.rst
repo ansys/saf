@@ -52,7 +52,7 @@ Real end users have none of that.
     - When run on Windows, it produces a Windows ``.exe`` installer.
     - When run on Linux, it produces a Linux executable.
 
-    To ship the solution on both platforms, run the build twice — once on a Windows machine,
+    To ship the solution on both platforms, run the build twice, once on a Windows machine,
     once on a Linux machine. The following commands are identical in either case.
 
 Prerequisites
@@ -69,7 +69,7 @@ The build command needs an installed solution to package.
 
         saf install -f
 
-    The ``-f`` flag forces a clean re-install of the virtual environment — recommended before a
+    The ``-f`` flag forces a clean re-install of the virtual environment, recommended before a
     release build to make sure the dependency graph is fresh.
 
 Build the installer
@@ -109,7 +109,7 @@ Development vs release build
 
 .. practice::
 
-    From the root of the ``game-of-life`` folder, build a **development installer** first — the
+    From the root of the ``game-of-life`` folder, build a **development installer** first. The
     console window makes any post-install issue trivial to diagnose:
 
     .. code-block:: bash
@@ -150,7 +150,7 @@ Never ship an installer you have not smoke-tested yourself.
 
     #. Locate the generated installer printed at the end of the ``saf build`` command.
 
-    #. Copy it to a **clean** location — ideally a virtual machine or a second workstation that
+    #. Copy it to a **clean** location, ideally a virtual machine or a second workstation that
        does not have your development environment. This is the only way to catch missing
        dependencies that happen to be pre-installed on your dev machine.
 
@@ -185,7 +185,7 @@ Never ship an installer you have not smoke-tested yourself.
                  ~/.local/share/ansys_inc/saf_solutions/Game of Life Solution/1/
                  /opt/ansys_inc/saf_solutions/Game of Life Solution/1/
 
-    #. Launch the newly-installed solution — from the Start menu or the desktop shortcut on
+    #. Launch the newly-installed solution, from the Start menu or the desktop shortcut on
        Windows, and from the desktop entry or the executable in the installation directory on
        Linux.
 
@@ -202,15 +202,15 @@ Never ship an installer you have not smoke-tested yourself.
 Where to go from here
 =====================
 
-Congratulations — you now have a fully functional, distributable SAF solution. To continue expanding your SAF fluency, explore these three next steps:
+Congratulations, you now have a fully functional, distributable SAF solution. To continue expanding your SAF fluency, explore these three next steps:
 
-- :ref:`installer` — the full reference for ``saf build``, including options for encrypting or
+- :ref:`installer`, the full reference for ``saf build``, including options for encrypting or
   obfuscating your source code, excluding the Python interpreter, or bundling as a directory
   when the installer exceeds the 4 GB single-file limit.
-- :ref:`user_guide` — dive deeper into the SAF concepts you touched in this tutorial (product
+- :ref:`user_guide`, dive deeper into the SAF concepts you touched in this tutorial (product
   instances, BDM storage, HPS job submission, testing, deployment).
 - The examples gallery in ``examples/src/saf/solutions/examples/`` on the
-  `SAF examples repository <https://github.com/ansys/saf>`_ — a growing library of small,
+  `SAF examples repository <https://github.com/ansys/saf>`_, a growing library of small,
   focused solutions that showcase one SAF feature at a time.
 
 Key takeaways
@@ -221,12 +221,12 @@ Key takeaways
     - ``saf build <solution-name>`` produces a **standalone desktop installer** that bundles
       the solution, its dependencies, and a Python interpreter.
     - The command is **platform-specific**: it targets the OS it runs on. Build on Windows for
-      a Windows installer, on Linux for a Linux one — there is no cross-compilation.
+      a Windows installer, on Linux for a Linux one. There is no cross-compilation.
     - The command only works for **Dash-based** solutions.
     - Use ``--offline-package`` when the target machine is offline or air-gapped.
     - Use ``--display-console-window`` during development to see logs and tracebacks; drop the
       flag for release builds so end users don't see a stray console window.
-    - Always test the generated installer on a **clean machine** before distributing it — that
+    - Always test the generated installer on a **clean machine** before distributing it. That
       is the only reliable way to catch missing dependencies that happen to be installed
       globally on your development workstation.
     - See :ref:`installer` for advanced options (encryption, obfuscation, custom entry points,

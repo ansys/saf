@@ -32,7 +32,7 @@ def layout(project: {{cookiecutter.__solution_definition_class_name}}):
     step = project.steps.{{ cookiecutter.__step_module_name }}
     return html.Div(
         [
-            html.H1("{{ cookiecutter.__step_name }}", className="display-3", style={"font-size": "48px", "fontWeight": "bold"}),
+            html.H1("{{ cookiecutter.__step_display_name }}", className="display-3", style={"font-size": "48px", "fontWeight": "bold"}),
             html.P(
                 "Compute the sum of two numbers.",
                 className="lead",

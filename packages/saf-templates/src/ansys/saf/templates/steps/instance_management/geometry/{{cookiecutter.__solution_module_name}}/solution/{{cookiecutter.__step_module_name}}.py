@@ -25,7 +25,7 @@ from ansys.saf.glow.solution import (
     long_running,
     transaction,
 )
-from ansys.saf.glow.solution.beta.geometry import GeometrySecureManager
+from ansys.saf.product_manager.geometry import GeometryManager
 from pydantic import Field
 
 
@@ -40,9 +40,9 @@ class {{ cookiecutter.__step_definition_class_name }}(StepModel):
         self=StepSpec(download=["version"], upload=["geometry_available"]),
         enable_termination_event=True,
     )
-    @create_instance("geometry_manager", GeometrySecureManager)
+    @create_instance("geometry_manager", GeometryManager)
     @long_running
-    def launch_geometry(self, geometry_manager: GeometrySecureManager) -> None:
+    def launch_geometry(self, geometry_manager: GeometryManager) -> None:
         self.transaction.raise_event(message="Initializing Geometry instance.", stream_name="{{ cookiecutter.__step_name_hyphenated }}-output-stream")
         try:
             geometry_manager.initialize(version=self.version)
@@ -55,7 +55,7 @@ class {{ cookiecutter.__step_definition_class_name }}(StepModel):
     @transaction(self=StepSpec())
     @instance("geometry_manager")
     @long_running
-    def use_geometry(self, geometry_manager: GeometrySecureManager) -> None:
+    def use_geometry(self, geometry_manager: GeometryManager) -> None:
         # Add actual usage of the Geometry instance here:
         # geometry = geometry_manager.instance
         ...
@@ -63,7 +63,7 @@ class {{ cookiecutter.__step_definition_class_name }}(StepModel):
     @transaction(self=StepSpec(upload=["geometry_available"]), enable_termination_event=True)
     @instance("geometry_manager")
     @long_running
-    def shutdown_geometry(self, geometry_manager: GeometrySecureManager) -> None:
+    def shutdown_geometry(self, geometry_manager: GeometryManager) -> None:
         self.transaction.raise_event(message="Shutting Geometry instance down.", stream_name="{{ cookiecutter.__step_name_hyphenated }}-output-stream")
         try:
             geometry_manager.shutdown()

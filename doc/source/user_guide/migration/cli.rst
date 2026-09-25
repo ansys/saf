@@ -3,7 +3,9 @@
 Migrate the solution UI to a multi-page Dash application
 ##########################################################
 
-The instructions below assume that your Solution UI follows the structure of the solution template provided by SAF CLI in previous versions.
+Starting with SAF CLI 4.0.0, the solution template introduces page registration, which requires a multi-page Dash application structure. This is a breaking change for solutions generated with SAF CLI versions prior to 4.0.0.
+
+The instructions below assume that your Solution UI follows the structure of the solution template provided by SAF CLI in versions prior to 4.0.0.
 
 Nevertheless, the changes are applicable with little modification to any Solution UI using Dash. See `Dash official documentation <https://dash.plotly.com/urls>`_ for more information. The main procedure consists of:
 

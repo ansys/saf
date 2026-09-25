@@ -54,7 +54,7 @@ class AbstractFluentInstanceVersionConfiguration(IProductInstanceVersionConfigur
     @property
     def execution_command(self) -> str:
         """The command to launch Fluent."""
-        ...
+        raise NotImplementedError
 
     @property
     def environment(self) -> dict[str, str]:

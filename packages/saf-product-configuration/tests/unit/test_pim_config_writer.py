@@ -14,16 +14,28 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from collections.abc import Callable
 import os
 from pathlib import Path
 import platform
 import re
 import sys
-from typing import Callable, Type
 
 import pytest
 import pytest_mock
 from pytest_mock import MockerFixture
+from tests.mocks.product_instance_configs.mock_grpc_instance_configuration import (
+    MockGrpcInstanceConfiguration,
+    MockSecureGrpcCustomRouteInstanceConfiguration,
+)
+from tests.mocks.product_instance_configs.mock_http_instance_configuration import (
+    MockHttpInstanceConfiguration,
+    MockHttpInstanceVersionConfiguration,
+)
+from tests.mocks.product_instance_configs.mock_tcp_instance_configuration import (
+    MockNoArgumentsInstanceConfiguration,
+    MockTcpInstanceConfiguration,
+)
 
 from ansys.saf.product_configuration.aedt import AedtInstanceConfiguration
 from ansys.saf.product_configuration.fluent import (
@@ -51,18 +63,6 @@ from ansys.saf.product_configuration.pim.config_writer import (
     PimLightConfigWriter,
 )
 from ansys.saf.product_configuration.visor import VisorInstanceConfiguration
-from tests.mocks.product_instance_configs.mock_grpc_instance_configuration import (
-    MockGrpcInstanceConfiguration,
-    MockSecureGrpcCustomRouteInstanceConfiguration,
-)
-from tests.mocks.product_instance_configs.mock_http_instance_configuration import (
-    MockHttpInstanceConfiguration,
-    MockHttpInstanceVersionConfiguration,
-)
-from tests.mocks.product_instance_configs.mock_tcp_instance_configuration import (
-    MockNoArgumentsInstanceConfiguration,
-    MockTcpInstanceConfiguration,
-)
 
 
 @pytest.fixture
@@ -79,8 +79,8 @@ def pim_configurations_dir(tmp_path: Path) -> Path:
 
 @pytest.fixture(autouse=True)
 def clean_local_ansys_env_vars(monkeypatch: pytest.MonkeyPatch) -> None:
-    for key in os.environ.keys():
-        if key.startswith("ANSYSEM_ROOT") or key.startswith("AWP_ROOT") or key.startswith("GEOMETRY_ROOT"):
+    for key in list(os.environ.keys()):
+        if key.startswith(("ANSYSEM_ROOT", "AWP_ROOT", "GEOMETRY_ROOT")):
             monkeypatch.delenv(key)
 
 
@@ -94,7 +94,9 @@ def clean_local_ansys_env_vars(monkeypatch: pytest.MonkeyPatch) -> None:
     ],
 )
 def test_pim_light_config_writer_dump_config(
-    service_type: str, product_config: IProductInstanceConfiguration, tmp_path: Path
+    service_type: str,
+    product_config: IProductInstanceConfiguration,
+    tmp_path: Path,
 ):
     PimLightConfigWriter.write_config(tmp_path, product_config)
     product_yaml = tmp_path / f"{product_config.product_name}{product_config.versions[0]}.yaml"
@@ -252,7 +254,7 @@ def test_pim_light_config_glow_product_binding_host_injection_in_insecure_config
 def test_custom_product_pim_configurations_no_product_installed(
     mocker: MockerFixture,
     pim_configurations_dir: Path,
-    product: Type[IProductInstanceConfiguration],
+    product: type[IProductInstanceConfiguration],
     caplog: pytest.LogCaptureFixture,
 ):
     class NoExeInstanceVersionConfiguration(MockHttpInstanceVersionConfiguration):
@@ -291,7 +293,7 @@ def test_custom_product_pim_configurations_no_product_installed(
         (VisorInstanceConfiguration, ["0"]),
     ],
 )
-def test_builtin_product_available_versions(product: Type[IProductInstanceConfiguration], versions: list[str]):
+def test_builtin_product_available_versions(product: type[IProductInstanceConfiguration], versions: list[str]):
     # GIVEN: No env vars pointing to local installations
     # WHEN: Loading product configurations
     config = product()
@@ -315,7 +317,7 @@ def test_builtin_product_available_versions(product: Type[IProductInstanceConfig
 )
 def test_builtin_product_pim_configurations_no_product_installed(
     pim_configurations_dir: Path,
-    product: Type[IProductInstanceConfiguration],
+    product: type[IProductInstanceConfiguration],
     caplog: pytest.LogCaptureFixture,
 ):
     # GIVEN: No env vars pointing to local product installation
@@ -345,7 +347,7 @@ def test_builtin_product_pim_configurations_no_product_installed(
 def test_builtin_product_pim_configurations_lower_version_available(
     pim_configurations_dir: Path,
     monkeypatch: pytest.MonkeyPatch,
-    product: Type[IProductInstanceConfiguration],
+    product: type[IProductInstanceConfiguration],
     version: str,
 ):
     # GIVEN: Env vars pointing to non-supported older product installation
@@ -376,7 +378,7 @@ def test_builtin_product_pim_configurations_lower_version_available(
 def test_builtin_product_pim_configurations_higher_version_available(
     pim_configurations_dir: Path,
     monkeypatch: pytest.MonkeyPatch,
-    product: Type[IProductInstanceConfiguration],
+    product: type[IProductInstanceConfiguration],
     version: str,
 ):
     # GIVEN: Env vars pointing to non-supported future product installation
@@ -432,9 +434,9 @@ def test_autogenerate_built_in_product_config_list():
 
 
 @pytest.fixture
-def expected_command() -> Callable[[Type[IProductInstanceConfiguration], str], str | None]:
+def expected_command() -> Callable[[type[IProductInstanceConfiguration], str], str | None]:
     def _get_expected_command(
-        product_config: Type[IProductInstanceConfiguration],
+        product_config: type[IProductInstanceConfiguration],
         version: str,
     ) -> str | None:
         mock_ansys_dir = "fake_ansys_install_dir"
@@ -474,16 +476,16 @@ def expected_command() -> Callable[[Type[IProductInstanceConfiguration], str], s
 
 
 @pytest.fixture
-def expected_args() -> Callable[[Type[IProductInstanceConfiguration], str, str | None], str]:  # noqa: C901
+def expected_args() -> Callable[[type[IProductInstanceConfiguration], str, str | None], str]:  # noqa: C901
 
     def _get_expected_args(  # noqa: C901
-        product_config: Type[IProductInstanceConfiguration],
+        product_config: type[IProductInstanceConfiguration],
         version: str,
         binding_host: str | None,
     ) -> str:
         secure_bind_host = binding_host or DEFAULT_GLOW_PRODUCT_BINDING_SECURE_HOST
 
-        product_expected_args: dict[Type[IProductInstanceConfiguration], str] = {}
+        product_expected_args: dict[type[IProductInstanceConfiguration], str] = {}
         product_expected_args[MechanicalInstanceConfiguration] = (
             f"""
             - "-DSAPPLET"
@@ -655,11 +657,9 @@ def expected_args() -> Callable[[Type[IProductInstanceConfiguration], str, str |
 
 
 @pytest.fixture
-def expected_env_vars() -> (  # noqa: C901
-    Callable[[Type[IProductInstanceConfiguration], str, str | None], str]
-):
+def expected_env_vars() -> Callable[[type[IProductInstanceConfiguration], str, str | None], str]:
     def _get_expected_env_vars(
-        product_config: Type[IProductInstanceConfiguration],
+        product_config: type[IProductInstanceConfiguration],
         version: str,
         binding_host: str | None,
     ) -> str:
@@ -669,17 +669,14 @@ def expected_env_vars() -> (  # noqa: C901
             return ""
         elif product_config == MapdlInstanceConfiguration:
             return "env:\n  ANSYS_LOCK: OFF\n  ANSYS_MAPDL_UDS_PATH: ${UDS_DIR}\n"
-        elif product_config == OptislangWrapperInstanceConfiguration:
-            return ""
-        elif product_config == AedtInstanceConfiguration:
-            return ""
-        elif product_config in [
+        elif product_config in (
+            OptislangWrapperInstanceConfiguration,
+            AedtInstanceConfiguration,
             Fluent3DDPSolverInstanceConfiguration,
             Fluent2DDPSolverInstanceConfiguration,
             Fluent3DDPMeshingInstanceConfiguration,
-        ]:
-            return ""
-        elif product_config == VisorInstanceConfiguration:
+            VisorInstanceConfiguration,
+        ):
             return ""
         elif product_config == GeometryInstanceConfiguration and version == "251" and platform.system() == "Windows":
             return f"""env:
@@ -780,11 +777,11 @@ def test_pim_dump_config_for_builtin_products(
     monkeypatch: pytest.MonkeyPatch,
     service_type: str,
     healthcheck_type: str,
-    expected_command: Callable[[Type[IProductInstanceConfiguration], str], str],
-    expected_args: Callable[[Type[IProductInstanceConfiguration], str, str | None], str],
-    expected_env_vars: Callable[[Type[IProductInstanceConfiguration], str, str | None], str],
+    expected_command: Callable[[type[IProductInstanceConfiguration], str], str],
+    expected_args: Callable[[type[IProductInstanceConfiguration], str, str | None], str],
+    expected_env_vars: Callable[[type[IProductInstanceConfiguration], str, str | None], str],
     version: str,
-    product_config: Type[IProductInstanceConfiguration],
+    product_config: type[IProductInstanceConfiguration],
     tmp_path: Path,
     caplog: pytest.LogCaptureFixture,
     mocker: pytest_mock.MockerFixture,

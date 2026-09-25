@@ -266,7 +266,7 @@ def test_optislang_instance_start(
     instance.start(
         project_path=project_path,
         project_properties_file=project_properties_file,
-        input_files=[file for file in input_files_folder.iterdir()],
+        input_files=list(input_files_folder.iterdir()),
         osl_version=251,
         loglevel="INFO",
         connection_mode="LOCAL_DOMAIN",

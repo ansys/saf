@@ -128,7 +128,7 @@ class PimLightConfigWriter:
                             config:
                               command: "{command}"
                               args:
-                    """
+                    """,
                 )
                 if not arguments:
                     # PIM Light Server (or yaml) complains if args is empty or it's not present.

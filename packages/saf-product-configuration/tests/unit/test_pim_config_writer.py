@@ -24,18 +24,6 @@ import sys
 import pytest
 import pytest_mock
 from pytest_mock import MockerFixture
-from tests.mocks.product_instance_configs.mock_grpc_instance_configuration import (
-    MockGrpcInstanceConfiguration,
-    MockSecureGrpcCustomRouteInstanceConfiguration,
-)
-from tests.mocks.product_instance_configs.mock_http_instance_configuration import (
-    MockHttpInstanceConfiguration,
-    MockHttpInstanceVersionConfiguration,
-)
-from tests.mocks.product_instance_configs.mock_tcp_instance_configuration import (
-    MockNoArgumentsInstanceConfiguration,
-    MockTcpInstanceConfiguration,
-)
 
 from ansys.saf.product_configuration.aedt import AedtInstanceConfiguration
 from ansys.saf.product_configuration.fluent import (
@@ -63,6 +51,18 @@ from ansys.saf.product_configuration.pim.config_writer import (
     PimLightConfigWriter,
 )
 from ansys.saf.product_configuration.visor import VisorInstanceConfiguration
+from tests.mocks.product_instance_configs.mock_grpc_instance_configuration import (
+    MockGrpcInstanceConfiguration,
+    MockSecureGrpcCustomRouteInstanceConfiguration,
+)
+from tests.mocks.product_instance_configs.mock_http_instance_configuration import (
+    MockHttpInstanceConfiguration,
+    MockHttpInstanceVersionConfiguration,
+)
+from tests.mocks.product_instance_configs.mock_tcp_instance_configuration import (
+    MockNoArgumentsInstanceConfiguration,
+    MockTcpInstanceConfiguration,
+)
 
 
 @pytest.fixture

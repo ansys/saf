@@ -357,25 +357,29 @@ def transaction(enable_termination_event: bool = False, **kwargs: StepSpec):
             transaction_local.hps_blob_manager = _hps_blob_manager
             transaction_local.step_type = step_self.__class__
 
-            if hasattr(step_func, "__wrapped__"):
-                # step_func is not the real step method, but a decorated function
-                # (@long_running, @create_instance or @instance)
-                # so let's pass the needed arguments
-                result = step_func(
-                    step_self,
-                    project_url,
-                    solution,
-                    name_of_step_containing_method,
-                    settings,
-                    http_client,
-                    **args_for_step_func,
-                )
-            else:
-                # step_func is the real step method: use only the arguments it needs
-                result = step_func(**args_for_step_func)
+            try:
+                if hasattr(step_func, "__wrapped__"):
+                    # step_func is not the real step method, but a decorated function
+                    # (@long_running, @create_instance or @instance)
+                    # so let's pass the needed arguments
+                    result = step_func(
+                        step_self,
+                        project_url,
+                        solution,
+                        name_of_step_containing_method,
+                        settings,
+                        http_client,
+                        **args_for_step_func,
+                    )
+                else:
+                    # step_func is the real step method: use only the arguments it needs
+                    result = step_func(**args_for_step_func)
 
-            for transaction_step_model in transaction_step_models:
-                transaction_step_model.upload()
+                for transaction_step_model in transaction_step_models:
+                    transaction_step_model.upload()
+            finally:
+                for transaction_step_model in transaction_step_models:
+                    transaction_step_model.release_live_file_locks()
             return result
 
         step_method_wrapper._wrapped_transaction_method = step_func  # pyright: ignore[reportAttributeAccessIssue]

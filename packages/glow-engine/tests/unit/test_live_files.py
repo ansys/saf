@@ -163,6 +163,34 @@ def test_live_file_read_missing_raises_file_not_found(tmp_path: Path):
         live_file.read_bytes()
 
 
+def test_transaction_live_file_single_writer_lock_is_exclusive(tmp_path: Path):
+    project_dir = tmp_path / "project-id"
+    first_writer = TransactionLiveFile("logs/runtime.log", project_dir)
+    second_writer = TransactionLiveFile("logs/runtime.log", project_dir)
+
+    assert first_writer.path == project_dir / "logs" / "runtime.log"
+    with pytest.raises(PermissionError, match="already being written"):
+        _ = second_writer.path
+
+    first_writer.release_lock()
+
+    assert second_writer.path == project_dir / "logs" / "runtime.log"
+    second_writer.release_lock()
+
+
+def test_transaction_live_file_release_lock_is_idempotent(tmp_path: Path):
+    project_dir = tmp_path / "project-id"
+    live_file = TransactionLiveFile("logs/runtime.log", project_dir)
+
+    _ = live_file.path
+    live_file.release_lock()
+    live_file.release_lock()
+
+    other_writer = TransactionLiveFile("logs/runtime.log", project_dir)
+    assert other_writer.path == project_dir / "logs" / "runtime.log"
+    other_writer.release_lock()
+
+
 @pytest.mark.parametrize("operation", ["write_text", "write", "write_bytes", "write_from_file", "delete"])
 def test_live_file_proxy_is_read_only(operation: str, tmp_path: Path):
     project_dir = tmp_path / "project-id"

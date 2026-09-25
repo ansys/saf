@@ -4,6 +4,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
+from filelock import FileLock, Timeout
 from pydantic_core import core_schema
 
 from ansys.saf.glow._storage.os import INVALID_CHARACTERS, is_filepath_invalid
@@ -89,8 +90,10 @@ class LiveFile(str):
 class TransactionLiveFile(LiveFile):
     """Transaction-scoped view of a file for the current project.
 
-    The relative path is resolved from ``project_files_dir / project_id``. This class
-    provides read access and exposes the resolved filesystem path through ``path``.
+    The relative path is resolved from ``project_files_dir``. Read access is available to
+    every transaction, and the resolved filesystem path is exposed through ``path``.
+    Accessing ``path`` acquires an exclusive, cross-process advisory lock so that only a
+    single transaction can write to the file at a time.
     """
 
     def __new__(cls, value: str, project_files_dir: Path):
@@ -98,13 +101,41 @@ class TransactionLiveFile(LiveFile):
 
     def __init__(self, value: str, project_files_dir: Path):
         self._project_files_dir = project_files_dir
+        self._lock: FileLock | None = None
 
     @property
     def _absolute_path(self) -> Path:
         return self._project_files_dir / self._relative_path
 
     @property
+    def _lock_path(self) -> Path:
+        return self._project_files_dir / f"{self._relative_path}.lock"
+
+    def _acquire_write_lock(self) -> None:
+        # Use filelock rather than a plain lock file: it takes an OS-level advisory lock
+        # that is released automatically when the process dies, so a crashed writer does
+        # not leave a stale lock that blocks every future writer. timeout=0 makes it
+        # fail fast instead of blocking when another transaction already holds the lock.
+        self._lock_path.parent.mkdir(parents=True, exist_ok=True)
+        lock = FileLock(str(self._lock_path))
+        try:
+            lock.acquire(timeout=0)
+        except Timeout:
+            raise PermissionError(
+                f"LiveFile '{self._relative_path.as_posix()}' is already being written by another transaction.",
+            ) from None
+        self._lock = lock
+
+    def release_lock(self) -> None:
+        """Release the single-writer lock if this transaction currently holds it."""
+        if self._lock is not None:
+            self._lock.release()
+            self._lock = None
+
+    @property
     def path(self) -> Path:
+        if self._lock is None:
+            self._acquire_write_lock()
         return self._absolute_path
 
 

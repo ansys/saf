@@ -194,6 +194,7 @@ class TransactionStepModel:
         self._graphql_client = graphql_client
         self._hps_blob_manager = hps_blob_manager
         self._access_token = access_token
+        self._live_files: list[TransactionLiveFile] = []
 
         # Assign default step field attribute to this object.
         step_model = step_type()
@@ -226,7 +227,9 @@ class TransactionStepModel:
         upload."""
         field_value = getattr(step_model, field_name)
         if isinstance(field_value, LiveFile):
-            field_value = TransactionLiveFile(str(field_value), self._project_files_dir)
+            transaction_live_file = TransactionLiveFile(str(field_value), self._project_files_dir)
+            self._live_files.append(transaction_live_file)
+            field_value = transaction_live_file
         elif isinstance(field_value, HpsParametricStudyProjectBase):
             hps_authenticator = create_hps_authenticator(self._settings, self._access_token)
             field_value = DynamicHpsParametricStudyProject(field_value, self._hps_blob_manager, hps_authenticator)
@@ -234,6 +237,11 @@ class TransactionStepModel:
             hps_authenticator = create_hps_authenticator(self._settings, self._access_token)
             field_value = DynamicHpsSimpleProject(field_value, self._hps_blob_manager, hps_authenticator)
         setattr(self, field_name, field_value)
+
+    def release_live_file_locks(self) -> None:
+        """Release any single-writer locks held by the live file fields of this transaction."""
+        for live_file in self._live_files:
+            live_file.release_lock()
 
     def _assign_step_method(self, step_model: StepModel):
         step_methods = {

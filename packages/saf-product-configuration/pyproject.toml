@@ -144,7 +144,7 @@ exclude = [
 strict = [ "src", "tests", "doc" ]
 
 [tool.uv.sources]
-ansys-product-configuration = { workspace = true }
+ansys-saf-product-configuration = { workspace = true }
 
 [tool.uv.build-backend]
 module-name = "ansys.saf.product_configuration"

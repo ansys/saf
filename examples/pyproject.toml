@@ -37,7 +37,7 @@ priority = "primary"
 
 [tool.poetry.dependencies]
 python = ">=3.11,<3.13" #not <3.15 because of ansys-dynamicreporting-core
-ansys-saf-glow-engine = {version = "^2.2.0", extras = ["all"], allow-prereleases = true}
+ansys-saf-sdk = {version = "^0.3.0", extras = ["core-pim", "instance-management-all", "core-hps"], allow-prereleases = true}
 numpy = "^1.26.4"
 pillow = "^12.1"
 ansys-tools-visualization-interface = "^0.12.1"
@@ -47,9 +47,7 @@ ansys-dynamicreporting-core = "^0.10.6" # Supports only Python 3.10 to 3.12, but
 [tool.poetry.group.desktop]
 optional = true
 [tool.poetry.group.desktop.dependencies]
-ansys-saf-desktop-orchestrator = {version = "^1.13.0"}
-ansys-saf-product-manager = {version = ">=0.5.0, <1.0.0", extras=["aedt", "all", "fluent", "geometry", "mapdl", "mechanical", "optislang-wrapper"], allow-prereleases=true}
-ansys-saf-product-configuration = {version = ">=0.21.0, <1.0.0", allow-prereleases=true}
+ansys-saf-sdk = {version = "^0.3.0", extras = ["desktop"], allow-prereleases = true}
 
 [tool.poetry.group.ui]
 optional = true
@@ -61,7 +59,6 @@ dash-extensions = ">=0.1.13"
 dash-iconify = "^0.1"
 dash-mantine-components = "^2.6"
 dash-uploader = "^0.6"
-dash-gif-component = "^1.1.0"
 pandas = "^2.2.2"
 
 [tool.poetry.group.tests]
@@ -93,7 +90,7 @@ pkginfo = "^1.12.1.2"
 pyinstaller = { version = "^6.16", python = "<3.15" }
 toml = "^0.10.2"
 pyc-wheel = "^1.2.7"
-ansys-saf-desktop-installer = { version = "^1.16.0", allow-prereleases=true }
+ansys-saf-sdk = {version = "^0.3.0", extras = ["build"], allow-prereleases = true}
 
 [tool.poetry.group.style]
 optional = true

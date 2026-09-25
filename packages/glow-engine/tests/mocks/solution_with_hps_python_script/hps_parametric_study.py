@@ -502,6 +502,90 @@ class StringResultParametricStep(StepModel):
         )
 
 
+class HpsProjectCollectionsStep(StepModel):
+
+    input_file: EntityHandle = NO_ENTITY
+    add_script: EntityHandle = NO_ENTITY
+    time_to_generate_the_output_file: float = 0.0
+    collect_interval: int = 0
+
+    simple_projects: list[HpsSimpleProject] = []
+    study_projects: list[HpsParametricStudyProject] = []
+    simple_projects_by_name: dict[str, HpsSimpleProject] = {}
+    study_projects_by_name: dict[str, HpsParametricStudyProject] = {}
+
+    @transaction(
+        self=StepSpec(
+            upload=["simple_projects", "simple_projects_by_name"],
+            download=[
+                "input_file",
+                "add_script",
+                "time_to_generate_the_output_file",
+                "collect_interval",
+            ],
+        ),
+    )
+    def start_n_simple_jobs(self, num_projects: int, list_or_dict: str) -> None:
+        if list_or_dict not in ["list", "dict"]:
+            raise ValueError("list_or_dict must be either 'list' or 'dict'")
+        if num_projects <= 0:
+            raise ValueError("num_projects must be a positive integer")
+
+        for _ in range(num_projects):
+            hps_project = HpsSimpleProject.start_hps_job(
+                input_values={
+                    "script": self.add_script,
+                    "custom_input_file": self.input_file,
+                    "time_to_generate_the_output_file": self.time_to_generate_the_output_file,
+                },
+                output_parameters={
+                    "result": HpsOutputFileSpecification(
+                        collect_interval=self.collect_interval,
+                    ),
+                },
+                # we're assuming that under test the HPS evaluator will be using the same
+                # version of python as the GLOW engine process
+                python_version=f"{sys.version_info.major}.{sys.version_info.minor}",
+                use_product_environment=False,
+            )
+            if list_or_dict == "list":
+                self.simple_projects.append(hps_project)
+            else:
+                self.simple_projects_by_name[f"simple_project_{len(self.simple_projects_by_name) + 1}"] = hps_project
+
+    @transaction(self=StepSpec(download=["simple_projects", "simple_projects_by_name"]))
+    def wait_for_hps_projects_to_finish(self, list_or_dict: str) -> None:
+        if list_or_dict not in ["list", "dict"]:
+            raise ValueError("list_or_dict must be either 'list' or 'dict'")
+        elif list_or_dict == "list":
+            hps_projects = self.simple_projects
+        else:
+            hps_projects = list(self.simple_projects_by_name.values())
+
+        max_iterations = 300
+        iterations = 0
+        while not all(project.finished for project in hps_projects):
+            time.sleep(1)
+            iterations += 1
+            if iterations >= max_iterations:
+                raise TimeoutError("HPS projects did not finish within the maximum allowed iterations")
+
+    @transaction(self=StepSpec(download=["simple_projects", "simple_projects_by_name"]))
+    def fetch_files(self, list_or_dict: str) -> list[str]:
+        if list_or_dict not in ["list", "dict"]:
+            raise ValueError("list_or_dict must be either 'list' or 'dict'")
+        elif list_or_dict == "list":
+            hps_projects = self.simple_projects
+        else:
+            hps_projects = list(self.simple_projects_by_name.values())
+
+        output: list[str] = []
+        for hps_project in hps_projects:
+            result_handle = cast("EntityHandle", hps_project.result)  # type: ignore
+            output.append(self.storage_scope.get_text(result_handle))
+        return output
+
+
 class Steps(StepsModel):
     file_job_step: FileJobStep
     data_transfer_step: DataTransferStep
@@ -509,6 +593,7 @@ class Steps(StepsModel):
     simple_subtract_step: SimpleSubtractStep
     simple_parametric_study: SimpleParametricStudy
     string_result_parametric_step: StringResultParametricStep
+    hps_project_collections_step: HpsProjectCollectionsStep
 
 
 class ParametricStudySolution(Solution):

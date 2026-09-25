@@ -18,6 +18,7 @@ from collections.abc import Callable, Generator
 import json
 import os
 from pathlib import Path
+from typing import cast
 
 from ansys.saf.testing.solution.end_to_end import (
     GlowBaseProcess,
@@ -37,6 +38,7 @@ from ansys.saf.glow.client import Client
 from tests.e2e.conftest import PACKAGE_ROOT, interactive_authorization
 from tests.mocks.solution_with_hps_python_script.hps_parametric_study import (
     FileJobStep,
+    HpsProjectCollectionsStep,
     ParametricStudySolution,
 )
 
@@ -89,7 +91,7 @@ def auto_setup_job_scripts(
 
 def load_job_scripts(
     project: ParametricStudySolution,
-    step: FileJobStep,
+    step: FileJobStep | HpsProjectCollectionsStep,
 ):
     storage_scope = project.storage_scope
     with Path(
@@ -215,6 +217,33 @@ class TestHpsParametricStudy:
 
             step.fetch_file()
             assert step.result_file_content == EXPECTED_CONTENT
+
+    @pytest.mark.parametrize("list_or_dict", ["list", "dict"])
+    def test_collecting_hps_projects_on_list_or_dict(
+        self,
+        function_project: ProjectFixture[ParametricStudySolution],
+        list_or_dict: str,
+    ):
+        """
+        Test that HPS projects can be grouped and stored in a list or flat dictionary.
+        """
+        num_projects = 2
+        step = function_project.project.steps.hps_project_collections_step
+        load_job_scripts(function_project.project, step)
+        step.start_n_simple_jobs(num_projects=num_projects, list_or_dict=list_or_dict)
+        if list_or_dict == "list":
+            assert len(step.simple_projects) == num_projects
+            for project in step.simple_projects:
+                assert project.hps_project_identifier
+        else:
+            assert len(step.simple_projects_by_name) == num_projects
+            for project in step.simple_projects_by_name.values():
+                assert project.hps_project_identifier
+        step.wait_for_hps_projects_to_finish(list_or_dict=list_or_dict)
+        output_files = step.fetch_files(list_or_dict=list_or_dict)
+        assert len(output_files) == num_projects
+        for output_file in output_files:
+            assert output_file == "result=7.0"
 
 
 @pytest.fixture

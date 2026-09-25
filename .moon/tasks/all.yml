@@ -4,6 +4,8 @@ tasks:
     script: 'uv run pre-commit run --files $(git ls-files -- ":(top,glob)$projectSource/**")'
     deps:
       - '~:pyright'
+      - '~:ruff'
+      - '~:ruff-format'
       - '~:bandit'
     inputs:
       - 'src/**/*'
@@ -25,6 +27,45 @@ tasks:
       - "$projectAlias"
       - "--all-extras"
       - "pyright"
+      - "$projectSource"
+    inputs:
+      - "src/**/*"
+      - "tests/**/*"
+      - "pyproject.toml"
+      - "/.python-version"
+    options:
+      runFromWorkspaceRoot: true
+
+  ruff:
+    description: "Run ruff check"
+    command:
+      - "uv"
+      - "run"
+      - "--package"
+      - "$projectAlias"
+      - "--all-extras"
+      - "ruff"
+      - "check"
+      - "$projectSource"
+    inputs:
+      - "src/**/*"
+      - "tests/**/*"
+      - "pyproject.toml"
+      - "/.python-version"
+    options:
+      runFromWorkspaceRoot: true
+
+  ruff-format:
+    description: "Run ruff format"
+    command:
+      - "uv"
+      - "run"
+      - "--package"
+      - "$projectAlias"
+      - "--all-extras"
+      - "ruff"
+      - "format"
+      - "--diff"
       - "$projectSource"
     inputs:
       - "src/**/*"

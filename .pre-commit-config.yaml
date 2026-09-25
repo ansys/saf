@@ -41,13 +41,6 @@ repos:
           - --custom_license=Apache-2.0
           - --start_year=2026
 
-  - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: 0470f7c8a653e950f7cc5a653204ceb3fde4c02a # v0.15.0
-    hooks:
-      - id: ruff-check
-        args: [--fix]
-      - id: ruff-format
-
   - repo: https://github.com/tox-dev/pyproject-fmt
     rev: 69b77b8d2436cb00c886f129dda7f68f3b2909ac # v2.11.0
     hooks:

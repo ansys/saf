@@ -213,7 +213,7 @@ class FluentInstance:
             if platform.system() == "Linux":
                 # script doesn't have proper shebang at the top. From testing, it seems that it requires bash to run.
                 # Using sh instead, fails to execute the if/else blocks.
-                subprocess.check_output(["bash", self._cleanup_file.as_posix()])  # nosec B603 B607
+                subprocess.check_output(["bash", self._cleanup_file.as_posix()])  # noqa: S607
             else:
                 try:
                     # Silence error due to the BAT file deleting itself. Raise the rest.

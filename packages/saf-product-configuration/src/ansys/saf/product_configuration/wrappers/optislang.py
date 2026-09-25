@@ -163,7 +163,7 @@ class OptislangInstance:
             server_address = None
             if connection_mode == CONNECTION_MODE_TCP:
                 communication_channel = CommunicationChannel.TCP
-                server_address = "0.0.0.0"  # nosec: B104
+                server_address = "0.0.0.0"  # noqa: S104
 
             self._osl = Optislang(
                 project_path=dest_project_file,

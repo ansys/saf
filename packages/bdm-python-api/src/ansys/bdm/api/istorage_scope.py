@@ -385,7 +385,7 @@ class IStorageScope(IReadStorageScope, Protocol):
     :func:`store()` will be deleted.
     """
 
-    def __enter__(self) -> "IStorageScope":
+    def __enter__(self) -> "IStorageScope":  
         """
         Track the set of files that are stored centrally.
         """

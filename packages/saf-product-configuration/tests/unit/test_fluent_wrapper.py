@@ -17,9 +17,9 @@
 from pathlib import Path
 import platform
 from typing import Any
+from unittest import mock
 
 from click.testing import CliRunner
-import mock
 import pytest
 
 from ansys.saf.product_configuration.wrappers.fluent import (
@@ -54,7 +54,10 @@ def test_cli_without_required_options():
 def test_cli_required_options():
     with (
         mock.patch.object(
-            FluentInstance, "__init__", side_effect=FluentInstance.__init__, autospec=True
+            FluentInstance,
+            "__init__",
+            side_effect=FluentInstance.__init__,
+            autospec=True,
         ) as fluent_init_mocked,
         mock.patch("uvicorn.run") as uvicorn_mocked,
         mock.patch.object(FluentInstance, "shutdown") as fluent_shutdown_mocked,
@@ -102,7 +105,10 @@ def test_cli_required_options():
 def test_cli_optional_args():
     with (
         mock.patch.object(
-            FluentInstance, "__init__", side_effect=FluentInstance.__init__, autospec=True
+            FluentInstance,
+            "__init__",
+            side_effect=FluentInstance.__init__,
+            autospec=True,
         ) as fluent_init_mocked,
         mock.patch("uvicorn.run") as uvicorn_mocked,
         mock.patch.object(FluentInstance, "shutdown") as fluent_shutdown_mocked,
@@ -268,7 +274,12 @@ def test_fluent_instance_shutdown_before_instance(tmp_path: Path):
     with mock.patch("ansys.saf.product_configuration.wrappers.fluent.kill_proc_tree") as kill_proc_tree_mock:
         # GIVEN: fresh FluentInstance
         f = FluentInstance(
-            TESTING_HOST, TESTING_VERSION, TESTING_MODE, TESTING_GEOMETRY, TESTING_PRECISION, TransportMode.INSECURE
+            TESTING_HOST,
+            TESTING_VERSION,
+            TESTING_MODE,
+            TESTING_GEOMETRY,
+            TESTING_PRECISION,
+            TransportMode.INSECURE,
         )
         assert f.port is None
 
@@ -304,7 +315,12 @@ def test_fluent_instance_shutdown_twice(tmp_path: Path):
         popen_cmd.side_effect = create_fluent_files
         # GIVEN: running FluentInstance that is stopped
         f = FluentInstance(
-            TESTING_HOST, TESTING_VERSION, TESTING_MODE, TESTING_GEOMETRY, TESTING_PRECISION, TransportMode.INSECURE
+            TESTING_HOST,
+            TESTING_VERSION,
+            TESTING_MODE,
+            TESTING_GEOMETRY,
+            TESTING_PRECISION,
+            TransportMode.INSECURE,
         )
         f.initialize(tmp_path)
 
@@ -348,7 +364,12 @@ def test_fluent_instance_launch_twice(tmp_path: Path):
         popen_cmd.side_effect = create_fluent_files
         # GIVEN: freshly launched FluentInstance
         f = FluentInstance(
-            TESTING_HOST, TESTING_VERSION, TESTING_MODE, TESTING_GEOMETRY, TESTING_PRECISION, TransportMode.INSECURE
+            TESTING_HOST,
+            TESTING_VERSION,
+            TESTING_MODE,
+            TESTING_GEOMETRY,
+            TESTING_PRECISION,
+            TransportMode.INSECURE,
         )
         f.initialize(tmp_path)
         popen_cmd.assert_called_once()
@@ -369,7 +390,12 @@ def test_fluent_timeout(monkeypatch: pytest.MonkeyPatch):
     # GIVEN: value not configured using env var
     # WHEN: launching FluentInstance
     f = FluentInstance(
-        TESTING_HOST, TESTING_VERSION, TESTING_MODE, TESTING_GEOMETRY, TESTING_PRECISION, TransportMode.INSECURE
+        TESTING_HOST,
+        TESTING_VERSION,
+        TESTING_MODE,
+        TESTING_GEOMETRY,
+        TESTING_PRECISION,
+        TransportMode.INSECURE,
     )
     # THEN: Timeout is the default one
     assert f._timeout == DEFAULT_TIMEOUT  # pyright: ignore[reportPrivateUsage]
@@ -380,7 +406,12 @@ def test_fluent_timeout(monkeypatch: pytest.MonkeyPatch):
     monkeypatch.setenv(SAF_FLUENT_WRAPPER_TIMEOUT, str(new_timeout))
     # WHEN: launching FluentInstance
     f = FluentInstance(
-        TESTING_HOST, TESTING_VERSION, TESTING_MODE, TESTING_GEOMETRY, TESTING_PRECISION, TransportMode.INSECURE
+        TESTING_HOST,
+        TESTING_VERSION,
+        TESTING_MODE,
+        TESTING_GEOMETRY,
+        TESTING_PRECISION,
+        TransportMode.INSECURE,
     )
     # THEN: Timeout is properly configured
     assert f._timeout == new_timeout  # pyright: ignore[reportPrivateUsage]
@@ -400,7 +431,12 @@ def test_fluent_timeout(monkeypatch: pytest.MonkeyPatch):
 )
 def test_fluent_instance_port_parsing(fluent_address: str | None, expected_port: int | None):
     f = FluentInstance(
-        TESTING_HOST, TESTING_VERSION, TESTING_MODE, TESTING_GEOMETRY, TESTING_PRECISION, TransportMode.INSECURE
+        TESTING_HOST,
+        TESTING_VERSION,
+        TESTING_MODE,
+        TESTING_GEOMETRY,
+        TESTING_PRECISION,
+        TransportMode.INSECURE,
     )
     f._fluent_address = fluent_address  # pyright: ignore[reportPrivateUsage]
     assert f.port == expected_port
@@ -412,7 +448,12 @@ def test_find_fluent_address_requires_first_line(tmp_path: Path, server_info_con
     server_info_file_path.write_text(server_info_content)
 
     f = FluentInstance(
-        TESTING_HOST, TESTING_VERSION, TESTING_MODE, TESTING_GEOMETRY, TESTING_PRECISION, TransportMode.INSECURE
+        TESTING_HOST,
+        TESTING_VERSION,
+        TESTING_MODE,
+        TESTING_GEOMETRY,
+        TESTING_PRECISION,
+        TransportMode.INSECURE,
     )
 
     with pytest.raises(RuntimeError, match="Couldn't find Fluent's address in server_info file."):
@@ -422,7 +463,12 @@ def test_find_fluent_address_requires_first_line(tmp_path: Path, server_info_con
 def test_build_cmd_insecure_transport(tmp_path: Path):
     with mock.patch.object(FluentInstance, "_find_fluent_bin", return_value="fluent"):
         f = FluentInstance(
-            TESTING_HOST, TESTING_VERSION, TESTING_MODE, TESTING_GEOMETRY, TESTING_PRECISION, TransportMode.INSECURE
+            TESTING_HOST,
+            TESTING_VERSION,
+            TESTING_MODE,
+            TESTING_GEOMETRY,
+            TESTING_PRECISION,
+            TransportMode.INSECURE,
         )
         cmd = f._build_cmd(tmp_path / "sifile.txt", TransportMode.INSECURE, None)  # pyright: ignore[reportPrivateUsage]
         assert "-grpc-allow-remote-host" in cmd
@@ -432,7 +478,12 @@ def test_build_cmd_insecure_transport(tmp_path: Path):
 def test_build_cmd_mtls_transport(tmp_path: Path):
     with mock.patch.object(FluentInstance, "_find_fluent_bin", return_value="fluent"):
         f = FluentInstance(
-            TESTING_HOST, TESTING_VERSION, TESTING_MODE, TESTING_GEOMETRY, TESTING_PRECISION, TransportMode.MTLS
+            TESTING_HOST,
+            TESTING_VERSION,
+            TESTING_MODE,
+            TESTING_GEOMETRY,
+            TESTING_PRECISION,
+            TransportMode.MTLS,
         )
         cmd = f._build_cmd(tmp_path / "sifile.txt", TransportMode.MTLS, "/tmp/certs")  # pyright: ignore[reportPrivateUsage]
         assert "-grpc-allow-remote-host" in cmd
@@ -443,7 +494,12 @@ def test_build_cmd_mtls_transport(tmp_path: Path):
 def test_build_cmd_uds_transport(tmp_path: Path):
     with mock.patch.object(FluentInstance, "_find_fluent_bin", return_value="fluent"):
         f = FluentInstance(
-            TESTING_HOST, TESTING_VERSION, TESTING_MODE, TESTING_GEOMETRY, TESTING_PRECISION, TransportMode.UDS
+            TESTING_HOST,
+            TESTING_VERSION,
+            TESTING_MODE,
+            TESTING_GEOMETRY,
+            TESTING_PRECISION,
+            TransportMode.UDS,
         )
         cmd = f._build_cmd(tmp_path / "sifile.txt", TransportMode.UDS, None)  # pyright: ignore[reportPrivateUsage]
         assert "-grpc-allow-remote-host" not in cmd
@@ -454,7 +510,12 @@ def test_build_cmd_wnua_transport(tmp_path: Path):
     assert TESTING_HOST != "127.0.0.1"
     with mock.patch.object(FluentInstance, "_find_fluent_bin", return_value="fluent"):
         f = FluentInstance(
-            TESTING_HOST, TESTING_VERSION, TESTING_MODE, TESTING_GEOMETRY, TESTING_PRECISION, TransportMode.WNUA
+            TESTING_HOST,
+            TESTING_VERSION,
+            TESTING_MODE,
+            TESTING_GEOMETRY,
+            TESTING_PRECISION,
+            TransportMode.WNUA,
         )
         cmd = f._build_cmd(tmp_path / "sifile.txt", TransportMode.WNUA, None)  # pyright: ignore[reportPrivateUsage]
         assert "-grpc-allow-remote-host" not in cmd

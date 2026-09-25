@@ -30,7 +30,7 @@ from ansys.optislang.core.errors import (  # pyright: ignore[reportMissingTypeSt
     OslServerStartError,
 )
 from ansys.optislang.core.tcp.osl_server import (  # pyright: ignore[reportMissingTypeStubs]
-    TcpOslServer,
+    TcpOslServer,  # noqa: TC002
 )
 import click
 from fastapi import Body, Depends, FastAPI, HTTPException, Request
@@ -106,7 +106,9 @@ class OptislangInstance:
         }
 
     def _move_project_and_input_files_to_temp_working_dir(
-        self, source_project_file: Path, source_input_file_paths: list[Path]
+        self,
+        source_project_file: Path,
+        source_input_file_paths: list[Path],
     ) -> Path:
         if not self._osl_working_directory:
             raise RuntimeError("Instance working directory not initialized.")
@@ -161,7 +163,7 @@ class OptislangInstance:
             server_address = None
             if connection_mode == CONNECTION_MODE_TCP:
                 communication_channel = CommunicationChannel.TCP
-                server_address = "0.0.0.0"  # nosec: B104
+                server_address = "0.0.0.0"  # noqa: S104
 
             self._osl = Optislang(
                 project_path=dest_project_file,
@@ -185,7 +187,7 @@ class OptislangInstance:
             )
             self._osl.__logger = osl_logger.add_instance_logger(self._osl.name, self._osl, loglevel)  # type: ignore
             self._osl.log.info("Start analysis")
-            osl_server = cast(TcpOslServer, self._osl.osl_server)
+            osl_server = cast("TcpOslServer", self._osl.osl_server)
             self._connection_mode = connection_mode
             if communication_channel == CommunicationChannel.TCP:
                 self._osl_host = osl_server.get_host()
@@ -267,13 +269,13 @@ async def server_start_exception_handler(request: Request, exc: OslServerStartEr
 @app.post("/start")
 async def start_instance(
     optislang_instance: GlobalOptislangInstanceDep,
-    project_path: Path = Body(...),  # noqa: B008
-    project_properties_file: Path = Body(...),  # noqa: B008
-    input_files: list[Path] = Body(...),  # noqa: B008
-    osl_version: int = Body(...),
-    loglevel: str = Body(...),
-    connection_mode: str = Body(default=CONNECTION_MODE_LOCAL_DOMAIN),
-    log_file_path: Path | None = Body(default=None),  # noqa: B008
+    project_path: Path = Body(...),  # noqa: B008, FAST002
+    project_properties_file: Path = Body(...),  # noqa: B008, FAST002
+    input_files: list[Path] = Body(...),  # noqa: B008, FAST002
+    osl_version: int = Body(...),  # noqa: FAST002
+    loglevel: str = Body(...),  # noqa: FAST002
+    connection_mode: str = Body(default=CONNECTION_MODE_LOCAL_DOMAIN),  # noqa: FAST002
+    log_file_path: Path | None = Body(default=None),  # noqa: B008, FAST002
 ):
     optislang_instance.start(
         project_path,

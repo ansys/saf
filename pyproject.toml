@@ -1,30 +1,52 @@
-[build-system]
-build-backend = "setuptools.build_meta"
-requires = [ "setuptools>=69", "wheel" ]
-
 [project]
-name = "ansys-saf-development"
-version = "0.2.0"
-description = "SAF Development Project"
-readme = "README.md"
+name = "ansys-saf-workspace"
+version = "0.3.0"
 maintainers = [ { name = "ANSYS, Inc.", email = "pyansys-core@synopsys.com" } ]
 authors = [ { name = "ANSYS, Inc.", email = "pyansys-core@synopsys.com" } ]
 requires-python = ">=3.11,<4.0"
+
 classifiers = [
-  "Intended Audience :: Science/Research",
-  "License :: OSI Approved :: Apache Software License",
-  "Operating System :: OS Independent",
   "Programming Language :: Python :: 3 :: Only",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
   "Programming Language :: Python :: 3.14",
-  "Topic :: Scientific/Engineering :: Information Analysis",
+]
+dependencies = [
+  "ansys-bdm-api",
+  "ansys-bdm-shared-volume",
+  "ansys-iam-oidc",
+  "ansys-saf-product-configuration[all]",
 ]
 
 [dependency-groups]
+dev = [
+  "bandit[toml]==1.9.4",
+  "pre-commit==4.6.0",
+  "pyright==1.1.408",
+  "ruff==0.15.0",
+  { include-group = "build" },
+  { include-group = "doc" },
+  { include-group = "tests" },
+]
+tests = [
+  "authlib>=1.8.0,<2",
+  "coverage>=7,<8",
+  "filelock>=3.8.0,<4",
+  "httpx2-pytest>=1.0,<2",
+  "mock>=4.0.3,<5",
+  "pytest>=9.0.3,<10",
+  "pytest-asyncio>=1.3.0,<2",
+  "pytest-cov>=4.0.0,<5",
+  "pytest-html>=4.1.1,<5",
+  "pytest-md>=0.2.0,<1",
+  "pytest-mock>=3.10.0,<4",
+  "pytest-timeout>=2.3.1,<3",
+  "pytest-xdist>=3.6.1,<4",
+]
 doc = [
-  "ansys-sphinx-theme>=1.9; python_version>='3.12'",
+  "ansys-sphinx-theme[autoapi]>=1.9; python_version>='3.12'",
+  "autodoc-pydantic>=2.2.0; python_version>='3.12'",
   "click>=8.3.2; python_version>='3.12'",
   "docutils>=0.21; python_version>='3.12' and python_version<'4.0'",
   "linkchecker>=10.6.0; python_version>='3.12'",
@@ -38,6 +60,7 @@ doc = [
   "sphinx-copybutton>=0.5.2; python_version>='3.12'",
   "sphinx-design>=0.7.0; python_version>='3.12'",
   "sphinx-gallery>=0.15.0; python_version>='3.12'",
+  "sphinx-jinja>=2.0.0; python_version>='3.12'",
   "sphinx-markdown-builder>=0.6; python_version>='3.12'",
   "sphinx-tabs>=3.5.0; python_version>='3.12'",
   "sphinx-toolbox>=4.2.0; python_version>='3.12'",
@@ -45,9 +68,9 @@ doc = [
   "sphinxemoji>=0.2; python_version>='3.12'",
   "toml>=0.10.2; python_version>='3.12'",
 ]
-
-[tool.poetry]
-package-mode = false
+build = [
+  "twine==7.0.0",
+]
 
 [tool.poetry.group.doc]
 optional = true
@@ -55,6 +78,99 @@ optional = true
 [tool.setuptools]
 py-modules = [  ]
 
+[tool.ruff]
+target-version = "py312"
+line-length = 120
+src = [ "packages/*/doc", "packages/*/src", "packages/*/tests" ]
+extend-exclude = [
+  "**/tests/mocks/mock_products/wnua.py",
+  "*_pb2.py",
+  "*_pb2_grpc.py",
+  "conf.py",
+  "packages/glow-engine/benchmarks",                            # Ignore files containing cookiecutter syntax
+  "packages/saf-cli/src/ansys/saf/cli/_solutions/templates/**", # Ignore files containing cookiecutter syntax
+  "packages/saf-cli/tests/mocks/plugin/",                       # Ignore files containing cookiecutter syntax
+  "packages/saf-templates/**/[{][{]cookiecutter.*",             # Ignore files containing cookiecutter syntax
+]
+# in same order as in https://docs.astral.sh/ruff/rules
+lint.select = [
+  "A",      # flake8-builtins
+  "ASYNC",  # flake8-async
+  "B",      # flake8-bugbear
+  "C4",     # flake8-comprehensions
+  "C90",    # mccabe
+  "COM",    # flake8-commas
+  "E",      # pycodestyle - error
+  "F",      # pyflakes
+  "FAST",   # fastapi
+  "I",      # isort
+  "LOG",    # flake8-logging
+  "N",      # pep8-naming
+  "PIE",    # flake8-pie
+  "PT",     # flake8-pytest-style
+  "PTH",    # flake8-use-pathlib
+  "PYI",    # flake8-pyi
+  "Q",      # flake8-quotes
+  "RUF100", # ruff-specific rules: unused noqa
+  "S",      # flake8-bandit
+  "SIM",    # flake8-simplify
+  "TC",     # flake8-type-checking
+  "UP",     # pyupgrade
+  "W",      # pycodestyle - warning
+]
+lint.ignore = [ "COM812", "PTH207", "PYI034", "S112", "S603" ]
+lint.per-file-ignores.".github/**" = [ "S" ]
+lint.per-file-ignores.".venv/**" = [ "S" ]
+lint.per-file-ignores."benchmarks/**" = [ "S" ]
+lint.per-file-ignores."cache/**" = [ "S" ]
+lint.per-file-ignores."packages/*/tests/**.py" = [ "S" ]
+lint.per-file-ignores."packages/dash-super-components/src/ansys/solutions/dash_super_components/utils/svg_icons.py" = [
+  "E501",
+]
+lint.per-file-ignores."packages/saf-cli/scripts/upgrade_solution_template_poetry_lock.py" = [ "S101" ]
+lint.per-file-ignores."packages/saf-testing/src/ansys/saf/testing/**.py" = [
+  "S",
+] # FIXME: temporary for the monorepo migration
+# Ignore `S` rules everywhere except for the `src/` directory.
+lint.per-file-ignores."tests/**.py" = [ "S" ]
+lint.flake8-bugbear.extend-immutable-calls = [
+  "fastapi.Depends",
+  "fastapi.Form",
+  "fastapi.params.Depends",
+  "fastapi.params.Form",
+  "fastapi.params.Query",
+  "fastapi.Query",
+]
+lint.flake8-pytest-style.mark-parentheses = false
+lint.flake8-type-checking.runtime-evaluated-base-classes = [ "pydantic.BaseModel", "pydantic_settings.BaseSettings" ]
+lint.flake8-type-checking.runtime-evaluated-decorators = [ "attrs.define", "pydantic.validate_call" ]
+lint.isort.force-sort-within-sections = true
+lint.isort.known-first-party = [
+  "tests",
+  "src",
+  "doc",
+  "ansys.bdm",
+  "ansys.iam.oidc",
+  "ansys.saf",
+  "ansys.solutions",
+]
+
+[tool.coverage.report]
+show_missing = true
+
 [tool.uv]
 package = false
-link-mode = "copy"
+
+[tool.uv.sources]
+ansys-bdm-api = { workspace = true }
+ansys-bdm-shared-volume = { workspace = true }
+ansys-iam-oidc = { workspace = true }
+ansys-saf-product-configuration = { workspace = true }
+
+[tool.uv.workspace]
+members = [
+  "packages/bdm-python-api",
+  "packages/bdm-python-shared-volume",
+  "packages/saf-iam-oidc",
+  "packages/saf-product-configuration",
+]

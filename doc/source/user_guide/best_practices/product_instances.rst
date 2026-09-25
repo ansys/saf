@@ -138,6 +138,7 @@ and it is lost when the transaction ends.
 
    from ansys.mapdl.core import launch_mapdl
 
+
    class QuickSolveStep(StepModel):
        """Single-shot MAPDL solve — no PIM, no instance reuse."""
 

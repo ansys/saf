@@ -33,8 +33,8 @@ from ansys.iam.oidc._utilities import encode_base64_token
 
 
 IDP_URL = "http://test_issuer_url"
-TEST_SECRET_KEY = "this_is_a_very_secure_test_key"  # noqa: S105
-TEST_WRONG_SECRET_KEY = "this_is_a_different_secure_test_key"  # noqa: S105
+TEST_SECRET_KEY = "this_is_a_very_secure_test_key"
+TEST_WRONG_SECRET_KEY = "this_is_a_different_secure_test_key"
 
 
 @pytest.fixture

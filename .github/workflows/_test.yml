@@ -6,6 +6,11 @@ run-name: >-
 on:
   workflow_dispatch:
     inputs:
+      use-moon:
+        description: 'Use Moon for the tests'
+        required: true
+        type: boolean
+        default: false
       package-name:
         description: 'Package to test'
         required: true
@@ -131,6 +136,10 @@ on:
         default: false
   workflow_call:
     inputs:
+      use-moon:
+        description: 'Use Moon for the tests'
+        required: true
+        type: boolean
       python-version:
         description: 'Python version'
         required: true
@@ -143,6 +152,10 @@ on:
         type: string
         description: 'Json file defining the groups of tests.'
         required: true
+      library-name:
+        description: 'Name of the library/package being tested'
+        required: true
+        type: string
     secrets:
       ANS_MINERVA_URL:
         description: 'Minerva URL'
@@ -299,6 +312,9 @@ jobs:
       PIP_INDEX_URL: https://pypi.org/simple
       GITHUB_TOKEN: ${{ github.token }}
       ANSYSLMD_LICENSE_FILE: ${{ format('1055@{0}', secrets.LICENSE_SERVER) }}
+      USE_MOON: ${{ inputs.use-moon && 'true' || 'false' }}
+      MOON_PYTHON_VERSION: ${{ inputs.python-version }}
+      PACKAGE: ${{ inputs.library-name }}
     steps:
       - name: Enable git long paths on Windows
         if: runner.os == 'Windows'
@@ -309,6 +325,7 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+          fetch-depth: 0 # For moon to have full git history
 
       - name: Prepare runner for tests
         if: matrix.prepare-runner == 'true' || matrix.upgrade-docker == 'true' ||
@@ -354,6 +371,7 @@ jobs:
             ]
 
       - name: Install dependencies
+        if: ${{ env.USE_MOON == 'false' }}
         id: prepare-env
         uses: ansys/saf-devops/prepare-python-environment@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
         with:
@@ -363,6 +381,10 @@ jobs:
             || '--with tests --all-extras' }}
           python-project-path: ${{ needs.configure-tests.outputs.working-directory
             }}
+
+      - name: Setup Moon Toolchain
+        if: ${{ env.USE_MOON == 'true' }}
+        uses: moonrepo/setup-toolchain@261c62cb5b0f580c7be7c8cd0f023a2e96756095 # v0.6.4
 
       - name: Install pim-light-server
         if: ${{ matrix.install-pim-light-server == 'true' }}
@@ -452,7 +474,7 @@ jobs:
           which xvfb-run
 
       - name: Configure PYTEST_DEBUG_TEMPROOT
-        if: runner.os != 'Linux'
+        if: runner.os != 'Linux' && env.USE_MOON == 'false'
         shell: bash
         run: echo "PYTEST_DEBUG_TEMPROOT=C:/" >> $GITHUB_ENV
 
@@ -470,6 +492,7 @@ jobs:
 
       - name: Run tests
         id: run-tests
+        if: ${{ env.USE_MOON == 'false' }}
         uses: ansys/saf-devops/run-tests@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
         with:
           python-version: ${{ inputs.python-version }}
@@ -484,8 +507,32 @@ jobs:
           checkout: false
           skip-install: true
 
+      - name: Run tests (Moon)
+        if: ${{ env.USE_MOON == 'true' }}
+        id: run-tests-moon
+        shell: bash
+        env:
+          PYTEST_ARGS: ${{ steps.pytest-args.outputs.pytest-args }}
+          REPORTS_DIR: "${{ matrix.test-report-artifact-name-suffix }}_${{ inputs.python-version
+            }}"
+        run: |
+          mkdir -p "$REPORTS_DIR"
+          moon run $PACKAGE:test -- $PYTEST_ARGS --html="$REPORTS_DIR/report.html" --md="$REPORTS_DIR/report.md"
+
+      - name: Publish pytest reports (Moon)
+        if: always() && steps.run-tests-moon.outcome != 'skipped' && env.USE_MOON
+          == 'true'
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: "pytest_reports_${{ matrix.test-report-artifact-name-suffix }}_${{
+            inputs.python-version }}"
+          path: ${{ matrix.test-report-artifact-name-suffix }}_${{ inputs.python-version
+            }}/**/*"
+          if-no-files-found: warn
+
       - name: Publish pytest logs
-        if: always() && steps.run-tests.outcome != 'skipped'
+        if: always() && (steps.run-tests.outcome != 'skipped' || steps.run-tests-moon.outcome
+          != 'skipped')
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: "pytest_logs_${{ matrix.test-report-artifact-name-suffix }}_${{ inputs.python-version
@@ -494,8 +541,9 @@ jobs:
           if-no-files-found: warn
 
       - name: Collect hps logs
-        if: ${{ always() && steps.run-tests.outcome != 'cancelled' && steps.run-tests.outcome
-          != 'skipped' && matrix.install-hps == 'true' }}
+        if: ${{ always() && (steps.run-tests.outcome != 'cancelled' || steps.run-tests-moon.outcome
+          != 'cancelled') && (steps.run-tests.outcome != 'skipped' || steps.run-tests-moon.outcome
+          != 'skipped') && matrix.install-hps == 'true' }}
         uses: ansys/saf-devops/collect-hps-logs@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
         with:
           artifact-prefix: "hps_test_reports_${{ matrix.test-report-artifact-name-suffix

@@ -14,29 +14,25 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import os
-
-import requests
-import re
 from enum import Enum
-from packaging.version import Version, InvalidVersion
-from branch import Branch
+import os
+import re
 
+from branch import Branch
 from constants import (
-    META_PACKAGE_NAME,
-    PYPROJECT_PATH,
-    PACKAGE_LIBRARY_DIRS,
-    INITIAL_META_PACKAGE_VERSION,
     DEPENDENCY_PINNING_ENV_VAR,
+    INITIAL_META_PACKAGE_VERSION,
+    META_PACKAGE_NAME,
+    PACKAGE_LIBRARY_DIRS,
     PACKAGE_VERSION_ENV_VARS,
+    PYPROJECT_PATH,
 )
+from packaging.version import InvalidVersion, Version
+import requests
 import tomlkit
 
-
 PACKAGES = list(PACKAGE_LIBRARY_DIRS)
-REQUIREMENT_RE = re.compile(
-    r"^(?P<name>[A-Za-z0-9][A-Za-z0-9._-]*)(?P<extras>\[[^\]]+\])?"
-)
+REQUIREMENT_RE = re.compile(r"^(?P<name>[A-Za-z0-9][A-Za-z0-9._-]*)(?P<extras>\[[^\]]+\])?")
 
 
 class UpdateType(Enum):
@@ -95,9 +91,7 @@ def release_branch_exists(version: str) -> bool:
     if response.status_code == 404:
         return False
     response.raise_for_status()
-    raise RuntimeError(
-        f"Unable to determine whether release branch '{branch_name}' exists."
-    )
+    raise RuntimeError(f"Unable to determine whether release branch '{branch_name}' exists.")
 
 
 def meta_package_release_exists(version: str) -> bool:
@@ -120,9 +114,7 @@ def meta_package_release_exists(version: str) -> bool:
     requests.HTTPError
         If the PyPI request fails for a reason other than a missing package.
     """
-    response = requests.get(
-        f"https://pypi.org/pypi/{META_PACKAGE_NAME}/json", timeout=10
-    )
+    response = requests.get(f"https://pypi.org/pypi/{META_PACKAGE_NAME}/json", timeout=10)
     if response.status_code == 404:
         return False
     response.raise_for_status()
@@ -185,14 +177,13 @@ def validate_user_selected_update_type(branch: Branch) -> UpdateType:
     """
     user_selected_update_type = os.environ.get("USER_SELECTED_UPDATE_TYPE", "auto")
 
-    valid_update_types = (
-        ["auto", "patch"]
-        if branch.is_release_branch
-        else ["auto", "major", "minor", "patch"]
-    )
+    valid_update_types = ["auto", "patch"] if branch.is_release_branch else ["auto", "major", "minor", "patch"]
     if user_selected_update_type not in valid_update_types:
         raise ValueError(
-            f"Invalid meta-package version update type: {user_selected_update_type}. Valid values are {valid_update_types}."
+            (
+                f"Invalid meta-package version update type: "
+                f"{user_selected_update_type}. Valid values are {valid_update_types}.",
+            ),
         )
 
     update_type = UpdateType(user_selected_update_type)
@@ -204,9 +195,7 @@ def validate_user_selected_update_type(branch: Branch) -> UpdateType:
         UpdateType.PATCH if update_type == UpdateType.AUTO else update_type,
     )
     if release_branch_exists(next_version) or meta_package_release_exists(next_version):
-        raise ValueError(
-            f"The next version {next_version} already exists as a branch or PyPI release."
-        )
+        raise ValueError(f"The next version {next_version} already exists as a branch or PyPI release.")
 
     return update_type
 
@@ -339,7 +328,7 @@ def determine_update_type(
     if user_selected_update_type.priority < update_type.priority:
         raise ValueError(
             f"The user selected a {user_selected_update_type.name} update, but at least one component has a "
-            f"{update_type.name} update."
+            f"{update_type.name} update.",
         )
     return user_selected_update_type
 
@@ -371,9 +360,7 @@ def get_latest_stable_version(name: str) -> str:
 
     stable_versions: list[Version] = []
     for version_string, release_files in releases.items():
-        if not release_files or all(
-            release_file["yanked"] for release_file in release_files
-        ):
+        if not release_files or all(release_file["yanked"] for release_file in release_files):
             continue
 
         try:
@@ -411,9 +398,7 @@ def get_latest_stable_versions(package_names: list[str]) -> dict[str, str]:
     versions = {}
     for name in package_names:
         override_variable = PACKAGE_VERSION_ENV_VARS.get(name)
-        override_version = (
-            os.environ.get(override_variable, "").strip() if override_variable else ""
-        )
+        override_version = os.environ.get(override_variable, "").strip() if override_variable else ""
         versions[name] = override_version or get_latest_stable_version(name)
     return versions
 
@@ -458,20 +443,18 @@ def get_dependency_pinning() -> DependencyPinning:
     ValueError
         If the environment variable contains an unsupported value.
     """
-    value = os.environ.get(
-        DEPENDENCY_PINNING_ENV_VAR, DependencyPinning.STRICT.value
-    ).lower()
+    value = os.environ.get(DEPENDENCY_PINNING_ENV_VAR, DependencyPinning.STRICT.value).lower()
     try:
         return DependencyPinning(value)
     except ValueError as error:
         valid_values = ", ".join(pinning.value for pinning in DependencyPinning)
-        raise ValueError(
-            f"{DEPENDENCY_PINNING_ENV_VAR} must be one of: {valid_values}"
-        ) from error
+        raise ValueError(f"{DEPENDENCY_PINNING_ENV_VAR} must be one of: {valid_values}") from error
 
 
 def build_updated_requirement(
-    requirement: str, versions: dict[str, str], pinning: DependencyPinning | None = None
+    requirement: str,
+    versions: dict[str, str],
+    pinning: DependencyPinning | None = None,
 ) -> str:
     """Rebuild a requirement using the selected dependency pinning style.
 

@@ -17,10 +17,9 @@
 from __future__ import annotations
 
 import os
-import tempfile
 from pathlib import Path
+import tempfile
 from unittest.mock import Mock, patch
-
 
 import sdk_meta_package_utilities as sdk_utils
 import version_utilities
@@ -40,7 +39,7 @@ def test_update_pyproject_updates_dependencies_and_lock() -> None:
             '[project.optional-dependencies]\nall = ["ansys-saf-desktop-installer>=1.0.0,<1.1.0"]\n',
             encoding="utf-8",
         )
-        latest = {package: "1.0.0" for package in version_utilities.PACKAGES}
+        latest = dict.fromkeys(version_utilities.PACKAGES, "1.0.0")
         latest["ansys-bdm-api"] = "0.6.1"
         latest["ansys-saf-desktop-installer"] = "1.0.1"
         with (
@@ -68,9 +67,7 @@ def test_update_pyproject_applies_strict_pinning_without_version_update() -> Non
     with tempfile.TemporaryDirectory() as directory:
         root = Path(directory)
         pyproject = root / "pyproject.toml"
-        requirements = [
-            f'"{package}>=1.0.0,<1.1.0"' for package in version_utilities.PACKAGES
-        ]
+        requirements = [f'"{package}>=1.0.0,<1.1.0"' for package in version_utilities.PACKAGES]
         pyproject.write_text(
             f'[project]\nversion = "0.4.0"\ndependencies = [{", ".join(requirements)}]\n'
             "[project.optional-dependencies]\nall = []\n",
@@ -101,18 +98,14 @@ def test_update_pyproject_applies_strict_pinning_without_version_update() -> Non
 def test_run_uv_lock() -> None:
     with patch.object(sdk_utils.subprocess, "run") as run:
         sdk_utils.run_uv_lock()
-    run.assert_called_once_with(
-        ["uv", "lock"], check=True, cwd=sdk_utils.PYPROJECT_PATH.parent
-    )
+    run.assert_called_once_with(["uv", "lock"], check=True, cwd=sdk_utils.PYPROJECT_PATH.parent)
 
 
 def test_update_pyproject_writes_changed_true_for_pinning_only_change() -> None:
     with tempfile.TemporaryDirectory() as directory:
         root = Path(directory)
         pyproject = root / "pyproject.toml"
-        requirements = [
-            f'"{package}>=1.0.0,<1.1.0"' for package in version_utilities.PACKAGES
-        ]
+        requirements = [f'"{package}>=1.0.0,<1.1.0"' for package in version_utilities.PACKAGES]
         pyproject.write_text(
             f'[project]\nversion = "0.4.0"\ndependencies = [{", ".join(requirements)}]\n'
             "[project.optional-dependencies]\nall = []\n",
@@ -127,9 +120,7 @@ def test_update_pyproject_writes_changed_true_for_pinning_only_change() -> None:
             patch.object(sdk_utils, "get_meta_package_version", return_value="0.4.0"),
             patch.object(sdk_utils, "generate_release_notes"),
             patch.object(sdk_utils, "run_uv_lock"),
-            patch.object(
-                sdk_utils, "write_github_output", side_effect=outputs.__setitem__
-            ),
+            patch.object(sdk_utils, "write_github_output", side_effect=outputs.__setitem__),
             patch.dict(os.environ, {}, clear=True),
         ):
             sdk_utils.update_pyproject(
@@ -160,9 +151,7 @@ def test_update_pyproject_writes_changed_false_when_nothing_changes() -> None:
             patch.object(sdk_utils, "get_meta_package_version", return_value="0.4.0"),
             patch.object(sdk_utils, "generate_release_notes"),
             patch.object(sdk_utils, "run_uv_lock") as lock,
-            patch.object(
-                sdk_utils, "write_github_output", side_effect=outputs.__setitem__
-            ),
+            patch.object(sdk_utils, "write_github_output", side_effect=outputs.__setitem__),
             patch.dict(os.environ, {}, clear=True),
         ):
             sdk_utils.update_pyproject(

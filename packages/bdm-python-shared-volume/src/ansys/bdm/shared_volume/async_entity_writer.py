@@ -16,6 +16,10 @@
 
 from types import TracebackType
 
+import anyio
+from anyio.abc import ByteSendStream
+from anyio.streams.file import FileWriteStream
+
 from ansys.bdm.api import (
     EntityHandle,
     EntityWriterHasNotCompletedWritingDataError,
@@ -24,9 +28,6 @@ from ansys.bdm.api import (
     IAsyncEntityWriter,
     IAsyncStorageScope,
 )
-import anyio
-from anyio.abc import ByteSendStream
-from anyio.streams.file import FileWriteStream
 
 
 class AsyncEntityWriter(IAsyncEntityWriter):
@@ -44,7 +45,7 @@ class AsyncEntityWriter(IAsyncEntityWriter):
         self._mime_type = mime_type
         self._encoding = encoding
 
-    async def __aenter__(self) -> "AsyncEntityWriter":  # noqa: PYI034
+    async def __aenter__(self) -> "AsyncEntityWriter":
         """start writing data that will comprise an entity"""
         if self._entered:
             raise EntityWriterHasWrittenDataError("data has been written once already")

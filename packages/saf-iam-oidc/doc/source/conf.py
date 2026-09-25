@@ -17,6 +17,7 @@
 from datetime import datetime
 import os
 from pathlib import Path
+import shutil
 import subprocess
 
 from ansys_sphinx_theme import ansys_favicon, get_version_match
@@ -221,11 +222,18 @@ html_theme_options["switcher"] = {
 
 jinja_globals = {"version": version}
 
+tox_command = shutil.which("tox")
+tox_envs = []
+if tox_command:
+    tox_envs = subprocess.run(
+        [tox_command, "list", "-d", "-q"],
+        capture_output=True,
+        text=True,
+    ).stdout.splitlines()[1:]
+
 jinja_contexts = {
     "toxenvs": {
-        "envs": subprocess.run(
-            ["tox", "list", "-d", "-q"], capture_output=True, text=True
-        ).stdout.splitlines()[1:],
+        "envs": tox_envs,
     },
 }
 

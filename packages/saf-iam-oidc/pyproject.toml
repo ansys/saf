@@ -1,116 +1,46 @@
 [build-system]
-build-backend = "poetry.core.masonry.api"
-requires = [ "poetry-core>=2.0.0", "setuptools>=67.0" ]
+build-backend = "uv_build"
+requires = [ "uv-build>=0.12.18,<0.13" ]
 
-[tool.poetry]
+[project]
 name = "ansys-iam-oidc"
 version = "0.10.dev0"
 description = "An OpenID Connect (OIDC) implementation for Identity and Access Management (IAM) solutions."
-license = "Apache-2.0"
-authors = [ "ANSYS, Inc. <pyansys-core@synopsys.com>" ]
-maintainers = [ "ANSYS, Inc. <pyansys-core@synopsys.com>" ]
 readme = "README.rst"
 keywords = [
-  "solution application framework",
   "ansys solutions",
-  "python",
+  "iam",
   "oauth2",
   "oidc",
-  "iam",
+  "python",
   "saf",
   "solution",
+  "solution application framework",
 ]
+license = "Apache-2.0"
+license-files = [ "LICENSE" ]
+maintainers = [ { name = "ANSYS, Inc.", email = "pyansys-core@synopsys.com" } ]
+authors = [ { name = "ANSYS, Inc.", email = "pyansys-core@synopsys.com" } ]
+requires-python = ">=3.11,<4"
 classifiers = [
   "Development Status :: 4 - Beta",
   "Intended Audience :: Developers",
-  "License :: OSI Approved :: Apache Software License",
   "Natural Language :: English",
-  "Programming Language :: Python :: 3",
+  "Operating System :: Microsoft :: Windows",
+  "Operating System :: POSIX :: Linux",
+  "Programming Language :: Python :: 3 :: Only",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
   "Programming Language :: Python :: 3.14",
   "Topic :: Software Development :: Libraries",
-  "Operating System :: Microsoft :: Windows",
-  "Operating System :: POSIX :: Linux",
 ]
-packages = [ { include = "ansys/iam/oidc", from = "src" } ]
 
-[[tool.poetry.source]]
-name = "PyPI"
-priority = "primary"
-
-[tool.poetry.dependencies]
-python = ">=3.11,<4"
-joserfc = "^1.6.3"
-httpx2 = "^2.5.0"
-fastapi = ">=0.115.2, <1.0"
-
-[tool.poetry.group.doc]
-optional = true
-[tool.poetry.group.doc.dependencies]
-ansys-sphinx-theme = { version = "^1.7.0", python = ">=3.12", extras = [ "autoapi" ] }
-autodoc-pydantic = { version = "^2.2.0", python = ">=3.12" }
-numpydoc = { version = "^1.10.0", python = ">=3.12" }
-sphinx = { version = "^9.1.0", python = ">=3.12" }
-sphinx-autodoc-typehints = { version = "^3.6.3", python = ">=3.12" }
-sphinx-copybutton = { version = "^0.5.2", python = ">=3.12" }
-sphinx-design = { version = "^0.7.0", python = ">=3.12" }
-sphinx-jinja = { version = "^2.0.0", python = ">=3.12" }
-toml = "^0.10.2"
-tox = { version = "^4.38.1", python = ">=3.12" }
-
-[tool.poetry.group.tests]
-optional = true
-[tool.poetry.group.tests.dependencies]
-authlib = "^1.8.0"
-coverage = "^7.0.0"
-mock = "^4.0.3"
-pytest = "^9.0.3"
-pytest-cov = "^7.0.0"
-pytest-html = "^4.1.0"
-pytest-md = "^0.2.0"
-pytest-mock = "^3.10.0"
-pytest-order = "^1.1.0"
-pytest-timeout = "^2.3.1"
-pytest-xdist = "^3.6.1"
-httpx2-pytest = "^1.0.0"
-pytest-asyncio = "^1.3.0"
-
-[tool.poetry.urls]
-Homepage = "https://github.com/ansys/saf"
-Documentation = "https://ansys-iam-oidc.docs.solutions.ansys.com/"
-Repository = "https://github.com/ansys/saf"
-Issues = "https://github.com/ansys/saf/issues"
-
-[tool.ruff]
-target-version = "py311"
-line-length = 120
-extend-exclude = [
-  "conf.py",
+dependencies = [
+  "fastapi>=0.115.2,<1.0",
+  "httpx2>=2.5.0,<3",
+  "joserfc>=1.6.3,<2",
 ]
-# start with ALL and ignore as needed, limiting ignored scope as much as possible.
-lint.select = [ "ALL" ]
-lint.ignore = [
-  "UP009", # Allow use of unsafe yaml.load in conf.py for Sphinx compatibility
-]
-lint.per-file-ignores."!src/**.py" = [ "D", "INP001" ]
-lint.per-file-ignores.".github/*" = [
-  "D", # docstrings not needed in github scripts
-]
-lint.per-file-ignores."tests/*" = [
-  "D",       # docstrings not needed in tests
-  "FBT001",  # boolean positional args allowed in tests
-  "PLR2004", # magic values allowed in tests
-  "S101",    # asserts allowed in tests
-]
-lint.flake8-pytest-style.mark-parentheses = false
-lint.isort.force-sort-within-sections = true
-lint.isort.known-first-party = [ "src", "doc", "tests" ]
-
-[tool.codespell]
-ignore-words = "./doc/styles/config/vocabularies/ANSYS/accept.txt"
-skip = "*.log,*.json,.git,.venv,.poetry,*.lcov,htmlcov,dist,./doc/build,poetry.lock"
 
 [tool.pytest.ini_options]
 pythonpath = "."
@@ -135,7 +65,7 @@ omit = [ "*/pytest-of-*/pytest-*/popen-*/*", "/tmp/*" ]
 show_missing = true
 
 [tool.pyright]
-pythonVersion = "3.11"
+pythonVersion = "3.12"
 extraPaths = [ "src" ]
 include = [ "src/ansys/iam/oidc", "tests" ]
 exclude = [
@@ -145,7 +75,7 @@ exclude = [
   "doc",
 ]
 strict = [ "src/ansys/iam/oidc", "tests" ]
-venvPath = "."
+venvPath = "../.."
 venv = ".venv"
 
 [tool.copyright]
@@ -155,5 +85,9 @@ exclude = [
   ".github/*",
 ]
 
-[build-system-requirements]
-build-system-version = "2.3.2"
+[tool.uv.sources]
+ansys-iam-oidc = { workspace = true }
+
+[tool.uv.build-backend]
+module-name = "ansys.iam.oidc"
+namespace = true

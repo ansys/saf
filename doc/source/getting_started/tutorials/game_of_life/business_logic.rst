@@ -158,8 +158,8 @@ In practice, the whole backend interacts with the engine through four calls:
 .. code-block:: python
 
     controller = SimulationController(grid_size=(20, 20))
-    controller.initialize("blinker")     # seed the grid
-    controller.step_forward()            # advance one generation
+    controller.initialize("blinker")  # seed the grid
+    controller.step_forward()  # advance one generation
     state = controller.get_current_state()  # snapshot: grid, generation, live_cells
 
 ``state.grid`` is a NumPy array of zeros and ones. ``state.live_cells`` is the population count,

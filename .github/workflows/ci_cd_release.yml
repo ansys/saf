@@ -170,7 +170,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Generate release notes
-        uses: ansys/saf-devops/generate-release-notes@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
+        uses: ansys/saf-devops/generate-release-notes@5d9e84af215372b7b125bbf12f5b0093600eb06d # v1.2.0
         with:
           tag-name: ${{ needs.release-information.outputs.release-name }}-${{ inputs.library
             }}
@@ -256,30 +256,21 @@ jobs:
       - prepare-release
       - certification
     if: ${{ always() && needs.certification.result == 'success' }}
-    runs-on: ubuntu-latest
     permissions:
       attestations: write # Write attestation for uploaded distribution artifacts
       contents: read # Read the source code of the project
       id-token: write # Write access to a temporary token for signing attestations
-    steps:
-      - name: checkout
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          token: ${{ secrets.PYANSYS_CI_BOT_TOKEN || github.token }}
-          ref: ${{ inputs.dev-release && 'main' || needs.release-information.outputs.release-branch-name
-            }}
-          persist-credentials: false
-
-      - name: "Build wheel"
-        uses: ansys/actions/build-library@7410037bfb276c79ae91eb3617b9f5d2876f0c94 # v11.0.8
-        with:
-          library-name: ${{ inputs.library }}-${{ needs.release-information.outputs.release-name
-            }}
-          working-directory: packages/${{ inputs.library }}
-          python-version: ${{ vars.PYTHON_VERSION }}
-          attest-provenance: true
-          validate-build: true
-          checkout: false
+    uses: ./.github/workflows/_build.yml
+    with:
+      library-name: ${{ inputs.library }}${{ case(contains('bdm-python-api,bdm-python-shared-volume,saf-iam-oidc,saf-product-configuration',
+        inputs.library), '', format('-{0}', needs.release-information.outputs.release-name))
+        }}
+      python-version: ${{ vars.PYTHON_VERSION }}
+      use-moon: ${{ contains('bdm-python-api,bdm-python-shared-volume,saf-iam-oidc,saf-product-configuration',
+        inputs.library) }}
+      artifact-name: ${{ inputs.library }}-${{ needs.release-information.outputs.release-name
+        }}${{ case(contains('bdm-python-api,bdm-python-shared-volume,saf-iam-oidc,saf-product-configuration',
+        inputs.library), '-artifacts', '') }}
 
   bump-version:
     name: Bump Version

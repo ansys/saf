@@ -241,10 +241,10 @@ Build the ``external_scripts`` path from the same prefix used in ``requests_path
    external_script = f"/{url_prefix}/super-components/dashAgGridComponentFunctions.js"
 
    app = DashProxy(
-      __name__,
-      requests_pathname_prefix=f"/{url_prefix}/",
-      routes_pathname_prefix=f"/{url_prefix}/",
-      external_scripts=[external_script],  # only needed for LogsSupervisor
+       __name__,
+       requests_pathname_prefix=f"/{url_prefix}/",
+       routes_pathname_prefix=f"/{url_prefix}/",
+       external_scripts=[external_script],  # only needed for LogsSupervisor
    )
    add_super_components_assets(app)
 

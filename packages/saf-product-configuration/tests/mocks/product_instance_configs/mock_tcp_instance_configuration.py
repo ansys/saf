@@ -51,7 +51,7 @@ class MockTcpInstanceVersionConfiguration(IProductInstanceVersionConfiguration):
             Software(
                 name="Python",
                 version=f"{sys.version_info.major}.{sys.version_info.minor}",
-            )
+            ),
         ]
 
     @property

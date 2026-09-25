@@ -1,112 +1,32 @@
 [build-system]
-build-backend = "poetry.core.masonry.api"
-requires = [ "poetry-core>=2.0.0", "setuptools>=70.0" ]
+build-backend = "uv_build"
+requires = [ "uv-build>=0.12.18,<0.13" ]
 
-[tool.poetry]
+[project]
 name = "ansys-bdm-shared-volume"
 version = "0.5.dev0"
 description = "Shared volume utilities for BDM solutions."
-license = "Apache-2.0"
-authors = [ "ANSYS, Inc. <pyansys-core@synopsys.com>" ]
-maintainers = [ "ANSYS, Inc. <pyansys-core@synopsys.com>" ]
 readme = "README.rst"
+license = "Apache-2.0"
+license-files = [ "LICENSE" ]
+maintainers = [ { name = "ANSYS, Inc.", email = "pyansys-core@synopsys.com" } ]
+authors = [ { name = "ANSYS, Inc.", email = "pyansys-core@synopsys.com" } ]
+requires-python = ">=3.11,<4"
 classifiers = [
   "Development Status :: 3 - Alpha",
   "Intended Audience :: Other Audience",
-  "License :: OSI Approved :: Apache Software License",
   "Natural Language :: English",
-  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
   "Programming Language :: Python :: 3.14",
 ]
 
-[[tool.poetry.packages]]
-include = "ansys/bdm/shared_volume/"
-from = "src"
-
-[[tool.poetry.source]]
-name = "PyPI"
-priority = "primary"
-
-[tool.poetry.dependencies]
-python = ">=3.11,<4"
-aioshutil = "^1.3"
-ansys-bdm-api = { version = ">=0.5, <1.0", allow-prereleases = true }
-
-[tool.poetry.group.doc]
-optional = true
-[tool.poetry.group.doc.dependencies]
-ansys-sphinx-theme = "^1.7.2"
-autodoc_pydantic = "^2.0"
-numpydoc = "^1.8.0"
-sphinx = "^8.0"
-sphinx-code-tabs = "^0.5.5"
-sphinx-design = "^0.6.1"
-sphinx_mdinclude = "^0.6.2"
-sphinx-autobuild = "^2021.3.14"
-sphinx-autodoc-typehints = "^2.5.0"
-sphinxcontrib-websupport = "^1.2.4"
-sphinx-copybutton = "^0.5.2"
-sphinxemoji = "^0.2"
-sphinx-gallery = "^0.15"
-sphinx-notfound-page = "^0.8.3"
-sphinx-tabs = ">=1.2.1,<3.5.0"
-toml = "^0.10.2"
-
-[tool.poetry.group.tests]
-optional = true
-[tool.poetry.group.tests.dependencies]
-coverage = "^7.0.0"
-filelock = "^3.8.0"
-mock = "^4.0.3"
-pytest = "^9.0.3"
-pytest-asyncio = "^1.3.0"
-pytest-cov = "^7.0.0"
-pytest-html = "^4.1.1"
-pytest-md = "^0.2.0"
-pytest-mock = "^3.10.0"
-pytest-timeout = "^2.3.1"
-pytest-xdist = "^3.6.1"
-
-[tool.ruff]
-target-version = "py311"
-line-length = 120
-extend-exclude = [
-  "conf.py",
+dependencies = [
+  "aioshutil>=1.3,<2",
+  "ansys-bdm-api>=0.5,<1.0",
 ]
-
-# in same order as in https://docs.astral.sh/ruff/rules
-lint.select = [
-  "A",      # flake8-builtins
-  "ASYNC",  # flake8-async
-  "B",      # flake8-bugbear
-  "C4",     # flake8-comprehensions
-  "C90",    # mccabe
-  "COM",    # flake8-commas
-  "E",      # pycodestyle - error
-  "F",      # pyflakes
-  "FAST",   # fastapi
-  "I",      # isort
-  "LOG",    # flake8-logging
-  "N",      # pep8-naming
-  "PIE",    # flake8-pie
-  "PT",     # flake8-pytest-style
-  "PTH",    # flake8-use-pathlib
-  "PYI",    # flake8-pyi
-  "Q",      # flake8-quotes
-  "RUF100", # ruff-specific rules: unused noqa
-  "SIM",    # flake8-simplify
-  "TC",     # flake8-type-checking
-]
-lint.ignore = [
-  "UP", # pyupgrade
-  "W",  # pycodestyle - warning
-]
-lint.flake8-pytest-style.mark-parentheses = false
-lint.isort.force-sort-within-sections = true
-lint.isort.known-first-party = [ "src", "doc", "tests" ]
 
 [tool.pytest.ini_options]
 pythonpath = "."
@@ -125,7 +45,8 @@ filterwarnings = [
 testpaths = [ "tests/" ]
 
 [tool.coverage.run]
-source = [ "ansys.bdm" ]
+source = [ "ansys.bdm.shared_volume" ]
+disable_warnings = [ "no-data-collected" ]
 omit = [
   "read_toml.py",
   "tests/*",
@@ -136,8 +57,8 @@ omit = [
 show_missing = true
 
 [tool.pyright]
-pythonVersion = "3.11"
-venvPath = "."
+pythonVersion = "3.12"
+venvPath = "../.."
 venv = ".venv"
 extraPaths = [ "src" ]
 include = [
@@ -149,8 +70,13 @@ strict = [
   "tests",
 ]
 
-[tool.bandit]
-exclude_dirs = [ ".venv", ".tox", "tests" ]
+[tool.uv]
+prereleases = "if-necessary"
+prerelease-package = { ansys-bdm-api = "allow" }
 
-[build-system-requirements]
-build-system-version = "2.3.2"
+[tool.uv.sources]
+ansys-bdm-shared-volume = { workspace = true }
+
+[tool.uv.build-backend]
+module-name = "ansys.bdm.shared_volume"
+namespace = true

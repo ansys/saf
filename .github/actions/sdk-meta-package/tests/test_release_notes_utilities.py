@@ -21,20 +21,14 @@ from pathlib import Path
 import tempfile
 from unittest.mock import Mock, patch
 
-
 import release_notes_utilities as release_utils
 
 
 def test_get_release_notes() -> None:
     response = Mock(status_code=200)
-    response.json.return_value = {
-        "body": "<!-- hidden -->\n## What's changed\n\n- Added feature"
-    }
+    response.json.return_value = {"body": "<!-- hidden -->\n## What's changed\n\n- Added feature"}
     with patch.object(release_utils.requests, "get", return_value=response) as get:
-        assert (
-            release_utils.get_release_notes("ansys-bdm-api", "0.5.0")
-            == "- Added feature"
-        )
+        assert release_utils.get_release_notes("ansys-bdm-api", "0.5.0") == "- Added feature"
     get.assert_called_once()
 
 
@@ -54,9 +48,7 @@ def test_generate_release_notes_writes_report_and_summary() -> None:
         root = Path(directory)
         summary = root / "summary.md"
         with (
-            patch.object(
-                release_utils, "RELEASE_NOTES_FILE", root / "release_notes.md"
-            ),
+            patch.object(release_utils, "RELEASE_NOTES_FILE", root / "release_notes.md"),
             patch.dict(
                 os.environ,
                 {"GITHUB_STEP_SUMMARY": str(summary), "MINIMUM_PIP_VERSION": "26.0"},

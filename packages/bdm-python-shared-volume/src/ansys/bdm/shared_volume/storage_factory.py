@@ -19,7 +19,6 @@ from ansys.bdm.api import (
     IStorageScope,
     IStorageScopeFactory,
 )
-
 from ansys.bdm.shared_volume.async_storage_scope import AsyncStorageScope
 from ansys.bdm.shared_volume.entity_tracker import EntityTracker
 from ansys.bdm.shared_volume.storage_configuration import (

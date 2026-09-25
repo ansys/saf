@@ -41,17 +41,19 @@ with tempfile.TemporaryDirectory() as temp_dir:
 
     from ci_cd_job_matrices import (
         SAF_PACKAGES,
-        TESTS_DEFINITIONS_PER_TARGET,
         TESTS_DEFINITIONS_DIR,
-        write_output,
-        write_to_github_step_summary,
-        write_matrix_to_output,
-        get_pr_changes,
+        TESTS_DEFINITIONS_PER_TARGET,
+        get_changed_moon_packages,
         get_changed_packages,
+        get_changed_poetry_packages,
         get_code_style_matrix_entries,
         get_compatibility_matrix_entries,
-        get_tests_matrix_entries,
+        get_pr_changes,
         get_tests_generated_solution_flag,
+        get_tests_matrix_entries,
+        write_matrix_to_output,
+        write_output,
+        write_to_github_step_summary,
     )
 
 
@@ -106,7 +108,7 @@ class TestWriteOutput:
     """Test the write_output function with various input types."""
 
     @pytest.mark.parametrize(
-        "key,value,validator",
+        ("key", "value", "validator"),
         [
             ("single_key", "single_value", lambda v: v == "single_value"),
             (
@@ -124,9 +126,7 @@ class TestWriteOutput:
         ],
         ids=["single_line", "multiline", "json", "empty", "long_value"],
     )
-    def test_write_output_types(
-        self, github_env: tuple[Path, Path], key: str, value: str, validator
-    ):
+    def test_write_output_types(self, github_env: tuple[Path, Path], key: str, value: str, validator):
         """Test writing different types of output values."""
         output_file, _ = github_env
         write_output(key, value)
@@ -257,27 +257,21 @@ class TestWriteMatrixToOutput:
 class TestGetPrChanges:
     """Test the get_pr_changes function."""
 
-    def test_get_pr_changes_empty(
-        self, github_env: tuple[Path, Path], monkeypatch: pytest.MonkeyPatch
-    ):
+    def test_get_pr_changes_empty(self, github_env: tuple[Path, Path], monkeypatch: pytest.MonkeyPatch):
         """Empty PR changes returns empty list."""
         monkeypatch.delenv("PR_CHANGES_JSON", raising=False)
         result = get_pr_changes()
 
         assert result == []
 
-    def test_get_pr_changes_single_package(
-        self, github_env: tuple[Path, Path], monkeypatch: pytest.MonkeyPatch
-    ):
+    def test_get_pr_changes_single_package(self, github_env: tuple[Path, Path], monkeypatch: pytest.MonkeyPatch):
         """Single package in PR changes is returned."""
         monkeypatch.setenv("PR_CHANGES_JSON", json.dumps(["glow-engine"]))
         result = get_pr_changes()
 
         assert result == ["glow-engine"]
 
-    def test_get_pr_changes_multiple_packages(
-        self, github_env: tuple[Path, Path], monkeypatch: pytest.MonkeyPatch
-    ):
+    def test_get_pr_changes_multiple_packages(self, github_env: tuple[Path, Path], monkeypatch: pytest.MonkeyPatch):
         """Multiple packages in PR changes are returned."""
         packages = ["glow-engine", "saf-cli", "saf-testing"]
         monkeypatch.setenv("PR_CHANGES_JSON", json.dumps(packages))
@@ -285,9 +279,7 @@ class TestGetPrChanges:
 
         assert result == packages
 
-    def test_get_pr_changes_outputs_matrix(
-        self, github_env: tuple[Path, Path], monkeypatch: pytest.MonkeyPatch
-    ):
+    def test_get_pr_changes_outputs_matrix(self, github_env: tuple[Path, Path], monkeypatch: pytest.MonkeyPatch):
         """PR changes are written to output as a list."""
         output_file, _ = github_env
         packages = ["pkg1", "pkg2"]
@@ -308,33 +300,25 @@ class TestGetChangedPackages:
         result = get_changed_packages([])
         assert result == []
 
-    def test_get_changed_packages_single_valid_package(
-        self, github_env: tuple[Path, Path]
-    ):
+    def test_get_changed_packages_single_valid_package(self, github_env: tuple[Path, Path]):
         """Single valid package is returned."""
         result = get_changed_packages(["glow-engine"])
         assert result == ["glow-engine"]
 
-    def test_get_changed_packages_multiple_valid_packages(
-        self, github_env: tuple[Path, Path]
-    ):
+    def test_get_changed_packages_multiple_valid_packages(self, github_env: tuple[Path, Path]):
         """Multiple valid packages are returned."""
         packages = ["glow-engine", "saf-cli", "saf-testing"]
         result = get_changed_packages(packages)
         assert result == packages
 
-    def test_get_changed_packages_filters_invalid_packages(
-        self, github_env: tuple[Path, Path]
-    ):
+    def test_get_changed_packages_filters_invalid_packages(self, github_env: tuple[Path, Path]):
         """Invalid packages are filtered out."""
         packages = ["glow-engine", "invalid-pkg", "saf-cli"]
         result = get_changed_packages(packages)
         assert result == ["glow-engine", "saf-cli"]
         assert "invalid-pkg" not in result
 
-    def test_get_changed_packages_all_invalid_packages(
-        self, github_env: tuple[Path, Path]
-    ):
+    def test_get_changed_packages_all_invalid_packages(self, github_env: tuple[Path, Path]):
         """All invalid packages returns empty list."""
         packages = ["unknown-pkg", "fake-pkg"]
         result = get_changed_packages(packages)
@@ -346,148 +330,183 @@ class TestGetChangedPackages:
         result = get_changed_packages(packages)
         assert result == packages
 
-    def test_get_changed_packages_all_valid_packages(
-        self, github_env: tuple[Path, Path]
-    ):
+    def test_get_changed_packages_all_valid_packages(self, github_env: tuple[Path, Path]):
         """All SAF packages can be in the input."""
         result = get_changed_packages(SAF_PACKAGES)
         assert result == SAF_PACKAGES
+
+    def test_get_changed_packages_includes_moon_packages(self, github_env: tuple[Path, Path]):
+        """Moon-managed packages are included in the package matrix."""
+        output_file, _ = github_env
+        result = get_changed_packages(["bdm-python-api", "glow-engine"])
+
+        assert result == ["bdm-python-api", "glow-engine"]
+        outputs = parse_outputs(output_file)
+        assert json.loads(outputs["packages_matrix"]) == {
+            "include": [
+                {"library-name": "bdm-python-api"},
+                {"library-name": "glow-engine"},
+            ],
+        }
+
+
+class TestGetChangedPoetryPackages:
+    """Test the get_changed_poetry_packages function."""
+
+    def test_get_changed_poetry_packages_excludes_moon_packages(self, github_env: tuple[Path, Path]):
+        """Moon-managed packages are excluded from the Poetry package matrix."""
+        output_file, _ = github_env
+
+        result = get_changed_poetry_packages(["bdm-python-api", "glow-engine"])
+
+        assert result == ["glow-engine"]
+        outputs = parse_outputs(output_file)
+        assert json.loads(outputs["poetry_packages_matrix"]) == {"include": [{"library-name": "glow-engine"}]}
+
+    def test_get_changed_poetry_packages_empty_input(self, github_env: tuple[Path, Path]):
+        """Empty input returns no Poetry packages."""
+        output_file, _ = github_env
+
+        result = get_changed_poetry_packages([])
+
+        assert result == []
+        outputs = parse_outputs(output_file)
+        assert outputs["poetry_packages_matrix"] == "{}"
+
+
+class TestGetChangedMoonPackages:
+    """Test the get_changed_moon_packages function."""
+
+    def test_get_changed_moon_packages_empty_input(self, github_env: tuple[Path, Path]):
+        """Empty input returns no Moon packages."""
+        output_file, _ = github_env
+
+        result = get_changed_moon_packages([])
+
+        assert result == []
+        outputs = parse_outputs(output_file)
+        assert outputs["moon_packages_matrix"] == "{}"
+
+    def test_get_changed_moon_packages_returns_moon_packages(self, github_env: tuple[Path, Path]):
+        """Moon-managed packages are returned and written to their matrix."""
+        output_file, _ = github_env
+
+        result = get_changed_moon_packages(["glow-engine", "bdm-python-api"])
+
+        assert result == ["bdm-python-api"]
+        outputs = parse_outputs(output_file)
+        assert json.loads(outputs["moon_packages_matrix"]) == {"include": [{"library-name": "bdm-python-api"}]}
+
+    def test_get_changed_moon_packages_filters_invalid_packages(self, github_env: tuple[Path, Path]):
+        """Invalid and non-Moon packages are filtered out."""
+        result = get_changed_moon_packages(["invalid-pkg", "saf-testing"])
+
+        assert result == []
 
 
 class TestGetCodeStyleMatrixEntries:
     """Test the get_code_style_matrix_entries function."""
 
     def test_get_code_style_matrix_empty_packages(self, github_env: tuple[Path, Path]):
-        """Empty packages includes only root entry."""
+        """Empty packages produce an empty matrix."""
         output_file, _ = github_env
         get_code_style_matrix_entries([])
 
         outputs = parse_outputs(output_file)
-        matrix = json.loads(outputs["code_style_matrix"])
-        assert len(matrix["include"]) == 1
-        assert matrix["include"][0]["target-directory"] == ".github"
-        assert matrix["include"][0]["dependency-manager"] == "uv"
+        assert outputs["code_style_matrix"] == "{}"
 
     def test_get_code_style_matrix_single_package(self, github_env: tuple[Path, Path]):
-        """Single package includes root and package entries."""
+        """Single package includes one package entry."""
         output_file, _ = github_env
         get_code_style_matrix_entries(["saf-testing"])
 
         outputs = parse_outputs(output_file)
         matrix = json.loads(outputs["code_style_matrix"])
-        assert len(matrix["include"]) == 2
-        assert matrix["include"][0]["target-directory"] == ".github"
-        assert matrix["include"][1]["target-directory"] == "packages/saf-testing"
-        assert matrix["include"][1]["dependency-manager"] == "poetry"
+        assert len(matrix["include"]) == 1
+        assert matrix["include"][0]["target-directory"] == "packages/saf-testing"
+        assert matrix["include"][0]["dependency-manager"] == "poetry"
 
-    def test_get_code_style_matrix_includes_examples(
-        self, github_env: tuple[Path, Path]
-    ):
+    def test_get_code_style_matrix_includes_examples(self, github_env: tuple[Path, Path]):
         """Examples changes add a style job for the examples project."""
         output_file, _ = github_env
         get_code_style_matrix_entries([], ["examples"])
 
         outputs = parse_outputs(output_file)
         matrix = json.loads(outputs["code_style_matrix"])
-        assert len(matrix["include"]) == 2
-        assert matrix["include"][0]["target-directory"] == ".github"
-        assert matrix["include"][1] == {
+        assert len(matrix["include"]) == 1
+        assert matrix["include"][0] == {
             "target-directory": "examples",
             "dependency-manager": "poetry",
             "poetry-install-args": "--with tests --all-extras",
         }
 
-    def test_get_code_style_matrix_multiple_packages(
-        self, github_env: tuple[Path, Path]
-    ):
+    def test_get_code_style_matrix_multiple_packages(self, github_env: tuple[Path, Path]):
         """Multiple packages are all included."""
         output_file, _ = github_env
-        get_code_style_matrix_entries(["glow-engine", "saf-iam-oidc"])
+        get_code_style_matrix_entries(["glow-engine", "saf-testing"])
 
         outputs = parse_outputs(output_file)
         matrix = json.loads(outputs["code_style_matrix"])
-        assert len(matrix["include"]) == 3  # root + 2 packages
+        assert len(matrix["include"]) == 2
 
-    def test_get_code_style_matrix_uses_default_poetry_args(
-        self, github_env: tuple[Path, Path]
-    ):
+    def test_get_code_style_matrix_uses_default_poetry_args(self, github_env: tuple[Path, Path]):
         """Packages without custom args use default."""
         output_file, _ = github_env
         get_code_style_matrix_entries(["saf-testing"])
 
         outputs = parse_outputs(output_file)
         matrix = json.loads(outputs["code_style_matrix"])
-        package_entry = matrix["include"][1]
+        package_entry = matrix["include"][0]
         assert package_entry["poetry-install-args"] == "--with tests --all-extras"
 
-    def test_get_code_style_matrix_uses_custom_poetry_args(
-        self, github_env: tuple[Path, Path]
-    ):
+    def test_get_code_style_matrix_uses_custom_poetry_args(self, github_env: tuple[Path, Path]):
         """Packages with custom args use those args."""
         output_file, _ = github_env
         get_code_style_matrix_entries(["glow-engine"])
 
         outputs = parse_outputs(output_file)
         matrix = json.loads(outputs["code_style_matrix"])
-        package_entry = matrix["include"][1]
+        package_entry = matrix["include"][0]
         assert package_entry["poetry-install-args"] == "--with tests,style --all-extras"
 
-    def test_get_code_style_matrix_multiple_packages_custom_args(
-        self, github_env: tuple[Path, Path]
-    ):
+    def test_get_code_style_matrix_multiple_packages_custom_args(self, github_env: tuple[Path, Path]):
         """Multiple packages with different custom args are handled correctly."""
         output_file, _ = github_env
-        get_code_style_matrix_entries(
-            ["glow-engine", "saf-iam-oidc", "saf-desktop-orchestrator"]
-        )
+        get_code_style_matrix_entries(["glow-engine", "saf-testing", "saf-desktop-orchestrator"])
 
         outputs = parse_outputs(output_file)
         matrix = json.loads(outputs["code_style_matrix"])
 
         # Check glow-engine entry
-        glow_entry = [
-            e
-            for e in matrix["include"]
-            if e["target-directory"] == "packages/glow-engine"
-        ][0]
+        glow_entry = [e for e in matrix["include"] if e["target-directory"] == "packages/glow-engine"][0]
         assert glow_entry["poetry-install-args"] == "--with tests,style --all-extras"
 
-        # Check saf-iam-oidc entry (default args)
-        iam_entry = [
-            e
-            for e in matrix["include"]
-            if e["target-directory"] == "packages/saf-iam-oidc"
-        ][0]
-        assert iam_entry["poetry-install-args"] == "--with tests --all-extras"
+        # Check saf-testing entry (default args)
+        testing_entry = [e for e in matrix["include"] if e["target-directory"] == "packages/saf-testing"][0]
+        assert testing_entry["poetry-install-args"] == "--with tests --all-extras"
 
         # Check saf-desktop-orchestrator entry (custom args)
-        desktop_entry = [
-            e
-            for e in matrix["include"]
-            if e["target-directory"] == "packages/saf-desktop-orchestrator"
-        ][0]
+        desktop_entry = [e for e in matrix["include"] if e["target-directory"] == "packages/saf-desktop-orchestrator"][
+            0
+        ]
         assert desktop_entry["poetry-install-args"] == "--with tests,dev --all-extras"
 
-    def test_get_code_style_matrix_filters_invalid_packages(
-        self, github_env: tuple[Path, Path]
-    ):
+    def test_get_code_style_matrix_filters_invalid_packages(self, github_env: tuple[Path, Path]):
         """Invalid packages are filtered out."""
         output_file, _ = github_env
         get_code_style_matrix_entries(["glow-engine", "invalid-pkg"])
 
         outputs = parse_outputs(output_file)
         matrix = json.loads(outputs["code_style_matrix"])
-        # Root + only glow-engine, not invalid-pkg
-        assert len(matrix["include"]) == 2
+        # Only glow-engine is included; invalid-pkg is filtered out.
+        assert len(matrix["include"]) == 1
         assert all("invalid-pkg" not in str(e) for e in matrix["include"])
 
 
 class TestGetCompatibilityMatrixEntries:
     """Test the get_compatibility_matrix_entries function."""
 
-    def test_get_compatibility_matrix_empty_packages(
-        self, github_env: tuple[Path, Path]
-    ):
+    def test_get_compatibility_matrix_empty_packages(self, github_env: tuple[Path, Path]):
         """Empty packages returns empty matrix."""
         output_file, _ = github_env
         get_compatibility_matrix_entries([])
@@ -495,9 +514,7 @@ class TestGetCompatibilityMatrixEntries:
         outputs = parse_outputs(output_file)
         assert outputs["compatibility_matrix"] == "{}"
 
-    def test_get_compatibility_matrix_single_package(
-        self, github_env: tuple[Path, Path]
-    ):
+    def test_get_compatibility_matrix_single_package(self, github_env: tuple[Path, Path]):
         """Single package is included in matrix."""
         output_file, _ = github_env
         get_compatibility_matrix_entries(["glow-engine"])
@@ -507,9 +524,7 @@ class TestGetCompatibilityMatrixEntries:
         assert len(matrix["include"]) == 1
         assert matrix["include"][0]["library-name"] == "glow-engine"
 
-    def test_get_compatibility_matrix_multiple_packages(
-        self, github_env: tuple[Path, Path]
-    ):
+    def test_get_compatibility_matrix_multiple_packages(self, github_env: tuple[Path, Path]):
         """Multiple packages are included in matrix."""
         output_file, _ = github_env
         packages = ["glow-engine", "saf-testing", "saf-product-manager"]
@@ -521,9 +536,7 @@ class TestGetCompatibilityMatrixEntries:
         names = [e["library-name"] for e in matrix["include"]]
         assert names == packages
 
-    def test_get_compatibility_matrix_excludes_saf_cli(
-        self, github_env: tuple[Path, Path]
-    ):
+    def test_get_compatibility_matrix_excludes_saf_cli(self, github_env: tuple[Path, Path]):
         """saf-cli is excluded from compatibility matrix."""
         output_file, _ = github_env
         packages = ["glow-engine", "saf-cli", "saf-testing"]
@@ -544,9 +557,7 @@ class TestGetCompatibilityMatrixEntries:
         outputs = parse_outputs(output_file)
         assert outputs["compatibility_matrix"] == "{}"
 
-    def test_get_compatibility_matrix_outputs_to_summary(
-        self, github_env: tuple[Path, Path]
-    ):
+    def test_get_compatibility_matrix_outputs_to_summary(self, github_env: tuple[Path, Path]):
         """Compatibility matrix is written to summary."""
         _, summary_file = github_env
         get_compatibility_matrix_entries(["glow-engine"])
@@ -566,9 +577,7 @@ class TestGetTestsMatrixEntries:
         outputs = parse_outputs(output_file)
         assert outputs["tests_matrix"] == "{}"
 
-    def test_get_tests_matrix_single_package_single_definition(
-        self, github_env: tuple[Path, Path]
-    ):
+    def test_get_tests_matrix_single_package_single_definition(self, github_env: tuple[Path, Path]):
         """Single package with single test definition."""
         output_file, _ = github_env
         get_tests_matrix_entries(["saf-testing"], ["saf-testing"])
@@ -592,12 +601,10 @@ class TestGetTestsMatrixEntries:
                 "library-name": "examples",
                 "tests-groups-file-path": f"{TESTS_DEFINITIONS_DIR}/examples.json",
                 "working-directory": "examples",
-            }
+            },
         ]
 
-    def test_get_tests_matrix_single_package_multiple_definitions(
-        self, github_env: tuple[Path, Path]
-    ):
+    def test_get_tests_matrix_single_package_multiple_definitions(self, github_env: tuple[Path, Path]):
         """Single package with multiple test definitions."""
         output_file, _ = github_env
         get_tests_matrix_entries(["glow-engine"], ["glow-engine"])
@@ -611,9 +618,7 @@ class TestGetTestsMatrixEntries:
     def test_get_tests_matrix_multiple_packages(self, github_env: tuple[Path, Path]):
         """Multiple packages with varying definitions."""
         output_file, _ = github_env
-        get_tests_matrix_entries(
-            ["glow-engine", "saf-iam-oidc"], ["glow-engine", "saf-iam-oidc"]
-        )
+        get_tests_matrix_entries(["glow-engine", "saf-iam-oidc"], ["glow-engine", "saf-iam-oidc"])
 
         outputs = parse_outputs(output_file)
         matrix = json.loads(outputs["tests_matrix"])
@@ -628,9 +633,7 @@ class TestGetTestsMatrixEntries:
         outputs = parse_outputs(output_file)
         assert outputs["tests_matrix"] == "{}"
 
-    def test_get_tests_matrix_mixed_valid_invalid_packages(
-        self, github_env: tuple[Path, Path]
-    ):
+    def test_get_tests_matrix_mixed_valid_invalid_packages(self, github_env: tuple[Path, Path]):
         """Only valid packages are included."""
         output_file, _ = github_env
         get_tests_matrix_entries(
@@ -645,9 +648,7 @@ class TestGetTestsMatrixEntries:
         names = [e["library-name"] for e in matrix["include"]]
         assert "unknown-package" not in names
 
-    def test_get_tests_matrix_file_paths_are_correct(
-        self, github_env: tuple[Path, Path]
-    ):
+    def test_get_tests_matrix_file_paths_are_correct(self, github_env: tuple[Path, Path]):
         """File paths in matrix entries are correct."""
         output_file, _ = github_env
         get_tests_matrix_entries(["saf-testing"], ["saf-testing"])
@@ -666,9 +667,7 @@ class TestGetTestsMatrixEntries:
         summary = read_summary(summary_file)
         assert "### tests_matrix:" in summary
 
-    def test_get_tests_matrix_includes_changed_product_manager_products(
-        self, github_env: tuple[Path, Path]
-    ):
+    def test_get_tests_matrix_includes_changed_product_manager_products(self, github_env: tuple[Path, Path]):
         """Product-specific matrices are included when their labels and parent package changed."""
         output_file, _ = github_env
         get_tests_matrix_entries(
@@ -683,18 +682,14 @@ class TestGetTestsMatrixEntries:
         outputs = parse_outputs(output_file)
         matrix = json.loads(outputs["tests_matrix"])
         assert len(matrix["include"]) == 3
-        assert {entry["library-name"] for entry in matrix["include"]} == {
-            "saf-product-manager"
-        }
+        assert {entry["library-name"] for entry in matrix["include"]} == {"saf-product-manager"}
         assert {entry["tests-groups-file-path"] for entry in matrix["include"]} == {
             f"{TESTS_DEFINITIONS_DIR}/saf-product-manager.json",
             f"{TESTS_DEFINITIONS_DIR}/saf-product-manager-aedt.json",
             f"{TESTS_DEFINITIONS_DIR}/saf-product-manager-fluent.json",
         }
 
-    def test_get_tests_matrix_excludes_product_manager_products_without_parent(
-        self, github_env: tuple[Path, Path]
-    ):
+    def test_get_tests_matrix_excludes_product_manager_products_without_parent(self, github_env: tuple[Path, Path]):
         """Product-specific matrices require a change to saf-product-manager."""
         output_file, _ = github_env
         get_tests_matrix_entries(["saf-product-manager-aedt"], [])
@@ -706,9 +701,7 @@ class TestGetTestsMatrixEntries:
 class TestGetTestGeneratedSolutionFlag:
     """Test the get_tests_generated_solution_flag function."""
 
-    def test_get_tests_generated_solution_flag_empty_packages(
-        self, github_env: tuple[Path, Path]
-    ):
+    def test_get_tests_generated_solution_flag_empty_packages(self, github_env: tuple[Path, Path]):
         """Empty packages outputs false flag."""
         output_file, _ = github_env
         get_tests_generated_solution_flag([])
@@ -716,9 +709,7 @@ class TestGetTestGeneratedSolutionFlag:
         outputs = parse_outputs(output_file)
         assert outputs["tests_generated_solution_flag"] == "false"
 
-    def test_get_tests_generated_solution_flag_without_saf_cli(
-        self, github_env: tuple[Path, Path]
-    ):
+    def test_get_tests_generated_solution_flag_without_saf_cli(self, github_env: tuple[Path, Path]):
         """Packages without saf-cli output false flag."""
         output_file, _ = github_env
         get_tests_generated_solution_flag(["glow-engine", "saf-testing"])
@@ -726,9 +717,7 @@ class TestGetTestGeneratedSolutionFlag:
         outputs = parse_outputs(output_file)
         assert outputs["tests_generated_solution_flag"] == "false"
 
-    def test_get_tests_generated_solution_flag_with_saf_cli(
-        self, github_env: tuple[Path, Path]
-    ):
+    def test_get_tests_generated_solution_flag_with_saf_cli(self, github_env: tuple[Path, Path]):
         """saf-cli in packages outputs true flag."""
         output_file, _ = github_env
         get_tests_generated_solution_flag(["saf-cli"])
@@ -736,9 +725,7 @@ class TestGetTestGeneratedSolutionFlag:
         outputs = parse_outputs(output_file)
         assert outputs["tests_generated_solution_flag"] == "true"
 
-    def test_get_tests_generated_solution_flag_saf_cli_with_others(
-        self, github_env: tuple[Path, Path]
-    ):
+    def test_get_tests_generated_solution_flag_saf_cli_with_others(self, github_env: tuple[Path, Path]):
         """saf-cli with other packages outputs true flag."""
         output_file, _ = github_env
         get_tests_generated_solution_flag(["glow-engine", "saf-cli", "saf-testing"])
@@ -750,14 +737,13 @@ class TestGetTestGeneratedSolutionFlag:
 class TestIntegration:
     """Integration tests for the full workflow."""
 
-    def test_full_workflow_no_changes(
-        self, github_env: tuple[Path, Path], monkeypatch: pytest.MonkeyPatch
-    ):
+    def test_full_workflow_no_changes(self, github_env: tuple[Path, Path], monkeypatch: pytest.MonkeyPatch):
         """Full workflow with no changes produces correct output."""
         output_file, summary_file = github_env
         monkeypatch.delenv("PR_CHANGES_JSON", raising=False)
 
         pr_changes = get_pr_changes()
+        get_changed_moon_packages(pr_changes)
         changed_packages = get_changed_packages(pr_changes)
         get_code_style_matrix_entries(changed_packages, pr_changes)
         get_compatibility_matrix_entries(changed_packages)
@@ -765,21 +751,21 @@ class TestIntegration:
         get_tests_generated_solution_flag(changed_packages)
 
         outputs = parse_outputs(output_file)
-        assert outputs["code_style_matrix"] != "{}"  # Root entry always present
+        assert outputs["code_style_matrix"] == "{}"
         assert outputs["compatibility_matrix"] == "{}"
         assert outputs["tests_matrix"] == "{}"
         assert outputs["tests_generated_solution_flag"] == "false"
 
-    def test_full_workflow_with_changes(
-        self, github_env: tuple[Path, Path], monkeypatch: pytest.MonkeyPatch
-    ):
+    def test_full_workflow_with_changes(self, github_env: tuple[Path, Path], monkeypatch: pytest.MonkeyPatch):
         """Full workflow with multiple packages."""
         output_file, summary_file = github_env
         monkeypatch.setenv(
-            "PR_CHANGES_JSON", json.dumps(["glow-engine", "saf-cli", "examples"])
+            "PR_CHANGES_JSON",
+            json.dumps(["bdm-python-api", "glow-engine", "saf-cli", "examples"]),
         )
 
         pr_changes = get_pr_changes()
+        moon_packages = get_changed_moon_packages(pr_changes)
         changed_packages = get_changed_packages(pr_changes)
         get_code_style_matrix_entries(changed_packages, pr_changes)
         get_compatibility_matrix_entries(changed_packages)
@@ -790,6 +776,7 @@ class TestIntegration:
 
         # Check all matrices are present
         assert "code_style_matrix" in outputs
+        assert "moon_packages_matrix" in outputs
         assert "compatibility_matrix" in outputs
         assert "tests_matrix" in outputs
         assert "tests_generated_solution_flag" in outputs
@@ -801,17 +788,18 @@ class TestIntegration:
             "poetry-install-args": "--with tests --all-extras",
         }
 
+        assert moon_packages == ["bdm-python-api"]
+        assert json.loads(outputs["moon_packages_matrix"]) == {"include": [{"library-name": "bdm-python-api"}]}
+
         # Verify that the working directory for examples is correctly set
         tests = json.loads(outputs["tests_matrix"])
-        examples_entries = [
-            entry for entry in tests["include"] if entry["library-name"] == "examples"
-        ]
+        examples_entries = [entry for entry in tests["include"] if entry["library-name"] == "examples"]
         assert examples_entries == [
             {
                 "library-name": "examples",
                 "tests-groups-file-path": f"{TESTS_DEFINITIONS_DIR}/examples.json",
                 "working-directory": "examples",
-            }
+            },
         ]
 
         # Verify saf-cli is excluded from compatibility matrix
@@ -822,14 +810,13 @@ class TestIntegration:
         # Verify test flag is set to true
         assert outputs["tests_generated_solution_flag"] == "true"
 
-    def test_full_workflow_summary_content(
-        self, github_env: tuple[Path, Path], monkeypatch: pytest.MonkeyPatch
-    ):
+    def test_full_workflow_summary_content(self, github_env: tuple[Path, Path], monkeypatch: pytest.MonkeyPatch):
         """All matrices appear in the step summary."""
         _, summary_file = github_env
         monkeypatch.setenv("PR_CHANGES_JSON", json.dumps(["glow-engine"]))
 
         pr_changes = get_pr_changes()
+        get_changed_moon_packages(pr_changes)
         changed_packages = get_changed_packages(pr_changes)
         get_code_style_matrix_entries(changed_packages, pr_changes)
         get_compatibility_matrix_entries(changed_packages)
@@ -837,11 +824,12 @@ class TestIntegration:
 
         summary = read_summary(summary_file)
         assert "### pr_changes:" in summary
+        assert "### moon_packages_matrix:" in summary
         assert "### packages_matrix:" in summary
         assert "### code_style_matrix:" in summary
         assert "### compatibility_matrix:" in summary
         assert "### tests_matrix:" in summary
-        assert summary.count("```json") == 5
+        assert summary.count("```json") == 6
 
 
 class TestDataValidation:
@@ -852,12 +840,8 @@ class TestDataValidation:
         repository_root = Path(__file__).parents[3]
         for definitions in TESTS_DEFINITIONS_PER_TARGET.values():
             for definition in definitions:
-                file_path = (
-                    repository_root / TESTS_DEFINITIONS_DIR / f"{definition}.json"
-                )
-                assert file_path.is_file(), (
-                    f"Test definition file not found: {file_path}"
-                )
+                file_path = repository_root / TESTS_DEFINITIONS_DIR / f"{definition}.json"
+                assert file_path.is_file(), f"Test definition file not found: {file_path}"
 
     def test_saf_packages_list_is_not_empty(self) -> None:
         """SAF_PACKAGES list is not empty."""
@@ -870,6 +854,4 @@ class TestDataValidation:
 
 
 if __name__ == "__main__":
-    sys.exit(
-        pytest.main([__file__, *sys.argv[1:]] if sys.argv[1:] else [__file__, "-v"])
-    )
+    sys.exit(pytest.main([__file__, *sys.argv[1:]] if sys.argv[1:] else [__file__, "-v"]))

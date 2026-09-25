@@ -161,6 +161,8 @@ jobs:
       commit-is-already-tagged: ${{ steps.verify-tag.outputs.commit-is-already-tagged
         }}
       library-name: ${{ steps.library-name.outputs.library-name }}
+      use-moon: ${{ contains('bdm-python-api,bdm-python-shared-volume,saf-iam-oidc,saf-product-configuration',
+        steps.library-name.outputs.library-name) }}
 
   check-package-changes:
     name: "Check if package files changed since certification"
@@ -218,9 +220,26 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read # Read the dependencies and source code of the library
+    env:
+      USE_MOON: ${{ needs.pre-certification.outputs.use-moon }}
+      PACKAGE: ${{ needs.pre-certification.outputs.library-name }}
     steps:
-      - name: Check vulnerabilities
-        uses: ansys/saf-devops/check-deps-vulnerabilities@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Setup Moon Toolchain
+        if: ${{ env.USE_MOON == 'true' }}
+        uses: moonrepo/setup-toolchain@261c62cb5b0f580c7be7c8cd0f023a2e96756095 # v0.6.4
+
+      - name: Vulnerability Check
+        if: ${{ env.USE_MOON == 'true' }}
+        shell: bash
+        run: moon run ${PACKAGE}:vulnerability-check
+
+      - uses: ansys/saf-devops/check-deps-vulnerabilities@5d9e84af215372b7b125bbf12f5b0093600eb06d # v1.2.0
         with:
           python-version: ${{ vars.PYTHON_VERSION }}
           poetry-version: ${{ vars.POETRY_VERSION }}
@@ -229,6 +248,13 @@ jobs:
           poetry-parent-directory: packages/${{ needs.pre-certification.outputs.library-name
             }}
           max-allowed-severity: medium
+          skip-install: ${{ env.USE_MOON == 'true' }}
+          checkout: false
+          requirements-file: ${{ env.USE_MOON == 'true' && format('{0}/dist/packages/{1}-requirements.txt',
+            github.workspace, needs.pre-certification.outputs.library-name) || 'dependencies.txt'
+            }}
+        env:
+          UV_VENV_CLEAR: ${{ env.USE_MOON == 'true' }}
 
   dependabot-alerts:
     permissions:
@@ -239,6 +265,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Get production dependencies
+        if: ${{ contains(env.UV_BASED_PACKAGES, needs.pre-certification.outputs.library-name)
+          }}
         uses: ansys/saf-devops/get-production-dependencies@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
         with:
           poetry-version: ${{ vars.POETRY_VERSION }}
@@ -247,6 +275,8 @@ jobs:
           python-version: ${{ vars.PYTHON_VERSION }}
 
       - name: Analyze Dependabot Alerts
+        if: ${{ contains(env.UV_BASED_PACKAGES, needs.pre-certification.outputs.library-name)
+          }}
         id: analyze-dependabot
         uses: ansys/saf-devops/analyze-dependabot-alerts@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
         with:
@@ -257,7 +287,9 @@ jobs:
 
   run-tests:
     name: Tests ${{ matrix.python-version }}
-    needs: [pre-certification, check-package-changes]
+    needs:
+      - pre-certification
+      - check-package-changes
     permissions:
       contents: read
       packages: write # Allows this job to publish packages
@@ -277,6 +309,8 @@ jobs:
         }}.json
       working-directory: packages/${{ needs.pre-certification.outputs.library-name
         }}
+      use-moon: ${{ needs.pre-certification.outputs.use-moon == 'true' }}
+      library-name: ${{ needs.pre-certification.outputs.library-name }}
     secrets:
       ANS_MINERVA_URL: ${{ secrets.ANS_MINERVA_URL }}
       TEST_REP_CLIENT_SECRET: ${{ secrets.TEST_REP_CLIENT_SECRET }}
@@ -313,6 +347,8 @@ jobs:
         }}-extended.json
       working-directory: packages/${{ needs.pre-certification.outputs.library-name
         }}
+      use-moon: false
+      library-name: ${{ needs.pre-certification.outputs.library-name }}
     secrets:
       ANS_MINERVA_URL: ${{ secrets.ANS_MINERVA_URL }}
       TEST_REP_CLIENT_SECRET: ${{ secrets.TEST_REP_CLIENT_SECRET }}
@@ -347,7 +383,6 @@ jobs:
           - mechanical
           - optislang
           - visor
-
     uses: ./.github/workflows/_test.yml
     with:
       python-version: ${{ matrix.python-version }}
@@ -355,6 +390,8 @@ jobs:
         }}-${{ matrix.flagship }}.json
       working-directory: packages/${{ needs.pre-certification.outputs.library-name
         }}
+      use-moon: false
+      library-name: ${{ needs.pre-certification.outputs.library-name }}
     secrets:
       ANS_MINERVA_URL: ${{ secrets.ANS_MINERVA_URL }}
       TEST_REP_CLIENT_SECRET: ${{ secrets.TEST_REP_CLIENT_SECRET }}
@@ -401,7 +438,6 @@ jobs:
   build-wheel:
     name: "Wheel ${{ matrix.python-version }}"
     needs: pre-certification
-    runs-on: ubuntu-latest
     permissions:
       attestations: write # Write attestation for uploaded distribution artifacts
       contents: read # Read the source code of the project
@@ -414,16 +450,14 @@ jobs:
           - "3.12"
           - "3.13"
           - "3.14"
-    steps:
-      - uses: ansys/actions/build-library@7410037bfb276c79ae91eb3617b9f5d2876f0c94 # v11.0.8
-        with:
-          library-name: ${{ needs.pre-certification.outputs.library-name }}-${{ matrix.python-version
-            }}
-          working-directory: packages/${{ needs.pre-certification.outputs.library-name
-            }}
-          python-version: ${{ matrix.python-version }}
-          attest-provenance: true
-          validate-build: true
+    uses: ./.github/workflows/_build.yml
+    with:
+      library-name: ${{ needs.pre-certification.outputs.library-name }}
+      python-version: ${{ matrix.python-version }}
+      use-moon: ${{ needs.pre-certification.outputs.use-moon == 'true' }}
+      artifact-name: ${{ needs.pre-certification.outputs.library-name }}-${{ matrix.python-version
+        }}${{ case(contains('bdm-python-api,bdm-python-shared-volume,saf-iam-oidc',
+        needs.pre-certification.outputs.library-name), '-artifacts', '') }}
 
   check-wheel-can-be-pip-installed:
     name: "Check wheel can be pip installed"

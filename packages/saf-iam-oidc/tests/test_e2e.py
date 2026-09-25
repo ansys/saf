@@ -41,7 +41,7 @@ def oauth_client() -> AsyncOAuth2Client:
     client = AsyncOAuth2Client(
         client_id=CLIENT_ID,
         client_secret=CLIENT_SECRET,
-        token_endpoint_auth_method="client_secret_post",  # noqa: S106
+        token_endpoint_auth_method="client_secret_post",
         scope="openid email profile",
     )
     token_endpoint = f"{ISSUER_URL}/protocol/openid-connect/token"

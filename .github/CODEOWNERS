@@ -1,3 +1,4 @@
 # SAF-SDK Team is the default reviewer of the project
 *            @ansys/saf-sdk
-/.github/    @ansys/saf-devops
+/.github/    @ansys/saf-devops @ansys/saf-sdk
+/.moon/      @ansys/saf-devops @ansys/saf-sdk

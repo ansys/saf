@@ -16,8 +16,9 @@
 
 from pathlib import Path
 
-from ansys.bdm.api import EntityHandle, IAsyncStorageScope, IStorageScope, RecursiveDictionaryOfEntityHandles
 import pytest
+
+from ansys.bdm.api import EntityHandle, IAsyncStorageScope, IStorageScope, RecursiveDictionaryOfEntityHandles
 
 
 def test_copy_from_dictionary_with_file_destination(

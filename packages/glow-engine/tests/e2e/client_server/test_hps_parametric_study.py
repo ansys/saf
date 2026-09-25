@@ -18,7 +18,6 @@ from collections.abc import Callable, Generator
 import json
 import os
 from pathlib import Path
-from typing import cast
 
 from ansys.saf.testing.solution.end_to_end import (
     GlowBaseProcess,

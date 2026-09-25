@@ -503,7 +503,6 @@ class StringResultParametricStep(StepModel):
 
 
 class HpsProjectCollectionsStep(StepModel):
-
     input_file: EntityHandle = NO_ENTITY
     add_script: EntityHandle = NO_ENTITY
     time_to_generate_the_output_file: float = 0.0

@@ -202,7 +202,7 @@ Never ship an installer you have not smoke-tested yourself.
 Where to go from here
 =====================
 
-Congratulations — you now have a fully functional, distributable SAF solution. To continue expanding your SAF fluency, explorethese three next steps:
+Congratulations — you now have a fully functional, distributable SAF solution. To continue expanding your SAF fluency, explore these three next steps:
 
 - :ref:`installer` — the full reference for ``saf build``, including options for encrypting or
   obfuscating your source code, excluding the Python interpreter, or bundling as a directory

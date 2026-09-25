@@ -12,7 +12,7 @@ saf_cli_compatibility_range = ">=4.3.dev0, <5.0"
 description = "a step that performs a simple HPS job."
 
 [templates.hps-simple-job-step.dependencies.main]
-ansys-saf-sdk = {version = "^0.1", allow-prereleases=true, extras = ["core-hps"]}
+ansys-saf-sdk = {version = ">=0.3.0,<1.0.0", allow-prereleases=true, extras = ["core-hps"]}
 
 [templates.hps-simple-job-step.dependencies.ui]
 dash-iconify = ">=0.1.0,<0.2.0"
@@ -25,7 +25,7 @@ saf_cli_compatibility_range = ">=4.3.dev0, <5.0"
 description = "a step that performs a parametric study on HPS."
 
 [templates.hps-parametric-study-step.dependencies.main]
-ansys-saf-sdk = {version = "^0.1", allow-prereleases=true, extras = ["core-hps"]}
+ansys-saf-sdk = {version = ">=0.3.0,<1.0.0", allow-prereleases=true, extras = ["core-hps"]}
 
 [templates.hps-parametric-study-step.dependencies.ui]
 dash-iconify = ">=0.1.0,<0.2.0"
@@ -38,4 +38,4 @@ saf_cli_compatibility_range = ">=4.3.dev0, <5.0"
 description = "a step that performs basic Geometry instance management"
 
 [templates.instance-mgmt-geometry-step.dependencies.main]
-ansys-saf-sdk = {version = "^0.1", allow-prereleases=true, extras = ["instance-management-geometry"]}
+ansys-saf-sdk = {version = ">=0.3.0,<1.0.0", allow-prereleases=true, extras = ["instance-management-geometry"]}

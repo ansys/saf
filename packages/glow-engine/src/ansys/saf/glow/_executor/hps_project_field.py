@@ -30,9 +30,6 @@ HpsProjectWrapperFactory = Callable[[HpsProject, str], DynamicHpsProject]
 
 
 class HpsProjectFieldTransformer(Protocol):
-    @property
-    def contains_hps_projects(self) -> bool: ...
-
     def to_persisted(self, value: Any, context: str) -> Any: ...
 
     def to_dynamic(
@@ -43,30 +40,9 @@ class HpsProjectFieldTransformer(Protocol):
     ) -> Any: ...
 
 
-class UnknownHpsProjectFieldTransformer:
-    @property
-    def contains_hps_projects(self) -> bool:
-        return False
-
-    def to_persisted(self, value: Any, context: str) -> Any:
-        return value
-
-    def to_dynamic(
-        self,
-        value: Any,
-        context: str,
-        wrapper_factory: HpsProjectWrapperFactory,
-    ) -> Any:
-        return value
-
-
 @dataclass(frozen=True)
 class HpsProjectTransformer:
     project_type: type[HpsProject]
-
-    @property
-    def contains_hps_projects(self) -> bool:
-        return True
 
     def to_persisted(self, value: Any, context: str) -> HpsProject:
         if not isinstance(value, DynamicHpsProject):
@@ -95,10 +71,6 @@ class HpsProjectTransformer:
 class HpsProjectListTransformer:
     item_transformer: HpsProjectFieldTransformer
 
-    @property
-    def contains_hps_projects(self) -> bool:
-        return True
-
     def to_persisted(self, value: Any, context: str) -> list[Any]:
         if not isinstance(value, list):
             raise MalformedSolutionError(f"{context} must be a list.")
@@ -124,10 +96,6 @@ class HpsProjectListTransformer:
 @dataclass(frozen=True)
 class HpsProjectDictionaryTransformer:
     value_transformer: HpsProjectFieldTransformer
-
-    @property
-    def contains_hps_projects(self) -> bool:
-        return True
 
     def to_persisted(self, value: Any, context: str) -> dict[str, Any]:
         if not isinstance(value, dict):
@@ -159,16 +127,16 @@ def _safe_issubclass(candidate: Any, classinfo: type | tuple[type, ...]) -> bool
 
 
 class HpsProjectFieldTransformerBuilder:
-    def build(self, annotation: Any) -> HpsProjectFieldTransformer:
+    def build(self, annotation: Any) -> HpsProjectFieldTransformer | None:
         if _safe_issubclass(annotation, (HpsSimpleProjectBase, HpsParametricStudyProjectBase)):
             return HpsProjectTransformer(annotation)
         type_arguments = get_args(annotation)
         if get_origin(annotation) is list and len(type_arguments) == 1:
             item_transformer = self.build(type_arguments[0])
-            if item_transformer.contains_hps_projects:
+            if item_transformer is not None:
                 return HpsProjectListTransformer(item_transformer)
         if get_origin(annotation) is dict and len(type_arguments) == 2 and type_arguments[0] is str:
             value_transformer = self.build(type_arguments[1])
-            if value_transformer.contains_hps_projects:
+            if value_transformer is not None:
                 return HpsProjectDictionaryTransformer(value_transformer)
-        return UnknownHpsProjectFieldTransformer()
+        return None

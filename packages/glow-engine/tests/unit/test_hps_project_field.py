@@ -20,7 +20,7 @@ from unittest.mock import MagicMock
 import pytest
 
 from ansys.saf.glow._core.blob_managers import HpsBlobManager
-from ansys.saf.glow._executor.hps_project_field import HpsProjectFieldTransformerBuilder
+from ansys.saf.glow._executor.hps_project_field import HpsProjectFieldTransformer, HpsProjectFieldTransformerBuilder
 from ansys.saf.glow._hps_auth.hps_authenticator import NullHpsAuthenticator
 from ansys.saf.glow._hps_parametric_studies.api import HpsParametricStudyProject, HpsSimpleProject
 from ansys.saf.glow._hps_parametric_studies.base import (
@@ -58,6 +58,12 @@ def _wrapper_factory(project: HpsProject, context: str) -> DynamicHpsProject:
     return _dynamic_project(project, dynamic_type)
 
 
+def _build_transformer(annotation: Any) -> HpsProjectFieldTransformer:
+    transformer = HpsProjectFieldTransformerBuilder().build(annotation)
+    assert transformer is not None
+    return transformer
+
+
 @pytest.mark.parametrize(("project_type", "dynamic_type", "wrong_project_type"), PROJECT_CASES)
 def test_scalar_hps_project_transforms_in_both_directions(
     project_type: type[HpsProject],
@@ -67,11 +73,10 @@ def test_scalar_hps_project_transforms_in_both_directions(
     del wrong_project_type
     persisted_project = project_type(hps_project_identifier="project-id")
     dynamic_project = _dynamic_project(persisted_project, dynamic_type)
-    transformer = HpsProjectFieldTransformerBuilder().build(project_type)
+    transformer = _build_transformer(project_type)
     wrapped_project = _dynamic_project(persisted_project, dynamic_type)
     wrapper_factory: Callable[[HpsProject, str], DynamicHpsProject] = MagicMock(return_value=wrapped_project)
 
-    assert transformer.contains_hps_projects
     assert transformer.to_persisted(dynamic_project, "Field 'project'") == persisted_project
     assert transformer.to_dynamic(persisted_project, "Field 'project'", wrapper_factory) is wrapped_project
     wrapper_factory.assert_called_once_with(persisted_project, "Field 'project'")  # type: ignore[attr-defined]
@@ -84,7 +89,7 @@ def test_scalar_hps_project_rejects_raw_project_on_upload(
     wrong_project_type: type[HpsProject],
 ):
     del dynamic_type, wrong_project_type
-    transformer = HpsProjectFieldTransformerBuilder().build(project_type)
+    transformer = _build_transformer(project_type)
 
     with pytest.raises(MalformedSolutionError, match="Field 'project'.*start_hps_job"):
         transformer.to_persisted(project_type(hps_project_identifier="raw"), "Field 'project'")
@@ -96,7 +101,7 @@ def test_scalar_hps_project_rejects_wrong_subtype(
     dynamic_type: type[DynamicHpsProject],
     wrong_project_type: type[HpsProject],
 ):
-    transformer = HpsProjectFieldTransformerBuilder().build(project_type)
+    transformer = _build_transformer(project_type)
     wrong_persisted_project = wrong_project_type(hps_project_identifier="wrong")
     wrong_dynamic_project = _dynamic_project(wrong_persisted_project, dynamic_type)
 
@@ -114,7 +119,7 @@ def test_scalar_hps_project_rejects_none(
     wrong_project_type: type[HpsProject],
 ):
     del dynamic_type, wrong_project_type
-    transformer = HpsProjectFieldTransformerBuilder().build(project_type)
+    transformer = _build_transformer(project_type)
 
     with pytest.raises(MalformedSolutionError, match="Field 'project'.*invalid HPS project handle"):
         transformer.to_persisted(None, "Field 'project'")
@@ -123,15 +128,8 @@ def test_scalar_hps_project_rejects_none(
         transformer.to_dynamic(None, "Field 'project'", MagicMock())
 
 
-def test_unknown_hps_project_field_transformer_passes_values_through():
-    transformer = HpsProjectFieldTransformerBuilder().build(str)
-    value = object()
-    wrapper_factory: Callable[[HpsProject, str], DynamicHpsProject] = MagicMock()
-
-    assert not transformer.contains_hps_projects
-    assert transformer.to_persisted(value, "Field 'value'") is value
-    assert transformer.to_dynamic(value, "Field 'value'", wrapper_factory) is value
-    wrapper_factory.assert_not_called()  # type: ignore[attr-defined]
+def test_unsupported_field_has_no_hps_project_transformer():
+    assert HpsProjectFieldTransformerBuilder().build(str) is None
 
 
 def test_hps_project_list_transforms_all_items():
@@ -140,9 +138,8 @@ def test_hps_project_list_transforms_all_items():
         HpsSimpleProject(hps_project_identifier="second"),
     ]
     dynamic_projects = [_dynamic_project(project, DynamicHpsSimpleProject) for project in persisted_projects]
-    transformer = HpsProjectFieldTransformerBuilder().build(list[HpsSimpleProject])
+    transformer = _build_transformer(list[HpsSimpleProject])
 
-    assert transformer.contains_hps_projects
     assert transformer.to_persisted(dynamic_projects, "Field 'projects'") == persisted_projects
     restored = transformer.to_dynamic(persisted_projects, "Field 'projects'", _wrapper_factory)
     assert [project.persisted_project for project in restored] == persisted_projects
@@ -156,9 +153,8 @@ def test_hps_project_dictionary_preserves_keys_and_values():
     dynamic_projects = {
         key: _dynamic_project(project, DynamicHpsParametricStudyProject) for key, project in persisted_projects.items()
     }
-    transformer = HpsProjectFieldTransformerBuilder().build(dict[str, HpsParametricStudyProject])
+    transformer = _build_transformer(dict[str, HpsParametricStudyProject])
 
-    assert transformer.contains_hps_projects
     assert transformer.to_persisted(dynamic_projects, "Field 'projects'") == persisted_projects
     restored = transformer.to_dynamic(persisted_projects, "Field 'projects'", _wrapper_factory)
     assert list(restored) == ["first", "second"]
@@ -176,7 +172,7 @@ def test_nested_hps_project_dictionary_of_lists_transforms_recursively():
         key: [_dynamic_project(project, DynamicHpsSimpleProject) for project in projects]
         for key, projects in persisted_projects.items()
     }
-    transformer = HpsProjectFieldTransformerBuilder().build(dict[str, list[HpsSimpleProject]])
+    transformer = _build_transformer(dict[str, list[HpsSimpleProject]])
 
     assert transformer.to_persisted(dynamic_projects, "Field 'groups'") == persisted_projects
     restored = transformer.to_dynamic(persisted_projects, "Field 'groups'", _wrapper_factory)
@@ -190,7 +186,7 @@ def test_nested_hps_project_list_of_dictionaries_transforms_recursively():
     dynamic_projects = [
         {"study": _dynamic_project(persisted_projects[0]["study"], DynamicHpsParametricStudyProject)},
     ]
-    transformer = HpsProjectFieldTransformerBuilder().build(list[dict[str, HpsParametricStudyProject]])
+    transformer = _build_transformer(list[dict[str, HpsParametricStudyProject]])
 
     assert transformer.to_persisted(dynamic_projects, "Field 'groups'") == persisted_projects
     restored = transformer.to_dynamic(persisted_projects, "Field 'groups'", _wrapper_factory)
@@ -202,7 +198,7 @@ def test_nested_hps_project_list_of_dictionaries_transforms_recursively():
     [(list[HpsSimpleProject], []), (dict[str, HpsSimpleProject], {})],
 )
 def test_empty_hps_project_list_or_dictionary_is_preserved(annotation: Any, empty_value: Any):
-    transformer = HpsProjectFieldTransformerBuilder().build(annotation)
+    transformer = _build_transformer(annotation)
 
     assert transformer.to_persisted(empty_value, "Field 'projects'") == empty_value
     assert transformer.to_dynamic(empty_value, "Field 'projects'", _wrapper_factory) == empty_value
@@ -220,7 +216,7 @@ def test_hps_project_list_or_dictionary_rejects_wrong_shape(
     wrong_value: Any,
     expected_message: str,
 ):
-    transformer = HpsProjectFieldTransformerBuilder().build(annotation)
+    transformer = _build_transformer(annotation)
 
     with pytest.raises(MalformedSolutionError, match=expected_message):
         transformer.to_persisted(wrong_value, "Field 'projects'")
@@ -230,7 +226,7 @@ def test_hps_project_list_or_dictionary_rejects_wrong_shape(
 
 
 def test_nested_hps_project_error_contains_exact_path():
-    transformer = HpsProjectFieldTransformerBuilder().build(dict[str, list[HpsSimpleProject]])
+    transformer = _build_transformer(dict[str, list[HpsSimpleProject]])
     projects = {
         "group_1": [
             _dynamic_project(HpsSimpleProject(hps_project_identifier="first"), DynamicHpsSimpleProject),
@@ -244,7 +240,7 @@ def test_nested_hps_project_error_contains_exact_path():
 
 
 def test_nested_hps_project_download_rejects_wrong_subtype_with_exact_path():
-    transformer = HpsProjectFieldTransformerBuilder().build(dict[str, list[HpsSimpleProject]])
+    transformer = _build_transformer(dict[str, list[HpsSimpleProject]])
     projects = {
         "group_1": [
             HpsSimpleProject(hps_project_identifier="simple"),
@@ -259,10 +255,5 @@ def test_nested_hps_project_download_rejects_wrong_subtype_with_exact_path():
         transformer.to_dynamic(projects, "Field 'groups'", _wrapper_factory)
 
 
-def test_dictionary_with_non_string_keys_uses_unknown_transformer():
-    transformer = HpsProjectFieldTransformerBuilder().build(dict[int, HpsSimpleProject])
-    value = {1: HpsSimpleProject(hps_project_identifier="raw")}
-
-    assert not transformer.contains_hps_projects
-    assert transformer.to_persisted(value, "Field 'projects'") is value
-    assert transformer.to_dynamic(value, "Field 'projects'", _wrapper_factory) is value
+def test_dictionary_with_non_string_keys_has_no_hps_project_transformer():
+    assert HpsProjectFieldTransformerBuilder().build(dict[int, HpsSimpleProject]) is None

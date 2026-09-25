@@ -197,11 +197,6 @@ class TransactionStepModel:
         self._hps_blob_manager = hps_blob_manager
         self._access_token = access_token
         self._step_type_hints = get_type_hints(step_type)
-        transformer_builder = HpsProjectFieldTransformerBuilder()
-        self._hps_project_field_transformers: dict[str, HpsProjectFieldTransformer] = {
-            field_name: transformer_builder.build(field_type)
-            for field_name, field_type in self._step_type_hints.items()
-        }
 
         # Assign default step field attribute to this object.
         step_model = step_type()
@@ -233,8 +228,8 @@ class TransactionStepModel:
         so that the field can be used only in the case of an
         upload."""
         field_value = getattr(step_model, field_name)
-        transformer = self._hps_project_field_transformers[field_name]
-        if transformer.contains_hps_projects:
+        transformer = self._get_hps_project_field_transformer(field_name)
+        if transformer is not None:
             hps_authenticator = create_hps_authenticator(self._settings, self._access_token)
             field_value = transformer.to_dynamic(
                 field_value,
@@ -246,6 +241,9 @@ class TransactionStepModel:
                 ),
             )
         setattr(self, field_name, field_value)
+
+    def _get_hps_project_field_transformer(self, field_name: str) -> HpsProjectFieldTransformer | None:
+        return HpsProjectFieldTransformerBuilder().build(self._step_type_hints[field_name])
 
     def _wrap_hps_project(
         self,
@@ -311,8 +309,12 @@ class TransactionStepModel:
                 )
             logger.debug(f"Uploading {field_name}")
             field_value = getattr(self, field_name)
-            transformer = self._hps_project_field_transformers[field_name]
-            persisted_field_value = transformer.to_persisted(field_value, f"Field '{field_name}'")
+            transformer = self._get_hps_project_field_transformer(field_name)
+            persisted_field_value = (
+                transformer.to_persisted(field_value, f"Field '{field_name}'")
+                if transformer is not None
+                else field_value
+            )
             fields[field_name] = jsonable_encoder(persisted_field_value)
 
         url_parts = self.get_method_url_parts()

@@ -35,12 +35,18 @@ from ansys.saf.glow._core.gql import GqlClientConnectionPool
 from ansys.saf.glow._core.gql_helper import perform_update_via_graphql
 from ansys.saf.glow._core.step_model import StepModel
 from ansys.saf.glow._core.step_spec import StepSpec
+from ansys.saf.glow._executor.hps_project_field import (
+    HpsProjectFieldTransformer,
+    HpsProjectFieldTransformerBuilder,
+)
 from ansys.saf.glow._hps_auth.hps_authenticator import create_hps_authenticator
+from ansys.saf.glow._hps_auth.ihps_authenticator import IHpsAuthenticator
 from ansys.saf.glow._hps_parametric_studies.base import (
     DynamicHpsParametricStudyProject,
     DynamicHpsProject,
     DynamicHpsSimpleProject,
     HpsParametricStudyProjectBase,
+    HpsProject,
     HpsSimpleProjectBase,
 )
 from ansys.saf.glow._server.exceptions import InternalError, MalformedSolutionError
@@ -190,12 +196,13 @@ class TransactionStepModel:
         self._graphql_client = graphql_client
         self._hps_blob_manager = hps_blob_manager
         self._access_token = access_token
+        self._step_type_hints = get_type_hints(step_type)
 
         # Assign default step field attribute to this object.
         step_model = step_type()
         for field_name in self._download_fields + self._upload_fields:
             self._assign_step_value(step_model, field_name)
-        for var_name, var_type in get_type_hints(step_type).items():
+        for var_name, var_type in self._step_type_hints.items():
             if hasattr(var_type, "__origin__") and var_type.__origin__ == ClassVar:
                 self._assign_step_value(step_model, var_name)
         self._assign_step_method(step_model)
@@ -221,13 +228,34 @@ class TransactionStepModel:
         so that the field can be used only in the case of an
         upload."""
         field_value = getattr(step_model, field_name)
-        if isinstance(field_value, HpsParametricStudyProjectBase):
+        transformer = self._get_hps_project_field_transformer(field_name)
+        if transformer is not None:
             hps_authenticator = create_hps_authenticator(self._settings, self._access_token)
-            field_value = DynamicHpsParametricStudyProject(field_value, self._hps_blob_manager, hps_authenticator)
-        elif isinstance(field_value, HpsSimpleProjectBase):
-            hps_authenticator = create_hps_authenticator(self._settings, self._access_token)
-            field_value = DynamicHpsSimpleProject(field_value, self._hps_blob_manager, hps_authenticator)
+            field_value = transformer.to_dynamic(
+                field_value,
+                f"Field '{field_name}'",
+                lambda project, context: self._wrap_hps_project(
+                    project,
+                    context,
+                    hps_authenticator,
+                ),
+            )
         setattr(self, field_name, field_value)
+
+    def _get_hps_project_field_transformer(self, field_name: str) -> HpsProjectFieldTransformer | None:
+        return HpsProjectFieldTransformerBuilder().build(self._step_type_hints[field_name])
+
+    def _wrap_hps_project(
+        self,
+        project: HpsProject,
+        context: str,
+        hps_authenticator: IHpsAuthenticator,
+    ) -> DynamicHpsProject:
+        if isinstance(project, HpsParametricStudyProjectBase):
+            return DynamicHpsParametricStudyProject(project, self._hps_blob_manager, hps_authenticator)
+        if not isinstance(project, HpsSimpleProjectBase):
+            raise MalformedSolutionError(f"{context} contains an invalid persisted HPS project.")
+        return DynamicHpsSimpleProject(project, self._hps_blob_manager, hps_authenticator)
 
     def _assign_step_method(self, step_model: StepModel):
         step_methods = {
@@ -281,10 +309,13 @@ class TransactionStepModel:
                 )
             logger.debug(f"Uploading {field_name}")
             field_value = getattr(self, field_name)
-            if isinstance(field_value, DynamicHpsProject):
-                fields[field_name] = jsonable_encoder(field_value.persisted_project)
-            else:
-                fields[field_name] = jsonable_encoder(field_value)
+            transformer = self._get_hps_project_field_transformer(field_name)
+            persisted_field_value = (
+                transformer.to_persisted(field_value, f"Field '{field_name}'")
+                if transformer is not None
+                else field_value
+            )
+            fields[field_name] = jsonable_encoder(persisted_field_value)
 
         url_parts = self.get_method_url_parts()
         project_id = url_parts.project_name.split("/")[1]

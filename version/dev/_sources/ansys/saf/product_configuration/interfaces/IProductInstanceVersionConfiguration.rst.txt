@@ -1,0 +1,442 @@
+
+
+
+
+
+
+:class:`IProductInstanceVersionConfiguration`
+=============================================
+
+
+.. py:class:: ansys.saf.product_configuration.interfaces.IProductInstanceVersionConfiguration
+
+   Bases: :py:obj:`Protocol`
+
+
+   
+   Interface to configure a given version of a product instance.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: IProductInstanceVersionConfiguration
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~service_name`
+            - This is the name of the service that is exposed by the instance management system (HPS or PIM)
+          * - :py:attr:`~enable_secure_flags`
+            - Must be set to True for the product instance to use the secure communication command line arguments.
+          * - :py:attr:`~linux_local_secure_flags`
+            - The command line arguments needed to configure the product instance for secure local communication on
+          * - :py:attr:`~linux_uds_id`
+            - Template for the uds_id, which is used to identify the socket file for UDS communication.
+          * - :py:attr:`~windows_local_secure_flags`
+            - The command line arguments needed to configure the product instance for secure local communication on
+          * - :py:attr:`~remote_secure_flags`
+            - The command line arguments needed to configure the product instance for secure remote communication.
+          * - :py:attr:`~insecure_flags`
+            - The command line arguments needed to configure the product instance for insecure communication.
+          * - :py:attr:`~execution_command`
+            - This is the command line used to start the product instance process.
+          * - :py:attr:`~environment`
+            - The environment variables that will be set in the environment running the ``execution_command``.
+          * - :py:attr:`~software_requirements`
+            - (For HPS only!) The software that must be installed on the node running the ``execution_command``.
+          * - :py:attr:`~exe_path_for_pim`
+            - (For PIM only!) The path to the product's executable.
+          * - :py:attr:`~health_route`
+            - The health route for the service. Typically '/health' for a HTTP service.
+          * - :py:attr:`~service_type`
+            - The type of service: grpc, http or tcp.
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.saf.product_configuration.interfaces import IProductInstanceVersionConfiguration
+
+Property detail
+---------------
+
+.. py:property:: service_name
+   :type: str
+
+
+   
+   This is the name of the service that is exposed by the instance management system (HPS or PIM)
+   that identifies it from other services.
+
+   It should be consistent with the name used in the PIM light amd PIM K8S configurations. Typically its something
+   simple like ``grpc`` or ``http``.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: enable_secure_flags
+   :type: bool
+
+
+   
+   Must be set to True for the product instance to use the secure communication command line arguments.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: linux_local_secure_flags
+   :type: str
+
+
+   
+   The command line arguments needed to configure the product instance for secure local communication on
+   Linux.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: linux_uds_id
+   :type: str
+
+
+   
+   Template for the uds_id, which is used to identify the socket file for UDS communication.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: windows_local_secure_flags
+   :type: str
+
+
+   
+   The command line arguments needed to configure the product instance for secure local communication on
+   Windows.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: remote_secure_flags
+   :type: str
+
+
+   
+   The command line arguments needed to configure the product instance for secure remote communication.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: insecure_flags
+   :type: str
+
+
+   
+   The command line arguments needed to configure the product instance for insecure communication.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: execution_command
+   :type: str
+
+
+   
+   This is the command line used to start the product instance process.
+
+   It can contain template variables in the form `${VAR}`. Supported variables are:
+
+   - PORT: an integer which is the port that the process should expose its service on.
+   - EXECUTABLE: the full path to the executable using either the first product listed
+     in the `software_requirements` for HPS or the path specified by `exe_path_for_pim` for PIM.
+
+   Note that for PIM this code runs just once during the YAML file generation that PIM later uses to
+   launch the products. Thus, it's not feasible to generate and assign resources here for each launch.
+   For instance, attempting to generate a temporary file/directory here and passing it to the command
+   won't work as expected.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: environment
+   :type: dict[str, str]
+
+
+   
+   The environment variables that will be set in the environment running the ``execution_command``.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: software_requirements
+   :type: list[ISoftware]
+
+
+   
+   (For HPS only!) The software that must be installed on the node running the ``execution_command``.
+
+   Find built-in products at ansys-rep-application-plugins.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: exe_path_for_pim
+   :type: str
+
+
+   
+   (For PIM only!) The path to the product's executable.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: health_route
+   :type: str | None
+
+
+   
+   The health route for the service. Typically '/health' for a HTTP service.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: service_type
+   :type: ServiceType
+
+
+   
+   The type of service: grpc, http or tcp.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+
+

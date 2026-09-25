@@ -30,3 +30,42 @@ tasks:
       runFromWorkspaceRoot: true
       # Shared pre-commit hook envs aren't safe for concurrent invocation across projects.
       mutex: 'pre-commit'
+
+  build-doc:
+    description: "Build general documentation"
+    command: 'uv'
+    args:
+      - "run"
+      - "sphinx-build"
+      - "-M"
+      - "html"
+      - "doc/source"
+      - "doc/_build"
+      - "-j"
+      - "auto"
+      - "--keep-going"
+      - "-v"
+    env:
+      DISABLE_INTERSPHINX: 'true'
+    inputs:
+      - "doc/**/*"
+      - "pyproject.toml"
+      - "/.python-version"
+    options:
+      runFromWorkspaceRoot: true
+
+  download-wheel-for-e2e-tests:
+    command: 'pip'
+    args:
+      - "download"
+      - "--pre"
+      - "--no-deps"
+      - "ansys-saf-aspire"
+      - "ansys-saf-desktop-portal"
+      - "-d"
+      - "./extra_packages"
+    outputs:
+      - "extra_packages"
+    env:
+      PIP_INDEX_URL: https://pypi.org/simple
+      PIP_QUIET: 1

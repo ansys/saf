@@ -6,20 +6,20 @@ requires = [ "uv-build>=0.12.18,<0.13" ]
 name = "ansys-saf-desktop-installer"
 version = "1.18.dev0"
 description = "SAF desktop installer"
+readme = "README.rst"
+keywords = [
+  "ansys solutions",
+  "glow",
+  "python",
+  "saf",
+  "solution",
+  "solution application framework",
+]
 license = "Apache-2.0"
 license-files = [ "LICENSE" ]
 maintainers = [ { name = "ANSYS, Inc.", email = "pyansys-core@synopsys.com" } ]
 authors = [ { name = "ANSYS, Inc.", email = "pyansys-core@synopsys.com" } ]
 requires-python = ">=3.11,<4"
-readme = "README.rst"
-keywords = [
-  "solution application framework",
-  "ansys solutions",
-  "python",
-  "glow",
-  "saf",
-  "solution",
-]
 classifiers = [
   "Development Status :: 4 - Beta",
   "Intended Audience :: Other Audience",
@@ -36,9 +36,9 @@ dependencies = [
   "click>=8.1.7,<9",
   "packaging>=24.0,<25",
   "pyinstaller>=6.16,<7; python_version<'3.15'",
+  "python-dotenv>=1.1.0,<2",
   "requests>=2.28.2,<3",
   "toml>=0.10.2,<0.11",
-  "python-dotenv>=1.1.0,<2",
 ]
 
 [tool.pytest.ini_options]

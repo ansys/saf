@@ -175,7 +175,7 @@ The image container uses a responsive 16:9 aspect ratio.
 
 .. rubric:: Default project placeholder
 
-.. figure:: /_static/images/projects_default_project.png
+.. figure:: /_static/images/projects_default_icon.png
     :width: 65%
 
 .. rubric:: Custom project icon

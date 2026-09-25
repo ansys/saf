@@ -223,8 +223,7 @@ within SAF solutions.
 SAF Projects Dashboard
 ----------------------
 
-Provides out-of-the-box PyAnsys-powered managers to launch and control Ansys project instances
-within SAF solutions.
+Provides a portal for managing projects within a SAF solution. It helps users to launch and control different  project instances.
 
 - **Package name**: ``ansys-saf-projects-dashboard``
 - **Key features**:

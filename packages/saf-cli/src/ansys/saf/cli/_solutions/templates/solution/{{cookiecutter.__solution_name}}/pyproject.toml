@@ -51,12 +51,12 @@ priority = "primary"
 
 [tool.poetry.dependencies]
 python = ">=3.11,<3.15"
-ansys-saf-sdk = "^0.2.0"
+ansys-saf-sdk = ">=0.3.0,<1.0.0"
 
 [tool.poetry.group.desktop]
 optional = true
 [tool.poetry.group.desktop.dependencies]
-ansys-saf-sdk = { version = "^0.2.0", extras = ["desktop"] }
+ansys-saf-sdk = { version = ">=0.3.0,<1.0.0", extras = ["desktop"] }
 
 {% if cookiecutter.__ui_framework == "dash" %}
 [tool.poetry.group.ui]
@@ -113,7 +113,7 @@ pkginfo = "^1.12.1.2"
 pyinstaller = { version = "^6.16", python = "<3.15" }
 toml = "^0.10.2"
 pyc-wheel = "^1.2.7"
-ansys-saf-sdk = { version = "^0.2.0", extras = ["build"] }
+ansys-saf-sdk = { version = ">=0.3.0,<1.0.0", extras = ["build"] }
 
 [tool.poetry.group.style]
 optional = true

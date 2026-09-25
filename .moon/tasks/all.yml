@@ -55,6 +55,26 @@ tasks:
     options:
       runFromWorkspaceRoot: true
 
+  ruff-fix:
+    description: "Run ruff fix"
+    command:
+      - "uv"
+      - "run"
+      - "--package"
+      - "$projectAlias"
+      - "--all-extras"
+      - "ruff"
+      - "check"
+      - "--fix"
+      - "$projectSource"
+    inputs:
+      - "src/**/*"
+      - "tests/**/*"
+      - "pyproject.toml"
+      - "/.python-version"
+    options:
+      runFromWorkspaceRoot: true
+
   ruff-format:
     description: "Run ruff format"
     command:
@@ -117,10 +137,9 @@ tasks:
 
   twine-check:
     description: "Check distribution with twine"
-    command: "uv"
+    command: "uvx"
     args:
-      - "run"
-      - "twine"
+      - "twine@7.0.0"
       - "check"
       - "dist/*.whl"
       - "dist/*.tar.gz"

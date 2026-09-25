@@ -24,7 +24,7 @@ import subprocess
 import sys
 
 from ansys_sphinx_theme import ansys_favicon, get_version_match  # pyright: ignore[reportMissingTypeStubs]
-from sphinx.builders.latex import LaTeXBuilder
+from sphinx.builders.latex import LaTeXBuilder  # pyright: ignore
 
 # Add source to path to import package version
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.absolute() / "src"))

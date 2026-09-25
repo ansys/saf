@@ -451,8 +451,16 @@ jobs:
             secrets.PYANSYS_PYPI_PRIVATE_URL }}
           PIP_QUIET: 1
 
+      - name: Download extra packages for e2e tests (Moon)
+        if: matrix.download-extra-packages == 'true' && env.USE_MOON == 'true'
+        shell: bash
+        run: moon run root:download-wheel-for-e2e-tests
+        env:
+          PIP_EXTRA_INDEX_URL: https://PAT:${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}@${{
+            secrets.PYANSYS_PYPI_PRIVATE_URL }}
+
       - name: Download extra packages for e2e tests
-        if: matrix.download-extra-packages == 'true'
+        if: matrix.download-extra-packages == 'true' && env.USE_MOON == 'false'
         shell: bash
         run: |
           ${PYTHON_EXE} -m pip download --pre --no-deps ansys-saf-aspire ansys-saf-desktop-portal -d ${GITHUB_WORKSPACE}/extra_packages

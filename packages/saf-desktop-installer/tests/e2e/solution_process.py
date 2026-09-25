@@ -19,10 +19,10 @@ from pathlib import Path
 import platform
 import shutil
 
-from ansys.saf.testing.process import Process
 import httpx2
 from tenacity import TryAgain, retry, stop_after_attempt, wait_fixed
 
+from ansys.saf.testing.process import Process
 from tests.utils import get_appdata_directory
 
 

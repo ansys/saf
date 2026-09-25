@@ -18,14 +18,15 @@
 import importlib
 from pathlib import Path
 
-from ansys.saf.glow.client import callback
-from ansys.solutions.my_solution_dash.solution.definition import MySolutionDashSolution
 from dash import Input, Output, State, dcc, html  # pyright: ignore[reportMissingTypeStubs]
 from dash_extensions.enrich import (  # pyright: ignore[reportMissingTypeStubs]
     DashProxy,
     MultiplexerTransform,
     TriggerTransform,
 )
+
+from ansys.saf.glow.client import callback
+from ansys.solutions.my_solution_dash.solution.definition import MySolutionDashSolution
 
 app = DashProxy(
     __name__,

@@ -20,7 +20,7 @@ from datetime import datetime
 import os
 from pathlib import Path
 import shutil
-from sphinx.builders.latex import LaTeXBuilder
+from sphinx.builders.latex import LaTeXBuilder  # pyright: ignore
 import subprocess
 import sys
 

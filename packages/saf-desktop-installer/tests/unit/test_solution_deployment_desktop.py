@@ -29,13 +29,6 @@ import zipfile
 if platform.system() == "Windows":
     import winreg
 
-from ansys.saf.testing.platform_specific import linux_only, windows_only
-from ansys.saf.testing.selenium import (
-    wait_for_element,
-    wait_for_expected_attribute,
-    wait_for_expected_property,
-    wait_for_partial_text,
-)
 from click.testing import CliRunner
 from plotly.utils import PlotlyJSONEncoder  # pyright: ignore[reportMissingTypeStubs]
 import pytest
@@ -58,6 +51,13 @@ from ansys.saf.desktop.installer.solution_desktop_deployment import (
     install_shortcut,
     main,
     modify_solution_wheel_metadata,
+)
+from ansys.saf.testing.platform_specific import linux_only, windows_only
+from ansys.saf.testing.selenium import (
+    wait_for_element,
+    wait_for_expected_attribute,
+    wait_for_expected_property,
+    wait_for_partial_text,
 )
 from tests.conftest import CUSTOM_PACKAGE_FOR_TEST_2_WHEEL_NAMES, check_installer_gui_is_using_local_bootstrap_css
 from tests.unit.conftest import InstallerUi

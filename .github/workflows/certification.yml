@@ -161,7 +161,7 @@ jobs:
       commit-is-already-tagged: ${{ steps.verify-tag.outputs.commit-is-already-tagged
         }}
       library-name: ${{ steps.library-name.outputs.library-name }}
-      use-moon: ${{ contains('bdm-python-api,bdm-python-shared-volume,saf-iam-oidc,saf-product-configuration',
+      use-moon: ${{ contains('bdm-python-api,bdm-python-shared-volume,saf-desktop-installer,saf-iam-oidc,saf-product-configuration',
         steps.library-name.outputs.library-name) }}
 
   check-package-changes:
@@ -221,7 +221,7 @@ jobs:
     permissions:
       contents: read # Read the dependencies and source code of the library
     env:
-      USE_MOON: ${{ needs.pre-certification.outputs.use-moon }}
+      USE_MOON: ${{ needs.pre-certification.outputs.use-moon == 'true' }}
       PACKAGE: ${{ needs.pre-certification.outputs.library-name }}
     steps:
       - name: Checkout repository
@@ -347,7 +347,7 @@ jobs:
         }}-extended.json
       working-directory: packages/${{ needs.pre-certification.outputs.library-name
         }}
-      use-moon: false
+      use-moon: ${{ needs.pre-certification.outputs.use-moon == 'true' }}
       library-name: ${{ needs.pre-certification.outputs.library-name }}
     secrets:
       ANS_MINERVA_URL: ${{ secrets.ANS_MINERVA_URL }}
@@ -390,7 +390,7 @@ jobs:
         }}-${{ matrix.flagship }}.json
       working-directory: packages/${{ needs.pre-certification.outputs.library-name
         }}
-      use-moon: false
+      use-moon: ${{ needs.pre-certification.outputs.use-moon == 'true' }}
       library-name: ${{ needs.pre-certification.outputs.library-name }}
     secrets:
       ANS_MINERVA_URL: ${{ secrets.ANS_MINERVA_URL }}

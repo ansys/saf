@@ -99,7 +99,7 @@ class PythonManager:
         response_errors: list[str] = []
 
         for versions_url in versions_urls:
-            response = requests.get(versions_url)
+            response = requests.get(versions_url)  # noqa: S113
 
             if response.status_code == 200:
                 if versions_url == PYTHON_VERSION_INDEX:
@@ -243,7 +243,7 @@ class PythonManager:
             downloaded_python_path = self._third_party_folder / f"python-{self._python_version}.tgz"
 
         logger.info(f"Downloading python {self._python_version} from {url}")
-        response: requests.Response = requests.get(url)
+        response: requests.Response = requests.get(url)  # noqa: S113
         if not response.ok:
             raise RuntimeError(
                 f"Could not downloaded python version: {self._python_version}. "

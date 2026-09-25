@@ -92,7 +92,7 @@ def build_wheel_using_poetry(definitions_folder: Path, solution_root_dir: Path) 
     _check_readme_file_from_pyproject(solution_root_dir / "pyproject.toml")
     try:
         subprocess.check_output(
-            ["poetry", "build", "--no-interaction"],
+            ["poetry", "build", "--no-interaction"],  # noqa: S607
             cwd=solution_root_dir,
             text=True,
             stderr=subprocess.STDOUT,

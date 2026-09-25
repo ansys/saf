@@ -37,7 +37,6 @@ from ansys.saf.glow.client import Client
 from tests.e2e.conftest import PACKAGE_ROOT, interactive_authorization
 from tests.mocks.solution_with_hps_python_script.hps_parametric_study import (
     FileJobStep,
-    HpsProjectCollectionsStep,
     ParametricStudySolution,
 )
 
@@ -90,7 +89,7 @@ def auto_setup_job_scripts(
 
 def load_job_scripts(
     project: ParametricStudySolution,
-    step: FileJobStep | HpsProjectCollectionsStep,
+    step: FileJobStep,
 ):
     storage_scope = project.storage_scope
     with Path(
@@ -218,31 +217,53 @@ class TestHpsParametricStudy:
             assert step.result_file_content == EXPECTED_CONTENT
 
     @pytest.mark.parametrize("list_or_dict", ["list", "dict"])
-    def test_collecting_hps_projects_on_list_or_dict(
+    def test_collecting_hps_simple_projects_on_list_or_dict(
         self,
         function_project: ProjectFixture[ParametricStudySolution],
         list_or_dict: str,
     ):
         """
-        Test that HPS projects can be grouped and stored in a list or flat dictionary.
+        Test that HPS simple jobs can be grouped and stored in a list or flat dictionary.
         """
         num_projects = 2
         step = function_project.project.steps.hps_project_collections_step
-        load_job_scripts(function_project.project, step)
         step.start_n_simple_jobs(num_projects=num_projects, list_or_dict=list_or_dict)
         if list_or_dict == "list":
-            assert len(step.simple_projects) == num_projects
-            for project in step.simple_projects:
-                assert project.hps_project_identifier
+            projects = step.simple_projects
         else:
-            assert len(step.simple_projects_by_name) == num_projects
-            for project in step.simple_projects_by_name.values():
-                assert project.hps_project_identifier
-        step.wait_for_hps_projects_to_finish(list_or_dict=list_or_dict)
-        output_files = step.fetch_files(list_or_dict=list_or_dict)
+            projects = list(step.simple_projects_by_name.values())
+        assert len(projects) == num_projects
+        for project in projects:
+            assert project.hps_project_identifier
+        step.wait_for_hps_jobs_to_finish(simple_or_parametric="simple",list_or_dict=list_or_dict)
+        output_files = step.fetch_simple_results(list_or_dict=list_or_dict)
         assert len(output_files) == num_projects
         for output_file in output_files:
-            assert output_file == "result=7.0"
+            assert output_file == 7
+
+    @pytest.mark.parametrize("list_or_dict", ["list", "dict"])
+    def test_collecting_hps_parametric_studies_on_list_or_dict(
+        self,
+        function_project: ProjectFixture[ParametricStudySolution],
+        list_or_dict: str,
+    ):
+        """
+        Test that HPS parametric studies can be grouped and stored in a list or flat dictionary.
+        """
+        num_projects = 2
+        step = function_project.project.steps.hps_project_collections_step
+        step.start_n_parametric_studies(num_projects=num_projects, list_or_dict=list_or_dict)
+        if list_or_dict == "list":
+            projects = step.study_projects
+        else:
+            projects = list(step.study_projects_by_name.values())
+        assert len(projects) == num_projects
+        for project in projects:
+            assert project.hps_project_identifier
+        step.wait_for_hps_jobs_to_finish(simple_or_parametric="parametric", list_or_dict=list_or_dict)
+        study_results = step.fetch_parametric_results(list_or_dict=list_or_dict)
+        assert len(study_results) == num_projects
+        assert study_results == [["study-result"]] * num_projects
 
 
 @pytest.fixture

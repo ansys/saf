@@ -5,8 +5,7 @@ BDM
 
 .. topic:: Objective
 
-  Manage the files and directories a solution produces or consumes — referred to as BLOBs
-  (binary large objects) — with the blob data management (BDM) feature: store them from the
+  Manage the files and directories a solution produces or consumes with the blob data management (BDM) feature: store them from the
   backend, reference them through typed step fields, and read, modify, or upload them from
   the frontend.
 
@@ -149,7 +148,7 @@ card of the file handling page.
 
     A **callback** is a Dash-decorated function that fires in response to a UI event. In a
     SAF solution, callbacks reach the backend through ``project.steps.<step_name>``, read or
-    write fields, and invoke transaction methods — no manual HTTP calls needed.
+    write fields, and invoke transaction methods. No manual HTTP calls are needed.
 
 
 Use case 1: Store and access a file

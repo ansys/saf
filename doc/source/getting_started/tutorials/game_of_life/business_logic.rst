@@ -140,7 +140,7 @@ last one is ever touched by the SAF backend.
    * - Object
      - Responsibility
    * - ``Pattern`` / ``PatternCategory``
-     - A dataclass and an enum describing one predefined starting configuration (its name,
+     - A ``dataclass`` and an ``enum`` describing one predefined starting configuration (its name,
        its category, and the 2D NumPy array of live cells).
    * - ``PatternLibrary``
      - The catalog of available patterns (``blinker``, ``toad``, ``beacon``, ``pulsar``,

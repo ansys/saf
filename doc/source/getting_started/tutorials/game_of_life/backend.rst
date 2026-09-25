@@ -12,13 +12,13 @@ Phase 3 — Backend
   - :material-outlined:`account_tree;1.25em;saf-objective-icon` Declare the workflow contract in the
     **solution definition**.
   - :material-outlined:`data_object;1.25em;saf-objective-icon` Define the **step model** and its
-    **typed fields** — where the state lives.
+    **typed fields**, where the state lives.
   - :material-outlined:`sync_alt;1.25em;saf-objective-icon` Write **transaction methods**, the only
     place where state is read and written.
   - :material-outlined:`rule;1.25em;saf-objective-icon` Declare **field dependencies**
     (``StepSpec``) so SAF knows what to load and save.
   - :material-outlined:`timer;1.25em;saf-objective-icon` Choose between **blocking** and
-    **long-running** transactions — synchronous or background execution.
+    **long-running** transactions. Synchronous or background execution.
   - :material-outlined:`podcasts;1.25em;saf-objective-icon` Publish **events** to stream progress
     from the backend to the UI in real time.
 
@@ -28,7 +28,7 @@ Phase 3 — Backend
 .. tip::
 
     This page is where you meet the fundamentals of the framework. Each of them is called out
-    in a purple **Key concept** box like the ones below — if you only read one thing per
+    in a purple **Key concept** box like the ones below. If you only read one thing per
     section, read those.
 
 .. note::

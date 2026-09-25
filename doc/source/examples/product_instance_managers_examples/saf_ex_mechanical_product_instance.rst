@@ -49,7 +49,7 @@ In this example, you learn how to:
 
     .. code-block:: toml
 
-        ansys-saf-sdk = {version = "^0.2.0", extras = ["core-pim", "instance-management-mechanical"]}
+        ansys-saf-sdk = {version = "^0.3.0", extras = ["core-pim", "instance-management-mechanical"]}
 
     This will install the supported version of ``ansys-mechanical-core`` to control the Mechanical product instances.
     This example uses PIM as the product instance management system. If you want to use HPS instead, replace the ``core-pim`` extra with ``core-hps``.

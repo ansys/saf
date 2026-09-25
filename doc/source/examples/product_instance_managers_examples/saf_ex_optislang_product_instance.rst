@@ -49,7 +49,7 @@ In this example, you learn how to:
 
     .. code-block:: toml
 
-        ansys-saf-sdk = {version = "^0.2.0", extras = ["core-pim", "instance-management-optislang"]}
+        ansys-saf-sdk = {version = "^0.3.0", extras = ["core-pim", "instance-management-optislang"]}
 
     This will install the supported version of ``ansys-optislang-core`` to control the optiSLang product instances.
     This example uses PIM as the product instance management system. If you want to use HPS instead, replace the ``core-pim`` extra with ``core-hps``.

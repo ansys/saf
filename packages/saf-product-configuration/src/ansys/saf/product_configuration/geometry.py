@@ -78,7 +78,7 @@ class BaseGeometryInstanceVersionConfiguration(IProductInstanceVersionConfigurat
             Software(
                 name="Ansys Geometry",
                 version=f"20{self._version[0:2]} R{self._version[2:]}",
-            )
+            ),
         ]
 
     @property

@@ -17,7 +17,7 @@
 import enum
 
 
-class TransportMode(str, enum.Enum):
+class TransportMode(enum.StrEnum):
     """Enum containing supported transport-mode values for wrapper CLI compatibility."""
 
     (INSECURE, UDS, MTLS, WNUA) = ("insecure", "UDS", "MTLS", "WNUA")

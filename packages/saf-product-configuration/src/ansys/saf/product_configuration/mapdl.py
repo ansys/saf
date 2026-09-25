@@ -82,7 +82,7 @@ class MapdlInstanceVersionConfiguration(IProductInstanceVersionConfiguration):
             Software(
                 name="Ansys Mechanical APDL",
                 version=f"20{self._version[0:2]} R{self._version[2:]}",
-            )
+            ),
         ]
 
     @property

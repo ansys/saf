@@ -161,7 +161,7 @@ jobs:
       commit-is-already-tagged: ${{ steps.verify-tag.outputs.commit-is-already-tagged
         }}
       library-name: ${{ steps.library-name.outputs.library-name }}
-      use-moon: ${{ contains('bdm-python-api,bdm-python-shared-volume,saf-iam-oidc',
+      use-moon: ${{ contains('bdm-python-api,bdm-python-shared-volume,saf-iam-oidc,saf-product-configuration',
         steps.library-name.outputs.library-name) }}
 
   check-package-changes:

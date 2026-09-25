@@ -14,13 +14,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from ansys.saf.product_configuration.interfaces import (
-    IProductInstanceConfiguration,
-    IProductInstanceVersionConfiguration,
-)
 from tests.mocks.product_instance_configs.mock_grpc_instance_configuration import (
     MockGrpcCustomRouteInstanceVersionConfiguration,
     MockGrpcInstanceConfiguration,  # pyright: ignore[reportUnusedImport]  # noqa: F401 # for testing duplicates via imports
+)
+
+from ansys.saf.product_configuration.interfaces import (
+    IProductInstanceConfiguration,
+    IProductInstanceVersionConfiguration,
 )
 
 

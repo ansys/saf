@@ -85,7 +85,7 @@ def extended_mgr(
             "Instance configuration MockGrpcCustomRouteInstanceConfiguration already loaded, skipping.",
             "Instance configuration MockGrpcInstanceConfiguration already loaded, skipping.",
             "Instance configuration MockHttpFakeRouteInstanceConfiguration2 already loaded, skipping.",
-        ]
+        ],
     )
 
     return mgr
@@ -177,7 +177,7 @@ def test_mock_product_has_expected_last_version(
     version, configuration = extended_mgr.get_version_configuration("custom-grpc-product")
     assert version == "222"
     assert configuration.execution_command.endswith(
-        " -m tests.mocks.grpc_mock_product.server ${PORT} --host ${HOST} --version 222"
+        " -m tests.mocks.grpc_mock_product.server ${PORT} --host ${HOST} --version 222",
     )
 
 
@@ -187,7 +187,7 @@ def test_mock_product_222_has_expected_command_line(
     version, configuration = extended_mgr.get_version_configuration("custom-grpc-product", "222")
     assert version == "222"
     assert configuration.execution_command.endswith(
-        " -m tests.mocks.grpc_mock_product.server ${PORT} --host ${HOST} --version 222"
+        " -m tests.mocks.grpc_mock_product.server ${PORT} --host ${HOST} --version 222",
     )
 
 

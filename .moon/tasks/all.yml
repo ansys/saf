@@ -144,29 +144,6 @@ tasks:
       - "/.python-version"
 
   build-doc:
-    description: "Build general documentation"
-    command: 'uv'
-    args:
-      - "run"
-      - "sphinx-build"
-      - "-M"
-      - "html"
-      - "doc/source"
-      - "doc/_build"
-      - "-j"
-      - "auto"
-      - "--keep-going"
-      - "-v"
-    env:
-      DISABLE_INTERSPHINX: 'true'
-    inputs:
-      - "doc/**/*"
-      - "pyproject.toml"
-      - "/.python-version"
-    options:
-      runFromWorkspaceRoot: true
-
-  build-api-doc:
     description: "Build API documentation"
     command: 'uv'
     args:

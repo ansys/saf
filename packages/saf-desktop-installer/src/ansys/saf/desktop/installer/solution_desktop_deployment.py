@@ -399,7 +399,7 @@ def install_shortcut(
         shell_cmd += f"$Shortcut.Description = '{solution_display_name} Application'; "
         shell_cmd += f"$Shortcut.IconLocation = '{installation_icon_path}'; "
         shell_cmd += "$Shortcut.Save()"
-        subprocess.check_output(["powershell.exe", "-Command", shell_cmd], stderr=subprocess.PIPE, text=True)
+        subprocess.check_output(["powershell.exe", "-Command", shell_cmd], stderr=subprocess.PIPE, text=True)  # noqa: S607
     else:
         with shortcut_path.open("w") as file:
             file.write("[Desktop Entry]\n")
@@ -1185,7 +1185,7 @@ def is_port_free(port: int) -> bool:
 
 def get_random_port() -> int:
     while True:
-        port = random.randint(40000, 65000)
+        port = random.randint(40000, 65000)  # noqa: S311
         if is_port_free(port):
             return port
 

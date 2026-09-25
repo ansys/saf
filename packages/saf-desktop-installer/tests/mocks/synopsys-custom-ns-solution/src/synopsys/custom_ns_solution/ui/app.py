@@ -15,7 +15,6 @@
 # limitations under the License.
 
 
-from ansys.saf.glow.client import callback
 from dash import Input, Output, State, dcc, html  # pyright: ignore[reportMissingTypeStubs]
 from dash_extensions.enrich import (  # pyright: ignore[reportMissingTypeStubs]
     DashProxy,
@@ -23,6 +22,8 @@ from dash_extensions.enrich import (  # pyright: ignore[reportMissingTypeStubs]
     TriggerTransform,
 )
 from synopsys.custom_ns_solution.solution.definition import MyCustomNSSolution
+
+from ansys.saf.glow.client import callback
 
 app = DashProxy(
     __name__,

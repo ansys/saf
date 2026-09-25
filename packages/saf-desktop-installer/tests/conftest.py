@@ -54,7 +54,7 @@ def solution_root_dir(tmp_path: Path, request: pytest.FixtureRequest, monkeypatc
 def check_installer_gui_is_using_local_bootstrap_css(selenium_webdriver: WebDriver) -> None:
     # check that the GUI is using the bundled bootstrap CSS from local assets, not from an external CDN
     stylesheets = cast(
-        list[str],
+        "list[str]",
         selenium_webdriver.execute_script(  # pyright: ignore[reportUnknownMemberType]
             "return Array.from(document.querySelectorAll('link[rel=\"stylesheet\"]')).map(element => element.href)",
         ),

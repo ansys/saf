@@ -24,11 +24,6 @@ import subprocess
 import sys
 import uuid
 
-from ansys.saf.testing.platform_specific import linux_only, windows_only
-from ansys.saf.testing.selenium import (
-    wait_for_element_and_click,
-    wait_for_partial_text,
-)
 from packaging.version import parse
 from PIL import Image
 import pytest
@@ -41,6 +36,11 @@ from ansys.saf.desktop.installer._package.config import (
 )
 from ansys.saf.desktop.installer._package.download_python import MINIMUM_REQUIRED_VERSIONS
 from ansys.saf.desktop.installer._package.solution import get_solution_package_dir
+from ansys.saf.testing.platform_specific import linux_only, windows_only
+from ansys.saf.testing.selenium import (
+    wait_for_element_and_click,
+    wait_for_partial_text,
+)
 from tests.e2e.conftest import (
     BuildSolution,
     ExecuteSolution,

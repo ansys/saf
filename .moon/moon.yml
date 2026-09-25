@@ -5,7 +5,7 @@ workspace:
     include: []
 
 tasks:
-  install:
+  uv-sync:
     command: "uv"
     args:
       - "sync"
@@ -30,27 +30,3 @@ tasks:
       runFromWorkspaceRoot: true
       # Shared pre-commit hook envs aren't safe for concurrent invocation across projects.
       mutex: 'pre-commit'
-
-  build-doc:
-    description: "Build general documentation"
-    command: 'uv'
-    args:
-      - "run"
-      - "sphinx-build"
-      - "-M"
-      - "html"
-      - "doc/source"
-      - "doc/_build"
-      - "-j"
-      - "auto"
-      - "--keep-going"
-      - "-v"
-    env:
-      DISABLE_INTERSPHINX: 'true'
-    inputs:
-      - "doc/**/*"
-      - "pyproject.toml"
-      - "/.python-version"
-    options:
-      runFromWorkspaceRoot: true
-

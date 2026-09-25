@@ -21,7 +21,7 @@ import shutil
 import subprocess
 
 from ansys_sphinx_theme import ansys_favicon, get_version_match
-from sphinx.builders.latex import LaTeXBuilder
+from sphinx.builders.latex import LaTeXBuilder  # pyright: ignore
 from ansys.iam.oidc import __version__
 
 THIS_PATH = Path(__file__).parent.resolve()

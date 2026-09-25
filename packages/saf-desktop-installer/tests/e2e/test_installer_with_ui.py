@@ -18,6 +18,9 @@ import logging
 from pathlib import Path
 import platform
 
+import pytest
+from selenium.webdriver.chrome.webdriver import WebDriver
+
 from ansys.saf.testing.selenium import (
     wait_for_element,
     wait_for_element_and_click,
@@ -25,9 +28,6 @@ from ansys.saf.testing.selenium import (
     wait_for_expected_property,
     wait_for_partial_text,
 )
-import pytest
-from selenium.webdriver.chrome.webdriver import WebDriver
-
 from tests.conftest import check_installer_gui_is_using_local_bootstrap_css
 from tests.e2e.conftest import (
     InstallSolutionGUI,

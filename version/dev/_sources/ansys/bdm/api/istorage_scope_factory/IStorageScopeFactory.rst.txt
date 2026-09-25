@@ -1,0 +1,149 @@
+
+
+
+
+
+
+:class:`IStorageScopeFactory`
+=============================
+
+
+.. py:class:: ansys.bdm.api.istorage_scope_factory.IStorageScopeFactory
+
+   Bases: :py:obj:`IReadStorageScopeFactory`, :py:obj:`Protocol`
+
+
+   
+   Factory pattern for creating instances of IStorageScope and IAsyncStorageScope.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: IStorageScopeFactory
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~create_storage_scope`
+            - Create a new storage scope.
+          * - :py:attr:`~create_async_storage_scope`
+            - Create a new asynchronous storage scope.
+
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.bdm.api.istorage_scope_factory import IStorageScopeFactory
+
+
+
+Method detail
+-------------
+
+.. py:method:: create_storage_scope(context: str, template_vars: dict[str, str]) -> ansys.bdm.api.istorage_scope.IStorageScope
+
+   
+   Create a new storage scope.
+
+
+   :Parameters:
+
+       **context: str**
+           TODO: How to word what this genericaly does.
+
+       **template_vars: Dict[str, str]**
+           Template variables that may be used by the configuration system             to return an appropriate :class:`IStorageScope`. TODO: Define whether certain fields             need to be passed in?
+
+
+
+   :Returns:
+
+       IStorageScope
+           A configured and ready to use :class:`IStorageScope`
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: create_async_storage_scope(context: str, template_vars: dict[str, str]) -> ansys.bdm.api.iasync_storage_scope.IAsyncStorageScope
+   :async:
+
+
+   
+   Create a new asynchronous storage scope.
+
+
+   :Parameters:
+
+       **context: str**
+           TODO: How to word what this genericaly does.
+
+       **template_vars: Dict[str, str]**
+           Template variables that may be used by the configuration system             to return an appropriate :class:`IAsyncStorageScope`. TODO: Define whether certain fields             need to be passed in?
+
+
+
+   :Returns:
+
+       IAsyncStorageScope
+           A configured and ready to use :class:`IAsyncStorageScope`
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

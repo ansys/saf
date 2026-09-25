@@ -94,7 +94,7 @@ def layout(project: {{cookiecutter.__solution_definition_class_name}}):
 
     return html.Div(
         [
-            html.H1("HPS {{ cookiecutter.__step_name }}", className="display-3", style={"font-size": "48px", "fontWeight": "bold"}),
+            html.H1("HPS {{ cookiecutter.__step_display_name }}", className="display-3", style={"font-size": "48px", "fontWeight": "bold"}),
             html.P(
                 "Run a 4-point parametric study for sum(A, B).",
                 className="lead",

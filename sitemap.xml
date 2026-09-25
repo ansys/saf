@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- managed-by: ansys/actions/_doc-gen-sitemap -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://saf.ansys.com/</loc>
+    <lastmod>2026-09-25T15:12:06+00:00</lastmod>
+  </url>
+  <url>
+    <loc>https://saf.ansys.com/version/stable/_sphinx/bltins.html</loc>
+  </url>
+  <url>
+    <loc>https://saf.ansys.com/version/stable/solution.html</loc>
+  </url>
+  <url>
+    <loc>https://saf.ansys.com/version/stable/product_instance.html</loc>
+  </url>
+  <url>
+    <loc>https://saf.ansys.com/version/stable/runtime.html</loc>
+  </url>
+  <url>
+    <loc>https://saf.ansys.com/version/stable/client.html</loc>
+  </url>
+  <url>
+    <loc>https://saf.ansys.com/version/stable/index.html</loc>
+  </url>
+  <url>
+    <loc>https://saf.ansys.com/version/stable/hps.html</loc>
+  </url>
+  <url>
+    <loc>https://saf.ansys.com/version/stable/cli.html</loc>
+  </url>
+</urlset>

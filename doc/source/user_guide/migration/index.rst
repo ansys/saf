@@ -17,8 +17,17 @@ This section provides migration guides for upgrading SAF solutions across major 
 
     Breaking changes in GLOW 2.0 and step-by-step migration instructions.
 
+   .. grid-item-card:: :material-outlined:`upgrade;1.75em` :ref:`dash_multipage_migration`
+    :class-card: highlight-card
+    :link-type: doc
+    :link: cli
+    :shadow: lg
+
+    Migrate the solution UI of the SAF CLI solution template to a multi-page Dash application.
+
 .. toctree::
    :maxdepth: 2
    :hidden:
 
    glow
+   cli

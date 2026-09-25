@@ -49,7 +49,7 @@ ANSYS_GRPC_CERTIFICATES = "ANSYS_GRPC_CERTIFICATES"
 
 
 _selected_version: str = "261"
-_product_host: str = "0.0.0.0"
+_product_host: str = "0.0.0.0"  # noqa: S104
 _transport_mode: TransportMode = TransportMode.INSECURE
 
 

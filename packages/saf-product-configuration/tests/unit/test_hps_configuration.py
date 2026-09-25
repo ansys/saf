@@ -15,7 +15,6 @@
 # limitations under the License.
 
 import platform
-from typing import Type
 
 import pytest
 
@@ -93,7 +92,7 @@ from ansys.saf.product_configuration.wrappers.versions import (
     ],
 )
 def test_hps_software_requirement(
-    product_config: Type[IProductInstanceConfiguration],
+    product_config: type[IProductInstanceConfiguration],
     version: str,
     expected_software: list[tuple[str, str]],
     monkeypatch: pytest.MonkeyPatch,

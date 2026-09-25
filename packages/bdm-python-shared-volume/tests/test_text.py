@@ -18,11 +18,11 @@ import codecs
 from pathlib import Path
 import shutil
 
+import pytest
+
 from ansys.bdm.api.entity_handle import EntityHandle
 from ansys.bdm.api.storage_exceptions import CannotGenerateStreamForDirectoryError
 from ansys.bdm.base.encoder import decode_bom
-import pytest
-
 from tests.conftest import SimpleAsyncStorageScopeFactory, SimpleStorageScopeFactory
 from tests.content import CONTENT
 

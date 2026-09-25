@@ -128,7 +128,7 @@ class OidcDependency(OpenIdConnect):
         """
         client = OidcClient(issuer=self._oidc_issuer, audience=self._audience)
         # perf optim: avoid refetching openid config if it is already cached by the async client
-        client._openid_config = self._oidc_client._openid_config  # pyright: ignore[reportPrivateUsage]  # noqa: SLF001
+        client._openid_config = self._oidc_client._openid_config  # pyright: ignore[reportPrivateUsage]
         return client
 
     async def __call__(self, request: Request) -> str | None:
@@ -282,7 +282,7 @@ class OidcWebSocketDependency(OidcDependency):
                 data = await websocket.receive_text()
                 await websocket.send_text(f"Message text was: {data}")
 
-        """  # noqa: D205
+        """
         if auto_error and (not oidc_issuer or not audience):
             msg = "Both 'oidc_issuer' and 'audience' must be provided when 'auto_error' is True."
             raise NoIssuerOrAudienceError(

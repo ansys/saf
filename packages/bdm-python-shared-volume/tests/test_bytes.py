@@ -17,10 +17,10 @@
 import random
 import string
 
-from ansys.bdm.api.entity_handle import EntityHandle
-from ansys.bdm.api.storage_exceptions import CannotGenerateStreamForDirectoryError
 import pytest
 
+from ansys.bdm.api.entity_handle import EntityHandle
+from ansys.bdm.api.storage_exceptions import CannotGenerateStreamForDirectoryError
 from tests.conftest import SimpleAsyncStorageScopeFactory, SimpleStorageScopeFactory
 from tests.content import CONTENT
 

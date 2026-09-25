@@ -107,7 +107,7 @@ def test_start_service_manager_failure_local_session(client: TestClient, mocker:
 
     # THEN: service manager is not launched again
     assert response.status_code == 400  # pyright: ignore[reportUnknownMemberType, reportUnknownVariableType]
-    assert response.json() == {"detail": "remote session creation is not supported in TransportMode.UDS mode"}  # pyright: ignore[reportUnknownMemberType, reportUnknownVariableType]
+    assert response.json() == {"detail": "remote session creation is not supported in UDS mode"}  # pyright: ignore[reportUnknownMemberType, reportUnknownVariableType]
     mocked_service_manager.assert_not_called()
 
 

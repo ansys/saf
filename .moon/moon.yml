@@ -1,0 +1,56 @@
+# Root-level project for tasks that must run once for the whole workspace,
+# instead of once per package. See https://moonrepo.dev/docs/guides/root-project
+workspace:
+  inheritedTasks:
+    include: []
+
+tasks:
+  install:
+    command: "uv"
+    args:
+      - "sync"
+    inputs:
+      - "/pyproject.toml"
+      - "/uv.lock"
+    outputs:
+      - "/.venv"
+    options:
+      runFromWorkspaceRoot: true
+
+  pre-commit:
+    description: "Run pre-commit against root-level files only (packages run their own pre-commit task)"
+    script: 'uv run pre-commit run --files $(git ls-files -- ":(top,glob)*" ":(top).github/**" ":(top)doc/**")'
+    inputs:
+      - '/.pre-commit-config.yaml'
+      - '/pyproject.toml'
+      - '/uv.lock'
+      - '/.github/**/*'
+      - '/doc/**/*'
+    options:
+      runFromWorkspaceRoot: true
+      # Shared pre-commit hook envs aren't safe for concurrent invocation across projects.
+      mutex: 'pre-commit'
+
+  build-doc:
+    description: "Build general documentation"
+    command: 'uv'
+    args:
+      - "run"
+      - "sphinx-build"
+      - "-M"
+      - "html"
+      - "doc/source"
+      - "doc/_build"
+      - "-j"
+      - "auto"
+      - "--keep-going"
+      - "-v"
+    env:
+      DISABLE_INTERSPHINX: 'true'
+    inputs:
+      - "doc/**/*"
+      - "pyproject.toml"
+      - "/.python-version"
+    options:
+      runFromWorkspaceRoot: true
+

@@ -81,7 +81,12 @@ TESTS_DEFINITIONS_PER_TARGET = {
     "examples": ["examples"],
 }
 
-UV_PACKAGES = ["bdm-python-api"]
+UV_PACKAGES = [
+    "bdm-python-api",
+    "bdm-python-shared-volume",
+    "saf-iam-oidc",
+    "saf-product-configuration",
+]
 
 
 def write_output(name: str, value: str) -> None:

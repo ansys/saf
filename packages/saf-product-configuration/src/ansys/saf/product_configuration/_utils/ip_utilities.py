@@ -24,4 +24,4 @@ def get_random_free_port() -> int:
             sock.bind(("", 0))
             return sock.getsockname()[1]
         except OSError as err:
-            raise IOError("no free ports") from err
+            raise OSError("no free ports") from err

@@ -1,13 +1,99 @@
 tasks:
   pre-commit:
-    description: "Run pre-commit against this package's files and root-level files only (other packages are not yet converted)"
-    script: 'uv run pre-commit run --files $(git ls-files -- ":(top,glob)*" ":(top).github/**" ":(top)doc/**" ":(top,glob)$projectSource/**")'
+    description: "Run pre-commit against this package's files only (root-level files are handled by root:pre-commit)"
+    script: 'uv run pre-commit run --files $(git ls-files -- ":(top,glob)$projectSource/**")'
+    deps:
+      - '~:pyright'
+      - '~:ruff'
+      - '~:ruff-format'
+      - '~:bandit'
     inputs:
       - 'src/**/*'
       - 'tests/**/*'
       - '/.pre-commit-config.yaml'
       - 'pyproject.toml'
-      - 'uv.lock'
+      - '/.uv.lock'
+    options:
+      runFromWorkspaceRoot: true
+      # Shared pre-commit hook envs aren't safe for concurrent invocation across projects.
+      mutex: 'pre-commit'
+
+  pyright:
+    description: "Run pyright"
+    command:
+      - "uv"
+      - "run"
+      - "--package"
+      - "$projectAlias"
+      - "--all-extras"
+      - "pyright"
+      - "$projectSource"
+    inputs:
+      - "src/**/*"
+      - "tests/**/*"
+      - "pyproject.toml"
+      - "/.python-version"
+    options:
+      runFromWorkspaceRoot: true
+
+  ruff:
+    description: "Run ruff check"
+    command:
+      - "uv"
+      - "run"
+      - "--package"
+      - "$projectAlias"
+      - "--all-extras"
+      - "ruff"
+      - "check"
+      - "$projectSource"
+    inputs:
+      - "src/**/*"
+      - "tests/**/*"
+      - "pyproject.toml"
+      - "/.python-version"
+    options:
+      runFromWorkspaceRoot: true
+
+  ruff-format:
+    description: "Run ruff format"
+    command:
+      - "uv"
+      - "run"
+      - "--package"
+      - "$projectAlias"
+      - "--all-extras"
+      - "ruff"
+      - "format"
+      - "--diff"
+      - "$projectSource"
+    inputs:
+      - "src/**/*"
+      - "tests/**/*"
+      - "pyproject.toml"
+      - "/.python-version"
+    options:
+      runFromWorkspaceRoot: true
+
+  bandit:
+    description: "Run bandit"
+    command:
+      - "uv"
+      - "run"
+      - "--package"
+      - "$projectAlias"
+      - "--all-extras"
+      - "bandit"
+      - "-r"
+      - "$projectSource/src"
+      - "--severity-level=high"
+    inputs:
+      - "src/**/*"
+      - "tests/**/*"
+      - "pyproject.toml"
+      - "/.python-version"
+    tags:
+      - "ubuntu-latest"
     options:
       runFromWorkspaceRoot: true
 
@@ -36,9 +122,11 @@ tasks:
       - "run"
       - "twine"
       - "check"
-      - "dist/*"
+      - "dist/*.whl"
+      - "dist/*.tar.gz"
     inputs:
-      - "dist/*"
+      - "dist/*.whl"
+      - "dist/*.tar.gz"
     options:
       runFromWorkspaceRoot: true
 
@@ -97,29 +185,6 @@ tasks:
       - "/.python-version"
 
   build-doc:
-    description: "Build general documentation"
-    command: 'uv'
-    args:
-      - "run"
-      - "sphinx-build"
-      - "-M"
-      - "html"
-      - "doc/source"
-      - "doc/_build"
-      - "-j"
-      - "auto"
-      - "--keep-going"
-      - "-v"
-    env:
-      DISABLE_INTERSPHINX: 'true'
-    inputs:
-      - "doc/**/*"
-      - "pyproject.toml"
-      - "/.python-version"
-    options:
-      runFromWorkspaceRoot: true
-
-  build-api-doc:
     description: "Build API documentation"
     command: 'uv'
     args:
@@ -149,7 +214,7 @@ tasks:
       - "export"
       - "--package"
       - "$projectAlias"
-      - "--no-emit-project"
+      - "--no-emit-workspace"
       - "--no-hashes"
       - "--format"
       - "requirements-txt"

@@ -15,7 +15,6 @@
 # limitations under the License.
 
 import sys
-from typing import Dict, List
 
 from ansys.saf.product_configuration.interfaces import (
     IProductInstanceConfiguration,
@@ -59,12 +58,12 @@ class VisorInstanceVersionConfiguration(IProductInstanceVersionConfiguration):
         return sys.executable
 
     @property
-    def environment(self) -> Dict[str, str]:
+    def environment(self) -> dict[str, str]:
         """Environment variables for the Visor instance."""
         return {}
 
     @property
-    def software_requirements(self) -> List[ISoftware]:
+    def software_requirements(self) -> list[ISoftware]:
         """Required software to run Visor in HPS."""
         return [
             Software(
@@ -88,7 +87,7 @@ class VisorInstanceConfiguration(IProductInstanceConfiguration):
         return PRODUCT_NAME
 
     @property
-    def versions(self) -> List[str]:
+    def versions(self) -> list[str]:
         """Supported Visor versions."""
         return ["0"]
 

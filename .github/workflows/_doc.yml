@@ -77,21 +77,12 @@ jobs:
             }}
           fetch-depth: 0
 
-      - name: Set up uv
-        uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
-        with:
-          enable-cache: false
-          python-version: ${{ vars.PYTHON_VERSION }}
-          activate-environment: true
-
       - name: Setup Moon Toolchain
         uses: moonrepo/setup-toolchain@261c62cb5b0f580c7be7c8cd0f023a2e96756095 # v0.6.4
 
       - name: Build centralized documentation
         shell: bash
-        env:
-          MOON_TOOLCHAIN_FORCE_GLOBALS: 'uv'
-        run: moon run doc:build-doc
+        run: moon run root:build-doc
 
       - name: Upload HTML documentation artifact
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
@@ -110,6 +101,10 @@ jobs:
       matrix:
         package:
           - bdm-python-api
+          - saf-iam-oidc
+          - saf-product-configuration
+    env:
+      PACKAGE: ${{ matrix.package }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -120,22 +115,12 @@ jobs:
             || (inputs.ref != '' && 'main' || github.ref) }}
           fetch-depth: 0
 
-      - name: Set up uv
-        uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
-        with:
-          enable-cache: false
-          python-version: ${{ vars.PYTHON_VERSION }}
-          activate-environment: true
-
       - name: Setup Moon Toolchain
         uses: moonrepo/setup-toolchain@261c62cb5b0f580c7be7c8cd0f023a2e96756095 # v0.6.4
 
       - name: Build centralized documentation
         shell: bash
-        env:
-          MOON_TOOLCHAIN_FORCE_GLOBALS: 'uv'
-          PACKAGE: ${{ matrix.package }}
-        run: moon run $PACKAGE:build-api-doc
+        run: moon run $PACKAGE:build-doc
 
       - name: Upload HTML documentation artifact
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
@@ -189,8 +174,6 @@ jobs:
         package:
           - dash-super-components
           - glow-engine
-          - saf-product-configuration
-          - saf-iam-oidc
           - saf-product-manager
     runs-on: ubuntu-latest
     steps:
@@ -375,7 +358,7 @@ jobs:
         id: info
         uses: ansys/saf-devops/get-information-from-pyproject@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
         with:
-          pyproject-path: pyproject.toml
+          pyproject-path: packages/saf-sdk/pyproject.toml
 
       - name: Deploy stable doc
         uses: ansys/saf-devops/doc-deploy-stable@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0

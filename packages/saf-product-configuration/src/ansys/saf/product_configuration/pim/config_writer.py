@@ -29,7 +29,7 @@ from ansys.saf.product_configuration.interfaces import IProductInstanceConfigura
 
 _PIM_TIMEOUT_ENV = "SAF_PIM_TIMEOUT"
 LOCALHOSTS = ["localhost", "127.0.0.1"]
-DEFAULT_GLOW_PRODUCT_BINDING_HOST = "0.0.0.0"  # nosec B104
+DEFAULT_GLOW_PRODUCT_BINDING_HOST = "0.0.0.0"  # noqa: S104
 DEFAULT_GLOW_PRODUCT_BINDING_SECURE_HOST = "localhost"
 
 
@@ -128,7 +128,7 @@ class PimLightConfigWriter:
                             config:
                               command: "{command}"
                               args:
-                    """
+                    """,
                 )
                 if not arguments:
                     # PIM Light Server (or yaml) complains if args is empty or it's not present.

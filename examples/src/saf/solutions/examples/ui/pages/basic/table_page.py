@@ -76,7 +76,7 @@ def layout() -> html.Div:
                 className="mantine-button",
                 style={
                     "font-size": "16px",
-                    "width": "100%",
+                    "width": "20%",
                     "background-color": "#2790F1",
                 },
             ),

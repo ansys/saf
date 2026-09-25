@@ -152,6 +152,10 @@ on:
         type: string
         description: 'Json file defining the groups of tests.'
         required: true
+      library-name:
+        description: 'Name of the library/package being tested'
+        required: true
+        type: string
     secrets:
       ANS_MINERVA_URL:
         description: 'Minerva URL'
@@ -309,6 +313,8 @@ jobs:
       GITHUB_TOKEN: ${{ github.token }}
       ANSYSLMD_LICENSE_FILE: ${{ format('1055@{0}', secrets.LICENSE_SERVER) }}
       USE_MOON: ${{ inputs.use-moon && 'true' || 'false' }}
+      MOON_PYTHON_VERSION: ${{ inputs.python-version }}
+      PACKAGE: ${{ inputs.library-name }}
     steps:
       - name: Enable git long paths on Windows
         if: runner.os == 'Windows'
@@ -375,14 +381,6 @@ jobs:
             || '--with tests --all-extras' }}
           python-project-path: ${{ needs.configure-tests.outputs.working-directory
             }}
-
-      - name: Set up uv
-        if: ${{ env.USE_MOON == 'true' }}
-        uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
-        with:
-          enable-cache: false
-          python-version: ${{ inputs.python-version }}
-          activate-environment: true
 
       - name: Setup Moon Toolchain
         if: ${{ env.USE_MOON == 'true' }}
@@ -514,11 +512,9 @@ jobs:
         id: run-tests-moon
         shell: bash
         env:
-          PACKAGE: bdm-python-api
           PYTEST_ARGS: ${{ steps.pytest-args.outputs.pytest-args }}
           REPORTS_DIR: "${{ matrix.test-report-artifact-name-suffix }}_${{ inputs.python-version
             }}"
-          MOON_TOOLCHAIN_FORCE_GLOBALS: 'uv'
         run: |
           mkdir -p "$REPORTS_DIR"
           moon run $PACKAGE:test -- $PYTEST_ARGS --html="$REPORTS_DIR/report.html" --md="$REPORTS_DIR/report.md"

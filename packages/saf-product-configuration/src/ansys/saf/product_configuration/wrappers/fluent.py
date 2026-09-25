@@ -163,10 +163,7 @@ class FluentInstance:
 
         if self._mode == "meshing":
             cmd.append("-meshing")
-        if self._precision == "double":
-            geometry_plus_precision = f"{self._geometry}dp"
-        else:
-            geometry_plus_precision = f"{self._geometry}sp"
+        geometry_plus_precision = f"{self._geometry}dp" if self._precision == "double" else f"{self._geometry}sp"
         # TODO: we don't check for invalid combinations of mode/version/precision
         cmd.append(geometry_plus_precision)
 
@@ -216,7 +213,7 @@ class FluentInstance:
             if platform.system() == "Linux":
                 # script doesn't have proper shebang at the top. From testing, it seems that it requires bash to run.
                 # Using sh instead, fails to execute the if/else blocks.
-                subprocess.check_output(["bash", self._cleanup_file.as_posix()])  # nosec B603 B607
+                subprocess.check_output(["bash", self._cleanup_file.as_posix()])  # noqa: S607
             else:
                 try:
                     # Silence error due to the BAT file deleting itself. Raise the rest.
@@ -272,7 +269,10 @@ async def health():
 @click.option("--mode", type=click.Choice(["solver", "meshing"]), required=True, help="Fluent mode: solver, meshing.")
 @click.option("--geometry", type=click.Choice(["2d", "3d"]), required=True, help="Fluent geometry: 2d, 3d.")
 @click.option(
-    "--precision", type=click.Choice(["double", "single"]), required=True, help="Fluent precision: single, double."
+    "--precision",
+    type=click.Choice(["double", "single"]),
+    required=True,
+    help="Fluent precision: single, double.",
 )
 @click.option(
     "--transport-mode",

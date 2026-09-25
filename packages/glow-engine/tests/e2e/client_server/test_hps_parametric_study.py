@@ -228,14 +228,11 @@ class TestHpsParametricStudy:
         num_projects = 2
         step = function_project.project.steps.hps_project_collections_step
         step.start_n_simple_jobs(num_projects=num_projects, list_or_dict=list_or_dict)
-        if list_or_dict == "list":
-            projects = step.simple_projects
-        else:
-            projects = list(step.simple_projects_by_name.values())
+        projects = step.simple_projects if list_or_dict == "list" else list(step.simple_projects_by_name.values())
         assert len(projects) == num_projects
         for project in projects:
             assert project.hps_project_identifier
-        step.wait_for_hps_jobs_to_finish(simple_or_parametric="simple",list_or_dict=list_or_dict)
+        step.wait_for_hps_jobs_to_finish(simple_or_parametric="simple", list_or_dict=list_or_dict)
         output_files = step.fetch_simple_results(list_or_dict=list_or_dict)
         assert len(output_files) == num_projects
         for output_file in output_files:
@@ -253,10 +250,7 @@ class TestHpsParametricStudy:
         num_projects = 2
         step = function_project.project.steps.hps_project_collections_step
         step.start_n_parametric_studies(num_projects=num_projects, list_or_dict=list_or_dict)
-        if list_or_dict == "list":
-            projects = step.study_projects
-        else:
-            projects = list(step.study_projects_by_name.values())
+        projects = step.study_projects if list_or_dict == "list" else list(step.study_projects_by_name.values())
         assert len(projects) == num_projects
         for project in projects:
             assert project.hps_project_identifier

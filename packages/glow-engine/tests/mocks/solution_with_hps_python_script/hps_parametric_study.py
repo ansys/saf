@@ -503,7 +503,6 @@ class StringResultParametricStep(StepModel):
 
 
 class HpsProjectCollectionsStep(StepModel):
-
     simple_projects: list[HpsSimpleProject] = []
     study_projects: list[HpsParametricStudyProject] = []
     simple_projects_by_name: dict[str, HpsSimpleProject] = {}
@@ -541,7 +540,11 @@ class HpsProjectCollectionsStep(StepModel):
             else:
                 self.study_projects_by_name[f"study_project_{len(self.study_projects_by_name) + 1}"] = hps_project
 
-    @transaction(self=StepSpec(download=["simple_projects", "simple_projects_by_name", "study_projects", "study_projects_by_name"]))
+    @transaction(
+        self=StepSpec(
+            download=["simple_projects", "simple_projects_by_name", "study_projects", "study_projects_by_name"]
+        )
+    )
     def wait_for_hps_jobs_to_finish(self, simple_or_parametric: str, list_or_dict: str) -> None:
         if list_or_dict not in ["list", "dict"]:
             raise ValueError("list_or_dict must be either 'list' or 'dict'")
@@ -551,10 +554,7 @@ class HpsProjectCollectionsStep(StepModel):
             else:
                 hps_projects = list(self.simple_projects_by_name.values())
         else:
-            if list_or_dict == "list":
-                hps_projects = self.study_projects
-            else:
-                hps_projects = list(self.study_projects_by_name.values())
+            hps_projects = self.study_projects if list_or_dict == "list" else list(self.study_projects_by_name.values())
 
         max_iterations = 300
         iterations = 0
@@ -566,10 +566,7 @@ class HpsProjectCollectionsStep(StepModel):
 
     @transaction(self=StepSpec(download=["simple_projects", "simple_projects_by_name"]))
     def fetch_simple_results(self, list_or_dict: str) -> list[int]:
-        if list_or_dict == "list":
-            hps_projects = self.simple_projects
-        else:
-            hps_projects = list(self.simple_projects_by_name.values())
+        hps_projects = self.simple_projects if list_or_dict == "list" else list(self.simple_projects_by_name.values())
 
         output: list[int] = []
         for hps_project in hps_projects:
@@ -578,10 +575,7 @@ class HpsProjectCollectionsStep(StepModel):
 
     @transaction(self=StepSpec(download=["study_projects", "study_projects_by_name"]))
     def fetch_parametric_results(self, list_or_dict: str) -> list[list[str]]:
-        if list_or_dict == "list":
-            hps_projects = self.study_projects
-        else:
-            hps_projects = list(self.study_projects_by_name.values())
+        hps_projects = self.study_projects if list_or_dict == "list" else list(self.study_projects_by_name.values())
 
         return [project.fetch_values_of_parameter("result") for project in hps_projects]
 

@@ -1,0 +1,2284 @@
+<!--
+Copyright (C) 2026 ANSYS, Inc. and/or its affiliates.
+SPDX-License-Identifier: Apache-2.0
+
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+ <!-- ©2026, ANSYS Inc. Unauthorized use, distribution or duplication is prohibited. -->
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" data-theme="dark">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Phase 4 — Frontend &#8212; SAF Doc</title>
+  
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "dark";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "dark";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/ansys-sphinx-theme.css?v=f424389c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=c83e6b79" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/ansys-sphinx-theme.css?v=f424389c" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://www.nerdfonts.com/assets/css/webfont.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/code-tabs.css?v=1bc26e2f" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=2d2447fe" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/carousel.css?v=272b576a" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/landing_page_banner.css?v=57c45261" />
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../../_static/scripts/fontawesome.js?digest=90905a2f556bf617f1a9"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
+
+
+  <!-- Include desired assets -->
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  
+
+  
+    <link href="../../../_static/css/breadcrumbs.css" rel="stylesheet" />
+  
+    <script src="../../../_static/documentation_options.js?v=8a448e45"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=49e1bf35"></script>
+    <script src="../../../_static/sg-tags.js?v=d80f6fa4"></script>
+    <script src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
+    <script src="../../../_static/code-tabs.js?v=c983d12e"></script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.12.1/dist/mermaid.esm.min.mjs";
+
+
+
+
+
+const initStyles = () => {
+    const defaultStyle = document.createElement('style');
+    defaultStyle.textContent = "pre.mermaid {\n    /* Same as .mermaid-container > pre */\n    display: block;\n    width: 100%;\n}\n\npre.mermaid > svg {\n    /* Same as .mermaid-container > pre > svg */\n    height: 500px;\n    width: 100%;\n    max-width: 100% !important;\n}";
+    document.head.appendChild(defaultStyle);
+
+    const fullscreenStyle = document.createElement('style');
+    fullscreenStyle.textContent = ".mermaid-container {\n    position: relative;\n    display: flex;\n    flex-direction: row;\n    width: 100%;\n}\n\n.mermaid-container > pre {\n    display: block;\n    width: 100%;\n}\n\n.mermaid-container > pre > svg {\n    height: 500px;\n    width: 100%;\n    max-width: 100% !important;\n}\n\n.mermaid-fullscreen-btn {\n    position: absolute;\n    width: 28px;\n    height: 28px;\n    background: rgba(255, 255, 255, 0.95);\n    border: 1px solid rgba(0, 0, 0, 0.3);\n    border-radius: 4px;\n    cursor: pointer;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n    transition: all 0.2s;\n    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);\n    font-size: 14px;\n    line-height: 1;\n    padding: 0;\n    color: #333;\n}\n\n.mermaid-fullscreen-btn:hover {\n    opacity: 100% !important;\n    background: rgba(255, 255, 255, 1);\n    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);\n    transform: scale(1.1);\n}\n\n.mermaid-fullscreen-btn.dark-theme {\n    background: rgba(50, 50, 50, 0.95);\n    border: 1px solid rgba(255, 255, 255, 0.3);\n    color: #e0e0e0;\n}\n\n.mermaid-fullscreen-btn.dark-theme:hover {\n    background: rgba(60, 60, 60, 1);\n    box-shadow: 0 3px 10px rgba(255, 255, 255, 0.2);\n}\n\n.mermaid-fullscreen-modal {\n    display: none;\n    position: fixed !important;\n    top: 0 !important;\n    left: 0 !important;\n    width: 95vw;\n    height: 100vh;\n    background: rgba(255, 255, 255, 0.98);\n    z-index: 9999;\n    padding: 20px;\n    overflow: auto;\n}\n\n.mermaid-fullscreen-modal.dark-theme {\n    background: rgba(0, 0, 0, 0.98);\n}\n\n.mermaid-fullscreen-modal.active {\n    display: flex;\n    align-items: center;\n    justify-content: center;\n}\n\n.mermaid-container-fullscreen {\n    position: relative;\n    width: 95vw;\n    height: 90vh;\n    max-width: 95vw;\n    max-height: 90vh;\n    background: white;\n    border-radius: 8px;\n    padding: 20px;\n    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);\n    overflow: auto;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n}\n\n.mermaid-container-fullscreen.dark-theme {\n    background: #1a1a1a;\n    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);\n}\n\n.mermaid-container-fullscreen pre.mermaid {\n    width: 100%;\n    height: 100%;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n}\n\n.mermaid-container-fullscreen .mermaid svg {\n    height: 100% !important;\n    width: 100% !important;\n    cursor: grab;\n}\n\n.mermaid-fullscreen-close {\n    position: fixed !important;\n    top: 20px !important;\n    right: 20px !important;\n    width: 40px;\n    height: 40px;\n    background: rgba(255, 255, 255, 0.95);\n    border: 1px solid rgba(0, 0, 0, 0.2);\n    border-radius: 50%;\n    cursor: pointer;\n    z-index: 10000;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);\n    transition: all 0.2s;\n    font-size: 24px;\n    line-height: 1;\n    color: #333;\n}\n\n.mermaid-fullscreen-close:hover {\n    background: white;\n    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);\n    transform: scale(1.1);\n}\n\n.mermaid-fullscreen-close.dark-theme {\n    background: rgba(50, 50, 50, 0.95);\n    border: 1px solid rgba(255, 255, 255, 0.2);\n    color: #e0e0e0;\n}\n\n.mermaid-fullscreen-close.dark-theme:hover {\n    background: rgba(60, 60, 60, 1);\n    box-shadow: 0 6px 16px rgba(255, 255, 255, 0.2);\n}\n\n.mermaid-fullscreen-modal .mermaid-fullscreen-btn {\n    display: none !important;\n}";
+    document.head.appendChild(fullscreenStyle);
+}
+
+// Detect if page has dark background
+const isDarkTheme = () => {
+    // We use a set of heuristics:
+    // 1. Check for common dark mode classes or attributes
+    // 2. Check computed background color brightness
+    if (document.documentElement.classList.contains('dark') ||
+        document.documentElement.getAttribute('data-theme') === 'dark' ||
+        document.body.classList.contains('dark') ||
+        document.body.getAttribute('data-theme') === 'dark') {
+        // console.log("Dark theme detected via class/attribute");
+        return true;
+    }
+    if (document.documentElement.classList.contains('light') ||
+        document.documentElement.getAttribute('data-theme') === 'light' ||
+        document.body.classList.contains('light') ||
+        document.body.getAttribute('data-theme') === 'light') {
+        // console.log("Light theme detected via class/attribute");
+        return false;
+    }
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        // console.log("Dark theme detected via prefers-color-scheme");
+        return true;
+    }
+    const bgColor = window.getComputedStyle(document.body).backgroundColor;
+    const match = bgColor.match(/rgb\((\d+),\s*(\d+),\s*(\d+)/);
+    if (match) {
+        const r = parseInt(match[1]);
+        const g = parseInt(match[2]);
+        const b = parseInt(match[3]);
+        const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+        // console.log("Background color brightness:", brightness);
+        return brightness < 128;
+    }
+    // console.log("No dark or light theme detected, defaulting to light theme");
+    return false;
+};
+
+let darkTheme = isDarkTheme();
+let modal = null;
+let modalContent = null;
+let previousScrollOffset = [window.scrollX, window.scrollY];
+let _lazyObserver = null;
+let _renderQueue = Promise.resolve();
+let closeModal = () => {};
+
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modal?.classList.contains('active')) {
+        closeModal();
+    }
+});
+
+// Apply d3 zoom to each SVG. Idempotent: an SVG already wrapped is skipped,
+// so this is safe to call both for the initial batch and for diagrams that
+// render lazily once they become visible.
+const addZoomToSvgs = (svgs) => {
+    svgs.each(function() {
+        if (this.getAttribute('data-zoom-applied') === 'true') return;
+        var svg = d3.select(this);
+        svg.html("<g class='wrapper'>" + svg.html() + "</g>");
+        var inner = svg.select("g");
+        var zoom = d3.zoom().on("zoom", function(event) {
+            inner.attr("transform", event.transform);
+        });
+        svg.call(zoom);
+        this.setAttribute('data-zoom-applied', 'true');
+    });
+};
+
+const runMermaid = async (rerun) => {
+    console.log("Running mermaid diagrams, rerun =", rerun);
+    // clear all existing mermaid charts
+    let all_mermaids = document.querySelectorAll(".mermaid");
+
+    if (rerun) {
+        // Disconnect any previous lazy rendering observer
+        if (_lazyObserver) {
+            _lazyObserver.disconnect();
+            _lazyObserver = null;
+        }
+
+        all_mermaids.forEach((el) => {
+            el.removeAttribute('data-mermaid-deferred');
+            el.removeAttribute('data-mermaid-render-failed');
+            if(!el.hasAttribute("data-original-code")) {
+                // store original code
+                // console.log(`Storing original code for first run: `, el.innerHTML);
+                el.setAttribute('data-original-code', el.innerHTML);
+            }
+            if(el.getAttribute("data-processed") === "true") {
+                // remove and restore original
+                el.removeAttribute("data-processed");
+                // console.log(`Restoring original code for re-run: `, el.getAttribute('data-original-code'));
+                el.innerHTML = el.getAttribute('data-original-code');
+            } else {
+                // store original code
+                // console.log(`Storing original code for re-run: `, el.innerHTML);
+                el.setAttribute('data-original-code', el.innerHTML);
+            }
+        });
+
+        // Separate visible and hidden elements. Mermaid's layout engine measures
+        // text dimensions via the DOM, which fails for elements hidden by a parent
+        // (e.g., Reveal.js non-active slides, sphinx-design unopened tabs),
+        // producing broken SVGs. Render visible elements now, defer hidden ones.
+        const visible = [];
+        const hidden = [];
+        all_mermaids.forEach((el) => {
+            // offsetParent is null for display:none ancestors.
+            // getClientRects().length > 0 catches position:fixed elements
+            // (which also have null offsetParent but are still visible).
+            if (el.offsetParent !== null || el.getClientRects().length > 0) {
+                visible.push(el);
+            } else {
+                hidden.push(el);
+                el.setAttribute('data-mermaid-deferred', 'true');
+            }
+        });
+
+        if (visible.length > 0) {
+            try {
+                await mermaid.run({ nodes: visible });
+            } catch (e) {
+                console.error("Mermaid rendering failed:", e);
+            }
+        }
+
+        // Lazily render hidden elements when they become visible.
+        // Uses a promise chain (_renderQueue) to serialize rendering,
+        // since IntersectionObserver may report multiple entries at once
+        // and mermaid.run() is not safe to call concurrently.
+        if (hidden.length > 0) {
+            if (typeof IntersectionObserver === 'undefined') {
+                console.warn("IntersectionObserver not available; hidden mermaid diagrams will not render.");
+            } else {
+                _renderQueue = Promise.resolve();
+                _lazyObserver = new IntersectionObserver((entries) => {
+                    for (const entry of entries) {
+                        if (entry.isIntersecting && entry.target.getAttribute("data-processed") !== "true") {
+                            _lazyObserver.unobserve(entry.target);
+                            const el = entry.target;
+                            _renderQueue = _renderQueue.then(async () => {
+                                try {
+                                    await mermaid.run({ nodes: [el] });
+                                    el.removeAttribute('data-mermaid-deferred');
+                                    // Apply zoom to the now-rendered diagram, matching
+                                    // the decoration visible diagrams receive.
+                                    if (false) {
+                                        addZoomToSvgs(d3.selectAll("").select(function() {
+                                            return this.querySelector("svg");
+                                        }));
+                                    }
+                                } catch (e) {
+                                    console.error("Mermaid deferred rendering failed:", e);
+                                    el.removeAttribute('data-mermaid-deferred');
+                                    el.setAttribute('data-mermaid-render-failed', 'true');
+                                }
+                            });
+                        }
+                    }
+                });
+                hidden.forEach((el) => _lazyObserver.observe(el));
+            }
+        }
+    }
+
+    all_mermaids = document.querySelectorAll(".mermaid");
+    // Exclude deferred (hidden) and render-failed elements from completion checks
+    const mermaids_active = document.querySelectorAll(".mermaid:not([data-mermaid-deferred]):not([data-mermaid-render-failed])");
+    const mermaids_processed = document.querySelectorAll(".mermaid:not([data-mermaid-deferred]):not([data-mermaid-render-failed])[data-processed='true']");
+
+    if (false) {
+        const mermaids_to_add_zoom = 0 === -1 ? mermaids_active.length : 0;
+        if(mermaids_to_add_zoom > 0) {
+            var svgs = d3.selectAll("").select(function() {
+                return this.querySelector("svg");
+            });
+            // Wait until every active (visible) diagram has rendered. Deferred
+            // diagrams are excluded, so a fixed d3_node_count that counts a
+            // hidden diagram no longer loops forever waiting for its SVG.
+            if(mermaids_active.length !== mermaids_processed.length) {
+                setTimeout(() => runMermaid(false), 200);
+                return;
+            }
+            addZoomToSvgs(svgs);
+        }
+    } else if(mermaids_active.length !== mermaids_processed.length) {
+        // Wait for mermaid to process all diagrams
+        setTimeout(() => runMermaid(false), 200);
+        return;
+    }
+
+    // Stop here if not adding fullscreen capability
+    if (!true) return;
+
+    if (modal !== null ) {
+        // Destroy existing modal
+        modal.remove();
+        modal = null;
+        modalContent = null;
+    }
+
+    modal = document.createElement('div');
+    modal.className = 'mermaid-fullscreen-modal' + (darkTheme ? ' dark-theme' : '');
+    modal.setAttribute('role', 'dialog');
+    modal.setAttribute('aria-modal', 'true');
+    modal.setAttribute('aria-label', 'Fullscreen diagram viewer');
+    modal.innerHTML = `
+        <button class="mermaid-fullscreen-close${darkTheme ? ' dark-theme' : ''}" aria-label="Close fullscreen">✕</button>
+        <div class="mermaid-container-fullscreen${darkTheme ? ' dark-theme' : ''}"></div>
+    `;
+    document.body.appendChild(modal);
+
+    modalContent = modal.querySelector('.mermaid-container-fullscreen');
+    const closeBtn = modal.querySelector('.mermaid-fullscreen-close');
+
+    closeModal = () => {
+        modal.classList.remove('active');
+        modalContent.innerHTML = '';
+        document.body.style.overflow = ''
+        window.scrollTo({left: previousScrollOffset[0], top: previousScrollOffset[1], behavior: 'instant'});
+    };
+
+    closeBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeModal();
+    });
+    document.querySelectorAll('.mermaid').forEach((mermaidDiv) => {
+        if (mermaidDiv.parentNode.classList.contains('mermaid-container') ||
+            mermaidDiv.closest('.mermaid-fullscreen-modal')) {
+            // Already processed, adjust button class if needed
+            const existingBtn = mermaidDiv.parentNode.querySelector('.mermaid-fullscreen-btn');
+            if (existingBtn) {
+                existingBtn.className = 'mermaid-fullscreen-btn' + (darkTheme ? ' dark-theme' : '');
+            }
+            return;
+        }
+
+        const container = document.createElement('div');
+        container.className = 'mermaid-container';
+        mermaidDiv.parentNode.insertBefore(container, mermaidDiv);
+        container.appendChild(mermaidDiv);
+
+        const fullscreenBtn = document.createElement('button');
+        fullscreenBtn.className = 'mermaid-fullscreen-btn' + (darkTheme ? ' dark-theme' : '');
+        fullscreenBtn.setAttribute('aria-label', 'View diagram in fullscreen');
+        fullscreenBtn.textContent = "\u26f6";
+        fullscreenBtn.style.opacity = "50%";
+
+        // Calculate dynamic position based on diagram's margin and padding
+        const diagramStyle = window.getComputedStyle(mermaidDiv);
+        const marginTop = parseFloat(diagramStyle.marginTop) || 0;
+        const marginRight = parseFloat(diagramStyle.marginRight) || 0;
+        const paddingTop = parseFloat(diagramStyle.paddingTop) || 0;
+        const paddingRight = parseFloat(diagramStyle.paddingRight) || 0;
+        fullscreenBtn.style.top = `${marginTop + paddingTop + 4}px`;
+        fullscreenBtn.style.right = `${marginRight + paddingRight + 4}px`;
+
+        fullscreenBtn.addEventListener('click', () => {
+            previousScrollOffset = [window.scrollX, window.scrollY];
+            const clone = mermaidDiv.cloneNode(true);
+            modalContent.innerHTML = '';
+            modalContent.appendChild(clone);
+
+            const svg = clone.querySelector('svg');
+            if (svg) {
+                svg.removeAttribute('width');
+                svg.removeAttribute('height');
+                svg.style.width = '100%';
+                svg.style.height = 'auto';
+                svg.style.maxWidth = '100%';
+                svg.style.display = 'block';
+
+                if (false) {
+                    setTimeout(() => {
+                        const g = svg.querySelector('g');
+                        if (g) {
+                            var svgD3 = d3.select(svg);
+                            svgD3.html("<g class='wrapper'>" + svgD3.html() + "</g>");
+                            var inner = svgD3.select("g");
+                            var zoom = d3.zoom().on("zoom", function(event) {
+                                inner.attr("transform", event.transform);
+                            });
+                            svgD3.call(zoom);
+                        }
+                    }, 100);
+                }
+            }
+
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        });
+        container.appendChild(fullscreenBtn);
+    });
+};
+
+
+
+const load = async () => {
+    initStyles();
+
+
+    await runMermaid(true);
+
+    const reRunIfThemeChanges = async () => {
+        const newDarkTheme = isDarkTheme();
+        if (newDarkTheme !== darkTheme) {
+            darkTheme = newDarkTheme;
+            console.log("Theme change detected, re-running mermaid with", darkTheme ? "dark" : "default", "theme");
+            await mermaid.initialize(
+                {...{"startOnLoad": false},
+                ...{ darkMode: darkTheme, theme: darkTheme ? "dark" : "default" },
+                }
+            );
+            await runMermaid(true);
+        }
+    };
+
+    // Update theme classes when theme changes
+    const themeObserver = new MutationObserver(reRunIfThemeChanges);
+    themeObserver.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ['class', 'style', 'data-theme']
+    });
+    themeObserver.observe(document.body, {
+        attributes: true,
+        attributeFilter: ['class', 'style', 'data-theme']
+    });
+};
+
+
+
+
+
+console.log("Initializing mermaid with", darkTheme ? "dark" : "default", "theme");
+mermaid.initialize(
+    {...{"startOnLoad": false},
+    ...{ darkMode: darkTheme, theme: darkTheme ? "dark" : "default" },
+    }
+);
+
+window.addEventListener("load", load);
+window.runMermaid = runMermaid;</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'getting_started/tutorials/game_of_life/frontend';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.20.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://saf.ansys.com/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.3';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <script src="../../../_static/js/sidebar-always-expanded.js?v=6b23dfe7"></script>
+    <script src="../../../_static/js/sdI_button_ref_tooltips.js?v=091f9e4c"></script>
+    <script src="../../../_static/js/primary-sidebar-sticky-offset.js?v=7ecdf44c"></script>
+    <link rel="icon" href="../../../_static/ansys-favicon.png"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="Phase 5 — Package" href="package.html" />
+    <link rel="prev" title="Phase 3 — Backend" href="backend.html" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.3.0" />
+  
+    
+    <script src="../../../_static/searchtools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <script src="../../../searchindex.js"></script>
+  
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+
+  <link rel="canonical" href="https://saf.ansys.com/version/stable/getting_started/tutorials/game_of_life/frontend.html" />
+  </head>
+  <body data-default-mode="dark">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+  
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+    
+    <img src="../../../_static/endorsed-ansys-logos-gold-white-rgb.svg" class="logo__image only-dark" alt="SAF Doc - Home"/>
+    <img src="../../../_static/endorsed-ansys-logos-gold-black-rgb.svg" class="logo__image only-light pst-js-only" alt="SAF Doc - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../index.html" title="SAF Doc home">Home</a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../overview/index.html">
+    Overview
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../index.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../user_guide/index.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api/index.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../contribute/index.html">
+    Contribute
+  </a>
+</li>
+
+  </ul>
+</nav>
+</div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+      
+        <div class="navbar-item">
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../../../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+  
+</div></div>
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/saf" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+  
+
+  
+
+
+
+
+
+
+
+
+
+<div class="ast-announcement-wrap" role="region" aria-label="Announcement" hidden>
+    <div class="ast-announcement info">
+        <span class="ast-announcement-icon" aria-hidden="true"></span>
+        <span class="ast-announcement-text" id="ast-announcement-text"></span>
+        <!-- djlint:off H021-->
+        <!-- for inline styles -->
+        <a class="ast-announcement-details-btn" id="ast-announcement-details-btn"
+           href=""
+           data-ast-url=""
+           aria-label="View notifications"
+           style="display:none">View</a>
+        <!-- djlint:on -->
+        <!-- djlint:off H023-->
+        <!-- use entity reference for &times; -->
+        <button class="ast-announcement-close" id="ast-announcement-close" aria-label="Close announcement">&times;</button>
+        <!-- djlint:on -->
+    </div>
+</div>
+
+<!-- Modal overlay -->
+<!-- djlint:off H023-->
+<!-- use entity reference for &times; -->
+<div class="ast-announcement-overlay" id="ast-announcement-overlay" role="dialog" aria-modal="true" aria-label="Announcement details">
+    <div class="ast-announcement-modal info">
+        <div class="ast-announcement-modal-body"
+             data-ast-items='[]'>
+        </div>
+        <button class="ast-announcement-modal-close" id="ast-announcement-modal-close" aria-label="Close">&times;</button>
+    </div>
+</div>
+<!-- djlint:on -->
+
+<script src="../../../_static/js/announcement_banner.js"
+        data-base-url="../../../"></script>
+
+  <div class="header-nav-banner d-print-none">
+    <div class="header-nav-banner__inner">
+      <div class="header-nav-banner__crumbs">
+        
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+     
+    <li class="breadcrumb-item breadcrumb-home">
+      <a
+        href="../../../index.html"
+        class="nav-link"
+        aria-label="Home"
+      >
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="../../index.html" class="nav-link">Getting started</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="../index.html" class="nav-link">Tutorials</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="index.html" class="nav-link">Game of Life</a>
+    </li>
+      
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Phase 4 — Frontend</span></li>
+    
+  </ul>
+</nav>
+
+      </div>
+    </div>
+  </div>
+
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../index.html" title="SAF Doc home">Home</a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../overview/index.html">
+    Overview
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../index.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../user_guide/index.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api/index.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../contribute/index.html">
+    Contribute
+  </a>
+</li>
+
+  </ul>
+</nav>
+</div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../../../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+  
+</div></div>
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/saf" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item pst-sidebar-collapse"><button id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar">
+  <svg class="pst-icon" role="img" aria-hidden="true" focusable="false" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="M3 15.5C2.36232 15.5 1.74874 15.2564 1.28478 14.8189C0.820828 14.3815 0.541576 13.7832 0.504167 13.1467L0.5 13L0.5 3C0.499965 2.36232 0.743605 1.74874 1.18107 1.28478C1.61854 0.820828 2.21676 0.541576 2.85333 0.504167L3 0.5L13 0.5C13.6377 0.499965 14.2513 0.743605 14.7152 1.18107C15.1792 1.61854 15.4584 2.21676 15.4958 2.85333L15.5 3L15.5 13C15.5 13.6377 15.2564 14.2513 14.8189 14.7152C14.3815 15.1792 13.7832 15.4584 13.1467 15.4958L13 15.5L3 15.5ZM3 13.8333L10.5 13.8333L10.5 2.16667L3 2.16667C2.79589 2.16669 2.59889 2.24163 2.44636 2.37726C2.29383 2.5129 2.19638 2.69979 2.1725 2.9025L2.16667 3L2.16667 13C2.16669 13.2041 2.24163 13.4011 2.37726 13.5536C2.5129 13.7062 2.69979 13.8036 2.9025 13.8275L3 13.8333ZM6.65583 10.325L6.5775 10.2558L4.91083 8.58917C4.76735 8.44567 4.68116 8.25476 4.66843 8.05223C4.65569 7.84971 4.71729 7.6495 4.84167 7.48917L4.91083 7.41083L6.5775 5.74417C6.72747 5.59471 6.9287 5.50794 7.14032 5.50148C7.35194 5.49502 7.55809 5.56935 7.7169 5.70937C7.8757 5.8494 7.97525 6.04463 7.99533 6.25539C8.01541 6.46616 7.95451 6.67667 7.825 6.84417L7.75583 6.9225L6.67917 8L7.75583 9.0775C7.89931 9.22099 7.98551 9.41191 7.99824 9.61443C8.01097 9.81695 7.94938 10.0172 7.825 10.1775L7.75583 10.2558C7.61234 10.3993 7.42142 10.4855 7.2189 10.4982C7.01638 10.511 6.81617 10.4494 6.65583 10.325Z"/>
+  </svg>
+  <span class="pst-collapse-sidebar-label">Collapse Sidebar</span>
+  <span class="pst-expand-sidebar-label">Expand Sidebar</span>
+</button></div>
+        <div class="sidebar-primary-item">
+
+
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../prerequisites/index.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../quick_start.html">Quick-start guide</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../index.html">Tutorials</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="index.html">Game of Life</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="initialization.html">Phase 1 — Initialization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="business_logic.html">Phase 2 — Business logic</a></li>
+<li class="toctree-l3"><a class="reference internal" href="backend.html">Phase 3 — Backend</a></li>
+<li class="toctree-l3 current active"><a class="current reference internal" href="#">Phase 4 — Frontend</a></li>
+<li class="toctree-l3"><a class="reference internal" href="package.html">Phase 5 — Package</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+     
+    <li class="breadcrumb-item breadcrumb-home">
+      <a
+        href="../../../index.html"
+        class="nav-link"
+        aria-label="Home"
+      >
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="../../index.html" class="nav-link">Getting started</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="../index.html" class="nav-link">Tutorials</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="index.html" class="nav-link">Game of Life</a>
+    </li>
+      
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Phase 4 — Frontend</span></li>
+    
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+  
+
+  
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="phase-4-frontend">
+<span id="game-of-life-frontend"></span><h1>Phase 4 — Frontend<a class="headerlink" href="#phase-4-frontend" title="Link to this heading">#</a></h1>
+<aside class="topic">
+<p class="topic-title">Objective</p>
+<p>In this module, you’ll cover the following topics:</p>
+<ul>
+<li><p><svg version="4.0.0.63c5cb3" width="1.25em" height="1.25em" class="sd-material-icon sd-material-icon-folder_open saf-objective-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M0 0h24v24H0V0z" fill="none"></path><path d="M20 6h-8l-2-2H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 12H4V8h16v10z"></path></svg> Discover where frontend code lives
+in a SAF solution, and the anatomy of a SAF Dash page.</p></li>
+<li><p><svg version="4.0.0.63c5cb3" width="1.25em" height="1.25em" class="sd-material-icon sd-material-icon-link saf-objective-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M0 0h24v24H0V0z" fill="none"></path><path d="M17 7h-4v2h4c1.65 0 3 1.35 3 3s-1.35 3-3 3h-4v2h4c2.76 0 5-2.24 5-5s-2.24-5-5-5zm-6 8H7c-1.65 0-3-1.35-3-3s1.35-3 3-3h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-2zm-3-4h8v2H8z"></path></svg> Register the page and give it a <strong>typed
+handle</strong> on the solution through <code class="docutils literal notranslate"><span class="pre">dash.register_page</span></code>.</p></li>
+<li><p><svg version="4.0.0.63c5cb3" width="1.25em" height="1.25em" class="sd-material-icon sd-material-icon-dashboard saf-objective-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M0 0h24v24H0V0z" fill="none"></path><path d="M19 5v2h-4V5h4M9 5v6H5V5h4m10 8v6h-4v-6h4M9 17v2H5v-2h4M21 3h-8v6h8V3zM11 3H3v10h8V3zm10 8h-8v10h8V11zm-10 4H3v6h8v-6z"></path></svg> Build the <strong>layout</strong> function that
+turns step fields into interactive Dash and Mantine controls.</p></li>
+<li><p><svg version="4.0.0.63c5cb3" width="1.25em" height="1.25em" class="sd-material-icon sd-material-icon-bolt saf-objective-icon" viewBox="0 0 24 24" aria-hidden="true"><g><rect fill="none" height="24" width="24"></rect></g><g><path d="M11,21h-1l1-7H7.5c-0.88,0-0.33-0.75-0.31-0.78C8.48,10.94,10.42,7.54,13.01,3h1l-1,7h3.51c0.4,0,0.62,0.19,0.4,0.66 C12.97,17.55,11,21,11,21z"></path></g></svg> Write <strong>callbacks</strong> that read and write
+fields and invoke transactions through the <code class="docutils literal notranslate"><span class="pre">DashClient</span></code> — no manual HTTP calls.</p></li>
+<li><p><svg version="4.0.0.63c5cb3" width="1.25em" height="1.25em" class="sd-material-icon sd-material-icon-hearing saf-objective-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M0 0h24v24H0V0z" fill="none"></path><path d="M17 20c-.29 0-.56-.06-.76-.15-.71-.37-1.21-.88-1.71-2.38-.51-1.56-1.47-2.29-2.39-3-.79-.61-1.61-1.24-2.32-2.53C9.29 10.98 9 9.93 9 9c0-2.8 2.2-5 5-5s5 2.2 5 5h2c0-3.93-3.07-7-7-7S7 5.07 7 9c0 1.26.38 2.65 1.07 3.9.91 1.65 1.98 2.48 2.85 3.15.81.62 1.39 1.07 1.71 2.05.6 1.82 1.37 2.84 2.73 3.55.51.23 1.07.35 1.64.35 2.21 0 4-1.79 4-4h-2c0 1.1-.9 2-2 2zM7.64 2.64L6.22 1.22C4.23 3.21 3 5.96 3 9s1.23 5.79 3.22 7.78l1.41-1.41C6.01 13.74 5 11.49 5 9s1.01-4.74 2.64-6.36zM11.5 9c0 1.38 1.12 2.5 2.5 2.5s2.5-1.12 2.5-2.5-1.12-2.5-2.5-2.5-2.5 1.12-2.5 2.5z"></path></svg> Hook <strong>event listeners</strong> to the streams
+your long-running transaction publishes, and animate the UI in real time.</p></li>
+<li><p><svg version="4.0.0.63c5cb3" width="1.25em" height="1.25em" class="sd-material-icon sd-material-icon-play_circle saf-objective-icon" viewBox="0 0 20 20" aria-hidden="true"><g><rect fill="none" height="20" width="20"></rect></g><g><g><path d="M10,2c-4.42,0-8,3.58-8,8s3.58,8,8,8s8-3.58,8-8S14.42,2,10,2z M10,16.5c-3.58,0-6.5-2.92-6.5-6.5S6.42,3.5,10,3.5 s6.5,2.92,6.5,6.5S13.58,16.5,10,16.5z"></path><polygon points="8,13.5 13.5,10 8,6.5"></polygon></g></g></svg> Run the finished solution with
+<code class="docutils literal notranslate"><span class="pre">saf</span> <span class="pre">run</span> <span class="pre">--debug</span></code> and watch the Game of Life evolve.</p></li>
+</ul>
+<p>At the end of this phase, the backend from <a class="reference internal" href="backend.html#game-of-life-backend"><span class="std std-ref">phase 3</span></a> is driven by
+a fully interactive Dash page.</p>
+</aside>
+<p>SAF is deliberately frontend-agnostic. The same backend could be driven from Streamlit,
+from a custom React app, or from a plain HTTP client. This tutorial uses
+<a class="reference external" href="https://dash.plotly.com/" rel="noopener noreferrer" target="_blank">Plotly Dash</a>.</p>
+<p>This phase explains the Dash concepts only as far as you need them to wire the SAF backend.
+Every one of them is covered in depth in the official documentation, and each section below
+links to the matching page. If Dash is new to you, start with the
+<a class="reference external" href="https://dash.plotly.com/layout" rel="noopener noreferrer" target="_blank">Dash fundamentals</a> and come back here.</p>
+<section id="where-the-frontend-lives">
+<h2>Where the frontend lives<a class="headerlink" href="#where-the-frontend-lives" title="Link to this heading">#</a></h2>
+<p>All frontend code lives under <code class="docutils literal notranslate"><span class="pre">src/saf/solutions/game_of_life/ui/</span></code>:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>ui/
+├── app.py                # DashProxy app instance (auto-generated, don't touch)
+├── assets/               # CSS, icons, images
+├── components/           # Reusable Dash components
+└── pages/
+    ├── about_page.py     # Landing page (auto-generated)
+    ├── game_of_life_page.py   # ← the file you will edit
+    └── page.py           # Page router (auto-generated, don't touch)
+</pre></div>
+</div>
+<p>You already have a <code class="docutils literal notranslate"><span class="pre">game_of_life_page.py</span></code> skeleton from <code class="docutils literal notranslate"><span class="pre">saf</span> <span class="pre">add-step</span></code>. You are going to
+replace its body with a fully functional page.</p>
+</section>
+<section id="the-full-frontend">
+<h2>The full frontend<a class="headerlink" href="#the-full-frontend" title="Link to this heading">#</a></h2>
+<p>Here is the file you are aiming at. Expand the dropdown to skim it now; the rest of the phase dissects it one block
+at a time.</p>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-icon"><svg version="1.1" width="1.0em" height="1.0em" class="sd-octicon sd-octicon-code" viewBox="0 0 16 16" aria-hidden="true"><path d="m11.28 3.22 4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.749.749 0 0 1-1.275-.326.749.749 0 0 1 .215-.734L13.94 8l-3.72-3.72a.749.749 0 0 1 .326-1.275.749.749 0 0 1 .734.215Zm-6.56 0a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042L2.06 8l3.72 3.72a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215L.47 8.53a.75.75 0 0 1 0-1.06Z"></path></svg></span><span class="sd-summary-text">Complete <code class="docutils literal notranslate"><span class="pre">game_of_life_page.py</span></code></span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<div class="literal-block-wrapper docutils container" id="id1">
+<div class="code-block-caption"><span class="caption-text">ui/pages/game_of_life_page.py</span><a class="headerlink" href="#id1" title="Link to this code">#</a></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">"""Frontend of the game of life page."""</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.saf.glow.client</span><span class="w"> </span><span class="kn">import</span> <span class="n">DashClient</span><span class="p">,</span> <span class="n">callback</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.saf.glow.solution</span><span class="w"> </span><span class="kn">import</span> <span class="n">MethodStatus</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">dash</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dash</span><span class="w"> </span><span class="kn">import</span> <span class="n">Patch</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dash_extensions.enrich</span><span class="w"> </span><span class="kn">import</span> <span class="n">Input</span><span class="p">,</span> <span class="n">Output</span><span class="p">,</span> <span class="n">State</span><span class="p">,</span> <span class="n">dcc</span><span class="p">,</span> <span class="n">html</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dash_iconify</span><span class="w"> </span><span class="kn">import</span> <span class="n">DashIconify</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">dash_mantine_components</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dmc</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">plotly.graph_objects</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">go</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">saf.solutions.examples.solution.definition</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExamplesSolution</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">saf.solutions.examples.solution.logic.game_of_life</span><span class="w"> </span><span class="kn">import</span> <span class="n">PatternLibrary</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="n">dash</span><span class="o">.</span><span class="n">register_page</span><span class="p">(</span>
+    <span class="vm">__name__</span><span class="p">,</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">"Conway's Game of Life"</span><span class="p">,</span>
+    <span class="n">path_template</span><span class="o">=</span><span class="s2">"/projects/&lt;project_id&gt;/game-of-life"</span><span class="p">,</span>
+    <span class="n">icon_asset_name</span><span class="o">=</span><span class="s2">"game-icons--crossed-air-flows.svg"</span><span class="p">,</span>
+    <span class="n">icon_asset_path</span><span class="o">=</span><span class="s2">"icons"</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">layout</span><span class="p">(</span><span class="n">project</span><span class="p">:</span> <span class="n">ExamplesSolution</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">html</span><span class="o">.</span><span class="n">Div</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Layout of the game of life page."""</span>
+    <span class="n">step</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">steps</span><span class="o">.</span><span class="n">game_of_life_step</span>
+    <span class="k">return</span> <span class="n">html</span><span class="o">.</span><span class="n">Div</span><span class="p">(</span>
+        <span class="p">[</span>
+            <span class="n">html</span><span class="o">.</span><span class="n">H1</span><span class="p">(</span>
+                <span class="s2">"Conway's Game of Life"</span><span class="p">,</span>
+                <span class="n">className</span><span class="o">=</span><span class="s2">"display-3"</span><span class="p">,</span>
+                <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s2">"font-size"</span><span class="p">:</span> <span class="s2">"40px"</span><span class="p">,</span> <span class="s2">"font-weight"</span><span class="p">:</span> <span class="s2">"bold"</span><span class="p">},</span>
+            <span class="p">),</span>
+            <span class="n">dmc</span><span class="o">.</span><span class="n">Blockquote</span><span class="p">(</span>
+                <span class="p">[</span>
+                    <span class="s2">"This is an implementation of "</span><span class="p">,</span>
+                    <span class="n">dmc</span><span class="o">.</span><span class="n">Anchor</span><span class="p">(</span>
+                        <span class="s2">"Conway's Game of Life"</span><span class="p">,</span>
+                        <span class="n">href</span><span class="o">=</span><span class="s2">"https://en.wikipedia.org/wiki/Conway</span><span class="si">%27s</span><span class="s2">_Game_of_Life"</span><span class="p">,</span>
+                        <span class="n">target</span><span class="o">=</span><span class="s2">"_blank"</span><span class="p">,</span>
+                        <span class="n">underline</span><span class="o">=</span><span class="s2">"always"</span><span class="p">,</span>
+                    <span class="p">),</span>
+                    <span class="s2">". It demonstrates how to build a simple SAF application "</span>
+                    <span class="s2">"from backend transactions to frontend visualization."</span><span class="p">,</span>
+                <span class="p">],</span>
+                <span class="n">icon</span><span class="o">=</span><span class="n">DashIconify</span><span class="p">(</span><span class="n">icon</span><span class="o">=</span><span class="s2">"material-symbols:info"</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">30</span><span class="p">),</span>
+                <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s2">"font-size"</span><span class="p">:</span> <span class="s2">"18px"</span><span class="p">,</span> <span class="s2">"fontStyle"</span><span class="p">:</span> <span class="s2">"italic"</span><span class="p">},</span>
+            <span class="p">),</span>
+            <span class="n">dmc</span><span class="o">.</span><span class="n">Space</span><span class="p">(</span><span class="n">h</span><span class="o">=</span><span class="mi">20</span><span class="p">),</span>
+            <span class="n">dmc</span><span class="o">.</span><span class="n">Grid</span><span class="p">(</span>
+                <span class="p">[</span>
+                    <span class="n">dmc</span><span class="o">.</span><span class="n">GridCol</span><span class="p">(</span>
+                        <span class="p">[</span>
+                            <span class="n">dmc</span><span class="o">.</span><span class="n">Divider</span><span class="p">(</span>
+                                <span class="n">label</span><span class="o">=</span><span class="s2">"Initialization"</span><span class="p">,</span>
+                                <span class="n">styles</span><span class="o">=</span><span class="p">{</span><span class="s2">"label"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"fontSize"</span><span class="p">:</span> <span class="s2">"18px"</span><span class="p">}},</span>
+                            <span class="p">),</span>
+                            <span class="n">dmc</span><span class="o">.</span><span class="n">Select</span><span class="p">(</span>
+                                <span class="n">label</span><span class="o">=</span><span class="s2">"Select Pattern"</span><span class="p">,</span>
+                                <span class="nb">id</span><span class="o">=</span><span class="s2">"pattern-select"</span><span class="p">,</span>
+                                <span class="n">value</span><span class="o">=</span><span class="s2">"blinker"</span><span class="p">,</span>
+                                <span class="n">searchable</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                <span class="n">clearable</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                                <span class="n">data</span><span class="o">=</span><span class="p">[</span>
+                                    <span class="p">{</span>
+                                        <span class="s2">"value"</span><span class="p">:</span> <span class="n">pattern</span><span class="p">,</span>
+                                        <span class="s2">"label"</span><span class="p">:</span> <span class="n">pattern</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"_"</span><span class="p">,</span> <span class="s2">" "</span><span class="p">)</span><span class="o">.</span><span class="n">title</span><span class="p">(),</span>
+                                    <span class="p">}</span>
+                                    <span class="k">for</span> <span class="n">pattern</span> <span class="ow">in</span> <span class="n">PatternLibrary</span><span class="p">()</span><span class="o">.</span><span class="n">get_pattern_list</span><span class="p">()</span> <span class="o">+</span> <span class="p">[</span><span class="s2">"random"</span><span class="p">]</span>
+                                <span class="p">],</span>
+                            <span class="p">),</span>
+                            <span class="n">dmc</span><span class="o">.</span><span class="n">Space</span><span class="p">(</span><span class="n">h</span><span class="o">=</span><span class="mi">20</span><span class="p">),</span>
+                            <span class="n">dmc</span><span class="o">.</span><span class="n">NumberInput</span><span class="p">(</span>
+                                <span class="n">label</span><span class="o">=</span><span class="s2">"Max Iterations"</span><span class="p">,</span>
+                                <span class="nb">id</span><span class="o">=</span><span class="s2">"max-iterations"</span><span class="p">,</span>
+                                <span class="n">value</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+                                <span class="nb">min</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                                <span class="nb">type</span><span class="o">=</span><span class="s2">"number"</span><span class="p">,</span>
+                                <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s2">"width"</span><span class="p">:</span> <span class="s2">"100%"</span><span class="p">},</span>
+                            <span class="p">),</span>
+                            <span class="n">dmc</span><span class="o">.</span><span class="n">Space</span><span class="p">(</span><span class="n">h</span><span class="o">=</span><span class="mi">20</span><span class="p">),</span>
+                            <span class="n">html</span><span class="o">.</span><span class="n">Div</span><span class="p">(</span><span class="s2">"Grid Size"</span><span class="p">),</span>
+                            <span class="n">dmc</span><span class="o">.</span><span class="n">Slider</span><span class="p">(</span>
+                                <span class="nb">id</span><span class="o">=</span><span class="s2">"grid-size"</span><span class="p">,</span>
+                                <span class="n">value</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+                                <span class="nb">min</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+                                <span class="nb">max</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+                                <span class="n">step</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                            <span class="p">),</span>
+                            <span class="n">dmc</span><span class="o">.</span><span class="n">Space</span><span class="p">(</span><span class="n">h</span><span class="o">=</span><span class="mi">20</span><span class="p">),</span>
+                            <span class="n">dmc</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span>
+                                <span class="s2">"Start Simulation"</span><span class="p">,</span>
+                                <span class="n">leftSection</span><span class="o">=</span><span class="n">html</span><span class="o">.</span><span class="n">Img</span><span class="p">(</span><span class="n">src</span><span class="o">=</span><span class="n">dash</span><span class="o">.</span><span class="n">get_asset_url</span><span class="p">(</span><span class="s2">"icons/mdi--play.svg"</span><span class="p">)),</span>
+                                <span class="nb">id</span><span class="o">=</span><span class="s2">"start-simulation"</span><span class="p">,</span>
+                                <span class="n">variant</span><span class="o">=</span><span class="s2">"filled"</span><span class="p">,</span>
+                                <span class="n">size</span><span class="o">=</span><span class="s2">"sm"</span><span class="p">,</span>
+                                <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s2">"width"</span><span class="p">:</span> <span class="s2">"100%"</span><span class="p">},</span>
+                            <span class="p">),</span>
+                            <span class="n">dmc</span><span class="o">.</span><span class="n">Space</span><span class="p">(</span><span class="n">h</span><span class="o">=</span><span class="mi">40</span><span class="p">),</span>
+                            <span class="n">dmc</span><span class="o">.</span><span class="n">Divider</span><span class="p">(</span>
+                                <span class="n">label</span><span class="o">=</span><span class="s2">"Simulation Status"</span><span class="p">,</span>
+                                <span class="n">styles</span><span class="o">=</span><span class="p">{</span><span class="s2">"label"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"fontSize"</span><span class="p">:</span> <span class="s2">"18px"</span><span class="p">}},</span>
+                            <span class="p">),</span>
+                            <span class="n">dmc</span><span class="o">.</span><span class="n">Group</span><span class="p">(</span>
+                                <span class="p">[</span>
+                                    <span class="n">html</span><span class="o">.</span><span class="n">Div</span><span class="p">(</span><span class="s2">"Iteration:"</span><span class="p">),</span>
+                                    <span class="n">dmc</span><span class="o">.</span><span class="n">Badge</span><span class="p">(</span><span class="s2">"0"</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">"iteration-counter"</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="s2">"lg"</span><span class="p">),</span>
+                                    <span class="n">dmc</span><span class="o">.</span><span class="n">Progress</span><span class="p">(</span>
+                                        <span class="n">value</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                                        <span class="nb">id</span><span class="o">=</span><span class="s2">"progress-bar"</span><span class="p">,</span>
+                                        <span class="n">size</span><span class="o">=</span><span class="s2">"xl"</span><span class="p">,</span>
+                                        <span class="n">radius</span><span class="o">=</span><span class="s2">"xl"</span><span class="p">,</span>
+                                        <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s2">"width"</span><span class="p">:</span> <span class="s2">"100%"</span><span class="p">},</span>
+                                    <span class="p">),</span>
+                                <span class="p">],</span>
+                            <span class="p">),</span>
+                        <span class="p">],</span>
+                        <span class="n">span</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+                    <span class="p">),</span>
+                    <span class="n">dmc</span><span class="o">.</span><span class="n">GridCol</span><span class="p">(</span>
+                        <span class="n">dcc</span><span class="o">.</span><span class="n">Graph</span><span class="p">(</span>
+                            <span class="nb">id</span><span class="o">=</span><span class="s2">"heatmap"</span><span class="p">,</span>
+                            <span class="n">figure</span><span class="o">=</span><span class="n">go</span><span class="o">.</span><span class="n">Figure</span><span class="p">(</span>
+                                <span class="n">data</span><span class="o">=</span><span class="n">go</span><span class="o">.</span><span class="n">Heatmap</span><span class="p">(</span>
+                                    <span class="n">zmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                                    <span class="n">zmax</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                                    <span class="n">colorscale</span><span class="o">=</span><span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="s2">"black"</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="s2">"white"</span><span class="p">]],</span>
+                                    <span class="n">xgap</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                                    <span class="n">ygap</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                                    <span class="n">showscale</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                                <span class="p">),</span>
+                                <span class="n">layout</span><span class="o">=</span><span class="n">go</span><span class="o">.</span><span class="n">Layout</span><span class="p">(</span>
+                                    <span class="n">xaxis</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
+                                        <span class="n">visible</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                                        <span class="n">scaleanchor</span><span class="o">=</span><span class="s2">"y"</span><span class="p">,</span>
+                                    <span class="p">),</span>
+                                    <span class="n">yaxis</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">visible</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">autorange</span><span class="o">=</span><span class="s2">"reversed"</span><span class="p">),</span>
+                                    <span class="n">paper_bgcolor</span><span class="o">=</span><span class="s2">"rgba(0,0,0,0)"</span><span class="p">,</span>
+                                    <span class="n">plot_bgcolor</span><span class="o">=</span><span class="s2">"#222"</span><span class="p">,</span>
+                                    <span class="n">autosize</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                    <span class="n">margin</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">l</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
+                                <span class="p">),</span>
+                            <span class="p">),</span>
+                            <span class="n">style</span><span class="o">=</span><span class="p">{</span>
+                                <span class="s2">"width"</span><span class="p">:</span> <span class="s2">"800px"</span><span class="p">,</span>
+                                <span class="s2">"height"</span><span class="p">:</span> <span class="s2">"600px"</span><span class="p">,</span>
+                                <span class="s2">"display"</span><span class="p">:</span> <span class="s2">"block"</span><span class="p">,</span>
+                                <span class="s2">"marginLeft"</span><span class="p">:</span> <span class="s2">"auto"</span><span class="p">,</span>
+                                <span class="s2">"marginRight"</span><span class="p">:</span> <span class="s2">"auto"</span><span class="p">,</span>
+                            <span class="p">},</span>
+                            <span class="n">config</span><span class="o">=</span><span class="p">{</span><span class="s2">"displayModeBar"</span><span class="p">:</span> <span class="kc">False</span><span class="p">},</span>
+                        <span class="p">),</span>
+                        <span class="n">span</span><span class="o">=</span><span class="mi">9</span><span class="p">,</span>
+                        <span class="n">style</span><span class="o">=</span><span class="p">{</span>
+                            <span class="s2">"display"</span><span class="p">:</span> <span class="s2">"flex"</span><span class="p">,</span>
+                            <span class="s2">"justifyContent"</span><span class="p">:</span> <span class="s2">"center"</span><span class="p">,</span>
+                            <span class="s2">"alignItems"</span><span class="p">:</span> <span class="s2">"center"</span><span class="p">,</span>
+                        <span class="p">},</span>
+                    <span class="p">),</span>
+                <span class="p">],</span>
+                <span class="n">justify</span><span class="o">=</span><span class="s2">"center"</span><span class="p">,</span>
+                <span class="n">style</span><span class="o">=</span><span class="p">{</span>
+                    <span class="s2">"margin"</span><span class="p">:</span> <span class="s2">"0 auto"</span><span class="p">,</span>
+                    <span class="s2">"maxWidth"</span><span class="p">:</span> <span class="s2">"1200px"</span><span class="p">,</span>
+                    <span class="s2">"width"</span><span class="p">:</span> <span class="s2">"100%"</span><span class="p">,</span>
+                    <span class="s2">"paddingRight"</span><span class="p">:</span> <span class="s2">"60px"</span><span class="p">,</span>
+                    <span class="s2">"paddingLeft"</span><span class="p">:</span> <span class="s2">"20px"</span><span class="p">,</span>
+                <span class="p">},</span>
+            <span class="p">),</span>
+            <span class="n">DashClient</span><span class="o">.</span><span class="n">create_event_listener</span><span class="p">(</span><span class="n">step</span><span class="p">,</span> <span class="n">stream_name</span><span class="o">=</span><span class="s2">"my-stream"</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">"update-heatmap"</span><span class="p">),</span>
+            <span class="n">DashClient</span><span class="o">.</span><span class="n">create_event_listener</span><span class="p">(</span><span class="n">step</span><span class="p">,</span> <span class="n">stream_name</span><span class="o">=</span><span class="s2">"simulate"</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">"termination"</span><span class="p">),</span>
+            <span class="n">html</span><span class="o">.</span><span class="n">Div</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s2">"notifications-container"</span><span class="p">),</span>
+        <span class="p">],</span>
+        <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s2">"paddingLeft"</span><span class="p">:</span> <span class="s2">"20px"</span><span class="p">},</span>
+    <span class="p">)</span>
+
+
+<span class="nd">@callback</span><span class="p">(</span>
+    <span class="n">Output</span><span class="p">(</span><span class="s2">"heatmap"</span><span class="p">,</span> <span class="s2">"figure"</span><span class="p">,</span> <span class="n">allow_duplicate</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+    <span class="n">Input</span><span class="p">(</span><span class="s2">"pattern-select"</span><span class="p">,</span> <span class="s2">"value"</span><span class="p">),</span>
+    <span class="n">Input</span><span class="p">(</span><span class="s2">"grid-size"</span><span class="p">,</span> <span class="s2">"value"</span><span class="p">),</span>
+    <span class="n">State</span><span class="p">(</span><span class="s2">"url"</span><span class="p">,</span> <span class="s2">"pathname"</span><span class="p">),</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">update_initial_pattern</span><span class="p">(</span><span class="n">pattern_select</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">grid_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">project</span><span class="p">:</span> <span class="n">ExamplesSolution</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Patch</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Update the initial pattern."""</span>
+    <span class="n">step</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">steps</span><span class="o">.</span><span class="n">game_of_life_step</span>
+    <span class="n">step</span><span class="o">.</span><span class="n">selected_pattern</span> <span class="o">=</span> <span class="n">pattern_select</span>
+    <span class="n">step</span><span class="o">.</span><span class="n">grid_size</span> <span class="o">=</span> <span class="n">grid_size</span>
+    <span class="n">step</span><span class="o">.</span><span class="n">display_initial_state</span><span class="p">()</span>
+    <span class="n">patched_figure</span> <span class="o">=</span> <span class="n">Patch</span><span class="p">()</span>
+    <span class="n">patched_figure</span><span class="p">[</span><span class="s2">"data"</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">"z"</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">step</span><span class="o">.</span><span class="n">initial_grid_state</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">patched_figure</span>
+
+
+<span class="nd">@callback</span><span class="p">(</span>
+    <span class="n">Output</span><span class="p">(</span><span class="s2">"notifications-container"</span><span class="p">,</span> <span class="s2">"children"</span><span class="p">),</span>
+    <span class="n">Output</span><span class="p">(</span><span class="s2">"start-simulation"</span><span class="p">,</span> <span class="s2">"loading"</span><span class="p">),</span>
+    <span class="n">Output</span><span class="p">(</span><span class="s2">"start-simulation"</span><span class="p">,</span> <span class="s2">"disabled"</span><span class="p">),</span>
+    <span class="n">Output</span><span class="p">(</span><span class="s2">"max-iterations"</span><span class="p">,</span> <span class="s2">"disabled"</span><span class="p">),</span>
+    <span class="n">Output</span><span class="p">(</span><span class="s2">"grid-size"</span><span class="p">,</span> <span class="s2">"disabled"</span><span class="p">),</span>
+    <span class="n">Output</span><span class="p">(</span><span class="s2">"pattern-select"</span><span class="p">,</span> <span class="s2">"disabled"</span><span class="p">),</span>
+    <span class="n">Output</span><span class="p">(</span><span class="s2">"iteration-counter"</span><span class="p">,</span> <span class="s2">"children"</span><span class="p">,</span> <span class="n">allow_duplicate</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+    <span class="n">Output</span><span class="p">(</span><span class="s2">"progress-bar"</span><span class="p">,</span> <span class="s2">"value"</span><span class="p">,</span> <span class="n">allow_duplicate</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+    <span class="n">Input</span><span class="p">(</span><span class="s2">"start-simulation"</span><span class="p">,</span> <span class="s2">"n_clicks"</span><span class="p">),</span>
+    <span class="n">State</span><span class="p">(</span><span class="s2">"pattern-select"</span><span class="p">,</span> <span class="s2">"value"</span><span class="p">),</span>
+    <span class="n">State</span><span class="p">(</span><span class="s2">"max-iterations"</span><span class="p">,</span> <span class="s2">"value"</span><span class="p">),</span>
+    <span class="n">State</span><span class="p">(</span><span class="s2">"grid-size"</span><span class="p">,</span> <span class="s2">"value"</span><span class="p">),</span>
+    <span class="n">State</span><span class="p">(</span><span class="s2">"url"</span><span class="p">,</span> <span class="s2">"pathname"</span><span class="p">),</span>
+    <span class="n">prevent_initial_call</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">start_simulation</span><span class="p">(</span>
+    <span class="n">start_simulation</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">pattern</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">max_iterations</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">grid_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">project</span><span class="p">:</span> <span class="n">ExamplesSolution</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">dmc</span><span class="o">.</span><span class="n">Notification</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""Trigger the simulation."""</span>
+    <span class="n">step</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">steps</span><span class="o">.</span><span class="n">game_of_life_step</span>
+    <span class="n">step</span><span class="o">.</span><span class="n">selected_pattern</span> <span class="o">=</span> <span class="n">pattern</span>
+    <span class="n">step</span><span class="o">.</span><span class="n">max_iterations</span> <span class="o">=</span> <span class="n">max_iterations</span>
+    <span class="n">step</span><span class="o">.</span><span class="n">grid_size</span> <span class="o">=</span> <span class="n">grid_size</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">step</span><span class="o">.</span><span class="n">simulate</span><span class="p">()</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="n">dmc</span><span class="o">.</span><span class="n">Notification</span><span class="p">(</span>
+                <span class="n">title</span><span class="o">=</span><span class="s2">"Error"</span><span class="p">,</span>
+                <span class="n">message</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">),</span>
+                <span class="n">color</span><span class="o">=</span><span class="s2">"red"</span><span class="p">,</span>
+                <span class="nb">id</span><span class="o">=</span><span class="p">{</span><span class="s2">"type"</span><span class="p">:</span> <span class="s2">"notification"</span><span class="p">,</span> <span class="s2">"index"</span><span class="p">:</span> <span class="s2">"simulation-error"</span><span class="p">},</span>
+                <span class="n">autoClose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="n">action</span><span class="o">=</span><span class="s2">"show"</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="kc">False</span><span class="p">,</span>
+            <span class="kc">False</span><span class="p">,</span>
+            <span class="kc">False</span><span class="p">,</span>
+            <span class="kc">False</span><span class="p">,</span>
+            <span class="kc">False</span><span class="p">,</span>
+            <span class="s2">"0/</span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">max_iterations</span><span class="p">),</span>
+            <span class="mi">0</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="n">dmc</span><span class="o">.</span><span class="n">Notification</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">"Simulation Started"</span><span class="p">,</span>
+            <span class="n">message</span><span class="o">=</span><span class="sa">f</span><span class="s2">"Simulation started with pattern: </span><span class="si">{</span><span class="n">pattern</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+            <span class="n">color</span><span class="o">=</span><span class="s2">"lime"</span><span class="p">,</span>
+            <span class="nb">id</span><span class="o">=</span><span class="p">{</span><span class="s2">"type"</span><span class="p">:</span> <span class="s2">"notification"</span><span class="p">,</span> <span class="s2">"index"</span><span class="p">:</span> <span class="s2">"simulation-started"</span><span class="p">},</span>
+            <span class="n">autoClose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">action</span><span class="o">=</span><span class="s2">"show"</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="kc">True</span><span class="p">,</span>
+        <span class="kc">True</span><span class="p">,</span>
+        <span class="kc">True</span><span class="p">,</span>
+        <span class="kc">True</span><span class="p">,</span>
+        <span class="kc">True</span><span class="p">,</span>
+        <span class="s2">"0/</span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">max_iterations</span><span class="p">),</span>
+        <span class="mi">0</span><span class="p">,</span>
+    <span class="p">)</span>
+
+
+<span class="nd">@callback</span><span class="p">(</span>
+    <span class="n">Output</span><span class="p">(</span><span class="s2">"heatmap"</span><span class="p">,</span> <span class="s2">"figure"</span><span class="p">),</span>
+    <span class="n">Output</span><span class="p">(</span><span class="s2">"iteration-counter"</span><span class="p">,</span> <span class="s2">"children"</span><span class="p">),</span>
+    <span class="n">Output</span><span class="p">(</span><span class="s2">"progress-bar"</span><span class="p">,</span> <span class="s2">"value"</span><span class="p">),</span>
+    <span class="n">Input</span><span class="p">(</span><span class="s2">"update-heatmap"</span><span class="p">,</span> <span class="s2">"message"</span><span class="p">),</span>
+    <span class="n">State</span><span class="p">(</span><span class="s2">"max-iterations"</span><span class="p">,</span> <span class="s2">"value"</span><span class="p">),</span>
+    <span class="n">prevent_initial_call</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">update_graph</span><span class="p">(</span><span class="n">message</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">max_iterations</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Patch</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""Update the grid."""</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">message</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"data"</span><span class="p">))</span>
+    <span class="n">patched_figure</span> <span class="o">=</span> <span class="n">Patch</span><span class="p">()</span>
+    <span class="n">patched_figure</span><span class="p">[</span><span class="s2">"data"</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">"z"</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"grid"</span><span class="p">))</span>
+    <span class="n">iteration</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"iteration"</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="n">patched_figure</span><span class="p">,</span>
+        <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">iteration</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">max_iterations</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+        <span class="n">iteration</span> <span class="o">/</span> <span class="n">max_iterations</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span>
+    <span class="p">)</span>
+
+
+<span class="nd">@callback</span><span class="p">(</span>
+    <span class="n">Output</span><span class="p">(</span><span class="s2">"notifications-container"</span><span class="p">,</span> <span class="s2">"children"</span><span class="p">),</span>
+    <span class="n">Output</span><span class="p">(</span><span class="s2">"start-simulation"</span><span class="p">,</span> <span class="s2">"loading"</span><span class="p">),</span>
+    <span class="n">Output</span><span class="p">(</span><span class="s2">"start-simulation"</span><span class="p">,</span> <span class="s2">"disabled"</span><span class="p">),</span>
+    <span class="n">Output</span><span class="p">(</span><span class="s2">"max-iterations"</span><span class="p">,</span> <span class="s2">"disabled"</span><span class="p">),</span>
+    <span class="n">Output</span><span class="p">(</span><span class="s2">"grid-size"</span><span class="p">,</span> <span class="s2">"disabled"</span><span class="p">),</span>
+    <span class="n">Output</span><span class="p">(</span><span class="s2">"pattern-select"</span><span class="p">,</span> <span class="s2">"disabled"</span><span class="p">),</span>
+    <span class="n">Input</span><span class="p">(</span><span class="s2">"termination"</span><span class="p">,</span> <span class="s2">"message"</span><span class="p">),</span>
+    <span class="n">State</span><span class="p">(</span><span class="s2">"url"</span><span class="p">,</span> <span class="s2">"pathname"</span><span class="p">),</span>
+    <span class="n">prevent_initial_call</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">enable_new_simulation</span><span class="p">(</span>
+    <span class="n">message</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">project</span><span class="p">:</span> <span class="n">ExamplesSolution</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">dmc</span><span class="o">.</span><span class="n">Notification</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""Enable starting a new simulation after termination."""</span>
+    <span class="n">step</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">steps</span><span class="o">.</span><span class="n">game_of_life_step</span>
+    <span class="n">status</span> <span class="o">=</span> <span class="n">step</span><span class="o">.</span><span class="n">get_method_state</span><span class="p">(</span><span class="s2">"simulate"</span><span class="p">)</span><span class="o">.</span><span class="n">status</span>
+    <span class="k">if</span> <span class="n">status</span> <span class="o">==</span> <span class="n">MethodStatus</span><span class="o">.</span><span class="n">Completed</span><span class="p">:</span>
+        <span class="n">notification</span> <span class="o">=</span> <span class="n">dmc</span><span class="o">.</span><span class="n">Notification</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">"Simulation Completed"</span><span class="p">,</span>
+            <span class="n">message</span><span class="o">=</span><span class="s2">"The simulation has completed successfully."</span><span class="p">,</span>
+            <span class="n">color</span><span class="o">=</span><span class="s2">"lime"</span><span class="p">,</span>
+            <span class="nb">id</span><span class="o">=</span><span class="p">{</span><span class="s2">"type"</span><span class="p">:</span> <span class="s2">"notification"</span><span class="p">,</span> <span class="s2">"index"</span><span class="p">:</span> <span class="s2">"simulation-completed"</span><span class="p">},</span>
+            <span class="n">autoClose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">action</span><span class="o">=</span><span class="s2">"show"</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">elif</span> <span class="n">status</span> <span class="o">==</span> <span class="n">MethodStatus</span><span class="o">.</span><span class="n">Failed</span><span class="p">:</span>
+        <span class="n">notification</span> <span class="o">=</span> <span class="n">dmc</span><span class="o">.</span><span class="n">Notification</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">"Simulation Failed"</span><span class="p">,</span>
+            <span class="n">message</span><span class="o">=</span><span class="s2">"The simulation has failed or was terminated."</span><span class="p">,</span>
+            <span class="n">color</span><span class="o">=</span><span class="s2">"red"</span><span class="p">,</span>
+            <span class="nb">id</span><span class="o">=</span><span class="p">{</span><span class="s2">"type"</span><span class="p">:</span> <span class="s2">"notification"</span><span class="p">,</span> <span class="s2">"index"</span><span class="p">:</span> <span class="s2">"simulation-failed"</span><span class="p">},</span>
+            <span class="n">autoClose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">action</span><span class="o">=</span><span class="s2">"show"</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">notification</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span>
+</pre></div>
+</div>
+</div>
+</div>
+</details><div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>As in phase 3, the snippets on this page are pulled straight from the
+<a class="reference external" href="https://github.com/ansys/saf/tree/main/examples" rel="noopener noreferrer" target="_blank">SAF examples solution</a>. Wherever you
+see <code class="docutils literal notranslate"><span class="pre">saf.solutions.examples</span></code> or <code class="docutils literal notranslate"><span class="pre">ExamplesSolution</span></code>, substitute
+<code class="docutils literal notranslate"><span class="pre">saf.solutions.game_of_life</span></code> and <code class="docutils literal notranslate"><span class="pre">GameOfLifeSolution</span></code>.</p>
+</div>
+</section>
+<section id="anatomy-of-a-saf-dash-page">
+<h2>Anatomy of a SAF Dash page<a class="headerlink" href="#anatomy-of-a-saf-dash-page" title="Link to this heading">#</a></h2>
+<div class="custom-admonition key-concept admonition">
+<p class="admonition-title">Key concept — SAF Dash page</p>
+<p>Every SAF Dash page, no matter how complex, is built from the same three blocks:</p>
+<ol class="arabic">
+<li><p><strong>Imports and page registration</strong>: declare the URL under which the page is reachable.</p></li>
+<li><p><strong>The ``layout`` function</strong>: receives a <code class="docutils literal notranslate"><span class="pre">project</span></code> (an instance of your <code class="docutils literal notranslate"><span class="pre">Solution</span></code>
+class) and returns a Dash component tree. This is where you build the visual.</p></li>
+<li><p><strong>Callbacks</strong>: decorated functions that fire in response to UI events (click, change,
+…) or backend events (streams).</p></li>
+</ol>
+<p>Recognizing those three blocks is enough to find your way around any SAF page, including
+ones you did not write.</p>
+</div>
+<p>The rest of this phase walks through the three blocks in order.</p>
+</section>
+<section id="page-registration">
+<h2>Page registration<a class="headerlink" href="#page-registration" title="Link to this heading">#</a></h2>
+<div class="custom-admonition key-concept admonition">
+<p class="admonition-title">Key concept — Page registration</p>
+<p><code class="docutils literal notranslate"><span class="pre">dash.register_page</span></code> declares the URL of the page, its label in the navigation tree and
+its icon. Its <code class="docutils literal notranslate"><span class="pre">path_template</span></code> <strong>must</strong> contain <code class="docutils literal notranslate"><span class="pre">&lt;project_id&gt;</span></code>, because every piece of
+state in SAF is scoped to a project: that placeholder is what lets the runtime resolve
+which project’s data the page works on.</p>
+<p>See <a class="reference external" href="https://dash.plotly.com/urls" rel="noopener noreferrer" target="_blank">Multi-page apps and URL support</a> in the Dash
+documentation, and in particular the
+<a class="reference external" href="https://dash.plotly.com/urls#variable-paths" rel="noopener noreferrer" target="_blank">variable paths</a> section, which explains
+the <code class="docutils literal notranslate"><span class="pre">&lt;variable_name&gt;</span></code> syntax SAF relies on.</p>
+</div>
+<div class="literal-block-wrapper docutils container" id="id2">
+<div class="code-block-caption"><span class="caption-text">ui/pages/game_of_life_page.py</span><a class="headerlink" href="#id2" title="Link to this code">#</a></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">dash</span><span class="o">.</span><span class="n">register_page</span><span class="p">(</span>
+    <span class="vm">__name__</span><span class="p">,</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">"Conway's Game of Life"</span><span class="p">,</span>
+    <span class="n">path_template</span><span class="o">=</span><span class="s2">"/projects/&lt;project_id&gt;/game-of-life"</span><span class="p">,</span>
+    <span class="n">icon_asset_name</span><span class="o">=</span><span class="s2">"game-icons--crossed-air-flows.svg"</span><span class="p">,</span>
+    <span class="n">icon_asset_path</span><span class="o">=</span><span class="s2">"icons"</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+</pre></div>
+</div>
+</div>
+<p>Two things to note:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">name</span></code> is the label shown in the navigation tree; <code class="docutils literal notranslate"><span class="pre">icon_asset_name</span></code> and
+<code class="docutils literal notranslate"><span class="pre">icon_asset_path</span></code> point at an SVG under <code class="docutils literal notranslate"><span class="pre">ui/assets/</span></code> and are optional.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">path_template</span></code> is what makes the page addressable: the runtime substitutes the real
+project identifier when the user navigates to it.</p></li>
+</ul>
+<p>The imports at the top of the file follow the same split you saw in the backend — SAF
+primitives, Dash/Plotly components, and finally your own solution:</p>
+<div class="literal-block-wrapper docutils container" id="id3">
+<div class="code-block-caption"><span class="caption-text">ui/pages/game_of_life_page.py</span><a class="headerlink" href="#id3" title="Link to this code">#</a></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.saf.glow.client</span><span class="w"> </span><span class="kn">import</span> <span class="n">DashClient</span><span class="p">,</span> <span class="n">callback</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.saf.glow.solution</span><span class="w"> </span><span class="kn">import</span> <span class="n">MethodStatus</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">dash</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dash</span><span class="w"> </span><span class="kn">import</span> <span class="n">Patch</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dash_extensions.enrich</span><span class="w"> </span><span class="kn">import</span> <span class="n">Input</span><span class="p">,</span> <span class="n">Output</span><span class="p">,</span> <span class="n">State</span><span class="p">,</span> <span class="n">dcc</span><span class="p">,</span> <span class="n">html</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dash_iconify</span><span class="w"> </span><span class="kn">import</span> <span class="n">DashIconify</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">dash_mantine_components</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dmc</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">plotly.graph_objects</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">go</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">saf.solutions.examples.solution.definition</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExamplesSolution</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">saf.solutions.examples.solution.logic.game_of_life</span><span class="w"> </span><span class="kn">import</span> <span class="n">PatternLibrary</span>
+
+</pre></div>
+</div>
+</div>
+<p>Importing your <code class="docutils literal notranslate"><span class="pre">Solution</span></code> class from <code class="docutils literal notranslate"><span class="pre">definition.py</span></code> gives every callback a <strong>typed handle</strong>
+on the whole solution — you get IDE completion on <code class="docutils literal notranslate"><span class="pre">project.steps.game_of_life_step</span></code> and its
+fields, for free.</p>
+</section>
+<section id="the-layout-function">
+<h2>The layout function<a class="headerlink" href="#the-layout-function" title="Link to this heading">#</a></h2>
+<div class="custom-admonition key-concept admonition">
+<p class="admonition-title">Key concept — <code class="docutils literal notranslate"><span class="pre">layout(project)</span></code></p>
+<p>The <strong>layout</strong> function is the entry point of the page. Its signature is fixed: SAF calls
+it with the <code class="docutils literal notranslate"><span class="pre">Solution</span></code> instance matching the <code class="docutils literal notranslate"><span class="pre">&lt;project_id&gt;</span></code> in the URL, and expects a
+Dash component tree in return.</p>
+<p>Annotating the parameter with your own <code class="docutils literal notranslate"><span class="pre">Solution</span></code> class turns <code class="docutils literal notranslate"><span class="pre">project</span></code> into a
+<strong>typed handle</strong> on the whole workflow: <code class="docutils literal notranslate"><span class="pre">project.steps.game_of_life_step</span></code> and its fields
+come with full IDE completion. Reading a field inside the layout is how you seed a control
+with a value already stored in the backend.</p>
+<p>See <a class="reference external" href="https://dash.plotly.com/layout" rel="noopener noreferrer" target="_blank">Dash layout</a> for the general principles, and
+<a class="reference external" href="https://dash.plotly.com/urls#layout" rel="noopener noreferrer" target="_blank">layout in Dash pages</a> for the function form used
+here.</p>
+</div>
+<p>The signature of the layout is fixed: SAF calls it with the project matching the
+<code class="docutils literal notranslate"><span class="pre">&lt;project_id&gt;</span></code> in the URL.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">layout</span><span class="p">(</span><span class="n">project</span><span class="p">:</span> <span class="n">GameOfLifeSolution</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">html</span><span class="o">.</span><span class="n">Div</span><span class="p">:</span>
+    <span class="n">step</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">steps</span><span class="o">.</span><span class="n">game_of_life_step</span>
+    <span class="k">return</span> <span class="n">html</span><span class="o">.</span><span class="n">Div</span><span class="p">([</span><span class="o">...</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>From there, you dereference the step you care about and use its fields as <strong>initial values</strong>
+for the controls.</p>
+<p>The layout of this page is a two-column grid:</p>
+<ul>
+<li><p><strong>Left column (3/12)</strong> — the controls: a pattern picker, a max-iterations input, a grid-size
+slider, a <span class="guilabel">Start simulation</span> button, and a small status area (iteration counter + progress
+bar).</p></li>
+<li><p><strong>Right column (9/12)</strong> — a Plotly <code class="docutils literal notranslate"><span class="pre">Heatmap</span></code> figure driven by the grid data.</p></li>
+</ul>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-icon"><svg version="1.1" width="1.0em" height="1.0em" class="sd-octicon sd-octicon-code" viewBox="0 0 16 16" aria-hidden="true"><path d="m11.28 3.22 4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.749.749 0 0 1-1.275-.326.749.749 0 0 1 .215-.734L13.94 8l-3.72-3.72a.749.749 0 0 1 .326-1.275.749.749 0 0 1 .734.215Zm-6.56 0a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042L2.06 8l3.72 3.72a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215L.47 8.53a.75.75 0 0 1 0-1.06Z"></path></svg></span><span class="sd-summary-text">The full <code class="docutils literal notranslate"><span class="pre">layout</span></code> function</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<div class="literal-block-wrapper docutils container" id="id4">
+<div class="code-block-caption"><span class="caption-text">ui/pages/game_of_life_page.py</span><a class="headerlink" href="#id4" title="Link to this code">#</a></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">layout</span><span class="p">(</span><span class="n">project</span><span class="p">:</span> <span class="n">ExamplesSolution</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">html</span><span class="o">.</span><span class="n">Div</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Layout of the game of life page."""</span>
+    <span class="n">step</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">steps</span><span class="o">.</span><span class="n">game_of_life_step</span>
+    <span class="k">return</span> <span class="n">html</span><span class="o">.</span><span class="n">Div</span><span class="p">(</span>
+        <span class="p">[</span>
+            <span class="n">html</span><span class="o">.</span><span class="n">H1</span><span class="p">(</span>
+                <span class="s2">"Conway's Game of Life"</span><span class="p">,</span>
+                <span class="n">className</span><span class="o">=</span><span class="s2">"display-3"</span><span class="p">,</span>
+                <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s2">"font-size"</span><span class="p">:</span> <span class="s2">"40px"</span><span class="p">,</span> <span class="s2">"font-weight"</span><span class="p">:</span> <span class="s2">"bold"</span><span class="p">},</span>
+            <span class="p">),</span>
+            <span class="n">dmc</span><span class="o">.</span><span class="n">Blockquote</span><span class="p">(</span>
+                <span class="p">[</span>
+                    <span class="s2">"This is an implementation of "</span><span class="p">,</span>
+                    <span class="n">dmc</span><span class="o">.</span><span class="n">Anchor</span><span class="p">(</span>
+                        <span class="s2">"Conway's Game of Life"</span><span class="p">,</span>
+                        <span class="n">href</span><span class="o">=</span><span class="s2">"https://en.wikipedia.org/wiki/Conway</span><span class="si">%27s</span><span class="s2">_Game_of_Life"</span><span class="p">,</span>
+                        <span class="n">target</span><span class="o">=</span><span class="s2">"_blank"</span><span class="p">,</span>
+                        <span class="n">underline</span><span class="o">=</span><span class="s2">"always"</span><span class="p">,</span>
+                    <span class="p">),</span>
+                    <span class="s2">". It demonstrates how to build a simple SAF application "</span>
+                    <span class="s2">"from backend transactions to frontend visualization."</span><span class="p">,</span>
+                <span class="p">],</span>
+                <span class="n">icon</span><span class="o">=</span><span class="n">DashIconify</span><span class="p">(</span><span class="n">icon</span><span class="o">=</span><span class="s2">"material-symbols:info"</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">30</span><span class="p">),</span>
+                <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s2">"font-size"</span><span class="p">:</span> <span class="s2">"18px"</span><span class="p">,</span> <span class="s2">"fontStyle"</span><span class="p">:</span> <span class="s2">"italic"</span><span class="p">},</span>
+            <span class="p">),</span>
+            <span class="n">dmc</span><span class="o">.</span><span class="n">Space</span><span class="p">(</span><span class="n">h</span><span class="o">=</span><span class="mi">20</span><span class="p">),</span>
+            <span class="n">dmc</span><span class="o">.</span><span class="n">Grid</span><span class="p">(</span>
+                <span class="p">[</span>
+                    <span class="n">dmc</span><span class="o">.</span><span class="n">GridCol</span><span class="p">(</span>
+                        <span class="p">[</span>
+                            <span class="n">dmc</span><span class="o">.</span><span class="n">Divider</span><span class="p">(</span>
+                                <span class="n">label</span><span class="o">=</span><span class="s2">"Initialization"</span><span class="p">,</span>
+                                <span class="n">styles</span><span class="o">=</span><span class="p">{</span><span class="s2">"label"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"fontSize"</span><span class="p">:</span> <span class="s2">"18px"</span><span class="p">}},</span>
+                            <span class="p">),</span>
+                            <span class="n">dmc</span><span class="o">.</span><span class="n">Select</span><span class="p">(</span>
+                                <span class="n">label</span><span class="o">=</span><span class="s2">"Select Pattern"</span><span class="p">,</span>
+                                <span class="nb">id</span><span class="o">=</span><span class="s2">"pattern-select"</span><span class="p">,</span>
+                                <span class="n">value</span><span class="o">=</span><span class="s2">"blinker"</span><span class="p">,</span>
+                                <span class="n">searchable</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                <span class="n">clearable</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                                <span class="n">data</span><span class="o">=</span><span class="p">[</span>
+                                    <span class="p">{</span>
+                                        <span class="s2">"value"</span><span class="p">:</span> <span class="n">pattern</span><span class="p">,</span>
+                                        <span class="s2">"label"</span><span class="p">:</span> <span class="n">pattern</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"_"</span><span class="p">,</span> <span class="s2">" "</span><span class="p">)</span><span class="o">.</span><span class="n">title</span><span class="p">(),</span>
+                                    <span class="p">}</span>
+                                    <span class="k">for</span> <span class="n">pattern</span> <span class="ow">in</span> <span class="n">PatternLibrary</span><span class="p">()</span><span class="o">.</span><span class="n">get_pattern_list</span><span class="p">()</span> <span class="o">+</span> <span class="p">[</span><span class="s2">"random"</span><span class="p">]</span>
+                                <span class="p">],</span>
+                            <span class="p">),</span>
+                            <span class="n">dmc</span><span class="o">.</span><span class="n">Space</span><span class="p">(</span><span class="n">h</span><span class="o">=</span><span class="mi">20</span><span class="p">),</span>
+                            <span class="n">dmc</span><span class="o">.</span><span class="n">NumberInput</span><span class="p">(</span>
+                                <span class="n">label</span><span class="o">=</span><span class="s2">"Max Iterations"</span><span class="p">,</span>
+                                <span class="nb">id</span><span class="o">=</span><span class="s2">"max-iterations"</span><span class="p">,</span>
+                                <span class="n">value</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+                                <span class="nb">min</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                                <span class="nb">type</span><span class="o">=</span><span class="s2">"number"</span><span class="p">,</span>
+                                <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s2">"width"</span><span class="p">:</span> <span class="s2">"100%"</span><span class="p">},</span>
+                            <span class="p">),</span>
+                            <span class="n">dmc</span><span class="o">.</span><span class="n">Space</span><span class="p">(</span><span class="n">h</span><span class="o">=</span><span class="mi">20</span><span class="p">),</span>
+                            <span class="n">html</span><span class="o">.</span><span class="n">Div</span><span class="p">(</span><span class="s2">"Grid Size"</span><span class="p">),</span>
+                            <span class="n">dmc</span><span class="o">.</span><span class="n">Slider</span><span class="p">(</span>
+                                <span class="nb">id</span><span class="o">=</span><span class="s2">"grid-size"</span><span class="p">,</span>
+                                <span class="n">value</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+                                <span class="nb">min</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+                                <span class="nb">max</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+                                <span class="n">step</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                            <span class="p">),</span>
+                            <span class="n">dmc</span><span class="o">.</span><span class="n">Space</span><span class="p">(</span><span class="n">h</span><span class="o">=</span><span class="mi">20</span><span class="p">),</span>
+                            <span class="n">dmc</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span>
+                                <span class="s2">"Start Simulation"</span><span class="p">,</span>
+                                <span class="n">leftSection</span><span class="o">=</span><span class="n">html</span><span class="o">.</span><span class="n">Img</span><span class="p">(</span><span class="n">src</span><span class="o">=</span><span class="n">dash</span><span class="o">.</span><span class="n">get_asset_url</span><span class="p">(</span><span class="s2">"icons/mdi--play.svg"</span><span class="p">)),</span>
+                                <span class="nb">id</span><span class="o">=</span><span class="s2">"start-simulation"</span><span class="p">,</span>
+                                <span class="n">variant</span><span class="o">=</span><span class="s2">"filled"</span><span class="p">,</span>
+                                <span class="n">size</span><span class="o">=</span><span class="s2">"sm"</span><span class="p">,</span>
+                                <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s2">"width"</span><span class="p">:</span> <span class="s2">"100%"</span><span class="p">},</span>
+                            <span class="p">),</span>
+                            <span class="n">dmc</span><span class="o">.</span><span class="n">Space</span><span class="p">(</span><span class="n">h</span><span class="o">=</span><span class="mi">40</span><span class="p">),</span>
+                            <span class="n">dmc</span><span class="o">.</span><span class="n">Divider</span><span class="p">(</span>
+                                <span class="n">label</span><span class="o">=</span><span class="s2">"Simulation Status"</span><span class="p">,</span>
+                                <span class="n">styles</span><span class="o">=</span><span class="p">{</span><span class="s2">"label"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"fontSize"</span><span class="p">:</span> <span class="s2">"18px"</span><span class="p">}},</span>
+                            <span class="p">),</span>
+                            <span class="n">dmc</span><span class="o">.</span><span class="n">Group</span><span class="p">(</span>
+                                <span class="p">[</span>
+                                    <span class="n">html</span><span class="o">.</span><span class="n">Div</span><span class="p">(</span><span class="s2">"Iteration:"</span><span class="p">),</span>
+                                    <span class="n">dmc</span><span class="o">.</span><span class="n">Badge</span><span class="p">(</span><span class="s2">"0"</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">"iteration-counter"</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="s2">"lg"</span><span class="p">),</span>
+                                    <span class="n">dmc</span><span class="o">.</span><span class="n">Progress</span><span class="p">(</span>
+                                        <span class="n">value</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                                        <span class="nb">id</span><span class="o">=</span><span class="s2">"progress-bar"</span><span class="p">,</span>
+                                        <span class="n">size</span><span class="o">=</span><span class="s2">"xl"</span><span class="p">,</span>
+                                        <span class="n">radius</span><span class="o">=</span><span class="s2">"xl"</span><span class="p">,</span>
+                                        <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s2">"width"</span><span class="p">:</span> <span class="s2">"100%"</span><span class="p">},</span>
+                                    <span class="p">),</span>
+                                <span class="p">],</span>
+                            <span class="p">),</span>
+                        <span class="p">],</span>
+                        <span class="n">span</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+                    <span class="p">),</span>
+                    <span class="n">dmc</span><span class="o">.</span><span class="n">GridCol</span><span class="p">(</span>
+                        <span class="n">dcc</span><span class="o">.</span><span class="n">Graph</span><span class="p">(</span>
+                            <span class="nb">id</span><span class="o">=</span><span class="s2">"heatmap"</span><span class="p">,</span>
+                            <span class="n">figure</span><span class="o">=</span><span class="n">go</span><span class="o">.</span><span class="n">Figure</span><span class="p">(</span>
+                                <span class="n">data</span><span class="o">=</span><span class="n">go</span><span class="o">.</span><span class="n">Heatmap</span><span class="p">(</span>
+                                    <span class="n">zmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                                    <span class="n">zmax</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                                    <span class="n">colorscale</span><span class="o">=</span><span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="s2">"black"</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="s2">"white"</span><span class="p">]],</span>
+                                    <span class="n">xgap</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                                    <span class="n">ygap</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                                    <span class="n">showscale</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                                <span class="p">),</span>
+                                <span class="n">layout</span><span class="o">=</span><span class="n">go</span><span class="o">.</span><span class="n">Layout</span><span class="p">(</span>
+                                    <span class="n">xaxis</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
+                                        <span class="n">visible</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                                        <span class="n">scaleanchor</span><span class="o">=</span><span class="s2">"y"</span><span class="p">,</span>
+                                    <span class="p">),</span>
+                                    <span class="n">yaxis</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">visible</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">autorange</span><span class="o">=</span><span class="s2">"reversed"</span><span class="p">),</span>
+                                    <span class="n">paper_bgcolor</span><span class="o">=</span><span class="s2">"rgba(0,0,0,0)"</span><span class="p">,</span>
+                                    <span class="n">plot_bgcolor</span><span class="o">=</span><span class="s2">"#222"</span><span class="p">,</span>
+                                    <span class="n">autosize</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                    <span class="n">margin</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">l</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
+                                <span class="p">),</span>
+                            <span class="p">),</span>
+                            <span class="n">style</span><span class="o">=</span><span class="p">{</span>
+                                <span class="s2">"width"</span><span class="p">:</span> <span class="s2">"800px"</span><span class="p">,</span>
+                                <span class="s2">"height"</span><span class="p">:</span> <span class="s2">"600px"</span><span class="p">,</span>
+                                <span class="s2">"display"</span><span class="p">:</span> <span class="s2">"block"</span><span class="p">,</span>
+                                <span class="s2">"marginLeft"</span><span class="p">:</span> <span class="s2">"auto"</span><span class="p">,</span>
+                                <span class="s2">"marginRight"</span><span class="p">:</span> <span class="s2">"auto"</span><span class="p">,</span>
+                            <span class="p">},</span>
+                            <span class="n">config</span><span class="o">=</span><span class="p">{</span><span class="s2">"displayModeBar"</span><span class="p">:</span> <span class="kc">False</span><span class="p">},</span>
+                        <span class="p">),</span>
+                        <span class="n">span</span><span class="o">=</span><span class="mi">9</span><span class="p">,</span>
+                        <span class="n">style</span><span class="o">=</span><span class="p">{</span>
+                            <span class="s2">"display"</span><span class="p">:</span> <span class="s2">"flex"</span><span class="p">,</span>
+                            <span class="s2">"justifyContent"</span><span class="p">:</span> <span class="s2">"center"</span><span class="p">,</span>
+                            <span class="s2">"alignItems"</span><span class="p">:</span> <span class="s2">"center"</span><span class="p">,</span>
+                        <span class="p">},</span>
+                    <span class="p">),</span>
+                <span class="p">],</span>
+                <span class="n">justify</span><span class="o">=</span><span class="s2">"center"</span><span class="p">,</span>
+                <span class="n">style</span><span class="o">=</span><span class="p">{</span>
+                    <span class="s2">"margin"</span><span class="p">:</span> <span class="s2">"0 auto"</span><span class="p">,</span>
+                    <span class="s2">"maxWidth"</span><span class="p">:</span> <span class="s2">"1200px"</span><span class="p">,</span>
+                    <span class="s2">"width"</span><span class="p">:</span> <span class="s2">"100%"</span><span class="p">,</span>
+                    <span class="s2">"paddingRight"</span><span class="p">:</span> <span class="s2">"60px"</span><span class="p">,</span>
+                    <span class="s2">"paddingLeft"</span><span class="p">:</span> <span class="s2">"20px"</span><span class="p">,</span>
+                <span class="p">},</span>
+            <span class="p">),</span>
+            <span class="n">DashClient</span><span class="o">.</span><span class="n">create_event_listener</span><span class="p">(</span><span class="n">step</span><span class="p">,</span> <span class="n">stream_name</span><span class="o">=</span><span class="s2">"my-stream"</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">"update-heatmap"</span><span class="p">),</span>
+            <span class="n">DashClient</span><span class="o">.</span><span class="n">create_event_listener</span><span class="p">(</span><span class="n">step</span><span class="p">,</span> <span class="n">stream_name</span><span class="o">=</span><span class="s2">"simulate"</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">"termination"</span><span class="p">),</span>
+            <span class="n">html</span><span class="o">.</span><span class="n">Div</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s2">"notifications-container"</span><span class="p">),</span>
+        <span class="p">],</span>
+        <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s2">"paddingLeft"</span><span class="p">:</span> <span class="s2">"20px"</span><span class="p">},</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</details><p>Most of it is plain Dash and Mantine markup, documented outside SAF:</p>
+<ul>
+<li><p><a class="reference external" href="https://dash.plotly.com/dash-html-components" rel="noopener noreferrer" target="_blank">Dash HTML components</a> for <code class="docutils literal notranslate"><span class="pre">html.Div</span></code> and
+friends — one class per HTML tag.</p></li>
+<li><p><a class="reference external" href="https://dash.plotly.com/dash-core-components" rel="noopener noreferrer" target="_blank">Dash core components</a> for <code class="docutils literal notranslate"><span class="pre">dcc.Graph</span></code>,
+<code class="docutils literal notranslate"><span class="pre">dcc.Store</span></code> and the other interactive building blocks.</p></li>
+<li><p><a class="reference external" href="https://www.dash-mantine-components.com/" rel="noopener noreferrer" target="_blank">Dash Mantine Components</a> for the grid, the
+dropdown, the slider and the buttons used in this page.</p></li>
+<li><p><a class="reference external" href="https://plotly.com/python/heatmaps/" rel="noopener noreferrer" target="_blank">Plotly heatmaps</a> for the figure that renders the
+grid of cells.</p></li>
+</ul>
+<p>The two SAF-specific lines are right at the end:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">DashClient</span><span class="o">.</span><span class="n">create_event_listener</span><span class="p">(</span><span class="n">step</span><span class="p">,</span> <span class="n">stream_name</span><span class="o">=</span><span class="s2">"my-stream"</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">"update-heatmap"</span><span class="p">),</span>
+<span class="n">DashClient</span><span class="o">.</span><span class="n">create_event_listener</span><span class="p">(</span><span class="n">step</span><span class="p">,</span> <span class="n">stream_name</span><span class="o">=</span><span class="s2">"simulate"</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">"termination"</span><span class="p">),</span>
+</pre></div>
+</div>
+<div class="custom-admonition key-concept admonition">
+<p class="admonition-title">Key concept — Event listener</p>
+<p><code class="docutils literal notranslate"><span class="pre">DashClient.create_event_listener(step,</span> <span class="pre">stream_name=...,</span> <span class="pre">id=...)</span></code> is the frontend
+counterpart of the backend’s <code class="docutils literal notranslate"><span class="pre">raise_event</span></code>. It inserts an <strong>invisible component</strong> in the
+layout that subscribes to a named backend stream and updates its <code class="docutils literal notranslate"><span class="pre">message</span></code> property
+every time an event arrives.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">id</span></code> you give it is what a callback targets with <code class="docutils literal notranslate"><span class="pre">Input(&quot;&lt;id&gt;&quot;,</span> <span class="pre">&quot;message&quot;)</span></code>. One
+listener per stream: here, one for the progress stream and one for the termination stream.</p>
+</div>
+<div class="custom-admonition practice admonition">
+<p class="admonition-title">Practice</p>
+<ol class="arabic">
+<li><p>Replace the whole content of <code class="docutils literal notranslate"><span class="pre">game_of_life_page.py</span></code> with the complete listing above
+— imports, <code class="docutils literal notranslate"><span class="pre">dash.register_page</span></code> and <code class="docutils literal notranslate"><span class="pre">layout</span></code>. Remember to substitute the
+<code class="docutils literal notranslate"><span class="pre">saf.solutions.examples</span></code> namespace and <code class="docutils literal notranslate"><span class="pre">ExamplesSolution</span></code> with your own.</p></li>
+<li><p>The “Start Simulation” button uses an icon that the template does not ship. Download
+<a class="reference external" href="https://github.com/ansys/saf/blob/main/examples/src/saf/solutions/examples/ui/assets/icons/mdi--play.svg" rel="noopener noreferrer" target="_blank">mdi–play.svg</a>
+and drop it into <code class="docutils literal notranslate"><span class="pre">src/saf/solutions/game_of_life/ui/assets/icons/</span></code>. Without it the
+button renders with a broken image.</p></li>
+</ol>
+<p>Save the file and continue — the page is not usable until the callbacks are in place.</p>
+</div>
+</section>
+<section id="callbacks-101">
+<h2>Callbacks 101<a class="headerlink" href="#callbacks-101" title="Link to this heading">#</a></h2>
+<div class="custom-admonition key-concept admonition">
+<p class="admonition-title">Key concept — Callback</p>
+<p>A <strong>callback</strong> is a function decorated with <code class="docutils literal notranslate"><span class="pre">&#64;callback</span></code> that reacts to changes in the
+application. It is described by three kinds of arguments:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">Input</span></code>: a value SAF <strong>watches</strong>. When it changes, the callback fires.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">State</span></code>: a value SAF <strong>reads but does not watch</strong>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Output</span></code>: a value SAF <strong>writes back</strong> to the browser once the callback returns.</p></li>
+</ul>
+<p>Callbacks are where the frontend drives the backend — which makes them the frontend
+mirror of the backend’s transaction methods.</p>
+<p>See <a class="reference external" href="https://dash.plotly.com/basic-callbacks" rel="noopener noreferrer" target="_blank">Basic callbacks</a> for <code class="docutils literal notranslate"><span class="pre">Input</span></code> and
+<code class="docutils literal notranslate"><span class="pre">Output</span></code>, <a class="reference external" href="https://dash.plotly.com/basic-callbacks#dash-app-with-state" rel="noopener noreferrer" target="_blank">Dash app with state</a>
+for <code class="docutils literal notranslate"><span class="pre">State</span></code>, and <a class="reference external" href="https://dash.plotly.com/advanced-callbacks" rel="noopener noreferrer" target="_blank">Advanced callbacks</a> for
+everything beyond the basics.</p>
+</div>
+<p>A callback in Dash is a decorated function that reacts to changes in the UI:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@callback</span><span class="p">(</span>
+    <span class="n">Output</span><span class="p">(</span><span class="s2">"some-component-id"</span><span class="p">,</span> <span class="s2">"some-property"</span><span class="p">),</span>
+    <span class="n">Input</span><span class="p">(</span><span class="s2">"triggering-component-id"</span><span class="p">,</span> <span class="s2">"triggering-property"</span><span class="p">),</span>
+    <span class="n">State</span><span class="p">(</span><span class="s2">"read-only-component-id"</span><span class="p">,</span> <span class="s2">"read-only-property"</span><span class="p">),</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">my_callback</span><span class="p">(</span><span class="n">triggering_value</span><span class="p">,</span> <span class="n">read_only_value</span><span class="p">):</span>
+    <span class="o">...</span>
+    <span class="k">return</span> <span class="n">new_value_for_the_output</span>
+</pre></div>
+</div>
+<p>Two rules to internalize:</p>
+<ol class="arabic">
+<li><p>The number of <code class="docutils literal notranslate"><span class="pre">Input</span></code> + <code class="docutils literal notranslate"><span class="pre">State</span></code> arguments in the decorator must match the number of
+function parameters. SAF passes you an extra <code class="docutils literal notranslate"><span class="pre">project</span></code> parameter automatically when the
+last <code class="docutils literal notranslate"><span class="pre">State</span></code> is <code class="docutils literal notranslate"><span class="pre">State(&quot;url&quot;,</span> <span class="pre">&quot;pathname&quot;)</span></code>.</p></li>
+<li><p>The number of <code class="docutils literal notranslate"><span class="pre">Output</span></code> entries in the decorator must match the number of items in the
+<code class="docutils literal notranslate"><span class="pre">return</span></code> statement.</p></li>
+</ol>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>The mental model between a SAF backend <code class="docutils literal notranslate"><span class="pre">&#64;transaction</span></code> and a Dash <code class="docutils literal notranslate"><span class="pre">&#64;callback</span></code> is
+intentionally similar:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>SAF <code class="docutils literal notranslate"><span class="pre">&#64;transaction</span></code></p></th>
+<th class="head"><p>Dash <code class="docutils literal notranslate"><span class="pre">&#64;callback</span></code></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">StepSpec(download=[...])</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Input(...)</span></code> and <code class="docutils literal notranslate"><span class="pre">State(...)</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">StepSpec(upload=[...])</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Output(...)</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="callback-1-preview-the-initial-pattern">
+<h2>Callback #1 — Preview the initial pattern<a class="headerlink" href="#callback-1-preview-the-initial-pattern" title="Link to this heading">#</a></h2>
+<div class="custom-admonition key-concept admonition">
+<p class="admonition-title">Key concept — <code class="docutils literal notranslate"><span class="pre">DashClient</span></code></p>
+<p>The <code class="docutils literal notranslate"><span class="pre">DashClient</span></code> is the bridge between the Dash page and the SAF backend. Through the
+typed <code class="docutils literal notranslate"><span class="pre">project</span></code> handle it exposes the step model as if it were a local object:</p>
+<ul>
+<li><p><strong>assigning</strong> to a field (<code class="docutils literal notranslate"><span class="pre">step.grid_size</span> <span class="pre">=</span> <span class="pre">20</span></code>) persists it in the backend;</p></li>
+<li><p><strong>reading</strong> a field (<code class="docutils literal notranslate"><span class="pre">step.initial_grid_state</span></code>) fetches its current value;</p></li>
+<li><p><strong>calling</strong> a transaction (<code class="docutils literal notranslate"><span class="pre">step.display_initial_state()</span></code>) executes it.</p></li>
+</ul>
+<p>There is no <code class="docutils literal notranslate"><span class="pre">requests.post</span></code> anywhere in a SAF page; the client turns each of those
+Pythonic operations into the corresponding REST API call under the hood.</p>
+</div>
+<p>Whenever the user picks a new pattern or moves the grid-size slider, you want the heatmap to
+redraw immediately. There is no long computation involved — the blocking
+<code class="docutils literal notranslate"><span class="pre">display_initial_state</span></code> transaction is perfect for the job.</p>
+<div class="literal-block-wrapper docutils container" id="id5">
+<div class="code-block-caption"><span class="caption-text">ui/pages/game_of_life_page.py</span><a class="headerlink" href="#id5" title="Link to this code">#</a></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@callback</span><span class="p">(</span>
+    <span class="n">Output</span><span class="p">(</span><span class="s2">"heatmap"</span><span class="p">,</span> <span class="s2">"figure"</span><span class="p">,</span> <span class="n">allow_duplicate</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+    <span class="n">Input</span><span class="p">(</span><span class="s2">"pattern-select"</span><span class="p">,</span> <span class="s2">"value"</span><span class="p">),</span>
+    <span class="n">Input</span><span class="p">(</span><span class="s2">"grid-size"</span><span class="p">,</span> <span class="s2">"value"</span><span class="p">),</span>
+    <span class="n">State</span><span class="p">(</span><span class="s2">"url"</span><span class="p">,</span> <span class="s2">"pathname"</span><span class="p">),</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">update_initial_pattern</span><span class="p">(</span><span class="n">pattern_select</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">grid_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">project</span><span class="p">:</span> <span class="n">ExamplesSolution</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Patch</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Update the initial pattern."""</span>
+    <span class="n">step</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">steps</span><span class="o">.</span><span class="n">game_of_life_step</span>
+    <span class="n">step</span><span class="o">.</span><span class="n">selected_pattern</span> <span class="o">=</span> <span class="n">pattern_select</span>
+    <span class="n">step</span><span class="o">.</span><span class="n">grid_size</span> <span class="o">=</span> <span class="n">grid_size</span>
+    <span class="n">step</span><span class="o">.</span><span class="n">display_initial_state</span><span class="p">()</span>
+    <span class="n">patched_figure</span> <span class="o">=</span> <span class="n">Patch</span><span class="p">()</span>
+    <span class="n">patched_figure</span><span class="p">[</span><span class="s2">"data"</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">"z"</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">step</span><span class="o">.</span><span class="n">initial_grid_state</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">patched_figure</span>
+</pre></div>
+</div>
+</div>
+<p>Notice the flow:</p>
+<ol class="arabic">
+<li><p>Access the step through <code class="docutils literal notranslate"><span class="pre">project.steps.game_of_life_step</span></code>.</p></li>
+<li><p><strong>Write</strong> the two input fields (<code class="docutils literal notranslate"><span class="pre">selected_pattern</span></code>, <code class="docutils literal notranslate"><span class="pre">grid_size</span></code>) — SAF persists them.</p></li>
+<li><p><strong>Invoke</strong> the transaction. Because it is blocking, execution pauses until it returns.</p></li>
+<li><p><strong>Read</strong> the output field (<code class="docutils literal notranslate"><span class="pre">initial_grid_state</span></code>) and use it to patch the figure.</p></li>
+</ol>
+<p>The interaction with the backend is entirely Pythonic. There is no <code class="docutils literal notranslate"><span class="pre">requests.post</span></code> call
+anywhere; SAF turns the field assignments and the <code class="docutils literal notranslate"><span class="pre">display_initial_state()</span></code> call into REST
+API calls under the hood.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p><code class="docutils literal notranslate"><span class="pre">dash.Patch</span></code> returns a lightweight diff instead of a full figure. It keeps the payload
+small when only one property changes. See
+<a class="reference external" href="https://dash.plotly.com/partial-properties" rel="noopener noreferrer" target="_blank">Partial property updates</a> for the full list
+of operations a <code class="docutils literal notranslate"><span class="pre">Patch</span></code> supports.</p>
+</div>
+</section>
+<section id="callback-2-launch-the-long-running-simulation">
+<h2>Callback #2 — Launch the long-running simulation<a class="headerlink" href="#callback-2-launch-the-long-running-simulation" title="Link to this heading">#</a></h2>
+<div class="custom-admonition key-concept admonition">
+<p class="admonition-title">Key concept — Calling a long-running transaction</p>
+<p>Calling a <code class="docutils literal notranslate"><span class="pre">&#64;long_running</span></code> transaction from a callback <strong>returns immediately</strong>: the
+callback must not — and cannot — wait for the result. Its only job is to <em>fire and forget</em>
+the transaction and to put the UI in its “running” state, typically by disabling the
+controls that would start a second run.</p>
+<p>Everything that happens afterwards is driven by events, in separate callbacks.</p>
+</div>
+<p>Clicking “Start simulation” must launch the long-running <code class="docutils literal notranslate"><span class="pre">simulate</span></code> transaction and disable
+the controls until it terminates. Because <code class="docutils literal notranslate"><span class="pre">simulate</span></code> is decorated with <code class="docutils literal notranslate"><span class="pre">&#64;long_running</span></code>, the
+call returns immediately — you do <strong>not</strong> wait for the loop to finish here.</p>
+<div class="literal-block-wrapper docutils container" id="id6">
+<div class="code-block-caption"><span class="caption-text">ui/pages/game_of_life_page.py</span><a class="headerlink" href="#id6" title="Link to this code">#</a></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@callback</span><span class="p">(</span>
+    <span class="n">Output</span><span class="p">(</span><span class="s2">"notifications-container"</span><span class="p">,</span> <span class="s2">"children"</span><span class="p">),</span>
+    <span class="n">Output</span><span class="p">(</span><span class="s2">"start-simulation"</span><span class="p">,</span> <span class="s2">"loading"</span><span class="p">),</span>
+    <span class="n">Output</span><span class="p">(</span><span class="s2">"start-simulation"</span><span class="p">,</span> <span class="s2">"disabled"</span><span class="p">),</span>
+    <span class="n">Output</span><span class="p">(</span><span class="s2">"max-iterations"</span><span class="p">,</span> <span class="s2">"disabled"</span><span class="p">),</span>
+    <span class="n">Output</span><span class="p">(</span><span class="s2">"grid-size"</span><span class="p">,</span> <span class="s2">"disabled"</span><span class="p">),</span>
+    <span class="n">Output</span><span class="p">(</span><span class="s2">"pattern-select"</span><span class="p">,</span> <span class="s2">"disabled"</span><span class="p">),</span>
+    <span class="n">Output</span><span class="p">(</span><span class="s2">"iteration-counter"</span><span class="p">,</span> <span class="s2">"children"</span><span class="p">,</span> <span class="n">allow_duplicate</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+    <span class="n">Output</span><span class="p">(</span><span class="s2">"progress-bar"</span><span class="p">,</span> <span class="s2">"value"</span><span class="p">,</span> <span class="n">allow_duplicate</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+    <span class="n">Input</span><span class="p">(</span><span class="s2">"start-simulation"</span><span class="p">,</span> <span class="s2">"n_clicks"</span><span class="p">),</span>
+    <span class="n">State</span><span class="p">(</span><span class="s2">"pattern-select"</span><span class="p">,</span> <span class="s2">"value"</span><span class="p">),</span>
+    <span class="n">State</span><span class="p">(</span><span class="s2">"max-iterations"</span><span class="p">,</span> <span class="s2">"value"</span><span class="p">),</span>
+    <span class="n">State</span><span class="p">(</span><span class="s2">"grid-size"</span><span class="p">,</span> <span class="s2">"value"</span><span class="p">),</span>
+    <span class="n">State</span><span class="p">(</span><span class="s2">"url"</span><span class="p">,</span> <span class="s2">"pathname"</span><span class="p">),</span>
+    <span class="n">prevent_initial_call</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">start_simulation</span><span class="p">(</span>
+    <span class="n">start_simulation</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">pattern</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">max_iterations</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">grid_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">project</span><span class="p">:</span> <span class="n">ExamplesSolution</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">dmc</span><span class="o">.</span><span class="n">Notification</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""Trigger the simulation."""</span>
+    <span class="n">step</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">steps</span><span class="o">.</span><span class="n">game_of_life_step</span>
+    <span class="n">step</span><span class="o">.</span><span class="n">selected_pattern</span> <span class="o">=</span> <span class="n">pattern</span>
+    <span class="n">step</span><span class="o">.</span><span class="n">max_iterations</span> <span class="o">=</span> <span class="n">max_iterations</span>
+    <span class="n">step</span><span class="o">.</span><span class="n">grid_size</span> <span class="o">=</span> <span class="n">grid_size</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">step</span><span class="o">.</span><span class="n">simulate</span><span class="p">()</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="n">dmc</span><span class="o">.</span><span class="n">Notification</span><span class="p">(</span>
+                <span class="n">title</span><span class="o">=</span><span class="s2">"Error"</span><span class="p">,</span>
+                <span class="n">message</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">),</span>
+                <span class="n">color</span><span class="o">=</span><span class="s2">"red"</span><span class="p">,</span>
+                <span class="nb">id</span><span class="o">=</span><span class="p">{</span><span class="s2">"type"</span><span class="p">:</span> <span class="s2">"notification"</span><span class="p">,</span> <span class="s2">"index"</span><span class="p">:</span> <span class="s2">"simulation-error"</span><span class="p">},</span>
+                <span class="n">autoClose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="n">action</span><span class="o">=</span><span class="s2">"show"</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="kc">False</span><span class="p">,</span>
+            <span class="kc">False</span><span class="p">,</span>
+            <span class="kc">False</span><span class="p">,</span>
+            <span class="kc">False</span><span class="p">,</span>
+            <span class="kc">False</span><span class="p">,</span>
+            <span class="s2">"0/</span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">max_iterations</span><span class="p">),</span>
+            <span class="mi">0</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="n">dmc</span><span class="o">.</span><span class="n">Notification</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">"Simulation Started"</span><span class="p">,</span>
+            <span class="n">message</span><span class="o">=</span><span class="sa">f</span><span class="s2">"Simulation started with pattern: </span><span class="si">{</span><span class="n">pattern</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+            <span class="n">color</span><span class="o">=</span><span class="s2">"lime"</span><span class="p">,</span>
+            <span class="nb">id</span><span class="o">=</span><span class="p">{</span><span class="s2">"type"</span><span class="p">:</span> <span class="s2">"notification"</span><span class="p">,</span> <span class="s2">"index"</span><span class="p">:</span> <span class="s2">"simulation-started"</span><span class="p">},</span>
+            <span class="n">autoClose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">action</span><span class="o">=</span><span class="s2">"show"</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="kc">True</span><span class="p">,</span>
+        <span class="kc">True</span><span class="p">,</span>
+        <span class="kc">True</span><span class="p">,</span>
+        <span class="kc">True</span><span class="p">,</span>
+        <span class="kc">True</span><span class="p">,</span>
+        <span class="s2">"0/</span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">max_iterations</span><span class="p">),</span>
+        <span class="mi">0</span><span class="p">,</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>Two subtleties:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">prevent_initial_call=True</span></code> prevents the callback from firing when the page first loads —
+otherwise it would start a simulation nobody asked for. See
+<a class="reference external" href="https://dash.plotly.com/advanced-callbacks" rel="noopener noreferrer" target="_blank">Prevent callbacks from being executed on initial load</a>.</p></li>
+<li><p>Because <code class="docutils literal notranslate"><span class="pre">step.simulate()</span></code> is asynchronous, the callback exits after triggering it. All the
+live updates happen in the next two callbacks.</p></li>
+</ul>
+</section>
+<section id="callback-3-react-to-progress-events">
+<h2>Callback #3 — React to progress events<a class="headerlink" href="#callback-3-react-to-progress-events" title="Link to this heading">#</a></h2>
+<div class="custom-admonition key-concept admonition">
+<p class="admonition-title">Key concept — Consuming an event</p>
+<p>An event listener is just another callback <code class="docutils literal notranslate"><span class="pre">Input</span></code>: <code class="docutils literal notranslate"><span class="pre">Input(&quot;&lt;listener-id&gt;&quot;,</span>
+<span class="pre">&quot;message&quot;)</span></code>. The payload published by the backend arrives as a <strong>JSON string</strong> in
+<code class="docutils literal notranslate"><span class="pre">message[&quot;data&quot;]</span></code>, so decode it with <code class="docutils literal notranslate"><span class="pre">json.loads</span></code> before use.</p>
+<p>The callback fires <strong>once per event</strong>, so keep its body cheap.</p>
+</div>
+<p>Every time the backend calls <code class="docutils literal notranslate"><span class="pre">self.transaction.raise_event(stream_name=&quot;my-stream&quot;,</span> <span class="pre">...)</span></code>,
+the event listener you declared in the layout fires. You wire a callback to it exactly like
+you would with any UI event:</p>
+<div class="literal-block-wrapper docutils container" id="id7">
+<div class="code-block-caption"><span class="caption-text">ui/pages/game_of_life_page.py</span><a class="headerlink" href="#id7" title="Link to this code">#</a></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@callback</span><span class="p">(</span>
+    <span class="n">Output</span><span class="p">(</span><span class="s2">"heatmap"</span><span class="p">,</span> <span class="s2">"figure"</span><span class="p">),</span>
+    <span class="n">Output</span><span class="p">(</span><span class="s2">"iteration-counter"</span><span class="p">,</span> <span class="s2">"children"</span><span class="p">),</span>
+    <span class="n">Output</span><span class="p">(</span><span class="s2">"progress-bar"</span><span class="p">,</span> <span class="s2">"value"</span><span class="p">),</span>
+    <span class="n">Input</span><span class="p">(</span><span class="s2">"update-heatmap"</span><span class="p">,</span> <span class="s2">"message"</span><span class="p">),</span>
+    <span class="n">State</span><span class="p">(</span><span class="s2">"max-iterations"</span><span class="p">,</span> <span class="s2">"value"</span><span class="p">),</span>
+    <span class="n">prevent_initial_call</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">update_graph</span><span class="p">(</span><span class="n">message</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">max_iterations</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Patch</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""Update the grid."""</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">message</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"data"</span><span class="p">))</span>
+    <span class="n">patched_figure</span> <span class="o">=</span> <span class="n">Patch</span><span class="p">()</span>
+    <span class="n">patched_figure</span><span class="p">[</span><span class="s2">"data"</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">"z"</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"grid"</span><span class="p">))</span>
+    <span class="n">iteration</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"iteration"</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="n">patched_figure</span><span class="p">,</span>
+        <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">iteration</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">max_iterations</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+        <span class="n">iteration</span> <span class="o">/</span> <span class="n">max_iterations</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">Input(&quot;update-heatmap&quot;,</span> <span class="pre">&quot;message&quot;)</span></code> matches the <code class="docutils literal notranslate"><span class="pre">id=&quot;update-heatmap&quot;</span></code> on the event
+listener component you created in the layout.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>This callback fires <strong>once per event</strong>. On a grid of 20 x 20 cells running for 10
+iterations, that means 11 callbacks: one for generation 0 (emitted before the loop) and
+one for each of the 10 iterations. Keep the callback body inexpensive.</p>
+</div>
+</section>
+<section id="callback-4-react-to-the-termination-event">
+<h2>Callback #4 — React to the termination event<a class="headerlink" href="#callback-4-react-to-the-termination-event" title="Link to this heading">#</a></h2>
+<div class="custom-admonition key-concept admonition">
+<p class="admonition-title">Key concept — <code class="docutils literal notranslate"><span class="pre">get_method_state()</span></code></p>
+<p>A termination event tells you that a long-running transaction is <strong>over</strong>, but not how it
+ended. <code class="docutils literal notranslate"><span class="pre">step.get_method_state(&quot;simulate&quot;).status</span></code> gives you the terminal status:
+<code class="docutils literal notranslate"><span class="pre">Completed</span></code> on success or <code class="docutils literal notranslate"><span class="pre">Failed</span></code> if the transaction raises. Use it to restore the
+UI and show the corresponding notification.</p>
+</div>
+<p>The last callback listens to the <code class="docutils literal notranslate"><span class="pre">simulate</span></code> stream — the one automatically emitted because
+you set <code class="docutils literal notranslate"><span class="pre">enable_termination_event=True</span></code> on the transaction. When it fires, the simulation
+is over (either successfully or not) and it is time to re-enable the controls.</p>
+<div class="literal-block-wrapper docutils container" id="id8">
+<div class="code-block-caption"><span class="caption-text">ui/pages/game_of_life_page.py</span><a class="headerlink" href="#id8" title="Link to this code">#</a></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@callback</span><span class="p">(</span>
+    <span class="n">Output</span><span class="p">(</span><span class="s2">"notifications-container"</span><span class="p">,</span> <span class="s2">"children"</span><span class="p">),</span>
+    <span class="n">Output</span><span class="p">(</span><span class="s2">"start-simulation"</span><span class="p">,</span> <span class="s2">"loading"</span><span class="p">),</span>
+    <span class="n">Output</span><span class="p">(</span><span class="s2">"start-simulation"</span><span class="p">,</span> <span class="s2">"disabled"</span><span class="p">),</span>
+    <span class="n">Output</span><span class="p">(</span><span class="s2">"max-iterations"</span><span class="p">,</span> <span class="s2">"disabled"</span><span class="p">),</span>
+    <span class="n">Output</span><span class="p">(</span><span class="s2">"grid-size"</span><span class="p">,</span> <span class="s2">"disabled"</span><span class="p">),</span>
+    <span class="n">Output</span><span class="p">(</span><span class="s2">"pattern-select"</span><span class="p">,</span> <span class="s2">"disabled"</span><span class="p">),</span>
+    <span class="n">Input</span><span class="p">(</span><span class="s2">"termination"</span><span class="p">,</span> <span class="s2">"message"</span><span class="p">),</span>
+    <span class="n">State</span><span class="p">(</span><span class="s2">"url"</span><span class="p">,</span> <span class="s2">"pathname"</span><span class="p">),</span>
+    <span class="n">prevent_initial_call</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">enable_new_simulation</span><span class="p">(</span>
+    <span class="n">message</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">project</span><span class="p">:</span> <span class="n">ExamplesSolution</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">dmc</span><span class="o">.</span><span class="n">Notification</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""Enable starting a new simulation after termination."""</span>
+    <span class="n">step</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">steps</span><span class="o">.</span><span class="n">game_of_life_step</span>
+    <span class="n">status</span> <span class="o">=</span> <span class="n">step</span><span class="o">.</span><span class="n">get_method_state</span><span class="p">(</span><span class="s2">"simulate"</span><span class="p">)</span><span class="o">.</span><span class="n">status</span>
+    <span class="k">if</span> <span class="n">status</span> <span class="o">==</span> <span class="n">MethodStatus</span><span class="o">.</span><span class="n">Completed</span><span class="p">:</span>
+        <span class="n">notification</span> <span class="o">=</span> <span class="n">dmc</span><span class="o">.</span><span class="n">Notification</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">"Simulation Completed"</span><span class="p">,</span>
+            <span class="n">message</span><span class="o">=</span><span class="s2">"The simulation has completed successfully."</span><span class="p">,</span>
+            <span class="n">color</span><span class="o">=</span><span class="s2">"lime"</span><span class="p">,</span>
+            <span class="nb">id</span><span class="o">=</span><span class="p">{</span><span class="s2">"type"</span><span class="p">:</span> <span class="s2">"notification"</span><span class="p">,</span> <span class="s2">"index"</span><span class="p">:</span> <span class="s2">"simulation-completed"</span><span class="p">},</span>
+            <span class="n">autoClose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">action</span><span class="o">=</span><span class="s2">"show"</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">elif</span> <span class="n">status</span> <span class="o">==</span> <span class="n">MethodStatus</span><span class="o">.</span><span class="n">Failed</span><span class="p">:</span>
+        <span class="n">notification</span> <span class="o">=</span> <span class="n">dmc</span><span class="o">.</span><span class="n">Notification</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">"Simulation Failed"</span><span class="p">,</span>
+            <span class="n">message</span><span class="o">=</span><span class="s2">"The simulation has failed or was terminated."</span><span class="p">,</span>
+            <span class="n">color</span><span class="o">=</span><span class="s2">"red"</span><span class="p">,</span>
+            <span class="nb">id</span><span class="o">=</span><span class="p">{</span><span class="s2">"type"</span><span class="p">:</span> <span class="s2">"notification"</span><span class="p">,</span> <span class="s2">"index"</span><span class="p">:</span> <span class="s2">"simulation-failed"</span><span class="p">},</span>
+            <span class="n">autoClose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">action</span><span class="o">=</span><span class="s2">"show"</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">notification</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span>
+</pre></div>
+</div>
+</div>
+<p>Notice how <code class="docutils literal notranslate"><span class="pre">step.get_method_state(&quot;simulate&quot;).status</span></code> gives you the terminal status of the
+transaction: <code class="docutils literal notranslate"><span class="pre">Completed</span></code> on success, <code class="docutils literal notranslate"><span class="pre">Failed</span></code> if it raised, or <code class="docutils literal notranslate"><span class="pre">Terminated</span></code> if it was
+cancelled. Use it to show the right notification to the user.</p>
+</section>
+<section id="the-end-to-end-flow">
+<h2>The end-to-end flow<a class="headerlink" href="#the-end-to-end-flow" title="Link to this heading">#</a></h2>
+<pre  class="mermaid">
+        sequenceDiagram
+    participant U as User
+    participant D as Dash callbacks
+    participant B as SAF backend
+    participant L as Event listeners
+
+    U-&gt;&gt;D: Selects pattern
+    D-&gt;&gt;B: display_initial_state()  (blocking)
+    B--&gt;&gt;D: initial_grid_state
+    D--&gt;&gt;U: Heatmap updated
+
+    U-&gt;&gt;D: Clicks &quot;Start simulation&quot;
+    D-&gt;&gt;B: simulate()  (long_running, returns immediately)
+    D--&gt;&gt;U: Buttons disabled + &quot;Started&quot; notification
+
+    loop for each generation
+        B-&gt;&gt;L: raise_event(stream=&quot;my-stream&quot;)
+        L-&gt;&gt;D: update_graph callback
+        D--&gt;&gt;U: Heatmap + counter update
+    end
+
+    B-&gt;&gt;L: termination event (stream=&quot;simulate&quot;)
+    L-&gt;&gt;D: enable_new_simulation callback
+    D--&gt;&gt;U: Buttons re-enabled + &quot;Completed&quot; notification
+    </pre></section>
+<section id="run-the-solution">
+<h2>Run the solution<a class="headerlink" href="#run-the-solution" title="Link to this heading">#</a></h2>
+<p>You now have a complete SAF solution. Time to see it in action.</p>
+<div class="custom-admonition practice admonition">
+<p class="admonition-title">Practice</p>
+<p>From the root of the <code class="docutils literal notranslate"><span class="pre">game-of-life</span></code> folder, run:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>saf<span class="w"> </span>run<span class="w"> </span>--debug
+</pre></div>
+</div>
+<p>A desktop window opens. Click <strong>Game of Life</strong> in the navigation tree on the left.</p>
+<ul>
+<li><p>Pick different patterns from the dropdown. The heatmap updates instantly (that is
+<code class="docutils literal notranslate"><span class="pre">display_initial_state</span></code> firing).</p></li>
+<li><p>Drag the grid-size slider. Same behavior.</p></li>
+<li><p>Click <strong>Start simulation</strong>. The controls grey out, a green notification pops up, and
+the heatmap animates generation by generation until it reaches <code class="docutils literal notranslate"><span class="pre">max_iterations</span></code> or
+every cell dies.</p></li>
+<li><p>Wait for the run to complete. A completion notification appears and the controls
+re-enable.</p></li>
+</ul>
+<p>If something goes wrong, you have two places to look: the terminal, where SAF prints
+tracebacks from failing transactions, and the Dash error overlay in the corner of the page,
+which <code class="docutils literal notranslate"><span class="pre">--debug</span></code> enables to report callback errors in the UI itself. That overlay is part
+of <a class="reference external" href="https://dash.plotly.com/devtools" rel="noopener noreferrer" target="_blank">Dash dev tools</a>, which also gives you a
+<a class="reference external" href="https://dash.plotly.com/devtools#callback-graph" rel="noopener noreferrer" target="_blank">callback graph</a> showing the order and
+duration of every callback. Common issues:</p>
+<ul>
+<li><p>Missing field in <code class="docutils literal notranslate"><span class="pre">upload</span></code>. The UI reads an empty <code class="docutils literal notranslate"><span class="pre">initial_grid_state</span></code>.</p></li>
+<li><p>Missing field in <code class="docutils literal notranslate"><span class="pre">download</span></code>. The transaction sees a stale value.</p></li>
+<li><p>Wrong decorator order (<code class="docutils literal notranslate"><span class="pre">&#64;long_running</span></code> above <code class="docutils literal notranslate"><span class="pre">&#64;transaction</span></code>). The method runs
+synchronously and blocks the UI.</p></li>
+<li><p>Missing <code class="docutils literal notranslate"><span class="pre">Input</span></code> or <code class="docutils literal notranslate"><span class="pre">State</span></code> in a <code class="docutils literal notranslate"><span class="pre">&#64;callback</span></code>. The number of dependencies in the
+decorator no longer matches the number of function parameters, and Dash raises a
+mismatched-arguments error.</p></li>
+<li><p>Missing <code class="docutils literal notranslate"><span class="pre">Output</span></code>, or a <code class="docutils literal notranslate"><span class="pre">return</span></code> statement that does not return as many values as
+there are <code class="docutils literal notranslate"><span class="pre">Output</span></code> entries.</p></li>
+<li><p>Unknown component identifier. An <code class="docutils literal notranslate"><span class="pre">Input</span></code>, <code class="docutils literal notranslate"><span class="pre">State</span></code> or <code class="docutils literal notranslate"><span class="pre">Output</span></code> that points at an
+<code class="docutils literal notranslate"><span class="pre">id</span></code> absent from the layout — including the event listener ids <code class="docutils literal notranslate"><span class="pre">update-heatmap</span></code> and
+<code class="docutils literal notranslate"><span class="pre">termination</span></code> — makes the callback silently never fire.</p></li>
+<li><p>Typos in field, property or <code class="docutils literal notranslate"><span class="pre">id</span></code> names. <code class="docutils literal notranslate"><span class="pre">step.grid_sizes</span></code> instead of
+<code class="docutils literal notranslate"><span class="pre">step.grid_size</span></code>, or <code class="docutils literal notranslate"><span class="pre">&quot;value&quot;</span></code> instead of <code class="docutils literal notranslate"><span class="pre">&quot;checked&quot;</span></code>, fail at runtime only.</p></li>
+<li><p>Syntax errors in the page module. The page fails to import and disappears from the
+navigation tree altogether.</p></li>
+</ul>
+</div>
+</section>
+<section id="key-takeaways">
+<h2>Key takeaways<a class="headerlink" href="#key-takeaways" title="Link to this heading">#</a></h2>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<ul>
+<li><p>The frontend interacts with the backend <strong>through the</strong> <code class="docutils literal notranslate"><span class="pre">DashClient</span></code>. Assign to a field and it is persisted.
+Call a transaction method and it runs.</p></li>
+<li><p>Callbacks and transactions mirror each other: <code class="docutils literal notranslate"><span class="pre">Input</span></code>/<code class="docutils literal notranslate"><span class="pre">State</span></code> matches <code class="docutils literal notranslate"><span class="pre">download</span></code>,
+<code class="docutils literal notranslate"><span class="pre">Output</span></code> matches <code class="docutils literal notranslate"><span class="pre">upload</span></code>.</p></li>
+<li><p>Backend events are delivered to the frontend through
+<code class="docutils literal notranslate"><span class="pre">DashClient.create_event_listener(step,</span> <span class="pre">stream_name=...,</span> <span class="pre">id=...)</span></code> components declared
+in the layout, and consumed with a regular <code class="docutils literal notranslate"><span class="pre">&#64;callback(Input(&quot;&lt;id&gt;&quot;,</span> <span class="pre">&quot;message&quot;))</span></code>.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">enable_termination_event=True</span></code> flag on a <code class="docutils literal notranslate"><span class="pre">&#64;transaction</span></code> gives you a “method
+finished” event on a stream named after the method. Perfect for re-enabling UI
+controls after a long-running run.</p></li>
+<li><p>Use <code class="docutils literal notranslate"><span class="pre">dash.Patch()</span></code> to send only the diff of a figure or component tree back to the
+browser; it keeps the update payload small.</p></li>
+<li><p>Type hints on layout arguments (<code class="docutils literal notranslate"><span class="pre">project:</span> <span class="pre">GameOfLifeSolution</span></code>) unlock IDE completion
+on step fields — a small effort with a big payoff.</p></li>
+</ul>
+</div>
+</section>
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#where-the-frontend-lives">Where the frontend lives</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-full-frontend">The full frontend</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#anatomy-of-a-saf-dash-page">Anatomy of a SAF Dash page</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#page-registration">Page registration</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-layout-function">The layout function</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#callbacks-101">Callbacks 101</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#callback-1-preview-the-initial-pattern">Callback #1 — Preview the initial pattern</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#callback-2-launch-the-long-running-simulation">Callback #2 — Launch the long-running simulation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#callback-3-react-to-progress-events">Callback #3 — React to progress events</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#callback-4-react-to-the-termination-event">Callback #4 — React to the termination event</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-end-to-end-flow">The end-to-end flow</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#run-the-solution">Run the solution</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-takeaways">Key takeaways</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9"></script>
+
+
+  <!-- Include desired assets -->
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.7/require.min.js"></script>
+
+<script>
+// Passing the search options to the search.js file
+const SEARCH_OPTIONS = JSON.parse('{"includeMatches": true, "includeScore": true, "keys": [{"name": "section", "weight": 3}, {"name": "title", "weight": 3}, {"name": "text", "weight": 1}, {"name": "objectID", "weight": 0.5}], "limit": 10, "threshold": 0.2}');
+const SEARCH_FILE = "../../../_static/search.json";
+const ADVANCE_SEARCH_PATH = "../../../search.html";
+const EXTRA_SOURCES = JSON.parse('""');
+</script>
+
+
+<script src="../../../_static/js/search.js"></script>
+
+  
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<footer class="bd-footer">
+  <div class="bd-footer__inner bd-page-width">
+    <div class="footer-items__start">
+      <div class="footer-item">
+        <div class="footer-items__start">
+          <div class="footer-item">
+            <img src="https://docs.pyansys.com/version/dev/_static/ansys_logo_transparent_white.png" alt="Ansys Logo" class="footer-ansys-logo">
+          </div>
+          <div class="footer-item"><br>
+            <p>2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-items__center">
+      <div class="footer-item">
+        <div class="footer-items__start">
+          <div class="connect-with-ansys">
+            <p>Latest documentation</p> <br>
+            <a href="https://www.ansys.com/" class="external-link" target="_blank" rel="noopener noreferrer">
+              <span class="link-text">Ansys.com</span>
+              <i class="fas fa-up-right-from-square"></i>
+            </a><br>
+            <a href="https://www.ansys.com/services/ansys-learning-hub" class="external-link" target="_blank" rel="noopener noreferrer">
+              <span class="link-text">Ansys Learning</span>
+              <i class="fas fa-up-right-from-square"></i>
+            </a><br>
+            <a href="https://www.ansys.com/support" class="external-link" target="_blank" rel="noopener noreferrer">
+              <span class="link-text">Ansys Support</span>
+              <i class="fas fa-up-right-from-square"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-items__end">
+      <div class="footer-item">
+        <div class="footer-right">
+          <span>Connect with Ansys</span>
+          <div class="social-icons">
+            <a href="https://www.youtube.com/user/ansysinc" target="_blank" rel="noopener" class="icon icon-youtube" aria-label="Youtube"><span class="sr-only">Youtube</span></a>
+            <a href="https://www.facebook.com/ansys" target="_blank" rel="noopener" class="icon icon-facebook" aria-label="Facebook"><span class="sr-only">Facebook</span></a>
+            <a href="https://www.linkedin.com/company/ansys-inc" target="_blank" rel="noopener" class="icon icon-linkedin" aria-label="Linkedin"><span class="sr-only">Linkedin</span></a>
+            <a href="https://github.com/ansys" target="_blank" rel="noopener" class="icon icon-github" aria-label="GitHub"><i class="fab fa-github"></i><span class="sr-only">GitHub</span></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+  </body>
+</html>

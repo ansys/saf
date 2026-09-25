@@ -1,0 +1,73 @@
+
+
+
+
+
+
+The ``iasync_entity_writer.py`` module
+======================================
+
+.. py:module:: ansys.bdm.api.iasync_entity_writer
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: iasync_entity_writer
+.. tab-set::
+
+
+
+    .. tab-item:: Interfaces
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.bdm.api.iasync_entity_writer.IAsyncEntityWriter`
+            - An object used to create a new entity from a stream of data.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_interface"></span> IAsyncEntityWriter</ansys/bdm/api/iasync_entity_writer/IAsyncEntityWriter>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

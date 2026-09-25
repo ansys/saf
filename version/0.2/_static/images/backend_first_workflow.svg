@@ -1,0 +1,123 @@
+<svg viewBox="0 0 760 520" xmlns="http://www.w3.org/2000/svg" role="img" font-family="ui-monospace, 'Cascadia Code', 'Fira Mono', monospace" font-size="13">
+  <title>Backend-first development workflow</title>
+  <desc>Diagram showing the recommended backend-first development workflow: define step models, implement transactions, test via /docs, verify completion, then write UI code</desc>
+
+  <defs>
+    <marker id="arr-green" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#34d399"/>
+    </marker>
+    <marker id="arr-blue" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#60a5fa"/>
+    </marker>
+    <marker id="arr-amber" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#fbbf24"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="760" height="520" fill="#0f172a" rx="12"/>
+
+  <!-- Title -->
+  <text x="380" y="36" text-anchor="middle" fill="#f1f5f9" font-size="16" font-weight="700" letter-spacing="0.5">Backend-First Development — Workflow</text>
+  <text x="380" y="56" text-anchor="middle" fill="#64748b" font-size="11">Build and validate the entire backend before writing any frontend code</text>
+
+  <!-- Step 1: Define step models -->
+  <rect x="40" y="80" width="300" height="72" rx="10" fill="#1e293b" stroke="#818cf8" stroke-width="1.5"/>
+  <circle cx="66" cy="100" r="12" fill="#312e81" stroke="#818cf8" stroke-width="1.5"/>
+  <text x="66" y="104" text-anchor="middle" fill="#c7d2fe" font-size="11" font-weight="700">1</text>
+  <text x="88" y="100" fill="#c7d2fe" font-size="12" font-weight="600">Define step models</text>
+  <text x="58" y="120" fill="#94a3b8" font-size="10">Fields, types, defaults</text>
+  <text x="58" y="136" fill="#6366f1" font-size="10">class MyStep(StepModel):</text>
+  <text x="58" y="148" fill="#6366f1" font-size="10">    temperature: float = 20.0</text>
+
+  <!-- Step 2: Implement transactions -->
+  <rect x="40" y="168" width="300" height="72" rx="10" fill="#1e293b" stroke="#818cf8" stroke-width="1.5"/>
+  <circle cx="66" cy="188" r="12" fill="#312e81" stroke="#818cf8" stroke-width="1.5"/>
+  <text x="66" y="192" text-anchor="middle" fill="#c7d2fe" font-size="11" font-weight="700">2</text>
+  <text x="88" y="188" fill="#c7d2fe" font-size="12" font-weight="600">Implement transactions</text>
+  <text x="58" y="208" fill="#94a3b8" font-size="10">Wire business logic into @transaction</text>
+  <text x="58" y="224" fill="#6366f1" font-size="10">@transaction(self=StepSpec(...))</text>
+  <text x="58" y="236" fill="#6366f1" font-size="10">def solve(self) -> None: ...</text>
+
+  <!-- Step 3: Test via /docs -->
+  <rect x="40" y="256" width="300" height="72" rx="10" fill="#1e293b" stroke="#34d399" stroke-width="1.5"/>
+  <circle cx="66" cy="276" r="12" fill="#064e3b" stroke="#34d399" stroke-width="1.5"/>
+  <text x="66" y="280" text-anchor="middle" fill="#a7f3d0" font-size="11" font-weight="700">3</text>
+  <text x="88" y="276" fill="#a7f3d0" font-size="12" font-weight="600">Test via /docs</text>
+  <text x="58" y="296" fill="#94a3b8" font-size="10">Run saf run → open Swagger UI</text>
+  <text x="58" y="312" fill="#34d399" font-size="10">http://localhost:5000/docs</text>
+  <text x="58" y="324" fill="#94a3b8" font-size="10">Invoke transactions directly from browser</text>
+
+  <!-- Step 4: Verify "Completed" -->
+  <rect x="40" y="344" width="300" height="72" rx="10" fill="#1e293b" stroke="#34d399" stroke-width="1.5"/>
+  <circle cx="66" cy="364" r="12" fill="#064e3b" stroke="#34d399" stroke-width="1.5"/>
+  <text x="66" y="368" text-anchor="middle" fill="#a7f3d0" font-size="11" font-weight="700">4</text>
+  <text x="88" y="364" fill="#a7f3d0" font-size="12" font-weight="600">Verify "Completed" status</text>
+  <text x="58" y="384" fill="#94a3b8" font-size="10">Every transaction must return success</text>
+  <text x="58" y="400" fill="#34d399" font-size="10">{"status": "Completed"}</text>
+  <text x="58" y="412" fill="#94a3b8" font-size="10">Fix any failures before proceeding</text>
+
+  <!-- Step 5: Write Dash UI -->
+  <rect x="40" y="432" width="300" height="72" rx="10" fill="#1e293b" stroke="#fbbf24" stroke-width="1.5"/>
+  <circle cx="66" cy="452" r="12" fill="#451a03" stroke="#fbbf24" stroke-width="1.5"/>
+  <text x="66" y="456" text-anchor="middle" fill="#fde68a" font-size="11" font-weight="700">5</text>
+  <text x="88" y="452" fill="#fde68a" font-size="12" font-weight="600">Write Dash UI code</text>
+  <text x="58" y="472" fill="#94a3b8" font-size="10">Only after backend is stable</text>
+  <text x="58" y="488" fill="#fbbf24" font-size="10">@callback(...)</text>
+  <text x="58" y="500" fill="#fbbf24" font-size="10">def on_click(project): ...</text>
+
+  <!-- Vertical arrows between steps -->
+  <line x1="190" y1="152" x2="190" y2="168" stroke="#818cf8" stroke-width="1.5" marker-end="url(#arr-blue)"/>
+  <line x1="190" y1="240" x2="190" y2="256" stroke="#34d399" stroke-width="1.5" marker-end="url(#arr-green)"/>
+  <line x1="190" y1="328" x2="190" y2="344" stroke="#34d399" stroke-width="1.5" marker-end="url(#arr-green)"/>
+  <line x1="190" y1="416" x2="190" y2="432" stroke="#fbbf24" stroke-width="1.5" marker-end="url(#arr-amber)"/>
+
+  <!-- RIGHT SIDE: Swagger UI mock -->
+  <rect x="420" y="80" width="310" height="260" rx="10" fill="#1e293b" stroke="#475569" stroke-width="1"/>
+
+  <!-- Swagger header -->
+  <rect x="420" y="80" width="310" height="34" rx="10" fill="#1e3a5f"/>
+  <rect x="420" y="102" width="310" height="12" fill="#1e3a5f"/>
+  <text x="436" y="100" fill="#93c5fd" font-size="11" font-weight="700">Swagger UI — /docs</text>
+  <text x="660" y="100" fill="#64748b" font-size="9">auto-generated</text>
+
+  <!-- API endpoints -->
+  <rect x="436" y="124" width="278" height="28" rx="5" fill="#14532d" stroke="#22c55e" stroke-width="1"/>
+  <text x="448" y="140" fill="#86efac" font-size="10" font-weight="700">POST</text>
+  <text x="488" y="140" fill="#e2e8f0" font-size="10">/projects/{id}/steps/setup/solve</text>
+
+  <rect x="436" y="160" width="278" height="28" rx="5" fill="#14532d" stroke="#22c55e" stroke-width="1"/>
+  <text x="448" y="176" fill="#86efac" font-size="10" font-weight="700">POST</text>
+  <text x="488" y="176" fill="#e2e8f0" font-size="10">/projects/{id}/steps/analysis/run</text>
+
+  <rect x="436" y="196" width="278" height="28" rx="5" fill="#0c4a6e" stroke="#38bdf8" stroke-width="1"/>
+  <text x="448" y="212" fill="#7dd3fc" font-size="10" font-weight="700">GET</text>
+  <text x="484" y="212" fill="#e2e8f0" font-size="10">/projects/{id}/steps/setup</text>
+
+  <rect x="436" y="232" width="278" height="28" rx="5" fill="#0c4a6e" stroke="#38bdf8" stroke-width="1"/>
+  <text x="448" y="248" fill="#7dd3fc" font-size="10" font-weight="700">GET</text>
+  <text x="484" y="248" fill="#e2e8f0" font-size="10">/projects/{id}/steps/analysis</text>
+
+  <!-- Response example -->
+  <rect x="436" y="272" width="278" height="56" rx="5" fill="#0f172a" stroke="#475569" stroke-width="1"/>
+  <text x="448" y="288" fill="#64748b" font-size="9">Response:</text>
+  <text x="448" y="304" fill="#34d399" font-size="10">{</text>
+  <text x="460" y="316" fill="#34d399" font-size="10">"status": "Completed" ✓</text>
+  <text x="448" y="328" fill="#34d399" font-size="10">}</text>
+
+  <!-- RIGHT SIDE: Warning box -->
+  <rect x="420" y="360" width="310" height="144" rx="10" fill="#1c1917" stroke="#f97316" stroke-width="1.5"/>
+  <rect x="420" y="360" width="310" height="32" rx="10" fill="#431407"/>
+  <rect x="420" y="380" width="310" height="12" fill="#431407"/>
+  <text x="440" y="380" fill="#fdba74" font-size="11" font-weight="700">⚠ Common mistake</text>
+
+  <text x="436" y="408" fill="#94a3b8" font-size="10">Starting with the UI before the backend</text>
+  <text x="436" y="424" fill="#94a3b8" font-size="10">is validated leads to:</text>
+  <text x="436" y="446" fill="#fb923c" font-size="10">• Debugging through callback layers</text>
+  <text x="436" y="462" fill="#fb923c" font-size="10">• Unclear if bugs are in logic or UI</text>
+  <text x="436" y="478" fill="#fb923c" font-size="10">• Wasted UI work if API changes</text>
+  <text x="436" y="494" fill="#fb923c" font-size="10">• Longer feedback loops</text>
+
+  <!-- Connecting arrow from step 3 to Swagger -->
+  <path d="M 340 292 C 370 292, 390 200, 420 200" stroke="#34d399" stroke-width="1.5" fill="none" stroke-dasharray="5,3" marker-end="url(#arr-green)"/>
+</svg>

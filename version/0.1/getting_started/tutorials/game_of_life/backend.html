@@ -1,0 +1,1888 @@
+<!--
+Copyright (C) 2026 ANSYS, Inc. and/or its affiliates.
+SPDX-License-Identifier: Apache-2.0
+
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+ <!-- ©2026, ANSYS Inc. Unauthorized use, distribution or duplication is prohibited. -->
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" data-theme="dark">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Phase 3 — Backend &#8212; SAF Doc</title>
+  
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "dark";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "dark";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/ansys-sphinx-theme.css?v=5ffe81b6" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=fd6457a4" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/ansys-sphinx-theme.css?v=5ffe81b6" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://www.nerdfonts.com/assets/css/webfont.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/code-tabs.css?v=1bc26e2f" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=110072de" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/carousel.css?v=272b576a" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/landing_page_banner.css?v=57c45261" />
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../../_static/scripts/fontawesome.js?digest=0790524f97105ba85085"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085" />
+
+
+  <!-- Include desired assets -->
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  
+
+  
+    <link href="../../../_static/css/breadcrumbs.css" rel="stylesheet" />
+  
+    <script src="../../../_static/documentation_options.js?v=8a448e45"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=49e1bf35"></script>
+    <script src="../../../_static/sg-tags.js?v=d80f6fa4"></script>
+    <script src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
+    <script src="../../../_static/code-tabs.js?v=c983d12e"></script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.12.1/dist/mermaid.esm.min.mjs";
+
+
+
+const initStyles = () => {
+    const defaultStyle = document.createElement('style');
+    defaultStyle.textContent = "pre.mermaid {\n    /* Same as .mermaid-container > pre */\n    display: block;\n    width: 100%;\n}\n\npre.mermaid > svg {\n    /* Same as .mermaid-container > pre > svg */\n    height: 500px;\n    width: 100%;\n    max-width: 100% !important;\n}";
+    document.head.appendChild(defaultStyle);
+
+    const fullscreenStyle = document.createElement('style');
+    fullscreenStyle.textContent = ".mermaid-container {\n    position: relative;\n    display: flex;\n    flex-direction: row;\n    width: 100%;\n}\n\n.mermaid-container > pre {\n    display: block;\n    width: 100%;\n}\n\n.mermaid-container > pre > svg {\n    height: 500px;\n    width: 100%;\n    max-width: 100% !important;\n}\n\n.mermaid-fullscreen-btn {\n    position: absolute;\n    width: 28px;\n    height: 28px;\n    background: rgba(255, 255, 255, 0.95);\n    border: 1px solid rgba(0, 0, 0, 0.3);\n    border-radius: 4px;\n    cursor: pointer;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n    transition: all 0.2s;\n    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);\n    font-size: 14px;\n    line-height: 1;\n    padding: 0;\n    color: #333;\n}\n\n.mermaid-fullscreen-btn:hover {\n    opacity: 100% !important;\n    background: rgba(255, 255, 255, 1);\n    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);\n    transform: scale(1.1);\n}\n\n.mermaid-fullscreen-btn.dark-theme {\n    background: rgba(50, 50, 50, 0.95);\n    border: 1px solid rgba(255, 255, 255, 0.3);\n    color: #e0e0e0;\n}\n\n.mermaid-fullscreen-btn.dark-theme:hover {\n    background: rgba(60, 60, 60, 1);\n    box-shadow: 0 3px 10px rgba(255, 255, 255, 0.2);\n}\n\n.mermaid-fullscreen-modal {\n    display: none;\n    position: fixed !important;\n    top: 0 !important;\n    left: 0 !important;\n    width: 95vw;\n    height: 100vh;\n    background: rgba(255, 255, 255, 0.98);\n    z-index: 9999;\n    padding: 20px;\n    overflow: auto;\n}\n\n.mermaid-fullscreen-modal.dark-theme {\n    background: rgba(0, 0, 0, 0.98);\n}\n\n.mermaid-fullscreen-modal.active {\n    display: flex;\n    align-items: center;\n    justify-content: center;\n}\n\n.mermaid-container-fullscreen {\n    position: relative;\n    width: 95vw;\n    height: 90vh;\n    max-width: 95vw;\n    max-height: 90vh;\n    background: white;\n    border-radius: 8px;\n    padding: 20px;\n    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);\n    overflow: auto;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n}\n\n.mermaid-container-fullscreen.dark-theme {\n    background: #1a1a1a;\n    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);\n}\n\n.mermaid-container-fullscreen pre.mermaid {\n    width: 100%;\n    height: 100%;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n}\n\n.mermaid-container-fullscreen .mermaid svg {\n    height: 100% !important;\n    width: 100% !important;\n    cursor: grab;\n}\n\n.mermaid-fullscreen-close {\n    position: fixed !important;\n    top: 20px !important;\n    right: 20px !important;\n    width: 40px;\n    height: 40px;\n    background: rgba(255, 255, 255, 0.95);\n    border: 1px solid rgba(0, 0, 0, 0.2);\n    border-radius: 50%;\n    cursor: pointer;\n    z-index: 10000;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);\n    transition: all 0.2s;\n    font-size: 24px;\n    line-height: 1;\n    color: #333;\n}\n\n.mermaid-fullscreen-close:hover {\n    background: white;\n    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);\n    transform: scale(1.1);\n}\n\n.mermaid-fullscreen-close.dark-theme {\n    background: rgba(50, 50, 50, 0.95);\n    border: 1px solid rgba(255, 255, 255, 0.2);\n    color: #e0e0e0;\n}\n\n.mermaid-fullscreen-close.dark-theme:hover {\n    background: rgba(60, 60, 60, 1);\n    box-shadow: 0 6px 16px rgba(255, 255, 255, 0.2);\n}\n\n.mermaid-fullscreen-modal .mermaid-fullscreen-btn {\n    display: none !important;\n}";
+    document.head.appendChild(fullscreenStyle);
+}
+
+// Detect if page has dark background
+const isDarkTheme = () => {
+    // We use a set of heuristics:
+    // 1. Check for common dark mode classes or attributes
+    // 2. Check computed background color brightness
+    if (document.documentElement.classList.contains('dark') ||
+        document.documentElement.getAttribute('data-theme') === 'dark' ||
+        document.body.classList.contains('dark') ||
+        document.body.getAttribute('data-theme') === 'dark') {
+        // console.log("Dark theme detected via class/attribute");
+        return true;
+    }
+    if (document.documentElement.classList.contains('light') ||
+        document.documentElement.getAttribute('data-theme') === 'light' ||
+        document.body.classList.contains('light') ||
+        document.body.getAttribute('data-theme') === 'light') {
+        // console.log("Light theme detected via class/attribute");
+        return false;
+    }
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        // console.log("Dark theme detected via prefers-color-scheme");
+        return true;
+    }
+    const bgColor = window.getComputedStyle(document.body).backgroundColor;
+    const match = bgColor.match(/rgb\((\d+),\s*(\d+),\s*(\d+)/);
+    if (match) {
+        const r = parseInt(match[1]);
+        const g = parseInt(match[2]);
+        const b = parseInt(match[3]);
+        const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+        // console.log("Background color brightness:", brightness);
+        return brightness < 128;
+    }
+    // console.log("No dark or light theme detected, defaulting to light theme");
+    return false;
+};
+
+let darkTheme = isDarkTheme();
+let modal = null;
+let modalContent = null;
+let previousScrollOffset = [window.scrollX, window.scrollY];
+let _lazyObserver = null;
+let _renderQueue = Promise.resolve();
+let closeModal = () => {};
+
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modal?.classList.contains('active')) {
+        closeModal();
+    }
+});
+
+// Apply d3 zoom to each SVG. Idempotent: an SVG already wrapped is skipped,
+// so this is safe to call both for the initial batch and for diagrams that
+// render lazily once they become visible.
+const addZoomToSvgs = (svgs) => {
+    svgs.each(function() {
+        if (this.getAttribute('data-zoom-applied') === 'true') return;
+        var svg = d3.select(this);
+        svg.html("<g class='wrapper'>" + svg.html() + "</g>");
+        var inner = svg.select("g");
+        var zoom = d3.zoom().on("zoom", function(event) {
+            inner.attr("transform", event.transform);
+        });
+        svg.call(zoom);
+        this.setAttribute('data-zoom-applied', 'true');
+    });
+};
+
+const runMermaid = async (rerun) => {
+    console.log("Running mermaid diagrams, rerun =", rerun);
+    // clear all existing mermaid charts
+    let all_mermaids = document.querySelectorAll(".mermaid");
+
+    if (rerun) {
+        // Disconnect any previous lazy rendering observer
+        if (_lazyObserver) {
+            _lazyObserver.disconnect();
+            _lazyObserver = null;
+        }
+
+        all_mermaids.forEach((el) => {
+            el.removeAttribute('data-mermaid-deferred');
+            el.removeAttribute('data-mermaid-render-failed');
+            if(!el.hasAttribute("data-original-code")) {
+                // store original code
+                // console.log(`Storing original code for first run: `, el.innerHTML);
+                el.setAttribute('data-original-code', el.innerHTML);
+            }
+            if(el.getAttribute("data-processed") === "true") {
+                // remove and restore original
+                el.removeAttribute("data-processed");
+                // console.log(`Restoring original code for re-run: `, el.getAttribute('data-original-code'));
+                el.innerHTML = el.getAttribute('data-original-code');
+            } else {
+                // store original code
+                // console.log(`Storing original code for re-run: `, el.innerHTML);
+                el.setAttribute('data-original-code', el.innerHTML);
+            }
+        });
+
+        // Separate visible and hidden elements. Mermaid's layout engine measures
+        // text dimensions via the DOM, which fails for elements hidden by a parent
+        // (e.g., Reveal.js non-active slides, sphinx-design unopened tabs),
+        // producing broken SVGs. Render visible elements now, defer hidden ones.
+        const visible = [];
+        const hidden = [];
+        all_mermaids.forEach((el) => {
+            // offsetParent is null for display:none ancestors.
+            // getClientRects().length > 0 catches position:fixed elements
+            // (which also have null offsetParent but are still visible).
+            if (el.offsetParent !== null || el.getClientRects().length > 0) {
+                visible.push(el);
+            } else {
+                hidden.push(el);
+                el.setAttribute('data-mermaid-deferred', 'true');
+            }
+        });
+
+        if (visible.length > 0) {
+            try {
+                await mermaid.run({ nodes: visible });
+            } catch (e) {
+                console.error("Mermaid rendering failed:", e);
+            }
+        }
+
+        // Lazily render hidden elements when they become visible.
+        // Uses a promise chain (_renderQueue) to serialize rendering,
+        // since IntersectionObserver may report multiple entries at once
+        // and mermaid.run() is not safe to call concurrently.
+        if (hidden.length > 0) {
+            if (typeof IntersectionObserver === 'undefined') {
+                console.warn("IntersectionObserver not available; hidden mermaid diagrams will not render.");
+            } else {
+                _renderQueue = Promise.resolve();
+                _lazyObserver = new IntersectionObserver((entries) => {
+                    for (const entry of entries) {
+                        if (entry.isIntersecting && entry.target.getAttribute("data-processed") !== "true") {
+                            _lazyObserver.unobserve(entry.target);
+                            const el = entry.target;
+                            _renderQueue = _renderQueue.then(async () => {
+                                try {
+                                    await mermaid.run({ nodes: [el] });
+                                    el.removeAttribute('data-mermaid-deferred');
+                                    // Apply zoom to the now-rendered diagram, matching
+                                    // the decoration visible diagrams receive.
+                                    if (false) {
+                                        addZoomToSvgs(d3.selectAll("").select(function() {
+                                            return this.querySelector("svg");
+                                        }));
+                                    }
+                                } catch (e) {
+                                    console.error("Mermaid deferred rendering failed:", e);
+                                    el.removeAttribute('data-mermaid-deferred');
+                                    el.setAttribute('data-mermaid-render-failed', 'true');
+                                }
+                            });
+                        }
+                    }
+                });
+                hidden.forEach((el) => _lazyObserver.observe(el));
+            }
+        }
+    }
+
+    all_mermaids = document.querySelectorAll(".mermaid");
+    // Exclude deferred (hidden) and render-failed elements from completion checks
+    const mermaids_active = document.querySelectorAll(".mermaid:not([data-mermaid-deferred]):not([data-mermaid-render-failed])");
+    const mermaids_processed = document.querySelectorAll(".mermaid:not([data-mermaid-deferred]):not([data-mermaid-render-failed])[data-processed='true']");
+
+    if (false) {
+        const mermaids_to_add_zoom = 0 === -1 ? mermaids_active.length : 0;
+        if(mermaids_to_add_zoom > 0) {
+            var svgs = d3.selectAll("").select(function() {
+                return this.querySelector("svg");
+            });
+            // Wait until every active (visible) diagram has rendered. Deferred
+            // diagrams are excluded, so a fixed d3_node_count that counts a
+            // hidden diagram no longer loops forever waiting for its SVG.
+            if(mermaids_active.length !== mermaids_processed.length) {
+                setTimeout(() => runMermaid(false), 200);
+                return;
+            }
+            addZoomToSvgs(svgs);
+        }
+    } else if(mermaids_active.length !== mermaids_processed.length) {
+        // Wait for mermaid to process all diagrams
+        setTimeout(() => runMermaid(false), 200);
+        return;
+    }
+
+    // Stop here if not adding fullscreen capability
+    if (!true) return;
+
+    if (modal !== null ) {
+        // Destroy existing modal
+        modal.remove();
+        modal = null;
+        modalContent = null;
+    }
+
+    modal = document.createElement('div');
+    modal.className = 'mermaid-fullscreen-modal' + (darkTheme ? ' dark-theme' : '');
+    modal.setAttribute('role', 'dialog');
+    modal.setAttribute('aria-modal', 'true');
+    modal.setAttribute('aria-label', 'Fullscreen diagram viewer');
+    modal.innerHTML = `
+        <button class="mermaid-fullscreen-close${darkTheme ? ' dark-theme' : ''}" aria-label="Close fullscreen">✕</button>
+        <div class="mermaid-container-fullscreen${darkTheme ? ' dark-theme' : ''}"></div>
+    `;
+    document.body.appendChild(modal);
+
+    modalContent = modal.querySelector('.mermaid-container-fullscreen');
+    const closeBtn = modal.querySelector('.mermaid-fullscreen-close');
+
+    closeModal = () => {
+        modal.classList.remove('active');
+        modalContent.innerHTML = '';
+        document.body.style.overflow = ''
+        window.scrollTo({left: previousScrollOffset[0], top: previousScrollOffset[1], behavior: 'instant'});
+    };
+
+    closeBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeModal();
+    });
+    document.querySelectorAll('.mermaid').forEach((mermaidDiv) => {
+        if (mermaidDiv.parentNode.classList.contains('mermaid-container') ||
+            mermaidDiv.closest('.mermaid-fullscreen-modal')) {
+            // Already processed, adjust button class if needed
+            const existingBtn = mermaidDiv.parentNode.querySelector('.mermaid-fullscreen-btn');
+            if (existingBtn) {
+                existingBtn.className = 'mermaid-fullscreen-btn' + (darkTheme ? ' dark-theme' : '');
+            }
+            return;
+        }
+
+        const container = document.createElement('div');
+        container.className = 'mermaid-container';
+        mermaidDiv.parentNode.insertBefore(container, mermaidDiv);
+        container.appendChild(mermaidDiv);
+
+        const fullscreenBtn = document.createElement('button');
+        fullscreenBtn.className = 'mermaid-fullscreen-btn' + (darkTheme ? ' dark-theme' : '');
+        fullscreenBtn.setAttribute('aria-label', 'View diagram in fullscreen');
+        fullscreenBtn.textContent = "\u26f6";
+        fullscreenBtn.style.opacity = "50%";
+
+        // Calculate dynamic position based on diagram's margin and padding
+        const diagramStyle = window.getComputedStyle(mermaidDiv);
+        const marginTop = parseFloat(diagramStyle.marginTop) || 0;
+        const marginRight = parseFloat(diagramStyle.marginRight) || 0;
+        const paddingTop = parseFloat(diagramStyle.paddingTop) || 0;
+        const paddingRight = parseFloat(diagramStyle.paddingRight) || 0;
+        fullscreenBtn.style.top = `${marginTop + paddingTop + 4}px`;
+        fullscreenBtn.style.right = `${marginRight + paddingRight + 4}px`;
+
+        fullscreenBtn.addEventListener('click', () => {
+            previousScrollOffset = [window.scrollX, window.scrollY];
+            const clone = mermaidDiv.cloneNode(true);
+            modalContent.innerHTML = '';
+            modalContent.appendChild(clone);
+
+            const svg = clone.querySelector('svg');
+            if (svg) {
+                svg.removeAttribute('width');
+                svg.removeAttribute('height');
+                svg.style.width = '100%';
+                svg.style.height = 'auto';
+                svg.style.maxWidth = '100%';
+                svg.style.display = 'block';
+
+                if (false) {
+                    setTimeout(() => {
+                        const g = svg.querySelector('g');
+                        if (g) {
+                            var svgD3 = d3.select(svg);
+                            svgD3.html("<g class='wrapper'>" + svgD3.html() + "</g>");
+                            var inner = svgD3.select("g");
+                            var zoom = d3.zoom().on("zoom", function(event) {
+                                inner.attr("transform", event.transform);
+                            });
+                            svgD3.call(zoom);
+                        }
+                    }, 100);
+                }
+            }
+
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        });
+        container.appendChild(fullscreenBtn);
+    });
+};
+
+
+
+const load = async () => {
+    initStyles();
+
+
+    await runMermaid(true);
+
+    const reRunIfThemeChanges = async () => {
+        const newDarkTheme = isDarkTheme();
+        if (newDarkTheme !== darkTheme) {
+            darkTheme = newDarkTheme;
+            console.log("Theme change detected, re-running mermaid with", darkTheme ? "dark" : "default", "theme");
+            await mermaid.initialize(
+                {...{"startOnLoad": false},
+                ...{ darkMode: darkTheme, theme: darkTheme ? "dark" : "default" },
+                }
+            );
+            await runMermaid(true);
+        }
+    };
+
+    // Update theme classes when theme changes
+    const themeObserver = new MutationObserver(reRunIfThemeChanges);
+    themeObserver.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ['class', 'style', 'data-theme']
+    });
+    themeObserver.observe(document.body, {
+        attributes: true,
+        attributeFilter: ['class', 'style', 'data-theme']
+    });
+};
+
+
+
+
+
+console.log("Initializing mermaid with", darkTheme ? "dark" : "default", "theme");
+mermaid.initialize(
+    {...{"startOnLoad": false},
+    ...{ darkMode: darkTheme, theme: darkTheme ? "dark" : "default" },
+    }
+);
+
+window.addEventListener("load", load);
+window.runMermaid = runMermaid;</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'getting_started/tutorials/game_of_life/backend';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.18.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://saf.ansys.com/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.1';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <script src="../../../_static/js/sidebar-always-expanded.js?v=6b23dfe7"></script>
+    <script src="../../../_static/js/sdI_button_ref_tooltips.js?v=091f9e4c"></script>
+    <script src="../../../_static/js/primary-sidebar-sticky-offset.js?v=7ecdf44c"></script>
+    <link rel="icon" href="../../../_static/ansys-favicon.png"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="Phase 4 — Frontend" href="frontend.html" />
+    <link rel="prev" title="Phase 2 — Business logic" href="business_logic.html" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.1.0" />
+  
+    
+    <script src="../../../_static/searchtools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <script src="../../../searchindex.js"></script>
+  
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+
+  <link rel="canonical" href="https://saf.ansys.com/version/stable/getting_started/tutorials/game_of_life/backend.html" />
+  </head>
+  <body data-default-mode="dark">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+  
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+    
+    <img src="../../../_static/endorsed-ansys-logos-full-color-rgb_dark.png" class="logo__image only-dark" alt="SAF Doc - Home"/>
+    <img src="../../../_static/endorsed-ansys-logos-full-color-rgb_light.png" class="logo__image only-light pst-js-only" alt="SAF Doc - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../index.html" title="SAF Doc home">Home</a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../overview/index.html">
+    Overview
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../index.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../user_guide/index.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api/index.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../contribute/index.html">
+    Contribute
+  </a>
+</li>
+
+  </ul>
+</nav>
+</div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+      
+        <div class="navbar-item">
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../../../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+  
+</div></div>
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/saf" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+  
+    
+<!--
+  Announcement Version Loader
+  Dynamically loads the announcement.html content into the announcement_msg div.
+-->
+<div id="announcement_msg" aria-live="polite"></div>
+<script>
+  // Fetch and inject the announcement HTML content
+  fetch("announcement.html")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error: ${response.status} Announcement.html file not found, Please ignore this, if you are in dev/stable documentation`);
+      }
+      return response.text();
+    })
+    .then((text) => {
+      var msgDiv = document.getElementById("announcement_msg");
+      if (msgDiv) {
+        msgDiv.innerHTML = text;
+      }
+    })
+    .catch((error) => {
+      // Log only unexpected fetch errors
+      if (!(error.message && error.message.startsWith("HTTP error: 404"))) {
+        console.error(`Fetch problem: ${error.message} Announcement.html could not be loaded.`);
+      }
+    });
+</script>
+  
+
+  <div class="header-nav-banner d-print-none">
+    <div class="header-nav-banner__inner">
+      <div class="header-nav-banner__crumbs">
+        
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+     
+    <li class="breadcrumb-item breadcrumb-home">
+      <a
+        href="../../../index.html"
+        class="nav-link"
+        aria-label="Home"
+      >
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="../../index.html" class="nav-link">Getting started</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="../index.html" class="nav-link">Tutorials</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="index.html" class="nav-link">Game of Life</a>
+    </li>
+      
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Phase 3 — Backend</span></li>
+    
+  </ul>
+</nav>
+
+      </div>
+    </div>
+  </div>
+
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../index.html" title="SAF Doc home">Home</a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../overview/index.html">
+    Overview
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../index.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../user_guide/index.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api/index.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../contribute/index.html">
+    Contribute
+  </a>
+</li>
+
+  </ul>
+</nav>
+</div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../../../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+  
+</div></div>
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/saf" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item pst-sidebar-collapse"><button id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar"><svg class="pst-icon svg-inline--fa" role="img" aria-hidden="true" focusable="false" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="M3 15.5C2.36232 15.5 1.74874 15.2564 1.28478 14.8189C0.820828 14.3815 0.541576 13.7832 0.504167 13.1467L0.5 13L0.5 3C0.499965 2.36232 0.743605 1.74874 1.18107 1.28478C1.61854 0.820828 2.21676 0.541576 2.85333 0.504167L3 0.5L13 0.5C13.6377 0.499965 14.2513 0.743605 14.7152 1.18107C15.1792 1.61854 15.4584 2.21676 15.4958 2.85333L15.5 3L15.5 13C15.5 13.6377 15.2564 14.2513 14.8189 14.7152C14.3815 15.1792 13.7832 15.4584 13.1467 15.4958L13 15.5L3 15.5ZM3 13.8333L10.5 13.8333L10.5 2.16667L3 2.16667C2.79589 2.16669 2.59889 2.24163 2.44636 2.37726C2.29383 2.5129 2.19638 2.69979 2.1725 2.9025L2.16667 3L2.16667 13C2.16669 13.2041 2.24163 13.4011 2.37726 13.5536C2.5129 13.7062 2.69979 13.8036 2.9025 13.8275L3 13.8333ZM6.65583 10.325L6.5775 10.2558L4.91083 8.58917C4.76735 8.44567 4.68116 8.25476 4.66843 8.05223C4.65569 7.84971 4.71729 7.6495 4.84167 7.48917L4.91083 7.41083L6.5775 5.74417C6.72747 5.59471 6.9287 5.50794 7.14032 5.50148C7.35194 5.49502 7.55809 5.56935 7.7169 5.70937C7.8757 5.8494 7.97525 6.04463 7.99533 6.25539C8.01541 6.46616 7.95451 6.67667 7.825 6.84417L7.75583 6.9225L6.67917 8L7.75583 9.0775C7.89931 9.22099 7.98551 9.41191 7.99824 9.61443C8.01097 9.81695 7.94938 10.0172 7.825 10.1775L7.75583 10.2558C7.61234 10.3993 7.42142 10.4855 7.2189 10.4982C7.01638 10.511 6.81617 10.4494 6.65583 10.325Z"/>
+  </svg>
+  <span class="pst-collapse-sidebar-label">Collapse Sidebar</span>
+  <span class="pst-expand-sidebar-label">Expand Sidebar</span>
+</button></div>
+        <div class="sidebar-primary-item">
+
+
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../prerequisites/index.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../quick_start.html">Quick-start guide</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../index.html">Tutorials</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="index.html">Game of Life</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="initialization.html">Phase 1 — Initialization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="business_logic.html">Phase 2 — Business logic</a></li>
+<li class="toctree-l3 current active"><a class="current reference internal" href="#">Phase 3 — Backend</a></li>
+<li class="toctree-l3"><a class="reference internal" href="frontend.html">Phase 4 — Frontend</a></li>
+<li class="toctree-l3"><a class="reference internal" href="package.html">Phase 5 — Package</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+     
+    <li class="breadcrumb-item breadcrumb-home">
+      <a
+        href="../../../index.html"
+        class="nav-link"
+        aria-label="Home"
+      >
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="../../index.html" class="nav-link">Getting started</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="../index.html" class="nav-link">Tutorials</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="index.html" class="nav-link">Game of Life</a>
+    </li>
+      
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Phase 3 — Backend</span></li>
+    
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="phase-3-backend">
+<span id="game-of-life-backend"></span><h1>Phase 3 — Backend<a class="headerlink" href="#phase-3-backend" title="Link to this heading">#</a></h1>
+<aside class="topic">
+<p class="topic-title">Objective</p>
+<p>In this module, you’ll cover the following topics:</p>
+<blockquote>
+<div><ul>
+<li><p><svg version="4.0.0.63c5cb3" width="1.25em" height="1.25em" class="sd-material-icon sd-material-icon-add_box saf-objective-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M0 0h24v24H0V0z" fill="none"></path><path d="M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zm-8-2h2v-4h4v-2h-4V7h-2v4H7v2h4z"></path></svg> Add a new step to the solution with
+<code class="docutils literal notranslate"><span class="pre">saf</span> <span class="pre">add-step</span></code>.</p></li>
+<li><p><svg version="4.0.0.63c5cb3" width="1.25em" height="1.25em" class="sd-material-icon sd-material-icon-account_tree saf-objective-icon" viewBox="0 0 24 24" aria-hidden="true"><rect fill="none" height="24" width="24"></rect><path d="M22,11V3h-7v3H9V3H2v8h7V8h2v10h4v3h7v-8h-7v3h-2V8h2v3H22z M7,9H4V5h3V9z M17,15h3v4h-3V15z M17,5h3v4h-3V5z"></path></svg> Declare the workflow contract in the
+<strong>solution definition</strong>.</p></li>
+<li><p><svg version="4.0.0.63c5cb3" width="1.25em" height="1.25em" class="sd-material-icon sd-material-icon-data_object saf-objective-icon" viewBox="0 0 20 20" aria-hidden="true"><g><rect fill="none" height="20" width="20" x="0"></rect></g><g><g><path d="M4,6.25v1.5C4,8.16,3.66,8.5,3.25,8.5H2v3h1.25C3.66,11.5,4,11.84,4,12.25v1.5C4,14.99,5.01,16,6.25,16H8v-1.5H6.25 c-0.41,0-0.75-0.34-0.75-0.75v-1.5c0-1.16-0.88-2.11-2-2.24V9.99c1.12-0.12,2-1.08,2-2.24v-1.5c0-0.41,0.34-0.75,0.75-0.75H8V4 H6.25C5.01,4,4,5.01,4,6.25z"></path><path d="M16.75,8.5C16.34,8.5,16,8.16,16,7.75v-1.5C16,5.01,14.99,4,13.75,4H12v1.5h1.75c0.41,0,0.75,0.34,0.75,0.75v1.5 c0,1.16,0.88,2.11,2,2.24v0.03c-1.12,0.12-2,1.08-2,2.24v1.5c0,0.41-0.34,0.75-0.75,0.75H12V16h1.75c1.24,0,2.25-1.01,2.25-2.25 v-1.5c0-0.41,0.34-0.75,0.75-0.75H18v-3H16.75z"></path></g></g></svg> Define the <strong>step model</strong> and its
+<strong>typed fields</strong> — where the state lives.</p></li>
+<li><p><svg version="4.0.0.63c5cb3" width="1.25em" height="1.25em" class="sd-material-icon sd-material-icon-sync_alt saf-objective-icon" viewBox="0 0 20 20" aria-hidden="true"><g><rect fill="none" height="20" width="20"></rect></g><g><g><polygon points="15,4 13.94,5.06 15.13,6.25 3,6.25 3,7.75 15.13,7.75 13.94,8.94 15,10 18,7"></polygon><polygon points="6.06,11.06 5,10 2,13 5,16 6.06,14.94 4.87,13.75 17,13.75 17,12.25 4.87,12.25"></polygon></g></g></svg> Write <strong>transaction methods</strong>, the only
+place where state is read and written.</p></li>
+<li><p><svg version="4.0.0.63c5cb3" width="1.25em" height="1.25em" class="sd-material-icon sd-material-icon-rule saf-objective-icon" viewBox="0 0 24 24" aria-hidden="true"><g><rect fill="none" height="24" width="24"></rect><path d="M16.54,11L13,7.46l1.41-1.41l2.12,2.12l4.24-4.24l1.41,1.41L16.54,11z M11,7H2v2h9V7z M21,13.41L19.59,12L17,14.59 L14.41,12L13,13.41L15.59,16L13,18.59L14.41,20L17,17.41L19.59,20L21,18.59L18.41,16L21,13.41z M11,15H2v2h9V15z"></path></g></svg> Declare <strong>field dependencies</strong>
+(<code class="docutils literal notranslate"><span class="pre">StepSpec</span></code>) so SAF knows what to load and save.</p></li>
+<li><p><svg version="4.0.0.63c5cb3" width="1.25em" height="1.25em" class="sd-material-icon sd-material-icon-timer saf-objective-icon" viewBox="0 0 20 20" aria-hidden="true"><g><rect fill="none" height="20" width="20" x="0"></rect></g><g><g><path d="M15.45,6.61l1.08-1.08l-1.06-1.06l-1.08,1.08C13.19,4.58,11.66,4,10,4c-3.87,0-7,3.13-7,7s3.13,7,7,7c3.87,0,7-3.13,7-7 C17,9.34,16.42,7.81,15.45,6.61z M10,16.5c-3.03,0-5.5-2.47-5.5-5.5S6.97,5.5,10,5.5s5.5,2.47,5.5,5.5S13.03,16.5,10,16.5z"></path><rect height="1.5" width="5" x="7.5" y="1.5"></rect><rect height="5" width="1.5" x="9.25" y="7"></rect></g></g></svg> Choose between <strong>blocking</strong> and
+<strong>long-running</strong> transactions — synchronous or background execution.</p></li>
+<li><p><svg version="4.0.0.63c5cb3" width="1.25em" height="1.25em" class="sd-material-icon sd-material-icon-podcasts saf-objective-icon" viewBox="0 0 24 24" aria-hidden="true"><g><path d="M0,0h24v24H0V0z" fill="none"></path></g><g><path d="M14,12c0,0.74-0.4,1.38-1,1.72V22h-2v-8.28c-0.6-0.35-1-0.98-1-1.72c0-1.1,0.9-2,2-2S14,10.9,14,12z M12,6 c-3.31,0-6,2.69-6,6c0,1.74,0.75,3.31,1.94,4.4l1.42-1.42C8.53,14.25,8,13.19,8,12c0-2.21,1.79-4,4-4s4,1.79,4,4 c0,1.19-0.53,2.25-1.36,2.98l1.42,1.42C17.25,15.31,18,13.74,18,12C18,8.69,15.31,6,12,6z M12,2C6.48,2,2,6.48,2,12 c0,2.85,1.2,5.41,3.11,7.24l1.42-1.42C4.98,16.36,4,14.29,4,12c0-4.41,3.59-8,8-8s8,3.59,8,8c0,2.29-0.98,4.36-2.53,5.82l1.42,1.42 C20.8,17.41,22,14.85,22,12C22,6.48,17.52,2,12,2z"></path></g></svg> Publish <strong>events</strong> to stream progress
+from the backend to the UI in real time.</p></li>
+</ul>
+<p>At the end of this phase, the ready-made engine from
+<a class="reference internal" href="business_logic.html#game-of-life-business-logic"><span class="std std-ref">phase 2</span></a> is fully wired into a SAF backend.</p>
+</div></blockquote>
+</aside>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>This page is where you meet the fundamentals of the framework. Each of them is called out
+in a purple <strong>Key concept</strong> box like the ones below — if you only read one thing per
+section, read those.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Every code snippet on this page is pulled directly from the
+<a class="reference external" href="https://github.com/ansys/saf/tree/main/examples" rel="noopener noreferrer" target="_blank">SAF examples solution</a>, so what you
+read here is always in sync with code that is built and tested on every commit.</p>
+<p>One consequence: the import paths show the <strong>examples</strong> namespace. In your own solution,
+replace</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>saf.solutions.examples.solution.game_of_life
+</pre></div>
+</div>
+<p>with</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>saf.solutions.game_of_life.solution.game_of_life
+</pre></div>
+</div>
+</div>
+<section id="where-you-are-heading">
+<h2>Where you are heading<a class="headerlink" href="#where-you-are-heading" title="Link to this heading">#</a></h2>
+<p>Here is the complete backend you will end up with. Skim it now, then come back to it whenever
+a snippet below feels out of context.</p>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-icon"><svg version="1.1" width="1.0em" height="1.0em" class="sd-octicon sd-octicon-code" viewBox="0 0 16 16" aria-hidden="true"><path d="m11.28 3.22 4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.749.749 0 0 1-1.275-.326.749.749 0 0 1 .215-.734L13.94 8l-3.72-3.72a.749.749 0 0 1 .326-1.275.749.749 0 0 1 .734.215Zm-6.56 0a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042L2.06 8l3.72 3.72a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215L.47 8.53a.75.75 0 0 1 0-1.06Z"></path></svg></span><span class="sd-summary-text">Complete <code class="docutils literal notranslate"><span class="pre">game_of_life_step.py</span></code></span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<div class="literal-block-wrapper docutils container" id="id1">
+<div class="code-block-caption"><span class="caption-text">solution/game_of_life_step.py</span><a class="headerlink" href="#id1" title="Link to this code">#</a></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Backend of the game of life step.&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.saf.glow.solution</span><span class="w"> </span><span class="kn">import</span> <span class="n">StepModel</span><span class="p">,</span> <span class="n">StepSpec</span><span class="p">,</span> <span class="n">long_running</span><span class="p">,</span> <span class="n">transaction</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">saf.solutions.examples.solution.game_of_life</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationController</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">GameOfLifeStep</span><span class="p">(</span><span class="n">StepModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Step definition of the game of life step.&quot;&quot;&quot;</span>
+
+    <span class="n">grid_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">20</span>
+    <span class="n">selected_pattern</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;beacon&quot;</span>
+    <span class="n">max_iterations</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span>
+
+    <span class="n">initial_grid_state</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">grid_states</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]]]</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="nd">@transaction</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">=</span><span class="n">StepSpec</span><span class="p">(</span><span class="n">upload</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;initial_grid_state&quot;</span><span class="p">],</span> <span class="n">download</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;selected_pattern&quot;</span><span class="p">,</span> <span class="s2">&quot;grid_size&quot;</span><span class="p">]),</span>
+        <span class="n">enable_termination_event</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">display_initial_state</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Display the initial state of the Game of Life simulation.&quot;&quot;&quot;</span>
+        <span class="n">controller</span> <span class="o">=</span> <span class="n">SimulationController</span><span class="p">(</span><span class="n">grid_size</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid_size</span><span class="p">))</span>
+        <span class="n">controller</span><span class="o">.</span><span class="n">initialize</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">selected_pattern</span><span class="p">)</span>
+        <span class="n">state</span> <span class="o">=</span> <span class="n">controller</span><span class="o">.</span><span class="n">get_current_state</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">initial_grid_state</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+
+    <span class="nd">@transaction</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">=</span><span class="n">StepSpec</span><span class="p">(</span>
+            <span class="n">upload</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;grid_states&quot;</span><span class="p">],</span>
+            <span class="n">download</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;selected_pattern&quot;</span><span class="p">,</span> <span class="s2">&quot;grid_size&quot;</span><span class="p">,</span> <span class="s2">&quot;max_iterations&quot;</span><span class="p">],</span>
+        <span class="p">),</span>
+        <span class="n">enable_termination_event</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="nd">@long_running</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">simulate</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Run the Game of Life simulation.&quot;&quot;&quot;</span>
+        <span class="n">controller</span> <span class="o">=</span> <span class="n">SimulationController</span><span class="p">(</span><span class="n">grid_size</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid_size</span><span class="p">))</span>
+        <span class="n">controller</span><span class="o">.</span><span class="n">initialize</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">selected_pattern</span><span class="p">)</span>
+        <span class="n">state</span> <span class="o">=</span> <span class="n">controller</span><span class="o">.</span><span class="n">get_current_state</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">grid_states</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">grid_states</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">transaction</span><span class="o">.</span><span class="n">raise_event</span><span class="p">(</span>
+            <span class="n">message</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;grid&quot;</span><span class="p">:</span> <span class="n">state</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span> <span class="s2">&quot;iteration&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">},</span>
+            <span class="n">stream_name</span><span class="o">=</span><span class="s2">&quot;my-stream&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">iterations</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">while</span> <span class="n">state</span><span class="o">.</span><span class="n">live_cells</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">iterations</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_iterations</span><span class="p">:</span>
+            <span class="n">iterations</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">controller</span><span class="o">.</span><span class="n">step_forward</span><span class="p">()</span>
+            <span class="n">state</span> <span class="o">=</span> <span class="n">controller</span><span class="o">.</span><span class="n">get_current_state</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">grid_states</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">transaction</span><span class="o">.</span><span class="n">raise_event</span><span class="p">(</span>
+                <span class="n">message</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;grid&quot;</span><span class="p">:</span> <span class="n">state</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span> <span class="s2">&quot;iteration&quot;</span><span class="p">:</span> <span class="n">iterations</span><span class="p">},</span>
+                <span class="n">stream_name</span><span class="o">=</span><span class="s2">&quot;my-stream&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</details><p>Barely fifty lines — and yet it exercises every backend concept SAF has to offer. Now unpack
+it, one concept at a time.</p>
+</section>
+<section id="add-a-new-step">
+<h2>Add a new step<a class="headerlink" href="#add-a-new-step" title="Link to this heading">#</a></h2>
+<p>The scaffold you created in <a class="reference internal" href="initialization.html#game-of-life-initialization"><span class="std std-ref">phase 1</span></a> ships with two example
+steps — <code class="docutils literal notranslate"><span class="pre">FirstStep</span></code> and <code class="docutils literal notranslate"><span class="pre">SecondStep</span></code>. You will replace them with a single new step called
+<code class="docutils literal notranslate"><span class="pre">game_of_life_step</span></code>.</p>
+<div class="custom-admonition practice admonition">
+<p class="admonition-title">Practice</p>
+<p>From the root of the <code class="docutils literal notranslate"><span class="pre">game-of-life</span></code> folder, run:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>saf<span class="w"> </span>add-step<span class="w"> </span>--step-name<span class="w"> </span>game_of_life_step<span class="w"> </span>--ui-framework<span class="w"> </span>dash
+</pre></div>
+</div>
+<p>The command prompts for a step template. Press <kbd class="kbd docutils literal notranslate">Enter</kbd> to accept the default
+<code class="docutils literal notranslate"><span class="pre">calculator-step</span></code>, which generates the sample “add two numbers” step you are about to
+replace.</p>
+<p><code class="docutils literal notranslate"><span class="pre">saf</span> <span class="pre">add-step</span></code> creates <strong>both</strong> the backend and the frontend file for the new step at
+once:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">src/saf/solutions/game_of_life/solution/game_of_life_step.py</span></code> (backend).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">src/saf/solutions/game_of_life/ui/pages/game_of_life_page.py</span></code> (frontend).</p></li>
+</ul>
+<p>It also registers the step in <code class="docutils literal notranslate"><span class="pre">definition.py</span></code>. You will keep the frontend file for
+<a class="reference internal" href="frontend.html#game-of-life-frontend"><span class="std std-ref">phase 4</span></a>; for now, focus on the backend one.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The page router in <code class="docutils literal notranslate"><span class="pre">ui/pages/page.py</span></code> needs no edit, ever. Pages advertise themselves
+through <code class="docutils literal notranslate"><span class="pre">dash.register_page</span></code>, and the router builds the navigation tree from Dash’s page
+registry. Adding or deleting a page file is enough.</p>
+</div>
+</section>
+<section id="the-solution-definition">
+<h2>The solution definition<a class="headerlink" href="#the-solution-definition" title="Link to this heading">#</a></h2>
+<div class="custom-admonition key-concept admonition">
+<p class="admonition-title">Key concept — Solution definition</p>
+<p><code class="docutils literal notranslate"><span class="pre">definition.py</span></code> is the <strong>single source of truth</strong> of the workflow. A <code class="docutils literal notranslate"><span class="pre">StepsModel</span></code>
+subclass lists every step as a typed attribute, and a <code class="docutils literal notranslate"><span class="pre">Solution</span></code> subclass ties the
+display name, the schema version and that step model together. The SAF runtime reads this
+file at startup to discover what the solution is made of.</p>
+</div>
+<p>Open <code class="docutils literal notranslate"><span class="pre">src/saf/solutions/game_of_life/solution/definition.py</span></code>. This is the file the SAF
+runtime reads to discover what steps exist and in what order they should be presented.</p>
+<p>Right after <code class="docutils literal notranslate"><span class="pre">saf</span> <span class="pre">add-step</span></code>, it looks something like this:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ansys.saf.glow.solution</span><span class="w"> </span><span class="kn">import</span> <span class="n">Solution</span><span class="p">,</span> <span class="n">StepsModel</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">saf.solutions.game_of_life.solution.first_step</span><span class="w"> </span><span class="kn">import</span> <span class="n">FirstStep</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">saf.solutions.game_of_life.solution.second_step</span><span class="w"> </span><span class="kn">import</span> <span class="n">SecondStep</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">saf.solutions.game_of_life.solution.game_of_life_step</span><span class="w"> </span><span class="kn">import</span> <span class="n">GameOfLifeStep</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Steps</span><span class="p">(</span><span class="n">StepsModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Workflow definition.&quot;&quot;&quot;</span>
+
+    <span class="n">first_step</span><span class="p">:</span> <span class="n">FirstStep</span>
+    <span class="n">second_step</span><span class="p">:</span> <span class="n">SecondStep</span>
+    <span class="n">game_of_life_step</span><span class="p">:</span> <span class="n">GameOfLifeStep</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">GameOfLifeSolution</span><span class="p">(</span><span class="n">Solution</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Solution definition.&quot;&quot;&quot;</span>
+
+    <span class="n">display_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Game of Life&quot;</span>
+    <span class="n">version</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">steps</span><span class="p">:</span> <span class="n">Steps</span>
+</pre></div>
+</div>
+<p>Three things are worth pointing out:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">Steps</span></code> inherits from <code class="docutils literal notranslate"><span class="pre">StepsModel</span></code> and lists every step as a typed attribute. The
+attribute name (<code class="docutils literal notranslate"><span class="pre">game_of_life_step</span></code>) is how you will reach the step from the frontend later
+on: <code class="docutils literal notranslate"><span class="pre">project.steps.game_of_life_step</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">GameOfLifeSolution</span></code> inherits from <code class="docutils literal notranslate"><span class="pre">Solution</span></code> and ties the display name, a schema
+version, and the <code class="docutils literal notranslate"><span class="pre">Steps</span></code> model together. This is the entrypoint the SAF runtime picks up
+when it boots the app.</p></li>
+<li><p>The imports at the top of the file are what the SAF runtime uses to <em>discover</em> the step
+classes. Removing a step from the definition without removing its import would leave dead
+code around, so always keep the two in sync.</p></li>
+</ul>
+<div class="custom-admonition practice admonition">
+<p class="admonition-title">Practice</p>
+<p>You only need one step for this tutorial, so delete the leftover <code class="docutils literal notranslate"><span class="pre">FirstStep</span></code> and
+<code class="docutils literal notranslate"><span class="pre">SecondStep</span></code>:</p>
+<ol class="arabic">
+<li><p>Delete the files <code class="docutils literal notranslate"><span class="pre">solution/first_step.py</span></code> and <code class="docutils literal notranslate"><span class="pre">solution/second_step.py</span></code>.</p></li>
+<li><p>Delete the files <code class="docutils literal notranslate"><span class="pre">ui/pages/first_page.py</span></code> and <code class="docutils literal notranslate"><span class="pre">ui/pages/second_page.py</span></code>.</p></li>
+<li><p>Remove or rewrite the generated <code class="docutils literal notranslate"><span class="pre">tests/unit/test_solution_api.py</span></code> and
+<code class="docutils literal notranslate"><span class="pre">tests/unit/test_solution_ui.py</span></code> because they still exercise the deleted
+calculator step and page.</p></li>
+<li><p>Edit <code class="docutils literal notranslate"><span class="pre">solution/definition.py</span></code> to look exactly like this:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ansys.saf.glow.solution</span><span class="w"> </span><span class="kn">import</span> <span class="n">Solution</span><span class="p">,</span> <span class="n">StepsModel</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">saf.solutions.game_of_life.solution.game_of_life_step</span><span class="w"> </span><span class="kn">import</span> <span class="n">GameOfLifeStep</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Steps</span><span class="p">(</span><span class="n">StepsModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Workflow definition.&quot;&quot;&quot;</span>
+
+    <span class="n">game_of_life_step</span><span class="p">:</span> <span class="n">GameOfLifeStep</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">GameOfLifeSolution</span><span class="p">(</span><span class="n">Solution</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Solution definition.&quot;&quot;&quot;</span>
+
+    <span class="n">display_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Game of Life&quot;</span>
+    <span class="n">version</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">steps</span><span class="p">:</span> <span class="n">Steps</span>
+</pre></div>
+</div>
+</li>
+</ol>
+<p>Save all the files. There is nothing to change in <code class="docutils literal notranslate"><span class="pre">ui/pages/page.py</span></code>: deleting the two
+page files is enough for them to disappear from the navigation tree.</p>
+</div>
+</section>
+<section id="the-step-model">
+<h2>The step model<a class="headerlink" href="#the-step-model" title="Link to this heading">#</a></h2>
+<div class="custom-admonition key-concept admonition">
+<p class="admonition-title">Key concept — Step model</p>
+<p>A <strong>step</strong> is one unit of the workflow, described by a class that inherits from
+<code class="docutils literal notranslate"><span class="pre">StepModel</span></code>. It owns two things, and only two things:</p>
+<ul>
+<li><p><strong>fields</strong>: the typed, persistent state of the step;</p></li>
+<li><p><strong>transaction methods</strong>: the place where the business logic is called and the fields are read and written.</p></li>
+</ul>
+</div>
+<p>Open the freshly generated <code class="docutils literal notranslate"><span class="pre">solution/game_of_life_step.py</span></code>. The scaffold gives you a toy
+adder:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ansys.saf.glow.solution</span><span class="w"> </span><span class="kn">import</span> <span class="n">StepModel</span><span class="p">,</span> <span class="n">StepSpec</span><span class="p">,</span> <span class="n">transaction</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">GameOfLifeStep</span><span class="p">(</span><span class="n">StepModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Step definition of the game_of_life_step step.&quot;&quot;&quot;</span>
+
+    <span class="n">first_arg</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">second_arg</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">result</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="nd">@transaction</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">=</span><span class="n">StepSpec</span><span class="p">(</span><span class="n">upload</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;result&quot;</span><span class="p">],</span> <span class="n">download</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;first_arg&quot;</span><span class="p">,</span> <span class="s2">&quot;second_arg&quot;</span><span class="p">]),</span>
+    <span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">calculate</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the sum of two numbers.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">first_arg</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">second_arg</span>
+</pre></div>
+</div>
+<p>That is the shape of every SAF step. You are going to replace the whole body.</p>
+<section id="typed-fields">
+<h3>Typed fields<a class="headerlink" href="#typed-fields" title="Link to this heading">#</a></h3>
+<div class="custom-admonition key-concept admonition">
+<p class="admonition-title">Key concept — Typed field</p>
+<p>A field is nothing more than a class attribute with a <strong>type annotation</strong> and a <strong>default
+value</strong>. SAF uses those annotations to:</p>
+<ul>
+<li><p>persist the field to storage between transactions;</p></li>
+<li><p>expose it in the auto-generated REST API;</p></li>
+<li><p>surface it to the frontend through the <code class="docutils literal notranslate"><span class="pre">DashClient</span></code>.</p></li>
+</ul>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p><strong>Every</strong> field must carry a type annotation. Untyped attributes lead to data validation errors at runtime.</p>
+</div>
+<p>For the Game of Life, three inputs and two outputs are enough:</p>
+<div class="literal-block-wrapper docutils container" id="id2">
+<div class="code-block-caption"><span class="caption-text">solution/game_of_life_step.py</span><a class="headerlink" href="#id2" title="Link to this code">#</a></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">GameOfLifeStep</span><span class="p">(</span><span class="n">StepModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Step definition of the game of life step.&quot;&quot;&quot;</span>
+
+    <span class="n">grid_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">20</span>
+    <span class="n">selected_pattern</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;beacon&quot;</span>
+    <span class="n">max_iterations</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span>
+
+    <span class="n">initial_grid_state</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">grid_states</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]]]</span> <span class="o">=</span> <span class="p">[]</span>
+
+</pre></div>
+</div>
+</div>
+<p>The first three fields are <strong>inputs</strong>: the user drives them from the UI. The last two are
+<strong>outputs</strong>: they are filled in by the transaction methods.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Field values must be <strong>JSON-serializable</strong>, because they travel over the REST API between
+the backend and the frontend. That is why <code class="docutils literal notranslate"><span class="pre">initial_grid_state</span></code> and <code class="docutils literal notranslate"><span class="pre">grid_states</span></code> are
+plain nested <code class="docutils literal notranslate"><span class="pre">list</span></code> of <code class="docutils literal notranslate"><span class="pre">int</span></code> rather than NumPy arrays — and why the transactions call
+<code class="docutils literal notranslate"><span class="pre">.tolist()</span></code> before assigning a grid to a field.</p>
+</div>
+<p>The imports the step needs are equally short — the SAF primitives on one side, your own
+business logic on the other:</p>
+<div class="literal-block-wrapper docutils container" id="id3">
+<div class="code-block-caption"><span class="caption-text">solution/game_of_life_step.py</span><a class="headerlink" href="#id3" title="Link to this code">#</a></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ansys.saf.glow.solution</span><span class="w"> </span><span class="kn">import</span> <span class="n">StepModel</span><span class="p">,</span> <span class="n">StepSpec</span><span class="p">,</span> <span class="n">long_running</span><span class="p">,</span> <span class="n">transaction</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">saf.solutions.examples.solution.game_of_life</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationController</span>
+
+
+</pre></div>
+</div>
+</div>
+<div class="custom-admonition practice admonition">
+<p class="admonition-title">Practice</p>
+<p>In <code class="docutils literal notranslate"><span class="pre">game_of_life_step.py</span></code>, replace the scaffold imports and the body of
+<code class="docutils literal notranslate"><span class="pre">GameOfLifeStep</span></code> with the two snippets above. Delete the <code class="docutils literal notranslate"><span class="pre">calculate</span></code> method and the
+<code class="docutils literal notranslate"><span class="pre">first_arg</span></code>, <code class="docutils literal notranslate"><span class="pre">second_arg</span></code> and <code class="docutils literal notranslate"><span class="pre">result</span></code> fields — you don’t need them.</p>
+<div class="line-block">
+<div class="line">Remember to point the <code class="docutils literal notranslate"><span class="pre">SimulationController</span></code> import at <strong>your</strong> business logic module:</div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">from</span> <span class="pre">saf.solutions.game_of_life.solution.game_of_life</span> <span class="pre">import</span> <span class="pre">SimulationController</span></code>.</div>
+</div>
+</div>
+</section>
+</section>
+<section id="transaction-methods">
+<h2>Transaction methods<a class="headerlink" href="#transaction-methods" title="Link to this heading">#</a></h2>
+<div class="custom-admonition key-concept admonition">
+<p class="admonition-title">Key concept — Transaction method</p>
+<p>Fields are inert data. <strong>Transaction methods</strong> are what make a step do something. In
+SAF they are the place where the business logic is called and the fields are read and written.
+Any method that touches a field must be decorated with <code class="docutils literal notranslate"><span class="pre">&#64;transaction</span></code>.</p>
+<p>Every transaction comes in one of two flavors:</p>
+<ul>
+<li><p><strong>Blocking</strong> (the default): The caller waits until the method returns. Use it for fast,
+deterministic work.</p></li>
+<li><p><strong>Long-running</strong> (<code class="docutils literal notranslate"><span class="pre">&#64;long_running</span></code>): The call returns immediately and the method keeps
+going in the background. Use it for anything slow or iterative.</p></li>
+</ul>
+</div>
+<section id="blocking-or-long-running">
+<h3>Blocking or long-running?<a class="headerlink" href="#blocking-or-long-running" title="Link to this heading">#</a></h3>
+<p>The two flavors are not interchangeable: the choice is driven by <strong>how long the work takes</strong>
+and by <strong>what the user should be able to do while it runs</strong>.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 20.0%" />
+<col style="width: 35.0%" />
+<col style="width: 45.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head stub"></th>
+<th class="head"><p>Blocking transaction</p></th>
+<th class="head"><p>Long-running transaction (<code class="docutils literal notranslate"><span class="pre">&#64;long_running</span></code>)</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><th class="stub"><p>Declaration</p></th>
+<td><p><code class="docutils literal notranslate"><span class="pre">&#64;transaction(...)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&#64;transaction(...)</span></code> + <code class="docutils literal notranslate"><span class="pre">&#64;long_running</span></code></p></td>
+</tr>
+<tr class="row-odd"><th class="stub"><p>Caller behavior</p></th>
+<td><p>Waits for the method to return</p></td>
+<td><p>Returns immediately, work continues in the background</p></td>
+</tr>
+<tr class="row-even"><th class="stub"><p>Typical duration</p></th>
+<td><p>Milliseconds to a couple of seconds</p></td>
+<td><p>Seconds, minutes, hours</p></td>
+</tr>
+<tr class="row-odd"><th class="stub"><p>UI during execution</p></th>
+<td><p>Frozen — the user can do nothing else</p></td>
+<td><p>Responsive — the user can navigate, cancel, watch progress</p></td>
+</tr>
+<tr class="row-even"><th class="stub"><p>Progress reporting</p></th>
+<td><p>None: the result appears all at once</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">raise_event</span></code> streams intermediate results in real time</p></td>
+</tr>
+<tr class="row-odd"><th class="stub"><p>Monitoring and control</p></th>
+<td><p>Not applicable</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">get_method_state()</span></code>, cancellation, termination event</p></td>
+</tr>
+<tr class="row-even"><th class="stub"><p>Typical use cases</p></th>
+<td><p>Validating inputs, preparing a preview, formatting results,
+reading a small file</p></td>
+<td><p>Running a solver, meshing, launching a PyAnsys session,
+iterative loops, batch post-processing</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p><strong>Rule of thumb</strong>: If the user would notice a spinner, make it long-running. A blocking
+transaction that takes more than a second or two makes the whole application feel broken,
+and one that takes minutes will hit client-side timeouts.</p>
+<p>Conversely, do not make everything long-running. The background machinery adds latency and forces the frontend to handle events and completion, which is needless complexity for a computation that takes
+10 ms.</p>
+</div>
+<p>In this step, you will write one of each: <code class="docutils literal notranslate"><span class="pre">display_initial_state</span></code> is blocking, and
+<code class="docutils literal notranslate"><span class="pre">simulate</span></code> — covered in the <a class="reference internal" href="#game-of-life-backend-long-running"><span class="std std-ref">next section</span></a> — is
+long-running.</p>
+</section>
+<section id="writing-a-blocking-transaction">
+<h3>Writing a blocking transaction<a class="headerlink" href="#writing-a-blocking-transaction" title="Link to this heading">#</a></h3>
+<p>The user picks a pattern in the UI and immediately wants to see it drawn on the grid. That is
+a tiny, instantaneous computation, so a plain <strong>blocking</strong> transaction is the right tool:</p>
+<div class="literal-block-wrapper docutils container" id="id4">
+<div class="code-block-caption"><span class="caption-text">solution/game_of_life_step.py</span><a class="headerlink" href="#id4" title="Link to this code">#</a></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="nd">@transaction</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">=</span><span class="n">StepSpec</span><span class="p">(</span><span class="n">upload</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;initial_grid_state&quot;</span><span class="p">],</span> <span class="n">download</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;selected_pattern&quot;</span><span class="p">,</span> <span class="s2">&quot;grid_size&quot;</span><span class="p">]),</span>
+        <span class="n">enable_termination_event</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">display_initial_state</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Display the initial state of the Game of Life simulation.&quot;&quot;&quot;</span>
+        <span class="n">controller</span> <span class="o">=</span> <span class="n">SimulationController</span><span class="p">(</span><span class="n">grid_size</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid_size</span><span class="p">))</span>
+        <span class="n">controller</span><span class="o">.</span><span class="n">initialize</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">selected_pattern</span><span class="p">)</span>
+        <span class="n">state</span> <span class="o">=</span> <span class="n">controller</span><span class="o">.</span><span class="n">get_current_state</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">initial_grid_state</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<p>Three lines of business logic, wrapped in a decorator. Look at that decorator closely — it
+carries two new concepts.</p>
+</section>
+<section id="the-transaction-decorator">
+<h3>The <code class="docutils literal notranslate"><span class="pre">&#64;transaction</span></code> decorator<a class="headerlink" href="#the-transaction-decorator" title="Link to this heading">#</a></h3>
+<div class="custom-admonition key-concept admonition">
+<p class="admonition-title">Key concept — <code class="docutils literal notranslate"><span class="pre">&#64;transaction</span></code></p>
+<p>The decorator does three important things behind the scenes:</p>
+<ul>
+<li><p>It runs the method in an <strong>isolated execution context</strong>, so it behaves identically on
+your laptop, in a Docker container, or on an on-prem cluster.</p></li>
+<li><p>It publishes the method as a <strong>POST endpoint in the auto-generated REST API</strong>. You will
+call it from the Dash frontend in phase 4, but you could just as well call it with
+<code class="docutils literal notranslate"><span class="pre">curl</span></code>.</p></li>
+<li><p>It records <strong>which fields the method reads and which it writes</strong>, so the SAF runtime
+knows what to load before the call and what to persist after it.</p></li>
+</ul>
+</div>
+<p>That last point is what the <code class="docutils literal notranslate"><span class="pre">StepSpec</span></code> argument is for.</p>
+</section>
+<section id="field-dependencies-with-stepspec">
+<h3>Field dependencies with <code class="docutils literal notranslate"><span class="pre">StepSpec</span></code><a class="headerlink" href="#field-dependencies-with-stepspec" title="Link to this heading">#</a></h3>
+<div class="custom-admonition key-concept admonition">
+<p class="admonition-title">Key concept — <code class="docutils literal notranslate"><span class="pre">StepSpec</span></code></p>
+<p><code class="docutils literal notranslate"><span class="pre">StepSpec</span></code> declares the field dependencies of a transaction: <code class="docutils literal notranslate"><span class="pre">download</span></code> lists the
+fields loaded from storage <strong>before</strong> the method runs, and <code class="docutils literal notranslate"><span class="pre">upload</span></code> lists the fields
+persisted <strong>after</strong> it finishes. A field that is not declared either holds no meaningful
+value on entry, or is silently dropped on exit.</p>
+</div>
+<p>In <code class="docutils literal notranslate"><span class="pre">display_initial_state</span></code>, that declaration reads:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="bp">self</span><span class="o">=</span><span class="n">StepSpec</span><span class="p">(</span>
+    <span class="n">upload</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;initial_grid_state&quot;</span><span class="p">],</span>
+    <span class="n">download</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;selected_pattern&quot;</span><span class="p">,</span> <span class="s2">&quot;grid_size&quot;</span><span class="p">],</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Read it like this:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 20.0%" />
+<col style="width: 80.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Argument</p></th>
+<th class="head"><p>Meaning</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">download</span></code></p></td>
+<td><p>Fields the transaction <strong>reads</strong> from persistent storage <em>before</em> running. The method’s
+<em>inputs</em>. Only these fields are guaranteed to hold a meaningful value inside the body.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">upload</span></code></p></td>
+<td><p>Fields the transaction <strong>writes back</strong> to persistent storage <em>after</em> it finishes. The
+method’s <em>outputs</em>. Fields you assign but forget to declare are silently dropped.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p><strong>Rule of thumb</strong>: if a field appears on the left-hand side of an assignment inside the
+transaction, it belongs in <code class="docutils literal notranslate"><span class="pre">upload</span></code>. If it appears on the right-hand side, it belongs in
+<code class="docutils literal notranslate"><span class="pre">download</span></code>. Forgetting either is the number-one gotcha for new SAF developers.</p>
+</div>
+<p>Why declare this explicitly instead of letting SAF figure it out? Because <code class="docutils literal notranslate"><span class="pre">download</span></code> /
+<code class="docutils literal notranslate"><span class="pre">upload</span></code> is precisely what lets a solution be split across process, container and machine
+boundaries without you writing a single line of serialization code. The step model becomes a
+contract that the runtime can honor anywhere.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The keyword is <code class="docutils literal notranslate"><span class="pre">self=</span></code> because a transaction may depend on <strong>several</strong> steps, not just
+its own. A step can declare <code class="docutils literal notranslate"><span class="pre">other_step=StepSpec(download=[...])</span></code> to read fields produced
+upstream — that is how a multi-step workflow chains data together.</p>
+</div>
+<div class="custom-admonition practice admonition">
+<p class="admonition-title">Practice</p>
+<p>Add the <code class="docutils literal notranslate"><span class="pre">display_initial_state</span></code> transaction to <code class="docutils literal notranslate"><span class="pre">game_of_life_step.py</span></code>.</p>
+<p>You now have a fully working blocking transaction. It is already testable through the
+auto-generated REST API — try it later with <code class="docutils literal notranslate"><span class="pre">saf</span> <span class="pre">run</span> <span class="pre">--no-ui</span></code> if you are curious.</p>
+</div>
+</section>
+</section>
+<section id="long-running-transactions">
+<span id="game-of-life-backend-long-running"></span><h2>Long-running transactions<a class="headerlink" href="#long-running-transactions" title="Link to this heading">#</a></h2>
+<p>The simulation itself is a different beast: it is an <strong>iterative loop</strong> that can run for
+seconds or minutes depending on the grid size and the iteration count. It lands squarely in
+the right-hand column of the comparison table above. Blocking the UI for that long is not
+acceptable — and the user would much rather <em>watch the grid evolve</em> than stare at a spinner
+until the final result arrives.</p>
+<p>Two more SAF features cover exactly this:</p>
+<ul>
+<li><p>the <code class="docutils literal notranslate"><span class="pre">&#64;long_running</span></code> decorator, which turns the transaction into a <strong>non-blocking
+background job</strong>;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">self.transaction.raise_event(...)</span></code>, which <strong>streams events</strong> from the running method back
+to any interested listener.</p></li>
+</ul>
+<p>Here is the resulting transaction:</p>
+<div class="literal-block-wrapper docutils container" id="id5">
+<div class="code-block-caption"><span class="caption-text">solution/game_of_life_step.py</span><a class="headerlink" href="#id5" title="Link to this code">#</a></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="nd">@transaction</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">=</span><span class="n">StepSpec</span><span class="p">(</span>
+            <span class="n">upload</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;grid_states&quot;</span><span class="p">],</span>
+            <span class="n">download</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;selected_pattern&quot;</span><span class="p">,</span> <span class="s2">&quot;grid_size&quot;</span><span class="p">,</span> <span class="s2">&quot;max_iterations&quot;</span><span class="p">],</span>
+        <span class="p">),</span>
+        <span class="n">enable_termination_event</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="nd">@long_running</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">simulate</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Run the Game of Life simulation.&quot;&quot;&quot;</span>
+        <span class="n">controller</span> <span class="o">=</span> <span class="n">SimulationController</span><span class="p">(</span><span class="n">grid_size</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid_size</span><span class="p">))</span>
+        <span class="n">controller</span><span class="o">.</span><span class="n">initialize</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">selected_pattern</span><span class="p">)</span>
+        <span class="n">state</span> <span class="o">=</span> <span class="n">controller</span><span class="o">.</span><span class="n">get_current_state</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">grid_states</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">grid_states</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">transaction</span><span class="o">.</span><span class="n">raise_event</span><span class="p">(</span>
+            <span class="n">message</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;grid&quot;</span><span class="p">:</span> <span class="n">state</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span> <span class="s2">&quot;iteration&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">},</span>
+            <span class="n">stream_name</span><span class="o">=</span><span class="s2">&quot;my-stream&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">iterations</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">while</span> <span class="n">state</span><span class="o">.</span><span class="n">live_cells</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">iterations</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_iterations</span><span class="p">:</span>
+            <span class="n">iterations</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">controller</span><span class="o">.</span><span class="n">step_forward</span><span class="p">()</span>
+            <span class="n">state</span> <span class="o">=</span> <span class="n">controller</span><span class="o">.</span><span class="n">get_current_state</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">grid_states</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">transaction</span><span class="o">.</span><span class="n">raise_event</span><span class="p">(</span>
+                <span class="n">message</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;grid&quot;</span><span class="p">:</span> <span class="n">state</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span> <span class="s2">&quot;iteration&quot;</span><span class="p">:</span> <span class="n">iterations</span><span class="p">},</span>
+                <span class="n">stream_name</span><span class="o">=</span><span class="s2">&quot;my-stream&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<section id="the-long-running-decorator">
+<h3>The <code class="docutils literal notranslate"><span class="pre">&#64;long_running</span></code> decorator<a class="headerlink" href="#the-long-running-decorator" title="Link to this heading">#</a></h3>
+<div class="custom-admonition key-concept admonition">
+<p class="admonition-title">Key concept — <code class="docutils literal notranslate"><span class="pre">&#64;long_running</span></code></p>
+<p>Stacking <code class="docutils literal notranslate"><span class="pre">&#64;long_running</span></code> <strong>under</strong> <code class="docutils literal notranslate"><span class="pre">&#64;transaction</span></code> turns the method into a non-blocking
+background job:</p>
+<ul>
+<li><p>The call returns <strong>immediately</strong> on the client side. The transaction starts
+asynchronously and the SAF runtime tracks its state.</p></li>
+<li><p>The client can poll the method status through <code class="docutils literal notranslate"><span class="pre">step.get_method_state(&quot;simulate&quot;)</span></code>,
+or listen for the termination event.</p></li>
+</ul>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p><strong>Decorator order matters.</strong> <code class="docutils literal notranslate"><span class="pre">&#64;long_running</span></code> sits immediately above the method and
+<strong>below</strong> <code class="docutils literal notranslate"><span class="pre">&#64;transaction</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@transaction</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+<span class="nd">@long_running</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">simulate</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="o">...</span>
+</pre></div>
+</div>
+<p>Swap the two and the runtime cannot see the long-running semantics.</p>
+</div>
+<p>Also notice the <code class="docutils literal notranslate"><span class="pre">download</span></code> set: <code class="docutils literal notranslate"><span class="pre">simulate</span></code> needs the same inputs the user tuned before
+launching the run (<code class="docutils literal notranslate"><span class="pre">selected_pattern</span></code>, <code class="docutils literal notranslate"><span class="pre">grid_size</span></code>) <strong>plus</strong> one that
+<code class="docutils literal notranslate"><span class="pre">display_initial_state</span></code> does not care about — <code class="docutils literal notranslate"><span class="pre">max_iterations</span></code>. Each transaction declares
+only what it truly needs, nothing more.</p>
+</section>
+</section>
+<section id="events">
+<h2>Events<a class="headerlink" href="#events" title="Link to this heading">#</a></h2>
+<p>A long-running job that says nothing until it is done is barely better than a blocking one.</p>
+<div class="custom-admonition key-concept admonition">
+<p class="admonition-title">Key concept — Event</p>
+<p><strong>Events</strong> are how a SAF backend talks to the outside world <em>while it is still running</em>.
+Inside a transaction, <code class="docutils literal notranslate"><span class="pre">self.transaction.raise_event(message=...,</span> <span class="pre">stream_name=...)</span></code>
+publishes a JSON-serializable message on a named stream that any listener — typically the
+frontend — can subscribe to in real time.</p>
+</div>
+<p>Every call to <code class="docutils literal notranslate"><span class="pre">raise_event</span></code> looks like this:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="bp">self</span><span class="o">.</span><span class="n">transaction</span><span class="o">.</span><span class="n">raise_event</span><span class="p">(</span>
+    <span class="n">message</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;grid&quot;</span><span class="p">:</span> <span class="n">state</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span> <span class="s2">&quot;iteration&quot;</span><span class="p">:</span> <span class="n">iterations</span><span class="p">},</span>
+    <span class="n">stream_name</span><span class="o">=</span><span class="s2">&quot;my-stream&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">message</span></code> is any <strong>JSON-serializable</strong> dict. Here, one full grid plus the generation
+number.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">stream_name</span></code> is a free-form identifier that you choose. The frontend subscribes to it by
+name in <a class="reference internal" href="frontend.html#game-of-life-frontend"><span class="std std-ref">phase 4</span></a>.</p></li>
+</ul>
+<p>Multiple streams can coexist. A common pattern in real solutions is one stream per kind of
+update — progress, warnings, intermediate artifacts.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Events are <em>transient</em>: they are delivered to whoever is listening at that moment and are
+not replayed. That is why <code class="docutils literal notranslate"><span class="pre">simulate</span></code> <strong>also</strong> appends every grid to the <code class="docutils literal notranslate"><span class="pre">grid_states</span></code>
+field. The events drive the live animation; the field is the durable record that survives
+a page reload.</p>
+</div>
+<section id="termination-events">
+<h3>Termination events<a class="headerlink" href="#termination-events" title="Link to this heading">#</a></h3>
+<div class="custom-admonition key-concept admonition">
+<p class="admonition-title">Key concept — Termination event</p>
+<p>Passing <code class="docutils literal notranslate"><span class="pre">enable_termination_event=True</span></code> to <code class="docutils literal notranslate"><span class="pre">&#64;transaction</span></code> asks SAF to emit an event on
+a stream <strong>named after the method</strong> whenever it terminates — whether it succeeded, failed,
+or was cancelled.</p>
+</div>
+<p>Both transactions of the step enable it, so the <code class="docutils literal notranslate"><span class="pre">simulate</span></code> method produces two kinds of
+events:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 20.0%" />
+<col style="width: 25.0%" />
+<col style="width: 55.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head stub"><p>Stream</p></th>
+<th class="head"><p>Emitted by</p></th>
+<th class="head"><p>Used by the frontend to…</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><th class="stub"><p><code class="docutils literal notranslate"><span class="pre">my-stream</span></code></p></th>
+<td><p>Your explicit <code class="docutils literal notranslate"><span class="pre">raise_event</span></code> calls</p></td>
+<td><p>Redraw the heatmap after every generation</p></td>
+</tr>
+<tr class="row-odd"><th class="stub"><p><code class="docutils literal notranslate"><span class="pre">simulate</span></code></p></th>
+<td><p><code class="docutils literal notranslate"><span class="pre">enable_termination_event=True</span></code></p></td>
+<td><p>Re-enable the “Start simulation” button and show a notification</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="custom-admonition practice admonition">
+<p class="admonition-title">Practice</p>
+<p>Add the <code class="docutils literal notranslate"><span class="pre">simulate</span></code> transaction to <code class="docutils literal notranslate"><span class="pre">game_of_life_step.py</span></code>. Your file should now match
+the complete listing at the top of this page — take a moment to diff yours against it.</p>
+</div>
+</section>
+</section>
+<section id="the-mental-model">
+<h2>The mental model<a class="headerlink" href="#the-mental-model" title="Link to this heading">#</a></h2>
+<p>At this point <code class="docutils literal notranslate"><span class="pre">GameOfLifeStep</span></code> embodies the whole backend and it demonstrates every SAF
+building block you will ever need:</p>
+<pre  class="mermaid">
+        flowchart LR
+    subgraph Frontend
+        UI[Dash page]
+    end
+
+    subgraph Backend[SAF backend]
+        direction TB
+        F1[grid_size, selected_pattern, max_iterations]
+        F2[initial_grid_state]
+        F3[grid_states]
+        T1[&quot;display_initial_state()&lt;br/&gt;(blocking)&quot;]
+        T2[&quot;simulate()&lt;br/&gt;(long_running)&quot;]
+    end
+
+    UI -- sets fields --&gt; F1
+    F1 -- download --&gt; T1
+    F1 -- download --&gt; T2
+    T1 -- upload --&gt; F2
+    T2 -- upload --&gt; F3
+    F2 -- read via DashClient --&gt; UI
+    T2 -- raise_event --&gt; UI
+    </pre><ul>
+<li><p><strong>Fields</strong> hold state. They are typed and persistent.</p></li>
+<li><p><strong>Transactions</strong> are the place where the business logic is called and the fields are read and written.
+<code class="docutils literal notranslate"><span class="pre">download</span></code> / <code class="docutils literal notranslate"><span class="pre">upload</span></code> dependencies through <code class="docutils literal notranslate"><span class="pre">StepSpec</span></code>.</p></li>
+<li><p><strong>Blocking transactions</strong> return only after the work is done.</p></li>
+<li><p><strong>Long-running transactions</strong> return immediately and use <strong>events</strong> to stream progress and
+a <strong>termination event</strong> to signal completion.</p></li>
+</ul>
+</section>
+<section id="key-takeaways">
+<h2>Key takeaways<a class="headerlink" href="#key-takeaways" title="Link to this heading">#</a></h2>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<ul>
+<li><p>The <strong>solution definition</strong> lists the workflow steps in a <code class="docutils literal notranslate"><span class="pre">StepsModel</span></code> and ties them
+together with the <code class="docutils literal notranslate"><span class="pre">Solution</span></code> class.</p></li>
+<li><p>A <strong>step model</strong> is a <code class="docutils literal notranslate"><span class="pre">StepModel</span></code> subclass whose typed class attributes are its
+<strong>fields</strong>. Every field needs a type annotation — no exceptions.</p></li>
+<li><p><strong>Field values must be JSON-serializable</strong>. Convert NumPy arrays with <code class="docutils literal notranslate"><span class="pre">.tolist()</span></code>
+before storing them in a field.</p></li>
+<li><p>Any method that touches fields is decorated with <code class="docutils literal notranslate"><span class="pre">&#64;transaction</span></code> and declares its
+<strong>field dependencies</strong> in a <code class="docutils literal notranslate"><span class="pre">StepSpec</span></code> (<code class="docutils literal notranslate"><span class="pre">download</span></code> for reads, <code class="docutils literal notranslate"><span class="pre">upload</span></code> for writes).</p></li>
+<li><p>Stack <code class="docutils literal notranslate"><span class="pre">&#64;long_running</span></code> <strong>under</strong> <code class="docutils literal notranslate"><span class="pre">&#64;transaction</span></code> to turn a method into a background
+job that returns immediately.</p></li>
+<li><p>Emit real-time updates from a long-running method with
+<code class="docutils literal notranslate"><span class="pre">self.transaction.raise_event(message=...,</span> <span class="pre">stream_name=...)</span></code>.</p></li>
+<li><p>Set <code class="docutils literal notranslate"><span class="pre">enable_termination_event=True</span></code> on a transaction to get an automatic event on the
+stream named after the method when it finishes (success, failure or cancellation).</p></li>
+</ul>
+</div>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#where-you-are-heading">Where you are heading</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#add-a-new-step">Add a new step</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-solution-definition">The solution definition</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-step-model">The step model</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#typed-fields">Typed fields</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#transaction-methods">Transaction methods</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#blocking-or-long-running">Blocking or long-running?</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#writing-a-blocking-transaction">Writing a blocking transaction</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-transaction-decorator">The <code class="docutils literal notranslate"><span class="pre">@transaction</span></code> decorator</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#field-dependencies-with-stepspec">Field dependencies with <code class="docutils literal notranslate"><span class="pre">StepSpec</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#long-running-transactions">Long-running transactions</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-long-running-decorator">The <code class="docutils literal notranslate"><span class="pre">@long_running</span></code> decorator</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#events">Events</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#termination-events">Termination events</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-mental-model">The mental model</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-takeaways">Key takeaways</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085"></script>
+
+
+  <!-- Include desired assets -->
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.7/require.min.js"></script>
+
+<script>
+// Passing the search options to the search.js file
+const SEARCH_OPTIONS = JSON.parse('{"keys": ["title", "text", "objectID"], "limit": 10, "threshold": 0.2}');
+const SEARCH_FILE = "../../../_static/search.json";
+const ADVANCE_SEARCH_PATH = "../../../search.html";
+const EXTRA_SOURCES = JSON.parse('""');
+</script>
+
+
+<script src="../../../_static/js/search.js"></script>
+
+  
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<footer class="bd-footer">
+  <div class="bd-footer__inner bd-page-width">
+    <div class="footer-items__start">
+      <div class="footer-item">
+        <div class="footer-items__start">
+          <div class="footer-item">
+            <img src="https://docs.pyansys.com/version/dev/_static/ansys_logo_transparent_white.png" alt="Ansys Logo" class="footer-ansys-logo">
+          </div>
+          <div class="footer-item"><br>
+            <p>2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-items__center">
+      <div class="footer-item">
+        <div class="footer-items__start">
+          <div class="connect-with-ansys">
+            <p>Latest documentation</p> <br>
+            <a href="https://www.ansys.com/" class="external-link" target="_blank" rel="noopener noreferrer">
+              <span class="link-text">Ansys.com</span>
+              <i class="fas fa-up-right-from-square"></i>
+            </a><br>
+            <a href="https://www.ansys.com/services/ansys-learning-hub" class="external-link" target="_blank" rel="noopener noreferrer">
+              <span class="link-text">Ansys Learning</span>
+              <i class="fas fa-up-right-from-square"></i>
+            </a><br>
+            <a href="https://www.ansys.com/support" class="external-link" target="_blank" rel="noopener noreferrer">
+              <span class="link-text">Ansys Support</span>
+              <i class="fas fa-up-right-from-square"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-items__end">
+      <div class="footer-item">
+        <div class="footer-right">
+          <span>Connect with Ansys</span>
+          <div class="social-icons">
+            <a href="https://www.youtube.com/user/ansysinc" target="_blank" rel="noopener" class="icon icon-youtube" aria-label="Youtube"><span class="sr-only">Youtube</span></a>
+            <a href="https://www.facebook.com/ansys" target="_blank" rel="noopener" class="icon icon-facebook" aria-label="Facebook"><span class="sr-only">Facebook</span></a>
+            <a href="https://www.linkedin.com/company/ansys-inc" target="_blank" rel="noopener" class="icon icon-linkedin" aria-label="Linkedin"><span class="sr-only">Linkedin</span></a>
+            <a href="https://github.com/ansys" target="_blank" rel="noopener" class="icon icon-github" aria-label="GitHub"><i class="fab fa-github"></i><span class="sr-only">GitHub</span></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+  </body>
+</html>

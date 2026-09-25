@@ -1,0 +1,107 @@
+
+
+
+
+
+
+:class:`Fluent3DDPSolverManager`
+================================
+
+
+.. py:class:: ansys.saf.product_manager.fluent.Fluent3DDPSolverManager(**kwargs: Any)
+
+   Bases: :py:obj:`ansys.saf.glow.solution.ProductInstanceManager`\ [\ :py:obj:`ansys.fluent.core.session_solver.Solver`\ , :py:obj:`FluentStateInfo`\ ]
+
+
+   
+   A manager of a `Fluent <https://www.ansys.com/en-gb/products/fluids/ansys-fluent>`_ product instance
+   in 3D Solver mode with double precision using secure gRPC connections.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: Fluent3DDPSolverManager
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~initialize`
+            - Initialize and start a Fluent Solver 3DDP product instance.
+
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.saf.product_manager.fluent import Fluent3DDPSolverManager
+
+
+
+Method detail
+-------------
+
+.. py:method:: initialize(version: str | None = None)
+
+   
+   Initialize and start a Fluent Solver 3DDP product instance.
+
+
+   :Parameters:
+
+       **version** : str, optional
+           The version of the Fluent product instance that must be used. The format is 3 decimal digits where
+           the first two digits indicate the year of release in the 21st century and the third digit indicates
+           the release within that year.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

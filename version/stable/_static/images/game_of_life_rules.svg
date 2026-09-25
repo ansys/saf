@@ -1,0 +1,123 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 496" width="780" height="496" role="img" aria-labelledby="golRulesTitle golRulesDesc">
+  <title id="golRulesTitle">Conway's Game of Life transition rules</title>
+  <desc id="golRulesDesc">Four rules shown as a three by three neighborhood before and after one generation: survival, underpopulation, overpopulation and reproduction. The gold ring marks the cell whose fate is illustrated.</desc>
+
+  <defs>
+    <marker id="golArrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#9aa0a6"/>
+    </marker>
+    <g id="golGrid3">
+      <rect x="0" y="0" width="78" height="78" fill="#9aa0a6" fill-opacity="0.08"/>
+      <path d="M0 0H78 M0 26H78 M0 52H78 M0 78H78 M0 0V78 M26 0V78 M52 0V78 M78 0V78"
+            fill="none" stroke="#9aa0a6" stroke-width="1"/>
+    </g>
+    <rect id="golFocus" x="26" y="26" width="26" height="26" fill="none" stroke="#FFB71B" stroke-width="2.5"/>
+  </defs>
+
+  <g font-family="Segoe UI, Helvetica, Arial, sans-serif">
+
+    <!-- Rule 1: survival -->
+    <g transform="translate(48,30)">
+      <use href="#golGrid3"/>
+      <g fill="#8a58b6">
+        <rect x="28" y="2" width="22" height="22" rx="2"/>
+        <rect x="54" y="28" width="22" height="22" rx="2"/>
+        <rect x="28" y="28" width="22" height="22" rx="2"/>
+      </g>
+      <use href="#golFocus"/>
+      <text x="39" y="96" font-size="12" fill="#9aa0a6" text-anchor="middle">generation n</text>
+    </g>
+    <line x1="138" y1="69" x2="188" y2="69" stroke="#9aa0a6" stroke-width="2" marker-end="url(#golArrow)"/>
+    <g transform="translate(204,30)">
+      <use href="#golGrid3"/>
+      <g fill="#8a58b6" fill-opacity="0.22">
+        <rect x="28" y="2" width="22" height="22" rx="2"/>
+        <rect x="54" y="28" width="22" height="22" rx="2"/>
+      </g>
+      <rect x="28" y="28" width="22" height="22" rx="2" fill="#8a58b6"/>
+      <use href="#golFocus"/>
+      <text x="39" y="96" font-size="12" fill="#9aa0a6" text-anchor="middle">generation n+1</text>
+    </g>
+    <text x="312" y="60" font-size="17" font-weight="600" fill="#8a58b6">Survival</text>
+    <text x="312" y="84" font-size="14.5" fill="#83888d">A live cell with 2 or 3 live neighbors stays alive.</text>
+
+    <!-- Rule 2: underpopulation -->
+    <g transform="translate(48,138)">
+      <use href="#golGrid3"/>
+      <g fill="#8a58b6">
+        <rect x="28" y="2" width="22" height="22" rx="2"/>
+        <rect x="28" y="28" width="22" height="22" rx="2"/>
+      </g>
+      <use href="#golFocus"/>
+    </g>
+    <line x1="138" y1="177" x2="188" y2="177" stroke="#9aa0a6" stroke-width="2" marker-end="url(#golArrow)"/>
+    <g transform="translate(204,138)">
+      <use href="#golGrid3"/>
+      <rect x="28" y="2" width="22" height="22" rx="2" fill="#8a58b6" fill-opacity="0.22"/>
+      <use href="#golFocus"/>
+    </g>
+    <text x="312" y="168" font-size="17" font-weight="600" fill="#8a58b6">Underpopulation</text>
+    <text x="312" y="192" font-size="14.5" fill="#83888d">A live cell with fewer than 2 live neighbors dies.</text>
+
+    <!-- Rule 3: overpopulation -->
+    <g transform="translate(48,246)">
+      <use href="#golGrid3"/>
+      <g fill="#8a58b6">
+        <rect x="2" y="2" width="22" height="22" rx="2"/>
+        <rect x="28" y="2" width="22" height="22" rx="2"/>
+        <rect x="54" y="2" width="22" height="22" rx="2"/>
+        <rect x="2" y="28" width="22" height="22" rx="2"/>
+        <rect x="28" y="28" width="22" height="22" rx="2"/>
+      </g>
+      <use href="#golFocus"/>
+    </g>
+    <line x1="138" y1="285" x2="188" y2="285" stroke="#9aa0a6" stroke-width="2" marker-end="url(#golArrow)"/>
+    <g transform="translate(204,246)">
+      <use href="#golGrid3"/>
+      <g fill="#8a58b6" fill-opacity="0.22">
+        <rect x="2" y="2" width="22" height="22" rx="2"/>
+        <rect x="28" y="2" width="22" height="22" rx="2"/>
+        <rect x="54" y="2" width="22" height="22" rx="2"/>
+        <rect x="2" y="28" width="22" height="22" rx="2"/>
+      </g>
+      <use href="#golFocus"/>
+    </g>
+    <text x="312" y="276" font-size="17" font-weight="600" fill="#8a58b6">Overpopulation</text>
+    <text x="312" y="300" font-size="14.5" fill="#83888d">A live cell with more than 3 live neighbors dies.</text>
+
+    <!-- Rule 4: reproduction -->
+    <g transform="translate(48,354)">
+      <use href="#golGrid3"/>
+      <g fill="#8a58b6">
+        <rect x="2" y="2" width="22" height="22" rx="2"/>
+        <rect x="28" y="2" width="22" height="22" rx="2"/>
+        <rect x="2" y="28" width="22" height="22" rx="2"/>
+      </g>
+      <use href="#golFocus"/>
+    </g>
+    <line x1="138" y1="393" x2="188" y2="393" stroke="#9aa0a6" stroke-width="2" marker-end="url(#golArrow)"/>
+    <g transform="translate(204,354)">
+      <use href="#golGrid3"/>
+      <g fill="#8a58b6" fill-opacity="0.22">
+        <rect x="2" y="2" width="22" height="22" rx="2"/>
+        <rect x="28" y="2" width="22" height="22" rx="2"/>
+        <rect x="2" y="28" width="22" height="22" rx="2"/>
+      </g>
+      <rect x="28" y="28" width="22" height="22" rx="2" fill="#8a58b6"/>
+      <use href="#golFocus"/>
+    </g>
+    <text x="312" y="384" font-size="17" font-weight="600" fill="#8a58b6">Reproduction</text>
+    <text x="312" y="408" font-size="14.5" fill="#83888d">A dead cell with exactly 3 live neighbors becomes alive.</text>
+
+    <!-- Legend -->
+    <g transform="translate(48,452)">
+      <rect x="0" y="0" width="18" height="18" rx="2" fill="#8a58b6"/>
+      <text x="26" y="14" font-size="13" fill="#83888d">live cell</text>
+      <rect x="104" y="0" width="18" height="18" rx="2" fill="#8a58b6" fill-opacity="0.22"/>
+      <text x="130" y="14" font-size="13" fill="#83888d">neighbor (its own fate follows the same rules)</text>
+      <rect x="430" y="0" width="18" height="18" fill="none" stroke="#FFB71B" stroke-width="2.5"/>
+      <text x="456" y="14" font-size="13" fill="#83888d">the cell whose fate is illustrated</text>
+    </g>
+
+  </g>
+</svg>

@@ -1,0 +1,58 @@
+<svg viewBox="0 0 760 340" xmlns="http://www.w3.org/2000/svg" role="img" font-family="ui-monospace, 'Cascadia Code', 'Fira Mono', monospace" font-size="13">
+  <title>When to merge versus split steps</title>
+  <desc>Side-by-side comparison showing when to merge steps into one versus splitting into multiple</desc>
+
+  <defs>
+    <marker id="arr-merge" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#fbbf24"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="760" height="340" fill="#0f172a" rx="12"/>
+
+  <!-- Title -->
+  <text x="380" y="32" text-anchor="middle" fill="#f1f5f9" font-size="16" font-weight="700" letter-spacing="0.5">When to Merge vs. Split Steps</text>
+
+  <!-- LEFT: Merge -->
+  <rect x="30" y="56" width="340" height="270" rx="10" fill="#1e293b" stroke="#fbbf24" stroke-width="1.5"/>
+  <rect x="30" y="56" width="340" height="30" rx="10" fill="#451a03"/>
+  <rect x="30" y="74" width="340" height="12" fill="#451a03"/>
+  <text x="200" y="76" text-anchor="middle" fill="#fde68a" font-size="12" font-weight="700">MERGE into one step</text>
+
+  <text x="50" y="108" fill="#94a3b8" font-size="10" font-weight="600">When:</text>
+  <text x="50" y="128" fill="#fbbf24" font-size="10">• Simple workflow with few parameters</text>
+  <text x="50" y="146" fill="#fbbf24" font-size="10">• All inputs/outputs share the same context</text>
+  <text x="50" y="164" fill="#fbbf24" font-size="10">• Single user role handles the entire flow</text>
+
+  <rect x="50" y="182" width="300" height="56" rx="6" fill="#0f172a" stroke="#fbbf24" stroke-width="1" stroke-dasharray="4,2"/>
+  <text x="60" y="200" fill="#fde68a" font-size="9">class SimpleAnalysisStep(StepModel):</text>
+  <text x="60" y="214" fill="#94a3b8" font-size="9">    length: float = 1.0</text>
+  <text x="60" y="228" fill="#94a3b8" font-size="9">    result: float = 0.0  # input + output together</text>
+
+  <rect x="50" y="250" width="300" height="60" rx="6" fill="#0f172a"/>
+  <text x="60" y="268" fill="#64748b" font-size="9">Example scenarios:</text>
+  <text x="60" y="286" fill="#94a3b8" font-size="9">• Unit converter (one input, one output)</text>
+  <text x="60" y="300" fill="#94a3b8" font-size="9">• Quick parameter study (< 5 fields)</text>
+
+  <!-- RIGHT: Split -->
+  <rect x="390" y="56" width="340" height="270" rx="10" fill="#1e293b" stroke="#34d399" stroke-width="1.5"/>
+  <rect x="390" y="56" width="340" height="30" rx="10" fill="#064e3b"/>
+  <rect x="390" y="74" width="340" height="12" fill="#064e3b"/>
+  <text x="560" y="76" text-anchor="middle" fill="#a7f3d0" font-size="12" font-weight="700">SPLIT into multiple steps</text>
+
+  <text x="410" y="108" fill="#94a3b8" font-size="10" font-weight="600">When:</text>
+  <text x="410" y="128" fill="#34d399" font-size="10">• Users need to inspect intermediate outputs</text>
+  <text x="410" y="146" fill="#34d399" font-size="10">• Different roles handle different phases</text>
+  <text x="410" y="164" fill="#34d399" font-size="10">• Setup and results need different UI</text>
+
+  <rect x="410" y="182" width="300" height="56" rx="6" fill="#0f172a" stroke="#34d399" stroke-width="1" stroke-dasharray="4,2"/>
+  <text x="420" y="200" fill="#a7f3d0" font-size="9">class SetupStep(StepModel): ...</text>
+  <text x="420" y="214" fill="#a7f3d0" font-size="9">class SolvingStep(StepModel): ...</text>
+  <text x="420" y="228" fill="#a7f3d0" font-size="9">class ResultsStep(StepModel): ...</text>
+
+  <rect x="410" y="250" width="300" height="60" rx="6" fill="#0f172a"/>
+  <text x="420" y="268" fill="#64748b" font-size="9">Example scenarios:</text>
+  <text x="420" y="286" fill="#94a3b8" font-size="9">• Multi-physics (EM → thermal → structural)</text>
+  <text x="420" y="300" fill="#94a3b8" font-size="9">• CAD import → meshing → solving → post</text>
+</svg>

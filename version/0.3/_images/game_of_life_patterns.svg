@@ -1,0 +1,140 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 420" width="780" height="420" role="img" aria-labelledby="golPatternsTitle golPatternsDesc">
+  <title id="golPatternsTitle">Game of Life starting patterns: blinker and glider</title>
+  <desc id="golPatternsDesc">The blinker oscillator flips between a horizontal and a vertical bar every generation, returning to its original shape after two generations. The glider spaceship reproduces its original shape shifted one cell diagonally after four generations.</desc>
+
+  <defs>
+    <marker id="golpArrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#9aa0a6"/>
+    </marker>
+    <g id="golpGrid5">
+      <rect x="0" y="0" width="90" height="90" fill="#9aa0a6" fill-opacity="0.08"/>
+      <path d="M0 0H90 M0 18H90 M0 36H90 M0 54H90 M0 72H90 M0 90H90 M0 0V90 M18 0V90 M36 0V90 M54 0V90 M72 0V90 M90 0V90"
+            fill="none" stroke="#9aa0a6" stroke-width="1"/>
+    </g>
+    <g id="golpGrid6">
+      <rect x="0" y="0" width="108" height="108" fill="#9aa0a6" fill-opacity="0.08"/>
+      <path d="M0 0H108 M0 18H108 M0 36H108 M0 54H108 M0 72H108 M0 90H108 M0 108H108 M0 0V108 M18 0V108 M36 0V108 M54 0V108 M72 0V108 M90 0V108 M108 0V108"
+            fill="none" stroke="#9aa0a6" stroke-width="1"/>
+    </g>
+  </defs>
+
+  <g font-family="Segoe UI, Helvetica, Arial, sans-serif" fill="#8a58b6">
+
+    <!-- ================= Blinker ================= -->
+    <text x="40" y="28" font-size="17" font-weight="600" fill="#8a58b6">Blinker — an oscillator of period 2</text>
+    <text x="40" y="50" font-size="14.5" fill="#83888d">Three cells in a row flip between horizontal and vertical, forever.</text>
+
+    <!-- generation 0 -->
+    <g transform="translate(211,70)">
+      <use href="#golpGrid5"/>
+      <g fill="#8a58b6">
+        <rect x="19" y="37" width="16" height="16" rx="2"/>
+        <rect x="37" y="37" width="16" height="16" rx="2"/>
+        <rect x="55" y="37" width="16" height="16" rx="2"/>
+      </g>
+      <text x="45" y="108" font-size="12.5" fill="#9aa0a6" text-anchor="middle">generation 0</text>
+    </g>
+    <line x1="306" y1="115" x2="336" y2="115" stroke="#9aa0a6" stroke-width="2" marker-end="url(#golpArrow)"/>
+
+    <!-- generation 1 -->
+    <g transform="translate(335,70)">
+      <use href="#golpGrid5"/>
+      <g fill="#8a58b6">
+        <rect x="37" y="19" width="16" height="16" rx="2"/>
+        <rect x="37" y="37" width="16" height="16" rx="2"/>
+        <rect x="37" y="55" width="16" height="16" rx="2"/>
+      </g>
+      <text x="45" y="108" font-size="12.5" fill="#9aa0a6" text-anchor="middle">generation 1</text>
+    </g>
+    <line x1="430" y1="115" x2="460" y2="115" stroke="#9aa0a6" stroke-width="2" marker-end="url(#golpArrow)"/>
+
+    <!-- generation 2 -->
+    <g transform="translate(459,70)">
+      <use href="#golpGrid5"/>
+      <g fill="#8a58b6">
+        <rect x="19" y="37" width="16" height="16" rx="2"/>
+        <rect x="37" y="37" width="16" height="16" rx="2"/>
+        <rect x="55" y="37" width="16" height="16" rx="2"/>
+      </g>
+      <text x="45" y="108" font-size="12.5" fill="#9aa0a6" text-anchor="middle">generation 2</text>
+    </g>
+    <text x="562" y="119" font-size="13" fill="#FFB71B" font-weight="600">back to the start</text>
+
+    <line x1="40" y1="205" x2="740" y2="205" stroke="#9aa0a6" stroke-width="1" stroke-opacity="0.5"/>
+
+    <!-- ================= Glider ================= -->
+    <text x="40" y="240" font-size="17" font-weight="600" fill="#8a58b6">Glider — a spaceship</text>
+    <text x="40" y="262" font-size="14.5" fill="#83888d">The shape reappears one cell down and one cell right every four generations, so it travels across the grid.</text>
+
+    <!-- generation 0 -->
+    <g transform="translate(40,282)">
+      <use href="#golpGrid6"/>
+      <g fill="#8a58b6">
+        <rect x="19" y="1" width="16" height="16" rx="2"/>
+        <rect x="37" y="19" width="16" height="16" rx="2"/>
+        <rect x="1" y="37" width="16" height="16" rx="2"/>
+        <rect x="19" y="37" width="16" height="16" rx="2"/>
+        <rect x="37" y="37" width="16" height="16" rx="2"/>
+      </g>
+      <text x="54" y="126" font-size="12.5" fill="#9aa0a6" text-anchor="middle">generation 0</text>
+    </g>
+    <line x1="158" y1="336" x2="188" y2="336" stroke="#9aa0a6" stroke-width="2" marker-end="url(#golpArrow)"/>
+
+    <!-- generation 1 -->
+    <g transform="translate(192,282)">
+      <use href="#golpGrid6"/>
+      <g fill="#8a58b6">
+        <rect x="1" y="19" width="16" height="16" rx="2"/>
+        <rect x="37" y="19" width="16" height="16" rx="2"/>
+        <rect x="19" y="37" width="16" height="16" rx="2"/>
+        <rect x="37" y="37" width="16" height="16" rx="2"/>
+        <rect x="19" y="55" width="16" height="16" rx="2"/>
+      </g>
+      <text x="54" y="126" font-size="12.5" fill="#9aa0a6" text-anchor="middle">generation 1</text>
+    </g>
+    <line x1="310" y1="336" x2="340" y2="336" stroke="#9aa0a6" stroke-width="2" marker-end="url(#golpArrow)"/>
+
+    <!-- generation 2 -->
+    <g transform="translate(344,282)">
+      <use href="#golpGrid6"/>
+      <g fill="#8a58b6">
+        <rect x="37" y="19" width="16" height="16" rx="2"/>
+        <rect x="1" y="37" width="16" height="16" rx="2"/>
+        <rect x="37" y="37" width="16" height="16" rx="2"/>
+        <rect x="19" y="55" width="16" height="16" rx="2"/>
+        <rect x="37" y="55" width="16" height="16" rx="2"/>
+      </g>
+      <text x="54" y="126" font-size="12.5" fill="#9aa0a6" text-anchor="middle">generation 2</text>
+    </g>
+    <line x1="462" y1="336" x2="492" y2="336" stroke="#9aa0a6" stroke-width="2" marker-end="url(#golpArrow)"/>
+
+    <!-- generation 3 -->
+    <g transform="translate(496,282)">
+      <use href="#golpGrid6"/>
+      <g fill="#8a58b6">
+        <rect x="19" y="19" width="16" height="16" rx="2"/>
+        <rect x="37" y="37" width="16" height="16" rx="2"/>
+        <rect x="55" y="37" width="16" height="16" rx="2"/>
+        <rect x="19" y="55" width="16" height="16" rx="2"/>
+        <rect x="37" y="55" width="16" height="16" rx="2"/>
+      </g>
+      <text x="54" y="126" font-size="12.5" fill="#9aa0a6" text-anchor="middle">generation 3</text>
+    </g>
+    <line x1="614" y1="336" x2="644" y2="336" stroke="#9aa0a6" stroke-width="2" marker-end="url(#golpArrow)"/>
+
+    <!-- generation 4 -->
+    <g transform="translate(648,282)">
+      <use href="#golpGrid6"/>
+      <g fill="#8a58b6">
+        <rect x="37" y="19" width="16" height="16" rx="2"/>
+        <rect x="55" y="37" width="16" height="16" rx="2"/>
+        <rect x="19" y="55" width="16" height="16" rx="2"/>
+        <rect x="37" y="55" width="16" height="16" rx="2"/>
+        <rect x="55" y="55" width="16" height="16" rx="2"/>
+      </g>
+      <rect x="17" y="17" width="56" height="56" fill="none" stroke="#FFB71B" stroke-width="2" stroke-dasharray="4 3"/>
+      <text x="54" y="126" font-size="12.5" fill="#FFB71B" text-anchor="middle" font-weight="600">generation 4</text>
+    </g>
+
+  </g>
+</svg>

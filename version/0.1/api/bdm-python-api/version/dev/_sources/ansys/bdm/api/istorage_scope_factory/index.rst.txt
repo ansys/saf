@@ -1,0 +1,80 @@
+
+
+
+
+
+
+The ``istorage_scope_factory.py`` module
+========================================
+
+.. py:module:: ansys.bdm.api.istorage_scope_factory
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: istorage_scope_factory
+.. tab-set::
+
+
+
+    .. tab-item:: Interfaces
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.bdm.api.istorage_scope_factory.IReadStorageScopeFactory`
+            - Factory pattern for creating instances of IReadStorageScope and IAsyncReadStorageScope.
+
+
+          * - :py:obj:`~ansys.bdm.api.istorage_scope_factory.IStorageScopeFactory`
+            - Factory pattern for creating instances of IStorageScope and IAsyncStorageScope.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_interface"></span> IReadStorageScopeFactory</ansys/bdm/api/istorage_scope_factory/IReadStorageScopeFactory>
+    <span class="nf nf-cod-symbol_interface"></span> IStorageScopeFactory</ansys/bdm/api/istorage_scope_factory/IStorageScopeFactory>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

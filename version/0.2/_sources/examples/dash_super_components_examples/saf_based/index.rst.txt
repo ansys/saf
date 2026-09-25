@@ -1,0 +1,79 @@
+
+
+.. _sphx_glr_examples_dash_super_components_examples_saf_based:
+
+SAF examples
+============
+
+These examples demonstrate the usage of Dash Super Components that
+integrate directly with the Solutions Application Framework (SAF) GLOW API.
+They embed a lightweight mock GLOW server so you can run them without a real SAF installation.
+
+Download any example as a Python script or Jupyter notebook and run it on your machine once DDash Super Components is installed.
+
+
+.. seealso::
+
+
+ For examples on how to use  Dash Super Components within a full SAF solution, see the
+ `showcase application <https://github.com/ansys/saf/tree/main/packages/dash-super-components/examples/showcase_all>`_
+ in the repository.
+
+.. raw:: html
+
+  <div id='sg-tag-list' class='sphx-glr-tag-list'></div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbnails">
+
+.. thumbnail-parent-div-open
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="A minimal Dash app showing how to use the TransactionMethodStatusBadge component to display the status of a SAF transaction method as a compact badge.">
+
+.. only:: html
+
+  .. image:: /examples/dash_super_components_examples/saf_based/images/thumb/sphx_glr_example_transaction_method_status_badge_thumb.png
+    :alt:
+
+  :doc:`/examples/dash_super_components_examples/saf_based/example_transaction_method_status_badge`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Transaction Method Status Badge</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="A minimal Dash app showing how to use TransactionSupervisor to monitor the progress of a SAF transaction method.">
+
+.. only:: html
+
+  .. image:: /examples/dash_super_components_examples/saf_based/images/thumb/sphx_glr_example_transaction_supervisor_thumb.png
+    :alt:
+
+  :doc:`/examples/dash_super_components_examples/saf_based/example_transaction_supervisor`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Transaction Supervisor</div>
+    </div>
+
+
+.. thumbnail-parent-div-close
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /examples/dash_super_components_examples/saf_based/example_transaction_method_status_badge
+   /examples/dash_super_components_examples/saf_based/example_transaction_supervisor
+

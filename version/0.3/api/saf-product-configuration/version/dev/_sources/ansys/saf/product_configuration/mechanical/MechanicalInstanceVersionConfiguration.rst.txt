@@ -1,0 +1,374 @@
+
+
+
+
+
+
+:class:`MechanicalInstanceVersionConfiguration`
+===============================================
+
+
+.. py:class:: ansys.saf.product_configuration.mechanical.MechanicalInstanceVersionConfiguration(version: str)
+
+   Bases: :py:obj:`ansys.saf.product_configuration.interfaces.IProductInstanceVersionConfiguration`
+
+
+   
+   Configuration class for a specific version of Ansys Mechanical with secure gRPC connections.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: MechanicalInstanceVersionConfiguration
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~service_name`
+            - The name of the service associated with the Mechanical instance.
+          * - :py:attr:`~execution_command`
+            - The command to launch Mechanical.
+          * - :py:attr:`~environment`
+            - Environment variables for the Mechanical instance.
+          * - :py:attr:`~software_requirements`
+            - Required software to run Mechanical in HPS.
+          * - :py:attr:`~exe_path_for_pim`
+            - Path to the Mechanical executable.
+          * - :py:attr:`~service_type`
+            - Service type use for the health check.
+          * - :py:attr:`~enable_secure_flags`
+            - Enable secure communication with the Mechanical service.
+          * - :py:attr:`~linux_local_secure_flags`
+            - The command line arguments needed to configure the product instance for secure local communication on
+          * - :py:attr:`~windows_local_secure_flags`
+            - The command line arguments needed to configure the product instance for secure local communication on
+          * - :py:attr:`~remote_secure_flags`
+            - The command line arguments needed to configure the product instance for secure remote communication.
+          * - :py:attr:`~insecure_flags`
+            - The command line arguments needed to configure the product instance for insecure communication.
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.saf.product_configuration.mechanical import MechanicalInstanceVersionConfiguration
+
+Property detail
+---------------
+
+.. py:property:: service_name
+   :type: str
+
+
+   
+   The name of the service associated with the Mechanical instance.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: execution_command
+   :type: str
+
+
+   
+   The command to launch Mechanical.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: environment
+   :type: dict[str, str]
+
+
+   
+   Environment variables for the Mechanical instance.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: software_requirements
+   :type: list[ansys.saf.product_configuration.interfaces.ISoftware]
+
+
+   
+   Required software to run Mechanical in HPS.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: exe_path_for_pim
+   :type: str
+
+
+   
+   Path to the Mechanical executable.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: service_type
+   :type: ansys.saf.product_configuration.interfaces.ServiceType
+
+
+   
+   Service type use for the health check.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: enable_secure_flags
+   :type: bool
+
+
+   
+   Enable secure communication with the Mechanical service.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: linux_local_secure_flags
+   :type: str
+
+
+   
+   The command line arguments needed to configure the product instance for secure local communication on
+   Linux.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: windows_local_secure_flags
+   :type: str
+
+
+   
+   The command line arguments needed to configure the product instance for secure local communication on
+   Windows.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: remote_secure_flags
+   :type: str
+
+
+   
+   The command line arguments needed to configure the product instance for secure remote communication.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: insecure_flags
+   :type: str
+
+
+   
+   The command line arguments needed to configure the product instance for insecure communication.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+
+

@@ -1,0 +1,120 @@
+
+
+
+
+
+
+:class:`OptislangInstance`
+==========================
+
+
+.. py:class:: ansys.saf.product_configuration.wrappers.optislang.OptislangInstance
+
+
+.. py:currentmodule:: OptislangInstance
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~get_connection_info`
+            - 
+          * - :py:attr:`~start`
+            - 
+          * - :py:attr:`~close_optislang`
+            - 
+          * - :py:attr:`~shutdown`
+            - 
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~port`
+            - 
+          * - :py:attr:`~host`
+            - 
+          * - :py:attr:`~local_server_id`
+            - 
+          * - :py:attr:`~connection_mode`
+            - 
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~osl_log_path`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.saf.product_configuration.wrappers.optislang import OptislangInstance
+
+Property detail
+---------------
+
+.. py:property:: port
+   :type: int | None
+
+
+.. py:property:: host
+   :type: str | None
+
+
+.. py:property:: local_server_id
+   :type: str | None
+
+
+.. py:property:: connection_mode
+   :type: str | None
+
+
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: osl_log_path
+   :type:  pathlib.Path | None
+   :value: None
+
+
+
+
+Method detail
+-------------
+
+.. py:method:: get_connection_info() -> dict[str, Any]
+
+.. py:method:: start(project_path: pathlib.Path, project_properties_file: pathlib.Path, input_files: list[pathlib.Path], osl_version: int, loglevel: str, connection_mode: str, log_file_path: pathlib.Path | None) -> None
+
+.. py:method:: close_optislang()
+
+.. py:method:: shutdown()
+
+
+
+

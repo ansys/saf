@@ -1,0 +1,88 @@
+
+
+
+
+
+
+The ``ui.py`` module
+====================
+
+.. py:module:: ansys.saf.glow.ui
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+.. py:currentmodule:: ui
+.. tab-set::
+
+
+
+
+
+
+
+
+    .. tab-item:: Attributes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~logger`
+            - 
+
+
+          * - :py:obj:`~settings`
+            - 
+
+
+          * - :py:obj:`~ui_app`
+            - 
+
+
+          * - :py:obj:`~app`
+            - 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Module detail
+-------------
+
+.. py:data:: logger
+
+.. py:data:: settings
+
+.. py:data:: ui_app
+
+.. py:data:: app
+
+
+

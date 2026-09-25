@@ -1,0 +1,118 @@
+
+
+
+
+
+
+The ``ansys.saf.product_manager`` library
+=========================================
+
+.. py:module:: ansys.saf.product_manager
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+.. py:currentmodule:: product_manager
+.. tab-set::
+
+    .. tab-item:: Subpackages
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.saf.product_manager.aedt`
+            - 
+
+
+          * - :py:obj:`~ansys.saf.product_manager.fluent`
+            - 
+
+
+          * - :py:obj:`~ansys.saf.product_manager.geometry`
+            - 
+
+
+          * - :py:obj:`~ansys.saf.product_manager.mapdl`
+            - 
+
+
+          * - :py:obj:`~ansys.saf.product_manager.mechanical`
+            - 
+
+
+          * - :py:obj:`~ansys.saf.product_manager.optislang_wrapper`
+            - 
+
+
+          * - :py:obj:`~ansys.saf.product_manager.visor`
+            - 
+
+
+
+
+
+
+
+
+
+    .. tab-item:: Attributes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~__version__`
+            - 
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-md-package"></span> aedt</ansys/saf/product_manager/aedt/index>
+    <span class="nf nf-md-package"></span> fluent</ansys/saf/product_manager/fluent/index>
+    <span class="nf nf-md-package"></span> geometry</ansys/saf/product_manager/geometry/index>
+    <span class="nf nf-md-package"></span> mapdl</ansys/saf/product_manager/mapdl/index>
+    <span class="nf nf-md-package"></span> mechanical</ansys/saf/product_manager/mechanical/index>
+    <span class="nf nf-md-package"></span> optislang_wrapper</ansys/saf/product_manager/optislang_wrapper/index>
+    <span class="nf nf-md-package"></span> visor</ansys/saf/product_manager/visor/index>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Module detail
+-------------
+
+.. py:data:: __version__
+
+
+

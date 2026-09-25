@@ -1,0 +1,1438 @@
+<!--
+Copyright (C) 2026 ANSYS, Inc. and/or its affiliates.
+SPDX-License-Identifier: Apache-2.0
+
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+ <!-- ©2026, ANSYS Inc. Unauthorized use, distribution or duplication is prohibited. -->
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" data-theme="dark">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Solution projects API &#8212; SAF Doc</title>
+  
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "dark";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "dark";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/ansys-sphinx-theme.css?v=f424389c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=c83e6b79" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/ansys-sphinx-theme.css?v=f424389c" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://www.nerdfonts.com/assets/css/webfont.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/code-tabs.css?v=1bc26e2f" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=2d2447fe" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/carousel.css?v=272b576a" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/landing_page_banner.css?v=57c45261" />
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../../_static/scripts/fontawesome.js?digest=90905a2f556bf617f1a9"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
+
+
+  <!-- Include desired assets -->
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  
+
+  
+    <link href="../../../_static/css/breadcrumbs.css" rel="stylesheet" />
+  
+    <script src="../../../_static/documentation_options.js?v=8a448e45"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=49e1bf35"></script>
+    <script src="../../../_static/sg-tags.js?v=d80f6fa4"></script>
+    <script src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
+    <script src="../../../_static/code-tabs.js?v=c983d12e"></script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'user_guide/backend/apis/projects_api';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.20.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://saf.ansys.com/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.3';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <script src="../../../_static/js/sidebar-always-expanded.js?v=6b23dfe7"></script>
+    <script src="../../../_static/js/sdI_button_ref_tooltips.js?v=091f9e4c"></script>
+    <script src="../../../_static/js/primary-sidebar-sticky-offset.js?v=7ecdf44c"></script>
+    <link rel="icon" href="../../../_static/ansys-favicon.png"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="MCP server" href="mcp_server.html" />
+    <link rel="prev" title="Solution REST API" href="rest_api.html" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.3.0" />
+  
+    
+    <script src="../../../_static/searchtools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <script src="../../../searchindex.js"></script>
+  
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+
+  <link rel="canonical" href="https://saf.ansys.com/version/stable/user_guide/backend/apis/projects_api.html" />
+  </head>
+  <body data-default-mode="dark">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+  
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+    
+    <img src="../../../_static/endorsed-ansys-logos-gold-white-rgb.svg" class="logo__image only-dark" alt="SAF Doc - Home"/>
+    <img src="../../../_static/endorsed-ansys-logos-gold-black-rgb.svg" class="logo__image only-light pst-js-only" alt="SAF Doc - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../index.html" title="SAF Doc home">Home</a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../overview/index.html">
+    Overview
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../getting_started/index.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../index.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api/index.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../contribute/index.html">
+    Contribute
+  </a>
+</li>
+
+  </ul>
+</nav>
+</div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+      
+        <div class="navbar-item">
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../../../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+  
+</div></div>
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/saf" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+  
+
+  
+
+
+
+
+
+
+
+
+
+<div class="ast-announcement-wrap" role="region" aria-label="Announcement" hidden>
+    <div class="ast-announcement info">
+        <span class="ast-announcement-icon" aria-hidden="true"></span>
+        <span class="ast-announcement-text" id="ast-announcement-text"></span>
+        <!-- djlint:off H021-->
+        <!-- for inline styles -->
+        <a class="ast-announcement-details-btn" id="ast-announcement-details-btn"
+           href=""
+           data-ast-url=""
+           aria-label="View notifications"
+           style="display:none">View</a>
+        <!-- djlint:on -->
+        <!-- djlint:off H023-->
+        <!-- use entity reference for &times; -->
+        <button class="ast-announcement-close" id="ast-announcement-close" aria-label="Close announcement">&times;</button>
+        <!-- djlint:on -->
+    </div>
+</div>
+
+<!-- Modal overlay -->
+<!-- djlint:off H023-->
+<!-- use entity reference for &times; -->
+<div class="ast-announcement-overlay" id="ast-announcement-overlay" role="dialog" aria-modal="true" aria-label="Announcement details">
+    <div class="ast-announcement-modal info">
+        <div class="ast-announcement-modal-body"
+             data-ast-items='[]'>
+        </div>
+        <button class="ast-announcement-modal-close" id="ast-announcement-modal-close" aria-label="Close">&times;</button>
+    </div>
+</div>
+<!-- djlint:on -->
+
+<script src="../../../_static/js/announcement_banner.js"
+        data-base-url="../../../"></script>
+
+  <div class="header-nav-banner d-print-none">
+    <div class="header-nav-banner__inner">
+      <div class="header-nav-banner__crumbs">
+        
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+     
+    <li class="breadcrumb-item breadcrumb-home">
+      <a
+        href="../../../index.html"
+        class="nav-link"
+        aria-label="Home"
+      >
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="../../index.html" class="nav-link">User guide</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="../index.html" class="nav-link">Backend development</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="index.html" class="nav-link">APIs</a>
+    </li>
+      
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Solution projects API</span></li>
+    
+  </ul>
+</nav>
+
+      </div>
+    </div>
+  </div>
+
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../index.html" title="SAF Doc home">Home</a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../overview/index.html">
+    Overview
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../getting_started/index.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../index.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api/index.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../contribute/index.html">
+    Contribute
+  </a>
+</li>
+
+  </ul>
+</nav>
+</div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../../../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+  
+</div></div>
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/saf" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item pst-sidebar-collapse"><button id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar">
+  <svg class="pst-icon" role="img" aria-hidden="true" focusable="false" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="M3 15.5C2.36232 15.5 1.74874 15.2564 1.28478 14.8189C0.820828 14.3815 0.541576 13.7832 0.504167 13.1467L0.5 13L0.5 3C0.499965 2.36232 0.743605 1.74874 1.18107 1.28478C1.61854 0.820828 2.21676 0.541576 2.85333 0.504167L3 0.5L13 0.5C13.6377 0.499965 14.2513 0.743605 14.7152 1.18107C15.1792 1.61854 15.4584 2.21676 15.4958 2.85333L15.5 3L15.5 13C15.5 13.6377 15.2564 14.2513 14.8189 14.7152C14.3815 15.1792 13.7832 15.4584 13.1467 15.4958L13 15.5L3 15.5ZM3 13.8333L10.5 13.8333L10.5 2.16667L3 2.16667C2.79589 2.16669 2.59889 2.24163 2.44636 2.37726C2.29383 2.5129 2.19638 2.69979 2.1725 2.9025L2.16667 3L2.16667 13C2.16669 13.2041 2.24163 13.4011 2.37726 13.5536C2.5129 13.7062 2.69979 13.8036 2.9025 13.8275L3 13.8333ZM6.65583 10.325L6.5775 10.2558L4.91083 8.58917C4.76735 8.44567 4.68116 8.25476 4.66843 8.05223C4.65569 7.84971 4.71729 7.6495 4.84167 7.48917L4.91083 7.41083L6.5775 5.74417C6.72747 5.59471 6.9287 5.50794 7.14032 5.50148C7.35194 5.49502 7.55809 5.56935 7.7169 5.70937C7.8757 5.8494 7.97525 6.04463 7.99533 6.25539C8.01541 6.46616 7.95451 6.67667 7.825 6.84417L7.75583 6.9225L6.67917 8L7.75583 9.0775C7.89931 9.22099 7.98551 9.41191 7.99824 9.61443C8.01097 9.81695 7.94938 10.0172 7.825 10.1775L7.75583 10.2558C7.61234 10.3993 7.42142 10.4855 7.2189 10.4982C7.01638 10.511 6.81617 10.4494 6.65583 10.325Z"/>
+  </svg>
+  <span class="pst-collapse-sidebar-label">Collapse Sidebar</span>
+  <span class="pst-expand-sidebar-label">Expand Sidebar</span>
+</button></div>
+        <div class="sidebar-primary-item">
+
+
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../scaffold.html">Scaffold</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../run_locally/index.html">Run locally</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../projects.html">Manage projects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../debug/index.html">Debug</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../test/index.html">Test</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../add_step.html">Add steps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../package/index.html">Package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../deploy/index.html">Deploy</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../index.html">Backend development</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../workflow_definition/index.html">Workflow definition</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../blob_management/index.html">Blob Data Management (BDM)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../ip_protection.html">IP protection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../instance_management/index.html">Instance management</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../job_submission/index.html">Job submission</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_management/index.html">Data management</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../authn_authz/index.html">Authentication and authorization</a></li>
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="index.html">APIs</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="rest_api.html">Solution REST API</a></li>
+<li class="toctree-l3 current active"><a class="current reference internal" href="#">Solution projects API</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mcp_server.html">MCP server</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../frontend/index.html">Frontend development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../environment_variables.html">Environment variables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../solution_servers.html">Solution servers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../script.html">Script a solution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../supported_software.html">Supported software</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../components.html">SAF components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../best_practices/index.html">Best practices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../migration/index.html">Migration guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting/index.html">Troubleshooting guide</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+     
+    <li class="breadcrumb-item breadcrumb-home">
+      <a
+        href="../../../index.html"
+        class="nav-link"
+        aria-label="Home"
+      >
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="../../index.html" class="nav-link">User guide</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="../index.html" class="nav-link">Backend development</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="index.html" class="nav-link">APIs</a>
+    </li>
+      
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Solution projects API</span></li>
+    
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+  
+
+  
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="solution-projects-api">
+<span id="id1"></span><h1>Solution projects API<a class="headerlink" href="#solution-projects-api" title="Link to this heading">#</a></h1>
+<p>SAF GLOW Engine supports and provides persistence for an arbitrary set of solution instances called <em class="dfn">projects</em>.
+A project consists of the project data and project files.</p>
+<p>The contents of the project data are determined by the data schema in the solution definition.
+Once you’ve created a project, you can use GLOW’s Client API and REST API to manipulate its contents.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>Do not modify or delete projects manually by directly editing or removing the project data or files, as this may invalidate the state of the project or its contents.
+Make sure that you perform all project operations either from the Client or Solution UI (where applicable).</p>
+</div>
+<section id="create-a-project">
+<h2>Create a project<a class="headerlink" href="#create-a-project" title="Link to this heading">#</a></h2>
+<p>You can create a project either using the client or via the REST interface.</p>
+<section id="create-a-project-using-the-python-client">
+<h3>Create a project using the Python client<a class="headerlink" href="#create-a-project-using-the-python-client" title="Link to this heading">#</a></h3>
+<p>The following example creates a project with <code class="docutils literal notranslate"><span class="pre">My</span> <span class="pre">Solution</span></code> as <code class="docutils literal notranslate"><span class="pre">display_name</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ansys.saf.glow.client</span><span class="w"> </span><span class="kn">import</span> <span class="n">Client</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.solutions.example.solution.definition</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExampleSolution</span>
+
+<span class="n">client</span> <span class="o">=</span> <span class="n">Client</span><span class="p">(</span><span class="n">ExampleSolution</span><span class="p">,</span> <span class="s2">"http://localhost:5432"</span><span class="p">)</span>
+<span class="n">my_project</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">create_project</span><span class="p">(</span><span class="n">display_name</span><span class="o">=</span><span class="s2">"My Solution"</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>You can also provide an optional <code class="docutils literal notranslate"><span class="pre">description</span></code> for the project:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">my_project</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">create_project</span><span class="p">(</span><span class="n">display_name</span><span class="o">=</span><span class="s2">"My Solution"</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">"A detailed description of the project"</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="create-a-project-using-the-rest-api">
+<h3>Create a project using the REST API<a class="headerlink" href="#create-a-project-using-the-rest-api" title="Link to this heading">#</a></h3>
+<p>Create a project using the HTTP <code class="docutils literal notranslate"><span class="pre">POST</span></code> request to the <code class="docutils literal notranslate"><span class="pre">/projects</span></code> endpoint.</p>
+<p>You can use the Open API UI (see <a class="reference internal" href="rest_api.html#solution-rest-api"><span class="std std-ref">Solution REST API</span></a>) to invoke this <code class="docutils literal notranslate"><span class="pre">POST</span></code> operation as follows:</p>
+<ol class="arabic">
+<li><p>Expand the <code class="docutils literal notranslate"><span class="pre">POST</span></code> request section of <code class="docutils literal notranslate"><span class="pre">Create</span> <span class="pre">Project</span></code>.</p></li>
+<li><p>Click <span class="guilabel">Try it out</span>.</p></li>
+<li><p>Under <span class="guilabel">Request body</span>, enter the project <code class="docutils literal notranslate"><span class="pre">display_name</span></code> and optionally a <code class="docutils literal notranslate"><span class="pre">description</span></code>.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="s2">"display_name"</span><span class="p">:</span> <span class="s2">"my project"</span><span class="p">,</span>
+  <span class="s2">"description"</span><span class="p">:</span> <span class="s2">"A detailed description of the project"</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+<li><p>Click <span class="guilabel">Execute</span>.</p>
+<p>Under <span class="guilabel">Response body</span>, the information of the created project is shown:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">"display_name"</span><span class="p">:</span> <span class="s2">"test project"</span><span class="p">,</span>
+    <span class="s2">"description"</span><span class="p">:</span> <span class="s2">"A detailed description of the project"</span><span class="p">,</span>
+    <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"projects/6638ce7177e87f72ac4bbab3"</span><span class="p">,</span>
+    <span class="s2">"date_created"</span><span class="p">:</span> <span class="s2">"2024-01-01T01:02:03.000004"</span><span class="p">,</span>
+    <span class="s2">"date_modified"</span><span class="p">:</span> <span class="s2">"2024-01-01T01:02:03.000004"</span><span class="p">,</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+</ol>
+<p>When a project is created using the REST API, a project is created in GLOW’s data repository and a project folder for its files is created by default in <code class="docutils literal notranslate"><span class="pre">glow_appdata_directory</span></code>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The response contains the project <code class="docutils literal notranslate"><span class="pre">name</span></code> (for example, <code class="docutils literal notranslate"><span class="pre">projects/6638ce7177e87f72ac4bbab3</span></code>) generated by GLOW.
+The <code class="docutils literal notranslate"><span class="pre">project_id</span></code> is an alphanumeric string at the end of a project’s <code class="docutils literal notranslate"><span class="pre">name</span></code> value. In the example above, the <code class="docutils literal notranslate"><span class="pre">project_id</span></code> is <code class="docutils literal notranslate"><span class="pre">6638ce7177e87f72ac4bbab3</span></code>.
+This is a unique identifier, required in other requests to handle the project.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><code class="docutils literal notranslate"><span class="pre">display_name</span></code> is not a unique identifier. SAF GLOW Engine allows you to create and import multiple projects with the same <code class="docutils literal notranslate"><span class="pre">display_name</span></code>.</p>
+</div>
+</section>
+</section>
+<section id="get-a-project">
+<h2>Get a project<a class="headerlink" href="#get-a-project" title="Link to this heading">#</a></h2>
+<p>You can retrieve an existing project using the client or via the REST interface.</p>
+<section id="get-a-project-using-the-python-client">
+<h3>Get a project using the Python client<a class="headerlink" href="#get-a-project-using-the-python-client" title="Link to this heading">#</a></h3>
+<p>The following example retrieves the project with id <code class="docutils literal notranslate"><span class="pre">6638ce7177e87f72ac4bbab3</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ansys.saf.glow.client</span><span class="w"> </span><span class="kn">import</span> <span class="n">Client</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.solutions.example.solution.definition</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExampleSolution</span>
+
+<span class="n">client</span> <span class="o">=</span> <span class="n">Client</span><span class="p">(</span><span class="n">ExampleSolution</span><span class="p">,</span> <span class="s2">"http://localhost:5432"</span><span class="p">)</span>
+<span class="n">my_project</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_project</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">"projects/6638ce7177e87f72ac4bbab3"</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Once you retrieve a project, you can access its metadata properties:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Access project properties</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">my_project</span><span class="o">.</span><span class="n">project_id</span><span class="p">)</span>  <span class="c1"># Output: "6638ce7177e87f72ac4bbab3"</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">my_project</span><span class="o">.</span><span class="n">project_name</span><span class="p">)</span>  <span class="c1"># Output: "projects/6638ce7177e87f72ac4bbab3"</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">my_project</span><span class="o">.</span><span class="n">project_display_name</span><span class="p">)</span>  <span class="c1"># Output: "E-Motor"</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">my_project</span><span class="o">.</span><span class="n">project_description</span><span class="p">)</span>  <span class="c1"># Output: "Updated motor design and thermal analysis"</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">my_project</span><span class="o">.</span><span class="n">date_created</span><span class="p">)</span>  <span class="c1"># Output: "2023-01-01T01:02:03.000004"</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">my_project</span><span class="o">.</span><span class="n">date_modified</span><span class="p">)</span>  <span class="c1"># Output: "2024-02-02T01:02:03.000004"</span>
+</pre></div>
+</div>
+</section>
+<section id="get-a-project-using-the-rest-api">
+<h3>Get a project using the REST API<a class="headerlink" href="#get-a-project-using-the-rest-api" title="Link to this heading">#</a></h3>
+<p>Get a project using the <code class="docutils literal notranslate"><span class="pre">GET</span></code> request. In the OpenAPI UI:</p>
+<ol class="arabic">
+<li><p>Expand the <code class="docutils literal notranslate"><span class="pre">GET</span></code> section of <code class="docutils literal notranslate"><span class="pre">Get</span> <span class="pre">Project</span></code>.</p></li>
+<li><p>Click <span class="guilabel">Try it out</span>.</p></li>
+<li><p>Under <span class="guilabel">Parameters</span>, enter the <code class="docutils literal notranslate"><span class="pre">project_id</span></code> of an existing project.</p></li>
+<li><p>Click <span class="guilabel">Execute</span>.</p>
+<p>Under <span class="guilabel">Response body</span>, the information of the project is shown:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="s2">"display_name"</span><span class="p">:</span> <span class="s2">"Electric Motor"</span><span class="p">,</span>
+  <span class="s2">"description"</span><span class="p">:</span> <span class="s2">"A detailed description of the project"</span><span class="p">,</span>
+  <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"projects/6638ce7177e87f72ac4bbab3"</span><span class="p">,</span>
+  <span class="s2">"date_created"</span><span class="p">:</span> <span class="s2">"2023-01-01T01:02:03.000004"</span><span class="p">,</span>
+  <span class="s2">"date_modified"</span><span class="p">:</span> <span class="s2">"2023-01-01T01:02:03.000004"</span><span class="p">,</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+</ol>
+</section>
+</section>
+<section id="export-share-a-project">
+<span id="projects-export"></span><h2>Export/share a project<a class="headerlink" href="#export-share-a-project" title="Link to this heading">#</a></h2>
+<p>You can collaborate with others by packaging and sharing projects. A project package (<code class="docutils literal notranslate"><span class="pre">.safx</span></code> file) allows you to share a complete project.</p>
+<p>To create a <code class="docutils literal notranslate"><span class="pre">.safx</span></code> project package, you need to export your project using either the REST API or the Python client provided by GLOW, as demonstrated below.</p>
+<p>You can then share the <code class="docutils literal notranslate"><span class="pre">.safx</span></code> file so it can be imported by other users.</p>
+<section id="export-a-project-using-the-python-client">
+<h3>Export a project using the Python client<a class="headerlink" href="#export-a-project-using-the-python-client" title="Link to this heading">#</a></h3>
+<p>You can export a project using the Python client, as shown in the following example. This example exports an existing project,
+with <code class="docutils literal notranslate"><span class="pre">projects/6638ce7177e87f72ac4bbab3</span></code> as <code class="docutils literal notranslate"><span class="pre">name</span></code> into the specified <code class="docutils literal notranslate"><span class="pre">destination_folder</span></code>.
+The name of the exported project is composed of the name of the project, followed by the <code class="docutils literal notranslate"><span class="pre">.safx</span></code> extension.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.saf.glow.client</span><span class="w"> </span><span class="kn">import</span> <span class="n">Client</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.solutions.example.solution.definition</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExampleSolution</span>
+
+<span class="n">client</span> <span class="o">=</span> <span class="n">Client</span><span class="p">(</span><span class="n">ExampleSolution</span><span class="p">,</span> <span class="s2">"http://localhost:5432"</span><span class="p">)</span>
+<span class="n">my_project</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_project</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">"projects/6638ce7177e87f72ac4bbab3"</span><span class="p">)</span>
+<span class="n">destination_folder</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">"D:/SAF"</span><span class="p">)</span>
+<span class="c1"># Export the project into D:/SAF/my_project.safx</span>
+<span class="n">my_project</span><span class="o">.</span><span class="n">export</span><span class="p">(</span><span class="n">destination</span><span class="o">=</span><span class="n">destination_folder</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="export-a-project-using-the-rest-api">
+<h3>Export a project using the REST API<a class="headerlink" href="#export-a-project-using-the-rest-api" title="Link to this heading">#</a></h3>
+<p>You can export a project using the following REST API endpoint:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">localhost</span><span class="p">:</span><span class="mi">5432</span><span class="o">/</span><span class="n">projects</span><span class="o">/</span><span class="mi">6638</span><span class="n">ce7177e87f72ac4bbab3</span><span class="p">:</span><span class="n">export</span>
+</pre></div>
+</div>
+<p>where <code class="docutils literal notranslate"><span class="pre">projects/6638ce7177e87f72ac4bbab3</span></code> is the project <code class="docutils literal notranslate"><span class="pre">name</span></code>.</p>
+<p class="rubric">Use curl</p>
+<p>YOu can also export a project using <code class="docutils literal notranslate"><span class="pre">curl</span></code>. The following example exports a project using <code class="docutils literal notranslate"><span class="pre">curl</span></code> and saves it into <code class="docutils literal notranslate"><span class="pre">D:/SAF/my_project.safx</span></code>.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>curl<span class="w"> </span>-X<span class="w"> </span><span class="s1">'GET'</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="s1">'http://127.0.0.1:5432/projects/6638ce7177e87f72ac4bbab3:export'</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-H<span class="w"> </span><span class="s1">'accept: */*'</span><span class="w"> </span>-o<span class="w"> </span>D:/SAF/my_project.safx
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The name of the <code class="docutils literal notranslate"><span class="pre">.safx</span></code> file doesn’t have to match the project’s <code class="docutils literal notranslate"><span class="pre">display_name</span></code> or <code class="docutils literal notranslate"><span class="pre">name</span></code>.</p>
+</div>
+</section>
+</section>
+<section id="import-a-project-package">
+<h2>Import a project package<a class="headerlink" href="#import-a-project-package" title="Link to this heading">#</a></h2>
+<p>You can import a project package (<code class="docutils literal notranslate"><span class="pre">.safx</span></code> file) into SAF using either the REST API or the Python client provided by GLOW, as demonstrated below.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Each product instance is separated from the instance of the original project, enabling both projects (original and imported) to operate independently without any interference.</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Importing a project will trigger the <a class="reference internal" href="#upgrade-supported-modifications"><span class="std std-ref">upgrade supported modifications</span></a> as well as the applicable <a class="reference internal" href="../workflow_definition/project_migration.html#project-migration"><span class="std std-ref">project migrations</span></a> if the solution definition contains any.</p>
+</div>
+<section id="import-a-project-using-the-python-client">
+<h3>Import a project using the Python client<a class="headerlink" href="#import-a-project-using-the-python-client" title="Link to this heading">#</a></h3>
+<p>You can import a project package using the Python client, as shown in the following example. This example imports an existing <code class="docutils literal notranslate"><span class="pre">.safx</span></code> file into a project with the targeted <code class="docutils literal notranslate"><span class="pre">display_name</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.saf.glow.client</span><span class="w"> </span><span class="kn">import</span> <span class="n">Client</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.solutions.example.solution.definition</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExampleSolution</span>
+
+<span class="n">client</span> <span class="o">=</span> <span class="n">Client</span><span class="p">(</span><span class="n">ExampleSolution</span><span class="p">,</span> <span class="s2">"http://localhost:5432"</span><span class="p">)</span>
+<span class="n">safx_source</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">"D:/SAF/my_project.safx"</span><span class="p">)</span>
+<span class="n">display_name</span> <span class="o">=</span> <span class="s2">"my_project"</span>
+<span class="c1"># Import the exported .safx project into a new project with display_name my_project</span>
+<span class="n">new_project</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">import_project</span><span class="p">(</span><span class="n">safx_path</span><span class="o">=</span><span class="n">safx_source</span><span class="p">,</span> <span class="n">display_name</span><span class="o">=</span><span class="n">display_name</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="import-a-project-using-the-rest-api">
+<h3>Import a project using the REST API<a class="headerlink" href="#import-a-project-using-the-rest-api" title="Link to this heading">#</a></h3>
+<p>You can import a project package using the following REST API endpoint:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">POST</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">localhost</span><span class="p">:</span><span class="mi">5432</span><span class="o">/</span><span class="n">projects</span><span class="p">:</span><span class="kn">import</span>
+</pre></div>
+</div>
+<p>A <code class="docutils literal notranslate"><span class="pre">.safx</span></code> project file (<code class="docutils literal notranslate"><span class="pre">safx_file</span></code>) and the <code class="docutils literal notranslate"><span class="pre">display_name</span></code> of the new project must be specified.</p>
+<p>The following example imports a project using <code class="docutils literal notranslate"><span class="pre">curl</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">curl</span> <span class="o">-</span><span class="n">X</span> <span class="s1">'POST'</span> \
+    <span class="s1">'http://localhost:5432/projects:import'</span> \
+    <span class="o">-</span><span class="n">H</span> <span class="s1">'accept: application/json'</span> \
+    <span class="o">-</span><span class="n">H</span> <span class="s1">'Content-Type: multipart/form-data'</span> \
+    <span class="o">-</span><span class="n">F</span> <span class="s1">'safx_file=@transaction.safx'</span> \
+    <span class="o">-</span><span class="n">F</span> <span class="s1">'display_name=my_project'</span>
+</pre></div>
+</div>
+<p>The response contains the information of the created project:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="s2">"display_name"</span><span class="p">:</span> <span class="s2">"my_project"</span><span class="p">,</span>
+  <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"projects/6638ce7177e87f72ac4bbab3"</span><span class="p">,</span>
+  <span class="s2">"date_created"</span><span class="p">:</span> <span class="s2">"2023-01-01T01:02:03.000004"</span><span class="p">,</span>
+  <span class="s2">"date_modified"</span><span class="p">:</span> <span class="s2">"2023-01-01T01:02:03.000004"</span><span class="p">,</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>SAF GLOW Engine generates a new <code class="docutils literal notranslate"><span class="pre">project_name</span></code> for the project, discarding the one from the imported project.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>When importing a project, the <code class="docutils literal notranslate"><span class="pre">description</span></code> attribute from the original project is inherited.
+The <code class="docutils literal notranslate"><span class="pre">description</span></code> parameter is not supported during import and cannot be customized. It can be modified after the project is imported using the <a class="reference internal" href="#modify-projects-properties"><span class="std std-ref">modify project properties</span></a> API.</p>
+</div>
+</section>
+</section>
+<section id="list-projects">
+<h2>List projects<a class="headerlink" href="#list-projects" title="Link to this heading">#</a></h2>
+<p>You can list the projects corresponding to a particular Solution using the client or via the REST interface.</p>
+<section id="list-projects-of-a-solution-using-the-python-client">
+<h3>List projects of a Solution using the Python client<a class="headerlink" href="#list-projects-of-a-solution-using-the-python-client" title="Link to this heading">#</a></h3>
+<p>The following example lists all the projects for solution ExampleSolution.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ansys.saf.glow.client</span><span class="w"> </span><span class="kn">import</span> <span class="n">Client</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.solutions.example.solution.definition</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExampleSolution</span>
+
+<span class="n">client</span> <span class="o">=</span> <span class="n">Client</span><span class="p">(</span><span class="n">ExampleSolution</span><span class="p">,</span> <span class="s2">"http://localhost:5432"</span><span class="p">)</span>
+<span class="n">all_projects</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">page_size</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="c1"># List the projects page by page until all projects are retrieved</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">list_projects</span><span class="p">(</span><span class="n">page_size</span><span class="o">=</span><span class="n">page_size</span><span class="p">)</span>
+<span class="n">all_projects</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">response</span><span class="p">[</span><span class="s2">"projects"</span><span class="p">])</span>
+<span class="c1"># If there are more projects to retrieve, the total number of pages is indicated in the response.</span>
+<span class="c1"># Loop through the pages until all projects are retrieved.</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">response</span><span class="p">[</span><span class="s2">"total_pages"</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">list_projects</span><span class="p">(</span><span class="n">page_size</span><span class="o">=</span><span class="n">page_size</span><span class="p">,</span> <span class="n">page</span><span class="o">=</span><span class="n">i</span><span class="p">)</span>
+    <span class="n">all_projects</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">response</span><span class="p">[</span><span class="s2">"projects"</span><span class="p">])</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">all_projects</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>You can also sort projects with the optional <code class="docutils literal notranslate"><span class="pre">order_by</span></code> parameter.
+Each field can be followed by <code class="docutils literal notranslate"><span class="pre">asc</span></code> or <code class="docutils literal notranslate"><span class="pre">desc</span></code>.
+If no direction is provided for a field, the default is ascending order.
+Supported fields are <code class="docutils literal notranslate"><span class="pre">display_name</span></code>, <code class="docutils literal notranslate"><span class="pre">description</span></code>, <code class="docutils literal notranslate"><span class="pre">date_created</span></code>, <code class="docutils literal notranslate"><span class="pre">date_modified</span></code>, and <code class="docutils literal notranslate"><span class="pre">name</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ansys.saf.glow.client</span><span class="w"> </span><span class="kn">import</span> <span class="n">Client</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.solutions.example.solution.definition</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExampleSolution</span>
+
+<span class="n">client</span> <span class="o">=</span> <span class="n">Client</span><span class="p">(</span><span class="n">ExampleSolution</span><span class="p">,</span> <span class="s2">"http://localhost:5432"</span><span class="p">)</span>
+<span class="c1"># Sort by latest modification date first</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">list_projects</span><span class="p">(</span><span class="n">order_by</span><span class="o">=</span><span class="s2">"date_modified desc"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="p">[</span><span class="s2">"projects"</span><span class="p">])</span>
+</pre></div>
+</div>
+</section>
+<section id="list-all-projects-of-a-solution-using-the-rest-api">
+<h3>List all projects of a Solution using the REST API<a class="headerlink" href="#list-all-projects-of-a-solution-using-the-rest-api" title="Link to this heading">#</a></h3>
+<p>List existing projects using the <code class="docutils literal notranslate"><span class="pre">GET</span></code> request. In the OpenAPI UI:</p>
+<ol class="arabic">
+<li><p>Expand the <code class="docutils literal notranslate"><span class="pre">GET</span></code> section of <code class="docutils literal notranslate"><span class="pre">List</span> <span class="pre">Projects</span></code>.</p></li>
+<li><p>Click <span class="guilabel">Try it out</span>.</p></li>
+<li><p>Optionally set <code class="docutils literal notranslate"><span class="pre">order_by</span></code> (for example, <code class="docutils literal notranslate"><span class="pre">date_modified</span> <span class="pre">desc,</span> <span class="pre">display_name</span></code>).</p></li>
+<li><p>Click <span class="guilabel">Execute</span>.</p>
+<p>Under <span class="guilabel">Response body</span>, a list of existing projects is shown:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="s2">"projects"</span><span class="p">:</span>
+    <span class="p">[</span>
+      <span class="p">{</span>
+        <span class="s2">"display_name"</span><span class="p">:</span> <span class="s2">"Electric Motor"</span><span class="p">,</span>
+        <span class="s2">"description"</span><span class="p">:</span> <span class="s2">"Motor design and analysis"</span><span class="p">,</span>
+        <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"projects/6638ce7177e87f72ac4bbab3"</span><span class="p">,</span>
+        <span class="s2">"date_created"</span><span class="p">:</span> <span class="s2">"2023-01-01T01:02:03.000004"</span><span class="p">,</span>
+        <span class="s2">"date_modified"</span><span class="p">:</span> <span class="s2">"2023-01-01T01:02:03.000004"</span>
+      <span class="p">},</span>
+      <span class="p">{</span>
+        <span class="s2">"display_name"</span><span class="p">:</span> <span class="s2">"EM Thermal"</span><span class="p">,</span>
+        <span class="s2">"description"</span><span class="p">:</span> <span class="s2">"Thermal analysis of motor"</span><span class="p">,</span>
+        <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"projects/6638ce7177e87f72ac4bbab4"</span><span class="p">,</span>
+        <span class="s2">"date_created"</span><span class="p">:</span> <span class="s2">"2023-01-01T01:02:03.000004"</span><span class="p">,</span>
+        <span class="s2">"date_modified"</span><span class="p">:</span> <span class="s2">"2023-01-01T01:02:03.000004"</span>
+      <span class="p">}</span>
+    <span class="p">],</span>
+  <span class="s2">"current_page"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+  <span class="s2">"total_pages"</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span>
+  <span class="s2">"page_size"</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+  <span class="s2">"total_projects"</span><span class="p">:</span> <span class="mi">2000</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+</ol>
+<p>You can also call the endpoint directly with query parameters:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>curl<span class="w"> </span>-X<span class="w"> </span><span class="s1">'GET'</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="s1">'http://127.0.0.1:5432/projects?page=1&amp;page_size=100&amp;order_by=date_modified%20desc,%20display_name'</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-H<span class="w"> </span><span class="s1">'accept: application/json'</span>
+</pre></div>
+</div>
+</section>
+<section id="filter-projects">
+<h3>Filter projects<a class="headerlink" href="#filter-projects" title="Link to this heading">#</a></h3>
+<p>You can optionally filter the listed projects by providing a <code class="docutils literal notranslate"><span class="pre">filter</span></code> expression. The filter syntax follows the format <code class="docutils literal notranslate"><span class="pre">&lt;field&gt;</span> <span class="pre">&lt;operator&gt;</span> <span class="pre">&lt;value&gt;</span> <span class="pre">[AND</span> <span class="pre">&lt;field&gt;</span> <span class="pre">&lt;operator&gt;</span> <span class="pre">&lt;value&gt;]...</span></code>.</p>
+<p><strong>Supported fields:</strong></p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">display_name</span></code>: Only supports the <code class="docutils literal notranslate"><span class="pre">=</span></code> operator, which performs a case-insensitive contains match.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">description</span></code>: Only supports the <code class="docutils literal notranslate"><span class="pre">=</span></code> operator, which performs a case-insensitive contains match.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">date_created</span></code>: Supports <code class="docutils literal notranslate"><span class="pre">=</span></code>, <code class="docutils literal notranslate"><span class="pre">!=</span></code>, <code class="docutils literal notranslate"><span class="pre">&lt;</span></code>, <code class="docutils literal notranslate"><span class="pre">&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">&lt;=</span></code>, <code class="docutils literal notranslate"><span class="pre">&gt;=</span></code>. Values must be ISO 8601 datetime strings.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">date_modified</span></code>: Supports <code class="docutils literal notranslate"><span class="pre">=</span></code>, <code class="docutils literal notranslate"><span class="pre">!=</span></code>, <code class="docutils literal notranslate"><span class="pre">&lt;</span></code>, <code class="docutils literal notranslate"><span class="pre">&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">&lt;=</span></code>, <code class="docutils literal notranslate"><span class="pre">&gt;=</span></code>. Values must be ISO 8601 datetime strings.</p></li>
+</ul>
+<p><strong>Combining conditions:</strong></p>
+<p>Multiple conditions can be combined using the <code class="docutils literal notranslate"><span class="pre">AND</span></code> (<code class="docutils literal notranslate"><span class="pre">OR</span></code> is not supported, nor parentheses for grouping).</p>
+<p class="rubric">Filter projects using the Python client</p>
+<p>The following examples demonstrate how to filter projects using the Python client.</p>
+<p>Filter by display name (case-insensitive contains match):</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ansys.saf.glow.client</span><span class="w"> </span><span class="kn">import</span> <span class="n">Client</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.solutions.example.solution.definition</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExampleSolution</span>
+
+<span class="n">client</span> <span class="o">=</span> <span class="n">Client</span><span class="p">(</span><span class="n">ExampleSolution</span><span class="p">,</span> <span class="s2">"http://localhost:5432"</span><span class="p">)</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">list_projects</span><span class="p">(</span><span class="nb">filter</span><span class="o">=</span><span class="s2">"display_name = Motor"</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Filter by description (case-insensitive contains match):</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">list_projects</span><span class="p">(</span><span class="nb">filter</span><span class="o">=</span><span class="s2">"description = thermal"</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Filter by creation date range:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">list_projects</span><span class="p">(</span><span class="nb">filter</span><span class="o">=</span><span class="s2">"date_created &gt;= 2024-01-01T00:00:00 AND date_created &lt;= 2024-12-31T23:59:59"</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Combine name and date filters:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">list_projects</span><span class="p">(</span><span class="nb">filter</span><span class="o">=</span><span class="s1">'display_name = "Electric Motor" AND date_modified &gt;= 2024-06-01T00:00:00'</span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="rubric">Filter projects using the REST API</p>
+<p>You can pass the <code class="docutils literal notranslate"><span class="pre">filter</span></code> parameter as a query string. For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>GET http://localhost:5432/projects?filter=display_name+%3D+Motor
+</pre></div>
+</div>
+<p>Using <code class="docutils literal notranslate"><span class="pre">curl</span></code>:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>curl<span class="w"> </span>-X<span class="w"> </span><span class="s1">'GET'</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="s1">'http://localhost:5432/projects?filter=display_name+%3D+Motor'</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-H<span class="w"> </span><span class="s1">'accept: application/json'</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Values containing spaces must be quoted in the filter expression (for example, <code class="docutils literal notranslate"><span class="pre">display_name</span> <span class="pre">=</span> <span class="pre">&quot;Electric</span> <span class="pre">Motor&quot;</span></code>).</p>
+</div>
+</section>
+</section>
+<section id="modify-project-properties">
+<span id="modify-projects-properties"></span><h2>Modify project properties<a class="headerlink" href="#modify-project-properties" title="Link to this heading">#</a></h2>
+<p>You can modify a project’s properties (display name and description) using the client or via the REST interface.</p>
+<section id="modify-project-properties-using-the-python-client">
+<h3>Modify project properties using the Python client<a class="headerlink" href="#modify-project-properties-using-the-python-client" title="Link to this heading">#</a></h3>
+<p>The following example changes a project’s display name and description.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ansys.saf.glow.client</span><span class="w"> </span><span class="kn">import</span> <span class="n">Client</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.solutions.example.solution.definition</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExampleSolution</span>
+
+<span class="n">client</span> <span class="o">=</span> <span class="n">Client</span><span class="p">(</span><span class="n">ExampleSolution</span><span class="p">,</span> <span class="s2">"http://localhost:5432"</span><span class="p">)</span>
+<span class="n">my_project</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_project</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">"projects/6638ce7177e87f72ac4bbab3"</span><span class="p">)</span>
+<span class="n">my_project</span><span class="o">.</span><span class="n">modify_project</span><span class="p">(</span><span class="n">display_name</span><span class="o">=</span><span class="s2">"E-Motor"</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">"Updated motor design and thermal analysis"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">my_project</span><span class="o">.</span><span class="n">project_display_name</span><span class="p">)</span>  <span class="c1"># Output: "E-Motor"</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">my_project</span><span class="o">.</span><span class="n">project_description</span><span class="p">)</span>  <span class="c1"># Output: "Updated motor design and thermal analysis"</span>
+</pre></div>
+</div>
+<p>You can modify only the display name:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">my_project</span><span class="o">.</span><span class="n">modify_project</span><span class="p">(</span><span class="n">display_name</span><span class="o">=</span><span class="s2">"E-Motor New"</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Or only the description:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">my_project</span><span class="o">.</span><span class="n">modify_project</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">"New description"</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>To clear the description, set it to an empty string:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">my_project</span><span class="o">.</span><span class="n">modify_project</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">""</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="modify-project-properties-using-the-rest-api">
+<h3>Modify project properties using the REST API<a class="headerlink" href="#modify-project-properties-using-the-rest-api" title="Link to this heading">#</a></h3>
+<p>Modify a project’s properties using the <code class="docutils literal notranslate"><span class="pre">PATCH</span></code> request. It automatically updates the <code class="docutils literal notranslate"><span class="pre">date_modified</span></code> field. In the OpenAPI UI:</p>
+<ol class="arabic">
+<li><p>Expand the <code class="docutils literal notranslate"><span class="pre">PATCH</span></code> section of <code class="docutils literal notranslate"><span class="pre">Modify</span> <span class="pre">Project</span></code>.</p></li>
+<li><p>Click <span class="guilabel">Try it out</span>.</p></li>
+<li><p>Under <span class="guilabel">Parameters</span>, enter the <code class="docutils literal notranslate"><span class="pre">project_id</span></code> of an existing project.</p></li>
+<li><p>Under <span class="guilabel">Request body</span>, enter the properties to modify.</p>
+<p>To modify the display name:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="s2">"display_name"</span><span class="p">:</span> <span class="s2">"E-Motor"</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>To modify the description:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="s2">"description"</span><span class="p">:</span> <span class="s2">"Updated motor design and thermal analysis"</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>To modify both properties:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="s2">"display_name"</span><span class="p">:</span> <span class="s2">"E-Motor"</span><span class="p">,</span>
+  <span class="s2">"description"</span><span class="p">:</span> <span class="s2">"Updated motor design and thermal analysis"</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+<li><p>Click <span class="guilabel">Execute</span>.</p>
+<p>Under <span class="guilabel">Response body</span>, the updated information of the project is shown:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="s2">"display_name"</span><span class="p">:</span> <span class="s2">"E-Motor"</span><span class="p">,</span>
+  <span class="s2">"description"</span><span class="p">:</span> <span class="s2">"Updated motor design and thermal analysis"</span><span class="p">,</span>
+  <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"projects/6638ce7177e87f72ac4bbab3"</span><span class="p">,</span>
+  <span class="s2">"date_created"</span><span class="p">:</span> <span class="s2">"2023-01-01T01:02:03.000004"</span><span class="p">,</span>
+  <span class="s2">"date_modified"</span><span class="p">:</span> <span class="s2">"2024-02-02T01:02:03.000004"</span><span class="p">,</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+</ol>
+</section>
+</section>
+<section id="delete-a-project">
+<h2>Delete a project<a class="headerlink" href="#delete-a-project" title="Link to this heading">#</a></h2>
+<p>You can delete a project using the client or via the REST interface.</p>
+<section id="delete-a-project-using-the-python-client">
+<h3>Delete a project using the Python client<a class="headerlink" href="#delete-a-project-using-the-python-client" title="Link to this heading">#</a></h3>
+<p>The following examples show how to delete the project with id <code class="docutils literal notranslate"><span class="pre">6638ce7177e87f72ac4bbab3</span></code> either using the corresponding client or project object method.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ansys.saf.glow.client</span><span class="w"> </span><span class="kn">import</span> <span class="n">Client</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.solutions.example.solution.definition</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExampleSolution</span>
+
+<span class="n">client</span> <span class="o">=</span> <span class="n">Client</span><span class="p">(</span><span class="n">ExampleSolution</span><span class="p">,</span> <span class="s2">"http://localhost:5432"</span><span class="p">)</span>
+<span class="n">client</span><span class="o">.</span><span class="n">delete_project</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">"projects/6638ce7177e87f72ac4bbab3"</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ansys.saf.glow.client</span><span class="w"> </span><span class="kn">import</span> <span class="n">Client</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.solutions.example.solution.definition</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExampleSolution</span>
+
+<span class="n">client</span> <span class="o">=</span> <span class="n">Client</span><span class="p">(</span><span class="n">ExampleSolution</span><span class="p">,</span> <span class="s2">"http://localhost:5432"</span><span class="p">)</span>
+<span class="n">my_project</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_project</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">"projects/6638ce7177e87f72ac4bbab3"</span><span class="p">)</span>
+<span class="n">my_project</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="delete-a-project-using-the-rest-api">
+<h3>Delete a project using the REST API<a class="headerlink" href="#delete-a-project-using-the-rest-api" title="Link to this heading">#</a></h3>
+<p>Delete a project using the <code class="docutils literal notranslate"><span class="pre">DELETE</span></code> request. In the OpenAPI UI:</p>
+<ol class="arabic">
+<li><p>Expand the <code class="docutils literal notranslate"><span class="pre">DELETE</span></code> section.</p></li>
+<li><p>Click <span class="guilabel">Try it out</span>.</p></li>
+<li><p>Under <span class="guilabel">Parameters</span>, enter the <code class="docutils literal notranslate"><span class="pre">project_id</span></code> of an existing project.</p></li>
+<li><p>Click <span class="guilabel">Execute</span>.</p></li>
+</ol>
+<p>Both the project data and project folder are deleted.</p>
+</section>
+</section>
+<section id="upgrade-a-project-after-modifying-the-solution-definition">
+<span id="projects-upgrade"></span><h2>Upgrade a project after modifying the solution definition<a class="headerlink" href="#upgrade-a-project-after-modifying-the-solution-definition" title="Link to this heading">#</a></h2>
+<p>You can upgrade a project using the client or via the REST interface.</p>
+<section id="upgrade-a-project-using-the-python-client">
+<h3>Upgrade a project using the Python client<a class="headerlink" href="#upgrade-a-project-using-the-python-client" title="Link to this heading">#</a></h3>
+<p>The following examples show how to upgrade the project with id <code class="docutils literal notranslate"><span class="pre">6638ce7177e87f72ac4bbab3</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ansys.saf.glow.client</span><span class="w"> </span><span class="kn">import</span> <span class="n">Client</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.solutions.example.solution.definition</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExampleSolution</span>
+
+<span class="n">client</span> <span class="o">=</span> <span class="n">Client</span><span class="p">(</span><span class="n">ExampleSolution</span><span class="p">,</span> <span class="s2">"http://localhost:5432"</span><span class="p">)</span>
+<span class="n">client</span><span class="o">.</span><span class="n">upgrade_project</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">"projects/6638ce7177e87f72ac4bbab3"</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="upgrade-a-project-using-the-rest-api">
+<h3>Upgrade a project using the REST API<a class="headerlink" href="#upgrade-a-project-using-the-rest-api" title="Link to this heading">#</a></h3>
+<p>After modifying the solution definition, you may need to upgrade the existing projects before you continue using them. This can be done using the <code class="docutils literal notranslate"><span class="pre">POST</span></code> request. In the OpenAPI UI:</p>
+<ol class="arabic">
+<li><p>Expand the <code class="docutils literal notranslate"><span class="pre">POST</span></code> section.</p></li>
+<li><p>Click <span class="guilabel">Try it out</span>.</p></li>
+<li><p>Under <span class="guilabel">Parameters</span>, enter the <code class="docutils literal notranslate"><span class="pre">project_id</span></code> of an existing project.</p></li>
+<li><p>Click <span class="guilabel">Execute</span>.</p></li>
+</ol>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul>
+<li><p>Modifying a solution definition might invalidate existing projects and prevent them from loading properly.</p></li>
+<li><p>Upgrading a project may render the <code class="docutils literal notranslate"><span class="pre">state</span></code> property of the fields obsolete, depending on the modifications.</p></li>
+</ul>
+</div>
+</section>
+<section id="supported-modifications">
+<span id="upgrade-supported-modifications"></span><h3>Supported modifications<a class="headerlink" href="#supported-modifications" title="Link to this heading">#</a></h3>
+<p class="rubric">Project upgrade optional:</p>
+<p>These modifications <em>do not</em> trigger an error if the project is used before being upgraded.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>You are recommended to upgrade the project, nonetheless.</p>
+</div>
+<ul>
+<li><p>Modifying the solution’s <code class="docutils literal notranslate"><span class="pre">display_name</span></code> field</p></li>
+<li><p>Modifying the solution’s <code class="docutils literal notranslate"><span class="pre">version</span></code> field (Only to be modified when introducing breaking changes)</p></li>
+<li><p>Adding/removing transactions</p></li>
+<li><p>Modifying the default value of a step field (The project value will not change to the new default value)</p></li>
+<li><p>Modifying the validator of a step field: only allowed if the current field value passes the new validator.</p></li>
+<li><p>Modifying the signature of a transaction (function parameters and download/upload fields).</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>These modification will be applied regardless of the value of the environment variable <span class="target" id="index-0"></span><code class="xref std std-envvar docutils literal notranslate"><span class="pre">GLOW_ENABLE_AUTOMATIC_PROJECT_MIGRATION</span></code>.</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The solution’s <code class="docutils literal notranslate"><span class="pre">version</span></code> field should only be modified (increased) if any of the other modifications represents a breaking change. Increasing the solution’s
+<code class="docutils literal notranslate"><span class="pre">version</span></code> field requires adding a migration transformation to the solution definition as specified in the <a class="reference internal" href="../workflow_definition/project_migration.html#project-migration"><span class="std std-ref">project migration documentation</span></a>.</p>
+</div>
+<p class="rubric">Project upgrade required:</p>
+<p>These modifications <em>do</em> trigger an error if the project is used before being upgraded.</p>
+<ul>
+<li><p>Adding/removing step fields</p></li>
+<li><p>Adding/removing steps</p></li>
+<li><p>Modifying the type of a step field (only allowed if the old and new types are casteable—for example, from <code class="docutils literal notranslate"><span class="pre">int</span></code> to <code class="docutils literal notranslate"><span class="pre">float</span></code>)</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Renaming a step or a step field is equivalent to removing the old one and adding a new one. Therefore, old values are not retained, and the new step or step field is initialized with its default values.</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>These modification will only be applied if the environment variable <span class="target" id="index-1"></span><code class="xref std std-envvar docutils literal notranslate"><span class="pre">GLOW_ENABLE_AUTOMATIC_PROJECT_MIGRATION</span></code> is set to <code class="docutils literal notranslate"><span class="pre">True</span></code>. Otherwise, and error will be
+raised. Never set <span class="target" id="index-2"></span><code class="xref std std-envvar docutils literal notranslate"><span class="pre">GLOW_ENABLE_AUTOMATIC_PROJECT_MIGRATION</span></code> to <code class="docutils literal notranslate"><span class="pre">True</span></code> in a production environment, the automatic project migration should be used only for
+development.</p>
+</div>
+</section>
+<section id="breaking-changes">
+<span id="upgrade-breaking-changes"></span><h3>Breaking changes<a class="headerlink" href="#breaking-changes" title="Link to this heading">#</a></h3>
+<p>These modification represent a breaking change:</p>
+<ul>
+<li><p>Modifying the validator of a step field when the new one invalidates the current field value.</p></li>
+<li><p>Modifying the type of a step field: if the current field value cannot be cast to the new type (for example, from a non-numeric <code class="docutils literal notranslate"><span class="pre">str</span></code> to <code class="docutils literal notranslate"><span class="pre">int</span></code>).</p></li>
+</ul>
+<p>When modifications include breaking changes, it is mandatory to include a migration transformation in the solution definition. Otherwise, the project cannot be upgraded
+and becomes inoperable. Read the documentation on the <a class="reference internal" href="../workflow_definition/project_migration.html#project-migration"><span class="std std-ref">project migration API</span></a> to know how to define a project migration.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Migrations are applied regardless of the value of <span class="target" id="index-3"></span><code class="xref std std-envvar docutils literal notranslate"><span class="pre">GLOW_ENABLE_AUTOMATIC_PROJECT_MIGRATION</span></code>.</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>It is mandatory to increase the solution’s <code class="docutils literal notranslate"><span class="pre">version</span></code> field when introducing breaking changes.</p>
+</div>
+</section>
+</section>
+<section id="project-files-location">
+<h2>Project files location<a class="headerlink" href="#project-files-location" title="Link to this heading">#</a></h2>
+<p>By default, the project folder for storing the project files is created in <code class="file docutils literal notranslate"><span class="pre">%APPDATA%/ansys/glow/SOLUTION_NAME/project_files</span></code>.</p>
+<p>You can change the location of the project files directory by setting the <span class="target" id="index-4"></span><code class="xref std std-envvar docutils literal notranslate"><span class="pre">GLOW_PROJECT_FILES_DIRECTORY</span></code> environment variable. For example, the following code sample causes SAF GLOW Engine to store the project files  in <code class="docutils literal notranslate"><span class="pre">D:/my_project_files/</span></code> directory.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$env:GLOW_PROJECT_FILES_DIRECTORY="D:/my_project_files"
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Do not move or modify project files manually. Doing so may lead to data loss or unexpected behavior.</p>
+</div>
+</section>
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#create-a-project">Create a project</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#create-a-project-using-the-python-client">Create a project using the Python client</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#create-a-project-using-the-rest-api">Create a project using the REST API</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#get-a-project">Get a project</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#get-a-project-using-the-python-client">Get a project using the Python client</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#get-a-project-using-the-rest-api">Get a project using the REST API</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#export-share-a-project">Export/share a project</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#export-a-project-using-the-python-client">Export a project using the Python client</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#export-a-project-using-the-rest-api">Export a project using the REST API</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#import-a-project-package">Import a project package</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#import-a-project-using-the-python-client">Import a project using the Python client</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#import-a-project-using-the-rest-api">Import a project using the REST API</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#list-projects">List projects</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#list-projects-of-a-solution-using-the-python-client">List projects of a Solution using the Python client</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#list-all-projects-of-a-solution-using-the-rest-api">List all projects of a Solution using the REST API</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#filter-projects">Filter projects</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#modify-project-properties">Modify project properties</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#modify-project-properties-using-the-python-client">Modify project properties using the Python client</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#modify-project-properties-using-the-rest-api">Modify project properties using the REST API</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#delete-a-project">Delete a project</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#delete-a-project-using-the-python-client">Delete a project using the Python client</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#delete-a-project-using-the-rest-api">Delete a project using the REST API</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#upgrade-a-project-after-modifying-the-solution-definition">Upgrade a project after modifying the solution definition</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#upgrade-a-project-using-the-python-client">Upgrade a project using the Python client</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#upgrade-a-project-using-the-rest-api">Upgrade a project using the REST API</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#supported-modifications">Supported modifications</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#breaking-changes">Breaking changes</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#project-files-location">Project files location</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9"></script>
+
+
+  <!-- Include desired assets -->
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.7/require.min.js"></script>
+
+<script>
+// Passing the search options to the search.js file
+const SEARCH_OPTIONS = JSON.parse('{"includeMatches": true, "includeScore": true, "keys": [{"name": "section", "weight": 3}, {"name": "title", "weight": 3}, {"name": "text", "weight": 1}, {"name": "objectID", "weight": 0.5}], "limit": 10, "threshold": 0.2}');
+const SEARCH_FILE = "../../../_static/search.json";
+const ADVANCE_SEARCH_PATH = "../../../search.html";
+const EXTRA_SOURCES = JSON.parse('""');
+</script>
+
+
+<script src="../../../_static/js/search.js"></script>
+
+  
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<footer class="bd-footer">
+  <div class="bd-footer__inner bd-page-width">
+    <div class="footer-items__start">
+      <div class="footer-item">
+        <div class="footer-items__start">
+          <div class="footer-item">
+            <img src="https://docs.pyansys.com/version/dev/_static/ansys_logo_transparent_white.png" alt="Ansys Logo" class="footer-ansys-logo">
+          </div>
+          <div class="footer-item"><br>
+            <p>2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-items__center">
+      <div class="footer-item">
+        <div class="footer-items__start">
+          <div class="connect-with-ansys">
+            <p>Latest documentation</p> <br>
+            <a href="https://www.ansys.com/" class="external-link" target="_blank" rel="noopener noreferrer">
+              <span class="link-text">Ansys.com</span>
+              <i class="fas fa-up-right-from-square"></i>
+            </a><br>
+            <a href="https://www.ansys.com/services/ansys-learning-hub" class="external-link" target="_blank" rel="noopener noreferrer">
+              <span class="link-text">Ansys Learning</span>
+              <i class="fas fa-up-right-from-square"></i>
+            </a><br>
+            <a href="https://www.ansys.com/support" class="external-link" target="_blank" rel="noopener noreferrer">
+              <span class="link-text">Ansys Support</span>
+              <i class="fas fa-up-right-from-square"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-items__end">
+      <div class="footer-item">
+        <div class="footer-right">
+          <span>Connect with Ansys</span>
+          <div class="social-icons">
+            <a href="https://www.youtube.com/user/ansysinc" target="_blank" rel="noopener" class="icon icon-youtube" aria-label="Youtube"><span class="sr-only">Youtube</span></a>
+            <a href="https://www.facebook.com/ansys" target="_blank" rel="noopener" class="icon icon-facebook" aria-label="Facebook"><span class="sr-only">Facebook</span></a>
+            <a href="https://www.linkedin.com/company/ansys-inc" target="_blank" rel="noopener" class="icon icon-linkedin" aria-label="Linkedin"><span class="sr-only">Linkedin</span></a>
+            <a href="https://github.com/ansys" target="_blank" rel="noopener" class="icon icon-github" aria-label="GitHub"><i class="fab fa-github"></i><span class="sr-only">GitHub</span></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+  </body>
+</html>

@@ -1,0 +1,49 @@
+
+
+
+
+
+
+:class:`TransportMode`
+======================
+
+
+.. py:class:: ansys.saf.product_configuration.wrappers.types.TransportMode
+
+   Bases: :py:obj:`str`, :py:obj:`enum.Enum`
+
+
+   
+   Enum containing supported transport-mode values for wrapper CLI compatibility.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.saf.product_configuration.wrappers.types import TransportMode
+
+
+
+
+

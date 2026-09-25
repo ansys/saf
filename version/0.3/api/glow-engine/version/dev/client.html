@@ -1,0 +1,1903 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" data-theme="dark">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Client API &#8212; SAF GLOW</title>
+  
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "dark";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "dark";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/ansys-sphinx-theme.css?v=5ffe81b6" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/autodoc_pydantic.css" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/ansys-sphinx-theme.css?v=5ffe81b6" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://www.nerdfonts.com/assets/css/webfont.css" />
+    <link rel="stylesheet" type="text/css" href="_static/code-tabs.css?v=1bc26e2f" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+
+  <!-- Include desired assets -->
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  
+
+  
+    <link href="_static/css/breadcrumbs.css" rel="stylesheet" />
+  
+    <script src="_static/documentation_options.js?v=8453f648"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=49e1bf35"></script>
+    <script src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
+    <script src="_static/code-tabs.js?v=c983d12e"></script>
+    <script src="_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'client';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.16.1';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://saf.ansys.com/version/stable/api/glow-engine/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'dev';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <link rel="icon" href="_static/ansys-favicon.png"/>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Product instance APIs" href="product_instance.html" />
+    <link rel="prev" title="Runtime API" href="runtime.html" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="2.5.dev0" />
+  <meta name="robots" content="noindex, follow" />
+  <link rel="canonical" href="https://saf.ansys.com/version/stable/api/glow-engine/version/dev/client.html" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="dark">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="index.html">
+  
+  
+  
+  
+  
+    
+    
+    
+    <img src="_static/endorsed-ansys-logos-gold-white-rgb.svg" class="logo__image only-dark" alt="SAF GLOW - Home"/>
+    <img src="_static/endorsed-ansys-logos-gold-black-rgb.svg" class="logo__image only-light pst-js-only" alt="SAF GLOW - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="index.html" title="SAF GLOW home">Home</a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="solution.html">
+    Solution API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="runtime.html">
+    Runtime API
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="#">
+    Client API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="product_instance.html">
+    Product instance APIs
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="hps.html">
+    HPS API
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="cli.html">
+    CLI API
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav>
+</div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+      
+        <div class="navbar-item">
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+  
+</div></div>
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/saf/tree/main/packages/glow-engine" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+  
+    
+<!--
+  Announcement Version Loader
+  Dynamically loads the announcement.html content into the announcement_msg div.
+-->
+<div id="announcement_msg" aria-live="polite"></div>
+<script>
+  // Fetch and inject the announcement HTML content
+  fetch("announcement.html")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error: ${response.status} Announcement.html file not found, Please ignore this, if you are in dev/stable documentation`);
+      }
+      return response.text();
+    })
+    .then((text) => {
+      var msgDiv = document.getElementById("announcement_msg");
+      if (msgDiv) {
+        msgDiv.innerHTML = text;
+      }
+    })
+    .catch((error) => {
+      // Log only unexpected fetch errors
+      if (!(error.message && error.message.startsWith("HTTP error: 404"))) {
+        console.error(`Fetch problem: ${error.message} Announcement.html could not be loaded.`);
+      }
+    });
+</script>
+  
+
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="index.html" title="SAF GLOW home">Home</a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="solution.html">
+    Solution API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="runtime.html">
+    Runtime API
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="#">
+    Client API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="product_instance.html">
+    Product instance APIs
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="hps.html">
+    HPS API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="cli.html">
+    CLI API
+  </a>
+</li>
+
+  </ul>
+</nav>
+</div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+  
+</div></div>
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/saf/tree/main/packages/glow-engine" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"></div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+         
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="https://saf.ansys.com/version/stable/api/index.html" class="nav-link">SAF</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a
+        href="index.html"
+        class="nav-link"
+        aria-label="Home"
+      >
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+      
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Client API</span></li>
+    
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="client-api">
+<span id="glow-api-client-index"></span><h1>Client API<a class="headerlink" href="#client-api" title="Link to this heading">#</a></h1>
+<p>This section documents GLOW’s Client API which enable programs, including a Dash UI server, to access a remote GLOW
+server that provides the guided workflow service for a given GLOW solution (a guided workflow application).</p>
+<span class="target" id="module-ansys.saf.glow.client"></span><dl class="py class">
+<dt class="sig sig-object py" id="ansys.saf.glow.client.AbstractStoragePath">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ansys.saf.glow.client.</span></span><span class="sig-name descname"><span class="pre">AbstractStoragePath</span></span><a class="headerlink" href="#ansys.saf.glow.client.AbstractStoragePath" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/dev/builtins/functions.html#object" title="(in Python v3.16)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>A base class for representing paths to folders, directories, files or blobs in a
+hierarchical storage scheme, such as an OS Filesystem or cloud storage.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.saf.glow.client.AbstractStoragePath.as_uri">
+<span class="sig-name descname"><span class="pre">as_uri</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/dev/builtins/stdtypes.html#str" title="(in Python v3.16)"><span class="pre">str</span></a></span></span><a class="headerlink" href="#ansys.saf.glow.client.AbstractStoragePath.as_uri" title="Link to this definition">#</a></dt>
+<dd><p>Return a URI that refers to the entity referenced by the path.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><a class="reference external" href="https://docs.python.org/dev/builtins/stdtypes.html#str" title="(in Python v3.16)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>A URI that refers to the entity referenced by the path.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.saf.glow.client.AbstractStoragePath.copy">
+<span class="sig-name descname"><span class="pre">copy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">destination</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#ansys.saf.glow.client.AbstractStoragePath" title="ansys.saf.glow._storage.base.AbstractStoragePath"><span class="pre">AbstractStoragePath</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/dev/builtins/constants.html#None" title="(in Python v3.16)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ansys.saf.glow.client.AbstractStoragePath.copy" title="Link to this definition">#</a></dt>
+<dd><p>Copy the referenced entity to the given destination directory or folder.
+The destination directory and any missing parents will be created if they do not exist.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>destination</strong><span class="classifier"><code class="docutils literal notranslate"><span class="pre">AbstractStoragePath</span></code></span></dt><dd><p>The directory or folder where the referenced entity will be copied.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.saf.glow.client.AbstractStoragePath.copyfileobj">
+<span class="sig-name descname"><span class="pre">copyfileobj</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fileobj</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/dev/builtins/constants.html#None" title="(in Python v3.16)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ansys.saf.glow.client.AbstractStoragePath.copyfileobj" title="Link to this definition">#</a></dt>
+<dd><p>Create or replace of the referenced entity with the contents of the file-like object <code class="docutils literal notranslate"><span class="pre">fileobj</span></code>.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>fileobj</strong><span class="classifier"><code class="docutils literal notranslate"><span class="pre">file</span> <span class="pre">like</span> <span class="pre">object</span></code></span></dt><dd><p>The object that is the source of data to become the content of the referenced entity.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.saf.glow.client.AbstractStoragePath.exists">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">exists</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/dev/builtins/functions.html#bool" title="(in Python v3.16)"><span class="pre">bool</span></a></span><a class="headerlink" href="#ansys.saf.glow.client.AbstractStoragePath.exists" title="Link to this definition">#</a></dt>
+<dd><p>Whether the entity referenced by the path exists.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><a class="reference internal" href="_sphinx/bltins.html#python-bltin-boolean-values"><span class="std std-ref">bool</span></a></dt><dd><p>Whether the entity referenced by the path exists.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.saf.glow.client.AbstractStoragePath.glob">
+<span class="sig-name descname"><span class="pre">glob</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pattern</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/dev/builtins/stdtypes.html#str" title="(in Python v3.16)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/dev/builtins/stdtypes.html#list" title="(in Python v3.16)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#ansys.saf.glow.client.AbstractStoragePath" title="ansys.saf.glow._storage.base.AbstractStoragePath"><span class="pre">AbstractStoragePath</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#ansys.saf.glow.client.AbstractStoragePath.glob" title="Link to this definition">#</a></dt>
+<dd><p>Return the paths of entities with in the referenced fdirectory or folder that match the given
+pattern.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>pattern</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/dev/builtins/stdtypes.html#str" title="(in Python v3.16)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a></span></dt><dd><p>The pattern that is used to match entities within the referenced directory.
+The pattern can include <code class="docutils literal notranslate"><span class="pre">*</span></code> as a wild match and <code class="docutils literal notranslate"><span class="pre">**</span></code> which matches directories recursively.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">list</span> <span class="pre">of</span> <span class="pre">AbstractStoragePath</span></code></dt><dd><p>The paths of entities with in the referenced directory or folder that match the given pattern.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.saf.glow.client.AbstractStoragePath.is_dir">
+<span class="sig-name descname"><span class="pre">is_dir</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/dev/builtins/functions.html#bool" title="(in Python v3.16)"><span class="pre">bool</span></a></span></span><a class="headerlink" href="#ansys.saf.glow.client.AbstractStoragePath.is_dir" title="Link to this definition">#</a></dt>
+<dd><p>Return whether the path refers to a directory or folder.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><a class="reference internal" href="_sphinx/bltins.html#python-bltin-boolean-values"><span class="std std-ref">bool</span></a></dt><dd><p>Whether the path refers to a directory or folder.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.saf.glow.client.AbstractStoragePath.is_file">
+<span class="sig-name descname"><span class="pre">is_file</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/dev/builtins/functions.html#bool" title="(in Python v3.16)"><span class="pre">bool</span></a></span></span><a class="headerlink" href="#ansys.saf.glow.client.AbstractStoragePath.is_file" title="Link to this definition">#</a></dt>
+<dd><p>Return whether the path refers to a file or blob.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><a class="reference internal" href="_sphinx/bltins.html#python-bltin-boolean-values"><span class="std std-ref">bool</span></a></dt><dd><p>Whether the path refers to a file or blob.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.saf.glow.client.AbstractStoragePath.iterdir">
+<span class="sig-name descname"><span class="pre">iterdir</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/dev/library/collections.abc.html#collections.abc.Iterator" title="(in Python v3.16)"><span class="pre">Iterator</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#ansys.saf.glow.client.AbstractStoragePath" title="ansys.saf.glow._storage.base.AbstractStoragePath"><span class="pre">AbstractStoragePath</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#ansys.saf.glow.client.AbstractStoragePath.iterdir" title="Link to this definition">#</a></dt>
+<dd><p>Return an iterator over the entities that exist on the directory or folder referenced by the path.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">Iterator</span> <span class="pre">over</span> <span class="pre">AbstractStoragePath</span></code></dt><dd><p>The entities that exist on the directory or folder referenced by the path.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.saf.glow.client.AbstractStoragePath.mkdir">
+<span class="sig-name descname"><span class="pre">mkdir</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/dev/builtins/constants.html#None" title="(in Python v3.16)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ansys.saf.glow.client.AbstractStoragePath.mkdir" title="Link to this definition">#</a></dt>
+<dd><p>Create the directory referenced by the path including all the parent directories.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.saf.glow.client.AbstractStoragePath.name">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">name</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/dev/builtins/stdtypes.html#str" title="(in Python v3.16)"><span class="pre">str</span></a></span><a class="headerlink" href="#ansys.saf.glow.client.AbstractStoragePath.name" title="Link to this definition">#</a></dt>
+<dd><p>The name of the entity referenced by the path.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><a class="reference external" href="https://docs.python.org/dev/builtins/stdtypes.html#str" title="(in Python v3.16)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>The name of the entity referenced by the path.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.saf.glow.client.AbstractStoragePath.parent">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">parent</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#ansys.saf.glow.client.AbstractStoragePath" title="ansys.saf.glow._storage.base.AbstractStoragePath"><span class="pre">AbstractStoragePath</span></a></span><a class="headerlink" href="#ansys.saf.glow.client.AbstractStoragePath.parent" title="Link to this definition">#</a></dt>
+<dd><p>The directory or folder that contains the entity referenced by the path.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">AbstractStoragePath</span></code></dt><dd><p>The directory or folder that contains the entity referenced by the path.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.saf.glow.client.AbstractStoragePath.read_text">
+<span class="sig-name descname"><span class="pre">read_text</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/dev/builtins/stdtypes.html#str" title="(in Python v3.16)"><span class="pre">str</span></a></span></span><a class="headerlink" href="#ansys.saf.glow.client.AbstractStoragePath.read_text" title="Link to this definition">#</a></dt>
+<dd><p>Return the text content of the file or blob that the path refers to.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><a class="reference external" href="https://docs.python.org/dev/builtins/stdtypes.html#str" title="(in Python v3.16)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>The text content of the file or blob that the path refers to.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.saf.glow.client.AbstractStoragePath.remove">
+<span class="sig-name descname"><span class="pre">remove</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/dev/builtins/constants.html#None" title="(in Python v3.16)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ansys.saf.glow.client.AbstractStoragePath.remove" title="Link to this definition">#</a></dt>
+<dd><p>Remove recursively the entire directory, folder, file or blob referenced by the path.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.saf.glow.client.AbstractStoragePath.resolve">
+<span class="sig-name descname"><span class="pre">resolve</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#ansys.saf.glow.client.AbstractStoragePath" title="ansys.saf.glow._storage.base.AbstractStoragePath"><span class="pre">AbstractStoragePath</span></a></span></span><a class="headerlink" href="#ansys.saf.glow.client.AbstractStoragePath.resolve" title="Link to this definition">#</a></dt>
+<dd><p>Make the path absolute, resolving any symbolic links or <code class="docutils literal notranslate"><span class="pre">..</span></code> components. A new path object is returned.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">AbstractStoragePath</span></code></dt><dd><p>A new reference to the same entity but removing symbolic links and <code class="docutils literal notranslate"><span class="pre">..</span></code> components.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.saf.glow.client.AbstractStoragePath.stem">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">stem</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/dev/builtins/stdtypes.html#str" title="(in Python v3.16)"><span class="pre">str</span></a></span><a class="headerlink" href="#ansys.saf.glow.client.AbstractStoragePath.stem" title="Link to this definition">#</a></dt>
+<dd><p>The name of the entity referenced by the path with its suffix (file extension).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><a class="reference external" href="https://docs.python.org/dev/builtins/stdtypes.html#str" title="(in Python v3.16)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>The name of the entity referenced by the path with its suffix (file extension).</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.saf.glow.client.AbstractStoragePath.suffix">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">suffix</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/dev/builtins/stdtypes.html#str" title="(in Python v3.16)"><span class="pre">str</span></a></span><a class="headerlink" href="#ansys.saf.glow.client.AbstractStoragePath.suffix" title="Link to this definition">#</a></dt>
+<dd><p>The suffix for file extension of the entity referenced by the path.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><a class="reference external" href="https://docs.python.org/dev/builtins/stdtypes.html#str" title="(in Python v3.16)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>The suffix for file extension of the entity referenced by the path.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.saf.glow.client.AbstractStoragePath.write_bytes">
+<span class="sig-name descname"><span class="pre">write_bytes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/dev/builtins/stdtypes.html#bytes" title="(in Python v3.16)"><span class="pre">bytes</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/dev/builtins/constants.html#None" title="(in Python v3.16)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ansys.saf.glow.client.AbstractStoragePath.write_bytes" title="Link to this definition">#</a></dt>
+<dd><p>Replace the content of the file or blob that the path refers to or
+creates a new file or blob.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>data</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/dev/builtins/stdtypes.html#bytes" title="(in Python v3.16)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bytes</span></code></a></span></dt><dd><p>The new content of the file or blob referenced by the path.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.saf.glow.client.AbstractStoragePath.write_text">
+<span class="sig-name descname"><span class="pre">write_text</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/dev/builtins/stdtypes.html#str" title="(in Python v3.16)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/dev/builtins/constants.html#None" title="(in Python v3.16)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ansys.saf.glow.client.AbstractStoragePath.write_text" title="Link to this definition">#</a></dt>
+<dd><p>Replace the content of the file or blob that the path refers to or
+creates a new file or blob.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>text</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/dev/builtins/stdtypes.html#str" title="(in Python v3.16)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a></span></dt><dd><p>The new content of the file or blob referenced by the path.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.saf.glow.client.AbstractStoragePath.write_text_with_new_dir">
+<span class="sig-name descname"><span class="pre">write_text_with_new_dir</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/dev/builtins/stdtypes.html#str" title="(in Python v3.16)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/dev/builtins/constants.html#None" title="(in Python v3.16)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ansys.saf.glow.client.AbstractStoragePath.write_text_with_new_dir" title="Link to this definition">#</a></dt>
+<dd><p>Replace the content of the file or blob that the path refers to or
+creates a new file or blob. Creates the parent directory if it does not already exist.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>text</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/dev/builtins/stdtypes.html#str" title="(in Python v3.16)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a></span></dt><dd><p>The new content of the file or blob referenced by the path.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.saf.glow.client.AnalysisResultModel">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ansys.saf.glow.client.</span></span><span class="sig-name descname"><span class="pre">AnalysisResultModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">valid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/dev/builtins/functions.html#bool" title="(in Python v3.16)"><span class="pre">bool</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">error</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/dev/builtins/stdtypes.html#str" title="(in Python v3.16)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stack_trace</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/dev/builtins/stdtypes.html#str" title="(in Python v3.16)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">uses_shared_product_instances</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/dev/builtins/functions.html#bool" title="(in Python v3.16)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">solution_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/dev/builtins/stdtypes.html#str" title="(in Python v3.16)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ui_module</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/dev/builtins/stdtypes.html#str" title="(in Python v3.16)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">solution_module</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/dev/builtins/stdtypes.html#str" title="(in Python v3.16)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.saf.glow.client.AnalysisResultModel" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></p>
+<p>Represents the result of a solution analysis.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ansys.saf.glow.client.AnalysisResultModel.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></span><a class="headerlink" href="#ansys.saf.glow.client.AnalysisResultModel.model_config" title="Link to this definition">#</a></dt>
+<dd><p>Configuration for the model, should be a dictionary conforming to [<cite>ConfigDict</cite>][pydantic.config.ConfigDict].</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="ansys.saf.glow.client.BadRequestException">
+<span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ansys.saf.glow.client.</span></span><span class="sig-name descname"><span class="pre">BadRequestException</span></span><a class="headerlink" href="#ansys.saf.glow.client.BadRequestException" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">SolutionClientError</span></code></p>
+<p>Exception raised when the GLOW client API is used incorrectly.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.saf.glow.client.Client">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ansys.saf.glow.client.</span></span><span class="sig-name descname"><span class="pre">Client</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">solution_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/dev/builtins/functions.html#type" title="(in Python v3.16)"><span class="pre">type</span></a><span class="p"><span class="pre">[</span></span><span class="pre">T</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/dev/builtins/stdtypes.html#str" title="(in Python v3.16)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">external_url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/dev/builtins/stdtypes.html#str" title="(in Python v3.16)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/dev/builtins/constants.html#None" title="(in Python v3.16)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">access_token</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/dev/builtins/stdtypes.html#str" title="(in Python v3.16)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/dev/builtins/constants.html#None" title="(in Python v3.16)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/dev/builtins/stdtypes.html#str" title="(in Python v3.16)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/dev/builtins/constants.html#None" title="(in Python v3.16)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.saf.glow.client.Client" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/dev/library/typing.html#typing.Generic" title="(in Python v3.16)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Generic</span></code></a>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">T</span></code>]</p>
+<p>Client for enabling access to a remote GLOW Solution.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>solution_type: type[Solution]</strong></dt><dd><p>The Solution that is being implemented remotely.
+Must be a class that has been derived from <a class="reference internal" href="solution.html#ansys.saf.glow.solution.Solution" title="ansys.saf.glow.solution.Solution"><code class="xref py py-class docutils literal notranslate"><span class="pre">Solution</span></code></a>.</p>
+</dd>
+<dt><strong>url: str</strong></dt><dd><p>The URL of the remote Solution GLOW REST API</p>
+</dd>
+<dt><strong>external_url: optional[str]</strong></dt><dd><p>The URL of the remote Solution GLOW REST API from outside the UI container (e.g. a browser)
+in on-premises deployments.</p>
+</dd>
+<dt><strong>access_token: optional[str]</strong></dt><dd><p>An optional access token containing the security credentials for a login session.</p>
+</dd>
+<dt><strong>api_key: optional[str]</strong></dt><dd><p>An optional API key sent via the <code class="docutils literal notranslate"><span class="pre">x-api-key</span></code> header. Takes precedence over <code class="docutils literal notranslate"><span class="pre">access_token</span></code>.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.saf.glow.client.Client.close">
+<span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ansys.saf.glow.client.Client.close" title="Link to this definition">#</a></dt>
+<dd><p>Close the transport and proxies.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.saf.glow.client.Client.create_project">
+<span class="sig-name descname"><span class="pre">create_project</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">display_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/dev/builtins/stdtypes.html#str" title="(in Python v3.16)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/dev/builtins/stdtypes.html#str" title="(in Python v3.16)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">T</span></span></span><a class="headerlink" href="#ansys.saf.glow.client.Client.create_project" title="Link to this definition">#</a></dt>
+<dd><p>Create a new project with the specified <code class="docutils literal notranslate"><span class="pre">display_name</span></code>.
+Return a Solution instance with the same fields and
+methods as the Solution specified in the <code class="docutils literal notranslate"><span class="pre">Client</span></code> constructor.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>display_name</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/dev/builtins/stdtypes.html#str" title="(in Python v3.16)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a></span></dt><dd><p>The project name displayed to the user.</p>
+</dd>
+<dt><strong>description</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/dev/builtins/stdtypes.html#str" title="(in Python v3.16)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">optional</span></code></span></dt><dd><p>The project description. Defaults to an empty string.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">T</span> <span class="pre">derived</span> <span class="pre">from</span> <span class="pre">ansys.saf.glow.solution.Solution</span></code></dt><dd><p>A Solution instance with the same fields and methods as the
+Solution specified in the <code class="docutils literal notranslate"><span class="pre">Client</span></code> constructor.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.saf.glow.client.Client.delete_project">
+<span class="sig-name descname"><span class="pre">delete_project</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/dev/builtins/stdtypes.html#str" title="(in Python v3.16)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/dev/builtins/constants.html#None" title="(in Python v3.16)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ansys.saf.glow.client.Client.delete_project" title="Link to this definition">#</a></dt>
+<dd><p>Delete a project specified by its resource name
+(<code class="docutils literal notranslate"><span class="pre">projects/&lt;project_id&gt;</span></code>).</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>name</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/dev/builtins/stdtypes.html#str" title="(in Python v3.16)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a></span></dt><dd><p>Resource name of an existing project.</p>
+<p>Has the form <code class="docutils literal notranslate"><span class="pre">projects/&lt;project_id&gt;</span></code>.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.saf.glow.client.Client.deployment_type">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">deployment_type</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#ansys.saf.glow.client.Deployment" title="ansys.saf.glow._config.const.Deployment"><span class="pre">Deployment</span></a></span><a class="headerlink" href="#ansys.saf.glow.client.Client.deployment_type" title="Link to this definition">#</a></dt>
+<dd><p>Return the deployment type derived from the value of the <code class="docutils literal notranslate"><span class="pre">GLOW_DEPLOYMENT</span></code> environment variable
+which corresponds to how the server in which the client is running is deployed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><a class="reference internal" href="#ansys.saf.glow.client.Deployment" title="ansys.saf.glow.client.Deployment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Deployment</span></code></a></dt><dd><p>The deployment type derived from the value of the <code class="docutils literal notranslate"><span class="pre">GLOW_DEPLOYMENT</span></code> environment variable
+which corresponds to how the server in which the client is running is deployed.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.saf.glow.client.Client.get_project">
+<span class="sig-name descname"><span class="pre">get_project</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/dev/builtins/stdtypes.html#str" title="(in Python v3.16)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">T</span></span></span><a class="headerlink" href="#ansys.saf.glow.client.Client.get_project" title="Link to this definition">#</a></dt>
+<dd><p>Return the Solution instance for a project specified by its
+resource name (<code class="docutils literal notranslate"><span class="pre">projects/&lt;project_id&gt;</span></code>).</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>name</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/dev/builtins/stdtypes.html#str" title="(in Python v3.16)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a></span></dt><dd><p>Resource name of an existing project.</p>
+<p>Has the form <code class="docutils literal notranslate"><span class="pre">projects/&lt;project_id&gt;</span></code>.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">T</span> <span class="pre">derived</span> <span class="pre">from</span> <span class="pre">ansys.saf.glow.solution.Solution</span></code></dt><dd><p>Solution instance for the project referred to by <code class="docutils literal notranslate"><span class="pre">name</span></code>
+with the same fields and methods as the Solution specified in the
+<code class="docutils literal notranslate"><span class="pre">Client</span></code> constructor.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.saf.glow.client.Client.get_schema">
+<span class="sig-name descname"><span class="pre">get_schema</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/dev/library/typing.html#typing.Any" title="(in Python v3.16)"><span class="pre">Any</span></a></span></span><a class="headerlink" href="#ansys.saf.glow.client.Client.get_schema" title="Link to this definition">#</a></dt>
+<dd><p>Return the JSON schema structure (dictionary) for the
+Solution passed to the constructor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">Any</span></code></dt><dd><p>JSON schema structure (dictionary) for the Solution passed to the constructor.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.saf.glow.client.Client.http_client">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">http_client</span></span><a class="headerlink" href="#ansys.saf.glow.client.Client.http_client" title="Link to this definition">#</a></dt>
+<dd><p>The http client used to communicate with the GLOW REST API.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.saf.glow.client.Client.import_project">
+<span class="sig-name descname"><span class="pre">import_project</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">safx_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/dev/library/pathlib.html#pathlib.Path" title="(in Python v3.16)"><span class="pre">Path</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">display_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/dev/builtins/stdtypes.html#str" title="(in Python v3.16)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">T</span></span></span><a class="headerlink" href="#ansys.saf.glow.client.Client.import_project" title="Link to this definition">#</a></dt>
+<dd><p>Import the given <code class="docutils literal notranslate"><span class="pre">.safx</span></code> project archive with the specified
+<code class="docutils literal notranslate"><span class="pre">display_name</span></code> and open it.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>safx_path</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Path</span></code></span></dt><dd><p>The path of to the safx project file.</p>
+<p>(A <code class="docutils literal notranslate"><span class="pre">.safx</span></code> project file is an archive of a <code class="docutils literal notranslate"><span class="pre">.sap</span></code> project with its associated project directory.)</p>
+</dd>
+<dt><strong>display_name</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/dev/builtins/stdtypes.html#str" title="(in Python v3.16)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a></span></dt><dd><p>The project name displayed to the user.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">T</span> <span class="pre">derived</span> <span class="pre">from</span> <span class="pre">ansys.saf.glow.solution.Solution</span></code></dt><dd><p>A Solution instance for the imported file
+with the same fields and methods as the Solution specified in the
+<code class="docutils literal notranslate"><span class="pre">Client</span></code> constructor.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.saf.glow.client.Client.list_projects">
+<span class="sig-name descname"><span class="pre">list_projects</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">page_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/dev/builtins/functions.html#int" title="(in Python v3.16)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/dev/builtins/constants.html#None" title="(in Python v3.16)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">page</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/dev/builtins/functions.html#int" title="(in Python v3.16)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/dev/builtins/constants.html#None" title="(in Python v3.16)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order_by</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/dev/builtins/stdtypes.html#str" title="(in Python v3.16)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/dev/builtins/constants.html#None" title="(in Python v3.16)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/dev/builtins/stdtypes.html#str" title="(in Python v3.16)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/dev/builtins/constants.html#None" title="(in Python v3.16)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/dev/library/typing.html#typing.Any" title="(in Python v3.16)"><span class="pre">Any</span></a></span></span><a class="headerlink" href="#ansys.saf.glow.client.Client.list_projects" title="Link to this definition">#</a></dt>
+<dd><p>List projects with pagination, ordering, and optional filtering.
+By default, returns the first page of results with a maximum of 100 projects per page.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>page_size</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">optional</span></code>, <a class="reference external" href="https://docs.python.org/dev/builtins/functions.html#int" title="(in Python v3.16)"><code class="docutils literal notranslate"><span class="pre">int</span></code></a></span></dt><dd><p>The maximum number of projects to return in the response. If not specified, defaults to returning
+at most 100 projects. Values above 100 will be coerced to 100.</p>
+</dd>
+<dt><strong>page</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">optional</span></code>, <a class="reference external" href="https://docs.python.org/dev/builtins/functions.html#int" title="(in Python v3.16)"><code class="docutils literal notranslate"><span class="pre">int</span></code></a></span></dt><dd><p>The page number to return (1-indexed). If not specified, defaults to returning the first page.</p>
+</dd>
+<dt><strong>order_by</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">optional</span></code>, <a class="reference external" href="https://docs.python.org/dev/builtins/stdtypes.html#str" title="(in Python v3.16)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a></span></dt><dd><p>Comma-separated list of fields to order by.
+The default sorting order is ascending.
+To specify descending order for a field, append a “ desc” suffix;
+for example: <code class="docutils literal notranslate"><span class="pre">&quot;date_modified</span> <span class="pre">desc,</span> <span class="pre">name&quot;</span></code>.</p>
+<p>Supported fields are <code class="docutils literal notranslate"><span class="pre">display_name</span></code>, <code class="docutils literal notranslate"><span class="pre">description</span></code>, <code class="docutils literal notranslate"><span class="pre">date_created</span></code>,
+<code class="docutils literal notranslate"><span class="pre">date_modified</span></code>, and <code class="docutils literal notranslate"><span class="pre">name</span></code>.</p>
+</dd>
+<dt><strong>filter</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">optional</span></code>, <a class="reference external" href="https://docs.python.org/dev/builtins/stdtypes.html#str" title="(in Python v3.16)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a></span></dt><dd><p>A filter expression to narrow down the listed projects. Follows the syntax:
+<code class="docutils literal notranslate"><span class="pre">&lt;field&gt;</span> <span class="pre">&lt;operator&gt;</span> <span class="pre">&lt;value&gt;</span> <span class="pre">[AND</span> <span class="pre">&lt;field&gt;</span> <span class="pre">&lt;operator&gt;</span> <span class="pre">&lt;value&gt;]...</span></code></p>
+<dl class="simple">
+<dt>Supported fields:</dt><dd><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">display_name</span></code>: Only supports <code class="docutils literal notranslate"><span class="pre">=</span></code> (case-insensitive, contains match).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">description</span></code>: Only supports <code class="docutils literal notranslate"><span class="pre">=</span></code> (case-insensitive, contains match).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">date_created</span></code>: Supports <code class="docutils literal notranslate"><span class="pre">=</span></code>, <code class="docutils literal notranslate"><span class="pre">!=</span></code>, <code class="docutils literal notranslate"><span class="pre">&lt;</span></code>, <code class="docutils literal notranslate"><span class="pre">&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">&lt;=</span></code>, <code class="docutils literal notranslate"><span class="pre">&gt;=</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">date_modified</span></code>: Supports <code class="docutils literal notranslate"><span class="pre">=</span></code>, <code class="docutils literal notranslate"><span class="pre">!=</span></code>, <code class="docutils literal notranslate"><span class="pre">&lt;</span></code>, <code class="docutils literal notranslate"><span class="pre">&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">&lt;=</span></code>, <code class="docutils literal notranslate"><span class="pre">&gt;=</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+<p>Date values must be ISO 8601 strings (e.g., <code class="docutils literal notranslate"><span class="pre">2024-01-15T00:00:00</span></code>, <code class="docutils literal notranslate"><span class="pre">2024-01-15</span></code>).</p>
+<dl class="simple">
+<dt>Examples:</dt><dd><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;display_name</span> <span class="pre">=</span> <span class="pre">Motor&quot;</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;description</span> <span class="pre">=</span> <span class="pre">benchmark&quot;</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;date_created</span> <span class="pre">&gt;=</span> <span class="pre">2024-01-01T00:00:00&quot;</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;display_name</span> <span class="pre">=</span> <span class="pre">Motor</span> <span class="pre">AND</span> <span class="pre">date_created</span> <span class="pre">&gt;=</span> <span class="pre">2024-01-01T00:00:00&quot;</span></code></p></li>
+</ul>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl>
+<dt><a class="reference external" href="https://docs.python.org/dev/builtins/stdtypes.html#dict" title="(in Python v3.16)"><code class="docutils literal notranslate"><span class="pre">dict</span></code></a>[<a class="reference external" href="https://docs.python.org/dev/builtins/stdtypes.html#str" title="(in Python v3.16)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">Any</span></code>]</dt><dd><p>JSON response with project information and pagination metadata.</p>
+<p>Example response:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;projects&quot;</span><span class="p">:</span> <span class="p">[{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;projects/&lt;id&gt;&quot;</span><span class="p">,</span> <span class="s2">&quot;display_name&quot;</span><span class="p">:</span> <span class="s2">&quot;my project&quot;</span><span class="p">}],</span>
+    <span class="s2">&quot;current_page&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s2">&quot;total_pages&quot;</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span>
+    <span class="s2">&quot;page_size&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+    <span class="s2">&quot;total_projects&quot;</span><span class="p">:</span> <span class="mi">2000</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.saf.glow.client.Client.upgrade_project">
+<span class="sig-name descname"><span class="pre">upgrade_project</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/dev/builtins/stdtypes.html#str" title="(in Python v3.16)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">T</span></span></span><a class="headerlink" href="#ansys.saf.glow.client.Client.upgrade_project" title="Link to this definition">#</a></dt>
+<dd><p>Upgrade the version of the Solution instance for a project specified
+by its resource name (<code class="docutils literal notranslate"><span class="pre">projects/&lt;project_id&gt;</span></code>).</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>name</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/dev/builtins/stdtypes.html#str" title="(in Python v3.16)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a></span></dt><dd><p>Resource name of an existing project.</p>
+<p>Has the form <code class="docutils literal notranslate"><span class="pre">projects/&lt;project_id&gt;</span></code>.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">T</span> <span class="pre">derived</span> <span class="pre">from</span> <span class="pre">ansys.saf.glow.solution.Solution</span></code></dt><dd><p>Solution instance for the project referred to by <code class="docutils literal notranslate"><span class="pre">name</span></code>
+with the same fields and methods as the Solution specified in the
+<code class="docutils literal notranslate"><span class="pre">Client</span></code> constructor.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="ansys.saf.glow.client.ConflictException">
+<span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ansys.saf.glow.client.</span></span><span class="sig-name descname"><span class="pre">ConflictException</span></span><a class="headerlink" href="#ansys.saf.glow.client.ConflictException" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">SolutionClientError</span></code></p>
+<p>Exception raised when the GLOW client API is invoked making a request
+inconsistent with a given project state.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.saf.glow.client.DashClient">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ansys.saf.glow.client.</span></span><span class="sig-name descname"><span class="pre">DashClient</span></span><a class="headerlink" href="#ansys.saf.glow.client.DashClient" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/dev/library/typing.html#typing.Generic" title="(in Python v3.16)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Generic</span></code></a>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">T</span></code>]</p>
+<p>Client for use in the Dash UI framework that enables access to remote GLOW Solution.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.saf.glow.client.DashClient.create_event_listener">
+<span class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">create_event_listener</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">step</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="solution.html#ansys.saf.glow.solution.StepModel" title="ansys.saf.glow._core.step_model.StepModel"><span class="pre">StepModel</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">stream_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/dev/builtins/stdtypes.html#str" title="(in Python v3.16)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/dev/builtins/stdtypes.html#str" title="(in Python v3.16)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">WebSocket</span></span></span><a class="headerlink" href="#ansys.saf.glow.client.DashClient.create_event_listener" title="Link to this definition">#</a></dt>
+<dd><p>Return a WebSocket configured to receive data from transaction events
+on the <code class="docutils literal notranslate"><span class="pre">stream_name</span></code> channel.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>step: StepModel</strong></dt><dd><p>The instance of the step used on the UI layout.</p>
+</dd>
+<dt><strong>stream_name: str</strong></dt><dd><p>The name of the stream that the WebSocket will try to connect to.
+A step may have multiple streams.</p>
+</dd>
+<dt><strong>id</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/dev/builtins/stdtypes.html#str" title="(in Python v3.16)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a></span></dt><dd><p>The identifier used on the HTML element that contains the WebSocket.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">WebSocket</span></code></dt><dd><p>A WebSocket configured to receive events data on the <code class="docutils literal notranslate"><span class="pre">stream_name</span></code> channel.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">layout</span> <span class="o">=</span> <span class="n">html</span><span class="o">.</span><span class="n">Div</span><span class="p">([</span>
+<span class="gp">&gt;&gt;&gt; </span>   <span class="n">html</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="s2">&quot;Trigger Event&quot;</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;trigger_event&quot;</span><span class="p">,</span> <span class="n">n_clicks</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
+<span class="gp">&gt;&gt;&gt; </span>   <span class="n">html</span><span class="o">.</span><span class="n">Div</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s2">&quot;event_message&quot;</span><span class="p">,</span> <span class="n">children</span><span class="o">=</span><span class="s2">&quot;Not triggered yet&quot;</span><span class="p">),</span>
+<span class="gp">&gt;&gt;&gt; </span>   <span class="n">html</span><span class="o">.</span><span class="n">Div</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s2">&quot;ws_container&quot;</span><span class="p">),</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nd">@callback</span><span class="p">(</span>
+<span class="gp">&gt;&gt;&gt; </span>  <span class="n">Input</span><span class="p">(</span><span class="s2">&quot;trigger_event&quot;</span><span class="p">,</span> <span class="s2">&quot;n_clicks&quot;</span><span class="p">),</span>
+<span class="gp">&gt;&gt;&gt; </span>  <span class="n">State</span><span class="p">(</span><span class="s2">&quot;url&quot;</span><span class="p">,</span> <span class="s2">&quot;pathname&quot;</span><span class="p">),</span>
+<span class="gp">&gt;&gt;&gt; </span>  <span class="n">prevent_initial_call</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">trigger_transaction_event</span><span class="p">(</span><span class="n">n_clicks</span><span class="p">,</span> <span class="n">project</span><span class="p">:</span> <span class="n">MySolution</span><span class="p">):</span>
+<span class="gp">&gt;&gt;&gt; </span>   <span class="k">if</span> <span class="n">n_clicks</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+<span class="gp">&gt;&gt;&gt; </span>       <span class="n">step</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">steps</span><span class="o">.</span><span class="n">my_step</span>
+<span class="gp">&gt;&gt;&gt; </span>       <span class="n">step</span><span class="o">.</span><span class="n">trigger_event</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nd">@callback</span><span class="p">(</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">Output</span><span class="p">(</span><span class="s2">&quot;event_message&quot;</span><span class="p">,</span> <span class="s2">&quot;children&quot;</span><span class="p">),</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">Input</span><span class="p">(</span><span class="s2">&quot;my_ws&quot;</span><span class="p">,</span> <span class="s2">&quot;message&quot;</span><span class="p">),</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">prevent_initial_call</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">message</span><span class="p">(</span><span class="n">message</span><span class="p">):</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="k">if</span> <span class="n">message</span><span class="p">:</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Received message: </span><span class="si">{</span><span class="n">message</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="k">else</span><span class="p">:</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="k">return</span> <span class="s2">&quot;No message received yet.&quot;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.saf.glow.client.DashClient.get_deployment_type">
+<span class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">get_deployment_type</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#ansys.saf.glow.client.Deployment" title="ansys.saf.glow._config.const.Deployment"><span class="pre">Deployment</span></a></span></span><a class="headerlink" href="#ansys.saf.glow.client.DashClient.get_deployment_type" title="Link to this definition">#</a></dt>
+<dd><p>Return the deployment type derived from the value of the <code class="docutils literal notranslate"><span class="pre">GLOW_DEPLOYMENT</span></code> environment variable
+which corresponds to how the server in which the client is running is deployed.
+Normally this will be the UI server of the solution.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><a class="reference internal" href="#ansys.saf.glow.client.Deployment" title="ansys.saf.glow.client.Deployment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Deployment</span></code></a></dt><dd><p>The deployment type derived from the value of the <code class="docutils literal notranslate"><span class="pre">GLOW_DEPLOYMENT</span></code> environment variable
+which corresponds to how the server in which the client is running is deployed.
+Normally this will be the UI server of the solution.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.saf.glow.client.DashClient.get_portal_ui_url">
+<span class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">get_portal_ui_url</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/dev/builtins/stdtypes.html#str" title="(in Python v3.16)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/dev/builtins/constants.html#None" title="(in Python v3.16)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ansys.saf.glow.client.DashClient.get_portal_ui_url" title="Link to this definition">#</a></dt>
+<dd><p>Return the URL of the SAF Portal UI. This URL is typically
+exposed as a link that enables the user to return to the
+Portal UI after using the Solution UI for a specific project.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><a class="reference external" href="https://docs.python.org/dev/builtins/stdtypes.html#str" title="(in Python v3.16)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>The URL of the SAF Portal UI.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.saf.glow.client.Deployment">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ansys.saf.glow.client.</span></span><span class="sig-name descname"><span class="pre">Deployment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.saf.glow.client.Deployment" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/dev/library/enum.html#enum.Enum" title="(in Python v3.16)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></a></p>
+<p>Categories of deployments for the GLOW server.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="ansys.saf.glow.client.InternalSolutionException">
+<span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ansys.saf.glow.client.</span></span><span class="sig-name descname"><span class="pre">InternalSolutionException</span></span><a class="headerlink" href="#ansys.saf.glow.client.InternalSolutionException" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">SolutionClientError</span></code></p>
+<p>Exception raised when the solution experienced a problem server-side.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.saf.glow.client.LongRunning">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ansys.saf.glow.client.</span></span><span class="sig-name descname"><span class="pre">LongRunning</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">step_model_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/dev/builtins/functions.html#type" title="(in Python v3.16)"><span class="pre">type</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="solution.html#ansys.saf.glow.solution.StepModel" title="ansys.saf.glow._core.step_model.StepModel"><span class="pre">StepModel</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/dev/builtins/stdtypes.html#str" title="(in Python v3.16)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">method_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/dev/builtins/stdtypes.html#str" title="(in Python v3.16)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">method_url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/dev/builtins/stdtypes.html#str" title="(in Python v3.16)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">http_client</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">T</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.saf.glow.client.LongRunning" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/dev/library/typing.html#typing.Generic" title="(in Python v3.16)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Generic</span></code></a>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">T</span></code>]</p>
+<p>An object that monitors the execution of a call to a long-running transaction method.</p>
+<p>A method that is decorated with <a class="reference internal" href="solution.html#ansys.saf.glow.solution.long_running" title="ansys.saf.glow.solution.long_running"><code class="xref py py-func docutils literal notranslate"><span class="pre">long_running()</span></code></a> will return a
+<code class="docutils literal notranslate"><span class="pre">LongRunning</span></code> object when called from a <a class="reference internal" href="solution.html#ansys.saf.glow.solution.Solution" title="ansys.saf.glow.solution.Solution"><code class="xref py py-class docutils literal notranslate"><span class="pre">Solution</span></code></a> instance returned by
+the GLOW client. The calling environment can use the <code class="docutils literal notranslate"><span class="pre">LongRunning</span></code> object to monitor the method execution.</p>
+<p>It is not expected that the constructor will be called directly by a Solution client.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>step_model_type</strong><span class="classifier"><code class="docutils literal notranslate"><span class="pre">type</span> <span class="pre">of</span> <span class="pre">StepModel</span></code></span></dt><dd><p>The step class that contains the method to be monitored.</p>
+</dd>
+<dt><strong>step_name</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/dev/builtins/stdtypes.html#str" title="(in Python v3.16)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a></span></dt><dd><p>The name of the step that contains the method to be monitored.
+The name of a step is the name of a field on a
+<a class="reference internal" href="solution.html#ansys.saf.glow.solution.StepsModel" title="ansys.saf.glow.solution.StepsModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">StepsModel</span></code></a> derived class.
+The <a class="reference internal" href="solution.html#ansys.saf.glow.solution.StepsModel" title="ansys.saf.glow.solution.StepsModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">StepsModel</span></code></a> derived class is the type of the
+<code class="xref py py-class docutils literal notranslate"><span class="pre">steps</span></code> field which defines the set of steps in a
+<a class="reference internal" href="solution.html#ansys.saf.glow.solution.Solution" title="ansys.saf.glow.solution.Solution"><code class="xref py py-class docutils literal notranslate"><span class="pre">Solution</span></code></a> derived class.</p>
+</dd>
+<dt><strong>method_name</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/dev/builtins/stdtypes.html#str" title="(in Python v3.16)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a></span></dt><dd><p>The name of the method that contains the method to be monitored.</p>
+</dd>
+<dt><strong>method_url</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/dev/builtins/stdtypes.html#str" title="(in Python v3.16)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a></span></dt><dd><p>The URL of the method to be monitored.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>For more detailed information on the concept of long-running methods, see
+<a class="reference external" href="https://saf.ansys.com/version/stable/user_guide/backend/workflow_definition/transaction_methods/asynchronous_execution.html">the corresponding section</a> of the User Guide.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.saf.glow.client.LongRunning.get_state">
+<span class="sig-name descname"><span class="pre">get_state</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="solution.html#ansys.saf.glow.solution.MethodState" title="ansys.saf.glow._core.method_status.MethodState"><span class="pre">MethodState</span></a></span></span><a class="headerlink" href="#ansys.saf.glow.client.LongRunning.get_state" title="Link to this definition">#</a></dt>
+<dd><p>Get the state of the long running method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">MethodState</span></code></dt><dd><p>The current state of the method execution</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>For instructions and an example on using this method, see
+<a class="reference external" href="https://saf.ansys.com/version/stable/user_guide/backend/workflow_definition/transaction_methods/asynchronous_execution.html#check-method-execution-status">the corresponding section</a> in the User Guide.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.saf.glow.client.LongRunning.is_complete">
+<span class="sig-name descname"><span class="pre">is_complete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">raise_for_error</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/dev/builtins/functions.html#bool" title="(in Python v3.16)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/dev/builtins/functions.html#bool" title="(in Python v3.16)"><span class="pre">bool</span></a></span></span><a class="headerlink" href="#ansys.saf.glow.client.LongRunning.is_complete" title="Link to this definition">#</a></dt>
+<dd><p>Specify whether the long-running method is complete or not.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>raise_for_error</strong><span class="classifier"><a class="reference internal" href="_sphinx/bltins.html#python-bltin-boolean-values"><span class="std std-ref">bool</span></a></span></dt><dd><p>If specified, then an exception is raised if the method has failed.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><a class="reference internal" href="_sphinx/bltins.html#python-bltin-boolean-values"><span class="std std-ref">bool</span></a></dt><dd><p>Whether the long-running method is complete or not.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>For instructions and an example of using this method, see
+<a class="reference external" href="https://saf.ansys.com/version/stable/user_guide/backend/workflow_definition/transaction_methods/asynchronous_execution.html#check-method-execution-status">the corresponding section</a> in the User Guide.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.saf.glow.client.LongRunning.wait">
+<span class="sig-name descname"><span class="pre">wait</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/dev/builtins/functions.html#int" title="(in Python v3.16)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/dev/builtins/constants.html#None" title="(in Python v3.16)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">T</span></span></span><a class="headerlink" href="#ansys.saf.glow.client.LongRunning.wait" title="Link to this definition">#</a></dt>
+<dd><p>Wait for the long running method to terminate.</p>
+<p>If the process does not terminate after timeout seconds,
+then raise a <a class="reference external" href="https://docs.python.org/dev/builtins/exceptions.html#TimeoutError" title="(in Python v3.16)"><code class="xref py py-class docutils literal notranslate"><span class="pre">TimeoutError</span></code></a> exception. It is safe to
+catch this exception and retry the wait.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>timeout</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/dev/builtins/functions.html#int" title="(in Python v3.16)"><code class="docutils literal notranslate"><span class="pre">int</span></code></a></span></dt><dd><p>If specified, then the parameter can be used to control
+the maximum number of seconds to wait before returning.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>For a description of this method with an example of its use, see
+<a class="reference external" href="https://saf.ansys.com/version/stable/user_guide/backend/workflow_definition/transaction_methods/asynchronous_execution.html#wait-for-long-running-methods">the corresponding section</a> in the User Guide.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="ansys.saf.glow.client.NotFoundException">
+<span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ansys.saf.glow.client.</span></span><span class="sig-name descname"><span class="pre">NotFoundException</span></span><a class="headerlink" href="#ansys.saf.glow.client.NotFoundException" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">SolutionClientError</span></code></p>
+<p>Exception raised when the GLOW client API is invoked to access an
+object that does not exist.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.saf.glow.client.OperatingSystemPath">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ansys.saf.glow.client.</span></span><span class="sig-name descname"><span class="pre">OperatingSystemPath</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/dev/builtins/stdtypes.html#str" title="(in Python v3.16)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/dev/library/pathlib.html#pathlib.Path" title="(in Python v3.16)"><span class="pre">Path</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.saf.glow.client.OperatingSystemPath" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ansys.saf.glow.client.AbstractStoragePath" title="ansys.saf.glow._storage.base.AbstractStoragePath"><code class="xref py py-class docutils literal notranslate"><span class="pre">AbstractStoragePath</span></code></a></p>
+<p>A path to a directory or file in a OS Filesystem which may or may not actually exist.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>path</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/dev/builtins/stdtypes.html#str" title="(in Python v3.16)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/dev/library/pathlib.html#pathlib.Path" title="(in Python v3.16)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pathlib.Path</span></code></a></span></dt><dd><p>A path to a directory or file in a OS Filesystem.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.saf.glow.client.OperatingSystemPath.as_uri">
+<span class="sig-name descname"><span class="pre">as_uri</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/dev/builtins/stdtypes.html#str" title="(in Python v3.16)"><span class="pre">str</span></a></span></span><a class="headerlink" href="#ansys.saf.glow.client.OperatingSystemPath.as_uri" title="Link to this definition">#</a></dt>
+<dd><p>Return a URI that refers to the entity referenced by the path.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><a class="reference external" href="https://docs.python.org/dev/builtins/stdtypes.html#str" title="(in Python v3.16)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>A URI that refers to the entity referenced by the path.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.saf.glow.client.OperatingSystemPath.copy">
+<span class="sig-name descname"><span class="pre">copy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">destination</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#ansys.saf.glow.client.AbstractStoragePath" title="ansys.saf.glow._storage.base.AbstractStoragePath"><span class="pre">AbstractStoragePath</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/dev/builtins/constants.html#None" title="(in Python v3.16)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ansys.saf.glow.client.OperatingSystemPath.copy" title="Link to this definition">#</a></dt>
+<dd><p>Copy the referenced entity to the given destination directory or folder.
+The destination directory and any missing parents will be created if they do not exist.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>destination</strong><span class="classifier"><code class="docutils literal notranslate"><span class="pre">AbstractStoragePath</span></code></span></dt><dd><p>The directory or folder where the referenced entity will be copied.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.saf.glow.client.OperatingSystemPath.copyfileobj">
+<span class="sig-name descname"><span class="pre">copyfileobj</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fileobj</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/dev/builtins/constants.html#None" title="(in Python v3.16)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ansys.saf.glow.client.OperatingSystemPath.copyfileobj" title="Link to this definition">#</a></dt>
+<dd><p>Create or replace of the referenced entity with the contents of the file-like object <code class="docutils literal notranslate"><span class="pre">fileobj</span></code>.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>fileobj</strong><span class="classifier"><code class="docutils literal notranslate"><span class="pre">file</span> <span class="pre">like</span> <span class="pre">object</span></code></span></dt><dd><p>The object that is the source of data to become the content of the referenced entity.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.saf.glow.client.OperatingSystemPath.exists">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">exists</span></span><a class="headerlink" href="#ansys.saf.glow.client.OperatingSystemPath.exists" title="Link to this definition">#</a></dt>
+<dd><p>Whether the entity referenced by the path exists.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><a class="reference internal" href="_sphinx/bltins.html#python-bltin-boolean-values"><span class="std std-ref">bool</span></a></dt><dd><p>Whether the entity referenced by the path exists.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.saf.glow.client.OperatingSystemPath.glob">
+<span class="sig-name descname"><span class="pre">glob</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pattern</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/dev/builtins/stdtypes.html#str" title="(in Python v3.16)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/dev/builtins/stdtypes.html#list" title="(in Python v3.16)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#ansys.saf.glow.client.AbstractStoragePath" title="ansys.saf.glow._storage.base.AbstractStoragePath"><span class="pre">AbstractStoragePath</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#ansys.saf.glow.client.OperatingSystemPath.glob" title="Link to this definition">#</a></dt>
+<dd><p>Return the paths of entities with in the referenced fdirectory or folder that match the given
+pattern.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>pattern</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/dev/builtins/stdtypes.html#str" title="(in Python v3.16)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a></span></dt><dd><p>The pattern that is used to match entities within the referenced directory.
+The pattern can include <code class="docutils literal notranslate"><span class="pre">*</span></code> as a wild match and <code class="docutils literal notranslate"><span class="pre">**</span></code> which matches directories recursively.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">list</span> <span class="pre">of</span> <span class="pre">AbstractStoragePath</span></code></dt><dd><p>The paths of entities with in the referenced directory or folder that match the given pattern.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.saf.glow.client.OperatingSystemPath.is_dir">
+<span class="sig-name descname"><span class="pre">is_dir</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/dev/builtins/functions.html#bool" title="(in Python v3.16)"><span class="pre">bool</span></a></span></span><a class="headerlink" href="#ansys.saf.glow.client.OperatingSystemPath.is_dir" title="Link to this definition">#</a></dt>
+<dd><p>Return whether the path refers to a directory or folder.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><a class="reference internal" href="_sphinx/bltins.html#python-bltin-boolean-values"><span class="std std-ref">bool</span></a></dt><dd><p>Whether the path refers to a directory or folder.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.saf.glow.client.OperatingSystemPath.is_file">
+<span class="sig-name descname"><span class="pre">is_file</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/dev/builtins/functions.html#bool" title="(in Python v3.16)"><span class="pre">bool</span></a></span></span><a class="headerlink" href="#ansys.saf.glow.client.OperatingSystemPath.is_file" title="Link to this definition">#</a></dt>
+<dd><p>Return whether the path refers to a file or blob.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><a class="reference internal" href="_sphinx/bltins.html#python-bltin-boolean-values"><span class="std std-ref">bool</span></a></dt><dd><p>Whether the path refers to a file or blob.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.saf.glow.client.OperatingSystemPath.iterdir">
+<span class="sig-name descname"><span class="pre">iterdir</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/dev/library/collections.abc.html#collections.abc.Iterator" title="(in Python v3.16)"><span class="pre">Iterator</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#ansys.saf.glow.client.AbstractStoragePath" title="ansys.saf.glow._storage.base.AbstractStoragePath"><span class="pre">AbstractStoragePath</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#ansys.saf.glow.client.OperatingSystemPath.iterdir" title="Link to this definition">#</a></dt>
+<dd><p>Return an iterator over the entities that exist on the directory or folder referenced by the path.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">Iterator</span> <span class="pre">over</span> <span class="pre">AbstractStoragePath</span></code></dt><dd><p>The entities that exist on the directory or folder referenced by the path.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.saf.glow.client.OperatingSystemPath.mkdir">
+<span class="sig-name descname"><span class="pre">mkdir</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/dev/builtins/constants.html#None" title="(in Python v3.16)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ansys.saf.glow.client.OperatingSystemPath.mkdir" title="Link to this definition">#</a></dt>
+<dd><p>Create the directory referenced by the path including all the parent directories.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.saf.glow.client.OperatingSystemPath.name">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">name</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/dev/builtins/stdtypes.html#str" title="(in Python v3.16)"><span class="pre">str</span></a></span><a class="headerlink" href="#ansys.saf.glow.client.OperatingSystemPath.name" title="Link to this definition">#</a></dt>
+<dd><p>The name of the entity referenced by the path.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><a class="reference external" href="https://docs.python.org/dev/builtins/stdtypes.html#str" title="(in Python v3.16)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>The name of the entity referenced by the path.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.saf.glow.client.OperatingSystemPath.parent">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">parent</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#ansys.saf.glow.client.AbstractStoragePath" title="ansys.saf.glow._storage.base.AbstractStoragePath"><span class="pre">AbstractStoragePath</span></a></span><a class="headerlink" href="#ansys.saf.glow.client.OperatingSystemPath.parent" title="Link to this definition">#</a></dt>
+<dd><p>The directory or folder that contains the entity referenced by the path.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">AbstractStoragePath</span></code></dt><dd><p>The directory or folder that contains the entity referenced by the path.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.saf.glow.client.OperatingSystemPath.read_text">
+<span class="sig-name descname"><span class="pre">read_text</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/dev/builtins/stdtypes.html#str" title="(in Python v3.16)"><span class="pre">str</span></a></span></span><a class="headerlink" href="#ansys.saf.glow.client.OperatingSystemPath.read_text" title="Link to this definition">#</a></dt>
+<dd><p>Return the text content of the file or blob that the path refers to.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><a class="reference external" href="https://docs.python.org/dev/builtins/stdtypes.html#str" title="(in Python v3.16)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>The text content of the file or blob that the path refers to.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.saf.glow.client.OperatingSystemPath.remove">
+<span class="sig-name descname"><span class="pre">remove</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/dev/builtins/constants.html#None" title="(in Python v3.16)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ansys.saf.glow.client.OperatingSystemPath.remove" title="Link to this definition">#</a></dt>
+<dd><p>Remove recursively the entire directory, folder, file or blob referenced by the path.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.saf.glow.client.OperatingSystemPath.resolve">
+<span class="sig-name descname"><span class="pre">resolve</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#ansys.saf.glow.client.AbstractStoragePath" title="ansys.saf.glow._storage.base.AbstractStoragePath"><span class="pre">AbstractStoragePath</span></a></span></span><a class="headerlink" href="#ansys.saf.glow.client.OperatingSystemPath.resolve" title="Link to this definition">#</a></dt>
+<dd><p>Make the path absolute, resolving any symbolic links or <code class="docutils literal notranslate"><span class="pre">..</span></code> components. A new path object is returned.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">AbstractStoragePath</span></code></dt><dd><p>A new reference to the same entity but removing symbolic links and <code class="docutils literal notranslate"><span class="pre">..</span></code> components.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.saf.glow.client.OperatingSystemPath.stem">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">stem</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/dev/builtins/stdtypes.html#str" title="(in Python v3.16)"><span class="pre">str</span></a></span><a class="headerlink" href="#ansys.saf.glow.client.OperatingSystemPath.stem" title="Link to this definition">#</a></dt>
+<dd><p>The name of the entity referenced by the path with its suffix (file extension).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><a class="reference external" href="https://docs.python.org/dev/builtins/stdtypes.html#str" title="(in Python v3.16)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>The name of the entity referenced by the path with its suffix (file extension).</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.saf.glow.client.OperatingSystemPath.suffix">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">suffix</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/dev/builtins/stdtypes.html#str" title="(in Python v3.16)"><span class="pre">str</span></a></span><a class="headerlink" href="#ansys.saf.glow.client.OperatingSystemPath.suffix" title="Link to this definition">#</a></dt>
+<dd><p>The suffix for file extension of the entity referenced by the path.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><a class="reference external" href="https://docs.python.org/dev/builtins/stdtypes.html#str" title="(in Python v3.16)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>The suffix for file extension of the entity referenced by the path.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.saf.glow.client.OperatingSystemPath.write_bytes">
+<span class="sig-name descname"><span class="pre">write_bytes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/dev/builtins/stdtypes.html#bytes" title="(in Python v3.16)"><span class="pre">bytes</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/dev/builtins/constants.html#None" title="(in Python v3.16)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ansys.saf.glow.client.OperatingSystemPath.write_bytes" title="Link to this definition">#</a></dt>
+<dd><p>Replace the content of the file or blob that the path refers to or
+creates a new file or blob.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>data</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/dev/builtins/stdtypes.html#bytes" title="(in Python v3.16)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bytes</span></code></a></span></dt><dd><p>The new content of the file or blob referenced by the path.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.saf.glow.client.OperatingSystemPath.write_text">
+<span class="sig-name descname"><span class="pre">write_text</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/dev/builtins/stdtypes.html#str" title="(in Python v3.16)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/dev/builtins/constants.html#None" title="(in Python v3.16)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ansys.saf.glow.client.OperatingSystemPath.write_text" title="Link to this definition">#</a></dt>
+<dd><p>Replace the content of the file or blob that the path refers to or
+creates a new file or blob.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>text</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/dev/builtins/stdtypes.html#str" title="(in Python v3.16)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a></span></dt><dd><p>The new content of the file or blob referenced by the path.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.saf.glow.client.OperatingSystemPath.write_text_with_new_dir">
+<span class="sig-name descname"><span class="pre">write_text_with_new_dir</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/dev/builtins/stdtypes.html#str" title="(in Python v3.16)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/dev/builtins/constants.html#None" title="(in Python v3.16)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ansys.saf.glow.client.OperatingSystemPath.write_text_with_new_dir" title="Link to this definition">#</a></dt>
+<dd><p>Replace the content of the file or blob that the path refers to or
+creates a new file or blob. Creates the parent directory if doesn’t exist.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>text</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/dev/builtins/stdtypes.html#str" title="(in Python v3.16)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a></span></dt><dd><p>The new content of the file or blob referenced by the path.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.saf.glow.client.OperatingSystemStorage">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ansys.saf.glow.client.</span></span><span class="sig-name descname"><span class="pre">OperatingSystemStorage</span></span><a class="headerlink" href="#ansys.saf.glow.client.OperatingSystemStorage" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">AbstractStorage</span></code></p>
+<p>A factory for <a class="reference internal" href="#ansys.saf.glow.client.OperatingSystemPath" title="ansys.saf.glow.client.OperatingSystemPath"><code class="xref py py-class docutils literal notranslate"><span class="pre">OperatingSystemPath</span></code></a> objects.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.saf.glow.client.OperatingSystemStorage.create_path_from_reference">
+<span class="sig-name descname"><span class="pre">create_path_from_reference</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reference</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/dev/builtins/stdtypes.html#str" title="(in Python v3.16)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#ansys.saf.glow.client.AbstractStoragePath" title="ansys.saf.glow._storage.base.AbstractStoragePath"><span class="pre">AbstractStoragePath</span></a></span></span><a class="headerlink" href="#ansys.saf.glow.client.OperatingSystemStorage.create_path_from_reference" title="Link to this definition">#</a></dt>
+<dd><p>Create a <a class="reference internal" href="#ansys.saf.glow.client.OperatingSystemPath" title="ansys.saf.glow.client.OperatingSystemPath"><code class="xref py py-class docutils literal notranslate"><span class="pre">OperatingSystemPath</span></code></a> object given a URL.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>reference</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/dev/builtins/stdtypes.html#str" title="(in Python v3.16)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a></span></dt><dd><p>The URL of a file or directory.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><a class="reference internal" href="#ansys.saf.glow.client.AbstractStoragePath" title="ansys.saf.glow.client.AbstractStoragePath"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AbstractStoragePath</span></code></a></dt><dd><p>A object for accessing the file or directory.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="ansys.saf.glow.client.PermissionException">
+<span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ansys.saf.glow.client.</span></span><span class="sig-name descname"><span class="pre">PermissionException</span></span><a class="headerlink" href="#ansys.saf.glow.client.PermissionException" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">SolutionClientError</span></code></p>
+<p>Exception raised when the GLOW client API is invoked to trigger an
+operation that the user does not have permission to perform.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="ansys.saf.glow.client.SolutionLoadException">
+<span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ansys.saf.glow.client.</span></span><span class="sig-name descname"><span class="pre">SolutionLoadException</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">errors</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/dev/builtins/stdtypes.html#str" title="(in Python v3.16)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/dev/builtins/stdtypes.html#list" title="(in Python v3.16)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/dev/builtins/stdtypes.html#str" title="(in Python v3.16)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.saf.glow.client.SolutionLoadException" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/dev/builtins/exceptions.html#Exception" title="(in Python v3.16)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></a></p>
+<p>Exception raised when errors are detected during
+validation of a <a class="reference internal" href="solution.html#ansys.saf.glow.solution.Solution" title="ansys.saf.glow.solution.Solution"><code class="xref py py-class docutils literal notranslate"><span class="pre">Solution</span></code></a> derived class prior to creating an API server.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>errors</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/dev/builtins/stdtypes.html#str" title="(in Python v3.16)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/dev/builtins/stdtypes.html#list" title="(in Python v3.16)"><code class="docutils literal notranslate"><span class="pre">list</span></code></a> <code class="xref py py-obj docutils literal notranslate"><span class="pre">of</span></code> <a class="reference external" href="https://docs.python.org/dev/builtins/stdtypes.html#str" title="(in Python v3.16)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a></span></dt><dd><p>Errors detected in the a <a class="reference internal" href="solution.html#ansys.saf.glow.solution.Solution" title="ansys.saf.glow.solution.Solution"><code class="xref py py-class docutils literal notranslate"><span class="pre">Solution</span></code></a> derived class.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.saf.glow.client.SolutionLoadException.errors">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">errors</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/dev/builtins/stdtypes.html#str" title="(in Python v3.16)"><span class="pre">str</span></a></span><a class="headerlink" href="#ansys.saf.glow.client.SolutionLoadException.errors" title="Link to this definition">#</a></dt>
+<dd><p>Errors detected in a <a class="reference internal" href="solution.html#ansys.saf.glow.solution.Solution" title="ansys.saf.glow.solution.Solution"><code class="xref py py-class docutils literal notranslate"><span class="pre">Solution</span></code></a> derived class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><a class="reference external" href="https://docs.python.org/dev/builtins/stdtypes.html#str" title="(in Python v3.16)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Errors detected in a <a class="reference internal" href="solution.html#ansys.saf.glow.solution.Solution" title="ansys.saf.glow.solution.Solution"><code class="xref py py-class docutils literal notranslate"><span class="pre">Solution</span></code></a> derived class.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="ansys.saf.glow.client.UnauthorizedException">
+<span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ansys.saf.glow.client.</span></span><span class="sig-name descname"><span class="pre">UnauthorizedException</span></span><a class="headerlink" href="#ansys.saf.glow.client.UnauthorizedException" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">SolutionClientError</span></code></p>
+<p>Exception raised when the GLOW client API is invoked to trigger an
+operation that the user does not have authorization to perform.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.saf.glow.client.callback">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ansys.saf.glow.client.</span></span><span class="sig-name descname"><span class="pre">callback</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/dev/library/typing.html#typing.Any" title="(in Python v3.16)"><span class="pre">Any</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/dev/library/typing.html#typing.Any" title="(in Python v3.16)"><span class="pre">Any</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.saf.glow.client.callback" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/dev/builtins/functions.html#object" title="(in Python v3.16)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>A decorator of <a class="reference external" href="https://dash.plotly.com/basic-callbacks">Dash callback functions</a> that replaces the
+<a class="reference external" href="https://dash.plotly.com/reference#dash.callback">Dash callback decorator</a>.</p>
+<p>This decorator ensures that:
+- project can be injected into a callback argument.</p>
+<ul>
+<li><p>Open Telemetry trace spans are generated for callback executions;</p></li>
+<li><p>The start and end of callback executions are logged ensuring that the module name,
+callback name, trace id and span id are visible in the log; and</p></li>
+<li><p>The DashClient class is initialized also in the new process that is spawn when a
+callback is run in the background.</p></li>
+</ul>
+<p>This class expects the <code class="docutils literal notranslate"><span class="pre">dash_extensions.enrich</span></code> package to be installed.</p>
+<p>The parameters of this decorator are identical to the
+<a class="reference external" href="https://dash.plotly.com/reference#dash.callback">Dash callback decorator</a>.</p>
+</dd></dl>
+
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.saf.glow.client.AbstractStoragePath"><code class="docutils literal notranslate"><span class="pre">AbstractStoragePath</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.saf.glow.client.AbstractStoragePath.as_uri"><code class="docutils literal notranslate"><span class="pre">AbstractStoragePath.as_uri()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.saf.glow.client.AbstractStoragePath.copy"><code class="docutils literal notranslate"><span class="pre">AbstractStoragePath.copy()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.saf.glow.client.AbstractStoragePath.copyfileobj"><code class="docutils literal notranslate"><span class="pre">AbstractStoragePath.copyfileobj()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.saf.glow.client.AbstractStoragePath.exists"><code class="docutils literal notranslate"><span class="pre">AbstractStoragePath.exists</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.saf.glow.client.AbstractStoragePath.glob"><code class="docutils literal notranslate"><span class="pre">AbstractStoragePath.glob()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.saf.glow.client.AbstractStoragePath.is_dir"><code class="docutils literal notranslate"><span class="pre">AbstractStoragePath.is_dir()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.saf.glow.client.AbstractStoragePath.is_file"><code class="docutils literal notranslate"><span class="pre">AbstractStoragePath.is_file()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.saf.glow.client.AbstractStoragePath.iterdir"><code class="docutils literal notranslate"><span class="pre">AbstractStoragePath.iterdir()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.saf.glow.client.AbstractStoragePath.mkdir"><code class="docutils literal notranslate"><span class="pre">AbstractStoragePath.mkdir()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.saf.glow.client.AbstractStoragePath.name"><code class="docutils literal notranslate"><span class="pre">AbstractStoragePath.name</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.saf.glow.client.AbstractStoragePath.parent"><code class="docutils literal notranslate"><span class="pre">AbstractStoragePath.parent</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.saf.glow.client.AbstractStoragePath.read_text"><code class="docutils literal notranslate"><span class="pre">AbstractStoragePath.read_text()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.saf.glow.client.AbstractStoragePath.remove"><code class="docutils literal notranslate"><span class="pre">AbstractStoragePath.remove()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.saf.glow.client.AbstractStoragePath.resolve"><code class="docutils literal notranslate"><span class="pre">AbstractStoragePath.resolve()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.saf.glow.client.AbstractStoragePath.stem"><code class="docutils literal notranslate"><span class="pre">AbstractStoragePath.stem</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.saf.glow.client.AbstractStoragePath.suffix"><code class="docutils literal notranslate"><span class="pre">AbstractStoragePath.suffix</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.saf.glow.client.AbstractStoragePath.write_bytes"><code class="docutils literal notranslate"><span class="pre">AbstractStoragePath.write_bytes()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.saf.glow.client.AbstractStoragePath.write_text"><code class="docutils literal notranslate"><span class="pre">AbstractStoragePath.write_text()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.saf.glow.client.AbstractStoragePath.write_text_with_new_dir"><code class="docutils literal notranslate"><span class="pre">AbstractStoragePath.write_text_with_new_dir()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.saf.glow.client.AnalysisResultModel"><code class="docutils literal notranslate"><span class="pre">AnalysisResultModel</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.saf.glow.client.AnalysisResultModel.model_config"><code class="docutils literal notranslate"><span class="pre">AnalysisResultModel.model_config</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.saf.glow.client.BadRequestException"><code class="docutils literal notranslate"><span class="pre">BadRequestException</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.saf.glow.client.Client"><code class="docutils literal notranslate"><span class="pre">Client</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.saf.glow.client.Client.close"><code class="docutils literal notranslate"><span class="pre">Client.close()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.saf.glow.client.Client.create_project"><code class="docutils literal notranslate"><span class="pre">Client.create_project()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.saf.glow.client.Client.delete_project"><code class="docutils literal notranslate"><span class="pre">Client.delete_project()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.saf.glow.client.Client.deployment_type"><code class="docutils literal notranslate"><span class="pre">Client.deployment_type</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.saf.glow.client.Client.get_project"><code class="docutils literal notranslate"><span class="pre">Client.get_project()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.saf.glow.client.Client.get_schema"><code class="docutils literal notranslate"><span class="pre">Client.get_schema()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.saf.glow.client.Client.http_client"><code class="docutils literal notranslate"><span class="pre">Client.http_client</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.saf.glow.client.Client.import_project"><code class="docutils literal notranslate"><span class="pre">Client.import_project()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.saf.glow.client.Client.list_projects"><code class="docutils literal notranslate"><span class="pre">Client.list_projects()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.saf.glow.client.Client.upgrade_project"><code class="docutils literal notranslate"><span class="pre">Client.upgrade_project()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.saf.glow.client.ConflictException"><code class="docutils literal notranslate"><span class="pre">ConflictException</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.saf.glow.client.DashClient"><code class="docutils literal notranslate"><span class="pre">DashClient</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.saf.glow.client.DashClient.create_event_listener"><code class="docutils literal notranslate"><span class="pre">DashClient.create_event_listener()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.saf.glow.client.DashClient.get_deployment_type"><code class="docutils literal notranslate"><span class="pre">DashClient.get_deployment_type()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.saf.glow.client.DashClient.get_portal_ui_url"><code class="docutils literal notranslate"><span class="pre">DashClient.get_portal_ui_url()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.saf.glow.client.Deployment"><code class="docutils literal notranslate"><span class="pre">Deployment</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.saf.glow.client.InternalSolutionException"><code class="docutils literal notranslate"><span class="pre">InternalSolutionException</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.saf.glow.client.LongRunning"><code class="docutils literal notranslate"><span class="pre">LongRunning</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.saf.glow.client.LongRunning.get_state"><code class="docutils literal notranslate"><span class="pre">LongRunning.get_state()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.saf.glow.client.LongRunning.is_complete"><code class="docutils literal notranslate"><span class="pre">LongRunning.is_complete()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.saf.glow.client.LongRunning.wait"><code class="docutils literal notranslate"><span class="pre">LongRunning.wait()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.saf.glow.client.NotFoundException"><code class="docutils literal notranslate"><span class="pre">NotFoundException</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.saf.glow.client.OperatingSystemPath"><code class="docutils literal notranslate"><span class="pre">OperatingSystemPath</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.saf.glow.client.OperatingSystemPath.as_uri"><code class="docutils literal notranslate"><span class="pre">OperatingSystemPath.as_uri()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.saf.glow.client.OperatingSystemPath.copy"><code class="docutils literal notranslate"><span class="pre">OperatingSystemPath.copy()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.saf.glow.client.OperatingSystemPath.copyfileobj"><code class="docutils literal notranslate"><span class="pre">OperatingSystemPath.copyfileobj()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.saf.glow.client.OperatingSystemPath.exists"><code class="docutils literal notranslate"><span class="pre">OperatingSystemPath.exists</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.saf.glow.client.OperatingSystemPath.glob"><code class="docutils literal notranslate"><span class="pre">OperatingSystemPath.glob()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.saf.glow.client.OperatingSystemPath.is_dir"><code class="docutils literal notranslate"><span class="pre">OperatingSystemPath.is_dir()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.saf.glow.client.OperatingSystemPath.is_file"><code class="docutils literal notranslate"><span class="pre">OperatingSystemPath.is_file()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.saf.glow.client.OperatingSystemPath.iterdir"><code class="docutils literal notranslate"><span class="pre">OperatingSystemPath.iterdir()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.saf.glow.client.OperatingSystemPath.mkdir"><code class="docutils literal notranslate"><span class="pre">OperatingSystemPath.mkdir()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.saf.glow.client.OperatingSystemPath.name"><code class="docutils literal notranslate"><span class="pre">OperatingSystemPath.name</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.saf.glow.client.OperatingSystemPath.parent"><code class="docutils literal notranslate"><span class="pre">OperatingSystemPath.parent</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.saf.glow.client.OperatingSystemPath.read_text"><code class="docutils literal notranslate"><span class="pre">OperatingSystemPath.read_text()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.saf.glow.client.OperatingSystemPath.remove"><code class="docutils literal notranslate"><span class="pre">OperatingSystemPath.remove()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.saf.glow.client.OperatingSystemPath.resolve"><code class="docutils literal notranslate"><span class="pre">OperatingSystemPath.resolve()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.saf.glow.client.OperatingSystemPath.stem"><code class="docutils literal notranslate"><span class="pre">OperatingSystemPath.stem</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.saf.glow.client.OperatingSystemPath.suffix"><code class="docutils literal notranslate"><span class="pre">OperatingSystemPath.suffix</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.saf.glow.client.OperatingSystemPath.write_bytes"><code class="docutils literal notranslate"><span class="pre">OperatingSystemPath.write_bytes()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.saf.glow.client.OperatingSystemPath.write_text"><code class="docutils literal notranslate"><span class="pre">OperatingSystemPath.write_text()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.saf.glow.client.OperatingSystemPath.write_text_with_new_dir"><code class="docutils literal notranslate"><span class="pre">OperatingSystemPath.write_text_with_new_dir()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.saf.glow.client.OperatingSystemStorage"><code class="docutils literal notranslate"><span class="pre">OperatingSystemStorage</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.saf.glow.client.OperatingSystemStorage.create_path_from_reference"><code class="docutils literal notranslate"><span class="pre">OperatingSystemStorage.create_path_from_reference()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.saf.glow.client.PermissionException"><code class="docutils literal notranslate"><span class="pre">PermissionException</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.saf.glow.client.SolutionLoadException"><code class="docutils literal notranslate"><span class="pre">SolutionLoadException</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.saf.glow.client.SolutionLoadException.errors"><code class="docutils literal notranslate"><span class="pre">SolutionLoadException.errors</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.saf.glow.client.UnauthorizedException"><code class="docutils literal notranslate"><span class="pre">UnauthorizedException</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.saf.glow.client.callback"><code class="docutils literal notranslate"><span class="pre">callback</span></code></a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+
+  <!-- Include desired assets -->
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.7/require.min.js"></script>
+
+<script>
+// Passing the search options to the search.js file
+const SEARCH_OPTIONS = JSON.parse('{"keys": ["title", "text", "objectID"], "limit": 10, "threshold": 0.2}');
+const SEARCH_FILE = "_static/search.json";
+const ADVANCE_SEARCH_PATH = "search.html";
+const EXTRA_SOURCES = JSON.parse('""');
+</script>
+
+
+<script src="_static/js/search.js"></script>
+
+  
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright (c) 2026 ANSYS, Inc. All rights reserved.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.0.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<!--
+  Theme Version Footer
+  Displays the Sphinx theme version and the last updated date.
+  Accessibility and semantic improvements included.
+-->
+<footer class="theme-version" aria-label="Theme version and last update">
+  <span>
+    
+      Built with the
+      <a href="https://sphinxdocs.ansys.com/version/stable/index.html" target="_blank" rel="noopener noreferrer">
+        Ansys Sphinx Theme
+      </a>
+      1.8.2.
+    
+  </span>
+  <br />
+  <span>Last updated on <time id="ast_build_date"></time></span>
+</footer>
+<script>
+  // Set the last updated date in a readable format
+  (function() {
+    var options = { day: "numeric", month: "long", year: "numeric" };
+    var ast_lastModifiedDate = new Date(document.lastModified);
+    var ast_build_date = ast_lastModifiedDate.toLocaleDateString("en-US", options);
+    var dateElem = document.getElementById("ast_build_date");
+    if (dateElem) {
+      dateElem.textContent = ast_build_date;
+    }
+  })();
+</script></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

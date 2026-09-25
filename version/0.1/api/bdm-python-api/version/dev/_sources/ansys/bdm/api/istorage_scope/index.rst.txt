@@ -1,0 +1,80 @@
+
+
+
+
+
+
+The ``istorage_scope.py`` module
+================================
+
+.. py:module:: ansys.bdm.api.istorage_scope
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: istorage_scope
+.. tab-set::
+
+
+
+    .. tab-item:: Interfaces
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.bdm.api.istorage_scope.IReadStorageScope`
+            - Represents access to a read only Blob Data Management system.
+
+
+          * - :py:obj:`~ansys.bdm.api.istorage_scope.IStorageScope`
+            - Represents access to a Blob Data Management system. Allows consumers
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_interface"></span> IReadStorageScope</ansys/bdm/api/istorage_scope/IReadStorageScope>
+    <span class="nf nf-cod-symbol_interface"></span> IStorageScope</ansys/bdm/api/istorage_scope/IStorageScope>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

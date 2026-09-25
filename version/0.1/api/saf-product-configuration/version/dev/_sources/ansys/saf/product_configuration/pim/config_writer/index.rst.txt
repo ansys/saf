@@ -1,0 +1,121 @@
+
+
+
+
+
+
+The ``config_writer.py`` module
+===============================
+
+.. py:module:: ansys.saf.product_configuration.pim.config_writer
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: config_writer
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.saf.product_configuration.pim.config_writer.PimLightConfigWriter`
+            - A utility class for writing PIM Light Server configuration files.
+
+
+
+
+
+
+    .. tab-item:: Attributes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~logger`
+            - 
+
+
+
+    .. tab-item:: Constants
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~LOCALHOSTS`
+            - 
+
+
+          * - :py:obj:`~DEFAULT_GLOW_PRODUCT_BINDING_HOST`
+            - 
+
+
+          * - :py:obj:`~DEFAULT_GLOW_PRODUCT_BINDING_SECURE_HOST`
+            - 
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> PimLightConfigWriter</ansys/saf/product_configuration/pim/config_writer/PimLightConfigWriter>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Module detail
+-------------
+
+.. py:data:: LOCALHOSTS
+   :value: ['localhost', '127.0.0.1']
+
+
+.. py:data:: DEFAULT_GLOW_PRODUCT_BINDING_HOST
+   :value: '0.0.0.0'
+
+
+.. py:data:: DEFAULT_GLOW_PRODUCT_BINDING_SECURE_HOST
+   :value: 'localhost'
+
+
+.. py:data:: logger
+
+
+

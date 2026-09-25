@@ -1,0 +1,162 @@
+
+
+
+
+
+
+The ``hps_execution_str.py`` module
+===================================
+
+.. py:module:: ansys.saf.glow.hps_execution_str
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+.. py:currentmodule:: hps_execution_str
+.. tab-set::
+
+
+
+
+
+
+
+
+
+    .. tab-item:: Constants
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~HPS_EXECUTION_CONTENT`
+            - 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Module detail
+-------------
+
+.. py:data:: HPS_EXECUTION_CONTENT
+   :value: Multiline-String
+
+   .. raw:: html
+
+      <details><summary>Show Value</summary>
+
+   .. code-block:: python
+
+      """
+      from abc import ABC, abstractmethod
+      from pathlib import Path
+      from typing import Any, Dict, List
+      
+      
+      class HpsProduct(ABC):
+      
+          @property
+          @abstractmethod
+          def name(self) -> str:
+              ...
+      
+          @property
+          @abstractmethod
+          def version(self) -> str:
+              ...
+      
+          @property
+          @abstractmethod
+          def executable(self) -> Path:
+              ...
+      
+      class HpsExecutionContext(ABC):
+      
+          @property
+          @abstractmethod
+          def input_parameters(self) -> Dict[str, Any]:
+              ...
+      
+          @property
+          @abstractmethod
+          def required_output_parameters(self) -> List[str]:
+              ...
+      
+          @property
+          @abstractmethod
+          def required_output_files(self) -> Dict[str, str]:
+              ...
+      
+          @property
+          def required_output_directories(self) -> Dict[str, str]:
+              return self._data["required_output_directories"]
+      
+          @property
+          @abstractmethod
+          def products(self) -> List[HpsProduct]:
+              ...
+      
+      class HpsExecutionFunctionality(ABC):
+          @abstractmethod
+          def run_and_capture_output(self, args : List[Any], **kwargs : Any):
+              ...
+      
+          @property
+          @abstractmethod
+          def context(self) -> HpsExecutionContext:
+              ...
+      
+      class HpsExecution(ABC):
+      
+          def run_and_capture_output(self, args : List[Any], keyword_args: dict[str, Any]):
+              self._impl.run_and_capture_output(args, **keyword_args)
+      
+          def load_impl(self, impl: HpsExecutionFunctionality):
+              self._impl = impl
+      
+          @property
+          def context(self) -> HpsExecutionContext:
+              return self._impl.context
+      
+          @abstractmethod
+          def execute(self) -> Dict[str, Any]:
+              ...
+      
+      
+      
+      """
+
+   .. raw:: html
+
+      </details>
+
+
+
+
+

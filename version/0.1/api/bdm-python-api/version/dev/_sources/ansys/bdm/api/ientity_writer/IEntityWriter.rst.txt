@@ -1,0 +1,198 @@
+
+
+
+
+
+
+:class:`IEntityWriter`
+======================
+
+
+.. py:class:: ansys.bdm.api.ientity_writer.IEntityWriter
+
+   Bases: :py:obj:`Protocol`
+
+
+   
+   An object used to create a new entity from a stream of data.
+
+   Instances are created from :func:`IStorageScope.begin_store()`
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+.. py:currentmodule:: IEntityWriter
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~stream`
+            - Return object that can be written to, which will be stored as the entity.
+          * - :py:attr:`~handle`
+            - Return the entity created by this object.
+
+
+
+
+   .. tab-item:: Special methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~__enter__`
+            - Start writing data that will comprise an entity.
+          * - :py:attr:`~__exit__`
+            - Finish collecting data and store entity.
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.bdm.api.ientity_writer import IEntityWriter
+
+Property detail
+---------------
+
+.. py:property:: stream
+   :type: io.RawIOBase
+
+
+   
+   Return object that can be written to, which will be stored as the entity.
+
+   This method will throw an exception if __enter__ has not been called.
+
+   This method will throw an exception if __exit__ has been called.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: handle
+   :type: ansys.bdm.api.entity_handle.EntityHandle
+
+
+   
+   Return the entity created by this object.
+
+   This method will throw an exception if __exit__ has not been called.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+Method detail
+-------------
+
+.. py:method:: __enter__() -> IEntityWriter
+
+   
+   Start writing data that will comprise an entity.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: __exit__(__exc_type: type[BaseException] | None, __exc_value: BaseException | None, __traceback: types.TracebackType | None) -> None
+
+   
+   Finish collecting data and store entity.
+
+   This method will throw an exception if __enter__ has not been called.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

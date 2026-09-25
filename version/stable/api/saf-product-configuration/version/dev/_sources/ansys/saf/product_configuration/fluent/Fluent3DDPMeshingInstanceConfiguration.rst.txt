@@ -1,0 +1,166 @@
+
+
+
+
+
+
+:class:`Fluent3DDPMeshingInstanceConfiguration`
+===============================================
+
+
+.. py:class:: ansys.saf.product_configuration.fluent.Fluent3DDPMeshingInstanceConfiguration
+
+   Bases: :py:obj:`ansys.saf.product_configuration.interfaces.IProductInstanceConfiguration`
+
+
+   
+   Configuration class for Ansys Fluent in meshing mode with 3D geometry in double precision and
+   secure gRPC connection.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: Fluent3DDPMeshingInstanceConfiguration
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~get_version_configuration`
+            - Get configuration class for a particular version of Fluent.
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~product_name`
+            - Name used to identify Fluent in the product instance management system.
+          * - :py:attr:`~versions`
+            - Supported Fluent versions.
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.saf.product_configuration.fluent import Fluent3DDPMeshingInstanceConfiguration
+
+Property detail
+---------------
+
+.. py:property:: product_name
+   :type: str
+
+
+   
+   Name used to identify Fluent in the product instance management system.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: versions
+   :type: list[str]
+
+
+   
+   Supported Fluent versions.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+Method detail
+-------------
+
+.. py:method:: get_version_configuration(version: str) -> ansys.saf.product_configuration.interfaces.IProductInstanceVersionConfiguration
+
+   
+   Get configuration class for a particular version of Fluent.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

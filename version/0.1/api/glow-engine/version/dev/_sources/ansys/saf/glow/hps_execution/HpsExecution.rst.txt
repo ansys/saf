@@ -1,0 +1,240 @@
+
+
+
+
+
+
+:class:`HpsExecution`
+=====================
+
+
+.. py:class:: ansys.saf.glow.hps_execution.HpsExecution
+
+   Bases: :py:obj:`abc.ABC`
+
+
+   
+   A job or design point evaluation for execution in HPS.
+   Derived classes implement the computation comprising the job or design point evaluation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:currentmodule:: HpsExecution
+
+Overview
+--------
+
+.. tab-set::
+
+   .. tab-item:: Abstract methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~execute`
+            - The core execution of the job or design point evaluation. This method must be implemented by the derived class.
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~run_and_capture_output`
+            - Convenience function to execute an application in a new process,
+          * - :py:attr:`~load_impl`
+            - Do not call this method from Solution code.
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~context`
+            - The context of an execution of the job or design point evaluation providing information about the job or design point evaluation.
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.saf.glow.hps_execution import HpsExecution
+
+Property detail
+---------------
+
+.. py:property:: context
+   :type: HpsExecutionContext
+
+
+   
+   The context of an execution of the job or design point evaluation providing information about the job or design point evaluation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+Method detail
+-------------
+
+.. py:method:: run_and_capture_output(args: List[Any], keyword_args: dict[str, Any])
+
+   
+   Convenience function to execute an application in a new process,
+   log its stdout/stderr and wait until the process completes.
+
+
+   :Parameters:
+
+       **args**
+           See args in subprocess.Popen
+
+       **\*\*kwargs**
+           Allows you to pass keyword arguments to subprocess.Popen,
+           except for stdout and stderr which are overridden as
+           
+           * stdout = subprocess.PIPE
+           * stderr = subprocess.STDOUT
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: load_impl(impl: HpsExecutionFunctionality)
+
+   
+   Do not call this method from Solution code.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: execute() -> Dict[str, Any]
+   :abstractmethod:
+
+
+   
+   The core execution of the job or design point evaluation. This method must be implemented by the derived class.
+
+   This method should:
+
+   - extract input parameter values from the
+     :py:attr:`~ansys.saf.glow.hps_execution.HpsExecutionContext.input_parameters` property of the
+     :py:attr:`~ansys.saf.glow.hps_execution.HpsExecution.context` property.
+   - read input files from the current working directory. Reading files can be guided by the values
+     (for those entries matching input files) in
+     the :py:attr:`~ansys.saf.glow.hps_execution.HpsExecutionContext.input_parameters` property of the
+     :py:attr:`~ansys.saf.glow.hps_execution.HpsExecution.context` property which are the absolute paths
+     to the input files for the job.
+   - write output files to the current working directory (can be guided by the
+     :py:attr:`~ansys.saf.glow.hps_execution.HpsExecutionContext.required_output_files` property of the
+     :py:attr:`~ansys.saf.glow.hps_execution.HpsExecution.context` property)
+   - throw exceptions when error conditions are encountered
+   - output logs to std out
+
+   This method can access information about the products or applications required by the job via the
+   :py:attr:`~ansys.saf.glow.hps_execution.HpsExecutionContext.products` property of the
+   :py:attr:`~ansys.saf.glow.hps_execution.HpsExecution.context` property.
+
+   If the evaluation needs to start a subprocess it is recommended that the
+   :py:meth:`~ansys.saf.glow.hps_execution.HpsExecution.run_and_capture_output` method is used.
+
+
+
+
+   :Returns:
+
+       :obj:`Dict`\[:class:`python:str`, :obj:`Any`]]
+           A dictionary of output parameter values
+           where the keys and types of the values match the definition passed to the ``output_parameters`` argument of the
+           :py:meth:`~ansys.saf.glow.solution.hps.HpsParametricStudyProject.start_hps_parametric_study` or
+           :py:meth:`~ansys.saf.glow.solution.hps.HpsSimpleProject.start_hps_job` method call that created the job or design point.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

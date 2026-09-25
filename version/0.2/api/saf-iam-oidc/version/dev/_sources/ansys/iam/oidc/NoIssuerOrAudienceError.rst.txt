@@ -1,0 +1,49 @@
+
+
+
+
+
+
+:class:`NoIssuerOrAudienceError`
+================================
+
+
+.. py:exception:: ansys.iam.oidc.NoIssuerOrAudienceError
+
+   Bases: :py:obj:`ValueError`
+
+
+   
+   Raised when no issuer or audience is provided but is required for the operation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.iam.oidc import NoIssuerOrAudienceError
+
+
+
+
+

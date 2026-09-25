@@ -1,0 +1,1233 @@
+<!--
+Copyright (C) 2026 ANSYS, Inc. and/or its affiliates.
+SPDX-License-Identifier: Apache-2.0
+
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+ <!-- ©2026, ANSYS Inc. Unauthorized use, distribution or duplication is prohibited. -->
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" data-theme="dark">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Minerva &#8212; SAF Doc</title>
+  
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "dark";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "dark";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/ansys-sphinx-theme.css?v=f424389c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=c83e6b79" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/ansys-sphinx-theme.css?v=f424389c" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://www.nerdfonts.com/assets/css/webfont.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/code-tabs.css?v=1bc26e2f" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=2d2447fe" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/carousel.css?v=272b576a" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/landing_page_banner.css?v=57c45261" />
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../../_static/scripts/fontawesome.js?digest=90905a2f556bf617f1a9"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
+
+
+  <!-- Include desired assets -->
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  
+
+  
+    <link href="../../../_static/css/breadcrumbs.css" rel="stylesheet" />
+  
+    <script src="../../../_static/documentation_options.js?v=8a448e45"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=49e1bf35"></script>
+    <script src="../../../_static/sg-tags.js?v=d80f6fa4"></script>
+    <script src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
+    <script src="../../../_static/code-tabs.js?v=c983d12e"></script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'user_guide/backend/data_management/minerva';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.20.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://saf.ansys.com/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.3';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <script src="../../../_static/js/sidebar-always-expanded.js?v=6b23dfe7"></script>
+    <script src="../../../_static/js/sdI_button_ref_tooltips.js?v=091f9e4c"></script>
+    <script src="../../../_static/js/primary-sidebar-sticky-offset.js?v=7ecdf44c"></script>
+    <link rel="icon" href="../../../_static/ansys-favicon.png"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="Authentication and authorization" href="../authn_authz/index.html" />
+    <link rel="prev" title="Data management" href="index.html" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.3.0" />
+  
+    
+    <script src="../../../_static/searchtools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <script src="../../../searchindex.js"></script>
+  
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+
+  <link rel="canonical" href="https://saf.ansys.com/version/stable/user_guide/backend/data_management/minerva.html" />
+  </head>
+  <body data-default-mode="dark">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+  
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+    
+    <img src="../../../_static/endorsed-ansys-logos-gold-white-rgb.svg" class="logo__image only-dark" alt="SAF Doc - Home"/>
+    <img src="../../../_static/endorsed-ansys-logos-gold-black-rgb.svg" class="logo__image only-light pst-js-only" alt="SAF Doc - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../index.html" title="SAF Doc home">Home</a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../overview/index.html">
+    Overview
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../getting_started/index.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../index.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api/index.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../contribute/index.html">
+    Contribute
+  </a>
+</li>
+
+  </ul>
+</nav>
+</div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+      
+        <div class="navbar-item">
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../../../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+  
+</div></div>
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/saf" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+  
+
+  
+
+
+
+
+
+
+
+
+
+<div class="ast-announcement-wrap" role="region" aria-label="Announcement" hidden>
+    <div class="ast-announcement info">
+        <span class="ast-announcement-icon" aria-hidden="true"></span>
+        <span class="ast-announcement-text" id="ast-announcement-text"></span>
+        <!-- djlint:off H021-->
+        <!-- for inline styles -->
+        <a class="ast-announcement-details-btn" id="ast-announcement-details-btn"
+           href=""
+           data-ast-url=""
+           aria-label="View notifications"
+           style="display:none">View</a>
+        <!-- djlint:on -->
+        <!-- djlint:off H023-->
+        <!-- use entity reference for &times; -->
+        <button class="ast-announcement-close" id="ast-announcement-close" aria-label="Close announcement">&times;</button>
+        <!-- djlint:on -->
+    </div>
+</div>
+
+<!-- Modal overlay -->
+<!-- djlint:off H023-->
+<!-- use entity reference for &times; -->
+<div class="ast-announcement-overlay" id="ast-announcement-overlay" role="dialog" aria-modal="true" aria-label="Announcement details">
+    <div class="ast-announcement-modal info">
+        <div class="ast-announcement-modal-body"
+             data-ast-items='[]'>
+        </div>
+        <button class="ast-announcement-modal-close" id="ast-announcement-modal-close" aria-label="Close">&times;</button>
+    </div>
+</div>
+<!-- djlint:on -->
+
+<script src="../../../_static/js/announcement_banner.js"
+        data-base-url="../../../"></script>
+
+  <div class="header-nav-banner d-print-none">
+    <div class="header-nav-banner__inner">
+      <div class="header-nav-banner__crumbs">
+        
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+     
+    <li class="breadcrumb-item breadcrumb-home">
+      <a
+        href="../../../index.html"
+        class="nav-link"
+        aria-label="Home"
+      >
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="../../index.html" class="nav-link">User guide</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="../index.html" class="nav-link">Backend development</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="index.html" class="nav-link">Data management</a>
+    </li>
+      
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Minerva</span></li>
+    
+  </ul>
+</nav>
+
+      </div>
+    </div>
+  </div>
+
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../index.html" title="SAF Doc home">Home</a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../overview/index.html">
+    Overview
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../getting_started/index.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../index.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api/index.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../contribute/index.html">
+    Contribute
+  </a>
+</li>
+
+  </ul>
+</nav>
+</div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../../../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+  
+</div></div>
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/saf" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item pst-sidebar-collapse"><button id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar">
+  <svg class="pst-icon" role="img" aria-hidden="true" focusable="false" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="M3 15.5C2.36232 15.5 1.74874 15.2564 1.28478 14.8189C0.820828 14.3815 0.541576 13.7832 0.504167 13.1467L0.5 13L0.5 3C0.499965 2.36232 0.743605 1.74874 1.18107 1.28478C1.61854 0.820828 2.21676 0.541576 2.85333 0.504167L3 0.5L13 0.5C13.6377 0.499965 14.2513 0.743605 14.7152 1.18107C15.1792 1.61854 15.4584 2.21676 15.4958 2.85333L15.5 3L15.5 13C15.5 13.6377 15.2564 14.2513 14.8189 14.7152C14.3815 15.1792 13.7832 15.4584 13.1467 15.4958L13 15.5L3 15.5ZM3 13.8333L10.5 13.8333L10.5 2.16667L3 2.16667C2.79589 2.16669 2.59889 2.24163 2.44636 2.37726C2.29383 2.5129 2.19638 2.69979 2.1725 2.9025L2.16667 3L2.16667 13C2.16669 13.2041 2.24163 13.4011 2.37726 13.5536C2.5129 13.7062 2.69979 13.8036 2.9025 13.8275L3 13.8333ZM6.65583 10.325L6.5775 10.2558L4.91083 8.58917C4.76735 8.44567 4.68116 8.25476 4.66843 8.05223C4.65569 7.84971 4.71729 7.6495 4.84167 7.48917L4.91083 7.41083L6.5775 5.74417C6.72747 5.59471 6.9287 5.50794 7.14032 5.50148C7.35194 5.49502 7.55809 5.56935 7.7169 5.70937C7.8757 5.8494 7.97525 6.04463 7.99533 6.25539C8.01541 6.46616 7.95451 6.67667 7.825 6.84417L7.75583 6.9225L6.67917 8L7.75583 9.0775C7.89931 9.22099 7.98551 9.41191 7.99824 9.61443C8.01097 9.81695 7.94938 10.0172 7.825 10.1775L7.75583 10.2558C7.61234 10.3993 7.42142 10.4855 7.2189 10.4982C7.01638 10.511 6.81617 10.4494 6.65583 10.325Z"/>
+  </svg>
+  <span class="pst-collapse-sidebar-label">Collapse Sidebar</span>
+  <span class="pst-expand-sidebar-label">Expand Sidebar</span>
+</button></div>
+        <div class="sidebar-primary-item">
+
+
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../scaffold.html">Scaffold</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../run_locally/index.html">Run locally</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../projects.html">Manage projects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../debug/index.html">Debug</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../test/index.html">Test</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../add_step.html">Add steps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../package/index.html">Package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../deploy/index.html">Deploy</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../index.html">Backend development</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../workflow_definition/index.html">Workflow definition</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../blob_management/index.html">Blob Data Management (BDM)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../ip_protection.html">IP protection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../instance_management/index.html">Instance management</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../job_submission/index.html">Job submission</a></li>
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="index.html">Data management</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l3 current active"><a class="current reference internal" href="#">Minerva</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../authn_authz/index.html">Authentication and authorization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../apis/index.html">APIs</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../frontend/index.html">Frontend development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../environment_variables.html">Environment variables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../solution_servers.html">Solution servers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../script.html">Script a solution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../supported_software.html">Supported software</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../components.html">SAF components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../best_practices/index.html">Best practices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../migration/index.html">Migration guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting/index.html">Troubleshooting guide</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+     
+    <li class="breadcrumb-item breadcrumb-home">
+      <a
+        href="../../../index.html"
+        class="nav-link"
+        aria-label="Home"
+      >
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="../../index.html" class="nav-link">User guide</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="../index.html" class="nav-link">Backend development</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="index.html" class="nav-link">Data management</a>
+    </li>
+      
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Minerva</span></li>
+    
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+  
+
+  
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="minerva">
+<span id="id1"></span><h1>Minerva<a class="headerlink" href="#minerva" title="Link to this heading">#</a></h1>
+<p>The SAF SDK gives you the ability to use a remote Ansys Minerva instance as a data repository in a seamless manner.
+Among other Minerva benefits, this provides a centralized storage, controlled data access, efficient data handling, integration with other PLM/PDM systems, consolidated insights, etc.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The data repository feature only works with files using BDM through the usage of <code class="docutils literal notranslate"><span class="pre">EntityHandle</span></code>.
+(for more information on BDM, see <a class="reference internal" href="../blob_management/index.html#blob-management"><span class="std std-ref">work with files using BDM</span></a>)</p>
+</div>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Link to this heading">#</a></h2>
+<p>Within a <code class="docutils literal notranslate"><span class="pre">&#64;transaction</span></code> method, you can access the <code class="docutils literal notranslate"><span class="pre">self.data_repository</span></code> member that allows:</p>
+<ul>
+<li><p>The creation of files or directories at specific target paths in the data repository.</p></li>
+<li><p>Querying and downloading existing files or directories in the data repository.</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Alternative data repositories will be implemented, but for now, only Minerva is supported.</p>
+</div>
+</section>
+<section id="prerequisites">
+<h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Link to this heading">#</a></h2>
+<ul>
+<li><p>Access to a Minerva instance</p></li>
+<li><p>Ansys Minerva Generic Connector (Minerva CLI)</p></li>
+</ul>
+<p>The Ansys Minerva Generic Connector can be downloaded from the Minerva instance URL by clicking on the top-right “AA” menu &gt; “Tools” &gt; “Ansys Minerva Generic Connector” or
+“Ansys Minerva Generic Connector (Linux)”. For more information, you can refer to the <a class="reference external" href="https://ansyshelp.ansys.com/account/secured?returnurl=/Views/Secured/corp/v252/en/min_cli_ug/min_ug_cli_install.html" rel="noopener noreferrer" target="_blank">specific Minerva documentation</a>.</p>
+<p>It requires to manually add <code class="docutils literal notranslate"><span class="pre">ansys-minerva-python-client</span></code> as a dependency in your solution’s <code class="docutils literal notranslate"><span class="pre">pyproject.toml</span></code> file.</p>
+</section>
+<section id="configuration">
+<h2>Configuration<a class="headerlink" href="#configuration" title="Link to this heading">#</a></h2>
+<p>In order to use Minerva as a data repository, you must set the <span class="target" id="index-0"></span><code class="xref std std-envvar docutils literal notranslate"><span class="pre">GLOW_DATA_REPOSITORY_TYPE</span></code> environment variable to <code class="docutils literal notranslate"><span class="pre">Minerva</span></code>.
+It also requires environment variables <span class="target" id="index-1"></span><code class="xref std std-envvar docutils literal notranslate"><span class="pre">ANS_MINERVA_URL</span></code> and <span class="target" id="index-2"></span><code class="xref std std-envvar docutils literal notranslate"><span class="pre">ANS_MINERVA_CLI</span></code> to be set, pointing to the Minerva server and to the Minerva CLI executable. Examples:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">ANS_MINERVA_URL</span><span class="o">=</span>http://localhost/AnsysMinerva
+<span class="nv">ANS_MINERVA_CLI</span><span class="o">=</span>C:<span class="se">\\</span>Program<span class="w"> </span>Files<span class="se">\\</span>ANSYS<span class="w"> </span>Inc<span class="se">\\</span>Ansys<span class="w"> </span>Minerva<span class="se">\\</span>AnsysMinerva_CLI.exe
+</pre></div>
+</div>
+<p>It’s important that the <span class="target" id="index-3"></span><code class="xref std std-envvar docutils literal notranslate"><span class="pre">ANS_MINERVA_URL</span></code> has the format from the example, without the <code class="docutils literal notranslate"><span class="pre">/Client</span></code> suffix.</p>
+<p>By default, files and directories will be uploaded to <code class="docutils literal notranslate"><span class="pre">/Data</span></code>. If you want to specify another default path, you can set the <span class="target" id="index-4"></span><code class="xref std std-envvar docutils literal notranslate"><span class="pre">GLOW_DATA_REPOSITORY_UPLOAD_ROOT</span></code> with another absolute path.</p>
+<section id="download-and-install-ansys-minerva-cli">
+<span id="id2"></span><h3>Download and install Ansys Minerva CLI<a class="headerlink" href="#download-and-install-ansys-minerva-cli" title="Link to this heading">#</a></h3>
+<p>The Ansys Minerva CLI is the tool used to communicate with the Minerva server. Follow these steps to download and install it:</p>
+<div class="tabs docutils container" data-tabgroup="">
+<ul class="tabbar">
+<li class="tabbutton selected" data-id="0" onclick="sphinx_code_tabs_onclick(this)">
+Windows</li><li class="tabbutton" data-id="1" onclick="sphinx_code_tabs_onclick(this)">
+Linux</li></ul><div class="tab texttab selected" data-id="0">
+<div class="docutils container">
+<ol class="arabic">
+<li><p>Access the Minerva instance URL and click on the top-right <strong>“AA”</strong> menu → <strong>Tools</strong> → <strong>Ansys Minerva Generic Connector</strong>.</p></li>
+<li><p>Run the downloaded <code class="docutils literal notranslate"><span class="pre">.msi</span></code> installer.</p></li>
+</ol>
+</div>
+</div><div class="tab texttab" data-id="1">
+<div class="docutils container">
+<ol class="arabic">
+<li><p>Access the Minerva instance URL and click on the top-right <strong>“AA”</strong> menu → <strong>Tools</strong> → <strong>Ansys Minerva Generic Connector (Linux)</strong>.</p></li>
+<li><p>Execute the downloaded <code class="docutils literal notranslate"><span class="pre">.sh</span></code> file:</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./ansysminerva-cli.sh<span class="w"> </span>--noexec<span class="w"> </span>--target<span class="w"> </span>&lt;output_dir&gt;
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>Navigate to <code class="docutils literal notranslate"><span class="pre">&lt;output_dir&gt;</span></code> and run:</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./install-ansysminerva.sh<span class="w"> </span>--accept-license
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ol>
+</div>
+</div></div><div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The installation process automatically adds the environment variable <code class="docutils literal notranslate"><span class="pre">ANS_MINERVA_CLI</span></code> pointing to the installed Ansys Minerva CLI executable.
+On Linux, make sure the executable has execute permissions.</p>
+</div>
+</section>
+<section id="minerva-authentication">
+<h3>Minerva authentication<a class="headerlink" href="#minerva-authentication" title="Link to this heading">#</a></h3>
+<p>Regarding authentication, refer to <a class="reference internal" href="../authn_authz/minerva_authentication.html#minerva-auth"><span class="std std-ref">Minerva authentication</span></a> section for the available options.</p>
+</section>
+</section>
+<section id="store-a-file-into-the-data-repository">
+<h2>Store a file into the data repository<a class="headerlink" href="#store-a-file-into-the-data-repository" title="Link to this heading">#</a></h2>
+<p>To upload a file or directory to the data repository, simply use the <code class="docutils literal notranslate"><span class="pre">upload</span></code> method provided on <code class="docutils literal notranslate"><span class="pre">self.data_repository</span></code> within a <code class="docutils literal notranslate"><span class="pre">&#64;transaction</span></code>.
+This method has the following signature:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">upload</span><span class="p">(</span>
+    <span class="n">entity_handle</span><span class="p">:</span> <span class="n">EntityHandle</span><span class="p">,</span>
+    <span class="n">target_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">metadata</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EntityHandle</span><span class="p">:</span> <span class="o">...</span>
+</pre></div>
+</div>
+<p>It uploads a file or directory referenced by an <code class="docutils literal notranslate"><span class="pre">EntityHandle</span></code>, and stores it into the data repository.
+It returns a new <code class="docutils literal notranslate"><span class="pre">EntityHandle</span></code> referencing the uploaded file or directory in the data repository.</p>
+<ul>
+<li><p>The method has an optional <code class="docutils literal notranslate"><span class="pre">target_path</span></code> argument which indicates the location where the file/folder will be uploaded in the data repository.
+If specified, it can be either absolute or relative.
+Absolute paths (for example <code class="docutils literal notranslate"><span class="pre">/Data/folder/my_file.txt</span></code>) will upload the handle at the specified location on the data repository.
+Relative paths (for example <code class="docutils literal notranslate"><span class="pre">folder/my_file.txt</span></code>) are relative to the data repository’s project directory, so the handle will be uploaded into a dedicated directory containing the project’s name.
+For example <code class="docutils literal notranslate"><span class="pre">target_path=folder/my_file.txt</span></code> will be translated to <code class="docutils literal notranslate"><span class="pre">/Data/project_name</span> <span class="pre">(project_id)/folder/my_file.txt</span></code>, where <code class="docutils literal notranslate"><span class="pre">/Data</span></code> is the default value of <code class="docutils literal notranslate"><span class="pre">GLOW_DATA_REPOSITORY_UPLOAD_ROOT</span></code>.
+By default, when <code class="docutils literal notranslate"><span class="pre">target_path</span></code> is omitted, the destination is derived from the handle data source.
+For example if the file is located in <code class="docutils literal notranslate"><span class="pre">self.storage_scope.get_storage_root()</span> <span class="pre">/</span> <span class="pre">&quot;dir&quot;</span> <span class="pre">/</span> <span class="pre">&quot;my_file.txt&quot;</span></code> then the relative path of the file <code class="docutils literal notranslate"><span class="pre">dir/my_file.txt</span></code> becomes the target path.
+As this target path is relative, the target path will refer to a location within the project directory in the data repository.
+The final destination will be <code class="docutils literal notranslate"><span class="pre">/Data/project_name</span> <span class="pre">(project_id)/dir/my_file.txt</span></code>.</p></li>
+<li><p>The optional <code class="docutils literal notranslate"><span class="pre">metadata</span></code> string argument contains metadata that augments the entity being uploaded in the data repository.
+In Minerva, the metadata string must meet the following criteria:</p>
+<ul>
+<li><p>It must be a valid XML.</p></li>
+<li><p>It must contain a single <code class="docutils literal notranslate"><span class="pre">&lt;file</span> <span class="pre">role=&quot;subject&quot;/&gt;</span></code> element (as the first child of the root <code class="docutils literal notranslate"><span class="pre">&lt;section&gt;</span></code>) referencing the associated file.</p></li>
+<li><p>It only applies to files.</p></li>
+</ul>
+<p>For more information: you can refer to the following Minerva sections:</p>
+<ul>
+<li><p><a class="reference external" href="https://ansyshelp.ansys.com/account/secured?returnurl=/Views/Secured/corp/v251/en/min_ug/upload_metadata_with_files.html" rel="noopener noreferrer" target="_blank">Uploading Metadata while Uploading Files</a> explains what is a valid XML content.</p></li>
+<li><p><a class="reference external" href="https://ansyshelp.ansys.com/account/secured?returnurl=/Views/Secured/corp/v251/en/min_cg/param_doc.htm" rel="noopener noreferrer" target="_blank">Parameter Document Schema</a> describes the schema with some examples.</p></li>
+<li><p><a class="reference external" href="https://ansyshelp.ansys.com/account/secured?returnurl=/Views/Secured/corp/v251/en/min_ug/fileless_parameter_doc.html" rel="noopener noreferrer" target="_blank">Creating Parameter Documents</a> shows how to create metadata using an UI tool.</p></li>
+</ul>
+</li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If a file already exists at the target location, and the supplied handle refers to a file, then a new version of the file is created in the data repository and the method returns a handle referring to the new version.</p>
+<p>If a directory exists at the target location and the supplied handle refers to a file, then an exception is thrown.</p>
+<p>If a file already exists at the target location and the supplied handle refers to a directory, then an exception is thrown.</p>
+</div>
+<section id="upload-examples">
+<h3>Upload examples<a class="headerlink" href="#upload-examples" title="Link to this heading">#</a></h3>
+<p>In the following snippet, an entity handle is uploaded into the remote data repository using various <code class="docutils literal notranslate"><span class="pre">target_path</span></code>.
+The <code class="docutils literal notranslate"><span class="pre">EntityHandle</span></code> is first created by executing <code class="docutils literal notranslate"><span class="pre">store_my_file_handle()</span></code>, then the handle referencing <code class="docutils literal notranslate"><span class="pre">my_file.txt</span></code> is uploaded to the data repository using one of the following methods.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">my_file_handle</span><span class="p">:</span> <span class="n">EntityHandle</span> <span class="o">=</span> <span class="n">NO_ENTITY</span>
+
+
+<span class="nd">@transaction</span><span class="p">(</span><span class="bp">self</span><span class="o">=</span><span class="n">StepSpec</span><span class="p">(</span><span class="n">upload</span><span class="o">=</span><span class="p">[</span><span class="s2">"my_file_handle"</span><span class="p">]))</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">store_my_file_handle</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Create a file and persist it in the solution using an EntityHandle."""</span>
+    <span class="n">filepath</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">storage_scope</span><span class="o">.</span><span class="n">get_storage_root</span><span class="p">()</span> <span class="o">/</span> <span class="s2">"my_file.txt"</span>
+    <span class="n">filepath</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="s2">"some data"</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">my_file_handle</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">storage_scope</span><span class="o">.</span><span class="n">store</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
+
+
+<span class="nd">@transaction</span><span class="p">(</span><span class="bp">self</span><span class="o">=</span><span class="n">StepSpec</span><span class="p">(</span><span class="n">download</span><span class="o">=</span><span class="p">[</span><span class="s2">"my_file_handle"</span><span class="p">]))</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">upload_file_to_data_repository</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Upload my_file.txt to /Data/project_name (project_id)/my_file.txt"""</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">data_repository</span><span class="o">.</span><span class="n">upload</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">my_file_handle</span><span class="p">)</span>
+
+
+<span class="nd">@transaction</span><span class="p">(</span><span class="bp">self</span><span class="o">=</span><span class="n">StepSpec</span><span class="p">(</span><span class="n">download</span><span class="o">=</span><span class="p">[</span><span class="s2">"my_file_handle"</span><span class="p">]))</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">upload_file_to_absolute_path_data_repository</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Upload my_file.txt to /Data/my_folder/file.txt"""</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">data_repository</span><span class="o">.</span><span class="n">upload</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">my_file_handle</span><span class="p">,</span> <span class="n">target_path</span><span class="o">=</span><span class="s2">"/Data/my_folder"</span><span class="p">)</span>
+
+
+<span class="nd">@transaction</span><span class="p">(</span><span class="bp">self</span><span class="o">=</span><span class="n">StepSpec</span><span class="p">(</span><span class="n">download</span><span class="o">=</span><span class="p">[</span><span class="s2">"my_file_handle"</span><span class="p">]))</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">upload_file_to_relative_path_data_repository</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Upload my_file.txt to /Data/project_name (project_id)/file.txt"""</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">data_repository</span><span class="o">.</span><span class="n">upload</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">my_file_handle</span><span class="p">,</span> <span class="n">target_path</span><span class="o">=</span><span class="s2">"file.txt"</span><span class="p">)</span>
+
+
+<span class="nd">@transaction</span><span class="p">(</span><span class="bp">self</span><span class="o">=</span><span class="n">StepSpec</span><span class="p">(</span><span class="n">download</span><span class="o">=</span><span class="p">[</span><span class="s2">"my_file_handle"</span><span class="p">]))</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">uploading_file_with_metadata_to_data_repository</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Upload my_file.txt with some custom metadata, to the data repository"""</span>
+    <span class="n">metadata</span> <span class="o">=</span> <span class="s2">"""</span>
+<span class="s2">        &lt;section&gt;</span>
+<span class="s2">            &lt;file role="subject" src="my_file.txt" creator="test" appVersion="test_version"/&gt;</span>
+<span class="s2">            &lt;text name="my_name" value="my_value"/&gt;</span>
+<span class="s2">        &lt;/section&gt;</span>
+<span class="s2">    """</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">data_repository</span><span class="o">.</span><span class="n">upload</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">my_file_handle</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="n">metadata</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>A more extensive example involving fluent:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">user_selection_handle</span><span class="p">:</span> <span class="n">EntityHandle</span> <span class="o">=</span> <span class="n">NO_ENTITY</span>
+
+
+<span class="nd">@transaction</span><span class="p">(</span><span class="bp">self</span><span class="o">=</span><span class="n">StepSpec</span><span class="p">(</span><span class="n">download</span><span class="o">=</span><span class="p">[</span><span class="s2">"user_selection_handle"</span><span class="p">]))</span>
+<span class="nd">@instance</span><span class="p">(</span><span class="s2">"fluent"</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">simulate_and_store_result_to_data_repository</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fluent</span><span class="p">:</span> <span class="n">Fluent3DDPSolverManager</span><span class="p">):</span>
+    <span class="n">input_file</span> <span class="o">=</span> <span class="n">fluent</span><span class="o">.</span><span class="n">storage_scope</span><span class="o">.</span><span class="n">get_cached</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">user_selection_handle</span><span class="p">)</span>
+    <span class="n">fluent</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">read_case</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">input_file</span><span class="p">))</span>
+    <span class="n">fluent</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">tui</span><span class="o">.</span><span class="n">solve</span><span class="o">.</span><span class="n">initialize</span><span class="o">.</span><span class="n">initialize_flow</span><span class="p">()</span>
+    <span class="n">max_temperature_filepath</span> <span class="o">=</span> <span class="n">fluent</span><span class="o">.</span><span class="n">storage_scope</span><span class="o">.</span><span class="n">get_storage_root</span><span class="p">()</span> <span class="o">/</span> <span class="s2">"max-temperature.out"</span>
+    <span class="n">fluent</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">tui</span><span class="o">.</span><span class="n">solve</span><span class="o">.</span><span class="n">report_files</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
+        <span class="s2">"max-temperature"</span><span class="p">,</span>
+        <span class="s2">"report-defs"</span><span class="p">,</span>
+        <span class="s2">"max-pad-temperature"</span><span class="p">,</span>
+        <span class="s2">"max-disc-temperature"</span><span class="p">,</span>
+        <span class="s2">"()"</span><span class="p">,</span>
+        <span class="s2">"file-name"</span><span class="p">,</span>
+        <span class="nb">str</span><span class="p">(</span><span class="n">max_temperature_filepath</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">result_handle</span> <span class="o">=</span> <span class="n">fluent</span><span class="o">.</span><span class="n">storage_scope</span><span class="o">.</span><span class="n">store</span><span class="p">(</span><span class="n">max_temperature_filepath</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">data_repository</span><span class="o">.</span><span class="n">upload</span><span class="p">(</span><span class="n">result_handle</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Remember that the BDM system is designed to support separate file systems and/or different OS systems between the product (in this case Fluent) and the SAF GLOW Engine method execution environment.
+This means that the values of <code class="docutils literal notranslate"><span class="pre">input_file</span></code> and <code class="docutils literal notranslate"><span class="pre">max_temperature_file_path</span></code> are OS file paths that are correct for the product instance but are not necessarily resolvable by the OS executing the transaction method code shown.</p>
+</div>
+</section>
+</section>
+<section id="access-files-from-the-data-repository">
+<h2>Access files from the data repository<a class="headerlink" href="#access-files-from-the-data-repository" title="Link to this heading">#</a></h2>
+<p>To access a file or directory from the data repository, simply use the <code class="docutils literal notranslate"><span class="pre">get_entity_handle</span></code> method provided on <code class="docutils literal notranslate"><span class="pre">self.data_repository</span></code>.
+This method has the following signature:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">get_entity_handle</span><span class="p">(</span><span class="n">target_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">version</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EntityHandle</span><span class="p">:</span> <span class="o">...</span>
+</pre></div>
+</div>
+<p>It returns an <code class="docutils literal notranslate"><span class="pre">EntityHandle</span></code> referencing the data stored at the target path on the remote data repository.
+If the requested target path does not exist, <code class="docutils literal notranslate"><span class="pre">NO_ENTITY</span></code> is returned.</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">target_path</span></code> follows the same semantic as the <code class="docutils literal notranslate"><span class="pre">upload</span></code> method and can be either relative or absolute.</p></li>
+<li><p>The optional <code class="docutils literal notranslate"><span class="pre">version</span></code> argument indicates which version of the file must be retrieved.
+It follows the following pattern: three digit for the major revision, optionally followed by a dot and three digits for the minor revision.
+(For example: <code class="docutils literal notranslate"><span class="pre">001</span></code> or <code class="docutils literal notranslate"><span class="pre">001.003</span></code>)</p>
+<p>You can check the versions in the Minerva UI, by clicking on <code class="docutils literal notranslate"><span class="pre">rev</span></code>:</p>
+<figure class="align-default">
+<img alt="../../../_images/minerva_versioning.png" src="../../../_images/minerva_versioning.png" />
+</figure>
+<p>If the version identifier is not supplied, then the latest version is returned.</p>
+<p>For more information on versioning, you can read <a class="reference external" href="https://ansyshelp.ansys.com/account/secured?returnurl=/Views/Secured/corp/v251/en/min_ug/min_versioning.html" rel="noopener noreferrer" target="_blank">Minerva’s documentation here</a>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Minerva supports multiple branches, but currently, the data repository only supports the default branch.</p>
+</div>
+</li>
+</ul>
+<section id="examples">
+<h3>Examples<a class="headerlink" href="#examples" title="Link to this heading">#</a></h3>
+<p>In the following snippets, <code class="docutils literal notranslate"><span class="pre">get_entity_handle</span></code> is used to access the data from the data repository.
+Since this method is returning an <code class="docutils literal notranslate"><span class="pre">EntityHandle</span></code>, any method and property described from BDM Python API can be used.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@transaction</span><span class="p">(</span><span class="bp">self</span><span class="o">=</span><span class="n">StepSpec</span><span class="p">())</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">read_data_repository_file_using_relative_path</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Read content of my_file.txt from /Data/project_name (project_id)/my_file.txt"""</span>
+    <span class="n">minerva_handle</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_repository</span><span class="o">.</span><span class="n">get_entity_handle</span><span class="p">(</span><span class="s2">"my_file.txt"</span><span class="p">)</span>
+    <span class="n">content</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">storage_scope</span><span class="o">.</span><span class="n">get_text</span><span class="p">(</span><span class="n">minerva_handle</span><span class="p">)</span>
+    <span class="o">...</span>
+
+
+<span class="nd">@transaction</span><span class="p">(</span><span class="bp">self</span><span class="o">=</span><span class="n">StepSpec</span><span class="p">())</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">read_data_repository_file_using_absolute_path</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Read content of my_file.txt from /Data/my_file.txt"""</span>
+    <span class="n">minerva_handle</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_repository</span><span class="o">.</span><span class="n">get_entity_handle</span><span class="p">(</span><span class="s2">"/Data/my_file.txt"</span><span class="p">)</span>
+    <span class="n">local_filepath</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">storage_scope</span><span class="o">.</span><span class="n">get_cached</span><span class="p">(</span><span class="n">minerva_handle</span><span class="p">)</span>
+    <span class="n">content</span> <span class="o">=</span> <span class="n">local_filepath</span><span class="o">.</span><span class="n">read_text</span><span class="p">()</span>
+    <span class="o">...</span>
+
+
+<span class="nd">@transaction</span><span class="p">(</span><span class="bp">self</span><span class="o">=</span><span class="n">StepSpec</span><span class="p">())</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">read_first_version_of_data_repository_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Read the first version of my_file.txt"""</span>
+    <span class="n">minerva_handle</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_repository</span><span class="o">.</span><span class="n">get_entity_handle</span><span class="p">(</span><span class="s2">"my_file.txt"</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="s2">"001"</span><span class="p">)</span>
+    <span class="n">v1_content</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">storage_scope</span><span class="o">.</span><span class="n">get_text</span><span class="p">(</span><span class="n">minerva_handle</span><span class="p">)</span>
+    <span class="o">...</span>
+
+
+<span class="nd">@transaction</span><span class="p">(</span><span class="bp">self</span><span class="o">=</span><span class="n">StepSpec</span><span class="p">())</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">read_second_version_of_data_repository_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Read the second revision of my_file.txt"""</span>
+    <span class="n">minerva_handle</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_repository</span><span class="o">.</span><span class="n">get_entity_handle</span><span class="p">(</span><span class="s2">"my_file.txt"</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="s2">"001.002"</span><span class="p">)</span>
+    <span class="n">v2_content</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">storage_scope</span><span class="o">.</span><span class="n">get_text</span><span class="p">(</span><span class="n">minerva_handle</span><span class="p">)</span>
+    <span class="o">...</span>
+
+
+<span class="nd">@transaction</span><span class="p">(</span><span class="bp">self</span><span class="o">=</span><span class="n">StepSpec</span><span class="p">())</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">list_data_repository_folder_children</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""List direct children of the folder from /Data/my_folder"""</span>
+    <span class="n">minerva_handle</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_repository</span><span class="o">.</span><span class="n">get_entity_handle</span><span class="p">(</span><span class="s2">"/Data/my_folder"</span><span class="p">)</span>
+    <span class="n">children</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">storage_scope</span><span class="o">.</span><span class="n">get_children</span><span class="p">(</span><span class="n">minerva_handle</span><span class="p">)</span>
+    <span class="o">...</span>
+
+
+<span class="nd">@transaction</span><span class="p">(</span><span class="bp">self</span><span class="o">=</span><span class="n">StepSpec</span><span class="p">())</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_parent_from_data_repo_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Get the entity handle from /Data/folder, using the parent of /Data/folder/my_file.txt"""</span>
+    <span class="n">minerva_handle</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_repository</span><span class="o">.</span><span class="n">get_entity_handle</span><span class="p">(</span><span class="s2">"/Data/folder/my_file.txt"</span><span class="p">)</span>
+    <span class="n">folder_handle</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">storage_scope</span><span class="o">.</span><span class="n">get_parent</span><span class="p">(</span><span class="n">minerva_handle</span><span class="p">)</span>
+    <span class="o">...</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="query-files-from-the-data-repository">
+<h2>Query files from the data repository<a class="headerlink" href="#query-files-from-the-data-repository" title="Link to this heading">#</a></h2>
+<p>To query files or directories from the data repository, simply use the <code class="docutils literal notranslate"><span class="pre">query</span></code> method provided on <code class="docutils literal notranslate"><span class="pre">self.data_repository</span></code>.
+This method has the following signature:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">query</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">EntityHandle</span><span class="p">]:</span> <span class="o">...</span>
+</pre></div>
+</div>
+<p>It queries items at the data repository based on the input value string and returns a list of handles pointing to the entities that fulfill such query.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Minerva uses the Adaptive Markup Language (AML) for the query value, and therefore requires knowledge of AML.</p>
+<p>For more information on AML search, you can read the documentation <a class="reference external" href="https://ansyshelp.ansys.com/account/secured?returnurl=/Views/Secured/corp/v251/en/min_ug/aml_search.html" rel="noopener noreferrer" target="_blank">here</a>.</p>
+</div>
+<section id="id3">
+<h3>Examples<a class="headerlink" href="#id3" title="Link to this heading">#</a></h3>
+<p>In the following snippet, <code class="docutils literal notranslate"><span class="pre">query</span></code> is used to search for items in the data repository.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@transaction</span><span class="p">(</span><span class="bp">self</span><span class="o">=</span><span class="n">StepSpec</span><span class="p">())</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">query_files_with_matching_pattern_on_data_repository</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Search items in Minerva using AML-based queries."""</span>
+    <span class="n">query_value</span> <span class="o">=</span> <span class="s2">"""</span>
+<span class="s2">    &lt;Item type="Ans_Data" action="get" page="1" select="name" pagesize="100" maxRecords="" returnMode="itemsOnly"&gt;</span>
+<span class="s2">        &lt;name condition="like"&gt;my_file.txt&lt;/name&gt;</span>
+<span class="s2">    &lt;/Item&gt;</span>
+<span class="s2">    """</span>
+    <span class="n">matching_minerva_handles</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_repository</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">query_value</span><span class="p">)</span>
+    <span class="n">first_matching_content</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">storage_scope</span><span class="o">.</span><span class="n">get_text</span><span class="p">(</span><span class="n">matching_minerva_handles</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="o">...</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="use-the-file-system-as-data-repository-for-development">
+<h2>Use the file system as data repository for development<a class="headerlink" href="#use-the-file-system-as-data-repository-for-development" title="Link to this heading">#</a></h2>
+<p>In addition to the Minerva implementation of the data repository interface, the SAF SDK provides a mock implementation using the local file system.
+The file system mock implementation mimics Minerva data repository, except that it stores files and folders locally.
+Its goal is to give the possibility to try and develop your solution using a data repository, without having to deploy a full Minerva instance.
+It must be used solely for tests and development.</p>
+<section id="id4">
+<h3>Configuration<a class="headerlink" href="#id4" title="Link to this heading">#</a></h3>
+<p>In order to use the file system as a data repository, you must set the <span class="target" id="index-5"></span><code class="xref std std-envvar docutils literal notranslate"><span class="pre">GLOW_DATA_REPOSITORY_TYPE</span></code> environment variable to <code class="docutils literal notranslate"><span class="pre">FileSystem</span></code>.</p>
+</section>
+<section id="differences">
+<h3>Differences<a class="headerlink" href="#differences" title="Link to this heading">#</a></h3>
+<p>The file system mock data repository behaves mostly the same as Minerva data repository, but few differences exist.</p>
+</section>
+<section id="upload">
+<h3>Upload<a class="headerlink" href="#upload" title="Link to this heading">#</a></h3>
+<p>Obviously, the files are not stored on a remote server, but locally in a “filesystem” folder located within the project files.</p>
+</section>
+<section id="query">
+<h3>Query<a class="headerlink" href="#query" title="Link to this heading">#</a></h3>
+<p>In order to be able to use the same queries as Minerva, you need to configure the solution with a dictionary mapping the query strings to the associated target paths.
+The query method will then simply look up the result of the query in the configured dictionary whose values are lists of target paths in the repository.</p>
+<p>The following example demonstrates how to configure the solution so that an AML query searching for <code class="docutils literal notranslate"><span class="pre">my_file*</span></code> will match the specified files.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">FileSystemQueryMapSolutionConfiguration</span><span class="p">(</span><span class="n">SolutionConfiguration</span><span class="p">):</span>
+    <span class="n">solution_schema_version</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">query_value</span> <span class="o">=</span> <span class="s2">"""</span>
+<span class="s2">        &lt;Item type="Ans_Data" action="get" page="1" select="name" pagesize="100" maxRecords="" returnMode="itemsOnly"&gt;</span>
+<span class="s2">            &lt;name condition="like"&gt;my_file*&lt;/name&gt;</span>
+<span class="s2">        &lt;/Item&gt;"""</span>
+    <span class="n">filesystem_data_repository_query_map</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]]</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">query_value</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">(</span><span class="s2">"folder/my_file1.txt"</span><span class="p">,</span> <span class="s2">"001"</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">"folder/my_file2.txt"</span><span class="p">,</span> <span class="s2">"001"</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">"folder/subdir/my_file3.txt"</span><span class="p">,</span> <span class="s2">"001"</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">"folder/nested_subdir_same_name/folder/my_file4.txt"</span><span class="p">,</span> <span class="s2">"001"</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">"folder/nested_subdir_same_name/folder/my_file5.txt"</span><span class="p">,</span> <span class="s2">"001"</span><span class="p">),</span>
+        <span class="p">],</span>
+    <span class="p">}</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">DataRepositorySolution</span><span class="p">(</span><span class="n">Solution</span><span class="p">):</span>
+    <span class="n">display_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"DataRepository"</span>
+    <span class="n">steps</span><span class="p">:</span> <span class="n">Steps</span>
+    <span class="n">solution_configuration</span><span class="p">:</span> <span class="n">FileSystemQueryMapSolutionConfiguration</span> <span class="o">=</span> <span class="n">FileSystemQueryMapSolutionConfiguration</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="file-major-version">
+<h3>File major version<a class="headerlink" href="#file-major-version" title="Link to this heading">#</a></h3>
+<p>The file system mock data repository only supports <code class="docutils literal notranslate"><span class="pre">001</span></code> as the major file version, so the versions of a file will always be <code class="docutils literal notranslate"><span class="pre">001.*</span></code>.</p>
+</section>
+</section>
+<section id="known-limitations">
+<h2>Known limitations<a class="headerlink" href="#known-limitations" title="Link to this heading">#</a></h2>
+<ul>
+<li><p>Branch versioning is not supported (except default).</p></li>
+<li><p>Folder versioning is not supported.</p></li>
+<li><p>Concurrency issues: avoid having simultaneous transactions pushing/getting data.</p></li>
+</ul>
+</section>
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#overview">Overview</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#prerequisites">Prerequisites</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#configuration">Configuration</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#download-and-install-ansys-minerva-cli">Download and install Ansys Minerva CLI</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#minerva-authentication">Minerva authentication</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#store-a-file-into-the-data-repository">Store a file into the data repository</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#upload-examples">Upload examples</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#access-files-from-the-data-repository">Access files from the data repository</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#examples">Examples</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#query-files-from-the-data-repository">Query files from the data repository</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">Examples</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#use-the-file-system-as-data-repository-for-development">Use the file system as data repository for development</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">Configuration</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#differences">Differences</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#upload">Upload</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#query">Query</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#file-major-version">File major version</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#known-limitations">Known limitations</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9"></script>
+
+
+  <!-- Include desired assets -->
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.7/require.min.js"></script>
+
+<script>
+// Passing the search options to the search.js file
+const SEARCH_OPTIONS = JSON.parse('{"includeMatches": true, "includeScore": true, "keys": [{"name": "section", "weight": 3}, {"name": "title", "weight": 3}, {"name": "text", "weight": 1}, {"name": "objectID", "weight": 0.5}], "limit": 10, "threshold": 0.2}');
+const SEARCH_FILE = "../../../_static/search.json";
+const ADVANCE_SEARCH_PATH = "../../../search.html";
+const EXTRA_SOURCES = JSON.parse('""');
+</script>
+
+
+<script src="../../../_static/js/search.js"></script>
+
+  
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<footer class="bd-footer">
+  <div class="bd-footer__inner bd-page-width">
+    <div class="footer-items__start">
+      <div class="footer-item">
+        <div class="footer-items__start">
+          <div class="footer-item">
+            <img src="https://docs.pyansys.com/version/dev/_static/ansys_logo_transparent_white.png" alt="Ansys Logo" class="footer-ansys-logo">
+          </div>
+          <div class="footer-item"><br>
+            <p>2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-items__center">
+      <div class="footer-item">
+        <div class="footer-items__start">
+          <div class="connect-with-ansys">
+            <p>Latest documentation</p> <br>
+            <a href="https://www.ansys.com/" class="external-link" target="_blank" rel="noopener noreferrer">
+              <span class="link-text">Ansys.com</span>
+              <i class="fas fa-up-right-from-square"></i>
+            </a><br>
+            <a href="https://www.ansys.com/services/ansys-learning-hub" class="external-link" target="_blank" rel="noopener noreferrer">
+              <span class="link-text">Ansys Learning</span>
+              <i class="fas fa-up-right-from-square"></i>
+            </a><br>
+            <a href="https://www.ansys.com/support" class="external-link" target="_blank" rel="noopener noreferrer">
+              <span class="link-text">Ansys Support</span>
+              <i class="fas fa-up-right-from-square"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-items__end">
+      <div class="footer-item">
+        <div class="footer-right">
+          <span>Connect with Ansys</span>
+          <div class="social-icons">
+            <a href="https://www.youtube.com/user/ansysinc" target="_blank" rel="noopener" class="icon icon-youtube" aria-label="Youtube"><span class="sr-only">Youtube</span></a>
+            <a href="https://www.facebook.com/ansys" target="_blank" rel="noopener" class="icon icon-facebook" aria-label="Facebook"><span class="sr-only">Facebook</span></a>
+            <a href="https://www.linkedin.com/company/ansys-inc" target="_blank" rel="noopener" class="icon icon-linkedin" aria-label="Linkedin"><span class="sr-only">Linkedin</span></a>
+            <a href="https://github.com/ansys" target="_blank" rel="noopener" class="icon icon-github" aria-label="GitHub"><i class="fab fa-github"></i><span class="sr-only">GitHub</span></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+  </body>
+</html>

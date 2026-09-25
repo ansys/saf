@@ -1,0 +1,1357 @@
+<!--
+Copyright (C) 2026 ANSYS, Inc. and/or its affiliates.
+SPDX-License-Identifier: Apache-2.0
+
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+ <!-- ©2026, ANSYS Inc. Unauthorized use, distribution or duplication is prohibited. -->
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" data-theme="dark">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Install &#8212; SAF Doc</title>
+  
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "dark";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "dark";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/ansys-sphinx-theme.css?v=f424389c" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=c83e6b79" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/ansys-sphinx-theme.css?v=f424389c" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://www.nerdfonts.com/assets/css/webfont.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/code-tabs.css?v=1bc26e2f" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=2d2447fe" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/carousel.css?v=272b576a" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/landing_page_banner.css?v=57c45261" />
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../_static/scripts/fontawesome.js?digest=90905a2f556bf617f1a9"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
+
+
+  <!-- Include desired assets -->
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  
+
+  
+    <link href="../_static/css/breadcrumbs.css" rel="stylesheet" />
+  
+    <script src="../_static/documentation_options.js?v=8a448e45"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=49e1bf35"></script>
+    <script src="../_static/sg-tags.js?v=d80f6fa4"></script>
+    <script src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
+    <script src="../_static/code-tabs.js?v=c983d12e"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'user_guide/install';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.20.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://saf.ansys.com/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.3';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <script src="../_static/js/sidebar-always-expanded.js?v=6b23dfe7"></script>
+    <script src="../_static/js/sdI_button_ref_tooltips.js?v=091f9e4c"></script>
+    <script src="../_static/js/primary-sidebar-sticky-offset.js?v=7ecdf44c"></script>
+    <link rel="icon" href="../_static/ansys-favicon.png"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Run locally" href="run_locally/index.html" />
+    <link rel="prev" title="Scaffold" href="scaffold.html" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.3.0" />
+  
+    
+    <script src="../_static/searchtools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../searchindex.js"></script>
+  
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+
+  <link rel="canonical" href="https://saf.ansys.com/version/stable/user_guide/install.html" />
+  </head>
+  <body data-default-mode="dark">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+  
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+    
+    <img src="../_static/endorsed-ansys-logos-gold-white-rgb.svg" class="logo__image only-dark" alt="SAF Doc - Home"/>
+    <img src="../_static/endorsed-ansys-logos-gold-black-rgb.svg" class="logo__image only-light pst-js-only" alt="SAF Doc - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../index.html" title="SAF Doc home">Home</a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../overview/index.html">
+    Overview
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../getting_started/index.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="index.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api/index.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../contribute/index.html">
+    Contribute
+  </a>
+</li>
+
+  </ul>
+</nav>
+</div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+      
+        <div class="navbar-item">
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+  
+</div></div>
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/saf" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+  
+
+  
+
+
+
+
+
+
+
+
+
+<div class="ast-announcement-wrap" role="region" aria-label="Announcement" hidden>
+    <div class="ast-announcement info">
+        <span class="ast-announcement-icon" aria-hidden="true"></span>
+        <span class="ast-announcement-text" id="ast-announcement-text"></span>
+        <!-- djlint:off H021-->
+        <!-- for inline styles -->
+        <a class="ast-announcement-details-btn" id="ast-announcement-details-btn"
+           href=""
+           data-ast-url=""
+           aria-label="View notifications"
+           style="display:none">View</a>
+        <!-- djlint:on -->
+        <!-- djlint:off H023-->
+        <!-- use entity reference for &times; -->
+        <button class="ast-announcement-close" id="ast-announcement-close" aria-label="Close announcement">&times;</button>
+        <!-- djlint:on -->
+    </div>
+</div>
+
+<!-- Modal overlay -->
+<!-- djlint:off H023-->
+<!-- use entity reference for &times; -->
+<div class="ast-announcement-overlay" id="ast-announcement-overlay" role="dialog" aria-modal="true" aria-label="Announcement details">
+    <div class="ast-announcement-modal info">
+        <div class="ast-announcement-modal-body"
+             data-ast-items='[]'>
+        </div>
+        <button class="ast-announcement-modal-close" id="ast-announcement-modal-close" aria-label="Close">&times;</button>
+    </div>
+</div>
+<!-- djlint:on -->
+
+<script src="../_static/js/announcement_banner.js"
+        data-base-url="../"></script>
+
+  <div class="header-nav-banner d-print-none">
+    <div class="header-nav-banner__inner">
+      <div class="header-nav-banner__crumbs">
+        
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+     
+    <li class="breadcrumb-item breadcrumb-home">
+      <a
+        href="../index.html"
+        class="nav-link"
+        aria-label="Home"
+      >
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="index.html" class="nav-link">User guide</a>
+    </li>
+      
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Install</span></li>
+    
+  </ul>
+</nav>
+
+      </div>
+    </div>
+  </div>
+
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../index.html" title="SAF Doc home">Home</a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../overview/index.html">
+    Overview
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../getting_started/index.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="index.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api/index.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../contribute/index.html">
+    Contribute
+  </a>
+</li>
+
+  </ul>
+</nav>
+</div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+  
+</div></div>
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/saf" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item pst-sidebar-collapse"><button id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar">
+  <svg class="pst-icon" role="img" aria-hidden="true" focusable="false" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="M3 15.5C2.36232 15.5 1.74874 15.2564 1.28478 14.8189C0.820828 14.3815 0.541576 13.7832 0.504167 13.1467L0.5 13L0.5 3C0.499965 2.36232 0.743605 1.74874 1.18107 1.28478C1.61854 0.820828 2.21676 0.541576 2.85333 0.504167L3 0.5L13 0.5C13.6377 0.499965 14.2513 0.743605 14.7152 1.18107C15.1792 1.61854 15.4584 2.21676 15.4958 2.85333L15.5 3L15.5 13C15.5 13.6377 15.2564 14.2513 14.8189 14.7152C14.3815 15.1792 13.7832 15.4584 13.1467 15.4958L13 15.5L3 15.5ZM3 13.8333L10.5 13.8333L10.5 2.16667L3 2.16667C2.79589 2.16669 2.59889 2.24163 2.44636 2.37726C2.29383 2.5129 2.19638 2.69979 2.1725 2.9025L2.16667 3L2.16667 13C2.16669 13.2041 2.24163 13.4011 2.37726 13.5536C2.5129 13.7062 2.69979 13.8036 2.9025 13.8275L3 13.8333ZM6.65583 10.325L6.5775 10.2558L4.91083 8.58917C4.76735 8.44567 4.68116 8.25476 4.66843 8.05223C4.65569 7.84971 4.71729 7.6495 4.84167 7.48917L4.91083 7.41083L6.5775 5.74417C6.72747 5.59471 6.9287 5.50794 7.14032 5.50148C7.35194 5.49502 7.55809 5.56935 7.7169 5.70937C7.8757 5.8494 7.97525 6.04463 7.99533 6.25539C8.01541 6.46616 7.95451 6.67667 7.825 6.84417L7.75583 6.9225L6.67917 8L7.75583 9.0775C7.89931 9.22099 7.98551 9.41191 7.99824 9.61443C8.01097 9.81695 7.94938 10.0172 7.825 10.1775L7.75583 10.2558C7.61234 10.3993 7.42142 10.4855 7.2189 10.4982C7.01638 10.511 6.81617 10.4494 6.65583 10.325Z"/>
+  </svg>
+  <span class="pst-collapse-sidebar-label">Collapse Sidebar</span>
+  <span class="pst-expand-sidebar-label">Expand Sidebar</span>
+</button></div>
+        <div class="sidebar-primary-item">
+
+
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="scaffold.html">Scaffold</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="run_locally/index.html">Run locally</a></li>
+<li class="toctree-l1"><a class="reference internal" href="projects.html">Manage projects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="debug/index.html">Debug</a></li>
+<li class="toctree-l1"><a class="reference internal" href="test/index.html">Test</a></li>
+<li class="toctree-l1"><a class="reference internal" href="add_step.html">Add steps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="package/index.html">Package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="deploy/index.html">Deploy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backend/index.html">Backend development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="frontend/index.html">Frontend development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="environment_variables.html">Environment variables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="solution_servers.html">Solution servers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="script.html">Script a solution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="supported_software.html">Supported software</a></li>
+<li class="toctree-l1"><a class="reference internal" href="components.html">SAF components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="best_practices/index.html">Best practices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="migration/index.html">Migration guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting/index.html">Troubleshooting guide</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+     
+    <li class="breadcrumb-item breadcrumb-home">
+      <a
+        href="../index.html"
+        class="nav-link"
+        aria-label="Home"
+      >
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="index.html" class="nav-link">User guide</a>
+    </li>
+      
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Install</span></li>
+    
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+  
+
+  
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="install">
+<span id="ug-install"></span><h1>Install<a class="headerlink" href="#install" title="Link to this heading">#</a></h1>
+<p>Installing a solution involves updating the solution’s dependencies and setting up a virtual environment.</p>
+<p>This process is required when you have created a new solution. You may also want to install a solution environment when you:</p>
+<ul>
+<li><p>Open a solution in a new workspace for the first time</p></li>
+<li><p>Want to refresh or recreate the existing environment</p></li>
+<li><p>Have made significant changes to dependencies</p></li>
+</ul>
+<section id="install-the-solution-environment">
+<h2>Install the solution environment<a class="headerlink" href="#install-the-solution-environment" title="Link to this heading">#</a></h2>
+<div class="sd-tab-set docutils">
+<input checked="checked" id="sd-tab-item-0" name="sd-tab-set-0" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-0">
+SAF CLI</label><div class="sd-tab-content docutils">
+<p>Install the solution environment using SAF CLI.</p>
+<div class="sd-tab-set docutils">
+<input checked="checked" id="sd-tab-item-2" name="sd-tab-set-1" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-2">
+From the solution’s root directory</label><div class="sd-tab-content docutils">
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>saf<span class="w"> </span>install<span class="w"> </span>-f
+</pre></div>
+</div>
+</div>
+<input id="sd-tab-item-3" name="sd-tab-set-1" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-3">
+From anywhere</label><div class="sd-tab-content docutils">
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>saf<span class="w"> </span>install<span class="w"> </span>&lt;app_name&gt;<span class="w"> </span>-f
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<input id="sd-tab-item-1" name="sd-tab-set-0" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-1">
+Solutions Manager</label><div class="sd-tab-content docutils">
+<p>Install the solution environment using Solutions Manager.</p>
+<ol class="arabic">
+<li><p>Open Visual Studio Code.</p></li>
+<li><p>In the Activity Bar, click the <strong>Solutions Manager</strong> icon.</p></li>
+<li><p>In the <strong>Solutions Manager</strong> pane, expand the <strong>Setup Solution</strong> view.</p>
+<a class="reference internal image-reference" href="../_images/solutions_manager_setup_solution_view.png"><img alt="Solutions Manager Setup Solution view" src="../_images/solutions_manager_setup_solution_view.png" style="width: 50%;" />
+</a>
+</li>
+<li><p>Provide the following values:</p>
+<ol class="loweralpha">
+<li><p>Select the solution you want to install.</p>
+<p>You can either select an option from the list of available solutions or browse for the solution folder of a different one.</p>
+</li>
+<li><p>Select an environment cleanup option.</p>
+<p>You can either use the default option (<strong>No clean-up</strong>) or select a different one.</p>
+</li>
+</ol>
+</li>
+<li><p>Set up the environment.</p>
+<p>Click the <span class="guilabel">Setup solution environment</span> button. Alternatively, you can copy the command under <strong>Solution setup command</strong> and run it in the terminal.</p>
+</li>
+</ol>
+</div>
+</div>
+<p>The installation installs all necessary dependencies. You can monitor its progress in the terminal.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p>For more detailed information on the installation process, see <a class="reference internal" href="#ug-install-saf-command"><span class="std std-ref">The saf install command</span></a>.</p>
+</div>
+<section id="the-saf-install-command">
+<span id="ug-install-saf-command"></span><h3>The <code class="docutils literal notranslate"><span class="pre">saf</span> <span class="pre">install</span></code> command<a class="headerlink" href="#the-saf-install-command" title="Link to this heading">#</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">saf</span> <span class="pre">install</span></code> command sets up the solution’s virtual environment within the application root directory, installs Poetry, and uses it to install the dependencies defined in the application’s <code class="docutils literal notranslate"><span class="pre">pyproject.toml</span></code> file.</p>
+</section>
+<section id="saf-install-options">
+<span id="ug-install-saf-command-options"></span><h3><code class="docutils literal notranslate"><span class="pre">saf</span> <span class="pre">install</span></code> options<a class="headerlink" href="#saf-install-options" title="Link to this heading">#</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">saf</span> <span class="pre">install</span></code> command has multiple options. To see them all, run the following command:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>saf install --help
+</pre></div>
+</div>
+<p>The following <code class="docutils literal notranslate"><span class="pre">saf</span> <span class="pre">install</span></code> options are available:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 55.0%" />
+<col style="width: 20.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head stub"><p>Option</p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>Default value</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><th class="stub"><p><code class="docutils literal notranslate"><span class="pre">-F</span></code>, <code class="docutils literal notranslate"><span class="pre">--force-clear-all</span></code></p></th>
+<td><p>Cleans up the workspace by deleting the existing <code class="docutils literal notranslate"><span class="pre">.venv</span></code>, <code class="docutils literal notranslate"><span class="pre">.poetry/.venv</span></code>, <code class="docutils literal notranslate"><span class="pre">.poetry/.cache</span></code>, and <code class="docutils literal notranslate"><span class="pre">poetry.lock</span></code>.</p></td>
+<td><p>Disabled</p></td>
+</tr>
+<tr class="row-odd"><th class="stub"><p><code class="docutils literal notranslate"><span class="pre">-f</span></code>, <code class="docutils literal notranslate"><span class="pre">--force-clear</span></code></p></th>
+<td><p>Cleans up the workspace by deleting the existing <code class="docutils literal notranslate"><span class="pre">.venv</span></code>, <code class="docutils literal notranslate"><span class="pre">.poetry/.venv</span></code>, and <code class="docutils literal notranslate"><span class="pre">.poetry/.cache</span></code>.</p></td>
+<td><p>Disabled</p></td>
+</tr>
+<tr class="row-even"><th class="stub"><p><code class="docutils literal notranslate"><span class="pre">--env-file</span></code></p></th>
+<td><p>Loads environment variables from this file.</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.env</span></code> in the application root directory, if present</p></td>
+</tr>
+<tr class="row-odd"><th class="stub"><p><code class="docutils literal notranslate"><span class="pre">-d</span></code>, <code class="docutils literal notranslate"><span class="pre">--dependencies</span></code></p></th>
+<td><p>List of dependency groups to install, separated by commas.</p>
+<p>For more detailed information on dependency packages and groups, see <a class="reference internal" href="#ug-install-dependency-groups"><span class="std std-ref">Solution dependency groups</span></a>.</p>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">desktop,ui,doc,build</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="virtual-environment-installation">
+<h3>Virtual environment installation<a class="headerlink" href="#virtual-environment-installation" title="Link to this heading">#</a></h3>
+<p>Under the hood, <code class="docutils literal notranslate"><span class="pre">saf</span> <span class="pre">install</span></code> creates two isolated virtual environments:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">.poetry/.venv</span></code>: Poetry’s own environment, keeping the dependency manager separate from the solution.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">.venv</span></code>: The solution’s virtual environment, managed by Poetry and populated with all packages from <code class="docutils literal notranslate"><span class="pre">pyproject.toml</span></code>.</p></li>
+</ul>
+<p>A symbolic link connects the two so that Poetry can transparently manage <code class="docutils literal notranslate"><span class="pre">.venv</span></code> without conflicts, as illustrated in the following diagram:</p>
+<img alt="Diagram showing the two virtual environments created by saf install and the symbolic link between them" src="../_images/saf_install.svg" />
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p><strong>Private sources:</strong> If your application’s <code class="docutils literal notranslate"><span class="pre">pyproject.toml</span></code> file declares a private source, you are prompted to provide credentials during installation.</p>
+<p>The system validates your credentials and securely stores them as user-level environment variables for future use. If invalid credentials are provided, you are prompted to re-enter them. You can cancel the credential prompt at any time by pressing <kbd class="kbd docutils literal notranslate">Ctrl</kbd>+<kbd class="kbd docutils literal notranslate">C</kbd>.</p>
+<p>For more detailed information, see <a class="reference internal" href="#user-guide-install-manage-private-sources"><span class="std std-ref">Manage private sources</span></a>.</p>
+</div>
+</section>
+<section id="solution-dependency-groups">
+<span id="ug-install-dependency-groups"></span><h3>Solution dependency groups<a class="headerlink" href="#solution-dependency-groups" title="Link to this heading">#</a></h3>
+<p>Poetry supports the concept of dependency groups, which are sets of packages that can be installed together. This allows you to install only the dependencies you need for a particular use case, such as development, testing, or documentation.</p>
+<p>Solution dependencies defined in the <code class="docutils literal notranslate"><span class="pre">pyproject.toml</span></code> file are organized into groups that can be installed selectively using the <code class="docutils literal notranslate"><span class="pre">-d/--dependencies</span></code> option of the <code class="docutils literal notranslate"><span class="pre">saf</span> <span class="pre">install</span></code> command.</p>
+<section id="main-dependencies">
+<h4>Main dependencies<a class="headerlink" href="#main-dependencies" title="Link to this heading">#</a></h4>
+<p>The packages listed under <code class="docutils literal notranslate"><span class="pre">[tool.poetry.dependencies]</span></code> in <code class="docutils literal notranslate"><span class="pre">pyproject.toml</span></code> (the runtime or “main” dependencies) are always installed by <code class="docutils literal notranslate"><span class="pre">saf</span> <span class="pre">install</span></code>. These are not a named dependency group—they are the project’s direct dependencies, such as <code class="docutils literal notranslate"><span class="pre">ansys-saf-glow-engine</span></code> and <code class="docutils literal notranslate"><span class="pre">ansys-saf-product-manager</span></code> in the solution template.</p>
+</section>
+<section id="default-optional-groups">
+<h4>Default optional groups<a class="headerlink" href="#default-optional-groups" title="Link to this heading">#</a></h4>
+<p>By default, <code class="docutils literal notranslate"><span class="pre">saf</span> <span class="pre">install</span></code> also requests the optional dependency groups <code class="docutils literal notranslate"><span class="pre">desktop</span></code>, <code class="docutils literal notranslate"><span class="pre">ui</span></code>, <code class="docutils literal notranslate"><span class="pre">doc</span></code>, and <code class="docutils literal notranslate"><span class="pre">build</span></code> when they are defined in the project’s <code class="docutils literal notranslate"><span class="pre">pyproject.toml</span></code>.</p>
+</section>
+<section id="additional-optional-groups">
+<h4>Additional optional groups<a class="headerlink" href="#additional-optional-groups" title="Link to this heading">#</a></h4>
+<p>Other optional groups may be defined for a project. In the solution template, <code class="docutils literal notranslate"><span class="pre">tests</span></code> and <code class="docutils literal notranslate"><span class="pre">style</span></code> are available but are not installed by default.</p>
+</section>
+<section id="control-which-groups-are-installed">
+<h4>Control which groups are installed<a class="headerlink" href="#control-which-groups-are-installed" title="Link to this heading">#</a></h4>
+<ul>
+<li><p>To specify which optional groups to install, use the <code class="docutils literal notranslate"><span class="pre">-d/--dependencies</span></code> option with <code class="docutils literal notranslate"><span class="pre">saf</span> <span class="pre">install</span></code>. For multiple groups, provide a comma-separated list of group names.
+For example, to install only the <code class="docutils literal notranslate"><span class="pre">tests</span></code> and <code class="docutils literal notranslate"><span class="pre">style</span></code> groups, use:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>saf<span class="w"> </span>install<span class="w"> </span>-d<span class="w"> </span>tests,style
+</pre></div>
+</div>
+</li>
+<li><p>If you pass <code class="docutils literal notranslate"><span class="pre">-d</span></code> with a specific list, only the listed optional groups are requested in addition to the main dependencies. The default selection is not implicitly merged—if you want the defaults, you must include them explicitly.
+For example, to install the default groups plus <code class="docutils literal notranslate"><span class="pre">tests</span></code>, use:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>saf<span class="w"> </span>install<span class="w"> </span>-d<span class="w"> </span>desktop,ui,doc,build,tests
+</pre></div>
+</div>
+</li>
+<li><p>To install every optional group defined in the project, use <code class="docutils literal notranslate"><span class="pre">-d</span> <span class="pre">all</span></code> with <code class="docutils literal notranslate"><span class="pre">saf</span> <span class="pre">install</span></code>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>saf<span class="w"> </span>install<span class="w"> </span>-d<span class="w"> </span>all
+</pre></div>
+</div>
+</li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Subsequent runs of <code class="docutils literal notranslate"><span class="pre">saf</span> <span class="pre">install</span></code> that specify additional dependency groups can only add packages to the environment; they do not remove already-installed packages.</p>
+<p>To create a clean environment containing only a given set of groups, use the <code class="docutils literal notranslate"><span class="pre">-f</span></code> (force-clear) option together with <code class="docutils literal notranslate"><span class="pre">-d</span></code>. This deletes the existing virtual environment and recreates it with the requested groups.</p>
+</div>
+</section>
+</section>
+</section>
+<section id="manage-solution-dependencies">
+<span id="user-guide-install-manage-dependencies"></span><h2>Manage solution dependencies<a class="headerlink" href="#manage-solution-dependencies" title="Link to this heading">#</a></h2>
+<p>Managing dependencies involves adding, updating, or removing individual packages in a solution’s virtual environment, and keeping the environment reproducible and consistent with the packages declared in its <code class="docutils literal notranslate"><span class="pre">pyproject.toml</span></code> file.</p>
+<p>Both SAF CLI and Solutions Manager manage dependencies by driving Poetry, the dependency management system used by SAF solutions. You can use either method, depending on your preference and workflow.</p>
+<div class="sd-tab-set docutils">
+<input checked="checked" id="sd-tab-item-4" name="sd-tab-set-2" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-4">
+SAF CLI</label><div class="sd-tab-content docutils">
+<p>To use SAF CLI to add, update, or remove individual packages, run Poetry commands inside the solution’s virtual environment.</p>
+</div>
+<input id="sd-tab-item-5" name="sd-tab-set-2" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-5">
+Solutions Manager</label><div class="sd-tab-content docutils">
+<p>To manage dependencies using the <strong>Dependencies</strong> view:</p>
+<ol class="arabic">
+<li><p>Open the solution’s root directory in Visual Studio Code.</p></li>
+<li><p>In the Activity Bar, click the <strong>Solutions Manager</strong> icon.</p></li>
+<li><p>In the <strong>Solutions Manager</strong> pane, expand the <strong>Dependencies</strong> view.</p>
+<a class="reference internal image-reference" href="../_images/solutions-manager-dependencies-view.png"><img alt="Solutions Manager Dependencies view" src="../_images/solutions-manager-dependencies-view.png" style="width: 45%;" />
+</a>
+<p>The dependency groups shown are populated from the solution’s <code class="docutils literal notranslate"><span class="pre">pyproject.toml</span></code> file. Expand a group to view the packages installed in the solution environment.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Packages installed from a private source are marked with a lock icon. For more information, see <a class="reference internal" href="#user-guide-install-manage-dependencies-private-packages"><span class="std std-ref">Private packages</span></a>.</p>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>If the environment falls out of sync with <code class="docutils literal notranslate"><span class="pre">pyproject.toml</span></code> or <code class="docutils literal notranslate"><span class="pre">poetry.lock</span></code> (for example, after a manual edit), the view shows a warning. To reconcile the environment, click <span class="guilabel">Sync Dependencies</span> or the sync icon in the view’s title bar.</p>
+</div>
+</li>
+</ol>
+</div>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p>For more information about using Poetry for dependency management, see the official <a class="reference external" href="https://python-poetry.org/docs/" rel="noopener noreferrer" target="_blank">Poetry</a> documentation.</p>
+</div>
+<section id="add-a-dependency">
+<span id="user-guide-install-manage-dependencies-add"></span><h3>Add a dependency<a class="headerlink" href="#add-a-dependency" title="Link to this heading">#</a></h3>
+<div class="sd-tab-set docutils">
+<input checked="checked" id="sd-tab-item-6" name="sd-tab-set-3" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-6">
+SAF CLI</label><div class="sd-tab-content docutils">
+<p>To add a dependency using Poetry, run <code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">add</span></code> inside the solution’s environment.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p>For the full set of <code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">add</span></code> options, see the official Poetry <a class="reference external" href="https://python-poetry.org/docs/cli/#add" rel="noopener noreferrer" target="_blank">add</a> command documentation.</p>
+</div>
+</div>
+<input id="sd-tab-item-7" name="sd-tab-set-3" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-7">
+Solutions Manager</label><div class="sd-tab-content docutils">
+<p>To add a dependency using Solutions Manager:</p>
+<ol class="arabic">
+<li><p>In the <strong>Dependencies</strong> view title bar, click the <strong>Add Dependency</strong> icon.</p>
+<a class="reference internal image-reference" href="../_images/solutions-manager-dependencies-add-button.png"><img alt="Add Dependency icon in the Dependencies view title bar" src="../_images/solutions-manager-dependencies-add-button.png" style="width: 45%;" />
+</a>
+</li>
+<li><p>In the field above the editor, enter the name of the package you want to add.</p>
+<a class="reference internal image-reference" href="../_images/solutions-manager-dependencies-add-package-name.png"><img alt="Add package name field" src="../_images/solutions-manager-dependencies-add-package-name.png" style="width: 100%;" />
+</a>
+</li>
+<li><p>In the field above the editor, enter a package version constraint (optional).</p>
+<p>Leave this field empty to let Poetry select the latest compatible version.</p>
+<a class="reference internal image-reference" href="../_images/solutions-manager-dependencies-add-package-version.png"><img alt="Add package version constraint field" src="../_images/solutions-manager-dependencies-add-package-version.png" style="width: 100%;" />
+</a>
+<p>For more information about version values, see <a class="reference internal" href="#user-guide-install-manage-dependencies-versions"><span class="std std-ref">Version constraints</span></a>.</p>
+</li>
+<li><p>In the dropdown list above the editor, select a dependency group.</p>
+<a class="reference internal image-reference" href="../_images/solutions-manager-dependencies-select-group.png"><img alt="Select dependency group dropdown" src="../_images/solutions-manager-dependencies-select-group.png" style="width: 100%;" />
+</a>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This list doesn’t include <code class="docutils literal notranslate"><span class="pre">desktop</span></code> or any custom groups defined in <code class="docutils literal notranslate"><span class="pre">pyproject.toml</span></code>. To add a dependency to one of those groups, use SAF CLI instead.</p>
+<p>Solutions Manager runs the equivalent <code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">add</span></code> command and shows a progress notification, followed by a success or failure message.</p>
+</div>
+</li>
+<li><p>Expand the group containing the new package and verify that the new package is visible.</p></li>
+</ol>
+</div>
+</div>
+</section>
+<section id="update-a-dependency">
+<span id="user-guide-install-manage-dependencies-update"></span><h3>Update a dependency<a class="headerlink" href="#update-a-dependency" title="Link to this heading">#</a></h3>
+<div class="sd-tab-set docutils">
+<input checked="checked" id="sd-tab-item-8" name="sd-tab-set-4" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-8">
+SAF CLI</label><div class="sd-tab-content docutils">
+<p>To update a dependency using Poetry, run <code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">update</span></code> inside the solution’s environment.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p>For the full set of <code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">update</span></code> options, see the official Poetry <a class="reference external" href="https://python-poetry.org/docs/cli/#update" rel="noopener noreferrer" target="_blank">update</a> command documentation.</p>
+</div>
+</div>
+<input id="sd-tab-item-9" name="sd-tab-set-4" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-9">
+Solutions Manager</label><div class="sd-tab-content docutils">
+<ol class="arabic">
+<li><p>In the <strong>Dependencies</strong> view, expand the group containing the package you want to update.</p></li>
+<li><p>Click the package’s <strong>Update Dependency</strong> icon.</p>
+<a class="reference internal image-reference" href="../_images/solutions-manager-dependencies-update-button.png"><img alt="Update Dependency icon" src="../_images/solutions-manager-dependencies-update-button.png" style="width: 45%;" />
+</a>
+</li>
+<li><p>In the confirmation dialog at the bottom right corner of the window, click <span class="guilabel">Yes</span>.</p>
+<p>Solutions Manager runs the equivalent <code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">update</span></code> command and shows a progress notification, followed by a success or failure message.</p>
+</li>
+<li><p>Verify that the package version has been updated.</p></li>
+</ol>
+</div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Updating a dependency does not prompt for or accept a version. It updates the package to the latest version allowed by its existing constraint in <code class="docutils literal notranslate"><span class="pre">pyproject.toml</span></code>, but does not change that constraint. To change a version constraint, add the dependency again with the new constraint, as described in <a class="reference internal" href="#user-guide-install-manage-dependencies-add"><span class="std std-ref">Add a dependency</span></a>.</p>
+</div>
+</section>
+<section id="remove-a-dependency">
+<span id="user-guide-install-manage-dependencies-remove"></span><h3>Remove a dependency<a class="headerlink" href="#remove-a-dependency" title="Link to this heading">#</a></h3>
+<div class="sd-tab-set docutils">
+<input checked="checked" id="sd-tab-item-10" name="sd-tab-set-5" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-10">
+SAF CLI</label><div class="sd-tab-content docutils">
+<p>To remove a dependency using Poetry, run <code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">remove</span></code> inside the solution’s environment.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p>For the full set of <code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">remove</span></code> options, see the official Poetry <a class="reference external" href="https://python-poetry.org/docs/cli/#remove" rel="noopener noreferrer" target="_blank">remove</a> command documentation.</p>
+</div>
+</div>
+<input id="sd-tab-item-11" name="sd-tab-set-5" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-11">
+Solutions Manager</label><div class="sd-tab-content docutils">
+<ol class="arabic">
+<li><p>In the <strong>Dependencies</strong> view, expand the group containing the package you want to remove.</p></li>
+<li><p>Click the package’s <strong>Remove Dependency</strong> icon.</p>
+<a class="reference internal image-reference" href="../_images/solutions-manager-dependencies-remove-button.png"><img alt="Remove Dependency icon on a package row" src="../_images/solutions-manager-dependencies-remove-button.png" style="width: 45%;" />
+</a>
+</li>
+<li><p>In the confirmation dialog at the bottom right corner of the window, click <span class="guilabel">Yes</span>.</p>
+<p>Solutions Manager runs the equivalent <code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">remove</span></code> command and shows a progress notification, followed by a success or failure message.</p>
+</li>
+<li><p>Verify that the package is no longer visible in the group from which it was removed.</p></li>
+</ol>
+</div>
+</div>
+</section>
+<section id="version-constraints">
+<span id="user-guide-install-manage-dependencies-versions"></span><h3>Version constraints<a class="headerlink" href="#version-constraints" title="Link to this heading">#</a></h3>
+<p>When adding a dependency, you specify a version constraint that tells Poetry which versions of the package are acceptable. Commonly used formats include:</p>
+<ul>
+<li><p><strong>Exact version</strong>: <code class="docutils literal notranslate"><span class="pre">1.0.0</span></code> or <code class="docutils literal notranslate"><span class="pre">1.0</span></code></p></li>
+<li><p><strong>Caret requirement</strong>: <code class="docutils literal notranslate"><span class="pre">^1.0.0</span></code> (allows releases that don’t change the leftmost non-zero version component)</p></li>
+<li><p><strong>Tilde requirement</strong>: <code class="docutils literal notranslate"><span class="pre">~1.0.0</span></code> (allows patch-level updates within the same minor version)</p></li>
+<li><p><strong>Comparison operators</strong>: <code class="docutils literal notranslate"><span class="pre">&gt;=1.0.0</span></code>, <code class="docutils literal notranslate"><span class="pre">&lt;=1.0.0</span></code>, <code class="docutils literal notranslate"><span class="pre">&gt;1.0.0</span></code>, <code class="docutils literal notranslate"><span class="pre">&lt;1.0.0</span></code></p></li>
+<li><p><strong>Development version</strong>: <code class="docutils literal notranslate"><span class="pre">0.1dev1</span></code></p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The Solutions Manager <strong>Add Dependency</strong> version field accepts only the formats listed above. To use a constraint outside this set, use SAF CLI instead. For the full syntax, including wildcards, multiple constraints, and pre-release versions, see the official Poetry <a class="reference external" href="https://python-poetry.org/docs/dependency-specification/" rel="noopener noreferrer" target="_blank">Dependency specification</a> documentation.</p>
+</div>
+</section>
+<section id="private-packages">
+<span id="user-guide-install-manage-dependencies-private-packages"></span><h3>Private packages<a class="headerlink" href="#private-packages" title="Link to this heading">#</a></h3>
+<p>Dependencies installed from a private source, such as the PyAnsys private PyPI index, require authentication.</p>
+<p>Before you add, update, or remove a private package, valid credentials for its source must already be available, as described in <a class="reference internal" href="#user-guide-install-manage-private-sources"><span class="std std-ref">Manage private sources</span></a>. Neither SAF CLI nor Solutions Manager prompts for credentials as part of these actions.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In Solutions Manager, these packages are marked with a lock icon in the <strong>Dependencies</strong> view.
+The <strong>Add Dependency</strong> command does not specify a source explicitly.</p>
+</div>
+</section>
+</section>
+<section id="execute-commands-in-the-solution-environment">
+<span id="ug-install-execute-commands"></span><h2>Execute commands in the solution environment<a class="headerlink" href="#execute-commands-in-the-solution-environment" title="Link to this heading">#</a></h2>
+<p>Once a solution is installed, you can use <code class="docutils literal notranslate"><span class="pre">saf</span> <span class="pre">execute</span></code> to run commands inside its virtual environment. This lets you invoke tools such as <code class="docutils literal notranslate"><span class="pre">pytest</span></code>, <code class="docutils literal notranslate"><span class="pre">sphinx-build</span></code>, or any other command without manually activating the solution’s virtual environment beforehand.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>saf execute &lt;solution_name&gt; "&lt;command&gt;"
+</pre></div>
+</div>
+<section id="the-saf-execute-command">
+<span id="ug-install-saf-execute-command"></span><h3>The <code class="docutils literal notranslate"><span class="pre">saf</span> <span class="pre">execute</span></code> command<a class="headerlink" href="#the-saf-execute-command" title="Link to this heading">#</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">saf</span> <span class="pre">execute</span></code> command prepends the solution’s <code class="docutils literal notranslate"><span class="pre">.venv</span></code> to <span class="target" id="index-0"></span><code class="xref std std-envvar docutils literal notranslate"><span class="pre">PATH</span></code>, so the solution’s Python
+interpreter and installed packages take precedence over any other environment on the system.</p>
+<a class="reference internal image-reference" href="../_images/saf_execute.svg"><img alt="Diagram showing how saf execute injects the solution environment into PATH" src="../_images/saf_execute.svg" style="width: 100%;" />
+</a>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>If the binary called in <code class="docutils literal notranslate"><span class="pre">&lt;command&gt;</span></code> is not present in the solution’s environment, binaries
+found in other environments on <span class="target" id="index-1"></span><code class="xref std std-envvar docutils literal notranslate"><span class="pre">PATH</span></code> are used as a fallback.</p>
+</div>
+</section>
+<section id="saf-execute-options">
+<span id="ug-install-saf-execute-options"></span><h3><code class="docutils literal notranslate"><span class="pre">saf</span> <span class="pre">execute</span></code> options<a class="headerlink" href="#saf-execute-options" title="Link to this heading">#</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">saf</span> <span class="pre">execute</span></code> command has multiple options. To see them all, run the following command:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>saf execute --help
+</pre></div>
+</div>
+<p>The following <code class="docutils literal notranslate"><span class="pre">saf</span> <span class="pre">execute</span></code> options are available:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 20.0%" />
+<col style="width: 40.0%" />
+<col style="width: 40.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head stub"><p>Option</p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>Default value</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><th class="stub"><p><code class="docutils literal notranslate"><span class="pre">--cwd</span></code></p></th>
+<td><p>Directory in which the command is executed.</p></td>
+<td><p>Solution’s root directory</p></td>
+</tr>
+<tr class="row-odd"><th class="stub"><p><code class="docutils literal notranslate"><span class="pre">--env-file</span></code></p></th>
+<td><p>Loads environment variables from this file.</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.env</span></code> in the solution root directory, if present</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="command-execution-example">
+<span id="ug-install-saf-execute-example"></span><h3>Command execution example<a class="headerlink" href="#command-execution-example" title="Link to this heading">#</a></h3>
+<p>This example illustrates how to run a solution’s test using the <code class="docutils literal notranslate"><span class="pre">saf</span> <span class="pre">execute</span></code> command. The command runs <code class="docutils literal notranslate"><span class="pre">pytest</span></code> in the solution’s virtual environment, using the solution’s Python interpreter and installed packages.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>saf<span class="w"> </span>execute<span class="w"> </span>my-solution<span class="w"> </span><span class="s2">"pytest -v"</span>
+</pre></div>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>To pass a command that itself contains spaces or quoted strings, wrap the inner string in single quotes:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>saf<span class="w"> </span>execute<span class="w"> </span>my-solution<span class="w"> </span><span class="s2">"python -c 'from datetime import datetime; print(datetime.now())'"</span>
+</pre></div>
+</div>
+</div>
+</section>
+</section>
+<section id="manage-private-sources">
+<span id="user-guide-install-manage-private-sources"></span><h2>Manage private sources<a class="headerlink" href="#manage-private-sources" title="Link to this heading">#</a></h2>
+<p>For applications that use private sources that require authentication, you can pre-configure credentials to avoid interactive prompts during installation.</p>
+<p class="rubric">Credential precedence order</p>
+<p>The system follows a specific <strong>order of precedence</strong> when looking for credentials:</p>
+<ol class="arabic">
+<li><p><strong>User session environment variables</strong> (highest priority)</p></li>
+<li><p><strong>Application-specific .env file</strong> (lower priority)</p></li>
+</ol>
+<p>If credentials are found at any level, they are validated. If validation fails, you are prompted to enter new credentials interactively.</p>
+<p class="rubric">Environment variable naming convention</p>
+<p>The environment variable names are derived from the source name declared in your application’s <code class="docutils literal notranslate"><span class="pre">pyproject.toml</span></code> file. Given a source name like <code class="docutils literal notranslate"><span class="pre">my-private-source</span></code>, the
+corresponding environment variables are:</p>
+<ul>
+<li><p>Username variable: <span class="target" id="index-2"></span><code class="xref std std-envvar docutils literal notranslate"><span class="pre">POETRY_HTTP_BASIC_MY_PRIVATE_SOURCE_USERNAME</span></code></p></li>
+<li><p>Password variable: <span class="target" id="index-3"></span><code class="xref std std-envvar docutils literal notranslate"><span class="pre">POETRY_HTTP_BASIC_MY_PRIVATE_SOURCE_PASSWORD</span></code></p></li>
+</ul>
+<section id="recommended-set-user-session-environment-variables">
+<h3>(Recommended) Set user session environment variables<a class="headerlink" href="#recommended-set-user-session-environment-variables" title="Link to this heading">#</a></h3>
+<p>Set environment variables at the user-session level for persistent, system-wide access:</p>
+<div class="sd-tab-set docutils">
+<input checked="checked" id="sd-tab-item-12" name="sd-tab-set-6" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-12">
+Windows (PowerShell)</label><div class="sd-tab-content docutils">
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="c"># Example for a 'my-private-source' source</span>
+<span class="c"># Set user-level environment variables (persists across sessions)</span>
+<span class="no">[Environment]</span><span class="p">::</span><span class="n">SetEnvironmentVariable</span><span class="p">(</span><span class="s2">"POETRY_HTTP_BASIC_MY_PRIVATE_SOURCE_USERNAME"</span><span class="p">,</span> <span class="s2">"your-username"</span><span class="p">,</span> <span class="s2">"User"</span><span class="p">)</span>
+<span class="no">[Environment]</span><span class="p">::</span><span class="n">SetEnvironmentVariable</span><span class="p">(</span><span class="s2">"POETRY_HTTP_BASIC_MY_PRIVATE_SOURCE_PASSWORD"</span><span class="p">,</span> <span class="s2">"your-token"</span><span class="p">,</span> <span class="s2">"User"</span><span class="p">)</span>
+
+<span class="c"># Or using setx command</span>
+<span class="n">setx</span> <span class="n">POETRY_HTTP_BASIC_MY_PRIVATE_SOURCE_USERNAME</span> <span class="s2">"your-username"</span>
+<span class="n">setx</span> <span class="n">POETRY_HTTP_BASIC_MY_PRIVATE_SOURCE_PASSWORD</span> <span class="s2">"your-token"</span>
+</pre></div>
+</div>
+</div>
+<input id="sd-tab-item-13" name="sd-tab-set-6" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-13">
+Linux/macOS</label><div class="sd-tab-content docutils">
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Example for a 'my-private-source' source</span>
+<span class="c1"># Add to your shell profile (for example, ~/.bash_profile, ~/.bashrc, or ~/.profile)</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">POETRY_HTTP_BASIC_MY_PRIVATE_SOURCE_USERNAME</span><span class="o">=</span><span class="s2">"your-username"</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">POETRY_HTTP_BASIC_MY_PRIVATE_SOURCE_PASSWORD</span><span class="o">=</span><span class="s2">"your-token"</span>
+
+<span class="c1"># Reload your profile</span>
+<span class="nb">source</span><span class="w"> </span>~/.bash_profile
+</pre></div>
+</div>
+</div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>User session environment variables are the <strong>preferred method</strong> because they:</p>
+<ul>
+<li><p>Apply to all applications that use the same private PyPI source</p></li>
+<li><p>Persist across terminal sessions</p></li>
+<li><p>Don’t require management of multiple <code class="docutils literal notranslate"><span class="pre">.env</span></code> files</p></li>
+</ul>
+</div>
+</section>
+<section id="use-an-application-specific-environment-file">
+<h3>Use an application-specific environment file<a class="headerlink" href="#use-an-application-specific-environment-file" title="Link to this heading">#</a></h3>
+<p>Edit the <code class="docutils literal notranslate"><span class="pre">.env</span></code> file in your application root directory for project-specific credentials:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">POETRY_HTTP_BASIC_MY_PRIVATE_SOURCE_USERNAME</span><span class="o">=</span>john.doe
+<span class="nv">POETRY_HTTP_BASIC_MY_PRIVATE_SOURCE_PASSWORD</span><span class="o">=</span>your-access-token
+</pre></div>
+</div>
+<section id="use-custom-environment-files">
+<h4>Use custom environment files<a class="headerlink" href="#use-custom-environment-files" title="Link to this heading">#</a></h4>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Use a custom environment file location</span>
+saf<span class="w"> </span>install<span class="w"> </span>&lt;app_name&gt;<span class="w"> </span>--env-file<span class="w"> </span>/path/to/custom.env
+</pre></div>
+</div>
+</section>
+<section id="find-your-source-name">
+<h4>Find your source name<a class="headerlink" href="#find-your-source-name" title="Link to this heading">#</a></h4>
+<p>Check your application’s <code class="docutils literal notranslate"><span class="pre">pyproject.toml</span></code> file for the source configuration:</p>
+<div class="highlight-toml notranslate"><div class="highlight"><pre><span></span><span class="k">[tool.poetry.source]</span>
+<span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"my-private-source"</span>
+<span class="n">url</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"https://your-pypi-server.com/simple/"</span>
+<span class="n">priority</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"primary"</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="environment-variable-naming-rules">
+<h3>Environment variable naming rules<a class="headerlink" href="#environment-variable-naming-rules" title="Link to this heading">#</a></h3>
+<ul>
+<li><p>Replace hyphens with underscores: <span class="target" id="index-4"></span><code class="xref std std-envvar docutils literal notranslate"><span class="pre">my-company-pypi</span></code> → <span class="target" id="index-5"></span><code class="xref std std-envvar docutils literal notranslate"><span class="pre">MY_COMPANY_PYPI</span></code></p></li>
+<li><p>Add the Poetry prefix and suffix: <span class="target" id="index-6"></span><code class="xref std std-envvar docutils literal notranslate"><span class="pre">POETRY_HTTP_BASIC_&lt;SOURCE_NAME&gt;_USERNAME/PASSWORD</span></code></p></li>
+</ul>
+</section>
+<section id="credential-precedence-example">
+<h3>Credential precedence example<a class="headerlink" href="#credential-precedence-example" title="Link to this heading">#</a></h3>
+<p>If you have both user session variables and a <code class="docutils literal notranslate"><span class="pre">.env</span></code> file for the <code class="docutils literal notranslate"><span class="pre">my-private-source</span></code> source:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># User session (takes precedence)</span>
+<span class="nv">POETRY_HTTP_BASIC_MY_PRIVATE_SOURCE_USERNAME</span><span class="o">=</span>session-user
+
+<span class="c1"># .env file (ignored for username, used for password)</span>
+<span class="nv">POETRY_HTTP_BASIC_MY_PRIVATE_SOURCE_USERNAME</span><span class="o">=</span>env-file-user
+<span class="nv">POETRY_HTTP_BASIC_MY_PRIVATE_SOURCE_PASSWORD</span><span class="o">=</span>env-file-token
+</pre></div>
+</div>
+<div class="admonition-result admonition">
+<p class="admonition-title">Result</p>
+<p><code class="docutils literal notranslate"><span class="pre">session-user</span></code> with <code class="docutils literal notranslate"><span class="pre">env-file-token</span></code> is used.</p>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p>If the installation fails, see <a class="reference internal" href="troubleshooting/installation.html#troubleshooting-installation"><span class="std std-ref">Installation</span></a> for common problems and their workarounds.
+On machines behind a corporate proxy or a TLS-inspecting firewall, see also
+<a class="reference internal" href="troubleshooting/corporate_environment.html#troubleshooting-corporate-environment"><span class="std std-ref">Corporate environment</span></a>.</p>
+</div>
+</section>
+</section>
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#install-the-solution-environment">Install the solution environment</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-saf-install-command">The <code class="docutils literal notranslate"><span class="pre">saf</span> <span class="pre">install</span></code> command</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#saf-install-options"><code class="docutils literal notranslate"><span class="pre">saf</span> <span class="pre">install</span></code> options</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#virtual-environment-installation">Virtual environment installation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#solution-dependency-groups">Solution dependency groups</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#main-dependencies">Main dependencies</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#default-optional-groups">Default optional groups</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#additional-optional-groups">Additional optional groups</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#control-which-groups-are-installed">Control which groups are installed</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#manage-solution-dependencies">Manage solution dependencies</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#add-a-dependency">Add a dependency</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#update-a-dependency">Update a dependency</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#remove-a-dependency">Remove a dependency</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#version-constraints">Version constraints</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#private-packages">Private packages</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#execute-commands-in-the-solution-environment">Execute commands in the solution environment</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-saf-execute-command">The <code class="docutils literal notranslate"><span class="pre">saf</span> <span class="pre">execute</span></code> command</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#saf-execute-options"><code class="docutils literal notranslate"><span class="pre">saf</span> <span class="pre">execute</span></code> options</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#command-execution-example">Command execution example</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#manage-private-sources">Manage private sources</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommended-set-user-session-environment-variables">(Recommended) Set user session environment variables</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#use-an-application-specific-environment-file">Use an application-specific environment file</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#use-custom-environment-files">Use custom environment files</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#find-your-source-name">Find your source name</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#environment-variable-naming-rules">Environment variable naming rules</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#credential-precedence-example">Credential precedence example</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9"></script>
+
+
+  <!-- Include desired assets -->
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.7/require.min.js"></script>
+
+<script>
+// Passing the search options to the search.js file
+const SEARCH_OPTIONS = JSON.parse('{"includeMatches": true, "includeScore": true, "keys": [{"name": "section", "weight": 3}, {"name": "title", "weight": 3}, {"name": "text", "weight": 1}, {"name": "objectID", "weight": 0.5}], "limit": 10, "threshold": 0.2}');
+const SEARCH_FILE = "../_static/search.json";
+const ADVANCE_SEARCH_PATH = "../search.html";
+const EXTRA_SOURCES = JSON.parse('""');
+</script>
+
+
+<script src="../_static/js/search.js"></script>
+
+  
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<footer class="bd-footer">
+  <div class="bd-footer__inner bd-page-width">
+    <div class="footer-items__start">
+      <div class="footer-item">
+        <div class="footer-items__start">
+          <div class="footer-item">
+            <img src="https://docs.pyansys.com/version/dev/_static/ansys_logo_transparent_white.png" alt="Ansys Logo" class="footer-ansys-logo">
+          </div>
+          <div class="footer-item"><br>
+            <p>2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-items__center">
+      <div class="footer-item">
+        <div class="footer-items__start">
+          <div class="connect-with-ansys">
+            <p>Latest documentation</p> <br>
+            <a href="https://www.ansys.com/" class="external-link" target="_blank" rel="noopener noreferrer">
+              <span class="link-text">Ansys.com</span>
+              <i class="fas fa-up-right-from-square"></i>
+            </a><br>
+            <a href="https://www.ansys.com/services/ansys-learning-hub" class="external-link" target="_blank" rel="noopener noreferrer">
+              <span class="link-text">Ansys Learning</span>
+              <i class="fas fa-up-right-from-square"></i>
+            </a><br>
+            <a href="https://www.ansys.com/support" class="external-link" target="_blank" rel="noopener noreferrer">
+              <span class="link-text">Ansys Support</span>
+              <i class="fas fa-up-right-from-square"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-items__end">
+      <div class="footer-item">
+        <div class="footer-right">
+          <span>Connect with Ansys</span>
+          <div class="social-icons">
+            <a href="https://www.youtube.com/user/ansysinc" target="_blank" rel="noopener" class="icon icon-youtube" aria-label="Youtube"><span class="sr-only">Youtube</span></a>
+            <a href="https://www.facebook.com/ansys" target="_blank" rel="noopener" class="icon icon-facebook" aria-label="Facebook"><span class="sr-only">Facebook</span></a>
+            <a href="https://www.linkedin.com/company/ansys-inc" target="_blank" rel="noopener" class="icon icon-linkedin" aria-label="Linkedin"><span class="sr-only">Linkedin</span></a>
+            <a href="https://github.com/ansys" target="_blank" rel="noopener" class="icon icon-github" aria-label="GitHub"><i class="fab fa-github"></i><span class="sr-only">GitHub</span></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+  </body>
+</html>

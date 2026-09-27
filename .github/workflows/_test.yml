@@ -407,9 +407,7 @@ jobs:
         env:
           PYTHON_EXE: ${{ needs.configure-tests.outputs.working-directory }}/${{ steps.prepare-env.outputs.python-cmd
             }}
-          VISOR_VERSION: '1.0.5b0.dev0+20260831'
-          PIP_EXTRA_INDEX_URL: https://PAT:${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}@${{
-            secrets.PYANSYS_PYPI_PRIVATE_URL }}
+          VISOR_VERSION: '1.0.1'
           PIP_QUIET: 1
 
       - name: Install desktop-portal

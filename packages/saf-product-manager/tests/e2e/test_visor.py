@@ -32,7 +32,6 @@ from tests.mocks.solution_end_to_end.solution.definition import EndToEndSolution
 
 pytestmark = [
     pytest.mark.parametrize("solution_type", [EndToEndSolution], indirect=True),
-    pytest.mark.xfail(reason="See Issue #103."),
 ]
 
 

@@ -38,6 +38,7 @@ ansys-bdm-shared-volume = { version = ">=0.4.0, <1.0", allow-prereleases = true 
 ansys-saf-glow-engine = { version = "^2.3.dev0", allow-prereleases = true }
 ansys-saf-product-configuration = { version = ">=0.25.0, <1.0", allow-prereleases = true }      # not explicitly imported, but managers depend on the specific implementations of the config/wrappers.
 httpx2 = { version = "^2.5.0", optional = true }                                                # for using AEDT, Fluent, Optislang Wrapper or Visor
+ansys-visor-viewer = { version = "^1.0.1", optional = true }
 ansys-fluent-core = { version = ">=0.39, <1.0", python = ">=3.11,<3.15", optional = true }      # for using Fluent instance manager
 pyansys-tools-report = { version = "*", optional = true }                                       # used by the fluent instance manager
 ansys-geometry-core = { version = ">=0.14.1, <1.0", optional = true }                           # for using Geometry instance manager.
@@ -109,7 +110,7 @@ geometry = [ "ansys-geometry-core", "beartype" ]
 mapdl = [ "ansys-mapdl-core" ]
 mechanical = [ "ansys-mechanical-core" ]
 optislang_wrapper = [ "ansys-optislang-core", "httpx2" ]
-visor = [ "httpx2" ]
+visor = [ "httpx2", "ansys-visor-viewer" ]
 # didn't find a way to dynamically include previous groups, so we need to copy all dependencies
 all = [
   "aiohttp",

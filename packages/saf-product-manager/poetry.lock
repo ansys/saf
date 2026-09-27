@@ -1673,11 +1673,12 @@ version = "0.13.0"
 description = "A collection of cache libraries in the same API interface."
 optional = false
 python-versions = ">=3.8"
-groups = ["tests"]
+groups = ["main", "tests"]
 files = [
     {file = "cachelib-0.13.0-py3-none-any.whl", hash = "sha256:8c8019e53b6302967d4e8329a504acf75e7bc46130291d30188a6e4e58162516"},
     {file = "cachelib-0.13.0.tar.gz", hash = "sha256:209d8996e3c57595bee274ff97116d1d73c4980b2fd9a34c7846cd07fd2e1a48"},
 ]
+markers = {main = "extra == \"visor\" or extra == \"all\""}
 
 [[package]]
 name = "certifi"
@@ -2388,11 +2389,12 @@ version = "2.0.6"
 description = "Extensions for Plotly Dash."
 optional = false
 python-versions = ">=3.11"
-groups = ["tests"]
+groups = ["main", "tests"]
 files = [
     {file = "dash_extensions-2.0.6-py3-none-any.whl", hash = "sha256:35a9ef516dd9431e472b68a76f4ae63a95223fcf9d319dfac79278157de85670"},
     {file = "dash_extensions-2.0.6.tar.gz", hash = "sha256:84e0b2d60e48983fa275dc11df87b57b1930bfe0efe9ffafdc253199027c9fa8"},
 ]
+markers = {main = "extra == \"visor\" or extra == \"all\""}
 
 [package.dependencies]
 dash = ">=3.0.0"
@@ -2408,11 +2410,12 @@ version = "0.39.1"
 description = "A wizard-like JSON serialization library for Python dataclasses"
 optional = false
 python-versions = ">=3.9"
-groups = ["tests"]
+groups = ["main", "tests"]
 files = [
     {file = "dataclass_wizard-0.39.1-py3-none-any.whl", hash = "sha256:3324e59eca705882eb34e2b3989b2beadd8c2b523e6269d4002cf1a4a5bf703b"},
     {file = "dataclass_wizard-0.39.1.tar.gz", hash = "sha256:1679948ed7c62103f40b34df97d03b35e6b2ad50f58173fdbe30074e2e4730f2"},
 ]
+markers = {main = "extra == \"visor\" or extra == \"all\""}
 
 [package.dependencies]
 typing-extensions = {version = ">=4.13.0", markers = "python_version <= \"3.12\""}
@@ -2588,11 +2591,12 @@ version = "0.17.1"
 description = "EditorConfig File Locator and Interpreter for Python"
 optional = false
 python-versions = ">=3.9"
-groups = ["tests"]
+groups = ["main", "tests"]
 files = [
     {file = "editorconfig-0.17.1-py3-none-any.whl", hash = "sha256:1eda9c2c0db8c16dbd50111b710572a5e6de934e39772de1959d41f64fc17c82"},
     {file = "editorconfig-0.17.1.tar.gz", hash = "sha256:23c08b00e8e08cc3adcddb825251c497478df1dada6aefeb01e626ad37303745"},
 ]
+markers = {main = "extra == \"visor\" or extra == \"all\""}
 
 [package.extras]
 dev = ["mypy (>=1.15)"]
@@ -2750,11 +2754,12 @@ version = "2.3.1"
 description = "Adds caching support to Flask applications."
 optional = false
 python-versions = ">=3.8"
-groups = ["tests"]
+groups = ["main", "tests"]
 files = [
     {file = "Flask_Caching-2.3.1-py3-none-any.whl", hash = "sha256:d3efcf600e5925ea5a2fcb810f13b341ae984f5b52c00e9d9070392f3ca10761"},
     {file = "flask_caching-2.3.1.tar.gz", hash = "sha256:65d7fd1b4eebf810f844de7de6258254b3248296ee429bdcb3f741bcbf7b98c9"},
 ]
+markers = {main = "extra == \"visor\" or extra == \"all\""}
 
 [package.dependencies]
 cachelib = ">=0.9.0"
@@ -3938,11 +3943,12 @@ version = "1.15.4"
 description = "JavaScript unobfuscator and beautifier."
 optional = false
 python-versions = "*"
-groups = ["tests"]
+groups = ["main", "tests"]
 files = [
     {file = "jsbeautifier-1.15.4-py3-none-any.whl", hash = "sha256:72f65de312a3f10900d7685557f84cb61a9733c50dcc27271a39f5b0051bf528"},
     {file = "jsbeautifier-1.15.4.tar.gz", hash = "sha256:5bb18d9efb9331d825735fbc5360ee8f1aac5e52780042803943aa7f854f7592"},
 ]
+markers = {main = "extra == \"visor\" or extra == \"all\""}
 
 [package.dependencies]
 editorconfig = ">=0.12.2"
@@ -10272,15 +10278,15 @@ cffi = ["cffi (>=1.17,<2.0) ; platform_python_implementation != \"PyPy\" and pyt
 
 [extras]
 aedt = ["aiohttp", "ansys-tools-visualization-interface", "contourpy", "contourpy", "fast-simplification", "httpx2", "ipython", "jupyterlab", "matplotlib", "openpyxl", "osmnx", "pandas", "pyaedt", "pyvista", "requests", "rpds-py", "rpds-py", "rpyc", "scikit-rf", "scipy", "scipy", "tables", "tables", "typer", "vtk"]
-all = ["aiohttp", "ansys-fluent-core", "ansys-geometry-core", "ansys-mapdl-core", "ansys-mechanical-core", "ansys-optislang-core", "ansys-tools-visualization-interface", "ansys-visor-viewer", "beartype", "contourpy", "contourpy", "fast-simplification", "httpx2", "ipython", "jupyterlab", "matplotlib", "openpyxl", "osmnx", "pandas", "pyaedt", "pyansys-tools-report", "pyvista", "requests", "rpds-py", "rpds-py", "rpyc", "scikit-rf", "scipy", "scipy", "tables", "tables", "typer", "vtk"]
+all = ["aiohttp", "ansys-fluent-core", "ansys-geometry-core", "ansys-mapdl-core", "ansys-mechanical-core", "ansys-optislang-core", "ansys-tools-visualization-interface", "ansys-visor-viewer", "beartype", "contourpy", "contourpy", "dash-extensions", "fast-simplification", "httpx2", "ipython", "jupyterlab", "matplotlib", "openpyxl", "osmnx", "pandas", "pyaedt", "pyansys-tools-report", "pyvista", "requests", "rpds-py", "rpds-py", "rpyc", "scikit-rf", "scipy", "scipy", "tables", "tables", "typer", "vtk"]
 fluent = ["ansys-fluent-core", "httpx2", "pyansys-tools-report"]
 geometry = ["ansys-geometry-core", "beartype"]
 mapdl = ["ansys-mapdl-core"]
 mechanical = ["ansys-mechanical-core"]
 optislang-wrapper = ["ansys-optislang-core", "httpx2"]
-visor = ["ansys-visor-viewer", "httpx2"]
+visor = ["ansys-visor-viewer", "dash-extensions", "httpx2"]
 
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.11,<4.0"
-content-hash = "278c0f8e297c0ab54e037b0c023053f798aaf90a9dd569a4567be28390581d2f"
+content-hash = "83a8179cb148806c16722e9a212e443eb826ffa802ccea1076c3bf4fa5cb0514"

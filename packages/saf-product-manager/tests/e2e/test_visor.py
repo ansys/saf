@@ -65,6 +65,7 @@ class TestVisorUI:
 
     def test_visor_ui(
         self,
+        request,
         session_selenium_webdriver: WebDriver,
         function_project: ProjectFixture[EndToEndSolution],
         restart_product_instance_system: Callable[..., None],
@@ -74,6 +75,10 @@ class TestVisorUI:
         we expect GLOW to raise an exception.
         """
         # WHEN: Loading Visor page
+        # Conditionally xfail on HPS until HPS/Visor flakiness is resolved (See Issue #103)
+        if request.node.get_closest_marker("use_hps"):
+            pytest.xfail(reason="Visor unstable on HPS, see Issue #103.")
+
         self._open_visor_page(session_selenium_webdriver, function_project)
         # THEN: no visor canvas is shown and status text are False
         with pytest.raises(NoSuchElementException):

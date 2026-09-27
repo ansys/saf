@@ -122,6 +122,7 @@ all = [
   "pyansys-tools-report",
   "ansys-mechanical-core",
   "ansys-optislang-core",
+  "ansys-visor-viewer",
   "matplotlib",
   "openpyxl",
   "osmnx",

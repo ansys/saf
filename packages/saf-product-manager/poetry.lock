@@ -35,7 +35,7 @@ description = "Happy Eyeballs for asyncio"
 optional = true
 python-versions = ">=3.9"
 groups = ["main"]
-markers = "extra == \"visor\" or extra == \"aedt\" or extra == \"all\""
+markers = "extra == \"visor\" or extra == \"all\" or extra == \"aedt\""
 files = [
     {file = "aiohappyeyeballs-2.6.1-py3-none-any.whl", hash = "sha256:f349ba8f4b75cb25c99c5c2d84e997e485204d2902a9597802b0371f09331fb8"},
     {file = "aiohappyeyeballs-2.6.1.tar.gz", hash = "sha256:c3f9d0113123803ccadfdf3f0faa505bc78e6a72d1cc4806cbd719826e943558"},
@@ -48,7 +48,7 @@ description = "Async http client/server framework (asyncio)"
 optional = true
 python-versions = ">=3.10"
 groups = ["main"]
-markers = "extra == \"visor\" or extra == \"aedt\" or extra == \"all\""
+markers = "extra == \"visor\" or extra == \"all\" or extra == \"aedt\""
 files = [
     {file = "aiohttp-3.14.3-cp310-cp310-macosx_10_9_universal2.whl", hash = "sha256:eb0495d778817619273c108784292be161a924b9f5ae5cbbc70a2caa6838250b"},
     {file = "aiohttp-3.14.3-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:c3c200cf9757edd785051dc699c7ecbec22110dbfcb3fefc7a9f9695eda8ea7a"},
@@ -203,7 +203,7 @@ description = "aiosignal: a list of registered asynchronous callbacks"
 optional = true
 python-versions = ">=3.9"
 groups = ["main"]
-markers = "extra == \"visor\" or extra == \"aedt\" or extra == \"all\""
+markers = "extra == \"visor\" or extra == \"all\" or extra == \"aedt\""
 files = [
     {file = "aiosignal-1.4.0-py3-none-any.whl", hash = "sha256:053243f8b92b990551949e63930a839ff0cf0b0ebbe0597b0f3fb19e1a0fe82e"},
     {file = "aiosignal-1.4.0.tar.gz", hash = "sha256:f47eecd9468083c2029cc99945502cb7708b082c232f9aca65da147157b251c7"},
@@ -1134,7 +1134,7 @@ description = "VISOR 3D visualization web component framework"
 optional = true
 python-versions = "<4.0,>=3.11"
 groups = ["main"]
-markers = "extra == \"visor\""
+markers = "extra == \"visor\" or extra == \"all\""
 files = [
     {file = "ansys_visor_viewer-1.0.1-py3-none-any.whl", hash = "sha256:8f7406aaa27abaa2dcd6e53ac35a3f1dbebc0035f8149f06c192f95fdebe3b6e"},
     {file = "ansys_visor_viewer-1.0.1.tar.gz", hash = "sha256:f788afc8449b0ecd4a1824866cec29a7817dbcca6fb3ca1d8749c7f3eff756b1"},
@@ -1616,7 +1616,7 @@ files = [
     {file = "blinker-1.9.0-py3-none-any.whl", hash = "sha256:ba0efaa9080b619ff2f3459d1d500c57bddea4a6b424b60a91141db6fd2f08bc"},
     {file = "blinker-1.9.0.tar.gz", hash = "sha256:b4ce2265a7abece45e7cc896e98dbebe6cead56bcf805a3d23136d145f5445bf"},
 ]
-markers = {main = "extra == \"visor\""}
+markers = {main = "extra == \"visor\" or extra == \"all\""}
 
 [[package]]
 name = "blosc2"
@@ -2358,7 +2358,7 @@ files = [
     {file = "dash-3.3.0-py3-none-any.whl", hash = "sha256:8f52415977f7490492dd8a3872279160be8ff253ca9f4d49a4e3ba747fa4bd91"},
     {file = "dash-3.3.0.tar.gz", hash = "sha256:eaaa7a671540b5e1db8066f4966d0277d21edc2c7acdaec2fd6d198366a8b0df"},
 ]
-markers = {main = "extra == \"visor\""}
+markers = {main = "extra == \"visor\" or extra == \"all\""}
 
 [package.dependencies]
 Flask = ">=1.0.4,<3.2"
@@ -2730,7 +2730,7 @@ files = [
     {file = "flask-3.1.3-py3-none-any.whl", hash = "sha256:f4bcbefc124291925f1a26446da31a5178f9483862233b23c0c96a20701f670c"},
     {file = "flask-3.1.3.tar.gz", hash = "sha256:0ef0e52b8a9cd932855379197dd8f94047b359ca0a78695144304cb45f87c9eb"},
 ]
-markers = {main = "extra == \"visor\""}
+markers = {main = "extra == \"visor\" or extra == \"all\""}
 
 [package.dependencies]
 blinker = ">=1.9.0"
@@ -2892,7 +2892,7 @@ description = "A list-like structure which implements collections.abc.MutableSeq
 optional = true
 python-versions = ">=3.9"
 groups = ["main"]
-markers = "extra == \"visor\" or extra == \"aedt\" or extra == \"all\""
+markers = "extra == \"visor\" or extra == \"all\" or extra == \"aedt\""
 files = [
     {file = "frozenlist-1.8.0-cp310-cp310-macosx_10_9_universal2.whl", hash = "sha256:b37f6d31b3dcea7deb5e9696e529a6aa4a898adc33db82da12e4c60a7c4d2011"},
     {file = "frozenlist-1.8.0-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:ef2b7b394f208233e471abc541cc6991f907ffd47dc72584acee3147899d6565"},
@@ -3629,7 +3629,7 @@ files = [
     {file = "importlib_metadata-7.0.1-py3-none-any.whl", hash = "sha256:4805911c3a4ec7c3966410053e9ec6a1fecd629117df5adee56dfc9432a1081e"},
     {file = "importlib_metadata-7.0.1.tar.gz", hash = "sha256:f238736bb06590ae52ac1fab06a3a9ef1d8dce2b7a35b5ab329371d6c8f5d2cc"},
 ]
-markers = {main = "(extra == \"fluent\" or extra == \"all\" or extra == \"mapdl\" or extra == \"visor\") and (python_version < \"3.15\" or extra == \"visor\")", doc = "python_version >= \"3.12\""}
+markers = {main = "(extra == \"fluent\" or extra == \"all\" or extra == \"mapdl\" or extra == \"visor\") and (python_version < \"3.15\" or extra == \"visor\" or extra == \"all\")", doc = "python_version >= \"3.12\""}
 
 [package.dependencies]
 zipp = ">=0.5"
@@ -3763,7 +3763,7 @@ files = [
     {file = "itsdangerous-2.2.0-py3-none-any.whl", hash = "sha256:c6242fc49e35958c8b15141343aa660db5fc54d4f13a1db01a3f5891b98700ef"},
     {file = "itsdangerous-2.2.0.tar.gz", hash = "sha256:e0050c0b7da1eea53ffaf149c0cfbb5c6e2e2b69c4bef22c81fa6eb73e5f6173"},
 ]
-markers = {main = "extra == \"visor\""}
+markers = {main = "extra == \"visor\" or extra == \"all\""}
 
 [[package]]
 name = "jaraco-collections"
@@ -3893,7 +3893,7 @@ files = [
     {file = "jinja2-3.1.6-py3-none-any.whl", hash = "sha256:85ece4451f492d0c13c5dd7c13a64681a86afae63a5f347908daf103ce6d2f67"},
     {file = "jinja2-3.1.6.tar.gz", hash = "sha256:0137fb05990d35f1275a587e9aee6d56da821fc83491a0fb838183be43f66d6d"},
 ]
-markers = {main = "extra == \"visor\" or extra == \"aedt\" or extra == \"all\"", doc = "python_version >= \"3.12\""}
+markers = {main = "extra == \"visor\" or extra == \"all\" or extra == \"aedt\"", doc = "python_version >= \"3.12\""}
 
 [package.dependencies]
 MarkupSafe = ">=2.0"
@@ -4493,7 +4493,7 @@ files = [
     {file = "MarkupSafe-2.1.5-cp39-cp39-win_amd64.whl", hash = "sha256:fa173ec60341d6bb97a89f5ea19c85c5643c1e7dedebc22f5181eb73573142c5"},
     {file = "MarkupSafe-2.1.5.tar.gz", hash = "sha256:d283d37a890ba4c1ae73ffadf8046435c76e7bc2247bbb63c00bd1a709c6544b"},
 ]
-markers = {main = "extra == \"visor\" or extra == \"aedt\" or extra == \"all\"", doc = "python_version >= \"3.12\""}
+markers = {main = "extra == \"visor\" or extra == \"all\" or extra == \"aedt\"", doc = "python_version >= \"3.12\""}
 
 [[package]]
 name = "marshmallow"
@@ -4707,7 +4707,7 @@ files = [
     {file = "more_itertools-11.1.0-py3-none-any.whl", hash = "sha256:4b65538ae22f6fed0ce4874efd317463a7489796a0939fa66824dd542125a192"},
     {file = "more_itertools-11.1.0.tar.gz", hash = "sha256:48e8f4d9e7e5878571ecf6f2b4e57634f93cd474cc8cfbd2376f2d11b396e30d"},
 ]
-markers = {main = "extra == \"visor\" or extra == \"aedt\" or extra == \"all\""}
+markers = {main = "extra == \"visor\" or extra == \"all\" or extra == \"aedt\""}
 
 [[package]]
 name = "msgpack"
@@ -4975,7 +4975,7 @@ files = [
     {file = "narwhals-2.13.0-py3-none-any.whl", hash = "sha256:9b795523c179ca78204e3be53726da374168f906e38de2ff174c2363baaaf481"},
     {file = "narwhals-2.13.0.tar.gz", hash = "sha256:ee94c97f4cf7cfeebbeca8d274784df8b3d7fd3f955ce418af998d405576fdd9"},
 ]
-markers = {main = "extra == \"visor\""}
+markers = {main = "extra == \"visor\" or extra == \"all\""}
 
 [package.extras]
 cudf = ["cudf (>=24.10.0)"]
@@ -5165,7 +5165,7 @@ files = [
     {file = "nest_asyncio-1.6.0-py3-none-any.whl", hash = "sha256:87af6efd6b5e897c81050477ef65c62e2b2f35d51703cae01aff2905b1852e1c"},
     {file = "nest_asyncio-1.6.0.tar.gz", hash = "sha256:6f172d5449aca15afd6c646851f4e31e02c598d553a667e38cafa997cfec55fe"},
 ]
-markers = {main = "extra == \"visor\" or extra == \"aedt\" or extra == \"all\""}
+markers = {main = "extra == \"visor\" or extra == \"all\" or extra == \"aedt\""}
 
 [[package]]
 name = "networkx"
@@ -6104,7 +6104,7 @@ files = [
     {file = "plotly-6.5.0-py3-none-any.whl", hash = "sha256:5ac851e100367735250206788a2b1325412aa4a4917a4fe3e6f0bc5aa6f3d90a"},
     {file = "plotly-6.5.0.tar.gz", hash = "sha256:d5d38224883fd38c1409bef7d6a8dc32b74348d39313f3c52ca998b8e447f5c8"},
 ]
-markers = {main = "extra == \"visor\""}
+markers = {main = "extra == \"visor\" or extra == \"all\""}
 
 [package.dependencies]
 narwhals = ">=1.15.1"
@@ -7868,7 +7868,7 @@ files = [
     {file = "retrying-1.4.2-py3-none-any.whl", hash = "sha256:bbc004aeb542a74f3569aeddf42a2516efefcdaff90df0eb38fbfbf19f179f59"},
     {file = "retrying-1.4.2.tar.gz", hash = "sha256:d102e75d53d8d30b88562d45361d6c6c934da06fab31bd81c0420acb97a8ba39"},
 ]
-markers = {main = "extra == \"visor\""}
+markers = {main = "extra == \"visor\" or extra == \"all\""}
 
 [[package]]
 name = "rfc3339-validator"
@@ -8469,7 +8469,7 @@ files = [
     {file = "setuptools-84.0.0-py3-none-any.whl", hash = "sha256:51a52592b3b99e102b609654876bd65f19f999935166d1352678931132b0c670"},
     {file = "setuptools-84.0.0.tar.gz", hash = "sha256:f4695c21257f0d9b537ec2692c941d02ee143b7cc1276941349a546573b2ef73"},
 ]
-markers = {main = "extra == \"visor\" or extra == \"aedt\" or extra == \"all\""}
+markers = {main = "extra == \"visor\" or extra == \"all\" or extra == \"aedt\""}
 
 [package.extras]
 check = ["pytest-checkdocs (>=2.14)", "pytest-ruff (>=0.2.1) ; sys_platform != \"cygwin\"", "ruff (>=0.13.0) ; sys_platform != \"cygwin\""]
@@ -9291,7 +9291,7 @@ description = "Trame, a framework to build applications in plain Python"
 optional = true
 python-versions = ">=3.9"
 groups = ["main"]
-markers = "extra == \"visor\" or extra == \"aedt\" or extra == \"all\""
+markers = "extra == \"visor\" or extra == \"all\" or extra == \"aedt\""
 files = [
     {file = "trame-3.12.0-py3-none-any.whl", hash = "sha256:9b33020625e0d1710d060c0fabe7b3be0e31b5e5138439ec9a796faf6fe96915"},
     {file = "trame-3.12.0.tar.gz", hash = "sha256:88b861162cb8b025e84e93f17dcfd43a84d02d2c1608c9f6d58e3cd646a50c05"},
@@ -9316,7 +9316,7 @@ description = "Internal client of trame"
 optional = true
 python-versions = ">=3.9"
 groups = ["main"]
-markers = "extra == \"visor\" or extra == \"aedt\" or extra == \"all\""
+markers = "extra == \"visor\" or extra == \"all\" or extra == \"aedt\""
 files = [
     {file = "trame_client-3.11.2-py3-none-any.whl", hash = "sha256:f4d9364ea89cdb9d128fcebe4ab5034e5c20662feb5fee858cfe2eca3dea4771"},
     {file = "trame_client-3.11.2.tar.gz", hash = "sha256:98b3f09d0fbdb09cd29eac61c945a76dcad4a08cfb4843abce5a148fd6fc7316"},
@@ -9336,7 +9336,7 @@ description = "Dependency less classes and functions for trame"
 optional = true
 python-versions = ">=3.9"
 groups = ["main"]
-markers = "extra == \"visor\" or extra == \"aedt\" or extra == \"all\""
+markers = "extra == \"visor\" or extra == \"all\" or extra == \"aedt\""
 files = [
     {file = "trame_common-1.0.1-py3-none-any.whl", hash = "sha256:b8f568a6f917a511f9e24060e20b8a95860729b10307ac04d2336d6780e3a2e6"},
     {file = "trame_common-1.0.1.tar.gz", hash = "sha256:9d4af2d9a6d08a7405977f459931cab9d4b53ae120a80264545f679d1f9a94bc"},
@@ -9369,7 +9369,7 @@ description = "Internal server side implementation of trame"
 optional = true
 python-versions = ">=3.7"
 groups = ["main"]
-markers = "extra == \"visor\" or extra == \"aedt\" or extra == \"all\""
+markers = "extra == \"visor\" or extra == \"all\" or extra == \"aedt\""
 files = [
     {file = "trame_server-3.8.1-py3-none-any.whl", hash = "sha256:b2a461432c36fcfc0f2d1805a7e766fff59b18155b5c6a1a43e1ab112c5eb2f3"},
     {file = "trame_server-3.8.1.tar.gz", hash = "sha256:88a2ab18d48664df903f2ef2c93734b96aa0ff51170b93aa3b218be80b70529a"},
@@ -9408,7 +9408,7 @@ description = "VTK Local Rendering using WASM"
 optional = true
 python-versions = ">=3.9"
 groups = ["main"]
-markers = "extra == \"visor\""
+markers = "extra == \"visor\" or extra == \"all\""
 files = [
     {file = "trame_vtklocal-0.16.4-py3-none-any.whl", hash = "sha256:21028d627a025694076e85bcb6cc564db6190652bfcdf04154c6158936e3601b"},
     {file = "trame_vtklocal-0.16.4.tar.gz", hash = "sha256:97c0d11e43913f79b9697fde65fad9ab752b92c2a28fcedd5344eca0b589b4e5"},
@@ -9845,7 +9845,7 @@ files = [
     {file = "werkzeug-3.1.8-py3-none-any.whl", hash = "sha256:63a77fb8892bf28ebc3178683445222aa500e48ebad5ec77b0ad80f8726b1f50"},
     {file = "werkzeug-3.1.8.tar.gz", hash = "sha256:9bad61a4268dac112f1c5cd4630a56ede601b6ed420300677a869083d70a4c44"},
 ]
-markers = {main = "extra == \"visor\""}
+markers = {main = "extra == \"visor\" or extra == \"all\""}
 
 [package.dependencies]
 markupsafe = ">=2.1.1"
@@ -9951,7 +9951,7 @@ description = "Python/JavaScript library for communicating over WebSocket"
 optional = true
 python-versions = "*"
 groups = ["main"]
-markers = "extra == \"visor\" or extra == \"aedt\" or extra == \"all\""
+markers = "extra == \"visor\" or extra == \"all\" or extra == \"aedt\""
 files = [
     {file = "wslink-2.5.0-py3-none-any.whl", hash = "sha256:e5738958cc6cbe95581108df066be31a9ead0c485d2b27ca3f3f4865fc08b761"},
     {file = "wslink-2.5.0.tar.gz", hash = "sha256:61f79460affeeeb05284821f5ec5bc927153d587b661d6cfe33cbe260f9cfae3"},
@@ -10151,7 +10151,7 @@ files = [
     {file = "zipp-3.19.1-py3-none-any.whl", hash = "sha256:2828e64edb5386ea6a52e7ba7cdb17bb30a73a858f5eb6eb93d8d36f5ea26091"},
     {file = "zipp-3.19.1.tar.gz", hash = "sha256:35427f6d5594f4acf82d25541438348c26736fa9b3afa2754bcd63cdb99d8e8f"},
 ]
-markers = {main = "(extra == \"fluent\" or extra == \"all\" or extra == \"mapdl\" or extra == \"visor\") and (python_version < \"3.15\" or extra == \"visor\")", doc = "python_version >= \"3.12\""}
+markers = {main = "(extra == \"fluent\" or extra == \"all\" or extra == \"mapdl\" or extra == \"visor\") and (python_version < \"3.15\" or extra == \"visor\" or extra == \"all\")", doc = "python_version >= \"3.12\""}
 
 [package.extras]
 doc = ["furo", "jaraco.packaging (>=9.3)", "jaraco.tidelift (>=1.4)", "rst.linker (>=1.9)", "sphinx (>=3.5)", "sphinx-lint"]
@@ -10272,7 +10272,7 @@ cffi = ["cffi (>=1.17,<2.0) ; platform_python_implementation != \"PyPy\" and pyt
 
 [extras]
 aedt = ["aiohttp", "ansys-tools-visualization-interface", "contourpy", "contourpy", "fast-simplification", "httpx2", "ipython", "jupyterlab", "matplotlib", "openpyxl", "osmnx", "pandas", "pyaedt", "pyvista", "requests", "rpds-py", "rpds-py", "rpyc", "scikit-rf", "scipy", "scipy", "tables", "tables", "typer", "vtk"]
-all = ["aiohttp", "ansys-fluent-core", "ansys-geometry-core", "ansys-mapdl-core", "ansys-mechanical-core", "ansys-optislang-core", "ansys-tools-visualization-interface", "beartype", "contourpy", "contourpy", "fast-simplification", "httpx2", "ipython", "jupyterlab", "matplotlib", "openpyxl", "osmnx", "pandas", "pyaedt", "pyansys-tools-report", "pyvista", "requests", "rpds-py", "rpds-py", "rpyc", "scikit-rf", "scipy", "scipy", "tables", "tables", "typer", "vtk"]
+all = ["aiohttp", "ansys-fluent-core", "ansys-geometry-core", "ansys-mapdl-core", "ansys-mechanical-core", "ansys-optislang-core", "ansys-tools-visualization-interface", "ansys-visor-viewer", "beartype", "contourpy", "contourpy", "fast-simplification", "httpx2", "ipython", "jupyterlab", "matplotlib", "openpyxl", "osmnx", "pandas", "pyaedt", "pyansys-tools-report", "pyvista", "requests", "rpds-py", "rpds-py", "rpyc", "scikit-rf", "scipy", "scipy", "tables", "tables", "typer", "vtk"]
 fluent = ["ansys-fluent-core", "httpx2", "pyansys-tools-report"]
 geometry = ["ansys-geometry-core", "beartype"]
 mapdl = ["ansys-mapdl-core"]
@@ -10283,4 +10283,4 @@ visor = ["ansys-visor-viewer", "httpx2"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.11,<4.0"
-content-hash = "2bdd1955313b1d7a3b9b70b644fbdacdbeea3a33f6278fb80ed434574732f02c"
+content-hash = "88c52601f4bad468c5479038d753195d591de5c32dbeb8729d84fc405a30121f"

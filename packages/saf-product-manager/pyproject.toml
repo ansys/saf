@@ -110,7 +110,7 @@ geometry = [ "ansys-geometry-core", "beartype" ]
 mapdl = [ "ansys-mapdl-core" ]
 mechanical = [ "ansys-mechanical-core" ]
 optislang_wrapper = [ "ansys-optislang-core", "httpx2" ]
-visor = [ "httpx2", "ansys-visor-viewer" ]
+visor = [ "httpx2", "ansys-visor-viewer", "dash-extensions" ]
 # didn't find a way to dynamically include previous groups, so we need to copy all dependencies
 all = [
   "aiohttp",
@@ -123,6 +123,7 @@ all = [
   "ansys-mechanical-core",
   "ansys-optislang-core",
   "ansys-visor-viewer",
+  "dash-extensions",
   "matplotlib",
   "openpyxl",
   "osmnx",
@@ -182,6 +183,7 @@ pytest-rerunfailures = "^15.0.0"
 pytest-timeout = "^2.3.1"
 pytest-xdist = "^3.6.1"
 gunicorn = "^23.0.0" # for launching UI server in DockerCompose
+dash-extensions = "^2.0.6"
 
 [tool.poetry.group.dev]
 optional = true

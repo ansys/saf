@@ -2384,14 +2384,14 @@ testing = ["beautifulsoup4 (>=4.8.2)", "cryptography", "dash_testing_stub (>=0.0
 
 [[package]]
 name = "dash-extensions"
-version = "2.0.5"
+version = "2.0.6"
 description = "Extensions for Plotly Dash."
 optional = false
 python-versions = ">=3.11"
 groups = ["tests"]
 files = [
-    {file = "dash_extensions-2.0.5-py3-none-any.whl", hash = "sha256:e672f693c799614c6ca802c2ca07f0c083042647983114d42b7c5fd1c7fa25e6"},
-    {file = "dash_extensions-2.0.5.tar.gz", hash = "sha256:5ee9b444d5e4318637019fcd513857f9b4f488569963fa270f77ee07802e5405"},
+    {file = "dash_extensions-2.0.6-py3-none-any.whl", hash = "sha256:35a9ef516dd9431e472b68a76f4ae63a95223fcf9d319dfac79278157de85670"},
+    {file = "dash_extensions-2.0.6.tar.gz", hash = "sha256:84e0b2d60e48983fa275dc11df87b57b1930bfe0efe9ffafdc253199027c9fa8"},
 ]
 
 [package.dependencies]
@@ -10283,4 +10283,4 @@ visor = ["ansys-visor-viewer", "httpx2"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.11,<4.0"
-content-hash = "88c52601f4bad468c5479038d753195d591de5c32dbeb8729d84fc405a30121f"
+content-hash = "278c0f8e297c0ab54e037b0c023053f798aaf90a9dd569a4567be28390581d2f"

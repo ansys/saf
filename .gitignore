@@ -247,3 +247,8 @@ release_notes.md
 
 !packages/saf-cli/tests/mocks/wheels
 !packages/saf-cli/tests/mocks/wheels/*.whl
+
+
+# Assets of saf-desktop-installer tests
+packages/saf-desktop-installer/report/report.html
+packages/saf-desktop-installer/report/assets/style.css

@@ -1,7 +1,5 @@
 name: JS
 
-run-name: >-
-  JS: ${{ inputs.library-name }} by ${{ github.actor }}
 on:
   workflow_call:
     inputs:
@@ -23,6 +21,12 @@ concurrency:
 # https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#permissions
 permissions: {}
 
+# Contract this workflow assumes of any package invoked with `library-name`:
+# it must provide `.nvmrc` and `package-lock.json`, and its `package.json`
+# must define `test` and `build` npm scripts (never invoked with
+# `--if-present`, so a missing script fails the job instead of silently
+# passing). Its Poetry `build` dependency group must supply everything the
+# component generator (`scripts/generate_components.py`) needs.
 jobs:
   js-test:
     name: "JavaScript tests"
@@ -96,7 +100,8 @@ jobs:
         env:
           LIBRARY_NAME: ${{ inputs.library-name }}
         run: |
-          if ! git diff --exit-code -- "packages/${LIBRARY_NAME}/src"; then
+          if [[ -n "$(git status --porcelain -- "packages/${LIBRARY_NAME}/src")" ]]; then
             echo "::error::Committed build output is out of date. Run 'npm run build' in packages/${LIBRARY_NAME} and commit the result."
+            git diff --stat -- "packages/${LIBRARY_NAME}/src"
             exit 1
           fi

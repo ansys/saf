@@ -84,7 +84,7 @@ The HPS API is designed to be used in the context of a GLOW transaction method.
 All the following examples are written in the context of a GLOW transaction method.
 
 Collection fields with HPS project handles
-=========================================== 
+===========================================
 
 Step fields can store collections of HPS project handles in addition to single
 ``HpsSimpleProject`` and ``HpsParametricStudyProject`` values. Supported collection

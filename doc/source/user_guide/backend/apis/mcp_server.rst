@@ -230,7 +230,7 @@ Data management
      - Downloads binary content from an ``EntityHandle`` step field on an existing project.
 
 Transaction execution
--------------------
+---------------------
 
 .. list-table::  Transaction execution tools
    :stub-columns: 1

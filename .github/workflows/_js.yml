@@ -100,8 +100,9 @@ jobs:
         env:
           LIBRARY_NAME: ${{ inputs.library-name }}
         run: |
-          if [[ -n "$(git status --porcelain -- "packages/${LIBRARY_NAME}/src")" ]]; then
+          status="$(git status --porcelain -- "packages/${LIBRARY_NAME}/src")"
+          if [[ -n "$status" ]]; then
             echo "::error::Committed build output is out of date. Run 'npm run build' in packages/${LIBRARY_NAME} and commit the result."
-            git diff --stat -- "packages/${LIBRARY_NAME}/src"
+            echo "$status"
             exit 1
           fi

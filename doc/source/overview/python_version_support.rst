@@ -23,7 +23,7 @@ Currently supported versions
 
 .. list-table::
    :header-rows: 1
-   :widths: 20 20 30
+   :widths: 20 20 60
 
    * - Python version
      - Status

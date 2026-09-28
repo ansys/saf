@@ -100,6 +100,7 @@ jobs:
       packages-matrix: ${{ steps.info.outputs.packages-matrix }}
       poetry-packages-matrix: ${{ steps.info.outputs.poetry-packages-matrix }}
       moon-packages-matrix: ${{ steps.info.outputs.moon-packages-matrix }}
+      js-packages-matrix: ${{ steps.info.outputs.js-packages-matrix }}
       code-style-matrix: ${{ steps.info.outputs.code-style-matrix }}
       compatibility-matrix: ${{ steps.info.outputs.compatibility-matrix }}
       tests-matrix: ${{ steps.info.outputs.tests-matrix }}
@@ -331,6 +332,20 @@ jobs:
           source ${ACTIVATE_CMD}
           pre-commit run --all-files --show-diff-on-failure
 
+  js-checks:
+    name: "JavaScript checks"
+    needs: ci-cd-config
+    if: ${{ needs.ci-cd-config.outputs.js-packages-matrix != '{}' }}
+    permissions:
+      contents: read # Read the source code of the package
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.ci-cd-config.outputs.js-packages-matrix) }}
+    uses: ./.github/workflows/_js.yml
+    with:
+      library-name: ${{ matrix.library-name }}
+      python-version: ${{ vars.PYTHON_VERSION }}
+
   doc:
     name: "Documentation"
     permissions:
@@ -553,6 +568,7 @@ jobs:
       - vulnerabilities
       - code-style-moon
       - code-style
+      - js-checks
       - check-dependencies-licenses
       - build-wheel
       - check-wheel-can-be-pip-installed

@@ -259,6 +259,34 @@ class TestHpsParametricStudy:
         assert len(study_results) == num_projects
         assert study_results == [["study-result"]] * num_projects
 
+    def test_collecting_hps_simple_projects_in_nested_lists_and_dictionaries(
+        self,
+        function_project: ProjectFixture[ParametricStudySolution],
+    ):
+        """
+        Test that HPS simple jobs can be stored in lists of dictionaries and dictionaries of lists.
+        """
+        num_projects = 2
+        step = function_project.project.steps.hps_project_collections_step
+        step.start_nested_simple_jobs(num_projects=num_projects)
+
+        projects_in_list_of_dicts = [
+            project for projects_by_name in step.simple_projects_list_of_dicts for project in projects_by_name.values()
+        ]
+        projects_in_dict_of_lists = [
+            project for projects in step.simple_projects_dict_of_lists.values() for project in projects
+        ]
+        assert len(projects_in_list_of_dicts) == num_projects
+        assert len(projects_in_dict_of_lists) == num_projects
+        assert all(project.hps_project_identifier for project in projects_in_list_of_dicts)
+        assert all(project.hps_project_identifier for project in projects_in_dict_of_lists)
+
+        step.wait_for_nested_simple_jobs_to_finish()
+        assert step.fetch_nested_simple_results() == {
+            "dict_of_lists": [7] * num_projects,
+            "list_of_dicts": [7] * num_projects,
+        }
+
 
 @pytest.fixture
 def env_var_instance_system(

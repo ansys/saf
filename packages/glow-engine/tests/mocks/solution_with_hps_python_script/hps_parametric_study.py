@@ -507,6 +507,8 @@ class HpsProjectCollectionsStep(StepModel):
     study_projects: list[HpsParametricStudyProject] = []
     simple_projects_by_name: dict[str, HpsSimpleProject] = {}
     study_projects_by_name: dict[str, HpsParametricStudyProject] = {}
+    simple_projects_list_of_dicts: list[dict[str, HpsSimpleProject]] = []
+    simple_projects_dict_of_lists: dict[str, list[HpsSimpleProject]] = {}
 
     @transaction(self=StepSpec(upload=["simple_projects", "simple_projects_by_name"]))
     def start_n_simple_jobs(self, num_projects: int, list_or_dict: str) -> None:
@@ -522,6 +524,56 @@ class HpsProjectCollectionsStep(StepModel):
                 self.simple_projects.append(hps_project)
             else:
                 self.simple_projects_by_name[f"simple_project_{len(self.simple_projects_by_name) + 1}"] = hps_project
+
+    @transaction(
+        self=StepSpec(upload=["simple_projects_list_of_dicts", "simple_projects_dict_of_lists"]),
+    )
+    def start_nested_simple_jobs(self, num_projects: int) -> None:
+        from ansys.solutions.solution_with_hps_python_script.scripts.single_module import subtract  # type: ignore
+
+        execution_spec = HpsExecutionSpecification(
+            function=subtract,  # type: ignore
+            output_parameters={"result": int},
+        )
+        projects_in_dict = self.simple_projects_dict_of_lists.setdefault("simple_projects", [])
+        for index in range(num_projects):
+            project_name = f"simple_project_{index + 1}"
+            self.simple_projects_list_of_dicts.append({project_name: execution_spec.execute(n=0)})
+            projects_in_dict.append(execution_spec.execute(n=0))
+
+    def _get_nested_simple_projects(self) -> tuple[list[HpsSimpleProject], list[HpsSimpleProject]]:
+        projects_in_list_of_dicts = [
+            project for projects_by_name in self.simple_projects_list_of_dicts for project in projects_by_name.values()
+        ]
+        projects_in_dict_of_lists = [
+            project for projects in self.simple_projects_dict_of_lists.values() for project in projects
+        ]
+        return projects_in_list_of_dicts, projects_in_dict_of_lists
+
+    @transaction(
+        self=StepSpec(download=["simple_projects_list_of_dicts", "simple_projects_dict_of_lists"]),
+    )
+    def wait_for_nested_simple_jobs_to_finish(self) -> None:
+        projects_in_list_of_dicts, projects_in_dict_of_lists = self._get_nested_simple_projects()
+        hps_projects = [*projects_in_list_of_dicts, *projects_in_dict_of_lists]
+
+        max_iterations = 300
+        iterations = 0
+        while not all(project.finished for project in hps_projects):
+            time.sleep(1)
+            iterations += 1
+            if iterations >= max_iterations:
+                raise TimeoutError("HPS projects did not finish within the maximum allowed iterations")
+
+    @transaction(
+        self=StepSpec(download=["simple_projects_list_of_dicts", "simple_projects_dict_of_lists"]),
+    )
+    def fetch_nested_simple_results(self) -> dict[str, list[int]]:
+        projects_in_list_of_dicts, projects_in_dict_of_lists = self._get_nested_simple_projects()
+        return {
+            "list_of_dicts": [project.result for project in projects_in_list_of_dicts],  # type: ignore
+            "dict_of_lists": [project.result for project in projects_in_dict_of_lists],  # type: ignore
+        }
 
     @transaction(self=StepSpec(upload=["study_projects", "study_projects_by_name"]))
     def start_n_parametric_studies(self, num_projects: int, list_or_dict: str) -> None:

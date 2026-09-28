@@ -150,13 +150,7 @@ tasks:
       runFromWorkspaceRoot: true
 
   test:
-    command: 'noop'
-    deps:
-      - '~:pytest-windows'
-      - '~:pytest-linux'
-
-  pytest-windows:
-    description: "Run pytest on Windows"
+    description: "Run pytest"
     command: 'uv'
     args:
       - "run"
@@ -172,43 +166,21 @@ tasks:
       - "--cov-report=html"
       - "-s" # Disable output capturing
     options:
-      os: 'windows'
       outputStyle: "stream"
+    env:
+      PYTHONUNBUFFERED: '1'
+    inputs:
+      - "src/**/*"
+      - "tests/**/*"
+      - "pyproject.toml"
+      - "/.python-version"
+
+  test-windows:
+    extends: "test"
     env:
       PYTEST_DEBUG_TEMPROOT: 'C:/'
-      PYTHONUNBUFFERED: '1'
-    inputs:
-      - "src/**/*"
-      - "tests/**/*"
-      - "pyproject.toml"
-      - "/.python-version"
-
-  pytest-linux:
-    description: "Run pytest on Linux"
-    command: 'uv'
-    args:
-      - "run"
-      - "--package"
-      - "$projectAlias"
-      - "--all-extras"
-      - "pytest"
-      - "-p"
-      - "no:faulthandler"
-      - "--cov=."
-      - "--cov-report=term"
-      - "--cov-report=xml"
-      - "--cov-report=html"
-      - "-s" # Disable output capturing
-    env:
-      PYTHONUNBUFFERED: '1'
     options:
-      os: 'linux'
-      outputStyle: "stream"
-    inputs:
-      - "src/**/*"
-      - "tests/**/*"
-      - "pyproject.toml"
-      - "/.python-version"
+      os: 'windows'
 
   build-doc:
     description: "Build API documentation"

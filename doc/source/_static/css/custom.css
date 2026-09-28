@@ -1216,8 +1216,7 @@ html::-webkit-scrollbar {
 /* "Table Style 5" from the Synopsys PowerPoint Development Kit: purple header with
    white bold text, bold first column, alternating lavender/plain row striping, and a
    thin light-gray grid. Applies to every docutils table (list-table, csv-table, grid
-   tables, ...), which render as `table.table`. The bespoke `.pim-summary-table` is raw
-   HTML without the `.table` class, so it is intentionally left untouched. */
+   tables, ...), which render as `table.table`. */
 
 /* Theme-aware palette (light defaults) */
 .bd-article {

@@ -170,7 +170,6 @@ lint.isort.known-first-party = [
   "ansys.solutions",
 ]
 
-
 [tool.coverage.report]
 show_missing = true
 

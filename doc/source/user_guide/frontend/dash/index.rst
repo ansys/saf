@@ -41,14 +41,6 @@ SAF is frontend agnostic, meaning that you can use any frontend technology to bu
 
         Connect Dash to SAF and use SAF features in your Dash application.
 
-    .. grid-item-card:: :material-outlined:`upgrade;2.25em` :ref:`dash_multipage_migration`
-        :class-card: highlight-card
-        :link-type: doc
-        :link: dash_migration
-        :shadow: lg
-
-        Migrate your Dash application to the new multipage app structure introduced in Dash 4.0
-
     .. grid-item-card:: :material-outlined:`palette;2.25em` :ref:`customize_dash_ui`
         :class-card: highlight-card
         :link-type: doc
@@ -75,6 +67,5 @@ SAF is frontend agnostic, meaning that you can use any frontend technology to bu
     dash_libraries
     dash_templates
     client_side
-    dash_migration
     customize_ui
     dash_super_components/index

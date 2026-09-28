@@ -99,6 +99,7 @@ class TransactionStep(StepModel):
     simple_projects_by_name: dict[str, HpsSimpleProject] = {}
     study_projects_by_name: dict[str, HpsParametricStudyProject] = {}
     nested_simple_projects: dict[str, list[HpsSimpleProject]] = {}
+    nested_study_projects: list[dict[str, HpsParametricStudyProject]] = []
     # this is not part of the schema for this step see
     # https://docs.pydantic.dev/usage/models/#automatically-excluded-attributes
     INFORMATION_LOGGED_BY_LOG_METHOD: ClassVar[str] = "information logged by log method"
@@ -428,6 +429,7 @@ class TransactionStep(StepModel):
                 "simple_projects_by_name",
                 "study_projects_by_name",
                 "nested_simple_projects",
+                "nested_study_projects",
             ],
         ),
     )
@@ -444,6 +446,9 @@ class TransactionStep(StepModel):
             self.simple_projects[0],
             self.simple_projects[1],
         ]
+        self.nested_study_projects.append(
+            {"first": self.study_projects[0], "second": self.study_projects[1]},
+        )
 
     @transaction(
         self=StepSpec(
@@ -453,13 +458,17 @@ class TransactionStep(StepModel):
                 "simple_projects_by_name",
                 "study_projects_by_name",
                 "nested_simple_projects",
+                "nested_study_projects",
             ],
         ),
     )
     def inspect_hps_project_collections(self) -> dict[str, Any]:
         nested_simple_projects = [project for projects in self.nested_simple_projects.values() for project in projects]
+        nested_study_projects = [
+            project for projects_by_name in self.nested_study_projects for project in projects_by_name.values()
+        ]
         simple_projects = [*self.simple_projects, *self.simple_projects_by_name.values(), *nested_simple_projects]
-        study_projects = [*self.study_projects, *self.study_projects_by_name.values()]
+        study_projects = [*self.study_projects, *self.study_projects_by_name.values(), *nested_study_projects]
         all_projects = [*simple_projects, *study_projects]
         return {
             "all_simple_projects_are_dynamic": all(
@@ -471,6 +480,7 @@ class TransactionStep(StepModel):
             "identifiers": [project.hps_project_identifier for project in all_projects],
             "dictionary_keys": [*self.simple_projects_by_name, *self.study_projects_by_name],
             "nested_dictionary_keys": list(self.nested_simple_projects),
+            "nested_list_keys": [list(projects_by_name) for projects_by_name in self.nested_study_projects],
             "ui_urls": [project.ui_url for project in all_projects],
             "finished": [project.finished for project in all_projects],
             "exists": [project.exists for project in all_projects],

@@ -81,30 +81,42 @@ def test_get_field(monkeypatch: pytest.MonkeyPatch, mocker: MockerFixture):
 
 
 @pytest.mark.parametrize(
-    ("field_name", "server_value", "collection_key", "project_type"),
+    ("field_name", "server_value", "collection_keys", "project_type"),
     [
         (
             "simple_projects",
             [{"hps_project_identifier": "simple-project"}],
-            0,
+            (0,),
             HpsSimpleProject,
         ),
         (
             "study_projects",
             [{"hps_project_identifier": "study-project"}],
-            0,
+            (0,),
             HpsParametricStudyProject,
         ),
         (
             "simple_projects_by_name",
             {"project_1": {"hps_project_identifier": "simple-project"}},
-            "project_1",
+            ("project_1",),
             HpsSimpleProject,
         ),
         (
             "study_projects_by_name",
             {"project_1": {"hps_project_identifier": "study-project"}},
-            "project_1",
+            ("project_1",),
+            HpsParametricStudyProject,
+        ),
+        (
+            "nested_simple_projects",
+            {"group_1": [{"hps_project_identifier": "simple-project"}]},
+            ("group_1", 0),
+            HpsSimpleProject,
+        ),
+        (
+            "nested_study_projects",
+            [{"project_1": {"hps_project_identifier": "study-project"}}],
+            (0, "project_1"),
             HpsParametricStudyProject,
         ),
     ],
@@ -112,8 +124,8 @@ def test_get_field(monkeypatch: pytest.MonkeyPatch, mocker: MockerFixture):
 def test_get_hps_project_collection_field(
     mocker: MockerFixture,
     field_name: str,
-    server_value: list[dict[str, str]] | dict[str, dict[str, str]],
-    collection_key: int | str,
+    server_value: Any,
+    collection_keys: tuple[int | str, ...],
     project_type: type[HpsSimpleProject] | type[HpsParametricStudyProject],
 ):
     client = Client(TransactionsSolution, "http://127.0.0.1:5432")
@@ -125,37 +137,51 @@ def test_get_hps_project_collection_field(
     )
 
     collection = getattr(step, field_name)
-    project = collection[collection_key]
+    project = collection
+    for collection_key in collection_keys:
+        project = project[collection_key]
 
     assert isinstance(project, project_type)
     assert project.hps_project_identifier in ("simple-project", "study-project")
 
 
 @pytest.mark.parametrize(
-    ("field_name", "server_value", "collection_key", "project_type"),
+    ("field_name", "server_value", "collection_keys", "project_type"),
     [
         (
             "simple_projects",
             [{"hps_project_identifier": "simple-project"}],
-            0,
+            (0,),
             HpsSimpleProject,
         ),
         (
             "study_projects",
             [{"hps_project_identifier": "study-project"}],
-            0,
+            (0,),
             HpsParametricStudyProject,
         ),
         (
             "simple_projects_by_name",
             {"project_1": {"hps_project_identifier": "simple-project"}},
-            "project_1",
+            ("project_1",),
             HpsSimpleProject,
         ),
         (
             "study_projects_by_name",
             {"project_1": {"hps_project_identifier": "study-project"}},
-            "project_1",
+            ("project_1",),
+            HpsParametricStudyProject,
+        ),
+        (
+            "nested_simple_projects",
+            {"group_1": [{"hps_project_identifier": "simple-project"}]},
+            ("group_1", 0),
+            HpsSimpleProject,
+        ),
+        (
+            "nested_study_projects",
+            [{"project_1": {"hps_project_identifier": "study-project"}}],
+            (0, "project_1"),
             HpsParametricStudyProject,
         ),
     ],
@@ -163,8 +189,8 @@ def test_get_hps_project_collection_field(
 def test_get_fields_returns_hps_project_collections(
     mocker: MockerFixture,
     field_name: str,
-    server_value: list[dict[str, str]] | dict[str, dict[str, str]],
-    collection_key: int | str,
+    server_value: Any,
+    collection_keys: tuple[int | str, ...],
     project_type: type[HpsSimpleProject] | type[HpsParametricStudyProject],
 ):
     client = Client(TransactionsSolution, "http://127.0.0.1:5432")
@@ -176,7 +202,9 @@ def test_get_fields_returns_hps_project_collections(
     )
 
     collection = step.get_fields([field_name])[field_name]
-    project = collection[collection_key]
+    project = collection
+    for collection_key in collection_keys:
+        project = project[collection_key]
 
     assert isinstance(project, project_type)
     assert project.hps_project_identifier in ("simple-project", "study-project")

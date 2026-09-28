@@ -217,6 +217,10 @@ def test_hps_project_collections_are_persisted_and_rehydrated(
         key: [project["hps_project_identifier"] for project in projects]
         for key, projects in persisted_step["nested_simple_projects"].items()
     } == {"group_1": simple_identifiers[:2]}
+    assert [
+        {key: project["hps_project_identifier"] for key, project in projects_by_name.items()}
+        for projects_by_name in persisted_step["nested_study_projects"]
+    ] == [{"first": study_identifiers[0], "second": study_identifiers[1]}]
 
     hps_project = mocker.MagicMock()
     hps_project.ui_url = "https://hps.example/projects/test"
@@ -238,14 +242,16 @@ def test_hps_project_collections_are_persisted_and_rehydrated(
             *simple_identifiers[:2],
             *study_identifiers[:2],
             *study_identifiers[2:],
+            *study_identifiers[:2],
         ],
         "dictionary_keys": ["first", "second", "first", "second"],
         "nested_dictionary_keys": ["group_1"],
-        "ui_urls": ["https://hps.example/projects/test"] * 10,
-        "finished": [True] * 10,
-        "exists": [True] * 10,
-        "status_counts": [1] * 4,
-        "parameter_values": [[[42]]] * 4,
+        "nested_list_keys": [["first", "second"]],
+        "ui_urls": ["https://hps.example/projects/test"] * 12,
+        "finished": [True] * 12,
+        "exists": [True] * 12,
+        "status_counts": [1] * 6,
+        "parameter_values": [[[42]]] * 6,
     }
 
 

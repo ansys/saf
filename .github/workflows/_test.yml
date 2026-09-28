@@ -454,7 +454,9 @@ jobs:
       - name: Download extra packages for e2e tests (Moon)
         if: matrix.download-extra-packages == 'true' && env.USE_MOON == 'true'
         shell: bash
-        run: moon run root:download-wheel-for-e2e-tests
+        run: |
+          moon run root:download-wheel-for-e2e-tests
+          echo "SAF_EXTRA_PACKAGES_DIR=${GITHUB_WORKSPACE}/extra_packages" >> "$GITHUB_ENV"
         env:
           PIP_EXTRA_INDEX_URL: https://PAT:${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}@${{
             secrets.PYANSYS_PYPI_PRIVATE_URL }}

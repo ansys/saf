@@ -55,6 +55,7 @@ tasks:
       runFromWorkspaceRoot: true
 
   download-wheel-for-e2e-tests:
+    description: "Download the private wheels required by the e2e tests into <workspace root>/extra_packages"
     command: 'pip'
     args:
       - "download"
@@ -65,7 +66,13 @@ tasks:
       - "-d"
       - "./extra_packages"
     outputs:
-      - "extra_packages"
+      - "/extra_packages"
     env:
       PIP_INDEX_URL: 'https://pypi.org/simple'
       PIP_QUIET: '1'
+    options:
+      runFromWorkspaceRoot: true
+      # Never cache: the resolved wheels depend on ambient index configuration
+      # (PIP_EXTRA_INDEX_URL for the Ansys private PyPI), which moon does not hash.
+      # A cache hit would silently restore the public placeholder wheels.
+      cache: false

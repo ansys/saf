@@ -653,7 +653,7 @@ Run:
 uv run --with pre-commit==4.6.0 pre-commit run --files .github/workflows/_js.yml
 ```
 
-Expected: `yamlfmt` may report `Failed` with files modified on the first run (that is the reformat); `gitleaks`, `zizmor`, `trailing-whitespace` and `codespell` report `Passed`. Known trap: `retain_line_breaks=true` mishandles a blank line placed immediately after multi-line folded-scalar content, silently injecting a literal `#magic___^_^___line` string and converting the file to CRLF. After any yamlfmt run, confirm that `grep -c "magic___" .github/workflows/_js.yml` returns 0 and that the file contains no carriage returns. If `zizmor` reports a finding, fix it rather than adding an ignore comment.
+Expected: `yamlfmt` may report `Failed` with files modified on the first run (that is the reformat); `gitleaks`, `zizmor`, `trailing-whitespace` and `codespell` report `Passed`. Known trap: `retain_line_breaks=true` mishandles a blank line placed immediately after multi-line folded-scalar content, silently injecting a literal `#magic___^_^___line` string and converting the file to CRLF. After any yamlfmt run, confirm that `grep -c "magic___" .github/workflows/_js.yml` returns 0. Do **not** judge line endings from the working-tree file: yamlfmt writes CRLF on Windows, but `.gitattributes` declares `*.yml text eol=lf`, so git's clean filter normalizes it on commit and the stored blob is LF regardless. Check the committed blob instead — `git cat-file -p HEAD:.github/workflows/_js.yml` piped through a CRLF count — and treat a CRLF working tree with a clean `git diff` as benign. If `zizmor` reports a finding, fix it rather than adding an ignore comment.
 
 - [ ] **Step 3: Re-run pre-commit to confirm a clean pass**
 

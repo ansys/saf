@@ -17,6 +17,7 @@ dependencies = [
   "ansys-bdm-shared-volume",
   "ansys-iam-oidc",
   "ansys-saf-product-configuration[all]",
+  "ansys-saf-testing[all]",
 ]
 
 [dependency-groups]
@@ -166,6 +167,7 @@ ansys-bdm-api = { workspace = true }
 ansys-bdm-shared-volume = { workspace = true }
 ansys-iam-oidc = { workspace = true }
 ansys-saf-product-configuration = { workspace = true }
+ansys-saf-testing = { workspace = true }
 
 [tool.uv.workspace]
 members = [
@@ -173,4 +175,5 @@ members = [
   "packages/bdm-python-shared-volume",
   "packages/saf-iam-oidc",
   "packages/saf-product-configuration",
+  "packages/saf-testing",
 ]

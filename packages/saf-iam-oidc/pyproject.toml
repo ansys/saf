@@ -42,7 +42,9 @@ dependencies = [
   "joserfc>=1.6.3,<2",
 ]
 
-[tool.pytest.ini_options]
+[tool.pytest]
+log_cli = true
+norecursedirs = [ ".moon", ".venv", "tmp*", ".git" ]
 pythonpath = "."
 addopts = [
   "--strict-config",

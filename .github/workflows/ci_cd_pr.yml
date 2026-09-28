@@ -246,7 +246,7 @@ jobs:
       - name: Install dependencies (Moon)
         if: ${{ env.USE_MOON == 'true' }}
         shell: bash
-        run: moon run :install -- --no-dev
+        run: moon run :uv-sync -- --no-dev
 
       - name: Check licenses
         uses: ansys/actions/check-licenses@7410037bfb276c79ae91eb3617b9f5d2876f0c94 # v11.0.8

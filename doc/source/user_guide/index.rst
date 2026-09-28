@@ -102,7 +102,7 @@ User guide
     :link: environment_variables
     :shadow: lg
 
-    Configure the SAF runtime using environment variables for SAF GLOW Engine, SAF, OTEL, and other components.
+    Configure the SAF runtime using environment variables for SAF GLOW Engine, SAF, OTel, and other components.
 
   .. grid-item-card:: :material-outlined:`dns;1.75em` :ref:`solution_servers`
     :class-card: highlight-card

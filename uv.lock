@@ -23,6 +23,7 @@ members = [
     "ansys-iam-oidc",
     "ansys-saf-desktop-installer",
     "ansys-saf-product-configuration",
+    "ansys-saf-testing",
     "ansys-saf-workspace",
 ]
 
@@ -299,6 +300,46 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/f0/35/512d053e53bb11af8c1e3741c60e03c88288c7e45bd75fa44ff89ca5ed8c/ansys_edb_core-0.3.3.tar.gz", hash = "sha256:ad7eab6b2134b78370a71f2c9a17a9faae562a6e0e8bb6279c8a93523fec04a6", size = 174935, upload-time = "2026-06-24T21:50:50.669Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/a4/5b/e3be9731ae0a973956091e65570783236268e2f8b0f1eb71725001129a32/ansys_edb_core-0.3.3-py3-none-any.whl", hash = "sha256:992602e86ec6528d0514614cb5411b4d48496285eee80127959a7f84a0d2fa5b", size = 241977, upload-time = "2026-06-24T21:50:48.518Z" },
+]
+
+[[package]]
+name = "ansys-hps-client"
+version = "0.13.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "ansys-hps-data-transfer-client" },
+    { name = "backoff" },
+    { name = "marshmallow" },
+    { name = "marshmallow-oneofschema" },
+    { name = "packaging" },
+    { name = "pydantic" },
+    { name = "pyjwt" },
+    { name = "requests" },
+    { name = "websocket-client" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/17/ed/e37591f6a5ffb67f89e6008073f720076aa70e4d4a6af094964d52e90169/ansys_hps_client-0.13.0.tar.gz", hash = "sha256:9ffb2f427df3c447cff71ff94597d73e5b4a5b5c5f446c06dcf6e75cc35f5ff1", size = 79899, upload-time = "2026-08-10T13:04:26.11Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/4d/f9/385de6e60dd262a8e32f253bfe5c1f545d6726443914ddb6ddb1236e94ba/ansys_hps_client-0.13.0-py3-none-any.whl", hash = "sha256:fbfa8ab55f34e08f9dbc661c2b8e3723be0d8d70e8c395d1c54ed07f1c64c5c9", size = 162378, upload-time = "2026-08-10T13:04:24.682Z" },
+]
+
+[[package]]
+name = "ansys-hps-data-transfer-client"
+version = "0.5.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "asyncio-atexit" },
+    { name = "backoff" },
+    { name = "filelock" },
+    { name = "httpx" },
+    { name = "humanize" },
+    { name = "portend" },
+    { name = "psutil" },
+    { name = "pydantic" },
+    { name = "requests" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/65/61/737deba539d76d95b5875022d48c49fec3f64845565d07da638409b5ccff/ansys_hps_data_transfer_client-0.5.0.tar.gz", hash = "sha256:b38a3120017793c7c0e0f3305e130c395a997461bd8b58b34ef205e294cd82df", size = 29925, upload-time = "2026-07-31T13:14:08.087Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/36/14/c020929afbfd00e151740e5a4804881776794ac9dafdee133066f493a1f5/ansys_hps_data_transfer_client-0.5.0-py3-none-any.whl", hash = "sha256:b7fcef29f8371646a02189e6e240778c0dca522520fd5d6c5959f193b3706f9c", size = 45016, upload-time = "2026-07-31T13:14:06.585Z" },
 ]
 
 [[package]]
@@ -599,8 +640,13 @@ provides-extras = ["aedt", "all", "fluent", "optislang"]
 
 [[package]]
 name = "ansys-saf-testing"
+<<<<<<< HEAD
 version = "0.13.0"
 source = { registry = "https://pypi.org/simple" }
+=======
+version = "0.15.dev0"
+source = { editable = "packages/saf-testing" }
+>>>>>>> main
 dependencies = [
     { name = "click" },
     { name = "cryptography" },
@@ -613,16 +659,74 @@ dependencies = [
     { name = "tenacity" },
     { name = "typing-extensions" },
 ]
+<<<<<<< HEAD
 sdist = { url = "https://files.pythonhosted.org/packages/08/13/9635cd89c479359d49aa26eb8c41f51bbdda3674923af927a7dcc7b91c39/ansys_saf_testing-0.13.0.tar.gz", hash = "sha256:879aa4baedcd3d00f971b882df469d90bc8f8ca0c9980f92dc0a4fdb011eb52f", size = 1260593, upload-time = "2026-08-14T09:25:42.833Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/a0/42/b9c39804feba0d4f7706c0590107b32912e4d8fc310e8573b9deb22a07dc/ansys_saf_testing-0.13.0-py3-none-any.whl", hash = "sha256:512d35b653d0873c289b1b27eb938b4b41e41305c752f6acd2a96810ef27b34c", size = 1309187, upload-time = "2026-08-14T09:25:40.833Z" },
 ]
 
 [package.optional-dependencies]
+=======
+
+[package.optional-dependencies]
+all = [
+    { name = "ansys-hps-client" },
+    { name = "ansys-saf-product-configuration" },
+    { name = "docker" },
+    { name = "grpcio" },
+    { name = "grpcio-health-checking" },
+    { name = "selenium" },
+]
+docker = [
+    { name = "docker" },
+]
+hps = [
+    { name = "ansys-hps-client" },
+    { name = "ansys-saf-product-configuration" },
+    { name = "docker" },
+]
+pim = [
+    { name = "ansys-saf-product-configuration" },
+    { name = "grpcio" },
+    { name = "grpcio-health-checking" },
+]
+>>>>>>> main
 selenium = [
     { name = "selenium" },
 ]
 
+<<<<<<< HEAD
+=======
+[package.metadata]
+requires-dist = [
+    { name = "ansys-hps-client", marker = "extra == 'all'", specifier = ">=0.12,<1.0" },
+    { name = "ansys-hps-client", marker = "extra == 'hps'", specifier = ">=0.12,<1.0" },
+    { name = "ansys-saf-product-configuration", marker = "extra == 'all'", editable = "packages/saf-product-configuration" },
+    { name = "ansys-saf-product-configuration", marker = "extra == 'hps'", editable = "packages/saf-product-configuration" },
+    { name = "ansys-saf-product-configuration", marker = "extra == 'pim'", editable = "packages/saf-product-configuration" },
+    { name = "click", specifier = ">=8.1.7,<9" },
+    { name = "cryptography", specifier = ">=50.0.0,<51" },
+    { name = "docker", marker = "extra == 'all'", specifier = ">=7.1.0,<8" },
+    { name = "docker", marker = "extra == 'docker'", specifier = ">=7.1.0,<8" },
+    { name = "docker", marker = "extra == 'hps'", specifier = ">=7.1.0,<8" },
+    { name = "grpcio", marker = "extra == 'all'", specifier = ">=1.47.0,<2" },
+    { name = "grpcio", marker = "extra == 'pim'", specifier = ">=1.47.0,<2" },
+    { name = "grpcio-health-checking", marker = "extra == 'all'", specifier = ">=1.24.0,<2" },
+    { name = "grpcio-health-checking", marker = "extra == 'pim'", specifier = ">=1.24.0,<2" },
+    { name = "httpx2", specifier = ">=2.5.0,<3" },
+    { name = "psutil", specifier = ">=7.0,<8" },
+    { name = "pydantic", specifier = ">=2.7,<3" },
+    { name = "pytest", specifier = ">=9.0.3,<9.1.0" },
+    { name = "pytest-mock", specifier = ">=3.15.0,<4" },
+    { name = "pyyaml", specifier = ">=6.0.0,<7" },
+    { name = "selenium", marker = "extra == 'all'", specifier = ">=4.0,<5" },
+    { name = "selenium", marker = "extra == 'selenium'", specifier = ">=4.0,<5" },
+    { name = "tenacity", specifier = ">=8.2.3,<9" },
+    { name = "typing-extensions", specifier = ">=4.14.0,<5" },
+]
+provides-extras = ["all", "docker", "hps", "pim", "selenium"]
+
+>>>>>>> main
 [[package]]
 name = "ansys-saf-workspace"
 version = "0.3.0"
@@ -633,6 +737,7 @@ dependencies = [
     { name = "ansys-iam-oidc" },
     { name = "ansys-saf-desktop-installer" },
     { name = "ansys-saf-product-configuration", extra = ["all"] },
+    { name = "ansys-saf-testing", extra = ["all"] },
 ]
 
 [package.dev-dependencies]
@@ -666,7 +771,10 @@ dev = [
     { name = "pytest-html" },
     { name = "pytest-md" },
     { name = "pytest-mock" },
+<<<<<<< HEAD
     { name = "pytest-order" },
+=======
+>>>>>>> main
     { name = "pytest-rerunfailures" },
     { name = "pytest-timeout" },
     { name = "pytest-xdist" },
@@ -732,7 +840,10 @@ tests = [
     { name = "pytest-html" },
     { name = "pytest-md" },
     { name = "pytest-mock" },
+<<<<<<< HEAD
     { name = "pytest-order" },
+=======
+>>>>>>> main
     { name = "pytest-rerunfailures" },
     { name = "pytest-timeout" },
     { name = "pytest-xdist" },
@@ -756,6 +867,7 @@ requires-dist = [
     { name = "ansys-iam-oidc", editable = "packages/saf-iam-oidc" },
     { name = "ansys-saf-desktop-installer", editable = "packages/saf-desktop-installer" },
     { name = "ansys-saf-product-configuration", extras = ["all"], editable = "packages/saf-product-configuration" },
+    { name = "ansys-saf-testing", extras = ["all"], editable = "packages/saf-testing" },
 ]
 
 [package.metadata.requires-dev]
@@ -789,8 +901,12 @@ dev = [
     { name = "pytest-html", specifier = ">=4.1.1,<5" },
     { name = "pytest-md", specifier = ">=0.2.0,<1" },
     { name = "pytest-mock", specifier = ">=3.10.0,<4" },
+<<<<<<< HEAD
     { name = "pytest-order", specifier = ">=1.1.0,<2" },
     { name = "pytest-rerunfailures", specifier = ">=15.0.0,<16" },
+=======
+    { name = "pytest-rerunfailures", specifier = ">=16.1.0,<17" },
+>>>>>>> main
     { name = "pytest-timeout", specifier = ">=2.3.1,<3" },
     { name = "pytest-xdist", specifier = ">=3.6.1,<4" },
     { name = "pythonnet", marker = "python_full_version < '3.15'", specifier = ">=3.1.0,<4.0" },
@@ -855,8 +971,12 @@ tests = [
     { name = "pytest-html", specifier = ">=4.1.1,<5" },
     { name = "pytest-md", specifier = ">=0.2.0,<1" },
     { name = "pytest-mock", specifier = ">=3.10.0,<4" },
+<<<<<<< HEAD
     { name = "pytest-order", specifier = ">=1.1.0,<2" },
     { name = "pytest-rerunfailures", specifier = ">=15.0.0,<16" },
+=======
+    { name = "pytest-rerunfailures", specifier = ">=16.1.0,<17" },
+>>>>>>> main
     { name = "pytest-timeout", specifier = ">=2.3.1,<3" },
     { name = "pytest-xdist", specifier = ">=3.6.1,<4" },
     { name = "tenacity", specifier = ">=8.5.0,<9" },
@@ -1099,6 +1219,7 @@ wheels = [
 ]
 
 [[package]]
+<<<<<<< HEAD
 name = "asyncpg"
 version = "0.31.0"
 source = { registry = "https://pypi.org/simple" }
@@ -1144,6 +1265,14 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/ba/7a/15e37d45e7f7c94facc1e9148c0e455e8f33c08f0b8a0b1deb2c5171771b/asyncpg-0.31.0-cp314-cp314t-musllinux_1_2_x86_64.whl", hash = "sha256:8df714dba348efcc162d2adf02d213e5fab1bd9f557e1305633e851a61814a7a", size = 3429426, upload-time = "2025-11-24T23:26:41.032Z" },
     { url = "https://files.pythonhosted.org/packages/13/d5/71437c5f6ae5f307828710efbe62163974e71237d5d46ebd2869ea052d10/asyncpg-0.31.0-cp314-cp314t-win32.whl", hash = "sha256:1b41f1afb1033f2b44f3234993b15096ddc9cd71b21a42dbd87fc6a57b43d65d", size = 614495, upload-time = "2025-11-24T23:26:42.659Z" },
     { url = "https://files.pythonhosted.org/packages/3c/d7/8fb3044eaef08a310acfe23dae9a8e2e07d305edc29a53497e52bc76eca7/asyncpg-0.31.0-cp314-cp314t-win_amd64.whl", hash = "sha256:bd4107bb7cdd0e9e65fae66a62afd3a249663b844fa34d479f6d5b3bef9c04c3", size = 706062, upload-time = "2025-11-24T23:26:44.086Z" },
+=======
+name = "asyncio-atexit"
+version = "1.0.1"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/22/d3/dd2974be3f67c7ec96e0d6ab454429d0372cb7c7bffa3d0ac67a483cb801/asyncio-atexit-1.0.1.tar.gz", hash = "sha256:1d0c71544b8ee2c484d322844ee72c0875dde6f250c0ed5b6993592ab9f7d436", size = 4373, upload-time = "2022-04-26T08:54:16.998Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/65/10/d6abaefa57a52646651fd0383c056280b0853c0106229ece6bb38cd14463/asyncio_atexit-1.0.1-py3-none-any.whl", hash = "sha256:d93d5f7d5633a534abd521ce2896ed0fbe8de170bb1e65ec871d1c20eac9d376", size = 3752, upload-time = "2022-04-26T08:54:15.726Z" },
+>>>>>>> main
 ]
 
 [[package]]
@@ -2249,6 +2378,20 @@ wheels = [
 ]
 
 [[package]]
+name = "docker"
+version = "7.2.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "pywin32", marker = "sys_platform == 'win32'" },
+    { name = "requests" },
+    { name = "urllib3" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/88/7f/731ff914b0255d3d065f45fd4e626d4b8c95dbcbaada049f337a6ac16410/docker-7.2.0.tar.gz", hash = "sha256:cebb93773d334f778e023a7ee352a8d6e13ab1bd3b863a4d4a59dec897df43ac", size = 118731, upload-time = "2026-07-09T14:53:46.39Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/75/23/529140fe1aab80fc6992f93a706deec709140a6397439139a054e1515c45/docker-7.2.0-py3-none-any.whl", hash = "sha256:a3f45fdeb9165e2d25d9a1d02ddf3bc70fb572cf5ebbf9b58558c22caf29b71f", size = 148775, upload-time = "2026-07-09T14:53:45.224Z" },
+]
+
+[[package]]
 name = "docstring-parser"
 version = "0.18.0"
 source = { registry = "https://pypi.org/simple" }
@@ -3018,6 +3161,15 @@ wheels = [
 ]
 
 [[package]]
+name = "humanize"
+version = "4.16.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/0a/ea/13a1ef3c12d12662905801495283530251918b70d62d368f1d2e0272c70d/humanize-4.16.0.tar.gz", hash = "sha256:7dc2244a2f84a4bfb1d36c37bac80cd78e35cdc5c119206d87b018e1445f3a3f", size = 89515, upload-time = "2026-06-30T16:17:29.859Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/b0/aa/0b7365d30fed43e7a3449aba1fe20a0a7174d9cf13e282af4e69ac825441/humanize-4.16.0-py3-none-any.whl", hash = "sha256:353eb2f34c09d098b2880eee8bef21832eae6d174f48c5762fff7e5fcb74d01d", size = 137209, upload-time = "2026-06-30T16:17:28.36Z" },
+]
+
+[[package]]
 name = "hyperframe"
 version = "6.1.0"
 source = { registry = "https://pypi.org/simple" }
@@ -3205,6 +3357,18 @@ wheels = [
 ]
 
 [[package]]
+name = "jaraco-collections"
+version = "5.2.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "jaraco-text" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/fa/d2/751000cf702676dbb78f97728f4d52b029e817e2b3c94088dfe5c70ff46d/jaraco_collections-5.2.1.tar.gz", hash = "sha256:dab81970bad6f0ab53b20745f1b01da37926e4c0fcd425046aa45e0d8efa18ed", size = 19729, upload-time = "2025-06-21T20:03:24.138Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/b5/fe/570f6a7b4443a3548ab02ba88c77b64521452a2eed2c80449d13be8fd4d1/jaraco_collections-5.2.1-py3-none-any.whl", hash = "sha256:ea3415ddfc50206b6ba7d09c3deb358b76a5f8c1ddc82be788e8e8bd151ebfa8", size = 11588, upload-time = "2025-06-21T20:03:22.935Z" },
+]
+
+[[package]]
 name = "jaraco-context"
 version = "6.1.2"
 source = { registry = "https://pypi.org/simple" }
@@ -3226,6 +3390,21 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/6c/1f/c23395957d41ccf27c4e535c3d334c4051e5395b3752057ba4cbaec35c56/jaraco_functools-4.6.0.tar.gz", hash = "sha256:880c577ec9720b3a052d5bc611fb9f2269b3d87902ef42440df443b88e443280", size = 20837, upload-time = "2026-07-14T01:28:02.544Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/02/36/ecc85bc96c273dc8a11273ed4782272975e6338d4a3e9228621175edf0e3/jaraco_functools-4.6.0-py3-none-any.whl", hash = "sha256:99e3dc0060c5cbe8fcd1cdb36258e2a65ca40f1566b2033b12abb1bb44dd3c30", size = 11677, upload-time = "2026-07-14T01:28:01.59Z" },
+]
+
+[[package]]
+name = "jaraco-text"
+version = "4.3.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "jaraco-context" },
+    { name = "jaraco-functools" },
+    { name = "more-itertools" },
+    { name = "typer-slim" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/be/8c/c74f1107719400477289d99cd2c0b5b7809a45f60acecfb5ef961c3533c8/jaraco_text-4.3.0.tar.gz", hash = "sha256:ddd5eb6259d0701e08cb642c8d6b63bcc73947d03df9239ea67bbef911b3e4e1", size = 20673, upload-time = "2026-07-12T22:44:47.952Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/d2/4f/cd038114e8ed88682eabe3123e598f8d236ab0f6b8c642d522438bfba175/jaraco_text-4.3.0-py3-none-any.whl", hash = "sha256:07a06a9eaf8b7eee54f2fec816565ef1eec5aa78fc81e4f1c3131ad09ff45a9a", size = 14328, upload-time = "2026-07-12T22:44:46.915Z" },
 ]
 
 [[package]]
@@ -3805,6 +3984,27 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/fb/df/5bd7a48c256faecd1d36edc13133e51397e41b73bb77e1a69deab746ebac/markupsafe-3.0.3-cp314-cp314t-win32.whl", hash = "sha256:915c04ba3851909ce68ccc2b8e2cd691618c4dc4c4232fb7982bca3f41fd8c3d", size = 14819, upload-time = "2025-09-27T18:37:26.285Z" },
     { url = "https://files.pythonhosted.org/packages/1a/8a/0402ba61a2f16038b48b39bccca271134be00c5c9f0f623208399333c448/markupsafe-3.0.3-cp314-cp314t-win_amd64.whl", hash = "sha256:4faffd047e07c38848ce017e8725090413cd80cbc23d86e55c587bf979e579c9", size = 15426, upload-time = "2025-09-27T18:37:27.316Z" },
     { url = "https://files.pythonhosted.org/packages/70/bc/6f1c2f612465f5fa89b95bead1f44dcb607670fd42891d8fdcd5d039f4f4/markupsafe-3.0.3-cp314-cp314t-win_arm64.whl", hash = "sha256:32001d6a8fc98c8cb5c947787c5d08b0a50663d139f1305bac5885d98d9b40fa", size = 14146, upload-time = "2025-09-27T18:37:28.327Z" },
+]
+
+[[package]]
+name = "marshmallow"
+version = "4.3.1"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/4e/d7/611e68d57e6a903c29cb33b5afec0f93b4baecacc6c6c62e33cde9eb9dcb/marshmallow-4.3.1.tar.gz", hash = "sha256:fb6b8048af08d4ab061610d5b7d3696a7e4c95337dbda880edb9f95812cabc20", size = 218308, upload-time = "2026-08-08T14:27:29.517Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/43/57/4526ca0e214a3d158690e3393f6d547a2f8070f88d6388ab21d5b0aac8a1/marshmallow-4.3.1-py3-none-any.whl", hash = "sha256:e65accfbe277546df92ed7996a678c90e063e9a7c2a2f5e03f7d0b90e3768c42", size = 49219, upload-time = "2026-08-08T14:27:28.078Z" },
+]
+
+[[package]]
+name = "marshmallow-oneofschema"
+version = "3.2.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "marshmallow" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/bb/42/a0e00dea6a831acfe9d3fe664d695b7cefc02c27dd69d9ccb4bdc3c3d1a7/marshmallow_oneofschema-3.2.0.tar.gz", hash = "sha256:c06c8d9f14d51ffff152d66d85bd5f27d55cff10752a3b1f8c1f948bf5f597a0", size = 9096, upload-time = "2025-05-08T13:49:34.798Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/71/15/52d6ac14dcfe381e4f1c204c9c287623b8b462bc27c6cc468dba0560ed4c/marshmallow_oneofschema-3.2.0-py3-none-any.whl", hash = "sha256:19c87e6124ef05e2831e5c631168c909a50a8fe399921b9841b75fef3785be8c", size = 5898, upload-time = "2025-05-08T13:49:33.26Z" },
 ]
 
 [[package]]
@@ -5242,6 +5442,18 @@ wheels = [
 ]
 
 [[package]]
+name = "portend"
+version = "3.2.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "tempora" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/b7/57/be90f42996fc4f57d5742ef2c95f7f7bb8e9183af2cc11bff8e7df338888/portend-3.2.1.tar.gz", hash = "sha256:aa9d40ab1f9e14bdb7d401f42210df35d017c9b97991baeb18568cedfb8c6489", size = 12243, upload-time = "2025-05-29T20:27:45.091Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/49/11/b0b19077f80cb8972b44c96af983e8cfcdb1506090bacef137ed8b448af8/portend-3.2.1-py3-none-any.whl", hash = "sha256:bd2bb1cd8585e32f1f986c1b8eae2950c8622c648db163b711a2fc2ef8d8d492", size = 5653, upload-time = "2025-05-29T20:27:43.75Z" },
+]
+
+[[package]]
 name = "pre-commit"
 version = "4.6.0"
 source = { registry = "https://pypi.org/simple" }
@@ -5721,6 +5933,7 @@ wheels = [
 ]
 
 [[package]]
+<<<<<<< HEAD
 name = "pyinstaller"
 version = "6.22.3"
 source = { registry = "https://pypi.org/simple" }
@@ -5875,6 +6088,14 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/f8/fb/3d48fb3deb0a57d25c118684dd13f702f856cadfcbd553b9a1ff5c8ba5fc/pyobjc_framework_webkit-12.2.2-cp314-cp314t-macosx_10_15_universal2.whl", hash = "sha256:147f0f18c0ddd70a1d05f88cf42a89b423b191957db6faf508cbbdb33092864c", size = 50971, upload-time = "2026-08-11T19:43:34.963Z" },
     { url = "https://files.pythonhosted.org/packages/56/79/5dfb4cb4cc3bf1f534a154fd6d9737a53288224e5eeca14cb0a4b18e5665/pyobjc_framework_webkit-12.2.2-cp315-cp315-macosx_10_15_universal2.whl", hash = "sha256:0be3ed885100dd38c6b927c9a25a63f22fd624bc4c6bb3d3af14fab5dcdcfc97", size = 50501, upload-time = "2026-08-11T19:43:35.835Z" },
     { url = "https://files.pythonhosted.org/packages/03/5b/e1e2f3f2a2d9194467898494cf102eaa96db1a395278a961861254ba0c48/pyobjc_framework_webkit-12.2.2-cp315-cp315t-macosx_10_15_universal2.whl", hash = "sha256:88c896d89764675af1ef85c6bda8740e50451e31bcd1d1d2ef59323acc9916ed", size = 50963, upload-time = "2026-08-11T19:43:37.152Z" },
+=======
+name = "pyjwt"
+version = "2.15.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/02/a5/5197bfd06417837ac079921c66fa6393f1dea3557272a263cebfef69e432/pyjwt-2.15.0.tar.gz", hash = "sha256:b11c5f9791d7bf51c2b39a81ed669f6b2dbbd669df2942f6c60167e9e3d1abe4", size = 120513, upload-time = "2026-09-23T16:56:00.689Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/e8/55/40e45bf052ee8ee12a4dfd785519660f8effa7b065442b91646ec6828619/pyjwt-2.15.0-py3-none-any.whl", hash = "sha256:7a3742debf6b879e912dbb9819ceec1594be812452b78c5f2e2dfc56564954f8", size = 33680, upload-time = "2026-09-23T16:55:59.241Z" },
+>>>>>>> main
 ]
 
 [[package]]
@@ -6091,7 +6312,7 @@ wheels = [
 
 [[package]]
 name = "pytest"
-version = "9.1.1"
+version = "9.0.3"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "colorama", marker = "sys_platform == 'win32'" },
@@ -6100,9 +6321,9 @@ dependencies = [
     { name = "pluggy" },
     { name = "pygments" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/e4/47/b9efed96c114afcfa3c9d3fe98a76a1d14c74a9e266d397cf6eb64be5e01/pytest-9.1.1.tar.gz", hash = "sha256:1088fbde8f2b49d95a549a195707afa7a76a3ce9bcadc26b6d71f0ffda5fe313", size = 1636369, upload-time = "2026-06-19T10:58:32.857Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/7d/0d/549bd94f1a0a402dc8cf64563a117c0f3765662e2e668477624baeec44d5/pytest-9.0.3.tar.gz", hash = "sha256:b86ada508af81d19edeb213c681b1d48246c1a91d304c6c81a427674c17eb91c", size = 1572165, upload-time = "2026-04-07T17:16:18.027Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/24/25/1de2678b631f5a49215c6c96fff41ba892b0a34df68d6d80292b1b48aa7f/pytest-9.1.1-py3-none-any.whl", hash = "sha256:37a86b45efb9a47a61a36449063e8e18d0cab3161329fc099eb21783169c4f0c", size = 386536, upload-time = "2026-06-19T10:58:31.347Z" },
+    { url = "https://files.pythonhosted.org/packages/d4/24/a372aaf5c9b7208e7112038812994107bc65a84cd00e0354a88c2c77a617/pytest-9.0.3-py3-none-any.whl", hash = "sha256:2c5efc453d45394fdd706ade797c0a81091eccd1d6e4bccfcd476e2b8e0ab5d9", size = 375249, upload-time = "2026-04-07T17:16:16.13Z" },
 ]
 
 [[package]]
@@ -6183,6 +6404,7 @@ wheels = [
 ]
 
 [[package]]
+<<<<<<< HEAD
 name = "pytest-order"
 version = "1.5.0"
 source = { registry = "https://pypi.org/simple" }
@@ -6197,14 +6419,24 @@ wheels = [
 [[package]]
 name = "pytest-rerunfailures"
 version = "15.1"
+=======
+name = "pytest-rerunfailures"
+version = "16.7"
+>>>>>>> main
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "packaging" },
     { name = "pytest" },
 ]
+<<<<<<< HEAD
 sdist = { url = "https://files.pythonhosted.org/packages/a0/78/e6e358545537a8e82c4dc91e72ec0d6f80546a3786dd27c76b06ca09db77/pytest_rerunfailures-15.1.tar.gz", hash = "sha256:c6040368abd7b8138c5b67288be17d6e5611b7368755ce0465dda0362c8ece80", size = 26981, upload-time = "2025-05-08T06:36:33.483Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/f3/30/11d836ff01c938969efa319b4ebe2374ed79d28043a12bfc908577aab9f3/pytest_rerunfailures-15.1-py3-none-any.whl", hash = "sha256:f674c3594845aba8b23c78e99b1ff8068556cc6a8b277f728071fdc4f4b0b355", size = 13274, upload-time = "2025-05-08T06:36:32.029Z" },
+=======
+sdist = { url = "https://files.pythonhosted.org/packages/d1/b0/6b5337f9d59b26b0069ea3d5e863c31dc04b69e51bbfb1cf2ea6328fba87/pytest_rerunfailures-16.7.tar.gz", hash = "sha256:6956ddfb65ca1d07e7e3d99e2c5359d82300f4cb062e6049563bd2c106f72d5c", size = 59666, upload-time = "2026-09-17T07:08:48.871Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/c1/d3/07ea35102cf2020ddaaac368d2a6f0bcc63d6523fb8918805bac3eb8b98f/pytest_rerunfailures-16.7-py3-none-any.whl", hash = "sha256:edf1886209c2b7dafe35b5bf1708d6ec40ccf6c6b357f0f02807efcec0204c99", size = 23952, upload-time = "2026-09-17T07:08:47.635Z" },
+>>>>>>> main
 ]
 
 [[package]]
@@ -7994,6 +8226,25 @@ wheels = [
 ]
 
 [[package]]
+<<<<<<< HEAD
+=======
+name = "tempora"
+version = "5.12.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "jaraco-collections" },
+    { name = "jaraco-context" },
+    { name = "jaraco-functools" },
+    { name = "python-dateutil" },
+    { name = "typing-extensions" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/fb/91/452a0eeae4a8745ded74cfba94e96a66f85fe0edf1d0697f031b0204ac07/tempora-5.12.0.tar.gz", hash = "sha256:b49b78cc7ec0b252bfbd74cef0187121b18e4f5a0c57e3b9c3d8fc15090af3b4", size = 20481, upload-time = "2026-07-14T01:28:10.642Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/ec/9e/4d84da6edba51bab06be6ff8b1ccf93cc19b0ef4ab6ffcab1f873134bec3/tempora-5.12.0-py3-none-any.whl", hash = "sha256:0f313689c4d83341acc806d7e6693864729606868cbc7709c4c121969d0909cc", size = 19428, upload-time = "2026-07-14T01:28:09.743Z" },
+]
+
+[[package]]
+>>>>>>> main
 name = "tenacity"
 version = "8.5.0"
 source = { registry = "https://pypi.org/simple" }
@@ -8275,6 +8526,7 @@ wheels = [
 ]
 
 [[package]]
+<<<<<<< HEAD
 name = "trove-classifiers"
 version = "2026.9.21.13"
 source = { registry = "https://pypi.org/simple" }
@@ -8284,6 +8536,8 @@ wheels = [
 ]
 
 [[package]]
+=======
+>>>>>>> main
 name = "truststore"
 version = "0.10.4"
 source = { registry = "https://pypi.org/simple" }
@@ -8305,6 +8559,18 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/16/f7/57713ba479fd405eb76de31404b2c744c289e336b2d999511ebf51e496f7/typer-0.27.2.tar.gz", hash = "sha256:269b7eb9d3c202ca84b4bc9618cb04ebb43d3d4d1e567e4c768607232c05f945", size = 204045, upload-time = "2026-08-28T10:26:55.046Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/dc/bf/205d0004930ede8f542fb58f601526fccf4ae7626075ca1e6c4de5d3d652/typer-0.27.2-py3-none-any.whl", hash = "sha256:b3a5fc4342d5fc8fda8fc3010b1cf117e9249aab7fae800c2eff62fd3842d97d", size = 123130, upload-time = "2026-08-28T10:26:53.752Z" },
+]
+
+[[package]]
+name = "typer-slim"
+version = "0.24.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "typer" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/a7/a7/e6aecc4b4eb59598829a3b5076a93aff291b4fdaa2ded25efc4e1f4d219c/typer_slim-0.24.0.tar.gz", hash = "sha256:f0ed36127183f52ae6ced2ecb2521789995992c521a46083bfcdbb652d22ad34", size = 4776, upload-time = "2026-02-16T22:08:51.2Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/a7/24/5480c20380dfd18cf33d14784096dca45a24eae6102e91d49a718d3b6855/typer_slim-0.24.0-py3-none-any.whl", hash = "sha256:d5d7ee1ee2834d5020c7c616ed5e0d0f29b9a4b1dd283bdebae198ec09778d0e", size = 3394, upload-time = "2026-02-16T22:08:49.92Z" },
 ]
 
 [[package]]
@@ -8707,6 +8973,7 @@ wheels = [
 ]
 
 [[package]]
+<<<<<<< HEAD
 name = "xattr"
 version = "1.3.0"
 source = { registry = "https://pypi.org/simple" }
@@ -8733,6 +9000,8 @@ wheels = [
 ]
 
 [[package]]
+=======
+>>>>>>> main
 name = "yarl"
 version = "1.25.1"
 source = { registry = "https://pypi.org/simple" }

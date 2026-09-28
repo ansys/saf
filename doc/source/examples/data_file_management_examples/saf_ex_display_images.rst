@@ -130,7 +130,7 @@ Expose the solution definition in the UI.
 
     A **callback** is a Dash-decorated function that fires in response to a UI event. In a
     SAF solution, callbacks reach the backend through ``project.steps.<step_name>``, read or
-    write fields, and invoke transaction methods — no manual HTTP calls needed.
+    write fields, and invoke transaction methods. No manual HTTP calls are needed.
 
 .. dropdown:: Trigger the image creation from the frontend
   :open:

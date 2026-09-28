@@ -61,9 +61,9 @@ tests-desktop-installer = [
   "dash-bootstrap-components>=1.2,<2.0",
   "httpx2>=2.5.0,<3.0",
   "pillow>=12.1.1,<13.0",
+  "poetry==2.3.2",
   "pylnk3>=0.4.2,<0.5",
   "pywebview>=6.0,<7.0",
-  "poetry==2.3.2",
 ]
 doc = [
   "ansys-sphinx-theme[autoapi]>=1.9; python_version>='3.12'",
@@ -169,6 +169,17 @@ lint.isort.known-first-party = [
   "ansys.saf",
   "ansys.solutions",
 ]
+
+[tool.pytest]
+log_cli = true
+
+[tool.pytest.ini_options]
+addopts = [
+  "--strict-config",
+  "--strict-markers",
+  "--import-mode=importlib",
+]
+asyncio_mode = "auto"
 
 [tool.coverage.report]
 show_missing = true

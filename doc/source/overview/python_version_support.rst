@@ -21,8 +21,9 @@ depends on, SAF SDK adds support for it.
 Currently supported versions
 ============================
 
-.. list-table::
+.. list-table::  Supported Python versions
    :header-rows: 1
+   :stub-columns: 1
    :widths: 20 20 60
 
    * - Python version

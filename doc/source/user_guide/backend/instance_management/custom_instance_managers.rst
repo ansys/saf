@@ -29,7 +29,8 @@ Example: Custom product
 For the sake of example, let us consider a simple custom product exposing an HTTP API that allows to get and store a value.
 The custom product exposes the following endpoints:
 
-.. list-table::
+.. list-table::  Custom product endpoints
+    :stub-columns: 1
     :header-rows: 1
     :widths: 30 70
 
@@ -183,8 +184,9 @@ Internal instance manager class implementation
 The first thing needed to implement an internal custom product instance manager is to create a new class derived from :py:class:`InstanceManager[TProductClient, TRecoveryState]`, where ``TProductClient`` is the type of the Python custom product client (in our example: ``CustomProductClient``) and ``TRecoveryState`` is the type of the recovery state info (in our example: ``CustomRecoveryStateInfo``) .
 This base class is abstract and has the following methods that need to be implemented by the derived internal product instance manager class:
 
-.. list-table::
+.. list-table:: Required methods
     :header-rows: 1
+    :stub-columns: 1
 
     * - Method
       - Action
@@ -403,7 +405,8 @@ A product instance configuration is a Python class that inherits from SAF GLOW E
 
 It has the following methods that need to be implemented by the derived product instance configuration class:
 
-.. list-table::
+.. list-table:: Methods of the product instance configuration class
+    :stub-columns: 1
     :header-rows: 1
 
     * - Method
@@ -427,8 +430,9 @@ The ``get_version_configuration`` method should return a product instance versio
 A product instance version configuration is a class implementing the SAF GLOW Engine's :py:class:`IProductInstanceVersionConfiguration` interface.
 It must implement the following:
 
-.. list-table::
+.. list-table:: Methods of the product instance version configuration class
     :header-rows: 1
+    :stub-columns: 1
 
     * - Method
       - Action

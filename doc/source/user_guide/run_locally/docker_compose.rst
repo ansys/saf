@@ -20,7 +20,7 @@ SAF solutions can run as containerized services using Docker Compose. Every SAF 
 Container deployment prerequisites
 ===================================
 
-.. list-table::
+.. list-table:: Comparison of container deployment prerequisites
   :header-rows: 1
   :stub-columns: 1
   :widths: 30 70
@@ -245,7 +245,8 @@ Compose files themselves are required.
    Each deployment template has its own ``.env`` file, as shown in the following table. Update :envvar:`APP_NAME` in every ``.env``
    file you intend to use.
 
-   .. list-table::
+   .. list-table:: Comparison of deployment template environment files
+      :stub-columns: 1
       :header-rows: 1
       :widths: 30 70
 

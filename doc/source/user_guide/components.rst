@@ -419,7 +419,7 @@ Extras
 
 Optional extras pull in additional packages, or extras of the core packages, for specific scenarios:
 
-.. list-table::
+.. list-table::  Optional extras of the SAF meta-package
    :header-rows: 1
    :stub-columns: 1
    :widths: 30 70

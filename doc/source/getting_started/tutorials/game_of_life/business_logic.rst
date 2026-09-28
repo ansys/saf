@@ -39,8 +39,9 @@ The universe is a 2D grid. Each cell is either **alive** or **dead**. Time advan
 **generations**, and the state of every cell at generation *n+1* depends only on its eight
 surrounding neighbors at generation *n*:
 
-.. list-table::
+.. list-table::  Transition rules of Conway's Game of Life
    :header-rows: 1
+   :stub-columns: 1
    :widths: 30 30 30
 
    * - Current cell state
@@ -132,7 +133,7 @@ What's inside the module
 You do not need to read every line, but it helps to know the four objects it exposes. Only the
 last one is ever touched by the SAF backend.
 
-.. list-table::
+.. list-table::  Objects exposed by the ``game_of_life`` module
    :header-rows: 1
    :stub-columns: 1
    :widths: 25 75

@@ -121,7 +121,8 @@ Comparison matrix
 
 Use the following matrix to determine which on-premise deployment option best fits your needs:
 
-.. list-table::
+.. list-table:: Comparison of on-premise deployment options
+   :stub-columns: 1
    :header-rows: 1
    :widths: 25 25 25 20
 

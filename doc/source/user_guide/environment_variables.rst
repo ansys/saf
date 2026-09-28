@@ -205,8 +205,9 @@ The environment variables used to configure SAF are listed below. The default va
 Deployment
 -----------
 
-.. list-table::
+.. list-table::  Deployment environment variables
    :header-rows: 1
+   :stub-columns: 1
    :widths: 20 55 25
 
    * - Variable
@@ -223,8 +224,9 @@ Deployment
 API server
 ----------
 
-.. list-table::
+.. list-table::  API server environment variables
    :header-rows: 1
+   :stub-columns: 1
    :widths: 20 55 25
 
    * - Variable
@@ -249,8 +251,9 @@ API server
 UI server
 ----------
 
-.. list-table::
+.. list-table::  UI server environment variables
    :header-rows: 1
+   :stub-columns: 1
    :widths: 20 55 25
 
    * - Variable
@@ -318,8 +321,9 @@ UI server
 BDM Python API
 --------------
 
-.. list-table::
+.. list-table::  BDM Python API environment variables
    :header-rows: 1
+   :stub-columns: 1
    :widths: 20 55 25
 
    * - Variable
@@ -336,8 +340,9 @@ BDM Python API
 Product Instance Manager
 -------------------------
 
-.. list-table::
+.. list-table::  Product Instance Manager environment variables
    :header-rows: 1
+   :stub-columns: 1
    :widths: 20 55 25
 
    * - Variable
@@ -421,7 +426,8 @@ Product Instance Manager
 HPS system for job and parametric study submission
 ---------------------------------------------------
 
-.. list-table::
+.. list-table::  HPS system environment variables
+   :stub-columns: 1
    :header-rows: 1
    :widths: 20 55 25
 
@@ -447,7 +453,8 @@ HPS system for job and parametric study submission
 Authentication
 --------------
 
-.. list-table::
+.. list-table::  Authentication environment variables
+   :stub-columns: 1
    :header-rows: 1
    :widths: 20 55 25
 
@@ -496,7 +503,8 @@ Authentication
 HPS authentication
 -------------------
 
-.. list-table::
+.. list-table::  HPS authentication environment variables
+   :stub-columns: 1
    :header-rows: 1
    :widths: 20 55 25
 
@@ -530,7 +538,8 @@ HPS authentication
 Solution configuration
 -----------------------
 
-.. list-table::
+.. list-table::  Solution configuration environment variables
+   :stub-columns: 1
    :header-rows: 1
    :widths: 20 55 25
 
@@ -546,7 +555,8 @@ Solution configuration
 Directories
 ------------
 
-.. list-table::
+.. list-table::  Directories environment variables
+   :stub-columns: 1
    :header-rows: 1
    :widths: 20 55 25
 
@@ -561,7 +571,8 @@ Directories
 Transaction method child processes
 -----------------------------------
 
-.. list-table::
+.. list-table::  Transaction method child processes environment variables
+   :stub-columns: 1
    :header-rows: 1
    :widths: 20 55 25
 
@@ -579,7 +590,8 @@ Transaction method child processes
 Database
 ---------
 
-.. list-table::
+.. list-table::  Database environment variables
+   :stub-columns: 1
    :header-rows: 1
    :widths: 20 55 25
 
@@ -606,7 +618,8 @@ Database
 Data repository
 ----------------
 
-.. list-table::
+.. list-table::  Data repository environment variables
+   :stub-columns: 1
    :header-rows: 1
    :widths: 20 55 25
 
@@ -633,7 +646,8 @@ Data repository
 Project migration
 -----------------
 
-.. list-table::
+.. list-table::  Project migration environment variables
+   :stub-columns: 1
    :header-rows: 1
    :widths: 20 55 25
 
@@ -650,7 +664,8 @@ Project migration
 Logging
 --------
 
-.. list-table::
+.. list-table::  Logging environment variables
+   :stub-columns: 1
    :header-rows: 1
    :widths: 20 55 25
 
@@ -686,7 +701,8 @@ Logging
 Telemetry
 ---------
 
-.. list-table::
+.. list-table::  Telemetry environment variables
+   :stub-columns: 1
    :header-rows: 1
    :widths: 20 55 25
 
@@ -703,7 +719,8 @@ Telemetry
 Debugging
 ----------
 
-.. list-table::
+.. list-table::  Debugging environment variables
+   :stub-columns: 1
    :header-rows: 1
    :widths: 20 55 25
 
@@ -754,7 +771,8 @@ Debugging
 Events
 ----------
 
-.. list-table::
+.. list-table::  Events environment variables
+   :stub-columns: 1
    :header-rows: 1
    :widths: 20 65 15
 
@@ -779,7 +797,8 @@ Events
 Portal API
 ----------
 
-.. list-table::
+.. list-table::  Portal API environment variables
+    :stub-columns: 1
     :header-rows: 1
     :widths: 20 65 15
 
@@ -794,7 +813,8 @@ Portal API
 Services
 --------
 
-.. list-table::
+.. list-table::  Services environment variables
+    :stub-columns: 1
     :header-rows: 1
     :widths: 20 65 15
 

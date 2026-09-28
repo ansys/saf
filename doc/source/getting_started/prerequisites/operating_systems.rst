@@ -5,7 +5,7 @@ Operating systems
 
 The following operating systems are supported for SAF-based solution development:
 
-.. list-table::
+.. list-table::  Supported operating systems
    :header-rows: 1
    :stub-columns: 1
    :widths: 25 75

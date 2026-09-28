@@ -305,8 +305,9 @@ Additional services specification format
 
 The additional services specification format is a YAML file consisting of a list of dictionaries. Each dictionary should have the following keys:
 
-.. list-table::
+.. list-table::  Additional services specification keys
    :header-rows: 1
+   :stub-columns: 1
    :widths: 20 80
 
    * - Key

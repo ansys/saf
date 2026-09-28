@@ -89,7 +89,8 @@ This approach provides:
 Summary
 =======
 
-.. list-table::
+.. list-table:: Comparison of environment variable handling patterns
+   :stub-columns: 1
    :header-rows: 1
    :widths: 33 33 33
 

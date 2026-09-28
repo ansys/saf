@@ -62,7 +62,8 @@ Configuration
 
 The MCP server is configured through the following environment variables:
 
-.. list-table::
+.. list-table::  MCP server environment variables
+   :stub-columns: 1
    :header-rows: 1
    :widths: 20 15 65
 
@@ -155,7 +156,8 @@ Available tools
 Workflow guidance
 ------------------
 
-.. list-table::
+.. list-table::  Workflow guidance tools
+   :stub-columns: 1
    :header-rows: 1
    :widths: 20 80
 
@@ -174,7 +176,8 @@ Workflow guidance
 Project management
 ------------------
 
-.. list-table::
+.. list-table::  Project management tools
+   :stub-columns: 1
    :header-rows: 1
    :widths: 20 80
 
@@ -206,7 +209,8 @@ Project management
 Data management
 ------------------
 
-.. list-table::
+.. list-table::  Data management tools
+   :stub-columns: 1
    :header-rows: 1
    :widths: 20 80
 
@@ -228,7 +232,8 @@ Data management
 Transaction execution
 -------------------
 
-.. list-table::
+.. list-table::  Transaction execution tools
+   :stub-columns: 1
    :header-rows: 1
    :widths: 20 80
 

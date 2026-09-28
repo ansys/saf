@@ -92,7 +92,7 @@ The ``saf install`` command has multiple options. To see them all, run the follo
 
 The following ``saf install`` options are available:
 
-.. list-table::
+.. list-table::  ``saf install`` options
    :header-rows: 1
    :stub-columns: 1
    :widths: 20 55 25
@@ -439,7 +439,7 @@ The ``saf execute`` command has multiple options. To see them all, run the follo
 
 The following ``saf execute`` options are available:
 
-.. list-table::
+.. list-table::  ``saf execute`` options
    :header-rows: 1
    :stub-columns: 1
    :widths: 20 40 40

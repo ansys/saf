@@ -87,7 +87,7 @@ You never start a SAF solution from a blank folder. The ``saf new`` command inst
     #. Answer the prompts as follows. Press :kbd:`Enter` to accept the default for anything not
        listed here.
 
-       .. list-table::
+       .. list-table::  Prompts and their meanings
           :header-rows: 1
           :stub-columns: 1
           :widths: 25 25 50
@@ -149,10 +149,11 @@ Take a minute to look around. Almost everything you will touch in this tutorial 
 
 Three ideas are baked into this layout, and they hold for every SAF solution:
 
-.. list-table::
+.. list-table::  Folder roles in a SAF solution
    :header-rows: 1
    :stub-columns: 1
    :widths: 20 80
+
    * - Folder
      - Role
    * - ``solution/``
@@ -186,7 +187,7 @@ packaging side: building the wheel that is shipped in the final installer. The `
 
 That contract is split across two files:
 
-.. list-table::
+.. list-table::  Poetry files and their roles
    :header-rows: 1
    :stub-columns: 1
    :widths: 20 80

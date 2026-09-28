@@ -176,6 +176,7 @@ tasks:
       outputStyle: "stream"
     env:
       PYTEST_DEBUG_TEMPROOT: 'C:/'
+      PYTHONUNBUFFERED: '1'
     inputs:
       - "src/**/*"
       - "tests/**/*"
@@ -198,6 +199,8 @@ tasks:
       - "--cov-report=xml"
       - "--cov-report=html"
       - "-s" # Disable output capturing
+    env:
+      PYTHONUNBUFFERED: '1'
     options:
       os: 'linux'
       outputStyle: "stream"

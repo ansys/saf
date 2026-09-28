@@ -39,21 +39,21 @@ System environment variables are set in your shell or system configuration. You 
 
     Set environment variables using SAF CLI:
 
-      .. tab-set::
+    .. tab-set::
 
-         .. tab-item:: Windows (PowerShell)
+        .. tab-item:: Windows (PowerShell)
 
-            .. code-block:: powershell
+          .. code-block:: powershell
 
-               $env:GLOW_API_PORT = "50001"
-               $env:GLOW_API_HOST = "0.0.0.0"
+              $env:GLOW_API_PORT = "50001"
+              $env:GLOW_API_HOST = "0.0.0.0"
 
-         .. tab-item:: Linux/macOS
+        .. tab-item:: Linux/macOS
 
-            .. code-block:: bash
+          .. code-block:: bash
 
-               export GLOW_API_PORT=50001
-               export GLOW_API_HOST=0.0.0.0
+              export GLOW_API_PORT=50001
+              export GLOW_API_HOST=0.0.0.0
 
    .. tab-item:: Solutions Manager
 

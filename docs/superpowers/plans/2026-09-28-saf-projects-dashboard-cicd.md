@@ -520,9 +520,6 @@ Create `.github/workflows/_js.yml`:
 ```yaml
 name: JS
 
-run-name: >-
-  JS: ${{ inputs.library-name }} by ${{ github.actor }}
-
 on:
   workflow_call:
     inputs:
@@ -617,11 +614,18 @@ jobs:
         env:
           LIBRARY_NAME: ${{ inputs.library-name }}
         run: |
-          if ! git diff --exit-code -- "packages/${LIBRARY_NAME}/src"; then
+          if [[ -n "$(git status --porcelain -- "packages/${LIBRARY_NAME}/src")" ]]; then
             echo "::error::Committed build output is out of date. Run 'npm run build' in packages/${LIBRARY_NAME} and commit the result."
+            git diff --stat -- "packages/${LIBRARY_NAME}/src"
             exit 1
           fi
 ```
+
+Also add a comment block above `jobs:` stating the contract this workflow assumes of any
+package it is invoked for: `.nvmrc` and `package-lock.json` must exist, `package.json` must
+define `test` and `build` scripts, and the Poetry `build` group must supply the component
+generator's dependencies. Do **not** use `npm run test --if-present` — that would silently turn
+a missing test script into a pass.
 
 Note: the spec sketched a final "Upload bundle" step. It is deliberately **not** in the
 workflow above. Nothing downstream consumes a `js-bundle-*` artifact — `_build.yml` packages the
@@ -630,12 +634,14 @@ committed files, and a freshness failure already prints the offending diff via
 `src/ansys_saf_projects_dashboard/` path into a workflow that is otherwise generic over
 `library-name`. Do not add it back.
 
-Four things in the above are deliberate and must not be "simplified":
+Six things in the above are deliberate and must not be "simplified":
 
 1. **`prepare-python-environment` creates `.venv` inside `python-project-path`**, which is why the build step does `source .venv/bin/activate` with `working-directory` set to the package. This mirrors how the `code-style` job in `ci_cd_pr.yml:325-332` activates the environment.
-2. **The freshness gate diffs all of `packages/<pkg>/src`**, not just the generated directory, so it stays correct for any package and catches drift in both the bundle and the generated `.py` wrappers. `npm ci` never rewrites `package-lock.json`, so it cannot cause a false positive.
-3. **`LIBRARY_NAME` goes through `env:`** rather than being interpolated into the `run:` block. `zizmor --pedantic` fails the build on template injection.
-4. **`git diff` works at the default fetch depth of 1** because it compares the working tree against `HEAD`, which is present. Do not add `fetch-depth: 0`.
+2. **The freshness gate inspects all of `packages/<pkg>/src`**, not just the generated directory, so it stays correct for any package and catches drift in both the bundle and the generated `.py` wrappers. `npm ci` never rewrites `package-lock.json`, so it cannot cause a false positive.
+3. **Detection uses `git status --porcelain`, not `git diff --exit-code`.** `git diff` only compares *tracked* files against `HEAD` and is blind to newly created ones. `webpack.config.js` emits fonts via `type: "asset/resource"` into `src/`, so a newly referenced asset would appear as an untracked file — `git diff` would report nothing and the gate would pass green while the packaged wheel silently lacked the asset. Scoped `status` is safe here because `node_modules/` is gitignored and lives outside `src/`. Do not revert this to `git diff`.
+4. **`LIBRARY_NAME` goes through `env:`** rather than being interpolated into the `run:` block. `zizmor --pedantic` fails the build on template injection.
+5. **The default fetch depth of 1 is sufficient** because the check compares the working tree against `HEAD`, which is present. Do not add `fetch-depth: 0`.
+6. **No `run-name:` key.** A `workflow_call`-only workflow never produces its own run — its jobs appear inside the caller's run and the caller's name is displayed — so `run-name` has no effect. Sibling `_build.yml` (also `workflow_call`-only) correctly omits it; `_test.yml` has one only because it also declares `workflow_dispatch`. It is also the folded scalar `yamlfmt` is known to corrupt in this repo.
 
 - [ ] **Step 2: Run the repo's pre-commit hooks on the new file and commit whatever they reformat**
 
@@ -647,7 +653,7 @@ Run:
 uv run --with pre-commit==4.6.0 pre-commit run --files .github/workflows/_js.yml
 ```
 
-Expected: `yamlfmt` reports `Failed` with files modified on the first run (that is the reformat), `gitleaks`, `zizmor`, `trailing-whitespace` and `codespell` report `Passed`. If `zizmor` reports a finding, fix it rather than adding an ignore comment.
+Expected: `yamlfmt` may report `Failed` with files modified on the first run (that is the reformat); `gitleaks`, `zizmor`, `trailing-whitespace` and `codespell` report `Passed`. Known trap: `retain_line_breaks=true` mishandles a blank line placed immediately after multi-line folded-scalar content, silently injecting a literal `#magic___^_^___line` string and converting the file to CRLF. After any yamlfmt run, confirm that `grep -c "magic___" .github/workflows/_js.yml` returns 0 and that the file contains no carriage returns. If `zizmor` reports a finding, fix it rather than adding an ignore comment.
 
 - [ ] **Step 3: Re-run pre-commit to confirm a clean pass**
 

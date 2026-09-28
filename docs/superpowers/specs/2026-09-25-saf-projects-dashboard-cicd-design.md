@@ -39,7 +39,7 @@ all packages and fanned out over matrices produced by
 | --- | --- | --- |
 | Dependency manager | **Poetry**, not Moon/uv | Smallest diff to green CI. Moon conversion is a separate follow-up, matching how `saf-iam-oidc` (#139) and `saf-product-configuration` (#144) were each done as standalone PRs. Bundling dependency-manager conversion with first-ever Node support in one PR is two risky changes at once. |
 | Node location | **New `_js.yml` reusable workflow** | `_test.yml` is 22 KB of pytest orchestration (runner labels, HPS/Visor install, Minerva secrets, test-report upload) that Jest does not fit. A separate workflow gated on an empty matrix has zero blast radius on the 12 packages that call the shared workflows. |
-| Wheel build | **Trust the committed bundle + freshness gate** | `src/ansys_saf_projects_dashboard/*.js` and the generated `*.py` wrappers are tracked in git, so `_build.yml` needs no change. A `git diff --exit-code` after `npm run build` gives the same guarantee as rebuilding, without making every wheel build depend on a clean `npm ci`. |
+| Wheel build | **Trust the committed bundle + freshness gate** | `src/ansys_saf_projects_dashboard/*.js` and the generated `*.py` wrappers are tracked in git, so `_build.yml` needs no change. A `git status --porcelain` check after `npm run build` gives the same guarantee as rebuilding, without making every wheel build depend on a clean `npm ci`. |
 | Documentation | **Deferred** | `doc/source` was never migrated. This change stays purely CI/CD; doc migration + `_doc.yml` wiring is a follow-up issue. |
 | Release target | **Public PyPI via OIDC trusted publishing** | Monorepo convention. The standalone published to the ansys-solutions private feed; diverging for one package would mean a bespoke publish job. |
 | Python test matrix | **Monorepo convention: single `vars.PYTHON_VERSION`** | The tests-group JSON schema has no `python-version` key; every package already accepts this. The dashboard gains Windows runners it never had, and certification re-sweeps 3.11–3.14 (see below). |
@@ -271,10 +271,11 @@ jobs:
       - name: Fail if the committed build output is stale
         shell: bash
         env:
-          GENERATED_PATH: packages/${{ inputs.library-name }}/src
+          LIBRARY_NAME: ${{ inputs.library-name }}
         run: |
-          if ! git diff --exit-code -- "${GENERATED_PATH}"; then
-            echo "::error::Committed build output is out of date. Run 'npm run build' in packages/${{ inputs.library-name }} and commit the result."
+          if [[ -n "$(git status --porcelain -- "packages/${LIBRARY_NAME}/src")" ]]; then
+            echo "::error::Committed build output is out of date. Run 'npm run build' in packages/${LIBRARY_NAME} and commit the result."
+            git diff --stat -- "packages/${LIBRARY_NAME}/src"
             exit 1
           fi
 ```
@@ -287,9 +288,22 @@ Notes on the shape above:
   package's `build` Poetry group). This is why the standalone invoked
   `poetry run npm run build`. `ansys/saf-devops/prepare-python-environment` creates `.venv`
   inside `python-project-path`, matching how the `code-style` job in `ci_cd_pr.yml` activates it.
-- **The freshness gate diffs the whole `src/`**, not just the generated package directory, so it
-  stays correct for any package and catches drift in both the bundle and the generated `.py`
+- **The freshness gate inspects the whole `src/`**, not just the generated package directory, so
+  it stays correct for any package and catches drift in both the bundle and the generated `.py`
   wrappers. `npm ci` does not modify `package-lock.json`, so it cannot produce a false positive.
+- **Detection uses `git status --porcelain`, not `git diff --exit-code`.** `git diff` compares
+  only *tracked* files against `HEAD` and is blind to newly created ones. `webpack.config.js`
+  emits fonts via `type: "asset/resource"` into `src/`, so a newly referenced asset would appear
+  as an untracked file: `git diff` would report nothing, the gate would pass green, and the
+  packaged wheel would silently lack the asset. Scoped `status` is safe because `node_modules/`
+  is gitignored and sits outside `src/`. The failure branch prints `git diff --stat` rather than
+  the full diff, because the committed bundle is minified onto one line and a full diff would
+  bury the `::error::` annotation.
+- **No `run-name:` key.** A `workflow_call`-only workflow never produces its own run, so
+  `run-name` has no effect. Sibling `_build.yml` (also `workflow_call`-only) omits it too.
+- **A comment block above `jobs:`** records the contract assumed of any package passed as
+  `library-name`: `.nvmrc` and `package-lock.json` must exist, `package.json` must define `test`
+  and `build` scripts, and the Poetry `build` group must cover the component generator.
 - **`vars.POETRY_VERSION`** resolves inside called workflows — the same pattern is already used
   at `_test.yml:499`.
 - All actions are pinned by commit SHA with a version comment, reusing the SHAs already present

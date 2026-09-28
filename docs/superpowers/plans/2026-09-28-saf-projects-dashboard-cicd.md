@@ -18,8 +18,8 @@
 - **All GitHub Actions must be pinned by full commit SHA** with a trailing `# vX.Y.Z` comment. Reuse SHAs already present in this repository — do not look up new ones:
   - `actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1`
   - `actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0`
-  - `actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1`
   - `ansys/saf-devops/prepare-python-environment@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0`
+- **Local environment note.** This machine exports `VIRTUAL_ENV` pointing at an unrelated checkout, so `uv run` prints a warning about a mismatched environment path. The warning is harmless and is not a finding. Local `node` is v22 while `.nvmrc` pins v20.19.0 — CI honours `.nvmrc`; local Jest runs on v22 are still valid evidence.
 - **Every workflow declares `permissions: {}` at the top level** and the narrowest `permissions:` per job. Every `actions/checkout` sets `persist-credentials: false`.
 - **Never interpolate `${{ ... }}` directly inside a `run:` block.** Pass the value through `env:` and reference the shell variable. The repo runs `zizmor --pedantic` in pre-commit, which fails on template injection.
 - **YAML formatting is enforced by `yamlfmt`** with `max_line_length=80,retain_line_breaks=true,retain_line_breaks_single=true`. Do not hand-wrap long lines. Write natural YAML, then run pre-commit and commit whatever it reformats.
@@ -228,8 +228,8 @@ Refs #80"
 Introduces a new matrix listing changed packages that carry a Node/npm build. This is what keeps `_js.yml` inert for the other 12 packages.
 
 **Files:**
-- Modify: `.github/actions/ci-cd-job-matrices/ci_cd_job_matrices.py:84-89` (after `UV_PACKAGES`), `:122-137` (new function near the other `get_changed_*`), `:211-218` (module-level call sequence)
-- Modify: `.github/actions/ci-cd-job-matrices/action.yml:22-38` (outputs)
+- Modify: `.github/actions/ci-cd-job-matrices/ci_cd_job_matrices.py` — locate by text anchor, not line number: after the `UV_PACKAGES` list, after the `get_changed_moon_packages` function, and the module-level call sequence at the end of the file. Task 1 already shifted this file's line numbers.
+- Modify: `.github/actions/ci-cd-job-matrices/action.yml` — the `outputs:` block
 - Test: `.github/actions/ci-cd-job-matrices/test_ci_cd_job_matrices.py` (new `TestGetChangedJsPackages` class)
 
 **Interfaces:**

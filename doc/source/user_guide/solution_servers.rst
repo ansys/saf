@@ -24,7 +24,7 @@ Startup order
 SAF Desktop Orchestrator starts services **sequentially** in the following order, running health checks **concurrently** via a thread pool after all services are launched:
 
 1. Additional services (if ``SAF_DEFINITION_PATH`` is set)
-2. OTEL Dashboard (unless ``--log-to-files``)
+2. OTel Dashboard (unless ``--log-to-files``)
 3. PIM Light Server (if the solution uses product instances)
 4. Solution API
 5. Solution UI (Dash or Streamlit)
@@ -195,7 +195,7 @@ Access the OTel Dashboard
 #. After running ``saf run``, review the console output.
 #. Find the line starting with ``OTEL Dashboard:``.
 
-   The URL on this line is the address of the OTEL Dashboard.
+   The URL on this line is the address of the OTel Dashboard.
 
 #. Enter the URL into your browser.
 

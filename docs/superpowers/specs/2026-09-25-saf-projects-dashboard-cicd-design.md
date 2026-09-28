@@ -42,7 +42,7 @@ all packages and fanned out over matrices produced by
 | Wheel build | **Trust the committed bundle + freshness gate** | `src/ansys_saf_projects_dashboard/*.js` and the generated `*.py` wrappers are tracked in git, so `_build.yml` needs no change. A `git diff --exit-code` after `npm run build` gives the same guarantee as rebuilding, without making every wheel build depend on a clean `npm ci`. |
 | Documentation | **Deferred** | `doc/source` was never migrated. This change stays purely CI/CD; doc migration + `_doc.yml` wiring is a follow-up issue. |
 | Release target | **Public PyPI via OIDC trusted publishing** | Monorepo convention. The standalone published to the ansys-solutions private feed; diverging for one package would mean a bespoke publish job. |
-| Python test matrix | **Monorepo convention: single `vars.PYTHON_VERSION`** | The tests-group JSON schema has no `python-version` key; every package already accepts this. The dashboard gains Windows runners it never had, and certification's `build-wheel` still sweeps 3.11–3.14. |
+| Python test matrix | **Monorepo convention: single `vars.PYTHON_VERSION`** | The tests-group JSON schema has no `python-version` key; every package already accepts this. The dashboard gains Windows runners it never had, and certification re-sweeps 3.11–3.14 (see below). |
 
 ## Architecture
 
@@ -277,13 +277,6 @@ jobs:
             echo "::error::Committed build output is out of date. Run 'npm run build' in packages/${{ inputs.library-name }} and commit the result."
             exit 1
           fi
-
-      - name: Upload bundle
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-        with:
-          name: js-bundle-${{ inputs.library-name }}
-          path: packages/${{ inputs.library-name }}/src/ansys_saf_projects_dashboard/
-          if-no-files-found: error
 ```
 
 Notes on the shape above:
@@ -301,6 +294,10 @@ Notes on the shape above:
   at `_test.yml:499`.
 - All actions are pinned by commit SHA with a version comment, reusing the SHAs already present
   elsewhere in the repository.
+- **No artifact upload.** Nothing downstream consumes the bundle — `_build.yml` packages the
+  committed files, and a freshness failure already prints the offending diff. Uploading would
+  also force a hardcoded `src/ansys_saf_projects_dashboard/` path into a workflow that is
+  otherwise generic over `library-name`.
 
 ### 4. Caller wiring
 
@@ -413,9 +410,12 @@ revisit only if certification is expected to be self-contained.
 
 **Coverage the standalone had that changes shape:**
 
-- Python test matrix goes from 3.11/3.12/3.13 on Ubuntu to a single `vars.PYTHON_VERSION` on
-  Ubuntu **and** Windows. Certification's `build-wheel` and `check-wheel-can-be-pip-installed`
-  still sweep 3.11–3.14, so multi-version installability is retained.
+- The **PR-level** Python test matrix goes from 3.11/3.12/3.13 on Ubuntu to a single
+  `vars.PYTHON_VERSION` on Ubuntu **and** Windows. Multi-version coverage is not lost, only
+  moved: `certification.yml` sweeps 3.11–3.14 in `run-tests` (line 297-304), `build-wheel`
+  (line 445-452) and `check-wheel-can-be-pip-installed` (line 469-476). The scheduled
+  certification run therefore exceeds the standalone's coverage — four Python versions on both
+  Linux and Windows, against the standalone's three on Linux only.
 
 **Coverage the standalone never had, gained for free:** `check-dependencies-licenses`, `sbom`,
 `compatibility-tests`, Windows pytest runners, `validate-release-branch`,

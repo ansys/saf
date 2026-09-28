@@ -38,7 +38,7 @@ saf/
 │   │   └── tests_groups_definitions/ # Per-package JSON test session configs
 │   ├── labeler.yml                   # Maps changed paths → PR labels
 │   └── labels.yml                    # Canonical label definitions
-└── packages/                         # All 12 Python packages
+└── packages/                         # All 13 Python packages
     ├── bdm-python-api/
     ├── bdm-python-shared-volume/
     ├── dash-super-components/
@@ -49,6 +49,7 @@ saf/
     ├── saf-iam-oidc/
     ├── saf-product-configuration/
     ├── saf-product-manager/
+    ├── saf-projects-dashboard/
     ├── saf-templates/
     └── saf-testing/
 ```
@@ -90,6 +91,7 @@ poetry install --all-extras
 #   saf-desktop-installer:    poetry install --with tests,style --all-extras
 #   saf-desktop-orchestrator: poetry install --with tests,dev --all-extras
 #   dash-super-components:    poetry install --with tests,style --all-extras
+#   saf-projects-dashboard:   poetry install --with tests,style --all-extras
 
 # Run tests
 poetry run pytest
@@ -100,7 +102,7 @@ Not all packages include `pre-commit` in their `pyproject.toml`. The dependency 
 
 | Group | Packages |
 |-------|----------|
-| `style` | glow-engine, saf-testing, dash-super-components |
+| `style` | glow-engine, saf-testing, dash-super-components, saf-projects-dashboard |
 | `dev` | saf-cli, saf-desktop-orchestrator, saf-product-manager, saf-product-configuration |
 | *(not included)* | bdm-python-api, bdm-python-shared-volume, saf-iam-oidc, saf-desktop-installer, saf-templates |
 

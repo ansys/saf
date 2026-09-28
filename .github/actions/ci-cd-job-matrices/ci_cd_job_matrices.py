@@ -36,6 +36,7 @@ SAF_PACKAGES = [
     "saf-iam-oidc",
     "saf-product-configuration",
     "saf-product-manager",
+    "saf-projects-dashboard",
     "saf-templates",
     "saf-testing",
 ]
@@ -58,6 +59,7 @@ CODE_STYLE_POETRY_ARGS = {
     "saf-desktop-installer": "--with tests,style --all-extras",
     "saf-desktop-orchestrator": "--with tests,dev --all-extras",
     "dash-super-components": "--with tests,style --all-extras",
+    "saf-projects-dashboard": "--with tests,style --all-extras",
 }
 
 TESTS_DEFINITIONS_DIR = ".github/workflows/tests_groups_definitions"
@@ -76,6 +78,7 @@ TESTS_DEFINITIONS_PER_TARGET = {
     "saf-iam-oidc": ["saf-iam-oidc"],
     "saf-product-configuration": ["saf-product-configuration"],
     "saf-product-manager": ["saf-product-manager"],
+    "saf-projects-dashboard": ["saf-projects-dashboard"],
     "saf-templates": ["saf-templates"],
     "saf-testing": ["saf-testing"],
     "examples": ["examples"],

@@ -96,11 +96,14 @@ jobs:
           npm run build
 
       - name: Fail if the committed build output is stale
+        # Exclude .py: post-processed by ruff-format and add-license-headers.
         shell: bash
         env:
           LIBRARY_NAME: ${{ inputs.library-name }}
         run: |
-          status="$(git status --porcelain -- "packages/${LIBRARY_NAME}/src")"
+          status="$(git status --porcelain -- \
+            "packages/${LIBRARY_NAME}/src" \
+            ":(exclude,glob)packages/${LIBRARY_NAME}/src/**/*.py")"
           if [[ -n "$status" ]]; then
             echo "::error::Committed build output is out of date. Run 'npm run build' in packages/${LIBRARY_NAME} and commit the result."
             echo "$status"

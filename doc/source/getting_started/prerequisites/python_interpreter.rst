@@ -9,8 +9,8 @@ Supported Python versions
 .. list-table::
    :header-rows: 1
    :stub-columns: 1
-   :widths: 30 70
-
+   :widths: 25 75
+   
    -  - Python version
       - End of life
 

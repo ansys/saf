@@ -88,7 +88,7 @@ Two different tools are used, depending on where you work:
 
 .. list-table::
     :header-rows: 1
-    :widths: 34 33 33
+    :widths: 50 30 20 
 
     * - Task
       - Working directory

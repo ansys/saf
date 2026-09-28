@@ -8,7 +8,7 @@ The following operating systems are supported for SAF-based solution development
 .. list-table::
    :header-rows: 1
    :stub-columns: 1
-   :widths: 30 70
+   :widths: 25 75
 
    *  - Operating system
       - Distribution

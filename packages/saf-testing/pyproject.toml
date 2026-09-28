@@ -58,9 +58,11 @@ optional-dependencies.pim = [
 ]
 optional-dependencies.selenium = [ "selenium>=4.0,<5" ]
 
-[tool.poetry.plugins.pytest11]
 # By registering the plugins here, they can be used without needing to declare them in pytest_plugins.
 # https://docs.pytest.org/en/stable/how-to/writing_plugins.html#making-your-plugin-installable-by-others
+# This must stay a PEP 621 table: the build backend is uv_build, which ignores [tool.poetry.plugins]
+# and would otherwise publish a wheel with no entry points and no fixtures.
+[project.entry-points.pytest11]
 saf_testing_directories = "ansys.saf.testing.directories"
 saf_testing_common = "ansys.saf.testing.common"
 saf_testing_docstring = "ansys.saf.testing.docstring_with_test_case"

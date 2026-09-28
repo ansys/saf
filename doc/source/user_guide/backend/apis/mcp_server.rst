@@ -29,32 +29,32 @@ The following steps assume you are using SAF CLI to manage your solution. For di
 
 1. Add the ``core-mcp`` extra to the ``ansys-saf-sdk`` dependency in your solution's ``pyproject.toml``. Afterwards, update your lock file and install the new dependencies:
 
-  .. code-block:: toml
+   .. code-block:: toml
 
-      ansys-saf-sdk = {version = "^0.2.0", extras = ["core-mcp"]}
+       ansys-saf-sdk = {version = "^0.2.0", extras = ["core-mcp"]}
 
-  .. code-block:: console
+   .. code-block:: console
 
-      saf execute my_solution "poetry lock"
-      saf install my_solution
+       saf execute my_solution "poetry lock"
+       saf install my_solution
 
 2. In your solution's ``.env`` file, enable MCP by setting:
 
-  .. code-block:: text
+   .. code-block:: text
 
-      GLOW_MCP_DISABLED=False
+    GLOW_MCP_DISABLED=False
 
 3. Run your solution. No need to launch the UI:
 
-  .. code-block:: console
+   .. code-block:: console
 
-      saf run --no-ui
+       saf run --no-ui
 
 4. Check the GLOW API logs and confirm that MCP is mounted. Look for an ``INFO`` line similar to:
 
-  .. code-block:: text
+   .. code-block:: text
 
-      MCP mounted at path /sse
+       MCP mounted at path /sse
 
 
 Configuration
@@ -64,7 +64,7 @@ The MCP server is configured through the following environment variables:
 
 .. list-table::
    :header-rows: 1
-   :widths: 35 15 50
+   :widths: 20 15 65
 
    * - Environment variable
      - Default
@@ -152,11 +152,12 @@ Example
 Available tools
 ===============
 
-**Workflow guidance**
+Workflow guidance
+------------------
 
 .. list-table::
    :header-rows: 1
-   :widths: 30 70
+   :widths: 20 80
 
    * - Tool
      - Description
@@ -170,11 +171,12 @@ Available tools
        long-running transactions) that apply to every solution, regardless of its specific steps or fields.
 
 
-**Project management**
+Project management
+------------------
 
 .. list-table::
    :header-rows: 1
-   :widths: 30 70
+   :widths: 20 80
 
    * - Tool
      - Description
@@ -201,11 +203,12 @@ Available tools
        Because the archive is a binary zip, it is returned base64-encoded and must be decoded before
        being written to a file.
 
-**Data management**
+Data management
+------------------
 
 .. list-table::
    :header-rows: 1
-   :widths: 30 70
+   :widths: 20 80
 
    * - Tool
      - Description
@@ -222,11 +225,12 @@ Available tools
    * - ``download_file``
      - Downloads binary content from an ``EntityHandle`` step field on an existing project.
 
-**Transaction execution**
+Transaction execution
+-------------------
 
 .. list-table::
    :header-rows: 1
-   :widths: 30 70
+   :widths: 20 80
 
    * - Tool
      - Description

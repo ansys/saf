@@ -216,6 +216,77 @@ class TestHpsParametricStudy:
             step.fetch_file()
             assert step.result_file_content == EXPECTED_CONTENT
 
+    @pytest.mark.parametrize("list_or_dict", ["list", "dict"])
+    def test_collecting_hps_simple_projects_on_list_or_dict(
+        self,
+        function_project: ProjectFixture[ParametricStudySolution],
+        list_or_dict: str,
+    ):
+        """
+        Test that HPS simple jobs can be grouped and stored in a list or flat dictionary.
+        """
+        num_projects = 2
+        step = function_project.project.steps.hps_project_collections_step
+        step.start_n_simple_jobs(num_projects=num_projects, list_or_dict=list_or_dict)
+        projects = step.simple_projects if list_or_dict == "list" else list(step.simple_projects_by_name.values())
+        assert len(projects) == num_projects
+        for project in projects:
+            assert project.hps_project_identifier
+        step.wait_for_hps_jobs_to_finish(simple_or_parametric="simple", list_or_dict=list_or_dict)
+        output_files = step.fetch_simple_results(list_or_dict=list_or_dict)
+        assert len(output_files) == num_projects
+        for output_file in output_files:
+            assert output_file == 7
+
+    @pytest.mark.parametrize("list_or_dict", ["list", "dict"])
+    def test_collecting_hps_parametric_studies_on_list_or_dict(
+        self,
+        function_project: ProjectFixture[ParametricStudySolution],
+        list_or_dict: str,
+    ):
+        """
+        Test that HPS parametric studies can be grouped and stored in a list or flat dictionary.
+        """
+        num_projects = 2
+        step = function_project.project.steps.hps_project_collections_step
+        step.start_n_parametric_studies(num_projects=num_projects, list_or_dict=list_or_dict)
+        projects = step.study_projects if list_or_dict == "list" else list(step.study_projects_by_name.values())
+        assert len(projects) == num_projects
+        for project in projects:
+            assert project.hps_project_identifier
+        step.wait_for_hps_jobs_to_finish(simple_or_parametric="parametric", list_or_dict=list_or_dict)
+        study_results = step.fetch_parametric_results(list_or_dict=list_or_dict)
+        assert len(study_results) == num_projects
+        assert study_results == [["study-result"]] * num_projects
+
+    def test_collecting_hps_simple_projects_in_nested_lists_and_dictionaries(
+        self,
+        function_project: ProjectFixture[ParametricStudySolution],
+    ):
+        """
+        Test that HPS simple jobs can be stored in lists of dictionaries and dictionaries of lists.
+        """
+        num_projects = 2
+        step = function_project.project.steps.hps_project_collections_step
+        step.start_nested_simple_jobs(num_projects=num_projects)
+
+        projects_in_list_of_dicts = [
+            project for projects_by_name in step.simple_projects_list_of_dicts for project in projects_by_name.values()
+        ]
+        projects_in_dict_of_lists = [
+            project for projects in step.simple_projects_dict_of_lists.values() for project in projects
+        ]
+        assert len(projects_in_list_of_dicts) == num_projects
+        assert len(projects_in_dict_of_lists) == num_projects
+        assert all(project.hps_project_identifier for project in projects_in_list_of_dicts)
+        assert all(project.hps_project_identifier for project in projects_in_dict_of_lists)
+
+        step.wait_for_nested_simple_jobs_to_finish()
+        assert step.fetch_nested_simple_results() == {
+            "dict_of_lists": [7] * num_projects,
+            "list_of_dicts": [7] * num_projects,
+        }
+
 
 @pytest.fixture
 def env_var_instance_system(

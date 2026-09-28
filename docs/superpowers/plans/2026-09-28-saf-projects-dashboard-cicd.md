@@ -102,7 +102,7 @@ Expected: FAIL with `AssertionError: assert 'saf-projects-dashboard' in {...}`
 
 In the same file, add one entry to `TESTS_DEFINITIONS_PER_TARGET` so the `saf-product-manager` / `saf-templates` region reads:
 
-```python
+```text
     "saf-product-manager": ["saf-product-manager"],
     "saf-projects-dashboard": ["saf-projects-dashboard"],
     "saf-templates": ["saf-templates"],
@@ -288,7 +288,7 @@ class TestGetChangedJsPackages:
 
 Then extend the import block at lines 42-57 so it includes the three new names. The block is alphabetised with constants first; the result must read:
 
-```python
+```text
     from ci_cd_job_matrices import (
         JS_PACKAGES,
         SAF_PACKAGES,
@@ -645,7 +645,7 @@ Six things in the above are deliberate and must not be "simplified":
 
 - [ ] **Step 2: Run the repo's pre-commit hooks on the new file and commit whatever they reformat**
 
-`yamlfmt` will rewrap lines to 80 columns and `zizmor --pedantic` will audit permissions and injection. Do not pre-empt either by hand.
+`yamlfmt` will rewrap lines to 80 columns and `zizmor --pedantic` will audit permissions and injection. Do not preempt either by hand.
 
 Run:
 

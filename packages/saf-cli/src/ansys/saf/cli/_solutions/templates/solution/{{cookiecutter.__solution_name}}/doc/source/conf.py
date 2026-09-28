@@ -21,7 +21,7 @@ import os
 from pathlib import Path
 
 from ansys_sphinx_theme import ansys_favicon, get_version_match
-from sphinx.builders.latex import LaTeXBuilder # pyright: ignore
+from sphinx.builders.latex import LaTeXBuilder
 import toml
 
 DOC_PATH = "doc/source"

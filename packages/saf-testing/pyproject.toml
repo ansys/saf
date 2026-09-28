@@ -91,7 +91,7 @@ extend-exclude = [
 [tool.pytest]
 log_cli = true
 norecursedirs = [ ".moon", ".venv", "tmp*", ".git" ]
-pythonpath = "."
+pythonpath = [ "." ]
 addopts = [
   "--strict-config",
   "--strict-markers",

@@ -226,7 +226,7 @@ Data management
      - Downloads binary content from an ``EntityHandle`` step field on an existing project.
 
 Transaction execution
--------------------
+---------------------
 
 .. list-table::
    :header-rows: 1

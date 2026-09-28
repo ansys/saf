@@ -31,7 +31,7 @@ The custom product exposes the following endpoints:
 
 .. list-table::
     :header-rows: 1
-    :widths: 30 65
+    :widths: 30 70
 
     * - Endpoint
       - Action

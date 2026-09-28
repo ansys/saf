@@ -65,7 +65,7 @@ Debugging scenarios
 .. list-table::
    :header-rows: 1
    :stub-columns: 1
-   :widths: 20 35 45
+   :widths: 20 40 40
 
    * - Scenario
      - VS Code setup

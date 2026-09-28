@@ -474,7 +474,7 @@ Required
 .. list-table::
    :header-rows: 1
    :stub-columns: 1
-   :widths: 50 50
+   :widths: 45 55
 
    *  - Option
       - Description
@@ -493,7 +493,7 @@ Optional
 .. list-table::
    :header-rows: 1
    :stub-columns: 1
-   :widths: 40 40 20
+   :widths: 40 50 15
 
    *  - Option
       - Description
@@ -686,7 +686,7 @@ The following ``glow_engine api`` options are available:
 .. list-table:: GLOW API options
    :header-rows: 1
    :stub-columns: 1
-   :widths: 25 60 15
+   :widths: 20 65 15
 
    * - Option
      - Description
@@ -803,7 +803,7 @@ The following ``glow_engine ui`` options are available:
 .. list-table::
    :header-rows: 1
    :stub-columns: 1
-   :widths: 25 60 15
+   :widths: 20 65 15
 
    * - Option
      - Description

@@ -99,7 +99,7 @@ Comparison
 
 .. list-table::
    :header-rows: 1
-   :widths: 40 30 30
+   :widths: 33 33 34
 
    * - Aspect
      - Synchronous

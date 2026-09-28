@@ -193,7 +193,7 @@ The right instance strategy depends on where the solution will be deployed and
 whether the workflow is iterative (multiple transactions) or single-shot.
 
 .. list-table::
-   :widths: 20 25 25 30
+   :widths: 15 20 35 30
    :header-rows: 1
 
    * - Strategy

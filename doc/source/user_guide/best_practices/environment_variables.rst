@@ -91,7 +91,7 @@ Summary
 
 .. list-table::
    :header-rows: 1
-   :widths: 50 25 25
+   :widths: 33 33 33
 
    * - Pattern
      - Development (``saf run``)

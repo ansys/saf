@@ -320,7 +320,7 @@ BDM Python API
 
 .. list-table::
    :header-rows: 1
-   :widths: 20 60 20
+   :widths: 20 55 25
 
    * - Variable
      - Description
@@ -608,7 +608,7 @@ Data repository
 
 .. list-table::
    :header-rows: 1
-   :widths: 20 65 15
+   :widths: 20 55 25
 
    * - Variable
      - Description
@@ -635,7 +635,7 @@ Project migration
 
 .. list-table::
    :header-rows: 1
-   :widths: 20 65 15
+   :widths: 20 55 25
 
    * - Variable
      - Description
@@ -652,7 +652,7 @@ Logging
 
 .. list-table::
    :header-rows: 1
-   :widths: 20 65 15
+   :widths: 20 55 25
 
    * - Variable
      - Description
@@ -688,7 +688,7 @@ Telemetry
 
 .. list-table::
    :header-rows: 1
-   :widths: 20 65 15
+   :widths: 20 55 25
 
    * - Variable
      - Description
@@ -705,7 +705,7 @@ Debugging
 
 .. list-table::
    :header-rows: 1
-   :widths: 20 50 30
+   :widths: 20 55 25
 
    * - Variable
      - Description

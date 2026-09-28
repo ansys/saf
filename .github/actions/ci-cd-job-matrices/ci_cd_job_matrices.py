@@ -87,6 +87,7 @@ UV_PACKAGES = [
     "saf-desktop-installer",
     "saf-iam-oidc",
     "saf-product-configuration",
+    "saf-testing",
 ]
 
 

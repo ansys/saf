@@ -44,8 +44,8 @@ dependencies = [
 
 [tool.pytest]
 log_cli = true
-pythonpath = [ "." ]
 norecursedirs = [ ".moon", ".venv", "tmp*", ".git" ]
+pythonpath = [ "." ]
 addopts = [
   "--strict-config",
   "--strict-markers",

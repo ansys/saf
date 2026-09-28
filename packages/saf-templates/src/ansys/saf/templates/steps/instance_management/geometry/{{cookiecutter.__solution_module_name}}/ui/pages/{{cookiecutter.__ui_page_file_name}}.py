@@ -161,7 +161,7 @@ def layout(project: {{cookiecutter.__solution_definition_class_name}}) -> html.D
     return html.Div(
         [
             html.H1(
-                "Geometry Instance Manager",
+                "{{ cookiecutter.__step_display_name }}",
                 className="display-3",
                 style={"font-size": "48px", "fontWeight": "bold"},
             ),

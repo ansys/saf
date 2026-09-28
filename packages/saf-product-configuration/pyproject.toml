@@ -103,8 +103,10 @@ optional-dependencies.optislang = [
   "uvicorn>=0.24,<1.0",
 ]
 
-[tool.pytest.ini_options]
-pythonpath = "."
+[tool.pytest]
+log_cli = true
+norecursedirs = [ ".moon", ".venv", "tmp*", ".git" ]
+pythonpath = [ "." ]
 addopts = [
   "--strict-config",
   "--strict-markers",

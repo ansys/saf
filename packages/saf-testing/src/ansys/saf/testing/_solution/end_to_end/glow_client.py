@@ -78,7 +78,7 @@ def get_glow_client(
         from ansys.saf.glow.client import Client  # pyright: ignore[reportMissingImports, reportUnknownVariableType]
 
         client = Client(  # pyright: ignore[reportUnknownVariableType]
-            glow_proc.solution_type,
+            glow_proc.solution_type, # pyright: ignore[reportArgumentType]
             glow_proc.base_api_url,
             access_token=access_token,
         )

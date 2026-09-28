@@ -164,11 +164,11 @@ tasks:
       - "--cov-report=term"
       - "--cov-report=xml"
       - "--cov-report=html"
-      - "-s" # Disable output capturing
-    options:
-      outputStyle: "stream"
+      - "-s" # Disable capturing of stdout and stderr during tests
     env:
       PYTHONUNBUFFERED: '1'
+    options:
+      outputStyle: "stream"
     inputs:
       - "src/**/*"
       - "tests/**/*"

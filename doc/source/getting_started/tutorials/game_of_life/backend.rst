@@ -7,23 +7,23 @@ Phase 3 — Backend
 
  In this module, you'll cover the following topics:
 
-  - :material-outlined:`add_box;1.25em;saf-objective-icon` Add a new step to the solution with
-    ``saf add-step``.
-  - :material-outlined:`account_tree;1.25em;saf-objective-icon` Declare the workflow contract in the
-    **solution definition**.
-  - :material-outlined:`data_object;1.25em;saf-objective-icon` Define the **step model** and its
-    **typed fields**, where the state lives.
-  - :material-outlined:`sync_alt;1.25em;saf-objective-icon` Write **transaction methods**, the only
-    place where state is read and written.
-  - :material-outlined:`rule;1.25em;saf-objective-icon` Declare **field dependencies**
-    (``StepSpec``) so SAF knows what to load and save.
-  - :material-outlined:`timer;1.25em;saf-objective-icon` Choose between **blocking** and
-    **long-running** transactions. Synchronous or background execution.
-  - :material-outlined:`podcasts;1.25em;saf-objective-icon` Publish **events** to stream progress
-    from the backend to the UI in real time.
+ - :material-outlined:`add_box;1.25em;saf-objective-icon` Add a new step to the solution with
+   ``saf add-step``.
+ - :material-outlined:`account_tree;1.25em;saf-objective-icon` Declare the workflow contract in the
+   **solution definition**.
+ - :material-outlined:`data_object;1.25em;saf-objective-icon` Define the **step model** and its
+   **typed fields**, where the state lives.
+ - :material-outlined:`sync_alt;1.25em;saf-objective-icon` Write **transaction methods**, the only
+   place where state is read and written.
+ - :material-outlined:`rule;1.25em;saf-objective-icon` Declare **field dependencies**
+   (``StepSpec``) so SAF knows what to load and save.
+ - :material-outlined:`timer;1.25em;saf-objective-icon` Choose between **blocking** and
+   **long-running** transactions. Synchronous or background execution.
+ - :material-outlined:`podcasts;1.25em;saf-objective-icon` Publish **events** to stream progress
+   from the backend to the UI in real time.
 
-  At the end of this phase, the ready-made engine from
-  :ref:`phase 2 <game_of_life_business_logic>` is fully wired into a SAF backend.
+ At the end of this phase, the ready-made engine from
+ :ref:`phase 2 <game_of_life_business_logic>` is fully wired into a SAF backend.
 
 .. tip::
 
@@ -301,7 +301,7 @@ and by **what the user should be able to do while it runs**.
    :stub-columns: 1
    :widths: 20 35 45
 
-   * -
+   * - Aspect
      - Blocking transaction
      - Long-running transaction (``@long_running``)
    * - Declaration
@@ -395,7 +395,7 @@ Read it like this:
 
 .. list-table::
    :header-rows: 1
-   :widths: 20 80
+   :widths: 25 75
 
    * - Argument
      - Meaning
@@ -537,7 +537,7 @@ events:
 .. list-table::
    :header-rows: 1
    :stub-columns: 1
-   :widths: 20 25 55
+   :widths: 20 30 50
 
    * - Stream
      - Emitted by

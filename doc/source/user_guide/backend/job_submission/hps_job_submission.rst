@@ -83,6 +83,54 @@ The GLOW HPS API and transaction methods
 The HPS API is designed to be used in the context of a GLOW transaction method.
 All the following examples are written in the context of a GLOW transaction method.
 
+Collection fields with HPS project handles
+=========================================
+
+Step fields can store collections of HPS project handles in addition to single
+``HpsSimpleProject`` and ``HpsParametricStudyProject`` values. Supported collection
+patterns include:
+
+* ``list[HpsSimpleProject]``
+* ``dict[str, HpsSimpleProject]``
+* ``dict[str, list[HpsSimpleProject]]``
+* ``list[dict[str, HpsParametricStudyProject]]``
+
+This is useful when a transaction creates multiple HPS jobs or studies and needs to keep
+track of them across step downloads and uploads.
+
+.. code-block:: python
+
+    class HpsCollectionsStep(StepModel):
+        simple_projects: list[HpsSimpleProject] = []
+        study_projects_by_name: dict[str, HpsParametricStudyProject] = {}
+        nested_simple_projects: dict[str, list[HpsSimpleProject]] = {}
+
+        @transaction(
+            self=StepSpec(
+                upload=[
+                    "simple_projects",
+                    "study_projects_by_name",
+                    "nested_simple_projects",
+                ],
+            )
+        )
+        def start_projects(self) -> None:
+            self.simple_projects.append(HpsSimpleProject.start_hps_job(input_values={}, output_parameters={}))
+            self.study_projects_by_name["first"] = HpsParametricStudyProject.start_hps_parametric_study(
+                input_values={},
+                output_parameters={},
+                parameters={},
+            )
+            self.nested_simple_projects["group_1"] = [
+                HpsSimpleProject.start_hps_job(input_values={}, output_parameters={}),
+                HpsSimpleProject.start_hps_job(input_values={}, output_parameters={}),
+            ]
+
+When a step is downloaded, the persisted project identifiers are converted back into
+project handles so the HPS jobs or studies can be queried and monitored in the same way as
+single project fields. The same behavior applies to nested lists and dictionaries and to both
+``HpsSimpleProject`` and ``HpsParametricStudyProject`` types.
+
 .. _hps_job_submit_single:
 
 Submit a single job to HPS

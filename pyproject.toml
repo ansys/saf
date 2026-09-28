@@ -170,14 +170,6 @@ lint.isort.known-first-party = [
   "ansys.solutions",
 ]
 
-[tool.pytest]
-log_cli = true
-addopts = [
-  "--strict-config",
-  "--strict-markers",
-  "--import-mode=importlib",
-]
-asyncio_mode = "auto"
 
 [tool.coverage.report]
 show_missing = true

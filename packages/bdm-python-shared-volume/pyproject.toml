@@ -28,8 +28,10 @@ dependencies = [
   "ansys-bdm-api>=0.5,<1.0",
 ]
 
-[tool.pytest.ini_options]
-pythonpath = "."
+[tool.pytest]
+log_cli = true
+pythonpath = [ "." ]
+norecursedirs = [".moon", ".venv", "tmp*", ".git"]
 addopts = [
   "--strict-config",
   "--strict-markers",

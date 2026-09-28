@@ -41,8 +41,10 @@ dependencies = [
   "toml>=0.10.2,<0.11",
 ]
 
-[tool.pytest.ini_options]
-pythonpath = "."
+[tool.pytest]
+log_cli = true
+pythonpath = [ "." ]
+norecursedirs = [".moon", ".venv", "tmp*", ".git"]
 addopts = [
   "--strict-config",
   "--strict-markers",
@@ -50,9 +52,10 @@ addopts = [
   "-nlogical",
   "--dist=loadfile",
 ]
-markers = [  ]
+asyncio_mode = "auto"
 filterwarnings = [  ]
-testpaths = [ "tests" ]
+markers = [  ]
+testpaths = [ "tests/" ]
 
 [tool.coverage.run]
 source = [ "ansys.saf.desktop.installer" ]

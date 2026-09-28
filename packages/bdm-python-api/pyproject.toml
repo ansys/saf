@@ -29,7 +29,9 @@ dependencies = [
   "pydantic>=2.3,<3",
 ]
 
-[tool.pytest.ini_options]
+[tool.pytest]
+log_cli = true
+norecursedirs = [ ".moon", ".venv", "tmp*", ".git" ]
 addopts = [
   "--strict-config",
   "--strict-markers",

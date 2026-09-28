@@ -63,6 +63,7 @@ tests-desktop-installer = [
   "pillow>=12.1.1,<13.0",
   "pylnk3>=0.4.2,<0.5",
   "pywebview>=6.0,<7.0",
+  "poetry==2.3.2",
 ]
 doc = [
   "ansys-sphinx-theme[autoapi]>=1.9; python_version>='3.12'",

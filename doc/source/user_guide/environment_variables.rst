@@ -232,16 +232,16 @@ API server
      - Default values
 
    * - :envvar:`GLOW_API_HOST`
-     - Specifies the host where the solution API server runs.
+     - Specifies the host on which the solution API server runs.
      - ``127.0.0.1``
 
    * - :envvar:`GLOW_API_PORT`
-     - Specifies the port where the solution API server runs.
+     - Specifies the port on which the solution API server listens.
      - ``5432``
 
    * - :envvar:`GLOW_SOLUTION_DEFINITION`
      - Specifies the solution definition module to use when launching the API
-       application directly via a production server instead of SAF GLOW Engine's CLI.
+       application directly with a production server instead of the SAF GLOW Engine CLI.
 
        **Example:** ``ansys.solutions.my_solution.solution.definition``
      - Auto-discovered (varies by solution)
@@ -258,19 +258,20 @@ UI server
      - Default values
 
    * - :envvar:`GLOW_UI_HOST`
-     - Specifies the host where the solution UI server runs.
+     - Specifies the host on which the solution UI server runs.
      - ``127.0.0.1``
 
    * - :envvar:`GLOW_UI_PORT`
-     - Specifies the port where the solution UI server runs.
+     - Specifies the port on which the solution UI server listens.
      - ``5433``
 
    * - :envvar:`GLOW_API_URL`
-     - Specifies the URL of the solution API server.
+     - Specifies the URL for the solution API server.
      - ``http://127.0.0.1:5432``
 
    * - :envvar:`GLOW_EXTERNAL_API_URL`
-     - Specifies the URL of the GLOW API server in a form accessible to the user machine (for example, ``http://127.0.0.1:5432``). Enables the access to the content of an entity handle or a file reference from the user machine (for example, from a browser).
+     - Specifies the GLOW API server URL that the user machine can access (for example, ``http://127.0.0.1:5432``).
+       Enables the user machine, such as a browser, to access entity-handle content or file references.
 
        * In desktop deployments, this value is automatically set to :envvar:`GLOW_API_URL`.
        * In on-premises deployments, you must set this value because :envvar:`GLOW_API_URL` contains a URL accessible only from within the UI container (for example, ``http://my-solution-api:50000``).
@@ -278,18 +279,18 @@ UI server
      - The value of :envvar:`GLOW_API_URL`
 
    * - :envvar:`GLOW_PORTAL_URL`
-     - Specifies the URL of the Portal server.
+     - Specifies the URL for the Portal server.
      - ``None``
 
    * - :envvar:`GLOW_UI_PROJECT_FILES_DIRECTORY`
-     - Specifies the absolute path to the project files directory that is shared with the GLOW API server in a
-       form accessible to the UI server, for deployments where the UI server runs on a different system than the GLOW API server.
+     - Specifies the absolute path to the project files directory shared with the GLOW API server
+       and accessible to the UI server when the servers run on different systems.
      - ``None``
 
    * - :envvar:`GLOW_WS_EVENTS_ADDR`
-     - Specifies the URL of the GLOW API server in a form accessible to the host machine (for example, ``http://127.0.0.1:5432``)
-       prefixed with the websocket protocol (for example, ``ws://127.0.0.1:5432`` or ``wss://127.0.0.1:5432``). Enables
-       websockets created within Dash client to connect to the websocket endpoint within the GLOW API server.
+     - Specifies the GLOW API server URL that the host machine can access (for example, ``http://127.0.0.1:5432``),
+       prefixed with the WebSocket protocol (for example, ``ws://127.0.0.1:5432`` or ``wss://127.0.0.1:5432``).
+       Enables WebSockets created by the Dash client to connect to the WebSocket endpoint in the GLOW API server.
 
        * In desktop deployments, this value is automatically resolved from :envvar:`GLOW_API_URL`.
        * In on-premises deployments, you must set this value because :envvar:`GLOW_API_URL` contains a URL
@@ -299,14 +300,14 @@ UI server
        ``ws://127.0.0.1:5432``
 
    * - :envvar:`GLOW_GRAPHQL_POOL_SIZE`
-     - Specifies the number of available GraphQL clients that can be used concurrently.
+     - Specifies the number of GraphQL clients available for concurrent use.
 
        (DashClient is using GraphQL internally to communicate with the GLOW API. Therefore, a small pool size may impact the performance for a solution used by many concurrent users.)
 
      - ``3``
 
    * - :envvar:`GLOW_UI_MODULE`
-     - Specifies the module containing the UI's Dash application.
+     - Specifies the module that contains the UI Dash application.
 
        Used to specify the module when launching the UI application directly via a production server instead of GLOW's CLI.
 
@@ -319,14 +320,14 @@ BDM Python API
 
 .. list-table::
    :header-rows: 1
-   :widths: 20 55 25
+   :widths: 20 60 20
 
    * - Variable
      - Description
      - Default values
 
    * - :envvar:`GLOW_BDM_GC_DISABLED`
-     - Disables BDM Python API garbage collection when set to ``True``.
+     - Disables garbage collection for the BDM Python API when set to ``True``.
      - ``False``
 
 
@@ -344,35 +345,35 @@ Product Instance Manager
      - Default values
 
    * - :envvar:`GLOW_PRODUCT_INSTANCE_SYSTEM`
-     - Specifies the Product Instance Manager system to be used.
+     - Specifies the Product Instance Manager system to use.
      - Permitted values:
 
        -  ``PIM`` (default)
        -  ``HPS``
 
    * - :envvar:`GLOW_PRODUCT_INSTANCE_SYSTEM_HOST`
-     - Specifies the host where the Product Instance Manager system runs.
+     - Specifies the host on which the Product Instance Manager system runs.
      - ``127.0.0.1``
 
    * - :envvar:`GLOW_PRODUCT_INSTANCE_SYSTEM_PORT`
-     - Specifies the port where the Product Instance Manager system runs.
+     - Specifies the port on which the Product Instance Manager system listens.
      - ``None``
 
    * - :envvar:`GLOW_PIM_SOCKET_PATH`
-     - Specifies the path to the UNIX socket file used by PIM Light Server.
+     - Specifies the path to the UNIX socket file that PIM Light Server uses.
 
        Required to connect to PIM Light Server on Linux when :envvar:`GLOW_PRODUCT_INSTANCE_SYSTEM_HOST` is set to ``localhost``.
      - ``None``
 
    * - :envvar:`GLOW_PRODUCT_HOST`
-     - Specifies the host where the product is running (not the manager system).
+     - Specifies the host on which the product runs, not the manager system.
 
        * For HPS, must be set in the environment where the product instance is running, not in the GLOW API environment.
        * For PIM, set it in the GLOW API environment. Overrides the value retrieved automatically from the Product Instance Manager system.
      - ``None``
 
    * - :envvar:`GLOW_PRODUCT_BINDING_HOST`
-     - Sets the TCP host or IP address where the product instance listens for connections.
+     - Specifies the TCP host or IP address on which the product instance listens for connections.
 
        (Not to be confused with the ``GLOW_PRODUCT_HOST`` environment variable. ``GLOW_PRODUCT_HOST`` is the address used to connect to the product instance from outside, whereas ``GLOW_PRODUCT_BINDING_HOST`` is the address where the product instance listens for connections).
 
@@ -383,12 +384,12 @@ Product Instance Manager
 
    * - :envvar:`GLOW_PRODUCT_INSTANCE_SYSTEM_PROJECT_FILES_DIRECTORY`
      - Specifies the absolute path to the project files directory shared with
-       the GLOW API server in a form accessible to the product when the Product
-       Instance Manager system runs on a different system.
+       the GLOW API server and accessible to the product when the Product Instance
+       Manager system runs on a different system.
      - ``None``
 
    * - :envvar:`GLOW_PRODUCT_INSTANCE_SYSTEM_PLATFORM`
-     - Specifies the platform where the Product Instance Manager system runs
+     - Specifies the platform on which the Product Instance Manager system runs
        when it is on a different system than the GLOW API server.
 
        Permitted values:
@@ -399,19 +400,19 @@ Product Instance Manager
      - ``None``
 
    * - :envvar:`ANSYS_GRPC_CERTIFICATES`
-     - Specifies the path to the directory where the gRPC certificates used by
-       PIM Light Server are stored.
+     - Specifies the path to the directory that stores the gRPC certificates used by
+       PIM Light Server.
 
        These certificates are required to connect to PIM Light Server
        when ``GLOW_PRODUCT_INSTANCE_SYSTEM_HOST`` is not ``localhost``.
      - ``None``
 
    * - :envvar:`SAF_OPTISLANG_TIMEOUT`
-     - Timeout in seconds for requests to managing the OptiSLang server instance.
+     - Specifies the timeout, in seconds, for requests that manage the OptiSLang server instance.
      - ``300``
 
    * - :envvar:`SAF_VISOR_TIMEOUT`
-     - Timeout in seconds for requests to managing the Visor server instance.
+     - Specifies the timeout, in seconds, for requests that manage the Visor server instance.
      - ``300``
 
 
@@ -429,11 +430,11 @@ HPS system for job and parametric study submission
      - Default values
 
    * - :envvar:`GLOW_HPS_HOST`
-     - Sets the host where the HPS system runs.
+     - Specifies the host on which the HPS system runs.
      - ``127.0.0.1``
 
    * - :envvar:`GLOW_HPS_PORT`
-     - Sets the port where the HPS system listens.
+     - Specifies the port on which the HPS system listens.
      - ``None``
 
 .. note::
@@ -455,7 +456,7 @@ Authentication
      - Default values
 
    * - :envvar:`GLOW_AUTH_ISSUER_URL`
-     - Specifies the address of the Identity Provider (usually Keycloak) for
+     - Specifies the address of the identity provider, usually Keycloak, for
        authenticated access to the GLOW API.
 
        **Example:** ``https://localhost:8443/hps/auth/realms/rep``
@@ -463,7 +464,7 @@ Authentication
      - ``None``
 
    * - :envvar:`GLOW_AUTH_CLIENT_ID`
-     - Specifies the public oauth2 identifier of the solution API.
+     - Specifies the public OAuth 2.0 identifier of the solution API.
 
        **Example:** ``my-solution-api``
      - ``None``
@@ -538,8 +539,8 @@ Solution configuration
      - Default values
 
    * - :envvar:`GLOW_OVERWRITE_SOLUTION_CONFIG`
-     - Specifies whether to allow overwriting of the persisted solution configuration when there
-       is a version update.
+     - Specifies whether to overwrite the persisted solution configuration when the
+       solution version changes.
      - ``None``
 
 Directories
@@ -554,7 +555,7 @@ Directories
      - Default values
 
    * - :envvar:`GLOW_PROJECT_FILES_DIRECTORY`
-     - Specifies the full OS file system path to the directory for storing the project files.
+     - Specifies the full operating system path to the directory that stores project files.
      - ``%APPDATA%/ansys/glow/SOLUTION_NAME/project_files/``
 
 Transaction method child processes
@@ -569,8 +570,8 @@ Transaction method child processes
      - Default values
 
    * - :envvar:`GLOW_METHOD_CLEANUP_CHILD_PROCS`
-     - Specifies whether to automatically kill child processes spawned by a long-running transaction
-       method after it completes.
+     - Specifies whether to automatically terminate child processes that a long-running transaction
+       method spawns after the method completes.
 
        For more information, see :ref:`child_process_cleanup`.
      - ``True``
@@ -587,14 +588,14 @@ Database
      - Default values
 
    * - :envvar:`GLOW_DATABASE_TYPE`
-     - Specifies the type of database to be used.
+     - Specifies the type of database to use.
      - Permitted values:
 
        - ``sqlite`` (default)
        - ``postgresql``
 
    * - :envvar:`GLOW_DATABASE_LOCATION`
-     - Specifies the location of the database.
+     - Specifies the database location.
 
        Can be a file path (for ``sqlite``) or a ``postgres``
        connection URI of the form ``postgresql://username:password@host:port``
@@ -607,14 +608,14 @@ Data repository
 
 .. list-table::
    :header-rows: 1
-   :widths: 20 55 25
+   :widths: 20 65 15
 
    * - Variable
      - Description
      - Default values
 
    * - :envvar:`GLOW_DATA_REPOSITORY_TYPE`
-     - Specifies the type of data repository to be used.
+     - Specifies the type of data repository to use.
 
        Permitted values:
 
@@ -624,7 +625,7 @@ Data repository
      - ``None``
 
    * - :envvar:`GLOW_DATA_REPOSITORY_UPLOAD_ROOT`
-     - Specifies the absolute path in the data repository to which a relative upload path is appended when uploading data.
+     - Specifies the absolute path in the data repository to which SAF appends a relative upload path when uploading data.
 
        If the upload path is an absolute path, the upload path is used.
      - ``/Data``
@@ -634,7 +635,7 @@ Project migration
 
 .. list-table::
    :header-rows: 1
-   :widths: 20 55 25
+   :widths: 20 65 15
 
    * - Variable
      - Description
@@ -651,29 +652,29 @@ Logging
 
 .. list-table::
    :header-rows: 1
-   :widths: 20 55 25
+   :widths: 20 65 15
 
    * - Variable
      - Description
      - Default values
 
    * - :envvar:`SAF_DESKTOP_LOG_TO_FILES`
-     - Specifies whether to log to files under ``$APPDATA/ansys/glow/<MySolution>/logs/`` and disable OTel Dashboard.
+     - Specifies whether to log to files under ``$APPDATA/ansys/glow/<MySolution>/logs/`` and disable the OTel Dashboard.
 
        This option is mutually exclusive with ``OTEL_EXPORTER_OTLP_ENDPOINT``. If both environment variables are set, an error is raised.
        (Note that this sets the SAF GLOW Engine environment variables for log configuration files, overriding any existing value.)
      - ``False``
 
    * - :envvar:`GLOW_LOG_CONFIG`
-     - Specifies the full OS file system path to the ``YAML`` logging configuration file for the API service.
+     - Specifies the full operating system path to the ``YAML`` logging configuration file for the API service.
      - ``None``
 
    * - :envvar:`GLOW_UI_LOG_CONFIG`
-     - Specifies the full OS file system path to the ``YAML`` logging configuration file for the UI service.
+     - Specifies the full operating system path to the ``YAML`` logging configuration file for the UI service.
      - ``None``
 
    * - :envvar:`GLOW_METHOD_LOG_CONFIG`
-     - Specifies the full OS file system path to the ``YAML`` logging configuration file for the Method Runner.
+     - Specifies the full operating system path to the ``YAML`` logging configuration file for the Method Runner.
      - ``None``
 
    * - :envvar:`GLOW_LOGGING_LEVEL`
@@ -687,14 +688,14 @@ Telemetry
 
 .. list-table::
    :header-rows: 1
-   :widths: 20 55 25
+   :widths: 20 65 15
 
    * - Variable
      - Description
      - Default values
 
    * - :envvar:`OTEL_EXPORTER_OTLP_ENDPOINT`
-     - Specifies the endpoint for the OTLP exporters (traces, logs, and metrics).
+     - Specifies the endpoint for the OTLP exporters for traces, logs, and metrics.
 
        Non-URL values enable export to process output.
      - ``None``
@@ -704,14 +705,14 @@ Debugging
 
 .. list-table::
    :header-rows: 1
-   :widths: 20 55 25
+   :widths: 20 50 30
 
    * - Variable
      - Description
      - Default values
 
    * - :envvar:`GLOW_DEBUG`
-     - Specifies whether debugging in SAF GLOW Engine is enabled.
+     - Specifies whether to enable debugging in SAF GLOW Engine.
      - ``False``
 
    * - :envvar:`GLOW_API_HOT_RELOAD`
@@ -721,7 +722,7 @@ Debugging
      - ``True``
 
    * - :envvar:`GLOW_API_HOT_RELOAD_MONITORING_DIR`
-     - Sets the directory that SAF GLOW Engine monitors for changes when API hot reload is enabled.
+     - Specifies the directory that SAF GLOW Engine monitors for changes when API hot reload is enabled.
 
        For solutions generated with SAF CLI, the default behavior prevents unnecessary API server reloads
        when only UI files are modified.
@@ -755,14 +756,14 @@ Events
 
 .. list-table::
    :header-rows: 1
-   :widths: 20 55 25
+   :widths: 20 65 15
 
    * - Variable
      - Description
      - Default values
 
    * - :envvar:`GLOW_WS_EVENT_POLL_INTERVAL`
-     - Sets the interval, in seconds, in the event transmission loop for a websocket connection.
+     - Specifies the interval, in seconds, between iterations of the event transmission loop for a WebSocket connection.
 
        Each iteration of the loop queries the database for new events and transmits those events via the websocket.
        :envvar:`GLOW_WS_EVENT_POLL_INTERVAL` is the duration of the pause between iterations of the loop.
@@ -780,14 +781,14 @@ Portal API
 
 .. list-table::
     :header-rows: 1
-    :widths: 20 55 25
+    :widths: 20 65 15
 
     * - Variable
       - Description
       - Default values
 
     * - :envvar:`PORTAL_API_VERSION`
-      - Specifies the API version of SAF Portal used to communicate with it.
+      - Specifies the SAF Portal API version to use for communication.
       - ``v1``
 
 Services
@@ -795,12 +796,12 @@ Services
 
 .. list-table::
     :header-rows: 1
-    :widths: 20 55 25
+    :widths: 20 65 15
 
     * - Variable
       - Description
       - Default values
 
     * - :envvar:`SAF_DESKTOP_HEALTH_CHECK_TIMEOUT`
-      - Sets the maximum time, in seconds, to wait for a service (for example, API, UI, Portal, or PIM) to become healthy after it has been started.
+      - Specifies the maximum time, in seconds, to wait for a service, such as the API, UI, Portal, or PIM, to become healthy after startup.
       - ``25`` seconds

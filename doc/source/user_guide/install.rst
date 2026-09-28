@@ -95,7 +95,7 @@ The following ``saf install`` options are available:
 .. list-table::
    :header-rows: 1
    :stub-columns: 1
-   :widths: 25 55 20
+   :widths: 20 55 25
 
    * - Option
      - Description
@@ -118,7 +118,7 @@ The following ``saf install`` options are available:
 
        For more detailed information on dependency packages and groups, see :ref:`ug-install-dependency-groups`.
 
-     - ``desktop,ui,doc,build``
+     - ``desktop``, ``ui``, ``doc``, ``build``
 
 
 Virtual environment installation

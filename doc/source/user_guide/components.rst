@@ -421,7 +421,8 @@ Optional extras pull in additional packages, or extras of the core packages, for
 
 .. list-table::
    :header-rows: 1
-   :widths: 35 65
+   :stub-columns: 1
+   :widths: 30 70
 
    * - Extra
      - Description

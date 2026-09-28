@@ -535,7 +535,7 @@ jobs:
           name: "pytest_reports_${{ matrix.test-report-artifact-name-suffix }}_${{
             inputs.python-version }}"
           path: ${{ needs.configure-tests.outputs.working-directory }}/${{ matrix.test-report-artifact-name-suffix
-            }}_${{ inputs.python-version }}/**/*"
+            }}_${{ inputs.python-version }}/"
           if-no-files-found: warn
 
       - name: Publish pytest logs

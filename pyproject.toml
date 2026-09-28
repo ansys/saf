@@ -170,24 +170,6 @@ lint.isort.known-first-party = [
   "ansys.solutions",
 ]
 
-[tool.pytest]
-log_cli = true
-pythonpath = [ "." ]
-norecursedirs = [ ".moon", ".venv", "tmp*", ".git" ]
-addopts = [
-  "--strict-config",
-  "--strict-markers",
-  "--import-mode=importlib",
-  "-nlogical",
-  "--dist=loadfile",
-]
-asyncio_mode = "auto"
-filterwarnings = [
-  "error",
-  "ignore::ResourceWarning",
-]
-testpaths = [ "tests/" ]
-
 [tool.coverage.report]
 show_missing = true
 

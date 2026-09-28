@@ -16,10 +16,7 @@
 
 # /// script
 # requires-python = ">=3.11"
-# dependencies = [
-#   "pytest>=8",
-#   "pytest-asyncio>=1.3.0,<2",
-# ]
+# dependencies = ["pytest>=8"]
 # ///
 
 """Tests for ``ci_cd_job_matrices.py``."""

@@ -173,6 +173,7 @@ tasks:
       - "src/**/*"
       - "tests/**/*"
       - "pyproject.toml"
+      - "/uv.lock"
       - "/.python-version"
 
   test-windows:

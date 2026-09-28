@@ -170,8 +170,10 @@ tasks:
       - "--cov-report=term"
       - "--cov-report=xml"
       - "--cov-report=html"
+      - "-s" # Disable output capturing
     options:
       os: 'windows'
+      outputStyle: "stream"
     env:
       PYTEST_DEBUG_TEMPROOT: 'C:/'
     inputs:
@@ -195,8 +197,10 @@ tasks:
       - "--cov-report=term"
       - "--cov-report=xml"
       - "--cov-report=html"
+      - "-s" # Disable output capturing
     options:
       os: 'linux'
+      outputStyle: "stream"
     inputs:
       - "src/**/*"
       - "tests/**/*"

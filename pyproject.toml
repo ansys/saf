@@ -172,8 +172,6 @@ lint.isort.known-first-party = [
 
 [tool.pytest]
 log_cli = true
-
-[tool.pytest.ini_options]
 addopts = [
   "--strict-config",
   "--strict-markers",

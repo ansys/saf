@@ -1,0 +1,102 @@
+name: JS
+
+run-name: >-
+  JS: ${{ inputs.library-name }} by ${{ github.actor }}
+on:
+  workflow_call:
+    inputs:
+      library-name:
+        description: 'Package carrying the Node build'
+        required: true
+        type: string
+      python-version:
+        description: 'Python version used for the component-generation step'
+        required: true
+        type: string
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}-js-${{ inputs.library-name }}
+  cancel-in-progress: true
+
+# Apply the principle of least privilege to state at job level the right
+# permissions. More information about workflow permissions in the page
+# https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#permissions
+permissions: {}
+
+jobs:
+  js-test:
+    name: "JavaScript tests"
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read # Read the source code of the package
+    defaults:
+      run:
+        working-directory: packages/${{ inputs.library-name }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Setup Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version-file: packages/${{ inputs.library-name }}/.nvmrc
+          cache: npm
+          cache-dependency-path: packages/${{ inputs.library-name }}/package-lock.json
+
+      - name: Install npm dependencies
+        shell: bash
+        run: npm ci
+
+      - name: Run Jest
+        shell: bash
+        run: npm test
+
+  js-build:
+    name: "JavaScript build and freshness"
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read # Read the source code of the package
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Setup Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version-file: packages/${{ inputs.library-name }}/.nvmrc
+          cache: npm
+          cache-dependency-path: packages/${{ inputs.library-name }}/package-lock.json
+
+      - name: Prepare Python environment
+        uses: ansys/saf-devops/prepare-python-environment@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
+        with:
+          python-version: ${{ inputs.python-version }}
+          poetry-version: ${{ vars.POETRY_VERSION }}
+          python-project-path: packages/${{ inputs.library-name }}
+          poetry-install-args: "--with build"
+
+      - name: Install npm dependencies
+        working-directory: packages/${{ inputs.library-name }}
+        shell: bash
+        run: npm ci
+
+      - name: Build bundle and generate component wrappers
+        working-directory: packages/${{ inputs.library-name }}
+        shell: bash
+        run: |
+          source .venv/bin/activate
+          npm run build
+
+      - name: Fail if the committed build output is stale
+        shell: bash
+        env:
+          LIBRARY_NAME: ${{ inputs.library-name }}
+        run: |
+          if ! git diff --exit-code -- "packages/${LIBRARY_NAME}/src"; then
+            echo "::error::Committed build output is out of date. Run 'npm run build' in packages/${LIBRARY_NAME} and commit the result."
+            exit 1
+          fi

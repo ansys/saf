@@ -451,8 +451,16 @@ jobs:
             secrets.PYANSYS_PYPI_PRIVATE_URL }}
           PIP_QUIET: 1
 
+      - name: Download extra packages for e2e tests (Moon)
+        if: matrix.download-extra-packages == 'true' && env.USE_MOON == 'true'
+        shell: bash
+        run: moon run root:download-wheel-for-e2e-tests
+        env:
+          PIP_EXTRA_INDEX_URL: https://PAT:${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}@${{
+            secrets.PYANSYS_PYPI_PRIVATE_URL }}
+
       - name: Download extra packages for e2e tests
-        if: matrix.download-extra-packages == 'true'
+        if: matrix.download-extra-packages == 'true' && env.USE_MOON == 'false'
         shell: bash
         run: |
           ${PYTHON_EXE} -m pip download --pre --no-deps ansys-saf-aspire ansys-saf-desktop-portal -d ${GITHUB_WORKSPACE}/extra_packages
@@ -513,11 +521,11 @@ jobs:
         shell: bash
         env:
           PYTEST_ARGS: ${{ steps.pytest-args.outputs.pytest-args }}
-          REPORTS_DIR: "${{ matrix.test-report-artifact-name-suffix }}_${{ inputs.python-version
-            }}"
+          REPORTS_DIR: "${{ github.workspace }}/${{ matrix.test-report-artifact-name-suffix
+            }}_${{ inputs.python-version }}"
         run: |
           mkdir -p "$REPORTS_DIR"
-          moon run $PACKAGE:test -- $PYTEST_ARGS --html="$REPORTS_DIR/report.html" --md="$REPORTS_DIR/report.md"
+          moon run $PACKAGE:test -- $PYTEST_ARGS --html="${REPORTS_DIR}/report.html" --md="${REPORTS_DIR}/report.md"
 
       - name: Publish pytest reports (Moon)
         if: always() && steps.run-tests-moon.outcome != 'skipped' && env.USE_MOON
@@ -526,8 +534,8 @@ jobs:
         with:
           name: "pytest_reports_${{ matrix.test-report-artifact-name-suffix }}_${{
             inputs.python-version }}"
-          path: ${{ matrix.test-report-artifact-name-suffix }}_${{ inputs.python-version
-            }}/**/*"
+          path: "${{ github.workspace }}/${{ matrix.test-report-artifact-name-suffix
+            }}_${{ inputs.python-version }}"
           if-no-files-found: warn
 
       - name: Publish pytest logs

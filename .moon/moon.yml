@@ -5,7 +5,7 @@ workspace:
     include: []
 
 tasks:
-  install:
+  uv-sync:
     command: "uv"
     args:
       - "sync"
@@ -54,3 +54,18 @@ tasks:
     options:
       runFromWorkspaceRoot: true
 
+  download-wheel-for-e2e-tests:
+    command: 'pip'
+    args:
+      - "download"
+      - "--pre"
+      - "--no-deps"
+      - "ansys-saf-aspire"
+      - "ansys-saf-desktop-portal"
+      - "-d"
+      - "./extra_packages"
+    outputs:
+      - "extra_packages"
+    env:
+      PIP_INDEX_URL: 'https://pypi.org/simple'
+      PIP_QUIET: '1'

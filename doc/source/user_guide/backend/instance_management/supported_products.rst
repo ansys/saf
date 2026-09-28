@@ -8,75 +8,99 @@ Overview
 
 By default, SAF GLOW Engine  includes product instance managers for the following products:
 
-.. list-table::
-   :header-rows: 1
-   :widths: 10 22 25 20 25
+.. raw:: html
 
-   *  - Product
-      - Supported versions
-      - Manager classes
-      - PyAnsys SDK
-      - Secure transport modes
-
-   *  - AEDT
-      - | 2025 R1 SP4,
-        | 2025 R2 SP4
-      - | ``HfssManager``
-        | ``IcepakManager``
-        | ``Maxwell2DManager``
-        | ``Maxwell3DManager``
-      - | ``pyaedt``
-        | 1.0.1
-      - WNUA, UDS, mTLS, insecure
-
-   *  - Fluent
-      - | 2025 R1 SP4,
-        | 2025 R2 SP4
-      - | ``Fluent3DDPSolverSecureManager``
-        | ``Fluent2DDPSolverSecureManager``
-        | ``Fluent3DDPMeshingSecureManager``
-      - | ``ansys-fluent-core``
-        | 0.37.0
-      - WNUA, UDS, mTLS, insecure
-
-   *  - Geometry
-      - | 2025 R1 SP4,
-        | 2025 R2 SP4
-      - ``GeometrySecureManager``
-      - | ``ansys-geometry-core``
-        | 0.14.2
-      - WNUA, UDS, mTLS, insecure
-
-   *  - MAPDL
-      - | 2025 R1 SP4,
-        | 2025 R2 SP4
-      - ``MapdlSecureManager``
-      - | ``ansys-mapdl-core``
-        | 0.73.0
-      - WNUA, UDS, mTLS, insecure
-
-   *  - Mechanical
-      - | 2025 R1 SP4,
-        | 2025 R2 SP4
-      - ``MechanicalSecureManager``
-      - | ``ansys-mechanical-core``
-        | 0.12.0
-      - WNUA, mTLS, insecure
-
-   *  - optiSLang
-      - | 2024 R1,
-        | 2024 R2
-      - ``OptislangManager``
-      - | ``ansys-optislang-core``
-        | 0.9.4
-      - N/A (insecure only)
-
-   *  - Visor
-      - 0.2.5b0
-      - ``VisorManager``
-      - | ``ansys-visor-viewer``
-        | 0.2.5b0
-      - N/A (insecure only)
+   <table class="pim-summary-table">
+     <thead>
+       <tr>
+         <th>Product</th>
+         <th>Supported versions</th>
+         <th>Manager classes</th>
+         <th>PyAnsys SDK</th>
+         <th>Secure transport modes</th>
+       </tr>
+     </thead>
+     <tbody>
+       <tr>
+         <td><strong>AEDT</strong></td>
+         <td>
+           <span class="pim-badge">2025 R1 SP4</span>
+           <span class="pim-badge">2025 R2 SP4</span>
+         </td>
+         <td>
+           <code>HfssManager</code><br>
+           <code>IcepakManager</code><br>
+           <code>Maxwell2DManager</code><br>
+           <code>Maxwell3DManager</code>
+         </td>
+         <td><code>pyaedt</code> <span class="pim-badge">1.0.1</span></td>
+         <td><span class="pim-secure-yes">WNUA, UDS, mTLS, insecure</span></td>
+       </tr>
+       <tr>
+         <td><strong>Fluent</strong></td>
+         <td>
+           <span class="pim-badge">2025 R1 SP4</span>
+           <span class="pim-badge">2025 R2 SP4</span>
+         </td>
+         <td>
+           <code>Fluent3DDPSolverSecureManager</code><br>
+           <code>Fluent2DDPSolverSecureManager</code><br>
+           <code>Fluent3DDPMeshingSecureManager</code>
+         </td>
+         <td><code>ansys-fluent-core</code> <span class="pim-badge">0.37.0</span></td>
+         <td><span class="pim-secure-yes">WNUA, UDS, mTLS, insecure</span></td>
+       </tr>
+       <tr>
+         <td><strong>Geometry</strong></td>
+         <td>
+           <span class="pim-badge">2025 R1 SP4</span>
+           <span class="pim-badge">2025 R2 SP4</span>
+         </td>
+         <td><code>GeometrySecureManager</code></td>
+         <td><code>ansys-geometry-core</code> <span class="pim-badge">0.14.2</span></td>
+         <td><span class="pim-secure-yes">WNUA, UDS, mTLS, insecure</span></td>
+       </tr>
+       <tr>
+         <td><strong>MAPDL</strong></td>
+         <td>
+           <span class="pim-badge">2025 R1 SP4</span>
+           <span class="pim-badge">2025 R2 SP4</span>
+         </td>
+         <td><code>MapdlSecureManager</code></td>
+         <td><code>ansys-mapdl-core</code> <span class="pim-badge">0.73.0</span></td>
+         <td><span class="pim-secure-yes">WNUA, UDS, mTLS, insecure</span></td>
+       </tr>
+       <tr>
+         <td><strong>Mechanical</strong></td>
+         <td>
+           <span class="pim-badge">2025 R1 SP4</span>
+           <span class="pim-badge">2025 R2 SP4</span>
+         </td>
+         <td><code>MechanicalSecureManager</code></td>
+         <td><code>ansys-mechanical-core</code> <span class="pim-badge">0.12.0</span></td>
+         <td><span class="pim-secure-yes">WNUA, mTLS, insecure</span></td>
+       </tr>
+       <tr>
+         <td><strong>optiSLang</strong></td>
+         <td>
+           <span class="pim-badge">2024 R1</span>
+           <span class="pim-badge">2024 R2</span>
+         </td>
+         <td><code>OptislangManager</code></td>
+         <td><code>ansys-optislang-core</code> <span class="pim-badge">0.9.4</span></td>
+         <td><span class="pim-secure-na">N/A (insecure only)</span></td>
+       </tr>
+       <tr>
+         <td><strong>Visor</strong></td>
+         <td>
+           <span class="pim-badge">0</span>
+         </td>
+         <td><code>VisorManager</code></td>
+         <td><code>ansys-visor-viewer</code> <span class="pim-badge">0.2.5b0</span></td>
+         <td><span class="pim-secure-na">N/A (insecure only)</span></td>
+       </tr>
+     </tbody>
+   </table>
 
 .. important::
 

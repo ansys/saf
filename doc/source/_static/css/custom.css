@@ -1213,37 +1213,70 @@ html::-webkit-scrollbar {
 
 /* ====================================== TABLE STYLING ====================================== */
 
-/* Collapse borders and set a uniform thin border on all four sides */
+/* "Table Style 5" from the Synopsys PowerPoint Development Kit: purple header with
+   white bold text, bold first column, alternating lavender/plain row striping, and a
+   thin light-gray grid. Applies to every docutils table (list-table, csv-table, grid
+   tables, ...), which render as `table.table`. */
+
+/* Theme-aware palette (light defaults) */
+.bd-article {
+    --saf-table-header-bg: #6A3A96;
+    --saf-table-header-fg: #ffffff;
+    --saf-table-stripe-bg: #ecebf5;
+    --saf-table-border: #d5d3e0;
+}
+
+[data-theme="dark"] .bd-article {
+    --saf-table-header-bg: #6A3A96;
+    --saf-table-header-fg: #ffffff;
+    --saf-table-stripe-bg: rgba(138, 88, 182, 0.16);
+    --saf-table-border: rgba(255, 255, 255, 0.14);
+}
+
 .bd-article table.table {
     border-collapse: collapse !important;
-    border: 1px solid #b0b0b0 !important;
+    border: 1px solid var(--saf-table-border) !important;
+    width: 100%;
 }
 
-.bd-article table.table td,
-.bd-article table.table th {
-    border: 1px solid #b0b0b0 !important;
-    padding-top: 0.8rem !important;
-    padding-bottom: 0.8rem    !important;
+/* Cells: thin grid, comfortable padding, theme-aware text color. Content is
+   left aligned by default (no !important, so an explicit alignment still wins). */
+.bd-article table.table th,
+.bd-article table.table td {
+    border: 1px solid var(--saf-table-border) !important;
+    padding: 0.6rem 0.85rem !important;
+    vertical-align: middle;
+ text-align: left;
+    color: var(--pst-color-text-base);
 }
 
-/* Remove the extra border-bottom the theme places on thead/tr elements */
+/* Header row: purple background, white bold text */
+.bd-article table.table thead th,
+.bd-article table.table thead th.head {
+    background-color: var(--saf-table-header-bg) !important;
+    color: var(--saf-table-header-fg) !important;
+    font-weight: 700 !important;
+    border-color: var(--saf-table-border) !important;
+}
+
+/* Bold row-label first column */
+.bd-article table.table tbody tr > :first-child {
+    font-weight: 700 !important;
+}
+
+/* Alternating body rows: shade the 1st, 3rd, 5th... data rows, independent of the
+   docutils row-odd/row-even parity (which shifts when a header row is present). */
+.bd-article table.table tbody tr:nth-child(odd) > * {
+    background-color: var(--saf-table-stripe-bg) !important;
+}
+
+.bd-article table.table tbody tr:nth-child(even) > * {
+    background-color: transparent !important;
+}
+
+/* Drop the theme's extra thead/tr bottom border so only the grid above shows */
 .bd-article table.table thead,
-.bd-article table.table tr {
-    border-bottom: none !important;
-}
-
-/* Dark mode: subtle borders */
-[data-theme="dark"] .bd-article table.table {
-    border: 1px solid #3e3e3e !important;
-}
-
-[data-theme="dark"] .bd-article table.table td,
-[data-theme="dark"] .bd-article table.table th {
-    border: 1px solid #3e3e3e !important;
-}
-
-[data-theme="dark"] .bd-article table.table thead,
-[data-theme="dark"] .bd-article table.table tr {
+.bd-article table.table tbody tr {
     border-bottom: none !important;
 }
 

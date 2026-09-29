@@ -167,7 +167,7 @@ jobs:
       commit-is-already-tagged: ${{ steps.verify-tag.outputs.commit-is-already-tagged
         }}
       library-name: ${{ steps.library-name.outputs.library-name }}
-      use-moon: ${{ contains('bdm-python-api,bdm-python-shared-volume,saf-iam-oidc,saf-product-configuration',
+      use-moon: ${{ contains('bdm-python-api,bdm-python-shared-volume,saf-iam-oidc,saf-product-configuration,saf-testing',
         steps.library-name.outputs.library-name) }}
 
   check-package-changes:
@@ -353,7 +353,7 @@ jobs:
         }}-extended.json
       working-directory: packages/${{ needs.pre-certification.outputs.library-name
         }}
-      use-moon: false
+      use-moon: ${{ needs.pre-certification.outputs.use-moon == 'true' }}
       library-name: ${{ needs.pre-certification.outputs.library-name }}
     secrets:
       ANS_MINERVA_URL: ${{ secrets.ANS_MINERVA_URL }}
@@ -396,7 +396,7 @@ jobs:
         }}-${{ matrix.flagship }}.json
       working-directory: packages/${{ needs.pre-certification.outputs.library-name
         }}
-      use-moon: false
+      use-moon: ${{ needs.pre-certification.outputs.use-moon == 'true' }}
       library-name: ${{ needs.pre-certification.outputs.library-name }}
     secrets:
       ANS_MINERVA_URL: ${{ secrets.ANS_MINERVA_URL }}
@@ -476,7 +476,7 @@ jobs:
       python-version: ${{ matrix.python-version }}
       use-moon: ${{ needs.pre-certification.outputs.use-moon == 'true' }}
       artifact-name: ${{ needs.pre-certification.outputs.library-name }}-${{ matrix.python-version
-        }}${{ case(contains('bdm-python-api,bdm-python-shared-volume,saf-iam-oidc',
+        }}${{ case(contains('bdm-python-api,bdm-python-shared-volume,saf-iam-oidc,saf-product-configuration,saf-testing',
         needs.pre-certification.outputs.library-name), '-artifacts', '') }}
 
   check-wheel-can-be-pip-installed:

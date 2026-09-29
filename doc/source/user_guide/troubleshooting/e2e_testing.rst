@@ -12,7 +12,7 @@ suite of a solution. See :ref:`test_e2e` for a description of the suite itself.
   ``_get_installer_path``.
 * **Shortcut not found:** update the solution display name and platform-specific
   desktop path.
-* **API/UI timeout:** check the URL patterns and platform-specific Glow log
+* **API/UI timeout:** check the URL patterns and platform-specific GLOW log
   directory used by ``running_examples``.
 * **No pages discovered:** inspect the rendered DOM and update the navigation
   selectors or group detection helpers.
@@ -23,5 +23,5 @@ suite of a solution. See :ref:`test_e2e` for a description of the suite itself.
 * **Dependency verification failure:** compare the ``saf install`` dependency
   groups with the groups reported by ``poetry show`` and check that the
   solution's lock file is current.
-* **Processes remain after pytest:** verify that the launcher teardown stops the
+* **Processes remain after pytest:** verify that the launcher cleanup stops the
   parent and all child processes.

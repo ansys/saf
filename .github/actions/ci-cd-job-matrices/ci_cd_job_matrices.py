@@ -89,6 +89,7 @@ UV_PACKAGES = [
     "bdm-python-shared-volume",
     "saf-iam-oidc",
     "saf-product-configuration",
+    "saf-testing",
 ]
 
 JS_PACKAGES = [

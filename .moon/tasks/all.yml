@@ -55,6 +55,26 @@ tasks:
     options:
       runFromWorkspaceRoot: true
 
+  ruff-fix:
+    description: "Run ruff fix"
+    command:
+      - "uv"
+      - "run"
+      - "--package"
+      - "$projectAlias"
+      - "--all-extras"
+      - "ruff"
+      - "check"
+      - "--fix"
+      - "$projectSource"
+    inputs:
+      - "src/**/*"
+      - "tests/**/*"
+      - "pyproject.toml"
+      - "/.python-version"
+    options:
+      runFromWorkspaceRoot: true
+
   ruff-format:
     description: "Run ruff format"
     command:
@@ -117,10 +137,9 @@ tasks:
 
   twine-check:
     description: "Check distribution with twine"
-    command: "uv"
+    command: "uvx"
     args:
-      - "run"
-      - "twine"
+      - "twine@7.0.0"
       - "check"
       - "dist/*.whl"
       - "dist/*.tar.gz"
@@ -131,13 +150,7 @@ tasks:
       runFromWorkspaceRoot: true
 
   test:
-    command: 'noop'
-    deps:
-      - '~:pytest-windows'
-      - '~:pytest-linux'
-
-  pytest-windows:
-    description: "Run pytest on Windows"
+    description: "Run pytest"
     command: 'uv'
     args:
       - "run"
@@ -151,38 +164,24 @@ tasks:
       - "--cov-report=term"
       - "--cov-report=xml"
       - "--cov-report=html"
+      - "-s" # Disable capturing of stdout and stderr during tests
+    env:
+      PYTHONUNBUFFERED: '1'
     options:
-      os: 'windows'
+      outputStyle: "stream"
+    inputs:
+      - "src/**/*"
+      - "tests/**/*"
+      - "pyproject.toml"
+      - "/uv.lock"
+      - "/.python-version"
+
+  test-windows:
+    extends: "test"
     env:
       PYTEST_DEBUG_TEMPROOT: 'C:/'
-    inputs:
-      - "src/**/*"
-      - "tests/**/*"
-      - "pyproject.toml"
-      - "/.python-version"
-
-  pytest-linux:
-    description: "Run pytest on Linux"
-    command: 'uv'
-    args:
-      - "run"
-      - "--package"
-      - "$projectAlias"
-      - "--all-extras"
-      - "pytest"
-      - "-p"
-      - "no:faulthandler"
-      - "--cov=."
-      - "--cov-report=term"
-      - "--cov-report=xml"
-      - "--cov-report=html"
     options:
-      os: 'linux'
-    inputs:
-      - "src/**/*"
-      - "tests/**/*"
-      - "pyproject.toml"
-      - "/.python-version"
+      os: 'windows'
 
   build-doc:
     description: "Build API documentation"

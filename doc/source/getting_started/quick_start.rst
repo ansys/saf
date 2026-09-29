@@ -354,7 +354,7 @@ Run the solution from SAF Portal
 
 The solution opens in the SAF Portal user interface. SAF Portal provides a project management interface for the solution, allowing you to create new projects, view existing projects, and manage project settings.
 
-.. image:: /_static/images/minimal_solution_portal_ui_empty.png
+.. image:: /_static/images/minimal_solution_projects_dashboard_ui_empty.png
    :alt: Solution opened in SAF Portal
 
 

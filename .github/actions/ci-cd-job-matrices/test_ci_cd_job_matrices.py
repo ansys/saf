@@ -106,7 +106,6 @@ def read_summary(summary_file: Path) -> str:
     """Read the GitHub step summary file content."""
     return summary_file.read_text(encoding="utf-8")
 
-
 class TestWriteOutput:
     """Test the write_output function with various input types."""
 
@@ -150,7 +149,6 @@ class TestWriteOutput:
         assert outputs["key2"] == "value2"
         assert outputs["key3"] == "value3"
 
-
 class TestWriteToGithubStepSummary:
     """Test the write_to_github_step_summary function."""
 
@@ -190,7 +188,6 @@ class TestWriteToGithubStepSummary:
         summary = read_summary(summary_file)
         assert "First summary" in summary
         assert "Second summary" in summary
-
 
 class TestWriteMatrixToOutput:
     """Test the write_matrix_to_output function."""
@@ -255,7 +252,6 @@ class TestWriteMatrixToOutput:
         matrix = json.loads(outputs["formatted_matrix"])
         assert "include" in matrix
         assert len(matrix["include"]) == 2
-
 
 class TestGetPrChanges:
     """Test the get_pr_changes function."""
@@ -402,7 +398,7 @@ class TestGetChangedMoonPackages:
 
     def test_get_changed_moon_packages_filters_invalid_packages(self, github_env: tuple[Path, Path]):
         """Invalid and non-Moon packages are filtered out."""
-        result = get_changed_moon_packages(["invalid-pkg", "saf-testing"])
+        result = get_changed_moon_packages(["invalid-pkg", "saf-cli"])
 
         assert result == []
 
@@ -463,12 +459,12 @@ class TestGetCodeStyleMatrixEntries:
     def test_get_code_style_matrix_single_package(self, github_env: tuple[Path, Path]):
         """Single package includes one package entry."""
         output_file, _ = github_env
-        get_code_style_matrix_entries(["saf-testing"])
+        get_code_style_matrix_entries(["saf-cli"])
 
         outputs = parse_outputs(output_file)
         matrix = json.loads(outputs["code_style_matrix"])
         assert len(matrix["include"]) == 1
-        assert matrix["include"][0]["target-directory"] == "packages/saf-testing"
+        assert matrix["include"][0]["target-directory"] == "packages/saf-cli"
         assert matrix["include"][0]["dependency-manager"] == "poetry"
 
     def test_get_code_style_matrix_includes_examples(self, github_env: tuple[Path, Path]):
@@ -488,7 +484,7 @@ class TestGetCodeStyleMatrixEntries:
     def test_get_code_style_matrix_multiple_packages(self, github_env: tuple[Path, Path]):
         """Multiple packages are all included."""
         output_file, _ = github_env
-        get_code_style_matrix_entries(["glow-engine", "saf-testing"])
+        get_code_style_matrix_entries(["glow-engine", "saf-cli"])
 
         outputs = parse_outputs(output_file)
         matrix = json.loads(outputs["code_style_matrix"])
@@ -497,7 +493,7 @@ class TestGetCodeStyleMatrixEntries:
     def test_get_code_style_matrix_uses_default_poetry_args(self, github_env: tuple[Path, Path]):
         """Packages without custom args use default."""
         output_file, _ = github_env
-        get_code_style_matrix_entries(["saf-testing"])
+        get_code_style_matrix_entries(["saf-cli"])
 
         outputs = parse_outputs(output_file)
         matrix = json.loads(outputs["code_style_matrix"])
@@ -517,7 +513,7 @@ class TestGetCodeStyleMatrixEntries:
     def test_get_code_style_matrix_multiple_packages_custom_args(self, github_env: tuple[Path, Path]):
         """Multiple packages with different custom args are handled correctly."""
         output_file, _ = github_env
-        get_code_style_matrix_entries(["glow-engine", "saf-testing", "saf-desktop-orchestrator"])
+        get_code_style_matrix_entries(["glow-engine", "saf-cli", "saf-desktop-orchestrator"])
 
         outputs = parse_outputs(output_file)
         matrix = json.loads(outputs["code_style_matrix"])
@@ -526,9 +522,9 @@ class TestGetCodeStyleMatrixEntries:
         glow_entry = [e for e in matrix["include"] if e["target-directory"] == "packages/glow-engine"][0]
         assert glow_entry["poetry-install-args"] == "--with tests,style --all-extras"
 
-        # Check saf-testing entry (default args)
-        testing_entry = [e for e in matrix["include"] if e["target-directory"] == "packages/saf-testing"][0]
-        assert testing_entry["poetry-install-args"] == "--with tests --all-extras"
+        # Check saf-cli entry (default args)
+        saf_cli_entry = [e for e in matrix["include"] if e["target-directory"] == "packages/saf-cli"][0]
+        assert saf_cli_entry["poetry-install-args"] == "--with tests --all-extras"
 
         # Check saf-desktop-orchestrator entry (custom args)
         desktop_entry = [e for e in matrix["include"] if e["target-directory"] == "packages/saf-desktop-orchestrator"][

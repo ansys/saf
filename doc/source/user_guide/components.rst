@@ -236,7 +236,7 @@ Provides a portal for managing projects within a SAF solution. It helps users to
   - Import and export support for .safx project files
   - Notifications, loading states, error handling, and CRUD action results exposed to Dash callbacks
   - Light and dark theme support, including integration with external theme providers
-  - Reusable Dash subcomponents for project lists, tables, filters, pagination, forms, menus, and metadata
+  - Reusable Dash components for project lists, tables, filters, pagination, forms, menus, and metadata
 
 .. _components_bdm_python_api:
 

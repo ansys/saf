@@ -336,7 +336,7 @@ Step template gallery
     - A step that submits a simple job to Ansys HPC Platform Services (HPS).
       Generates the boilerplate for job submission, status polling, and result
       retrieval.
-    - ``ansys-saf-sdk[core-hps]``, | ``dash-iconify``
+    - ``ansys-saf-sdk[core-hps]``, ``dash-iconify``
     - SAF SDK
   * - ``hps-parametric-study-step``
     - A step that runs a parametric study on HPS. Extends the simple job step

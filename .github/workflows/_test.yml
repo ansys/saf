@@ -402,7 +402,7 @@ jobs:
       - name: Install pim-light-server with Moon
         if: ${{ matrix.install-pim-light-server == 'true' && env.USE_MOON == 'true' }}
         shell: bash
-        run: moon run install-pim-light-server
+        run: moon run $PACKAGE:install-pim-light-server
         env:
           PIP_EXTRA_INDEX_URL: https://PAT:${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}@${{
             secrets.PYANSYS_PYPI_PRIVATE_URL }}
@@ -436,7 +436,7 @@ jobs:
       - name: Install desktop-portal with Moon
         if: ${{ matrix.install-portal == 'true' && env.USE_MOON == 'true' }}
         shell: bash
-        run: moon run install-desktop-portal
+        run: moon run $PACKAGE:install-desktop-portal
         env:
           PIP_EXTRA_INDEX_URL: https://PAT:${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}@${{
             secrets.PYANSYS_PYPI_PRIVATE_URL }}
@@ -457,7 +457,7 @@ jobs:
       - name: Install aspire dashboard with Moon
         if: ${{ matrix.install-ansys-saf-aspire == 'true' && env.USE_MOON == 'true' }}
         shell: bash
-        run: moon run install-ansys-saf-aspire
+        run: moon run $PACKAGE:install-ansys-saf-aspire
         env:
           PIP_EXTRA_INDEX_URL: https://PAT:${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}@${{
             secrets.PYANSYS_PYPI_PRIVATE_URL }}

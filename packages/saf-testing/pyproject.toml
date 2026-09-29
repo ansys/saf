@@ -58,7 +58,7 @@ optional-dependencies.pim = [
 ]
 optional-dependencies.selenium = [ "selenium>=4.0,<5" ]
 
-[project.entry-points.pytest12]
+[project.entry-points.pytest11]
 # By registering the plugins here, they can be used without needing to declare them in pytest_plugins.
 # https://docs.pytest.org/en/stable/how-to/writing_plugins.html#making-your-plugin-installable-by-others
 saf_testing_directories = "ansys.saf.testing.directories"

@@ -18,9 +18,10 @@ from collections.abc import Callable
 from pathlib import Path
 import re
 
+import httpx2
+
 from ansys.saf.testing.common import find_exec_in_venv
 from ansys.saf.testing.process import Process
-import httpx2
 
 
 class OrchestratorProcess(Process):

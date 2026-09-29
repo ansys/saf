@@ -15,7 +15,7 @@
 # limitations under the License.
 
 import contextlib
-from io import TextIOWrapper
+from io import TextIOWrapper  # noqa: TC003
 import logging
 import os
 from pathlib import Path

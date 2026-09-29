@@ -16,14 +16,14 @@
 
 from __future__ import annotations
 
-from collections.abc import MutableMapping
+from collections.abc import MutableMapping  # noqa: TC003
 from functools import partial
 import importlib
 import json
 import logging
 import logging.config
 import os
-from pathlib import Path
+from pathlib import Path  # noqa: TC003
 import platform
 import signal
 import sys
@@ -236,11 +236,10 @@ def _run_solution_stack_inner(  # noqa: C901
 ) -> None:
     # These imports are run here because they take a significant amount of time, which would delay the splash screen
     # if they were imported at a module level.
-    from ansys.saf.glow.cli import run_analysis
-
     from ansys.saf.desktop.orchestrator._config.schema import GLOW_PRODUCT_INSTANCE_SYSTEM, Settings
     from ansys.saf.desktop.orchestrator._orchestration.launcher import Launcher
     from ansys.saf.desktop.orchestrator._orchestration.streamlit_launcher import StreamlitLauncher
+    from ansys.saf.glow.cli import run_analysis
 
     analysis_result = run_analysis(solution_main_module_name=solution_main_module_name)
     if not analysis_result.valid:

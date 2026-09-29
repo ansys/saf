@@ -17,7 +17,6 @@
 """Solution definition module."""
 
 from ansys.saf.glow.solution import Solution, StepsModel
-
 from tests.mocks.solutions.minimal_streamlit_solution.solution.first_step import FirstStep
 from tests.mocks.solutions.minimal_streamlit_solution.solution.second_step import SecondStep
 

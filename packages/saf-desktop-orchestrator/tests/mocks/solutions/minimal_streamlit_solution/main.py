@@ -17,7 +17,6 @@
 """Entry point."""
 
 from ansys.saf.glow.runtime import glow_main
-
 from tests.mocks.solutions.minimal_streamlit_solution.solution import definition
 
 

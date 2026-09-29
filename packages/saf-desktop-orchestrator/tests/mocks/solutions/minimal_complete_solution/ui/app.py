@@ -18,7 +18,6 @@
 #
 
 
-from ansys.saf.glow.client import callback
 from dash import Input, Output, State, dcc, html  # pyright: ignore[reportMissingTypeStubs]
 from dash_extensions.enrich import (  # pyright: ignore[reportMissingTypeStubs]
     DashProxy,
@@ -26,6 +25,7 @@ from dash_extensions.enrich import (  # pyright: ignore[reportMissingTypeStubs]
     TriggerTransform,
 )
 
+from ansys.saf.glow.client import callback
 from tests.mocks.solutions.minimal_complete_solution.solution.definition import MySolution
 
 app = DashProxy(

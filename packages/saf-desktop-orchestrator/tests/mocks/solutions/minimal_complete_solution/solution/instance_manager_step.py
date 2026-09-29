@@ -21,7 +21,6 @@ from ansys.saf.glow.solution import (
     instance,
     transaction,
 )
-
 from tests.mocks.solutions.minimal_complete_solution.solution.custom_product_manager import CustomProductManager
 
 

@@ -65,7 +65,9 @@ tasks:
       - "-d"
       - "./extra_packages"
     outputs:
-      - "extra_packages"
+      - "./extra_packages"
     env:
       PIP_INDEX_URL: 'https://pypi.org/simple'
       PIP_QUIET: '1'
+    options:
+      cache: false

@@ -17,10 +17,11 @@
 from pathlib import Path
 import re
 
-from ansys.saf.testing.common import find_exec_in_venv
-from ansys.saf.testing.process import Process
 import httpx2
 from tenacity import TryAgain, retry, stop_after_attempt, wait_fixed
+
+from ansys.saf.testing.common import find_exec_in_venv
+from ansys.saf.testing.process import Process
 
 
 @retry(stop=stop_after_attempt(200), wait=wait_fixed(0.5))

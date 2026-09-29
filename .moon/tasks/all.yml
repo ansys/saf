@@ -176,13 +176,6 @@ tasks:
       - "/uv.lock"
       - "/.python-version"
 
-  test-windows:
-    extends: "test"
-    env:
-      PYTEST_DEBUG_TEMPROOT: 'C:/'
-    options:
-      os: 'windows'
-
   build-doc:
     description: "Build API documentation"
     command: 'uv'

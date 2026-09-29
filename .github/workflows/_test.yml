@@ -484,7 +484,7 @@ jobs:
           which xvfb-run
 
       - name: Configure PYTEST_DEBUG_TEMPROOT
-        if: runner.os != 'Linux' && env.USE_MOON == 'false'
+        if: runner.os != 'Linux'
         shell: bash
         run: echo "PYTEST_DEBUG_TEMPROOT=C:/" >> $GITHUB_ENV
 

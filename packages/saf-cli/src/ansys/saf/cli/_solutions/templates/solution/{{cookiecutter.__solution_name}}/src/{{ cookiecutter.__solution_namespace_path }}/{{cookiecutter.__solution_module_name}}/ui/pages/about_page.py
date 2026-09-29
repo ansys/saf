@@ -72,7 +72,6 @@ def layout():
                     ),
                     dmc.GridCol(
                         [
-
                             dmc.Tooltip(
                                 dmc.Image(
                                     src=dash.get_asset_url("images/workflow-placeholder.png"),

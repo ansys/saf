@@ -26,11 +26,23 @@ tasks:
     options:
       cache: false
 
+  install-pim-light-server:
+    deps:
+      - target: "~:install-private-dependency"
+        args:
+          - "ansys-saf-pim-light-server==0.3.12"
+
   install-ansys-saf-aspire:
     deps:
       - target: "~:install-private-dependency"
         args:
           - "ansys-saf-aspire==9.1.6"
+
+  install-portal:
+    deps:
+      - target: "~:install-private-dependency"
+        args:
+          - "ansys-saf-desktop-portal==0.4.dev2"
 
   pre-commit:
     description: "Run pre-commit against this package's files only (root-level files are handled by root:pre-commit)"

@@ -38,7 +38,7 @@ tasks:
         args:
           - "ansys-saf-aspire==9.1.6"
 
-  install-portal:
+  install-saf-desktop-portal:
     deps:
       - target: "~:install-private-dependency"
         args:

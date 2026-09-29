@@ -438,7 +438,7 @@ jobs:
       - name: Install desktop-portal with Moon
         if: ${{ matrix.install-portal == 'true' && env.USE_MOON == 'true' }}
         shell: bash
-        run: moon run $PACKAGE:install-desktop-portal
+        run: moon run $PACKAGE:install-saf-desktop-portal
         env:
           UV_EXTRA_INDEX_URL: https://PAT:${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}@${{
             secrets.PYANSYS_PYPI_PRIVATE_URL }}

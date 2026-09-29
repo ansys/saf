@@ -6,20 +6,20 @@ requires = [ "uv-build>=0.12.18,<0.13" ]
 name = "ansys-saf-desktop-orchestrator"
 version = "1.15.dev0"
 description = "Solution Application Framework (SAF) Desktop Orchestrator"
+readme = "README.rst"
+keywords = [
+  "ansys solutions",
+  "glow",
+  "python",
+  "saf",
+  "solution",
+  "solution application framework",
+]
 license = "Apache-2.0"
 license-files = [ "LICENSE" ]
 maintainers = [ { name = "ANSYS, Inc.", email = "pyansys-core@synopsys.com" } ]
 authors = [ { name = "ANSYS, Inc.", email = "pyansys-core@synopsys.com" } ]
 requires-python = ">=3.11,<4"
-readme = "README.rst"
-keywords = [
-  "solution application framework",
-  "ansys solutions",
-  "python",
-  "glow",
-  "saf",
-  "solution",
-]
 classifiers = [
   "Development Status :: 4 - Beta",
   "Intended Audience :: Other Audience",
@@ -40,16 +40,15 @@ dependencies = [
   "httpx2>=2.5.0,<3.0",
   "psutil>=7.0,<8.0",
   "pydantic>=2.7,<3.0",
-  "pydantic-settings>=2.0.2,<3.0,!=2.6.0", # In 2.6.0, they changed how Settings.model_validate() works, breaking everything: https://github.com/pydantic/pydantic-settings/issues/445. It was fixed in 2.6.1.
+  "pydantic-settings>=2.0.2,<3.0,!=2.6.0",         # In 2.6.0, they changed how Settings.model_validate() works, breaking everything: https://github.com/pydantic/pydantic-settings/issues/445. It was fixed in 2.6.1.
   "python-dotenv>=1.0.0,<2.0",
-  "pythonnet>=3.1.0,<3.15; python_version<'3.15' ",
+  "pythonnet>=3.1.0,<3.15; python_version<'3.15'",
   "pywebview>=6.2.1,<7.0",
   "pyyaml>=6.0,<7.0",
   "typing-extensions>=4.12.2,<5.0",
 ]
 
-[project.scripts]
-solution-app-starter = "ansys.saf.desktop.orchestrator._scripts.solution_app_starter:run_solution"
+scripts.solution-app-starter = "ansys.saf.desktop.orchestrator._scripts.solution_app_starter:run_solution"
 
 [tool.pytest]
 log_cli = true

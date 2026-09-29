@@ -1220,14 +1220,14 @@ html::-webkit-scrollbar {
 
 /* Theme-aware palette (light defaults) */
 .bd-article {
-    --saf-table-header-bg: #6f3fa0;
+    --saf-table-header-bg: #6A3A96;
     --saf-table-header-fg: #ffffff;
     --saf-table-stripe-bg: #ecebf5;
     --saf-table-border: #d5d3e0;
 }
 
 [data-theme="dark"] .bd-article {
-    --saf-table-header-bg: #6e3fa3;
+    --saf-table-header-bg: #6A3A96;
     --saf-table-header-fg: #ffffff;
     --saf-table-stripe-bg: rgba(138, 88, 182, 0.16);
     --saf-table-border: rgba(255, 255, 255, 0.14);

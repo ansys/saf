@@ -861,7 +861,7 @@ def test_run_orchestrator_with_filelogs_and_otel_env_var(option_from_cli: bool, 
     raises an error.
     """
     monkeypatch.setenv(OTEL_EXPORTER_OTLP_ENDPOINT, "something")
-    python_exec = find_exec_in_venv(Path.cwd(), "python")
+    python_exec = find_exec_in_venv(Path.cwd().parent.parent, "python")
     args = [
         python_exec,
         "-m",

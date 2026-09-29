@@ -100,7 +100,7 @@ jobs:
       - ubuntu-latest
     steps:
       - id: verify-tag
-        uses: ansys/saf-devops/verify-tag-and-commit@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
+        uses: ansys/saf-devops/verify-tag-and-commit@05e496627cef1b70380fe627cfe2b70550e79a87 # v1.1.0
         with:
           tag: certified-${{ inputs.library-name }}
 
@@ -267,7 +267,7 @@ jobs:
       - name: Get production dependencies
         if: ${{ contains(env.UV_BASED_PACKAGES, needs.pre-certification.outputs.library-name)
           }}
-        uses: ansys/saf-devops/get-production-dependencies@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
+        uses: ansys/saf-devops/get-production-dependencies@05e496627cef1b70380fe627cfe2b70550e79a87 # v1.1.0
         with:
           poetry-version: ${{ vars.POETRY_VERSION }}
           poetry-parent-directory: packages/${{ needs.pre-certification.outputs.library-name
@@ -278,7 +278,7 @@ jobs:
         if: ${{ contains(env.UV_BASED_PACKAGES, needs.pre-certification.outputs.library-name)
           }}
         id: analyze-dependabot
-        uses: ansys/saf-devops/analyze-dependabot-alerts@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
+        uses: ansys/saf-devops/analyze-dependabot-alerts@05e496627cef1b70380fe627cfe2b70550e79a87 # v1.1.0
         with:
           severity-level: high
           manifest-path: packages/${{ needs.pre-certification.outputs.library-name
@@ -477,7 +477,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check if wheel can be pip installed
-        uses: ansys/saf-devops/pip-install-production-wheel@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
+        uses: ansys/saf-devops/pip-install-production-wheel@05e496627cef1b70380fe627cfe2b70550e79a87 # v1.1.0
         with:
           python-version: ${{ matrix.python-version }}
           wheel-artifact: '${{ needs.pre-certification.outputs.library-name }}-${{
@@ -562,6 +562,6 @@ jobs:
       - ubuntu-latest
     steps:
       - name: tagging commit
-        uses: ansys/saf-devops/apply-tag-on-commit@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
+        uses: ansys/saf-devops/apply-tag-on-commit@05e496627cef1b70380fe627cfe2b70550e79a87 # v1.1.0
         with:
           tag: certified-${{ needs.pre-certification.outputs.library-name }}

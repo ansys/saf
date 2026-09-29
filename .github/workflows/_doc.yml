@@ -132,7 +132,7 @@ jobs:
 
       - name: Get version
         id: info
-        uses: ansys/saf-devops/get-information-from-pyproject@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
+        uses: ansys/saf-devops/get-information-from-pyproject@05e496627cef1b70380fe627cfe2b70550e79a87 # v1.1.0
         with:
           pyproject-path: packages/${{ matrix.package }}/pyproject.toml
 
@@ -150,7 +150,7 @@ jobs:
 
       - name: Deploy stable doc
         if: ${{ !contains(steps.info.outputs.patch-version, 'dev') }}
-        uses: ansys/saf-devops/doc-deploy-stable@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
+        uses: ansys/saf-devops/doc-deploy-stable@05e496627cef1b70380fe627cfe2b70550e79a87 # v1.1.0
         with:
           cname: ${{ vars.CNAME }}
           token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
@@ -189,7 +189,7 @@ jobs:
 
       - name: Install dependencies
         id: prepare-env
-        uses: ansys/saf-devops/prepare-python-environment@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
+        uses: ansys/saf-devops/prepare-python-environment@05e496627cef1b70380fe627cfe2b70550e79a87 # v1.1.0
         with:
           python-version: ${{ vars.PYTHON_VERSION }}
           poetry-version: ${{ vars.POETRY_VERSION }}
@@ -212,7 +212,7 @@ jobs:
 
       - name: Get version
         id: info
-        uses: ansys/saf-devops/get-information-from-pyproject@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
+        uses: ansys/saf-devops/get-information-from-pyproject@05e496627cef1b70380fe627cfe2b70550e79a87 # v1.1.0
         with:
           pyproject-path: packages/${{ matrix.package }}/pyproject.toml
 
@@ -230,7 +230,7 @@ jobs:
 
       - name: Deploy stable doc
         if: ${{ !contains(steps.info.outputs.patch-version, 'dev') }}
-        uses: ansys/saf-devops/doc-deploy-stable@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
+        uses: ansys/saf-devops/doc-deploy-stable@05e496627cef1b70380fe627cfe2b70550e79a87 # v1.1.0
         with:
           cname: ${{ vars.CNAME }}
           token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
@@ -356,12 +356,12 @@ jobs:
     steps:
       - name: Get version
         id: info
-        uses: ansys/saf-devops/get-information-from-pyproject@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
+        uses: ansys/saf-devops/get-information-from-pyproject@05e496627cef1b70380fe627cfe2b70550e79a87 # v1.1.0
         with:
           pyproject-path: packages/saf-sdk/pyproject.toml
 
       - name: Deploy stable doc
-        uses: ansys/saf-devops/doc-deploy-stable@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
+        uses: ansys/saf-devops/doc-deploy-stable@05e496627cef1b70380fe627cfe2b70550e79a87 # v1.1.0
         with:
           cname: ${{ vars.CNAME }}
           token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}

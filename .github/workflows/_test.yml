@@ -330,7 +330,7 @@ jobs:
       - name: Prepare runner for tests
         if: matrix.prepare-runner == 'true' || matrix.upgrade-docker == 'true' ||
           matrix.install-hps == 'true'
-        uses: ansys/saf-devops/prepare-runner-for-tests@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
+        uses: ansys/saf-devops/prepare-runner-for-tests@05e496627cef1b70380fe627cfe2b70550e79a87 # v1.1.0
         with:
           python-version: ${{ inputs.python-version }}
           upgrade-docker: ${{ matrix.upgrade-docker == 'true' }}
@@ -373,7 +373,7 @@ jobs:
       - name: Install dependencies
         if: ${{ env.USE_MOON == 'false' }}
         id: prepare-env
-        uses: ansys/saf-devops/prepare-python-environment@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
+        uses: ansys/saf-devops/prepare-python-environment@05e496627cef1b70380fe627cfe2b70550e79a87 # v1.1.0
         with:
           python-version: ${{ inputs.python-version }}
           poetry-version: ${{ vars.POETRY_VERSION }}
@@ -501,7 +501,7 @@ jobs:
       - name: Run tests
         id: run-tests
         if: ${{ env.USE_MOON == 'false' }}
-        uses: ansys/saf-devops/run-tests@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
+        uses: ansys/saf-devops/run-tests@05e496627cef1b70380fe627cfe2b70550e79a87 # v1.1.0
         with:
           python-version: ${{ inputs.python-version }}
           poetry-version: ${{ vars.POETRY_VERSION}}
@@ -552,7 +552,7 @@ jobs:
         if: ${{ always() && (steps.run-tests.outcome != 'cancelled' || steps.run-tests-moon.outcome
           != 'cancelled') && (steps.run-tests.outcome != 'skipped' || steps.run-tests-moon.outcome
           != 'skipped') && matrix.install-hps == 'true' }}
-        uses: ansys/saf-devops/collect-hps-logs@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
+        uses: ansys/saf-devops/collect-hps-logs@05e496627cef1b70380fe627cfe2b70550e79a87 # v1.1.0
         with:
           artifact-prefix: "hps_test_reports_${{ matrix.test-report-artifact-name-suffix
             }}_${{ inputs.python-version }}_${{ runner.os }}"

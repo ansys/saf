@@ -201,8 +201,8 @@ That contract is split across two files:
    * - ``poetry.lock``
      - The generated **resolution** file. Do not edit it manually. It pins the exact version and
        hash of every direct and transitive dependency that satisfies the constraints in
-       ``pyproject.toml``. It ensures that your machine, your colleague's machine, the CI
-       pipeline, and the final installer use an identical environment.
+      ``pyproject.toml``. It ensures that your machine, your colleague's machine, the CI
+      pipeline, and the final installer select dependencies from the same locked resolution.
 
 The two files must stay consistent. The ``saf install`` command installs from ``poetry.lock``, and Poetry refuses to do so if the lock file no longer matches the manifest. This is why every dependency change goes through ``poetry lock``, as shown in
 :ref:`Declare the dependencies <game_of_life_declare_dependencies>`.

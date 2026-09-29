@@ -17,7 +17,7 @@ The standalone repository at `ansys/saf-projects-dashboard` carries four workflo
 Two things make this package different from every other package in the monorepo:
 
 1. **It needs Node.** The wheel's payload is a webpack bundle plus Python component wrappers
-   generated from TypeScript. It has 12 Jest suites under `src/ts/__tests__/`. A grep of
+   generated from TypeScript. It has 10 Jest suites under `src/ts/__tests__/`. A grep of
    `.github/` and `.moon/` for `setup-node`, `npm ci`, `.nvmrc`, and `package.json` returns
    zero hits — no monorepo package has ever needed Node in CI.
 2. **Its documentation was not migrated.** The standalone has a 40-file Sphinx site at
@@ -273,7 +273,8 @@ jobs:
         env:
           LIBRARY_NAME: ${{ inputs.library-name }}
         run: |
-          if [[ -n "$(git status --porcelain -- "packages/${LIBRARY_NAME}/src")" ]]; then
+          status="$(git status --porcelain --             "packages/${LIBRARY_NAME}/src"             ":(exclude,glob)packages/${LIBRARY_NAME}/src/**/*.py")"
+          if [[ -n "$status" ]]; then
             echo "::error::Committed build output is out of date. Run 'npm run build' in packages/${LIBRARY_NAME} and commit the result."
             git diff --stat -- "packages/${LIBRARY_NAME}/src"
             exit 1
@@ -299,6 +300,13 @@ Notes on the shape above:
   is gitignored and sits outside `src/`. The failure branch prints `git diff --stat` rather than
   the full diff, because the committed bundle is minified onto one line and a full diff would
   bury the `::error::` annotation.
+- **Python files are excluded from the gate, deliberately.** The generated `.py` wrappers are
+  post-processed after generation by the package's own pre-commit hooks — `ruff-format`
+  reformats them and `add-license-headers` prepends a license block — so raw generator output
+  can never match what is committed, and an unscoped gate would fail on every run even with
+  zero real drift. The `.js` and `.json` artifacts are untouched by those hooks (the committed
+  bundle and `proptypes.js` carry no license header), so they are the only sound basis for the
+  comparison. Do not remove the `:(exclude,glob)` pathspec.
 - **No `run-name:` key.** A `workflow_call`-only workflow never produces its own run, so
   `run-name` has no effect. Sibling `_build.yml` (also `workflow_call`-only) omits it too.
 - **A comment block above `jobs:`** records the contract assumed of any package passed as

@@ -96,7 +96,9 @@ jobs:
           npm run build
 
       - name: Fail if the committed build output is stale
-        # Exclude .py: post-processed by ruff-format and add-license-headers.
+        # Do not remove the .py exclude: the generated wrappers are
+        # reformatted and license-headered by pre-commit after generation,
+        # so raw generator output can never match them. See the design doc.
         shell: bash
         env:
           LIBRARY_NAME: ${{ inputs.library-name }}

@@ -502,7 +502,7 @@ Refs #80"
 
 The one new workflow. Two jobs: Jest, and a webpack build that doubles as a staleness gate on the committed bundle.
 
-Background the implementer needs: the wheel's payload is a webpack bundle (`src/ansys_saf_projects_dashboard/ansys_saf_projects_dashboard.js`) plus Dash component wrappers (`ProjectsDashboard.py` and siblings) generated from TypeScript. Both are **committed to git**, so `_build.yml` can package a correct wheel with no Node at all. What Node buys is (a) running the 12 Jest suites in `src/ts/__tests__/`, and (b) proving the committed output still matches `src/ts/`.
+Background the implementer needs: the wheel's payload is a webpack bundle (`src/ansys_saf_projects_dashboard/ansys_saf_projects_dashboard.js`) plus Dash component wrappers (`ProjectsDashboard.py` and siblings) generated from TypeScript. Both are **committed to git**, so `_build.yml` can package a correct wheel with no Node at all. What Node buys is (a) running the 10 Jest suites in `src/ts/__tests__/`, and (b) proving the committed output still matches `src/ts/`.
 
 `npm run build` runs `node scripts/build.js`, which chains `npm run build:js` (webpack) and `npm run build:backends` (`python scripts/generate_components.py`). It therefore needs **both** Node and a Python environment with the package's `build` Poetry group installed — this is why the standalone repo invoked `poetry run npm run build`.
 
@@ -614,7 +614,8 @@ jobs:
         env:
           LIBRARY_NAME: ${{ inputs.library-name }}
         run: |
-          if [[ -n "$(git status --porcelain -- "packages/${LIBRARY_NAME}/src")" ]]; then
+          status="$(git status --porcelain --             "packages/${LIBRARY_NAME}/src"             ":(exclude,glob)packages/${LIBRARY_NAME}/src/**/*.py")"
+          if [[ -n "$status" ]]; then
             echo "::error::Committed build output is out of date. Run 'npm run build' in packages/${LIBRARY_NAME} and commit the result."
             git diff --stat -- "packages/${LIBRARY_NAME}/src"
             exit 1
@@ -639,6 +640,13 @@ Six things in the above are deliberate and must not be "simplified":
 1. **`prepare-python-environment` creates `.venv` inside `python-project-path`**, which is why the build step does `source .venv/bin/activate` with `working-directory` set to the package. This mirrors how the `code-style` job in `ci_cd_pr.yml:325-332` activates the environment.
 2. **The freshness gate inspects all of `packages/<pkg>/src`**, not just the generated directory, so it stays correct for any package and catches drift in both the bundle and the generated `.py` wrappers. `npm ci` never rewrites `package-lock.json`, so it cannot cause a false positive.
 3. **Detection uses `git status --porcelain`, not `git diff --exit-code`.** `git diff` only compares *tracked* files against `HEAD` and is blind to newly created ones. `webpack.config.js` emits fonts via `type: "asset/resource"` into `src/`, so a newly referenced asset would appear as an untracked file — `git diff` would report nothing and the gate would pass green while the packaged wheel silently lacked the asset. Scoped `status` is safe here because `node_modules/` is gitignored and lives outside `src/`. Do not revert this to `git diff`.
+- **Python files are excluded from the gate, deliberately.** The generated `.py` wrappers are
+  post-processed after generation by the package's own pre-commit hooks — `ruff-format`
+  reformats them and `add-license-headers` prepends a license block — so raw generator output
+  can never match what is committed, and an unscoped gate would fail on every run even with
+  zero real drift. The `.js` and `.json` artifacts are untouched by those hooks (the committed
+  bundle and `proptypes.js` carry no license header), so they are the only sound basis for the
+  comparison. Do not remove the `:(exclude,glob)` pathspec.
 4. **`LIBRARY_NAME` goes through `env:`** rather than being interpolated into the `run:` block. `zizmor --pedantic` fails the build on template injection.
 5. **The default fetch depth of 1 is sufficient** because the check compares the working tree against `HEAD`, which is present. Do not add `fetch-depth: 0`.
 6. **No `run-name:` key.** A `workflow_call`-only workflow never produces its own run — its jobs appear inside the caller's run and the caller's name is displayed — so `run-name` has no effect. Sibling `_build.yml` (also `workflow_call`-only) correctly omits it; `_test.yml` has one only because it also declares `workflow_dispatch`. It is also the folded scalar `yamlfmt` is known to corrupt in this repo.
@@ -1257,11 +1265,12 @@ git push -u origin chore/80-enable-cicd-actions-for-saf-projects-dashboard-packa
 
 Then open the PR with a title matching the semantic-PR convention enforced by `lint-pr-title`, for example `ci(feat): enable CI/CD for saf-projects-dashboard`, and a description that closes #80.
 
-The PR description must record these three items, because they are deliberate scope decisions a reviewer will otherwise flag as gaps:
+The PR description must record these four items, because they are deliberate scope decisions a reviewer will otherwise flag as gaps:
 
-1. Documentation is deferred — `doc/source` was never migrated into `packages/saf-projects-dashboard/`, so the package is intentionally absent from `_doc.yml` and `.github/changes_doc_filters.yaml`. Follow-up issue required.
-2. Moon/uv conversion is deferred — the package stays on Poetry. Follow-up issue required.
-3. A **PyPI trusted-publisher entry for `ansys-saf-projects-dashboard`** must be configured (scoped to `ansys/saf`, workflow `ci_cd_release.yml`, environment `saf-release`) before the first stable release. Not needed before merge, but `release-to-pypi` will fail without it.
+1. **`js-checks / js-build` is expected to FAIL on this PR.** The committed build output is genuinely out of date: `dash` 4.4.1 now emits a `NumberType` compatibility shim, and the bundle, `proptypes.js`, `metadata.json` and `package-info.json` have all drifted. The new freshness gate is correctly detecting real drift — it is not a bug in the gate. Regenerating touches shipped package code rather than CI, so it lands in a **separate PR** by decision; this PR is merged with that check known-red. Verified locally: the scoped gate reports exactly those four files.
+2. Documentation is deferred — `doc/source` was never migrated into `packages/saf-projects-dashboard/`, so the package is intentionally absent from `_doc.yml` and `.github/changes_doc_filters.yaml`. Follow-up issue required.
+3. Moon/uv conversion is deferred — the package stays on Poetry. Follow-up issue required.
+4. A **PyPI trusted-publisher entry for `ansys-saf-projects-dashboard`** must be configured (scoped to `ansys/saf`, workflow `ci_cd_release.yml`, environment `saf-release`) before the first stable release. Not needed before merge, but `release-to-pypi` will fail without it.
 
 - [ ] **Step 9: Confirm the expected jobs ran green on the PR**
 

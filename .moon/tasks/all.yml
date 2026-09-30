@@ -1,4 +1,49 @@
 tasks:
+  
+  check-env-var:
+    description: "Check if an environment variable is set"
+    command: "uv"
+    args:
+      - "run"
+      - "python"
+      - "$workspaceRoot/.moon/scripts/check_env_var.py"
+      # The value passed via args: ['UV_EXTRA_INDEX_URL'] will naturally append here
+
+  install-private-dependency:
+    command: "uv"
+    args:
+      - "pip"
+      - "install"
+      - "--pre"
+      - "--no-deps"
+      # The value passed via args: ["ansys-saf-aspire==9.1.6"] will naturally append here
+    deps:
+      - target: "~:check-env-var"
+        args: ["UV_EXTRA_INDEX_URL"]
+    env:
+      PIP_INDEX_URL: "https://pypi.org/simple"
+      PIP_QUIET: "1"
+    options:
+      cache: false
+
+  install-pim-light-server:
+    deps:
+      - target: "~:install-private-dependency"
+        args:
+          - "ansys-saf-pim-light-server==0.3.12"
+
+  install-ansys-saf-aspire:
+    deps:
+      - target: "~:install-private-dependency"
+        args:
+          - "ansys-saf-aspire==9.1.6"
+
+  install-saf-desktop-portal:
+    deps:
+      - target: "~:install-private-dependency"
+        args:
+          - "ansys-saf-desktop-portal==0.4.dev2"
+
   pre-commit:
     description: "Run pre-commit against this package's files only (root-level files are handled by root:pre-commit)"
     script: 'uv run pre-commit run --files $(git ls-files -- ":(top,glob)$projectSource/**")'
@@ -167,6 +212,7 @@ tasks:
       - "-s" # Disable capturing of stdout and stderr during tests
     env:
       PYTHONUNBUFFERED: '1'
+      SAF_EXTRA_PACKAGES_DIR: 'extra_packages'
     options:
       outputStyle: "stream"
     inputs:
@@ -175,6 +221,7 @@ tasks:
       - "pyproject.toml"
       - "/uv.lock"
       - "/.python-version"
+      - "/extra_packages/**/*"
 
   build-doc:
     description: "Build API documentation"

@@ -16,16 +16,17 @@
 
 from typing import Annotated
 
-from ansys.saf.glow.solution import (
-    Solution,
-    StepModel,
-    StepsModel,
-)
 from pydantic import (
     AfterValidator,
     BaseModel,
     field_validator,
     model_validator,
+)
+
+from ansys.saf.glow.solution import (
+    Solution,
+    StepModel,
+    StepsModel,
 )
 
 

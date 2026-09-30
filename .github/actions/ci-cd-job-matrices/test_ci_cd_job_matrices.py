@@ -468,7 +468,7 @@ class TestGetCodeStyleMatrixEntries:
     def test_get_code_style_matrix_multiple_packages_custom_args(self, github_env: tuple[Path, Path]):
         """Multiple packages with different custom args are handled correctly."""
         output_file, _ = github_env
-        get_code_style_matrix_entries(["glow-engine", "saf-cli", "saf-desktop-orchestrator"])
+        get_code_style_matrix_entries(["glow-engine", "saf-cli"])
 
         outputs = parse_outputs(output_file)
         matrix = json.loads(outputs["code_style_matrix"])
@@ -481,11 +481,7 @@ class TestGetCodeStyleMatrixEntries:
         saf_cli_entry = [e for e in matrix["include"] if e["target-directory"] == "packages/saf-cli"][0]
         assert saf_cli_entry["poetry-install-args"] == "--with tests --all-extras"
 
-        # Check saf-desktop-orchestrator entry (custom args)
-        desktop_entry = [e for e in matrix["include"] if e["target-directory"] == "packages/saf-desktop-orchestrator"][
-            0
-        ]
-        assert desktop_entry["poetry-install-args"] == "--with tests,dev --all-extras"
+        assert all(e["target-directory"] != "packages/saf-desktop-orchestrator" for e in matrix["include"])
 
     def test_get_code_style_matrix_filters_invalid_packages(self, github_env: tuple[Path, Path]):
         """Invalid packages are filtered out."""

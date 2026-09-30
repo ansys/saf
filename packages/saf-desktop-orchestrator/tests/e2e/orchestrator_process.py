@@ -18,9 +18,10 @@ from collections.abc import Callable
 from pathlib import Path
 import re
 
+import httpx2
+
 from ansys.saf.testing.common import find_exec_in_venv
 from ansys.saf.testing.process import Process
-import httpx2
 
 
 class OrchestratorProcess(Process):
@@ -33,7 +34,7 @@ class OrchestratorProcess(Process):
         use_pythonw: bool = False,
         bg: bool = True,
     ):
-        python_exec = find_exec_in_venv(Path.cwd(), "python" if not use_pythonw else "pythonw")
+        python_exec = find_exec_in_venv(Path.cwd().parent.parent, "python" if not use_pythonw else "pythonw")
         super().__init__([python_exec.as_posix()] + args, env=env, cwd=cwd, health_check=health_check, bg=bg)
 
     def _portal_started(self) -> bool:

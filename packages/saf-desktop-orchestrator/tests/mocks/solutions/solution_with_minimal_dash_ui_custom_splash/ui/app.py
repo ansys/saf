@@ -13,7 +13,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-from ansys.saf.glow.client import callback
 from dash import Input, Output, State, dcc, html  # pyright: ignore[reportMissingTypeStubs]
 from dash_extensions.enrich import (  # pyright: ignore[reportMissingTypeStubs]
     DashProxy,
@@ -21,6 +20,7 @@ from dash_extensions.enrich import (  # pyright: ignore[reportMissingTypeStubs]
     TriggerTransform,
 )
 
+from ansys.saf.glow.client import callback
 from tests.mocks.solutions.solution_with_minimal_dash_ui_custom_splash.solution.definition import MySolution
 
 app = DashProxy(

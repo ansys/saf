@@ -85,6 +85,7 @@ UV_PACKAGES = [
     "bdm-python-api",
     "bdm-python-shared-volume",
     "saf-desktop-installer",
+    "saf-desktop-orchestrator",
     "saf-iam-oidc",
     "saf-product-configuration",
     "saf-testing",

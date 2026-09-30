@@ -25,9 +25,6 @@ import sys
 from typing import Any
 from unittest.mock import MagicMock
 
-from ansys.saf.glow.cli import run_api
-from ansys.saf.glow.client import AnalysisResultModel
-from ansys.saf.testing.common import YieldFixture
 import httpx2
 from pydantic import ValidationError
 import pytest
@@ -53,6 +50,9 @@ from ansys.saf.desktop.orchestrator._orchestration.python_process import PythonP
 from ansys.saf.desktop.orchestrator._orchestration.pywebview_events import set_custom_pywebview_icon
 from ansys.saf.desktop.orchestrator._orchestration.run_solution_stack import run_solution_stack
 from ansys.saf.desktop.orchestrator._utilities.splash_screen import SplashScreen
+from ansys.saf.glow.cli import run_api
+from ansys.saf.glow.client import AnalysisResultModel
+from ansys.saf.testing.common import YieldFixture
 from tests.mocks.solutions_main import minimal_main
 
 SOLUTION_NAME = "My Solution"

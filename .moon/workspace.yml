@@ -5,6 +5,7 @@ projects:
   globs:
     - "packages/bdm-python-api"
     - "packages/bdm-python-shared-volume"
+    - "packages/saf-desktop-orchestrator"
     - "packages/saf-iam-oidc"
     - "packages/saf-desktop-installer"
     - "packages/saf-product-configuration"

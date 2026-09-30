@@ -37,7 +37,7 @@ class SolutionAppStarter(Process):
         log_to_files: bool = False,
         env: dict[str, str] | None = None,
     ) -> None:
-        starter_exec = find_exec_in_venv(Path.cwd(), "solution-app-starter")
+        starter_exec = find_exec_in_venv(Path.cwd().parent.parent, "solution-app-starter")
         cmd = [starter_exec.as_posix(), archived_solution.as_posix()]
         if log_to_files:
             cmd.append("--log-to-files")

@@ -64,6 +64,7 @@ repos:
       - id: add-license-headers
         # Having a license on the examples causes it to render as Markdown in the
         # documentation of the project.
+        exclude: ^packages/saf-projects-dashboard/src/ansys_saf_projects_dashboard/
         args:
           - --start_year=2026
 

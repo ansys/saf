@@ -17,14 +17,14 @@
 from typing import Any
 import uuid
 
+from pydantic import BaseModel, Field
+
 from ansys.bdm.api import NO_ENTITY, EntityHandle
 from ansys.saf.glow.solution import (
     InstanceManager,
     ProductInstanceManager,
     RecoveryStateInfo,
 )
-from pydantic import BaseModel, Field
-
 from tests.mocks.solutions.minimal_complete_solution.custom_product_client import CustomProductClient
 
 PRODUCT_NAME = "custom-product"

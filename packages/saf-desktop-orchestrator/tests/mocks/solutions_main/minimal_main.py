@@ -15,7 +15,6 @@
 # limitations under the License.
 
 from ansys.saf.glow.runtime import glow_main
-
 from tests.mocks.solutions.minimal_solution import definition
 
 

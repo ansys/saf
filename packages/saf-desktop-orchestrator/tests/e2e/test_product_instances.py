@@ -19,12 +19,12 @@ from pathlib import Path
 import platform
 import random
 
-from ansys.saf.testing.platform_specific import linux_only, windows_only
 import httpx2
 import pytest
 from tenacity import TryAgain, retry, stop_after_attempt, wait_fixed
 
 from ansys.saf.desktop.orchestrator._utilities.ip_utilities import get_local_ip, get_random_free_port
+from ansys.saf.testing.platform_specific import linux_only, windows_only
 from tests.e2e.conftest import MINIMAL_PIM_SOLUTION, OrchestrateSolution
 from tests.e2e.orchestrator_process import OrchestratorProcess
 

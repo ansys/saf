@@ -15,7 +15,6 @@
 # limitations under the License.
 
 from ansys.saf.glow.runtime import glow_main
-
 from tests.mocks.solutions.solution_with_minimal_dash_ui_custom_splash.solution import definition
 from tests.mocks.solutions.solution_with_minimal_dash_ui_custom_splash.ui import app
 

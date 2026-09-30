@@ -422,6 +422,14 @@ jobs:
             secrets.PYANSYS_PYPI_PRIVATE_URL }}
           PIP_QUIET: 1
 
+      - name: Install visor with Moon
+        if: ${{ matrix.install-visor == 'true' && env.USE_MOON == 'true' }}
+        shell: bash
+        run: moon run $PACKAGE:install-visor
+        env:
+          UV_EXTRA_INDEX_URL: https://PAT:${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}@${{
+            secrets.PYANSYS_PYPI_PRIVATE_URL }}
+
       - name: Install desktop-portal
         if: ${{ matrix.install-portal == 'true' && env.USE_MOON == 'false' }}
         shell: bash

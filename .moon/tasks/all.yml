@@ -44,6 +44,12 @@ tasks:
         args:
           - "ansys-saf-desktop-portal==0.4.dev2"
 
+  install-visor:
+    deps:
+      - target: "~:install-private-dependency"
+        args:
+          - "ansys-visor-viewer==1.0.5b0.dev0+20260831"
+
   pre-commit:
     description: "Run pre-commit against this package's files only (root-level files are handled by root:pre-commit)"
     script: 'uv run pre-commit run --files $(git ls-files -- ":(top,glob)$projectSource/**")'

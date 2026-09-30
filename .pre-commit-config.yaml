@@ -29,7 +29,11 @@ repos:
     rev: 2ccb47ff45ad361a21071a7eedda4c37e6ae8c5a # frozen: v2.4.2
     hooks:
       - id: codespell
-        exclude: ^doc/styles/Vocab/ANSYS/accept\.txt$
+        exclude: |
+          (?x)^(
+            doc/styles/Vocab/ANSYS/accept\.txt|
+            .*\.aedt
+          )$
         args: [--ignore-words=doc/styles/Vocab/ANSYS/accept.txt]
 
   - repo: https://github.com/google/yamlfmt
@@ -52,7 +56,7 @@ repos:
           - --start_year=2026
 
   - repo: https://github.com/tox-dev/pyproject-fmt
-    rev: 69b77b8d2436cb00c886f129dda7f68f3b2909ac # v2.11.0
+    rev: 59e7b26529dc6f15c43063064b8b06ded60d0910 # v2.29.4
     hooks:
       - id: pyproject-fmt
         files: ^(pyproject\.toml|packages/[^/]+/pyproject\.toml)$

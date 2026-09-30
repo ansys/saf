@@ -58,8 +58,17 @@ def get_client_roles(claims: dict[str, Any], client_id: str | None) -> set[str]:
     return {role for role in roles if isinstance(role, str)}
 
 
-def has_required_role(claims: dict[str, Any], client_id: str | None, required_roles: frozenset[str]) -> bool:
-    """Check that the user holds at least one of ``required_roles``. Always true when no role is required."""
+def has_required_role(
+    claims: dict[str, Any],
+    client_id: str | None,
+    required_roles: frozenset[str],
+    bypass_roles: frozenset[str] = frozenset(),
+) -> bool:
+    """Check that the user holds all of ``required_roles``, or at least one of ``bypass_roles``.
+
+    Always true when no role is required.
+    """
     if not required_roles:
         return True
-    return not required_roles.isdisjoint(get_client_roles(claims, client_id))
+    user_roles = get_client_roles(claims, client_id)
+    return required_roles <= user_roles or not bypass_roles.isdisjoint(user_roles)

@@ -30,6 +30,7 @@ from ansys.saf.glow._config.const import (
     DEFAULT_GLOW_AUTH_DISABLED,
     DEFAULT_SOLUTION_API_URL,
     GLOW_API_URL,
+    GLOW_AUTH_BYPASS_ROLES,
     GLOW_AUTH_CLIENT_ID,
     GLOW_AUTH_DISABLED,
     GLOW_AUTH_ISSUER_URL,
@@ -173,6 +174,7 @@ def create_app(settings: Settings) -> Any:
     # DockerCompose deployments. Leave it disabled for Desktop ones, though.
     disable_auth = os.environ.get(GLOW_AUTH_DISABLED, DEFAULT_GLOW_AUTH_DISABLED) != "False"
     required_roles = parse_required_roles(os.environ.get(GLOW_AUTH_REQUIRED_ROLES))
+    bypass_roles = parse_required_roles(os.environ.get(GLOW_AUTH_BYPASS_ROLES))
     oidc_client = OidcClient(oidc_issuer_url, audience)
     if not disable_auth and not (oidc_issuer_url and audience):
         # We could catch exception NoIssuerOrAudienceError from OidcClient when doing validate_access_token, but
@@ -223,8 +225,8 @@ def create_app(settings: Settings) -> Any:
         except ValueError as ex:
             logger.error("Invalid access token: %s", str(ex))
             raise Unauthorized(www_authenticate=WWWAuthenticate("Bearer")) from None
-        if required_roles and not has_required_role(token.claims, audience, required_roles):
-            logger.error("Access token does not grant any of the required roles.")
+        if required_roles and not has_required_role(token.claims, audience, required_roles, bypass_roles):
+            logger.error("Access token does not grant the required roles.")
             raise Forbidden()
 
     # The following environment variables are necessary to for DashClient methods and callbacks.

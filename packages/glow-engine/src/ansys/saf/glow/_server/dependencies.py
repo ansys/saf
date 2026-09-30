@@ -35,6 +35,7 @@ from ansys.saf.glow._bdm.multiplexor import SafMultiplexorStorageScopeFactory
 from ansys.saf.glow._bdm.storage_contexts import RESTAPI_CONTEXT
 from ansys.saf.glow._config.const import (
     DEFAULT_GLOW_AUTH_DISABLED,
+    GLOW_AUTH_BYPASS_ROLES,
     GLOW_AUTH_CLIENT_ID,
     GLOW_AUTH_DISABLED,
     GLOW_AUTH_ISSUER_URL,
@@ -98,6 +99,7 @@ audience = os.environ.get(GLOW_AUTH_CLIENT_ID)
 # DockerCompose deployments. Leave it disabled for Desktop ones, though.
 disable_auth = os.environ.get(GLOW_AUTH_DISABLED, DEFAULT_GLOW_AUTH_DISABLED) != "False"
 required_roles = parse_required_roles(os.environ.get(GLOW_AUTH_REQUIRED_ROLES))
+bypass_roles = parse_required_roles(os.environ.get(GLOW_AUTH_BYPASS_ROLES))
 
 try:
     oidc_scheme = OidcDependency(oidc_issuer=oidc_issuer_url, audience=audience, auto_error=not disable_auth)
@@ -157,8 +159,12 @@ async def oidc_scheme_with_api_key(
             logger.debug("API key authentication successful.")
             return api_key
     token = await oidc_scheme(request)
-    if oidc_scheme.auto_error and token and not has_required_role(decode_token_claims(token), audience, required_roles):
-        logger.error("Access token does not grant any of the required roles.")
+    if (
+        oidc_scheme.auto_error
+        and token
+        and not has_required_role(decode_token_claims(token), audience, required_roles, bypass_roles)
+    ):
+        logger.error("Access token does not grant the required roles.")
         raise HTTPException(status_code=403, detail="Forbidden")
     return token
 
@@ -167,9 +173,9 @@ async def oidc_scheme_ws_with_roles(token: Annotated[str | None, Depends(oidc_sc
     if (
         oidc_scheme_ws.auto_error
         and token
-        and not has_required_role(decode_token_claims(token), audience, required_roles)
+        and not has_required_role(decode_token_claims(token), audience, required_roles, bypass_roles)
     ):
-        logger.error("Access token does not grant any of the required roles.")
+        logger.error("Access token does not grant the required roles.")
         raise fastapi.WebSocketException(code=fastapi.status.WS_1008_POLICY_VIOLATION, reason="Forbidden")
     return token
 

@@ -70,9 +70,19 @@ def test_get_client_roles(claims: dict[str, Any], client_id: str | None, expecte
 
 
 def test_has_required_role():
-    claims = {"resource_access": {"portal": {"roles": ["hello-saf-role"]}}}
+    claims = {"resource_access": {"portal": {"roles": ["portal_user", "hello-saf-role"]}}}
     assert has_required_role(claims, "portal", frozenset())
     assert has_required_role({}, "portal", frozenset())
-    assert has_required_role(claims, "portal", frozenset({"hello-saf-role", "portal_admin"}))
-    assert not has_required_role(claims, "portal", frozenset({"beam-calculator-role"}))
+    assert has_required_role(claims, "portal", frozenset({"portal_user", "hello-saf-role"}))
+    assert not has_required_role(claims, "portal", frozenset({"portal_user", "beam-calculator-role"}))
     assert not has_required_role(claims, "other", frozenset({"hello-saf-role"}))
+
+
+def test_has_required_role_bypass():
+    required = frozenset({"portal_user", "hello-saf-role"})
+    bypass = frozenset({"portal_admin"})
+    admin = {"resource_access": {"portal": {"roles": ["portal_admin"]}}}
+    only_user = {"resource_access": {"portal": {"roles": ["portal_user"]}}}
+    assert has_required_role(admin, "portal", required, bypass)
+    assert not has_required_role(only_user, "portal", required, bypass)
+    assert not has_required_role(admin, "other", required, bypass)

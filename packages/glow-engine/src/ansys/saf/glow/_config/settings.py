@@ -190,9 +190,13 @@ class Settings(BaseSettings):
     glow_auth_required_roles: str | None = Field(
         default=None,
         description=(
-            "Comma-separated client roles (of glow_auth_client_id), at least one of which the user must hold. "
+            "Comma-separated client roles (of glow_auth_client_id) the user must all hold. "
             "Only enforced when authorization is enabled."
         ),
+    )
+    glow_auth_bypass_roles: str | None = Field(
+        default=None,
+        description="Comma-separated client roles (of glow_auth_client_id) that exempt the user from required roles.",
     )
     glow_api_key: str | None = Field(
         default=None,

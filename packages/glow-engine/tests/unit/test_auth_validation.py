@@ -326,9 +326,13 @@ def _make_token(claims: dict[str, object]) -> str:
     return f"{encode({'alg': 'none'})}.{encode(claims)}.signature"
 
 
-TOKEN_WITH_ROLE = _make_token({"resource_access": {"my-client-id": {"roles": ["other-role", "app-role"]}}})
-TOKEN_WITHOUT_ROLE = _make_token({"resource_access": {"my-client-id": {"roles": ["other-role"]}}})
-TOKEN_WITH_ROLE_OF_OTHER_CLIENT = _make_token({"resource_access": {"other-client": {"roles": ["app-role"]}}})
+TOKEN_WITH_ROLE = _make_token({"resource_access": {"my-client-id": {"roles": ["portal_user", "app-role"]}}})
+TOKEN_BYPASS_ROLE = _make_token({"resource_access": {"my-client-id": {"roles": ["portal_admin"]}}})
+TOKEN_WITHOUT_ROLE = _make_token({"resource_access": {"my-client-id": {"roles": ["portal_user"]}}})
+TOKEN_WITH_ONLY_APP_ROLE = _make_token({"resource_access": {"my-client-id": {"roles": ["app-role"]}}})
+TOKEN_WITH_ROLE_OF_OTHER_CLIENT = _make_token(
+    {"resource_access": {"other-client": {"roles": ["portal_user", "app-role"]}}},
+)
 
 
 def _assert_missing_role(endpoint: str, response: Response) -> None:
@@ -344,18 +348,23 @@ def require_app_role(monkeypatch: pytest.MonkeyPatch, mocker: MockerFixture) -> 
     monkeypatch.setattr(oidc_scheme, "auto_error", True)
     monkeypatch.setattr(oidc_scheme_ws, "auto_error", True)
     monkeypatch.setattr(dependencies, "audience", "my-client-id")
-    monkeypatch.setattr(dependencies, "required_roles", frozenset({"app-role"}))
+    monkeypatch.setattr(dependencies, "required_roles", frozenset({"portal_user", "app-role"}))
+    monkeypatch.setattr(dependencies, "bypass_roles", frozenset({"portal_admin"}))
     mocker.patch.object(oidc_scheme._oidc_client, "validate_access_token")  # pyright: ignore[reportPrivateUsage]
     mocker.patch.object(oidc_scheme_ws._oidc_client, "validate_access_token")  # pyright: ignore[reportPrivateUsage]
 
 
 @pytest.mark.usefixtures("require_app_role")
-async def test_http_routes_accept_token_with_required_role(settings: Settings):
-    await _verify_http_routes(settings, _assert_authenticated_response, bearer_token=TOKEN_WITH_ROLE)
+@pytest.mark.parametrize("token", [TOKEN_WITH_ROLE, TOKEN_BYPASS_ROLE])
+async def test_http_routes_accept_token_with_required_or_bypass_role(settings: Settings, token: str):
+    await _verify_http_routes(settings, _assert_authenticated_response, bearer_token=token)
 
 
 @pytest.mark.usefixtures("require_app_role")
-@pytest.mark.parametrize("token", [TOKEN_WITHOUT_ROLE, TOKEN_WITH_ROLE_OF_OTHER_CLIENT, "not-a-jwt"])
+@pytest.mark.parametrize(
+    "token",
+    [TOKEN_WITHOUT_ROLE, TOKEN_WITH_ONLY_APP_ROLE, TOKEN_WITH_ROLE_OF_OTHER_CLIENT, "not-a-jwt"],
+)
 async def test_http_routes_without_required_role_return_403(settings: Settings, token: str):
     await _verify_http_routes(settings, _assert_missing_role, bearer_token=token)
 
@@ -565,7 +574,13 @@ def test_dash_app_without_valid_token_returns_401(monkeypatch: pytest.MonkeyPatc
 
 @pytest.mark.parametrize(
     ("roles", "expected_status"),
-    [(["other-role", "app-role"], 200), (["other-role"], 403), ([], 403)],
+    [
+        (["portal_user", "app-role"], 200),
+        (["portal_admin"], 200),
+        (["portal_user"], 403),
+        (["app-role"], 403),
+        ([], 403),
+    ],
 )
 def test_dash_app_enforces_required_roles(
     roles: list[str],
@@ -578,7 +593,8 @@ def test_dash_app_enforces_required_roles(
     monkeypatch.setenv("GLOW_AUTH_ISSUER_URL", "https://my-issuer-url")
     monkeypatch.setenv("GLOW_AUTH_CLIENT_ID", "my-client-id")
     monkeypatch.setenv("GLOW_AUTH_DISABLED", "False")
-    monkeypatch.setenv("GLOW_AUTH_REQUIRED_ROLES", "app-role, portal_admin")
+    monkeypatch.setenv("GLOW_AUTH_REQUIRED_ROLES", "portal_user, app-role")
+    monkeypatch.setenv("GLOW_AUTH_BYPASS_ROLES", "portal_admin")
 
     ui_app = build_mock_dash_app(monkeypatch)
     flask_app: Flask = ui_app.server  # type: ignore

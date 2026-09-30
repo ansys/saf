@@ -17,7 +17,6 @@
 from typing import Any
 from unittest.mock import patch
 
-from ansys.saf.testing.platform_specific import skip_for_ci
 from grpc_health.v1 import (  # pyright: ignore[reportMissingTypeStubs]
     health_pb2,
 )
@@ -29,6 +28,7 @@ from ansys.saf.desktop.orchestrator._config.schema import (
     HEALTH_CHECK_INTERVAL,
 )
 from ansys.saf.desktop.orchestrator._orchestration.additional_service_process import AdditionalServiceProcess
+from ansys.saf.testing.platform_specific import skip_for_ci
 
 
 def test_additional_service_process_wait_for_healthy_http():

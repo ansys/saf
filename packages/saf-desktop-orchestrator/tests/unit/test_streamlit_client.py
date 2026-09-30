@@ -14,13 +14,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from ansys.saf.glow.client import Client
-from ansys.saf.glow.solution import Solution
 import pytest
 import pytest_mock
 
 from ansys.saf.desktop.orchestrator._config.schema import GLOW_API_HOST, GLOW_API_PORT, PORTAL_UI_HOST, PORTAL_UI_PORT
 from ansys.saf.desktop.orchestrator._orchestration.streamlit_client import StreamlitClient
+from ansys.saf.glow.client import Client
+from ansys.saf.glow.solution import Solution
 
 
 class DummySolution(Solution):

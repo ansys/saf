@@ -25,12 +25,11 @@ from tempfile import mkdtemp
 import typing
 import uuid
 
-from ansys.saf.product_configuration.interfaces import IProductInstanceConfiguration
-from ansys.saf.product_configuration.pim.config_writer import PimLightConfigWriter
-
 from ansys.saf.desktop.orchestrator._config.schema import DEFAULT_SAF_DESKTOP_HEALTH_CHECK_TIMEOUT, PIM_LOCALHOSTS
 from ansys.saf.desktop.orchestrator._orchestration.process import ServiceProcess
 from ansys.saf.desktop.orchestrator._utilities.ip_utilities import get_random_free_port
+from ansys.saf.product_configuration.interfaces import IProductInstanceConfiguration
+from ansys.saf.product_configuration.pim.config_writer import PimLightConfigWriter
 
 logger = logging.getLogger(__name__)
 
@@ -138,7 +137,7 @@ class PimProcess(ServiceProcess):
                 get_pim_light_exe_and_args,  # pyright: ignore[reportUnknownVariableType]
             )
 
-            args: list[str] = typing.cast(list[str], get_pim_light_exe_and_args())  # pyright: ignore[reportUnnecessaryCast]
+            args: list[str] = typing.cast("list[str]", get_pim_light_exe_and_args())  # pyright: ignore[reportUnnecessaryCast]
         except ModuleNotFoundError:
             # pim light server not found in the environment, try to find it in a unified Ansys installation.
             pim_exe = self.find_unified_pim_installation()

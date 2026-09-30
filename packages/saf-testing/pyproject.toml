@@ -58,24 +58,23 @@ optional-dependencies.pim = [
 ]
 optional-dependencies.selenium = [ "selenium>=4.0,<5" ]
 
-[tool.poetry.plugins.pytest11]
+entry-points.pytest11.saf_testing_common = "ansys.saf.testing.common"
+entry-points.pytest11.saf_testing_database = "ansys.saf.testing.database"
 # By registering the plugins here, they can be used without needing to declare them in pytest_plugins.
 # https://docs.pytest.org/en/stable/how-to/writing_plugins.html#making-your-plugin-installable-by-others
-saf_testing_directories = "ansys.saf.testing.directories"
-saf_testing_common = "ansys.saf.testing.common"
-saf_testing_docstring = "ansys.saf.testing.docstring_with_test_case"
-saf_testing_mocking = "ansys.saf.testing.mocking"
-saf_testing_network = "ansys.saf.testing.network"
-saf_testing_selenium = "ansys.saf.testing.selenium"
-saf_testing_platform_specific = "ansys.saf.testing.platform_specific"
-saf_testing_process = "ansys.saf.testing.process"
-saf_testing_solution = "ansys.saf.testing.solution"
-saf_testing_pytest = "ansys.saf.testing.pytest"
-saf_testing_docker = "ansys.saf.testing.docker"
-saf_testing_hps = "ansys.saf.testing.hps"
-saf_testing_pim = "ansys.saf.testing.pim"
-saf_testing_database = "ansys.saf.testing.database"
-saf_testing_solution_e2e = "ansys.saf.testing.solution.end_to_end"
+entry-points.pytest11.saf_testing_directories = "ansys.saf.testing.directories"
+entry-points.pytest11.saf_testing_docker = "ansys.saf.testing.docker"
+entry-points.pytest11.saf_testing_docstring = "ansys.saf.testing.docstring_with_test_case"
+entry-points.pytest11.saf_testing_hps = "ansys.saf.testing.hps"
+entry-points.pytest11.saf_testing_mocking = "ansys.saf.testing.mocking"
+entry-points.pytest11.saf_testing_network = "ansys.saf.testing.network"
+entry-points.pytest11.saf_testing_pim = "ansys.saf.testing.pim"
+entry-points.pytest11.saf_testing_platform_specific = "ansys.saf.testing.platform_specific"
+entry-points.pytest11.saf_testing_process = "ansys.saf.testing.process"
+entry-points.pytest11.saf_testing_pytest = "ansys.saf.testing.pytest"
+entry-points.pytest11.saf_testing_selenium = "ansys.saf.testing.selenium"
+entry-points.pytest11.saf_testing_solution = "ansys.saf.testing.solution"
+entry-points.pytest11.saf_testing_solution_e2e = "ansys.saf.testing.solution.end_to_end"
 
 [tool.black]
 line-length = 120

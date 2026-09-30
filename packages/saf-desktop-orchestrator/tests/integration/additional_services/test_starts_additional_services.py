@@ -20,7 +20,7 @@ import pytest
 
 from ansys.saf.desktop.orchestrator._config.schema import Settings
 from ansys.saf.desktop.orchestrator._orchestration.launcher import Launcher
-from ansys.saf.desktop.orchestrator._orchestration.process import ServiceProcess
+from ansys.saf.desktop.orchestrator._orchestration.process import ServiceProcess  # noqa: TC001
 from ansys.saf.desktop.orchestrator._orchestration.solution_ui_framework import SolutionUIFramework
 from tests.integration.orchestration.test_orchestrator import verify_pid_not_exists
 

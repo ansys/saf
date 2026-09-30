@@ -1,21 +1,22 @@
 [build-system]
-build-backend = "poetry.core.masonry.api"
-requires = [ "poetry-core>=2.0.0", "setuptools>=67.0" ]
+build-backend = "uv_build"
+requires = [ "uv-build>=0.12.18,<0.13" ]
 
 [tool.poetry]
 name = "ansys-saf-product-manager"
 version = "0.6.dev0"
 description = "SAF Product Manager"
 license = "Apache-2.0"
-authors = [ "ANSYS, Inc. <pyansys-core@synopsys.com>" ]
-maintainers = [ "ANSYS, Inc. <pyansys-core@synopsys.com>" ]
+license-files = [ "LICENSE" ]
+maintainers = [ { name = "ANSYS, Inc.", email = "pyansys-core@synopsys.com" } ]
+authors = [ { name = "ANSYS, Inc.", email = "pyansys-core@synopsys.com" } ]
+requires-python = ">=3.11,<4"
 readme = "README.rst"
 classifiers = [
   "Development Status :: 4 - Beta",
   "Intended Audience :: Other Audience",
-  "License :: OSI Approved :: Apache Software License",
   "Natural Language :: English",
-  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
@@ -23,62 +24,16 @@ classifiers = [
   "Topic :: Scientific/Engineering",
 ]
 
-[[tool.poetry.packages]]
-include = "ansys/saf/product_manager/"
-from = "src"
+dependencies = [
+  "ansys-bdm-api">=0.5.0,<1.0",
+  "ansys-bdm-shared-volume">=0.4.0, <1.0",
+  "ansys-saf-glow-engine">=2.3.dev0",
+  "ansys-saf-product-configuration">=0.25.0, <1.0",
 
-[[tool.poetry.source]]
-name = "PyPI"
-priority = "primary"
-
-[tool.poetry.dependencies]
-python = ">=3.11,<4.0"
-ansys-bdm-api = { version = ">=0.5.0, <1.0", allow-prereleases = true }
-ansys-bdm-shared-volume = { version = ">=0.4.0, <1.0", allow-prereleases = true }
-ansys-saf-glow-engine = { version = "^2.3.dev0", allow-prereleases = true }
-ansys-saf-product-configuration = { version = ">=0.25.0, <1.0", allow-prereleases = true }      # not explicitly imported, but managers depend on the specific implementations of the config/wrappers.
-httpx2 = { version = "^2.5.0", optional = true }                                                # for using AEDT, Fluent, Optislang Wrapper or Visor
-ansys-fluent-core = { version = ">=0.39, <1.0", python = ">=3.11,<3.15", optional = true }      # for using Fluent instance manager
-pyansys-tools-report = { version = "*", optional = true }                                       # used by the fluent instance manager
-ansys-geometry-core = { version = ">=0.14.1, <1.0", optional = true }                           # for using Geometry instance manager.
-ansys-mapdl-core = { version = ">=0.73.0, <1.0", python = ">=3.11, <3.15", optional = true }    # for using Mapdl instance manager
-ansys-mechanical-core = { version = ">=0.12, <1.0", python = ">=3.11, <3.15", optional = true } # for using Mechanical instance manager
-ansys-optislang-core = { version = "^1.4.0", optional = true }                                  # for using Optislang instance manager
-pyaedt = { version = "^1.0.0", optional = true }
-aiohttp = { version = "^3.14.2", optional = true }                                              # nested dep introduced by pyaedt/pyedb 0.61.0 (aiohttp >= 3.8). version 4.0.0a1 makes the wheel not pip-installable
-# Mimic the 'all' extras of pyaedt to avoid to introduce fpdf2
-matplotlib = { version = ">=3.5.0", optional = true }
-openpyxl = { version = " >=3.1.0", optional = true }
-osmnx = { version = ">=2.0.0", optional = true }
-pandas = { version = ">=1.1.0", optional = true }
-pyvista = { version = ">=0.38.0,<0.49", optional = true, extras = [ "io" ] }
-fast-simplification = { version = ">=0.1.7", optional = true }
-ansys-tools-visualization-interface = { version = "*", optional = true }
-tables = [
-  { version = "<3.11", optional = true, python = ">=3.11,<3.13" },
-  { version = ">=3.11.1", optional = true, python = ">=3.13" },
-]
-rpds-py = [
-  { version = ">=0.18.1,<2026", optional = true, python = ">=3.11,<3.13" },
-  { version = ">=2026.5.1", optional = true, python = ">=3.13" },
-]
-contourpy = [
-  { version = "<=1.3.2", optional = true, python = ">=3.11,<3.12" },
-  { version = ">=1.3.3", optional = true, python = ">=3.12" },
-]
-
-scikit-rf = { version = ">=0.30.0", optional = true }
-scipy = [
-  { version = "<=1.15.3", optional = true, python = "<3.11" },
-  { version = ">=1.17.1", optional = true, python = ">=3.11" },
-]
-requests = { version = "*", optional = true }
-typer = { version = ">=0.20.0", optional = true }
-vtk = { version = ">=9.0, <9.7", optional = true }
-rpyc = { version = ">=6.0.0", optional = true }
-jupyterlab = { version = ">=4.6.2", optional = true }
-ipython = { version = ">=7.30.0", optional = true }
-beartype = { version = ">=0.22.9, <0.23", optional = true } # fixes exception on ansys-geometry-core with python >=3.14
+  
+[project.optional-dependencies]
+aedt = [ 
+  "pyaedt>=1.0.0,<2.0.0", "aiohttp", "httpx2", "matplotlib", "openpyxl", "osmnx", "pandas", "pyvista", "fast-simplification", "ansys-tools-visualization-interface", "tables", "rpds-py", "contourpy", "scikit-rf", "scipy", "vtk", "requests", "typer", "rpyc", "jupyterlab", "ipython" ]
 
 [tool.poetry.extras]
 aedt = [
@@ -268,24 +223,6 @@ show_missing = true
 include = [ "src/*" ]
 omit = [ "*/pytest-of-*/pytest-*/popen-*/*" ]
 
-[tool.pyright]
-pythonVersion = "3.11"
-extraPaths = [ "src" ]
-include = [ "src", "tests", "doc" ]
-exclude = [
-  ".venv",
-  ".poetry",
-  ".git",
-  "src/ansys/saf/product_manager/visor",
-  "tests/mocks/solution_end_to_end",
-  "doc/source",
-]
-strict = [ "src", "tests", "doc" ]
-venvPath = "."
-venv = ".venv"
-
-[build-system-requirements]
-build-system-version = "2.3.2"
-
-[tool.bandit]
-exclude_dirs = [ "tests" ]
+[tool.uv]
+prereleases = "if-necessary"
+prerelease-package = { ansys-bdm-api = "allow" }

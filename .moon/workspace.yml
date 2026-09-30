@@ -8,6 +8,7 @@ projects:
     - "packages/saf-desktop-orchestrator"
     - "packages/saf-iam-oidc"
     - "packages/saf-product-configuration"
+    - "packages/saf-product-manager"
     - "packages/saf-testing"
     - "packages/saf-templates"
   # Root-level project for workspace-wide, run-once tasks.

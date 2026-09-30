@@ -87,6 +87,7 @@ UV_PACKAGES = [
     "saf-desktop-orchestrator",
     "saf-iam-oidc",
     "saf-product-configuration",
+    "saf-product-manager",
     "saf-testing",
     "saf-templates",
 ]

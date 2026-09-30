@@ -551,13 +551,14 @@ jobs:
         shell: bash
         env:
           PYTEST_ARGS: ${{ steps.pytest-args.outputs.pytest-args }}
-          REPORTS_DIR: "${{ github.workspace }}/${{ matrix.test-report-artifact-name-suffix
-            }}_${{ inputs.python-version }}"
+          REPORTS_DIR: "${{ case( inputs.library-name == 'saf-desktop-installer' &&
+            \ runner.os == 'Linux', '', format('{0}/{1}_{2}', github.workspace, matrix.test-report-artifact-name-suffix,
+            inputs.python-version ) )}}"
           COVERAGE_ARG: ${{ case( inputs.library-name == 'saf-desktop-installer' &&  runner.os
-            == 'Linux', '', '--cov=src --cov-report=term --cov-report=xml --cov-report=html')}} # Get stuck in the coverage of saf-desktop-installer on Linux
+            == 'Linux', '', '--cov=src --cov-report=term --cov-report=xml --cov-report=html')}} # Get stuck in the reporting of saf-desktop-installer on Linux
         run: |
-          mkdir -p "$REPORTS_DIR"
-          moon run $PACKAGE:test -- $PYTEST_ARGS $COVERAGE_ARG --html="${REPORTS_DIR}/report.html" --md="${REPORTS_DIR}/report.md"
+          mkdir -p "${REPORTS_DIR:-.}"
+          moon run $PACKAGE:test -- $PYTEST_ARGS $COVERAGE_ARG ${REPORTS_DIR:+--html="${REPORTS_DIR}/report.html" --md="${REPORTS_DIR}/report.md"}
 
       - name: Publish pytest reports (Moon)
         if: always() && steps.run-tests-moon.outcome != 'skipped' && env.USE_MOON

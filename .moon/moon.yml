@@ -18,8 +18,10 @@ tasks:
       runFromWorkspaceRoot: true
 
   pre-commit:
-    description: "Run pre-commit against root-level files only (packages run their own pre-commit task)"
-    script: 'uv run pre-commit run --files $(git ls-files -- ":(top,glob)*" ":(top).github/**" ":(top)doc/**")'
+    description: "Run pre-commit against root-level files only (packages run their
+      own pre-commit task)"
+    script: 'uv run pre-commit run --files $(git ls-files -- ":(top,glob)*" ":(top).github/**"
+      ":(top)doc/**")'
     inputs:
       - '/.pre-commit-config.yaml'
       - '/pyproject.toml'
@@ -55,7 +57,8 @@ tasks:
       runFromWorkspaceRoot: true
 
   download-wheel-for-e2e-tests:
-    description: "Download the private wheels required by the e2e tests into <workspace root>/extra_packages"
+    description: "Download the private wheels required by the e2e tests into <workspace
+      root>/extra_packages"
     command: 'pip'
     args:
       - "download"

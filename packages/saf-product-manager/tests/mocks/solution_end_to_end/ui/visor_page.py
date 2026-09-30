@@ -18,10 +18,10 @@
 
 import logging
 
-from ansys.saf.glow.client import callback
 from dash_extensions.enrich import Input, Output, State, html  # pyright: ignore[reportMissingTypeStubs]
 from visordash import Visordash  # pyright: ignore[reportMissingTypeStubs]
 
+from ansys.saf.glow.client import callback
 from tests.mocks.solution_end_to_end.solution.definition import EndToEndSolution
 from tests.mocks.solution_end_to_end.solution.visor_instance_step import (
     VisorInstanceStep,

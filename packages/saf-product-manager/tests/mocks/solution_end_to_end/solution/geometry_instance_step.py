@@ -20,6 +20,8 @@ from ansys.geometry.core import LOG as GEOMETRY_LOGGER  # pyright: ignore
 from ansys.geometry.core.math import Point2D  # pyright: ignore
 from ansys.geometry.core.misc import UNITS, Distance  # pyright: ignore
 from ansys.geometry.core.sketch import Sketch  # pyright: ignore
+from pint import Quantity
+
 from ansys.saf.glow.solution import (
     StepModel,
     StepSpec,
@@ -28,8 +30,6 @@ from ansys.saf.glow.solution import (
     long_running,
     transaction,
 )
-from pint import Quantity
-
 from ansys.saf.product_manager.geometry import GeometryManager
 
 logger = logging.getLogger(__name__)

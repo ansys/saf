@@ -163,3 +163,10 @@ prerelease-package = {
   ansys-saf-glow-engine = "allow",
   ansys-saf-product-configuration = "allow"
 }
+
+[tool.uv.sources]
+ansys-product-manager = { workspace = true }
+
+[tool.uv.build-backend]
+module-name = "ansys.saf.product_manager"
+namespace = true

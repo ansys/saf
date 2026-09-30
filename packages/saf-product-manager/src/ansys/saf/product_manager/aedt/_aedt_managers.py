@@ -23,14 +23,14 @@ from typing import Any, TypeVar
 
 import ansys.aedt.core  # pyright: ignore[reportMissingTypeStubs]
 import ansys.aedt.core.common_rpc  # pyright: ignore[reportMissingTypeStubs]
+import httpx2
+
 from ansys.bdm.api import NO_ENTITY, EntityHandle
 from ansys.saf.glow.solution import (
     InstanceManager,
     ProductInstanceManager,
     RecoveryStateInfo,
 )
-import httpx2
-
 from ansys.saf.product_manager._utilities.const import ANSYS_GRPC_CERTIFICATES, INSECURE_GRPC_MSG
 from ansys.saf.product_manager._utilities.ip_utilities import is_localhost
 

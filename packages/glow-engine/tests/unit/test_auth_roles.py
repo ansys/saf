@@ -31,9 +31,9 @@ from ansys.saf.glow._utilities.auth_roles import (
 @pytest.mark.parametrize(
     ("value", "expected"),
     [
-        (None, frozenset()),
-        ("", frozenset()),
-        (" , ", frozenset()),
+        (None, frozenset[str]()),
+        ("", frozenset[str]()),
+        (" , ", frozenset[str]()),
         ("app-role", frozenset({"app-role"})),
         (" app-role , portal_admin,", frozenset({"app-role", "portal_admin"})),
     ],
@@ -58,11 +58,11 @@ def test_decode_token_claims_invalid(token: str):
     [
         ({"resource_access": {"portal": {"roles": ["a", "b"]}}}, "portal", {"a", "b"}),
         ({"resource_access": {"portal": {"roles": ["a", 1]}}}, "portal", {"a"}),
-        ({"resource_access": {"other": {"roles": ["a"]}}}, "portal", set()),
-        ({"resource_access": {"portal": {"roles": "a"}}}, "portal", set()),
-        ({"resource_access": {"portal": {"roles": ["a"]}}}, None, set()),
-        ({"realm_access": {"roles": ["a"]}}, "portal", set()),
-        ({}, "portal", set()),
+        ({"resource_access": {"other": {"roles": ["a"]}}}, "portal", set[str]()),
+        ({"resource_access": {"portal": {"roles": "a"}}}, "portal", set[str]()),
+        ({"resource_access": {"portal": {"roles": ["a"]}}}, None, set[str]()),
+        ({"realm_access": {"roles": ["a"]}}, "portal", set[str]()),
+        ({}, "portal", set[str]()),
     ],
 )
 def test_get_client_roles(claims: dict[str, Any], client_id: str | None, expected: set[str]):

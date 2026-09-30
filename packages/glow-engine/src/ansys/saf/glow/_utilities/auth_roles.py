@@ -19,7 +19,7 @@
 import base64
 import binascii
 import json
-from typing import Any
+from typing import Any, cast
 
 
 def parse_required_roles(value: str | None) -> frozenset[str]:
@@ -36,26 +36,26 @@ def decode_token_claims(access_token: str) -> dict[str, Any]:
     """
     try:
         payload = access_token.split(".")[1]
-        claims = json.loads(base64.urlsafe_b64decode(payload + "=" * (-len(payload) % 4)))
+        claims: object = json.loads(base64.urlsafe_b64decode(payload + "=" * (-len(payload) % 4)))
     except (IndexError, ValueError, binascii.Error):
         return {}
-    return claims if isinstance(claims, dict) else {}
+    return cast("dict[str, Any]", claims) if isinstance(claims, dict) else {}
 
 
 def get_client_roles(claims: dict[str, Any], client_id: str | None) -> set[str]:
     """Return the roles granted to the user for ``client_id`` (Keycloak ``resource_access`` claim)."""
     if not client_id:
         return set()
-    resource_access = claims.get("resource_access")
+    resource_access: object = claims.get("resource_access")
     if not isinstance(resource_access, dict):
         return set()
-    client_access = resource_access.get(client_id)
+    client_access: object = cast("dict[str, object]", resource_access).get(client_id)
     if not isinstance(client_access, dict):
         return set()
-    roles = client_access.get("roles")
+    roles: object = cast("dict[str, object]", client_access).get("roles")
     if not isinstance(roles, list):
         return set()
-    return {role for role in roles if isinstance(role, str)}
+    return {role for role in cast("list[object]", roles) if isinstance(role, str)}
 
 
 def has_required_role(

@@ -28,7 +28,7 @@ from ansys.saf.glow._server.dependencies import (
     SettingsDep,
     WSEventManagerDep,
     oidc_scheme_with_api_key,
-    oidc_scheme_ws,
+    oidc_scheme_ws_with_roles,
     validate_project,
     validate_project_for_websocket,
     validate_step,
@@ -99,7 +99,7 @@ async def store_event(
     "/projects/{project_id}/steps/{step_id}/streams/{stream_name}",
     # auth must be validated before project and step existence to avoid information leak.
     dependencies=[
-        Depends(oidc_scheme_ws),
+        Depends(oidc_scheme_ws_with_roles),
         Depends(validate_project_for_websocket),
         Depends(validate_step_for_websocket),
     ],

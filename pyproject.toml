@@ -4,7 +4,6 @@ version = "0.3.0"
 maintainers = [ { name = "ANSYS, Inc.", email = "pyansys-core@synopsys.com" } ]
 authors = [ { name = "ANSYS, Inc.", email = "pyansys-core@synopsys.com" } ]
 requires-python = ">=3.11,<4.0"
-
 classifiers = [
   "Programming Language :: Python :: 3 :: Only",
   "Programming Language :: Python :: 3.11",
@@ -33,6 +32,30 @@ dev = [
   { include-group = "tests" },
   { include-group = "tests-saf-desktop-orchestrator" },
 ]
+doc = [
+  "ansys-sphinx-theme[autoapi]>=1.9; python_version>='3.12'",
+  "autodoc-pydantic>=2.2.0; python_version>='3.12'",
+  "click>=8.3.2; python_version>='3.12'",
+  "docutils>=0.21; python_version>='3.12' and python_version<'4.0'",
+  "linkchecker>=10.6.0; python_version>='3.12'",
+  "nbsphinx>=0.9.8; python_version>='3.12'",
+  "numpydoc>=1.10.0; python_version>='3.12'",
+  "rst2html>=2020.7.4; python_version>='3.12'",
+  "rst2html5>=2.0.1; python_version>='3.12' and python_version<'4.0'",
+  "ruamel-yaml>=0.19.1; python_version>='3.12'",
+  "sphinx>=9.1; python_version>='3.12'",
+  "sphinx-code-tabs>=0.5.5; python_version>='3.12'",
+  "sphinx-copybutton>=0.5.2; python_version>='3.12'",
+  "sphinx-design>=0.7.0; python_version>='3.12'",
+  "sphinx-gallery>=0.15.0; python_version>='3.12'",
+  "sphinx-jinja>=2.0.0; python_version>='3.12'",
+  "sphinx-markdown-builder>=0.6; python_version>='3.12'",
+  "sphinx-tabs>=3.5.0; python_version>='3.12'",
+  "sphinx-toolbox>=4.2.0; python_version>='3.12'",
+  "sphinxcontrib-mermaid>=0.7.1; python_version>='3.12'",
+  "sphinxemoji>=0.2; python_version>='3.12'",
+  "toml>=0.10.2; python_version>='3.12'",
+]
 tests = [
   "authlib>=1.8.0,<2",
   "coverage>=7,<8",
@@ -58,36 +81,33 @@ tests-saf-desktop-orchestrator = [
   "streamlit>=1.58.0,<2.0",                # For Streamlit-based UI server.
   "streamlit-antd-components>=0.3.2,<1.0", # typical in Streamlit-based apps
 ]
-doc = [
-  "ansys-sphinx-theme[autoapi]>=1.9; python_version>='3.12'",
-  "autodoc-pydantic>=2.2.0; python_version>='3.12'",
-  "click>=8.3.2; python_version>='3.12'",
-  "docutils>=0.21; python_version>='3.12' and python_version<'4.0'",
-  "linkchecker>=10.6.0; python_version>='3.12'",
-  "nbsphinx>=0.9.8; python_version>='3.12'",
-  "numpydoc>=1.10.0; python_version>='3.12'",
-  "rst2html>=2020.7.4; python_version>='3.12'",
-  "rst2html5>=2.0.1; python_version>='3.12' and python_version<'4.0'",
-  "ruamel-yaml>=0.19.1; python_version>='3.12'",
-  "sphinx>=9.1; python_version>='3.12'",
-  "sphinx-code-tabs>=0.5.5; python_version>='3.12'",
-  "sphinx-copybutton>=0.5.2; python_version>='3.12'",
-  "sphinx-design>=0.7.0; python_version>='3.12'",
-  "sphinx-gallery>=0.15.0; python_version>='3.12'",
-  "sphinx-jinja>=2.0.0; python_version>='3.12'",
-  "sphinx-markdown-builder>=0.6; python_version>='3.12'",
-  "sphinx-tabs>=3.5.0; python_version>='3.12'",
-  "sphinx-toolbox>=4.2.0; python_version>='3.12'",
-  "sphinxcontrib-mermaid>=0.7.1; python_version>='3.12'",
-  "sphinxemoji>=0.2; python_version>='3.12'",
-  "toml>=0.10.2; python_version>='3.12'",
-]
 
-[tool.poetry.group.doc]
-optional = true
+[tool.poetry]
+group.doc.optional = true
 
 [tool.setuptools]
-py-modules = [  ]
+py-modules = []
+
+[tool.uv]
+sources.ansys-bdm-api = { workspace = true }
+sources.ansys-bdm-shared-volume = { workspace = true }
+sources.ansys-iam-oidc = { workspace = true }
+sources.ansys-saf-desktop-orchestrator = { workspace = true }
+sources.ansys-saf-product-configuration = { workspace = true }
+sources.ansys-saf-product-manager = { workspace = true }
+sources.ansys-saf-templates = { workspace = true }
+sources.ansys-saf-testing = { workspace = true }
+package = false
+workspace.members = [
+  "packages/bdm-python-api",
+  "packages/bdm-python-shared-volume",
+  "packages/saf-desktop-orchestrator",
+  "packages/saf-iam-oidc",
+  "packages/saf-product-configuration",
+  "packages/saf-product-manager",
+  "packages/saf-templates",
+  "packages/saf-testing",
+]
 
 [tool.ruff]
 target-version = "py312"
@@ -138,7 +158,7 @@ lint.per-file-ignores."packages/dash-super-components/src/ansys/solutions/dash_s
 lint.per-file-ignores."packages/saf-cli/scripts/upgrade_solution_template_poetry_lock.py" = [ "S101" ]
 lint.per-file-ignores."packages/saf-testing/src/ansys/saf/testing/**.py" = [
   "S",
-] # FIXME: temporary for the monorepo migration
+]  # FIXME: temporary for the monorepo migration
 # Ignore `S` rules everywhere except for the `src/` directory.
 lint.per-file-ignores."tests/**.py" = [ "S" ]
 lint.flake8-bugbear.extend-immutable-calls = [
@@ -163,12 +183,11 @@ lint.isort.known-first-party = [
   "ansys.solutions",
 ]
 
-[tool.coverage.report]
-show_missing = true
-
 [tool.pyright]
 pythonVersion = "3.12"
-extraPaths = [ "src" ]
+venv = ".venv"
+venvPath = "."
+strict = [ "src", "tests" ]
 include = [
   "src",
   "tests",
@@ -176,36 +195,11 @@ include = [
 exclude = [
   "**/*_pb2.py",
   "**/*_pb2_grpc.py",
+  "**/*{{cookiecutter*/**",
   "**/.venv",
   "**/{{cookiecutter.project_slug}}",
-  "**/*{{cookiecutter*/**",
-
 ]
-strict = [ "src", "tests" ]
-venvPath = "."
-venv = ".venv"
+extraPaths = [ "src" ]
 
-[tool.uv]
-package = false
-
-[tool.uv.sources]
-ansys-bdm-api = { workspace = true }
-ansys-bdm-shared-volume = { workspace = true }
-ansys-saf-desktop-orchestrator = { workspace = true }
-ansys-iam-oidc = { workspace = true }
-ansys-saf-product-configuration = { workspace = true }
-ansys-saf-product-manager = { workspace = true }
-ansys-saf-testing = { workspace = true }
-ansys-saf-templates = { workspace = true }
-
-[tool.uv.workspace]
-members = [
-  "packages/bdm-python-api",
-  "packages/bdm-python-shared-volume",
-  "packages/saf-desktop-orchestrator",
-  "packages/saf-iam-oidc",
-  "packages/saf-product-configuration",
-  "packages/saf-product-manager",
-  "packages/saf-testing",
-  "packages/saf-templates",
-]
+[tool.coverage]
+report.show_missing = true

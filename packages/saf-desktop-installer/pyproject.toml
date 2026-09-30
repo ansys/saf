@@ -53,7 +53,7 @@ addopts = [
   "--dist=loadfile",
 ]
 asyncio_mode = "auto"
-filterwarnings = [ 
+filterwarnings = [
   "ignore::DeprecationWarning",
   "ignore::UserWarning",
 ]
@@ -62,19 +62,19 @@ testpaths = [ "tests/" ]
 
 [tool.coverage.run]
 source = [ "ansys.saf.desktop.installer" ]
-omit = [ 
+omit = [
   "*/pytest-of-*/pytest-*/popen-*/*",
   "/tmp/*",
   "*/Temp/*",
   "dist/*",
   "*/.venv/*",
   "*/site-packages/*",
-  "*/tests/*"
+  "*/tests/*",
 ]
 
 [tool.coverage.report]
 show_missing = true
-omit = [ 
+omit = [
   "*/pytest-of-*/pytest-*/popen-*/*",
   "/tmp/*",
   "*/Temp/*",

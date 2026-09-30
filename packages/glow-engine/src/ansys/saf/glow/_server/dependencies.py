@@ -38,6 +38,7 @@ from ansys.saf.glow._config.const import (
     GLOW_AUTH_CLIENT_ID,
     GLOW_AUTH_DISABLED,
     GLOW_AUTH_ISSUER_URL,
+    GLOW_AUTH_REQUIRED_ROLES,
     LOCALHOST_HOSTS,
     DatabaseType,
     Deployment,
@@ -76,6 +77,7 @@ from ansys.saf.glow._server.project_files_manager import ProjectFilesManager
 from ansys.saf.glow._server.schemas import ProjectInfo
 from ansys.saf.glow._server.solution import SolutionService
 from ansys.saf.glow._telemetry.inject_trace_http_transport import InjectTraceTransport
+from ansys.saf.glow._utilities.auth_roles import decode_token_claims, has_required_role, parse_required_roles
 from ansys.saf.glow._utilities.conversion import url_part_to_python_identifier
 from ansys.saf.glow._utilities.requests import build_api_url_for_internal_requests_from_request
 
@@ -95,6 +97,7 @@ audience = os.environ.get(GLOW_AUTH_CLIENT_ID)
 # Aftersaf-portal is fixed, enable auth validation by default for
 # DockerCompose deployments. Leave it disabled for Desktop ones, though.
 disable_auth = os.environ.get(GLOW_AUTH_DISABLED, DEFAULT_GLOW_AUTH_DISABLED) != "False"
+required_roles = parse_required_roles(os.environ.get(GLOW_AUTH_REQUIRED_ROLES))
 
 try:
     oidc_scheme = OidcDependency(oidc_issuer=oidc_issuer_url, audience=audience, auto_error=not disable_auth)
@@ -153,7 +156,22 @@ async def oidc_scheme_with_api_key(
         if api_key and secrets.compare_digest(api_key, settings.computed_api_key):
             logger.debug("API key authentication successful.")
             return api_key
-    return await oidc_scheme(request)
+    token = await oidc_scheme(request)
+    if oidc_scheme.auto_error and token and not has_required_role(decode_token_claims(token), audience, required_roles):
+        logger.error("Access token does not grant any of the required roles.")
+        raise HTTPException(status_code=403, detail="Forbidden")
+    return token
+
+
+async def oidc_scheme_ws_with_roles(token: Annotated[str | None, Depends(oidc_scheme_ws)]) -> str | None:
+    if (
+        oidc_scheme_ws.auto_error
+        and token
+        and not has_required_role(decode_token_claims(token), audience, required_roles)
+    ):
+        logger.error("Access token does not grant any of the required roles.")
+        raise fastapi.WebSocketException(code=fastapi.status.WS_1008_POLICY_VIOLATION, reason="Forbidden")
+    return token
 
 
 def _get_repository(
@@ -606,7 +624,7 @@ MultiplexorStorageScopeFactoryDep = Annotated[
     Depends(get_multiplexor_storage_factory),
 ]
 AccessTokenDep = Annotated[str | None, Depends(oidc_scheme_with_api_key)]
-WSAccessTokenDep = Annotated[str | None, Depends(oidc_scheme_ws)]
+WSAccessTokenDep = Annotated[str | None, Depends(oidc_scheme_ws_with_roles)]
 FileSystemDataRepoQueryMapDep = Annotated[
     dict[str, list[tuple[str, str]]] | None,
     Depends(get_filesystem_data_repository_query_map),

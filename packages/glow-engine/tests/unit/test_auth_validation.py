@@ -14,7 +14,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import base64
 from collections.abc import Callable
+import json
 import logging
 from typing import TYPE_CHECKING
 from unittest.mock import call
@@ -315,6 +317,73 @@ async def test_http_routes_without_valid_token_return_401(
     await _verify_http_routes(settings, _assert_invalid_token, bearer_token="invalid_token")
 
 
+def _make_token(claims: dict[str, object]) -> str:
+    """Build an unsigned JWT-shaped token. Tests using it mock the signature validation."""
+
+    def encode(part: dict[str, object]) -> str:
+        return base64.urlsafe_b64encode(json.dumps(part).encode()).decode().rstrip("=")
+
+    return f"{encode({'alg': 'none'})}.{encode(claims)}.signature"
+
+
+TOKEN_WITH_ROLE = _make_token({"resource_access": {"my-client-id": {"roles": ["other-role", "app-role"]}}})
+TOKEN_WITHOUT_ROLE = _make_token({"resource_access": {"my-client-id": {"roles": ["other-role"]}}})
+TOKEN_WITH_ROLE_OF_OTHER_CLIENT = _make_token({"resource_access": {"other-client": {"roles": ["app-role"]}}})
+
+
+def _assert_missing_role(endpoint: str, response: Response) -> None:
+    if endpoint not in ROUTES_WITHOUT_AUTH:
+        assert response.status_code == status.HTTP_403_FORBIDDEN
+        assert response.json() == {"detail": "Forbidden"}
+    else:
+        assert response.status_code not in [status.HTTP_401_UNAUTHORIZED, status.HTTP_403_FORBIDDEN]
+
+
+@pytest.fixture
+def require_app_role(monkeypatch: pytest.MonkeyPatch, mocker: MockerFixture) -> None:
+    monkeypatch.setattr(oidc_scheme, "auto_error", True)
+    monkeypatch.setattr(oidc_scheme_ws, "auto_error", True)
+    monkeypatch.setattr(dependencies, "audience", "my-client-id")
+    monkeypatch.setattr(dependencies, "required_roles", frozenset({"app-role"}))
+    mocker.patch.object(oidc_scheme._oidc_client, "validate_access_token")  # pyright: ignore[reportPrivateUsage]
+    mocker.patch.object(oidc_scheme_ws._oidc_client, "validate_access_token")  # pyright: ignore[reportPrivateUsage]
+
+
+@pytest.mark.usefixtures("require_app_role")
+async def test_http_routes_accept_token_with_required_role(settings: Settings):
+    await _verify_http_routes(settings, _assert_authenticated_response, bearer_token=TOKEN_WITH_ROLE)
+
+
+@pytest.mark.usefixtures("require_app_role")
+@pytest.mark.parametrize("token", [TOKEN_WITHOUT_ROLE, TOKEN_WITH_ROLE_OF_OTHER_CLIENT, "not-a-jwt"])
+async def test_http_routes_without_required_role_return_403(settings: Settings, token: str):
+    await _verify_http_routes(settings, _assert_missing_role, bearer_token=token)
+
+
+@pytest.mark.usefixtures("require_app_role")
+def test_websocket_routes_without_required_role_raise_1008(settings: Settings):
+    app = build_mock_app(settings, solution)
+    with TestClient(app) as client:
+        for route in app.routes:
+            if not isinstance(route, APIWebSocketRoute):
+                continue
+            for token, forbidden in [(TOKEN_WITHOUT_ROLE, True), (TOKEN_WITH_ROLE, False)]:
+                subprotocols = [f"{DEFAULT_SUBPROTOCOL_PREFIX}{encode_base64_token(token)}"]
+                if forbidden:
+                    with pytest.raises(WebSocketDisconnect) as e, client.websocket_connect(route.path, subprotocols):
+                        ...
+                    assert e.value.code == WS_1008_POLICY_VIOLATION
+                    assert e.value.reason == "Forbidden"
+                else:
+                    with (
+                        pytest.raises(WebSocketDenialResponse) as denial,
+                        client.websocket_connect(route.path, subprotocols),
+                    ):
+                        ...
+                    # Using placeholder project_id and getting a 404 is fine. We only want to see if auth is passed.
+                    assert "404 Not Found" in str(denial)
+
+
 def test_websocket_routes_require_valid_token(
     settings: Settings,
     monkeypatch: pytest.MonkeyPatch,
@@ -492,6 +561,47 @@ def test_dash_app_without_valid_token_returns_401(monkeypatch: pytest.MonkeyPatc
     assert log_error_mock.call_args_list == [call("Invalid access token: %s", "Invalid token")] * len(
         DASH_TESTING_ROUTES,
     )
+
+
+@pytest.mark.parametrize(
+    ("roles", "expected_status"),
+    [(["other-role", "app-role"], 200), (["other-role"], 403), ([], 403)],
+)
+def test_dash_app_enforces_required_roles(
+    roles: list[str],
+    expected_status: int,
+    monkeypatch: pytest.MonkeyPatch,
+    mocker: pytest_mock.MockerFixture,
+):
+    claims = {"resource_access": {"my-client-id": {"roles": roles}}}
+    mocker.patch.object(OidcClient, "validate_access_token", return_value=mocker.Mock(claims=claims))
+    monkeypatch.setenv("GLOW_AUTH_ISSUER_URL", "https://my-issuer-url")
+    monkeypatch.setenv("GLOW_AUTH_CLIENT_ID", "my-client-id")
+    monkeypatch.setenv("GLOW_AUTH_DISABLED", "False")
+    monkeypatch.setenv("GLOW_AUTH_REQUIRED_ROLES", "app-role, portal_admin")
+
+    ui_app = build_mock_dash_app(monkeypatch)
+    flask_app: Flask = ui_app.server  # type: ignore
+    with flask_app.test_client() as client:
+        for route in DASH_ROUTES_WITHOUT_AUTH:
+            assert client.get(route).status_code == 200
+        for method, route in DASH_TESTING_ROUTES:
+            r = getattr(client, method)(route, headers={"Authorization": "Bearer my_valid_token"})
+            if expected_status == 403:
+                assert r.status_code == 403
+            else:
+                assert r.status_code not in [403, 401]
+
+
+def test_dash_app_ignores_required_roles_when_auth_disabled(monkeypatch: pytest.MonkeyPatch):
+    monkeypatch.setenv("GLOW_AUTH_DISABLED", "True")
+    monkeypatch.setenv("GLOW_AUTH_REQUIRED_ROLES", "app-role")
+
+    ui_app = build_mock_dash_app(monkeypatch)
+    flask_app: Flask = ui_app.server  # type: ignore
+    with flask_app.test_client() as client:
+        for method, route in DASH_TESTING_ROUTES:
+            assert getattr(client, method)(route).status_code not in [403, 401]
 
 
 @pytest.mark.parametrize(

@@ -472,6 +472,14 @@ Authentication
      - Disables API authorization when set to ``True``.
      - ``True``
 
+   * - :envvar:`GLOW_AUTH_REQUIRED_ROLES`
+     - Comma-separated list of client roles. When authorization is enabled, the Solution UI and API servers
+       reject requests whose access token does not grant at least one of these roles with a 403 Forbidden error.
+       Roles are read from the ``resource_access.<GLOW_AUTH_CLIENT_ID>.roles`` claim (Keycloak client roles).
+
+       **Example:** ``my-solution-role,portal_admin``
+     - ``None`` (any valid token is accepted)
+
    * - :envvar:`GLOW_API_KEY`
      - Provides the API key for authenticating local requests to the API server.
 

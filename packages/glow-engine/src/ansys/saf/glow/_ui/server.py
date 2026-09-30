@@ -33,6 +33,7 @@ from ansys.saf.glow._config.const import (
     GLOW_AUTH_CLIENT_ID,
     GLOW_AUTH_DISABLED,
     GLOW_AUTH_ISSUER_URL,
+    GLOW_AUTH_REQUIRED_ROLES,
     GLOW_EXTERNAL_API_URL,
     GLOW_SOLUTION_DEFINITION,
     GLOW_UI_SERVICE_NAME,
@@ -40,6 +41,7 @@ from ansys.saf.glow._config.const import (
 )
 from ansys.saf.glow._config.settings import Settings
 from ansys.saf.glow._telemetry.instrumentor import Instrumentor
+from ansys.saf.glow._utilities.auth_roles import has_required_role, parse_required_roles
 
 logger = logging.getLogger(__name__)
 
@@ -170,6 +172,7 @@ def create_app(settings: Settings) -> Any:
     # After saf-portal is fixed, enable auth validation by default for
     # DockerCompose deployments. Leave it disabled for Desktop ones, though.
     disable_auth = os.environ.get(GLOW_AUTH_DISABLED, DEFAULT_GLOW_AUTH_DISABLED) != "False"
+    required_roles = parse_required_roles(os.environ.get(GLOW_AUTH_REQUIRED_ROLES))
     oidc_client = OidcClient(oidc_issuer_url, audience)
     if not disable_auth and not (oidc_issuer_url and audience):
         # We could catch exception NoIssuerOrAudienceError from OidcClient when doing validate_access_token, but
@@ -216,10 +219,13 @@ def create_app(settings: Settings) -> Any:
             logger.error("Missing access token in authorization header")
             raise Unauthorized(www_authenticate=WWWAuthenticate("Bearer"))
         try:
-            oidc_client.validate_access_token(request.authorization.token)
+            token = oidc_client.validate_access_token(request.authorization.token)
         except ValueError as ex:
             logger.error("Invalid access token: %s", str(ex))
             raise Unauthorized(www_authenticate=WWWAuthenticate("Bearer")) from None
+        if required_roles and not has_required_role(token.claims, audience, required_roles):
+            logger.error("Access token does not grant any of the required roles.")
+            raise Forbidden()
 
     # The following environment variables are necessary to for DashClient methods and callbacks.
     # Setting GLOW_SOLUTION_DEFINITION is only necessary in the case of solution definition autodiscovery:

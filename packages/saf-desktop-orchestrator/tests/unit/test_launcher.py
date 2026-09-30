@@ -19,7 +19,6 @@ from pathlib import Path
 import sys
 from unittest.mock import MagicMock
 
-from ansys.saf.testing.platform_specific import windows_only
 import pytest
 import pytest_mock
 
@@ -34,6 +33,7 @@ from ansys.saf.desktop.orchestrator._config.schema import (
 )
 from ansys.saf.desktop.orchestrator._orchestration.launcher import Launcher
 from ansys.saf.desktop.orchestrator._orchestration.solution_ui_framework import SolutionUIFramework
+from ansys.saf.testing.platform_specific import windows_only
 
 
 def test_start_solution_ui(mocker: pytest_mock.MockerFixture):

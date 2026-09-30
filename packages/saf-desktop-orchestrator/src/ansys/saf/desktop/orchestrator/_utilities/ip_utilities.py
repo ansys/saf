@@ -168,7 +168,7 @@ def resolve_ip(ip_or_url: str) -> str:
     str:
         The modified IP or URL with 0.0.0.0 replaced by the local host IP (127.0.0.1).
     """
-    if "0.0.0.0" in ip_or_url:  # nosec B104
-        return ip_or_url.replace("0.0.0.0", LOCALHOST_IP)  # nosec B104
+    if "0.0.0.0" in ip_or_url:  # noqa: S104
+        return ip_or_url.replace("0.0.0.0", LOCALHOST_IP)  # noqa S104
 
     return ip_or_url

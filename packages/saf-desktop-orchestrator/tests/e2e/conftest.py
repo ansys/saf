@@ -20,12 +20,12 @@ from pathlib import Path
 from typing import Protocol
 from zipfile import ZipFile
 
-from ansys.saf.testing.common import YieldFixture
-from ansys.saf.testing.process import Process
 import pytest
 from tenacity import TryAgain, retry, stop_after_attempt, wait_fixed
 
 from ansys.saf.desktop.orchestrator._utilities.ip_utilities import get_local_ip
+from ansys.saf.testing.common import YieldFixture
+from ansys.saf.testing.process import Process
 from tests.e2e.app_starter_process import SolutionAppStarter
 from tests.e2e.orchestrator_process import OrchestratorProcess
 from tests.generate_grpc_certificates import (

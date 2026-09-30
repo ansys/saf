@@ -16,11 +16,11 @@
 
 from unittest.mock import MagicMock
 
-from ansys.saf.testing.platform_specific import linux_only, windows_only
 import pytest
 from pytest_mock import MockerFixture
 
 from ansys.saf.desktop.orchestrator._orchestration.pywebview_events import set_custom_pywebview_icon
+from ansys.saf.testing.platform_specific import linux_only, windows_only
 
 SOLUTION_WITH_ICON = "tests.mocks.solutions.minimal_complete_solution"
 SOLUTION_WITHOUT_ICON = "tests.mocks.solutions_main.minimal_main"

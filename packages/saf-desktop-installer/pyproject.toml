@@ -65,21 +65,6 @@ omit = [ "dist/*" ]
 show_missing = true
 omit = [ "*/pytest-of-*/pytest-*/popen-*/*", "/tmp/*", "*/Temp/*", "dist/*" ]
 
-[tool.pyright]
-pythonVersion = "3.12"
-extraPaths = [ "src" ]
-include = [ "src/ansys/saf/desktop/installer", "tests" ]
-exclude = [
-  ".venv",
-  ".poetry",
-  ".tox",
-  ".git",
-  "doc/source/conf.py",
-]
-strict = [ "src/ansys/saf/desktop/installer", "tests" ]
-venvPath = "../.."
-venv = ".venv"
-
 [tool.bandit]
 exclude_dirs = [ "tests" ]
 

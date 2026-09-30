@@ -58,20 +58,6 @@ omit = [
 [tool.coverage.report]
 show_missing = true
 
-[tool.pyright]
-pythonVersion = "3.12"
-venvPath = "../.."
-venv = ".venv"
-extraPaths = [ "src" ]
-include = [
-  "src/ansys/bdm/shared_volume",
-  "tests",
-]
-strict = [
-  "src/ansys/bdm/shared_volume",
-  "tests",
-]
-
 [tool.uv]
 prereleases = "if-necessary"
 prerelease-package = { ansys-bdm-api = "allow" }

@@ -109,21 +109,6 @@ source = [ "ansys.saf.testing" ]
 show_missing = true
 omit = [ "*/pytest-of-*/pytest-*/popen-*/*", "/tmp/*" ]
 
-[tool.pyright]
-pythonVersion = "3.12"
-extraPaths = [ "src" ]
-include = [ "src/ansys/saf/testing", "tests" ]
-exclude = [
-  "**/*_pb2.py",
-  "**/*_pb2_grpc.py",
-  ".venv",
-  ".poetry",
-  "doc/**",
-]
-strict = [ "src/ansys/saf/testing", "tests" ]
-venvPath = "../.."
-venv = ".venv"
-
 [tool.uv.sources]
 ansys-saf-testing = { workspace = true }
 

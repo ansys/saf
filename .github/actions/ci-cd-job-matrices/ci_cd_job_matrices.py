@@ -89,6 +89,7 @@ UV_PACKAGES = [
     "saf-iam-oidc",
     "saf-product-configuration",
     "saf-testing",
+    "saf-templates",
 ]
 
 

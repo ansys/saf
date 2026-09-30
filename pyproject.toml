@@ -19,6 +19,7 @@ dependencies = [
   "ansys-saf-desktop-installer",
   "ansys-saf-desktop-orchestrator",
   "ansys-saf-product-configuration[all]",
+  "ansys-saf-templates",
   "ansys-saf-testing[all]",
 ]
 
@@ -115,10 +116,7 @@ extend-exclude = [
   "*_pb2.py",
   "*_pb2_grpc.py",
   "conf.py",
-  "packages/glow-engine/benchmarks",                            # Ignore files containing cookiecutter syntax
-  "packages/saf-cli/src/ansys/saf/cli/_solutions/templates/**", # Ignore files containing cookiecutter syntax
-  "packages/saf-cli/tests/mocks/plugin/",                       # Ignore files containing cookiecutter syntax
-  "packages/saf-templates/**/[{][{]cookiecutter.*",             # Ignore files containing cookiecutter syntax
+  "packages/**/[{][{]cookiecutter.*",     # Ignore files containing cookiecutter syntax
 ]
 # in same order as in https://docs.astral.sh/ruff/rules
 lint.select = [
@@ -186,6 +184,25 @@ lint.isort.known-first-party = [
 [tool.coverage.report]
 show_missing = true
 
+[tool.pyright]
+pythonVersion = "3.12"
+extraPaths = [ "src" ]
+include = [
+  "src",
+  "tests",
+]
+exclude = [
+  "**/*_pb2.py",
+  "**/*_pb2_grpc.py",
+  "**/.venv",
+  "**/{{cookiecutter.project_slug}}",
+  "**/*{{cookiecutter*/**",
+
+]
+strict = [ "src", "tests" ]
+venvPath = "."
+venv = ".venv"
+
 [tool.uv]
 package = false
 
@@ -197,6 +214,7 @@ ansys-saf-desktop-installer = { workspace = true }
 ansys-iam-oidc = { workspace = true }
 ansys-saf-product-configuration = { workspace = true }
 ansys-saf-testing = { workspace = true }
+ansys-saf-templates = { workspace = true }
 
 [tool.uv.workspace]
 members = [
@@ -207,4 +225,5 @@ members = [
   "packages/saf-iam-oidc",
   "packages/saf-product-configuration",
   "packages/saf-testing",
+  "packages/saf-templates",
 ]

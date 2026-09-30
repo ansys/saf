@@ -16,8 +16,8 @@ dependencies = [
   "ansys-bdm-api",
   "ansys-bdm-shared-volume",
   "ansys-iam-oidc",
-  "ansys-saf-desktop-orchestrator",
   "ansys-saf-desktop-installer",
+  "ansys-saf-desktop-orchestrator",
   "ansys-saf-product-configuration[all]",
   "ansys-saf-testing[all]",
 ]
@@ -32,8 +32,8 @@ dev = [
   { include-group = "doc" },
   { include-group = "style-desktop-installer" },
   { include-group = "tests" },
-  { include-group = "tests-saf-desktop-orchestrator" },
   { include-group = "tests-desktop-installer" },
+  { include-group = "tests-saf-desktop-orchestrator" },
 ]
 style-desktop-installer = [
   "ansys-saf-glow-engine[dash]>=2.1.0,<3.0.0",

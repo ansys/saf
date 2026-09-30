@@ -5,9 +5,11 @@ projects:
   globs:
     - "packages/bdm-python-api"
     - "packages/bdm-python-shared-volume"
+    - "packages/saf-desktop-orchestrator"
     - "packages/saf-iam-oidc"
     - "packages/saf-product-configuration"
     - "packages/saf-testing"
+    - "packages/saf-templates"
   # Root-level project for workspace-wide, run-once tasks.
   sources:
     root: ".moon"

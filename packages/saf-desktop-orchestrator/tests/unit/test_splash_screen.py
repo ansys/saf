@@ -32,7 +32,7 @@ class TestSplashHandle:
     def test_update_status(self):
         """Test that update_status sends a message to the status queue."""
         status_queue: multiprocessing.Queue[str] = multiprocessing.Queue()
-        process: multiprocessing.Process = cast(multiprocessing.Process, multiprocessing.current_process())
+        process: multiprocessing.Process = cast("multiprocessing.Process", multiprocessing.current_process())
         handle = SplashHandle(process, status_queue)
         handle.update_status("Test message")
         assert status_queue.get(timeout=1) == "Test message"

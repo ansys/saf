@@ -15,7 +15,6 @@
 # limitations under the License.
 
 from ansys.saf.glow.solution import Solution, StepsModel
-
 from tests.mocks.solutions.minimal_pim_solution.solution.instance_manager_step import CustomSharedInstanceStep
 
 

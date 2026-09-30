@@ -39,15 +39,6 @@ addopts = [
 ]
 asyncio_mode = "auto"
 
-[tool.pyright]
-pythonVersion = "3.12"
-extraPaths = [ "src" ]
-include = [ "src", "tests" ]
-exclude = [ "**/*_pb2.py", "**/*_pb2_grpc.py" ]
-strict = [ "src", "tests" ]
-venvPath = "../.."
-venv = ".venv"
-
 [tool.uv.sources]
 ansys-bdm-api = { workspace = true }
 

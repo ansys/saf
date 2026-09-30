@@ -75,23 +75,6 @@ source = [ "ansys.saf.desktop.orchestrator" ]
 show_missing = true
 omit = [ "*/pytest-of-*/pytest-*/popen-*/*", "/tmp/*" ]
 
-[tool.pyright]
-venvPath = "../.."
-venv = ".venv"
-extraPaths = [ "src" ]
-include = [ "src/ansys/saf/desktop/orchestrator", "tests" ]
-exclude = [
-  "**/*_pb2.py",
-  "**/*_pb2_grpc.py",
-  ".venv",
-  ".poetry",
-  ".tox",
-  ".git",
-  "doc/source/conf.py",
-]
-strict = [ "src/ansys/saf/desktop/orchestrator", "tests" ]
-pythonVersion = "3.12"
-
 [tool.uv.sources]
 ansys-saf-desktop-orchestrator = { workspace = true }
 

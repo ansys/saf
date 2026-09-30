@@ -23,6 +23,7 @@ members = [
     "ansys-iam-oidc",
     "ansys-saf-desktop-orchestrator",
     "ansys-saf-product-configuration",
+    "ansys-saf-templates",
     "ansys-saf-testing",
     "ansys-saf-workspace",
 ]
@@ -686,6 +687,11 @@ requires-dist = [
 provides-extras = ["aedt", "all", "fluent", "optislang"]
 
 [[package]]
+name = "ansys-saf-templates"
+version = "0.4.dev0"
+source = { editable = "packages/saf-templates" }
+
+[[package]]
 name = "ansys-saf-testing"
 version = "0.15.dev0"
 source = { editable = "packages/saf-testing" }
@@ -767,6 +773,7 @@ dependencies = [
     { name = "ansys-iam-oidc" },
     { name = "ansys-saf-desktop-orchestrator" },
     { name = "ansys-saf-product-configuration", extra = ["all"] },
+    { name = "ansys-saf-templates" },
     { name = "ansys-saf-testing", extra = ["all"] },
 ]
 
@@ -877,6 +884,7 @@ requires-dist = [
     { name = "ansys-iam-oidc", editable = "packages/saf-iam-oidc" },
     { name = "ansys-saf-desktop-orchestrator", editable = "packages/saf-desktop-orchestrator" },
     { name = "ansys-saf-product-configuration", extras = ["all"], editable = "packages/saf-product-configuration" },
+    { name = "ansys-saf-templates", editable = "packages/saf-templates" },
     { name = "ansys-saf-testing", extras = ["all"], editable = "packages/saf-testing" },
 ]
 

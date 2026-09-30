@@ -410,7 +410,7 @@ jobs:
             secrets.PYANSYS_PYPI_PRIVATE_URL }}
 
       - name: Install visor
-        if: ${{ matrix.install-visor == 'true' }}
+        if: ${{ matrix.install-visor == 'true' && env.USE_MOON == 'false' }}
         shell: bash
         run: |
           ${PYTHON_EXE} -m pip install ansys-visor-viewer==${VISOR_VERSION}

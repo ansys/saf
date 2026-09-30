@@ -103,6 +103,7 @@ jobs:
           - bdm-python-api
           - saf-iam-oidc
           - saf-product-configuration
+          - saf-product-manager
     env:
       PACKAGE: ${{ matrix.package }}
     runs-on: ubuntu-latest
@@ -174,7 +175,6 @@ jobs:
         package:
           - dash-super-components
           - glow-engine
-          - saf-product-manager
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository

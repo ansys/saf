@@ -456,8 +456,8 @@ jobs:
       python-version: ${{ matrix.python-version }}
       use-moon: ${{ needs.pre-certification.outputs.use-moon == 'true' }}
       artifact-name: ${{ needs.pre-certification.outputs.library-name }}-${{ matrix.python-version
-        }}${{ needs.pre-certification.outputs.use-moon == 'false', '', '-artifacts')
-        }}
+        }}${{ case(needs.pre-certification.outputs.use-moon == 'false', '', '-artifacts'
+        ) }}
 
   check-wheel-can-be-pip-installed:
     name: "Check wheel can be pip installed"

@@ -70,7 +70,13 @@ theme_toggle = dmc.Switch(
 header = dmc.AppShellHeader(
     dmc.Flex(
         [
-            html.Img(id="logo-image", src=get_asset("placeholder_logo.png", "logos", "light"), height="36px"),
+            html.Img(
+                id="logo-image",
+                src=get_asset("placeholder_logo.png", "logos", "light"),
+                height="64px",
+                alt="Solution logo placeholder.",
+                title="Customize this logo by modifying /ui/assets/logos/light/placeholder_logo.png",
+            ),
             dmc.Group(
                 [
                     dmc.Text(
@@ -362,14 +368,16 @@ def open_new_page(value, project_id: str | None, pathname: str):
 @callback(
     Output("access-solution-doc", "children"),
     Output("logo-image", "src"),
+    Output("logo-image", "title"),
     Input("color-scheme-switch", "checked"),
 )
-def update_nav_icons(switch_on: bool) -> tuple[html.Img, str]:
+def update_nav_icons(switch_on: bool) -> tuple[html.Img, str, str]:
     """Update navigation tree icons based on the current theme."""
     theme = "dark" if switch_on else "light"
     return (
         html.Img(src=get_asset("teenyicons--doc-solid.svg", "icons", theme)),
         get_asset("placeholder_logo.png", "logos", theme),
+        f"Customize this logo by modifying /ui/assets/logos/{theme}/placeholder_logo.png",
     )
 
 

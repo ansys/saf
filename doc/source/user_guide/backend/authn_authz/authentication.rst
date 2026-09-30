@@ -40,6 +40,8 @@ In this type of container-based deployment, security is paramount, and solution 
 
 From the Solution UI/API server perspective, they are unaware of that authentication process and the origin of the access token. They only see an incoming request and expect it to have a ``bearer`` access token in its headers. The access token should be a valid JWT (JSON Web Token) signed by an identity provider, which contains user information and scopes. The Solution UI/API server extracts the access token and validates it against the configured identity provider. If there is no token in the request or the token is invalid, the request is rejected with either a 401 Unauthorized or a 403 Forbidden error, depending on the context. If :envvar:`GLOW_AUTH_REQUIRED_ROLES` is set, a valid token that does not grant all of the listed client roles, and none of the roles in :envvar:`GLOW_AUTH_BYPASS_ROLES`, is also rejected with a 403 Forbidden error, so that a user who can log in but was not given access to the solution cannot open it by its URL. If valid, the request is processed and the access token is passed through to any subsequent component or request made by the server. For example:
 
+The roles configured with :envvar:`GLOW_AUTH_REQUIRED_ROLES` and :envvar:`GLOW_AUTH_BYPASS_ROLES` apply to the solution as a whole; they do not provide per-project permissions or ownership. Consequently, any user who can access the solution can access and modify any project within it.
+
 - In the Solution UI server, the access token is reused for all requests to the Solution API server, including REST, GraphQL and WebSockets.
 - In the Solution API server, the access token is:
     - Reused to authenticate with other systems such as HPS or Minerva

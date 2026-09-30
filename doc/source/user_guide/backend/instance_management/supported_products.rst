@@ -11,7 +11,7 @@ By default, SAF GLOW Engine  includes product instance managers for the followin
 .. list-table::
    :header-rows: 1
    :stub-columns: 1
-   :widths: 10 22 25 20 25
+   :widths: 10 25 25 20 30
 
    *  - Product
       - Supported versions

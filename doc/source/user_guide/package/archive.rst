@@ -96,7 +96,7 @@ The ``saf archive`` command has several options. To see them all, run the follow
 
 The following ``saf archive`` options are available:
 
-.. list-table::
+.. list-table:: Comparison of SAF archive command options
    :header-rows: 1
    :stub-columns: 1
    :widths: 15 85

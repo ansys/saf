@@ -92,10 +92,10 @@ The ``saf install`` command has multiple options. To see them all, run the follo
 
 The following ``saf install`` options are available:
 
-.. list-table::
+.. list-table::  ``saf install`` options
    :header-rows: 1
    :stub-columns: 1
-   :widths: 25 55 20
+   :widths: 20 55 25
 
    * - Option
      - Description
@@ -118,7 +118,7 @@ The following ``saf install`` options are available:
 
        For more detailed information on dependency packages and groups, see :ref:`ug-install-dependency-groups`.
 
-     - ``desktop,ui,doc,build``
+     - ``desktop``, ``ui``, ``doc``, ``build``
 
 
 Virtual environment installation
@@ -439,7 +439,7 @@ The ``saf execute`` command has multiple options. To see them all, run the follo
 
 The following ``saf execute`` options are available:
 
-.. list-table::
+.. list-table::  ``saf execute`` options
    :header-rows: 1
    :stub-columns: 1
    :widths: 20 40 40

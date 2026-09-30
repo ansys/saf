@@ -406,7 +406,7 @@ jobs:
         shell: bash
         run: moon run $PACKAGE:install-pim-light-server
         env:
-          UV_EXTRA_INDEX_URL: https://PAT:${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}@${{
+          PIP_EXTRA_INDEX_URL: https://PAT:${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}@${{
             secrets.PYANSYS_PYPI_PRIVATE_URL }}
 
       - name: Install visor
@@ -427,7 +427,7 @@ jobs:
         shell: bash
         run: moon run $PACKAGE:install-visor
         env:
-          UV_EXTRA_INDEX_URL: https://PAT:${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}@${{
+          PIP_EXTRA_INDEX_URL: https://PAT:${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}@${{
             secrets.PYANSYS_PYPI_PRIVATE_URL }}
 
       - name: Install desktop-portal
@@ -448,7 +448,7 @@ jobs:
         shell: bash
         run: moon run $PACKAGE:install-saf-desktop-portal
         env:
-          UV_EXTRA_INDEX_URL: https://PAT:${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}@${{
+          PIP_EXTRA_INDEX_URL: https://PAT:${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}@${{
             secrets.PYANSYS_PYPI_PRIVATE_URL }}
 
       - name: Install aspire dashboard
@@ -471,7 +471,7 @@ jobs:
         shell: bash
         run: moon run $PACKAGE:install-ansys-saf-aspire
         env:
-          UV_EXTRA_INDEX_URL: https://PAT:${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}@${{
+          PIP_EXTRA_INDEX_URL: https://PAT:${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}@${{
             secrets.PYANSYS_PYPI_PRIVATE_URL }}
 
       - name: Install minerva-python-client
@@ -519,11 +519,6 @@ jobs:
           which gtk-launch
           which xvfb-run
 
-      - name: Configure PYTEST_DEBUG_TEMPROOT
-        if: runner.os != 'Linux' && env.USE_MOON == 'false'
-        shell: bash
-        run: echo "PYTEST_DEBUG_TEMPROOT=C:/" >> $GITHUB_ENV
-
       - name: Build pytest additional arguments
         id: pytest-args
         shell: bash
@@ -538,6 +533,8 @@ jobs:
 
       - name: Run tests
         id: run-tests
+        env:
+          PYTEST_DEBUG_TEMPROOT: ${{ runner.os == 'Windows' && 'C:/' || '/tmp' }}
         if: ${{ env.USE_MOON == 'false' }}
         uses: ansys/saf-devops/run-tests@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
         with:
@@ -558,6 +555,7 @@ jobs:
         id: run-tests-moon
         shell: bash
         env:
+          PYTEST_DEBUG_TEMPROOT: ${{ runner.os == 'Windows' && 'C:/' || '/tmp' }}
           PYTEST_ARGS: ${{ steps.pytest-args.outputs.pytest-args }}
           REPORTS_DIR: "${{ github.workspace }}/${{ matrix.test-report-artifact-name-suffix
             }}_${{ inputs.python-version }}"

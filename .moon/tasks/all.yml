@@ -7,19 +7,21 @@ tasks:
       - "run"
       - "python"
       - "$workspaceRoot/.moon/scripts/check_env_var.py"
-      # The value passed via args: ['UV_EXTRA_INDEX_URL'] will naturally append here
 
   install-private-dependency:
+    description: "Install a private dependency from a private PyPI index"
     command: "uv"
     args:
+      - "run"
+      - "python"
+      - "-m"
       - "pip"
       - "install"
       - "--pre"
       - "--no-deps"
-      # The value passed via args: ["ansys-saf-aspire==9.1.6"] will naturally append here
     deps:
       - target: "~:check-env-var"
-        args: ["UV_EXTRA_INDEX_URL"]
+        args: ["PIP_EXTRA_INDEX_URL"]
     env:
       PIP_INDEX_URL: "https://pypi.org/simple"
       PIP_QUIET: "1"
@@ -27,24 +29,28 @@ tasks:
       cache: false
 
   install-pim-light-server:
+    description: "Install the ANSYS SAF PIM Light Server package"
     deps:
       - target: "~:install-private-dependency"
         args:
           - "ansys-saf-pim-light-server==0.3.12"
 
   install-ansys-saf-aspire:
+    description: "Install the ANSYS SAF Aspire package"
     deps:
       - target: "~:install-private-dependency"
         args:
           - "ansys-saf-aspire==9.1.6"
 
   install-saf-desktop-portal:
+    description: "Install the ANSYS SAF Desktop Portal package"
     deps:
       - target: "~:install-private-dependency"
         args:
           - "ansys-saf-desktop-portal==0.4.dev2"
 
   install-visor:
+    description: "Install the ANSYS Visor Viewer package"
     deps:
       - target: "~:install-private-dependency"
         args:
@@ -228,13 +234,6 @@ tasks:
       - "/uv.lock"
       - "/.python-version"
       - "/extra_packages/**/*"
-
-  test-windows:
-    extends: "test"
-    env:
-      PYTEST_DEBUG_TEMPROOT: 'C:/'
-    options:
-      os: 'windows'
 
   build-doc:
     description: "Build API documentation"

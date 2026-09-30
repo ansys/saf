@@ -51,6 +51,11 @@ addopts = [
   "--import-mode=importlib",
   "-nlogical",
   "--dist=loadfile",
+  "--ignore=.moon",
+  "--ignore=.venv",
+  "--ignore=tmp*",
+  "--ignore=.git",
+  "--tx=popen",              # Standardizes subprocess creation across Linux & Windows
 ]
 asyncio_mode = "auto"
 filterwarnings = [

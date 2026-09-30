@@ -131,20 +131,6 @@ show_missing = true
 include = [ "src/*" ]
 omit = [ "*/pytest-of-*/pytest-*/popen-*/*" ]
 
-[tool.pyright]
-pythonVersion = "3.12"
-venvPath = "../.."
-venv = ".venv"
-extraPaths = [ "src" ]
-include = [ "src", "tests", "doc" ]
-exclude = [
-  ".venv",
-  ".poetry",
-  ".git",
-  "doc/source",
-]
-strict = [ "src", "tests", "doc" ]
-
 [tool.uv.sources]
 ansys-saf-product-configuration = { workspace = true }
 

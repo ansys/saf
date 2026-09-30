@@ -24,8 +24,6 @@ import sys
 from typing import Any
 from uuid import uuid4
 
-from ansys.saf.glow.cli import run_api
-from ansys.saf.product_configuration.manager.configurations_manager import ProductInstanceConfigurationsManager
 import httpx2
 import yaml
 
@@ -69,6 +67,8 @@ from ansys.saf.desktop.orchestrator._orchestration.solution_ui_framework import 
 from ansys.saf.desktop.orchestrator._telemetry.utilities import get_config_file
 from ansys.saf.desktop.orchestrator._utilities.directories import find_product_instance_configs_dir
 from ansys.saf.desktop.orchestrator._utilities.ip_utilities import get_random_free_port, try_response
+from ansys.saf.glow.cli import run_api
+from ansys.saf.product_configuration.manager.configurations_manager import ProductInstanceConfigurationsManager
 
 logger = logging.getLogger(__name__)
 

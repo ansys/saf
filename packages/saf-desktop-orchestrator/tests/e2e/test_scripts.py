@@ -20,12 +20,12 @@ from pathlib import Path
 import platform
 from typing import Any
 
-from ansys.saf.testing.selenium import wait_for_element, wait_for_element_and_click, wait_for_element_and_send_text
 import pytest
 from selenium.webdriver.chrome.webdriver import WebDriver
 from selenium.webdriver.common.by import By
 
 from ansys.saf.desktop.orchestrator._config.schema import SAF_DESKTOP_LOG_TO_FILES
+from ansys.saf.testing.selenium import wait_for_element, wait_for_element_and_click, wait_for_element_and_send_text
 from tests.conftest import copy_mock_solution_to_layout
 from tests.e2e.app_starter_process import SolutionAppStarter
 

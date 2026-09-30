@@ -552,7 +552,7 @@ jobs:
         env:
           PYTEST_ARGS: ${{ steps.pytest-args.outputs.pytest-args }}
           REPORTS_DIR: "${{ case( inputs.library-name == 'saf-desktop-installer' &&
-            \ runner.os == 'Linux', '', format('{0}/{1}_{2}', github.workspace, matrix.test-report-artifact-name-suffix,
+            runner.os == 'Linux', '', format('{0}/{1}_{2}', github.workspace, matrix.test-report-artifact-name-suffix,
             inputs.python-version ) )}}"
           COVERAGE_ARG: ${{ case( inputs.library-name == 'saf-desktop-installer' &&  runner.os
             == 'Linux', '', '--cov=src --cov-report=term --cov-report=xml --cov-report=html')}} # Get stuck in the reporting of saf-desktop-installer on Linux

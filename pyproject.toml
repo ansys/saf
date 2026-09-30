@@ -18,6 +18,7 @@ dependencies = [
   "ansys-iam-oidc",
   "ansys-saf-desktop-orchestrator",
   "ansys-saf-product-configuration[all]",
+  "ansys-saf-product-manager[all]",
   "ansys-saf-templates",
   "ansys-saf-testing[all]",
 ]
@@ -193,6 +194,7 @@ ansys-bdm-shared-volume = { workspace = true }
 ansys-saf-desktop-orchestrator = { workspace = true }
 ansys-iam-oidc = { workspace = true }
 ansys-saf-product-configuration = { workspace = true }
+ansys-saf-product-manager = { workspace = true }
 ansys-saf-testing = { workspace = true }
 ansys-saf-templates = { workspace = true }
 
@@ -203,6 +205,7 @@ members = [
   "packages/saf-desktop-orchestrator",
   "packages/saf-iam-oidc",
   "packages/saf-product-configuration",
+  "packages/saf-product-manager",
   "packages/saf-testing",
   "packages/saf-templates",
 ]

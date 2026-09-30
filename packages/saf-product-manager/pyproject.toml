@@ -2,7 +2,7 @@
 build-backend = "uv_build"
 requires = [ "uv-build>=0.12.18,<0.13" ]
 
-[tool.poetry]
+[project]
 name = "ansys-saf-product-manager"
 version = "0.6.dev0"
 description = "SAF Product Manager"
@@ -25,164 +25,96 @@ classifiers = [
 ]
 
 dependencies = [
-  "ansys-bdm-api">=0.5.0,<1.0",
-  "ansys-bdm-shared-volume">=0.4.0, <1.0",
-  "ansys-saf-glow-engine">=2.3.dev0",
-  "ansys-saf-product-configuration">=0.25.0, <1.0",
+  "ansys-bdm-api>=0.5.0,<1.0",
+  "ansys-bdm-shared-volume>=0.4.0, <1.0",
+  "ansys-saf-glow-engine>=2.3.dev0,<3.0.0",
+  "ansys-saf-product-configuration>=0.25.0, <1.0",
+]
 
-  
 [project.optional-dependencies]
-aedt = [ 
-  "pyaedt>=1.0.0,<2.0.0", "aiohttp", "httpx2", "matplotlib", "openpyxl", "osmnx", "pandas", "pyvista", "fast-simplification", "ansys-tools-visualization-interface", "tables", "rpds-py", "contourpy", "scikit-rf", "scipy", "vtk", "requests", "typer", "rpyc", "jupyterlab", "ipython" ]
-
-[tool.poetry.extras]
 aedt = [
-  "pyaedt",
-  "aiohttp",
-  "httpx2",
-  "matplotlib",
-  "openpyxl",
-  "osmnx",
-  "pandas",
-  "pyvista",
-  "fast-simplification",
-  "ansys-tools-visualization-interface",
-  "tables",
-  "rpds-py",
-  "contourpy",
-  "scikit-rf",
-  "scipy",
-  "vtk",
-  "requests",
-  "typer",
-  "rpyc",
-  "jupyterlab",
-  "ipython",
+  "pyaedt>=1.0.0,<2.0.0",
+  "aiohttp>=3.14.2,<4.0.0",
+  "httpx2>=2.5.0,<3.0.0",
+  "matplotlib>=3.5.0,<4.0.0",
+  "openpyxl>=3.1.0,<4.0.0",
+  "osmnx>=2.0.0,<3.0.0",
+  "pandas>=1.1.0",
+  "pyvista[io]>=0.38.0,<0.49",
+  "fast-simplification>=0.1.7,<1.0",
+  "ansys-tools-visualization-interface>=0.1.0,<1.0",
+  "scikit-rf>=0.30.0,<1.0",
+  "requests>=2.0.0,<3.0.0",
+  "typer>=0.20.0,<1.0",
+  "vtk>=9.0,<9.7",
+  "rpyc>=6.0.0,<7.0.0",
+  "jupyterlab>=4.6.2,<5.0.0",
+  "ipython>=7.30.0,<8.0.0",
+  "tables<3.11 ; python_version >= '3.11' and python_version < '3.13'",
+  "tables>=3.11.1,<4.0.0 ; python_version >= '3.13'",
+  "rpds-py>=0.18.1,<2026 ; python_version >= '3.11' and python_version < '3.13'",
+  "rpds-py>=2026.5.1 ; python_version >= '3.13'",
+  "contourpy<=1.3.2 ; python_version >= '3.11' and python_version < '3.12'",
+  "contourpy>=1.3.3,<2.0.0 ; python_version >= '3.12'",
+  "scipy<=1.15.3 ; python_version < '3.11'",
+  "scipy>=1.17.1,<2.0.0 ; python_version >= '3.11'",
 ]
-fluent = [ "ansys-fluent-core", "httpx2", "pyansys-tools-report" ]
-geometry = [ "ansys-geometry-core", "beartype" ]
-mapdl = [ "ansys-mapdl-core" ]
-mechanical = [ "ansys-mechanical-core" ]
-optislang_wrapper = [ "ansys-optislang-core", "httpx2" ]
-visor = [ "httpx2" ]
-# didn't find a way to dynamically include previous groups, so we need to copy all dependencies
-all = [
-  "aiohttp",
-  "pyaedt",
-  "httpx2",
-  "ansys-geometry-core",
-  "ansys-fluent-core",
-  "ansys-mapdl-core",
+fluent = [
+  "ansys-fluent-core>=0.39, <1.0 ; python_version >= '3.11' and python_version < '3.15'",
+  "httpx2>=2.5.0",
   "pyansys-tools-report",
-  "ansys-mechanical-core",
-  "ansys-optislang-core",
-  "matplotlib",
-  "openpyxl",
-  "osmnx",
-  "pandas",
-  "pyvista",
-  "fast-simplification",
-  "ansys-tools-visualization-interface",
-  "tables",
-  "rpds-py",
-  "contourpy",
-  "scikit-rf",
-  "scipy",
-  "vtk",
-  "requests",
-  "typer",
-  "rpyc",
-  "jupyterlab",
-  "ipython",
-  "beartype",
 ]
-
-[tool.poetry.group.doc]
-optional = true
-[tool.poetry.group.doc.dependencies]
-ansys-sphinx-theme = { extras = [ "autoapi" ], version = "^1.7.0", python = ">=3.12" }
-autodoc-pydantic = { version = "^2.2.0", python = ">=3.12" }
-numpydoc = { version = "^1.10.0", python = ">=3.12" }
-sphinx = { version = "^9.1.0", python = ">=3.12" }
-sphinx-autodoc-typehints = { version = "^3.6.3", python = ">=3.12" }
-sphinx-copybutton = { version = "^0.5.2", python = ">=3.12" }
-sphinx-design = { version = "^0.7.0", python = ">=3.12" }
-
-[tool.poetry.group.tests]
-optional = true
-[tool.poetry.group.tests.dependencies]
-ansys-saf-glow-engine = { version = "^2.1.0", allow-prereleases = true, extras = [
-  "dash",
-  "pim",
-  "hps",
-] }
-ansys-saf-testing = { version = ">=0.14.0, <1.0", allow-prereleases = true, extras = [
-  "selenium",
-  "hps",
-  "pim",
-] }
-coverage = "^7.2.6"
-docker = "^7.1.0"
-grpcio-health-checking = "^1.24.0"
-mock = "^4.0.3"
-pytest = "~9.0.3" # Limited to <9.1.0 because higher versions produce a BDM error
-pytest-asyncio = "^1.0.0"
-pytest-cov = "^7.0.0"
-pytest-html = "^4.1.1"
-pytest-md = "^0.2.0"
-pytest-mock = "^3.10.0"
-pytest-rerunfailures = "^15.0.0"
-pytest-timeout = "^2.3.1"
-pytest-xdist = "^3.6.1"
-gunicorn = "^23.0.0" # for launching UI server in DockerCompose
-
-[tool.poetry.group.dev]
-optional = true
-[tool.poetry.group.dev.dependencies]
-# TODO: use a tool that makes sure the version here and in the pre-commit file are in sync!
-pyright = "1.1.407"
-ruff = "0.15.0"
-pre-commit = "^4.5"
-
-[tool.ruff]
-target-version = "py311"
-line-length = 120
-
-# in same order as in https://docs.astral.sh/ruff/rules
-lint.select = [
-  "A",      # flake8-builtins
-  "ASYNC",  # flake8-async
-  "B",      # flake8-bugbear
-  "C4",     # flake8-comprehensions
-  "C90",    # mccabe
-  "COM",    # flake8-commas
-  "E",      # pycodestyle - error
-  "F",      # pyflakes
-  "FAST",   # fastapi
-  "I",      # isort
-  "LOG",    # flake8-logging
-  "N",      # pep8-naming
-  "PIE",    # flake8-pie
-  "PT",     # flake8-pytest-style
-  "PTH",    # flake8-use-pathlib
-  "PYI",    # flake8-pyi
-  "Q",      # flake8-quotes
-  "RUF100", # ruff-specific rules: unused noqa
-  "SIM",    # flake8-simplify
-  "TC",     # flake8-type-checking
-  "UP",     # pyupgrade
-  "W",      # pycodestyle - warning
+geometry = [
+    "ansys-geometry-core>=0.14.1, <1.0",
+    "beartype>=0.22.9, <0.23",
 ]
-lint.ignore = [ "PTH207" ]
-lint.flake8-pytest-style.mark-parentheses = false
-lint.flake8-type-checking.runtime-evaluated-base-classes = [ "pydantic.BaseModel", "pydantic_settings.BaseSettings" ]
-lint.flake8-type-checking.runtime-evaluated-decorators = [ "attrs.define", "pydantic.validate_call" ]
-lint.isort.force-sort-within-sections = true
-lint.isort.known-first-party = [ "src", "doc", "tests" ]
-
-[tool.codespell]
-ignore-words = ".codespellignore"
-skip = "*.json,,.git,.venv,.poetry,*.lcov,htmlcov,dist,./doc/build,*.aedt,batch.log,./pytest_logs,*.vtp,./hps_deployment/*,hps_deployment_logs.txt,poetry.lock"
+mapdl = [
+    "ansys-mapdl-core>=0.73.0, <1.0 ; python_version >= '3.11' and python_version < '3.15'",
+]
+mechanical = [
+    "ansys-mechanical-core>=0.12, <1.0 ; python_version >= '3.11' and python_version < '3.15'",
+]
+optislang_wrapper = [
+    "ansys-optislang-core>=1.4.0",
+    "httpx2>=2.5.0",
+]
+visor = [
+    "httpx2>=2.5.0",
+]
+all = [
+  "pyaedt>=1.0.0,<2.0.0",
+  "aiohttp>=3.14.2,<4.0.0",
+  "httpx2>=2.5.0,<3.0.0",
+  "matplotlib>=3.5.0,<4.0.0",
+  "openpyxl>=3.1.0,<4.0.0",
+  "osmnx>=2.0.0,<3.0.0",
+  "pandas>=1.1.0",
+  "pyvista[io]>=0.38.0,<0.49",
+  "fast-simplification>=0.1.7,<1.0",
+  "ansys-tools-visualization-interface>=0.1.0,<1.0",
+  "scikit-rf>=0.30.0,<1.0",
+  "requests>=2.0.0,<3.0.0",
+  "typer>=0.20.0,<1.0",
+  "vtk>=9.0,<9.7",
+  "rpyc>=6.0.0,<7.0.0",
+  "jupyterlab>=4.6.2,<5.0.0",
+  "ipython>=7.30.0,<8.0.0",
+  "tables<3.11 ; python_version >= '3.11' and python_version < '3.13'",
+  "tables>=3.11.1,<4.0.0 ; python_version >= '3.13'",
+  "rpds-py>=0.18.1,<2026 ; python_version >= '3.11' and python_version < '3.13'",
+  "rpds-py>=2026.5.1 ; python_version >= '3.13'",
+  "contourpy<=1.3.2 ; python_version >= '3.11' and python_version < '3.12'",
+  "contourpy>=1.3.3,<2.0.0 ; python_version >= '3.12'",
+  "scipy<=1.15.3 ; python_version < '3.11'",
+  "scipy>=1.17.1,<2.0.0 ; python_version >= '3.11'",
+  "ansys-fluent-core>=0.39, <1.0 ; python_version >= '3.11' and python_version < '3.15'",
+  "pyansys-tools-report",
+  "ansys-geometry-core>=0.14.1, <1.0",
+  "beartype>=0.22.9, <0.23",
+  "ansys-mapdl-core>=0.73.0, <1.0 ; python_version >= '3.11' and python_version < '3.15'",
+  "ansys-mechanical-core>=0.12, <1.0 ; python_version >= '3.11' and python_version < '3.15'",
+  "ansys-optislang-core>=1.4.0",
+]
 
 [tool.pytest.ini_options]
 pythonpath = "."
@@ -225,4 +157,9 @@ omit = [ "*/pytest-of-*/pytest-*/popen-*/*" ]
 
 [tool.uv]
 prereleases = "if-necessary"
-prerelease-package = { ansys-bdm-api = "allow" }
+prerelease-package = { 
+  ansys-bdm-api = "allow",
+  ansys-bdm-shared-volume = "allow",
+  ansys-saf-glow-engine = "allow",
+  ansys-saf-product-configuration = "allow"
+}

@@ -23,7 +23,6 @@ import subprocess
 import sys
 from typing import Any
 
-from ansys.saf.testing.platform_specific import windows_only
 import httpx2
 import pytest
 import pytest_mock
@@ -36,6 +35,7 @@ from ansys.saf.desktop.orchestrator._config.schema import (
 from ansys.saf.desktop.orchestrator._orchestration.pim_process import PimProcess
 from ansys.saf.desktop.orchestrator._orchestration.process import ServiceProcess
 from ansys.saf.desktop.orchestrator._utilities.ip_utilities import get_random_free_port
+from ansys.saf.testing.platform_specific import windows_only
 
 
 class TestServiceProcess:

@@ -22,7 +22,7 @@ import base64
 import logging
 import multiprocessing as mp
 from multiprocessing import Queue
-from multiprocessing.process import BaseProcess
+from multiprocessing.process import BaseProcess  # noqa: TC003
 from pathlib import Path
 import queue
 import sys

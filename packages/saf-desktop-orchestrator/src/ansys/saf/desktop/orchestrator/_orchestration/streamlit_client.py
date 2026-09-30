@@ -18,9 +18,6 @@ import logging
 import os
 from typing import Generic, TypeVar
 
-from ansys.saf.glow.client import Client
-from ansys.saf.glow.solution import Solution
-
 from ansys.saf.desktop.orchestrator._config.schema import (
     GLOW_API_HOST,
     GLOW_API_PORT,
@@ -28,12 +25,14 @@ from ansys.saf.desktop.orchestrator._config.schema import (
     PORTAL_UI_HOST,
     PORTAL_UI_PORT,
 )
+from ansys.saf.glow.client import Client
+from ansys.saf.glow.solution import Solution
 
 T = TypeVar("T", bound=Solution)
 logger = logging.getLogger(__name__)
 
 
-class StreamlitClient(Generic[T]):
+class StreamlitClient(Generic[T]):  # noqa: UP046
     # TODO: unify with DashClient? There is nothing about Streamlit in this class
 
     _singleton: Client[T]

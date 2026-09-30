@@ -21,13 +21,6 @@ import platform
 import random
 import subprocess
 
-from ansys.saf.testing.common import find_exec_in_venv
-from ansys.saf.testing.platform_specific import windows_only
-from ansys.saf.testing.selenium import (
-    wait_for_element,
-    wait_for_element_and_click,
-    wait_for_text,
-)
 import httpx2
 import pytest
 from selenium.webdriver.chrome.webdriver import WebDriver
@@ -41,6 +34,13 @@ from ansys.saf.desktop.orchestrator._config.schema import (
     SAF_DESKTOP_LOG_TO_FILES,
 )
 from ansys.saf.desktop.orchestrator._utilities.ip_utilities import get_random_free_port
+from ansys.saf.testing.common import find_exec_in_venv
+from ansys.saf.testing.platform_specific import windows_only
+from ansys.saf.testing.selenium import (
+    wait_for_element,
+    wait_for_element_and_click,
+    wait_for_text,
+)
 from tests.conftest import copy_mock_solution_to_layout
 from tests.e2e.conftest import (
     MINIMAL_COMPLETE_SOLUTION,
@@ -861,7 +861,7 @@ def test_run_orchestrator_with_filelogs_and_otel_env_var(option_from_cli: bool, 
     raises an error.
     """
     monkeypatch.setenv(OTEL_EXPORTER_OTLP_ENDPOINT, "something")
-    python_exec = find_exec_in_venv(Path.cwd(), "python")
+    python_exec = find_exec_in_venv(Path.cwd().parent.parent, "python")
     args = [
         python_exec,
         "-m",

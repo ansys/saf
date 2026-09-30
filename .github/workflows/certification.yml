@@ -167,7 +167,7 @@ jobs:
       commit-is-already-tagged: ${{ steps.verify-tag.outputs.commit-is-already-tagged
         }}
       library-name: ${{ steps.library-name.outputs.library-name }}
-      use-moon: ${{ contains('bdm-python-api,bdm-python-shared-volume,saf-iam-oidc,saf-product-configuration,saf-testing',
+      use-moon: ${{ ! contains('dash-super-components,glow-engine,saf-cli,saf-desktop-installer,saf-product-manager',
         steps.library-name.outputs.library-name) }}
 
   check-package-changes:
@@ -476,8 +476,8 @@ jobs:
       python-version: ${{ matrix.python-version }}
       use-moon: ${{ needs.pre-certification.outputs.use-moon == 'true' }}
       artifact-name: ${{ needs.pre-certification.outputs.library-name }}-${{ matrix.python-version
-        }}${{ case(contains('bdm-python-api,bdm-python-shared-volume,saf-iam-oidc,saf-product-configuration,saf-testing',
-        needs.pre-certification.outputs.library-name), '-artifacts', '') }}
+        }}${{ case(needs.pre-certification.outputs.use-moon == 'false', '', '-artifacts'
+        ) }}
 
   check-wheel-can-be-pip-installed:
     name: "Check wheel can be pip installed"

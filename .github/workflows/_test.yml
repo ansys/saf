@@ -388,7 +388,8 @@ jobs:
         uses: moonrepo/setup-toolchain@261c62cb5b0f580c7be7c8cd0f023a2e96756095 # v0.6.4
 
       - name: Install pim-light-server
-        if: ${{ matrix.install-pim-light-server == 'true' }}
+        if: ${{ matrix.install-pim-light-server == 'true' && env.USE_MOON == 'false'
+          }}
         shell: bash
         run: |
           ${PYTHON_EXE} -m pip install ansys-saf-pim-light-server==${PIM_VERSION}
@@ -399,6 +400,15 @@ jobs:
           PIP_EXTRA_INDEX_URL: https://PAT:${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}@${{
             secrets.PYANSYS_PYPI_PRIVATE_URL }}
           PIP_QUIET: 1
+
+      - name: Install pim-light-server with Moon
+        if: ${{ matrix.install-pim-light-server == 'true' && env.USE_MOON == 'true'
+          }}
+        shell: bash
+        run: moon run $PACKAGE:install-pim-light-server
+        env:
+          UV_EXTRA_INDEX_URL: https://PAT:${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}@${{
+            secrets.PYANSYS_PYPI_PRIVATE_URL }}
 
       - name: Install visor
         if: ${{ matrix.install-visor == 'true' }}
@@ -414,7 +424,7 @@ jobs:
           PIP_QUIET: 1
 
       - name: Install desktop-portal
-        if: ${{ matrix.install-portal == 'true' }}
+        if: ${{ matrix.install-portal == 'true' && env.USE_MOON == 'false' }}
         shell: bash
         run: |
           ${PYTHON_EXE} -m pip install --pre ansys-saf-desktop-portal==${PORTAL_VERSION}
@@ -426,8 +436,17 @@ jobs:
             secrets.PYANSYS_PYPI_PRIVATE_URL }}
           PIP_QUIET: 1
 
+      - name: Install desktop-portal with Moon
+        if: ${{ matrix.install-portal == 'true' && env.USE_MOON == 'true' }}
+        shell: bash
+        run: moon run $PACKAGE:install-saf-desktop-portal
+        env:
+          UV_EXTRA_INDEX_URL: https://PAT:${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}@${{
+            secrets.PYANSYS_PYPI_PRIVATE_URL }}
+
       - name: Install aspire dashboard
-        if: ${{ matrix.install-ansys-saf-aspire == 'true' }}
+        if: ${{ matrix.install-ansys-saf-aspire == 'true' && env.USE_MOON == 'false'
+          }}
         shell: bash
         run: |
           ${PYTHON_EXE} -m pip install ansys-saf-aspire==${ASPIRE_DASHBOARD_VERSION}
@@ -438,6 +457,15 @@ jobs:
           PIP_EXTRA_INDEX_URL: https://PAT:${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}@${{
             secrets.PYANSYS_PYPI_PRIVATE_URL }}
           PIP_QUIET: 1
+
+      - name: Install aspire dashboard with Moon
+        if: ${{ matrix.install-ansys-saf-aspire == 'true' && env.USE_MOON == 'true'
+          }}
+        shell: bash
+        run: moon run $PACKAGE:install-ansys-saf-aspire
+        env:
+          UV_EXTRA_INDEX_URL: https://PAT:${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}@${{
+            secrets.PYANSYS_PYPI_PRIVATE_URL }}
 
       - name: Install minerva-python-client
         if: ${{ matrix.install-minerva-python-client == 'true' }}
@@ -455,7 +483,9 @@ jobs:
       - name: Download extra packages for e2e tests (Moon)
         if: matrix.download-extra-packages == 'true' && env.USE_MOON == 'true'
         shell: bash
-        run: moon run root:download-wheel-for-e2e-tests
+        run: |
+          moon run root:download-wheel-for-e2e-tests
+          echo "SAF_EXTRA_PACKAGES_DIR=${GITHUB_WORKSPACE}/extra_packages" >> "$GITHUB_ENV"
         env:
           PIP_EXTRA_INDEX_URL: https://PAT:${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}@${{
             secrets.PYANSYS_PYPI_PRIVATE_URL }}

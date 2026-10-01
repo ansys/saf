@@ -128,7 +128,7 @@ The ``saf add-step`` command has multiple options. To see them all, run the foll
 
 The following ``saf add-step`` options are available:
 
-.. list-table::
+.. list-table::  ``saf add-step`` options
    :header-rows: 1
    :stub-columns: 1
    :widths: 25 75
@@ -248,10 +248,10 @@ Prerequisites
 
 Before using step templates, ensure you've met the following prerequisites:
 
-.. list-table::
+.. list-table::  Prerequisites for using step templates
   :header-rows: 1
   :stub-columns: 1
-  :widths: 20 80
+  :widths: 30 70
 
   * - Prerequisite
     - Description
@@ -319,9 +319,9 @@ additional templates from installed plugins. For information on available templa
 Step template gallery
 ----------------------
 
-.. list-table::
+.. list-table::  Step templates gallery
   :header-rows: 1
-  :widths: 25 45 20 10
+  :widths: 22 52 16 8
 
   * - Template
     - Description

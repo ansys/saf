@@ -86,9 +86,10 @@ and its own release lifecycle.
 
 Two different tools are used, depending on where you work:
 
-.. list-table::
+.. list-table::  Tools used for repository-level and package-level tasks
     :header-rows: 1
-    :widths: 34 33 33
+    :stub-columns: 1
+    :widths: 50 30 20
 
     * - Task
       - Working directory
@@ -276,9 +277,10 @@ To run the root checks, from the repository root, run:
 Not every package declares ``pre-commit``. When it does, the dependency group
 that contains it depends on the package:
 
-.. list-table::
+.. list-table::  Pre-commit dependency groups
     :header-rows: 1
     :widths: 20 80
+    :stub-columns: 1
 
     * - Group
       - Packages

@@ -15,6 +15,7 @@ New features
 .. list-table::
    :widths: 20,100,20
    :header-rows: 1
+   :stub-columns: 1
 
    * - Issue
      - Category/Feature
@@ -34,6 +35,7 @@ Bug fixes
 .. list-table::
    :widths: 20,100,20
    :header-rows: 1
+   :stub-columns: 1
 
    * - Issue
      - Category/Fix
@@ -54,6 +56,7 @@ Notable changes
 .. list-table::
    :widths: 100
    :header-rows: 1
+   :stub-columns: 1
 
    * - Category/Change
    * - Category

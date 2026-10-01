@@ -5,7 +5,7 @@ Run a solution on desktop
 
 You can run a solution locally on your desktop using any of the following methods:
 
-.. list-table::
+.. list-table:: Comparison of run methods on desktop
    :header-rows: 1
    :stub-columns: 1
    :widths: 25 75
@@ -280,7 +280,7 @@ Options are divided into :ref:`user_guide_saf_run_options_ui_and_display`, :ref:
 UI and display options
 ~~~~~~~~~~~~~~~~~~~~~~
 
-.. list-table::
+.. list-table:: Comparison of UI and display options
    :header-rows: 1
    :stub-columns: 1
    :widths: 25 75
@@ -306,7 +306,7 @@ UI and display options
 Debugging options
 ~~~~~~~~~~~~~~~~~
 
-.. list-table::
+.. list-table:: Comparison of debugging options
    :header-rows: 1
    :stub-columns: 1
    :widths: 25 55 20
@@ -339,7 +339,7 @@ Debugging options
 Port configuration
 ~~~~~~~~~~~~~~~~~~
 
-.. list-table::
+.. list-table:: Comparison of port configuration options
    :header-rows: 1
    :stub-columns: 1
    :widths: 25 55 20
@@ -363,7 +363,7 @@ Port configuration
 Project and environment options
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. list-table::
+.. list-table:: Comparison of project and environment options
    :header-rows: 1
    :stub-columns: 1
    :widths: 25 55 20
@@ -471,10 +471,10 @@ following sections.
 Required
 ~~~~~~~~
 
-.. list-table::
+.. list-table:: Comparison of required orchestrator command options
    :header-rows: 1
    :stub-columns: 1
-   :widths: 50 50
+   :widths: 45 55
 
    *  - Option
       - Description
@@ -490,10 +490,10 @@ Required
 Optional
 ~~~~~~~~
 
-.. list-table::
+.. list-table:: Comparison of optional orchestrator command options
    :header-rows: 1
    :stub-columns: 1
-   :widths: 40 40 20
+   :widths: 40 50 15
 
    *  - Option
       - Description
@@ -686,7 +686,7 @@ The following ``glow_engine api`` options are available:
 .. list-table:: GLOW API options
    :header-rows: 1
    :stub-columns: 1
-   :widths: 25 60 15
+   :widths: 20 65 15
 
    * - Option
      - Description
@@ -800,10 +800,10 @@ The ``glow_engine ui`` command has multiple options. To see them all, run the fo
 
 The following ``glow_engine ui`` options are available:
 
-.. list-table::
+.. list-table:: Comparison of ``glow_engine ui`` command options
    :header-rows: 1
    :stub-columns: 1
-   :widths: 25 60 15
+   :widths: 20 65 15
 
    * - Option
      - Description

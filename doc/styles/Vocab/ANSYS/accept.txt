@@ -21,6 +21,7 @@
 [Cc]loud
 [Cc]ookiecutter
 [Cc]ornifer
+[Dd]ataclass
 [Dd]edicated
 [Dd]esynchronized
 [Dd]ev
@@ -31,6 +32,7 @@
 [Ee]mail
 [Ee]nablement
 [Ee]slint
+[Ee]num
 [Gg]eometry [Mm]anipulation
 [Mm]onospaced
 [Nn]umpydoc

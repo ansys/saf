@@ -39,8 +39,9 @@ The universe is a 2D grid. Each cell is either **alive** or **dead**. Time advan
 **generations**, and the state of every cell at generation *n+1* depends only on its eight
 surrounding neighbors at generation *n*:
 
-.. list-table::
+.. list-table::  Transition rules of Conway's Game of Life
    :header-rows: 1
+   :stub-columns: 1
    :widths: 30 30 30
 
    * - Current cell state
@@ -50,13 +51,13 @@ surrounding neighbors at generation *n*:
      - 2 or 3
      - **Alive** (survival)
    * - Alive
-     - anything else
+     - Anything else
      - **Dead** (under- or overpopulation)
    * - Dead
-     - exactly 3
+     - Exactly 3
      - **Alive** (reproduction)
    * - Dead
-     - anything else
+     - Anything else
      - **Dead**
 
 .. figure:: /_static/images/game_of_life_rules.svg
@@ -132,7 +133,7 @@ What's inside the module
 You do not need to read every line, but it helps to know the four objects it exposes. Only the
 last one is ever touched by the SAF backend.
 
-.. list-table::
+.. list-table::  Objects exposed by the ``game_of_life`` module
    :header-rows: 1
    :stub-columns: 1
    :widths: 25 75
@@ -140,18 +141,17 @@ last one is ever touched by the SAF backend.
    * - Object
      - Responsibility
    * - ``Pattern`` / ``PatternCategory``
-     - A ``dataclass`` and an ``enum`` describing one predefined starting configuration (its name,
-       its category, and the 2D NumPy array of live cells).
+     - Describe a predefined starting configuration with its name, category, and 2D NumPy array
+       of live cells. ``Pattern`` is a dataclass, and ``PatternCategory`` is an enum.
    * - ``PatternLibrary``
-     - The catalog of available patterns (``blinker``, ``toad``, ``beacon``, ``pulsar``,
-       ``glider``, ``lwss``, ``gosper_glider_gun``). Also knows how to center a small pattern
-       on a larger grid.
+     - Provide the available patterns: ``blinker``, ``toad``, ``beacon``, ``pulsar``, ``glider``,
+       ``lwss``, and ``gosper_glider_gun``. Center small patterns on larger grids.
    * - ``GameOfLifeEngine``
-     - The pure computation. ``compute_next_generation()`` applies Conway's rules to a whole
-       grid at once using vectorized NumPy operations.
+     - Apply Conway's rules to an entire grid with vectorized NumPy operations by using
+       ``compute_next_generation()``.
    * - ``SimulationController``
-     - The stateful facade the backend actually uses: ``initialize(pattern)``,
-       ``step_forward()`` and ``get_current_state()``.
+     - Provide the stateful interface used by the backend: ``initialize(pattern)``,
+       ``step_forward()``, and ``get_current_state()``.
 
 In practice, the whole backend interacts with the engine through four calls:
 

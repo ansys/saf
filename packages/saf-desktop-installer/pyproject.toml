@@ -85,9 +85,6 @@ omit = [
   "dist/*",
 ]
 
-[tool.bandit]
-exclude_dirs = [ "tests" ]
-
 [tool.uv.sources]
 ansys-saf-desktop-installer = { workspace = true }
 

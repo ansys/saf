@@ -75,7 +75,7 @@ Install these dependencies in the environment that runs pytest:
 
 | Dependency | Why it is needed |
 |---|---|
-| Python | Runs pytest and the lifecycle helpers |
+| Python 3.11 through 3.14 | Runs pytest and the lifecycle helpers; the examples solution currently supports Python 3.11 and 3.12 |
 | pytest | Discovers fixtures and test functions |
 | Selenium 4 | Controls Chrome and waits for UI state |
 | Chrome or Chromium | Renders the solution UI |
@@ -102,7 +102,20 @@ available transitively in your solution, declare them in the test dependency
 group too. Tests should not depend on an unrelated package merely because that
 package happens to be installed in one developer's virtual environment.
 
-For Poetry, the equivalent dependency command is:
+For the examples solution, run these commands from the `examples` directory to
+create the lock file and install the test environment:
+
+```text
+saf execute "poetry lock"
+saf execute "poetry install --with tests,desktop,ui"
+```
+
+The E2E fixture installs the `desktop`, `ui`, and `build` groups separately in
+its temporary solution workspace. Do not run that `saf install -f` command in
+the checkout where pytest is installed because it can remove the test
+environment.
+
+For a new Poetry-based solution, the equivalent dependency command is:
 
 ```text
 poetry add --group tests ansys-saf-cli pytest selenium psutil httpx2
@@ -114,10 +127,9 @@ For a non-Poetry project, install the equivalent packages with pip:
 python -m pip install ansys-saf-cli pytest selenium psutil httpx2
 ```
 
-Run `poetry run saf --version` or `saf --version` to verify that the command is
-available before starting the E2E suite. If the CLI is installed in a
-different environment, set `SAF_EXECUTABLE` to the full path of its
-platform-specific executable.
+Run `saf --version` to verify that the command is available before starting the
+E2E suite. If the CLI is installed in a different environment, set
+`SAF_EXECUTABLE` to the full path of its platform-specific executable.
 
 These tests use native Selenium fixtures. They do **not** require
 any private package, and the browser options fixture is defined locally in
@@ -140,6 +152,14 @@ to the solution's `pyproject.toml`. The extra path is not applied to the
 Use this only for the E2E runner. It does not place PIM inside the generated
 installer, and it is not a substitute for providing PIM through the supported
 runtime or packaging mechanism in a user installation.
+
+On Windows, pywin32 needs special handling. Its `pywin32.pth` file adds
+`win32`, `win32\lib`, and `Pythonwin` to Python's import path. Python does not
+process `.pth` files in a directory that was supplied through `PYTHONPATH`, so
+adding only the runner's `site-packages` directory would leave modules such as
+`pywintypes` unavailable. The E2E helper forwards the path-only entries from
+`pywin32.pth` without executing its `import` line or forwarding unrelated
+`.pth` files.
 
 ### How CI runs the E2E suite
 
@@ -574,32 +594,35 @@ assertion belongs in the test file for that feature.
 
 ## 11. Run the tests in a useful order
 
+Run these commands from the solution root (the `examples` directory for the
+reference solution).
+
 Run collection first. It catches import and fixture-name problems without
 building or launching anything:
 
 ```text
-pytest --collect-only -q tests/e2e
+saf execute "pytest --collect-only -q tests/e2e"
 ```
 
 Then run the inexpensive lifecycle tests before the browser test:
 
 ```text
-pytest -q tests/e2e/test_install_dependencies.py
-pytest -q tests/e2e/test_build_installer.py
-pytest -q tests/e2e/test_execute_installer.py
-pytest -q tests/e2e/test_execute_shortcut.py
+saf execute "pytest -q tests/e2e/test_install_dependencies.py"
+saf execute "pytest -q tests/e2e/test_build_installer.py"
+saf execute "pytest -q tests/e2e/test_execute_installer.py"
+saf execute "pytest -q tests/e2e/test_execute_shortcut.py"
 ```
 
 Run the browser smoke test after the lifecycle is working:
 
 ```text
-pytest -q tests/e2e/test_solution_ui.py
+saf execute "pytest -q tests/e2e/test_solution_ui.py"
 ```
 
 Run the whole suite with diagnostics visible:
 
 ```text
-pytest tests/e2e -vv -s --setup-show --durations=0 --log-cli-level=INFO
+saf execute "pytest tests/e2e -vv -s --setup-show --durations=0 --log-cli-level=INFO"
 ```
 
 Useful options:
@@ -641,7 +664,7 @@ workers.
 When diagnosing a failure, first run one focused test with:
 
 ```text
-pytest <test-path> -vv -s --setup-show --log-cli-level=DEBUG
+saf execute "pytest <test-path> -vv -s --setup-show --log-cli-level=DEBUG"
 ```
 
 The fixture logs show the exact lifecycle stage where the failure occurred.
@@ -696,7 +719,8 @@ files evolve; the links open the file containing each function.
 | `_wait_for_value` | [`conftest.py`](./conftest.py) | Polls a getter until it returns a value or the timeout expires. |
 | `_get_shortcut_path` | [`conftest.py`](./conftest.py) | Builds the expected Windows or Linux shortcut path. |
 | `_get_installer_path` | [`conftest.py`](./conftest.py) | Builds the expected platform-specific installer path. |
-| `_append_test_environment_site_packages_to_pythonpath` | [`conftest.py`](./conftest.py) | Adds the pytest environment's packages to installer and launcher subprocesses for the CI-only PIM bridge. |
+| `_get_pywin32_pythonpath_entries` | [`conftest.py`](./conftest.py) | Reads pywin32's path-only `.pth` entries without executing code. |
+| `_append_test_environment_site_packages_to_pythonpath` | [`conftest.py`](./conftest.py) | Adds the pytest environment's packages and pywin32 paths to installer and launcher subprocesses for the CI-only PIM bridge. |
 | `_require_linux_shortcut_tools` | [`conftest.py`](./conftest.py) | Checks that Linux has `gtk-launch` and `xvfb-run`. |
 | `_find_splash_image` | [`conftest.py`](./conftest.py) | Waits for the image path selected by the orchestrator and measures when it appears. |
 | `_wait_for_http_ok` | [`conftest.py`](./conftest.py) | Waits for a service URL to return HTTP 200. |

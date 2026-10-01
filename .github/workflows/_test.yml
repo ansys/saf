@@ -304,7 +304,7 @@ jobs:
       # By pre-setting PlatformToolset to v143 here, the conditional check sees a
       # non-empty value and skips the v140 assignment, using v143 instead.
       PlatformToolset: "v143"
-      PYTHON_VERSION: ${{ vars.PYTHON_VERSION }}
+      PYTHON_VERSION: ${{ inputs.python-version }}
       POETRY_VIRTUALENVS_PREFER_ACTIVE_PYTHON: true
       HTML_REPORT_OPTION: "--html=report/report.html"
       ANS_MINERVA_URL: ${{ secrets.ANS_MINERVA_URL }}
@@ -313,7 +313,7 @@ jobs:
       GITHUB_TOKEN: ${{ github.token }}
       ANSYSLMD_LICENSE_FILE: ${{ format('1055@{0}', secrets.LICENSE_SERVER) }}
       USE_MOON: ${{ inputs.use-moon && 'true' || 'false' }}
-      MOON_PYTHON_VERSION: ${{ inputs.python-version }}
+      UV_PYTHON: ${{ inputs.python-version }}
       PACKAGE: ${{ inputs.library-name }}
     steps:
       - name: Enable git long paths on Windows
@@ -512,7 +512,7 @@ jobs:
           which xvfb-run
 
       - name: Configure PYTEST_DEBUG_TEMPROOT
-        if: runner.os != 'Linux'
+        if: runner.os != 'Linux' && env.USE_MOON == 'false'
         shell: bash
         run: echo "PYTEST_DEBUG_TEMPROOT=C:/" >> $GITHUB_ENV
 
@@ -551,14 +551,11 @@ jobs:
         shell: bash
         env:
           PYTEST_ARGS: ${{ steps.pytest-args.outputs.pytest-args }}
-          REPORTS_DIR: "${{ case( inputs.library-name == 'saf-desktop-installer' &&
-            runner.os == 'Linux', '', format('{0}/{1}_{2}', github.workspace, matrix.test-report-artifact-name-suffix,
-            inputs.python-version ) )}}"
-          COVERAGE_ARG: ${{ case( inputs.library-name == 'saf-desktop-installer' &&  runner.os
-            == 'Linux', '', '--cov=src --cov-report=term --cov-report=xml --cov-report=html')}} # Get stuck in the reporting of saf-desktop-installer on Linux
+          REPORTS_DIR: "${{ github.workspace }}/${{ matrix.test-report-artifact-name-suffix
+            }}_${{ inputs.python-version }}"
         run: |
-          mkdir -p "${REPORTS_DIR:-.}"
-          moon run $PACKAGE:test -- $PYTEST_ARGS $COVERAGE_ARG ${REPORTS_DIR:+--html="${REPORTS_DIR}/report.html" --md="${REPORTS_DIR}/report.md"}
+          mkdir -p "$REPORTS_DIR"
+          moon run $PACKAGE:test -- $PYTEST_ARGS --html="${REPORTS_DIR}/report.html" --md="${REPORTS_DIR}/report.md"
 
       - name: Publish pytest reports (Moon)
         if: always() && steps.run-tests-moon.outcome != 'skipped' && env.USE_MOON

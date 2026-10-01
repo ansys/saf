@@ -56,6 +56,7 @@ from pathlib import Path
 import platform
 import random
 import shutil
+import signal
 import socket
 import subprocess
 import sys
@@ -1217,9 +1218,15 @@ def start_dash(args: dict[str, Any], port: int) -> None:
     )
 
 
+def _raise_keyboard_interrupt(signum: int, frame: Any) -> None:
+    raise KeyboardInterrupt
+
+
 def _start_installer_gui(args: dict[str, Any], port: int) -> None:
     dash_process = mp.Process(target=start_dash, args=(args, port))
     dash_process.start()
+    # Installed after start() so the Dash child keeps the default handler; ensures cleanup on SIGTERM.
+    previous_sigterm_handler = signal.signal(signal.SIGTERM, _raise_keyboard_interrupt)
     try:
         if platform.system() == "Windows":
             webview_process = mp.Process(target=start_webview, args=(port,))
@@ -1234,6 +1241,7 @@ def _start_installer_gui(args: dict[str, Any], port: int) -> None:
     except KeyboardInterrupt:
         pass
     finally:
+        signal.signal(signal.SIGTERM, previous_sigterm_handler)
         if dash_process.is_alive():
             dash_process.terminate()
             dash_process.join(timeout=5)

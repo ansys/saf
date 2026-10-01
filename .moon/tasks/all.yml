@@ -263,7 +263,7 @@ tasks:
 
   build-doc:
     description: "Build API documentation"
-      deps:
+    deps:
       - target: "~:check-env-var"
         args: 
           - "UV_PYTHON"

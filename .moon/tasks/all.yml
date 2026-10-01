@@ -243,9 +243,12 @@ tasks:
       - "$projectAlias"
       - "--all-extras"
       - "pytest"
+      - "--cov=."
+      - "--cov-report=term"
+      - "--cov-report=xml"
+      - "--cov-report=html"
       - "-p"
       - "no:faulthandler"
-      - "$args"
       - "-s" # Disable capturing of stdout and stderr during tests
     env:
       PYTHONUNBUFFERED: '1'

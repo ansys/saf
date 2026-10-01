@@ -37,13 +37,13 @@ def _resolve_segment(value: Any, segment: str) -> Any:
             index = int(segment)
         except ValueError as e:
             raise ValueError(f"'{segment}' is not a valid list index.") from e
-        if not 0 <= index < len(value):
+        if not 0 <= index < len(value):  # pyright: ignore[reportUnknownArgumentType]
             raise ValueError(f"List index '{segment}' does not exist.")
-        return value[index]
+        return value[index]  # pyright: ignore[reportUnknownVariableType]
     if isinstance(value, dict):
         if segment not in value:
             raise ValueError(f"Dictionary key '{segment}' does not exist.")
-        return value[segment]
+        return value[segment]  # pyright: ignore[reportUnknownVariableType]
     if isinstance(value, BaseModel):
         if segment not in type(value).model_fields:
             raise ValueError(f"Field '{segment}' does not exist on '{type(value).__name__}'.")

@@ -135,12 +135,12 @@ MISSING_PATH_CASES: dict[str, tuple[str, str]] = {
 def _get_at_path(value: Any, segments: list[str]) -> Any:
     for segment in segments:
         if isinstance(value, list):
-            value = value[int(segment)]
+            value = value[int(segment)]  # type: ignore[reportUnknownVariableType]
         elif isinstance(value, dict):
-            value = value[segment]
+            value = value[segment]  # type: ignore[reportUnknownVariableType]
         else:
-            value = getattr(value, segment)
-    return value
+            value = getattr(value, segment)  # type: ignore[reportUnknownVariableType]
+    return value  # pyright: ignore[reportUnknownVariableType]
 
 
 def _entity_handle() -> EntityHandle:

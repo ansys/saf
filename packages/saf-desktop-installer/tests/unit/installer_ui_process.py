@@ -81,13 +81,13 @@ class InstallerUIProcess:
         if not self._process:
             return
         if sys.platform == "win32":
-            subprocess.run(  # noqa: S603
-                ["taskkill", "/F", "/T", "/PID", str(self._process.pid)],  # noqa: S607
+            subprocess.run(
+                ["taskkill", "/F", "/T", "/PID", str(self._process.pid)],
                 capture_output=True,
                 check=False,
             )
         else:
-            try:
+            try:  # noqa: SIM105
                 os.killpg(self._process.pid, signal.SIGTERM)
             except ProcessLookupError:
                 pass

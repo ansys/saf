@@ -187,6 +187,17 @@ class Settings(BaseSettings):
         default=True,  # Disabled by default.
         description="Specifies whether authorization should be disabled or not.",
     )
+    glow_auth_required_roles: str | None = Field(
+        default=None,
+        description=(
+            "Comma-separated client roles (of glow_auth_client_id) the user must all hold. "
+            "Only enforced when authorization is enabled."
+        ),
+    )
+    glow_auth_bypass_roles: str | None = Field(
+        default=None,
+        description="Comma-separated client roles (of glow_auth_client_id) that exempt the user from required roles.",
+    )
     glow_api_key: str | None = Field(
         default=None,
         description="API key for authenticating local requests to the API server.",

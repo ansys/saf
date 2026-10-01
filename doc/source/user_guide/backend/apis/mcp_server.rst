@@ -11,13 +11,13 @@ The MCP URL will be ``http://$SOLUTION_API_URL/$GLOW_MCP_PATH`` (default path: `
 It's independent of how you launch the API Server, either through SAF Desktop Orchestrator, with a Docker compose file, using the GLOW CLI or manually launching the server.
 
 The MCP server provides resources listing the available tools and expected solution workflow, and tools for managing projects,
-setting and retrieving step fields, uploading and downloading single files, and running transaction methods,
-both sync and long running.
+setting and retrieving step fields, uploading and downloading entity handle files (including entity handles nested in lists,
+dictionaries, or custom objects), and running transaction methods, both sync and long running.
 
 .. important::
   This is an **experimental feature** and it's disabled by default. The following limitations apply:
 
-  - Not supporting uploading/downloading directories, nor files within nested data structures (lists, dictionaries, custom objects, etc).
+  - Not supporting uploading/downloading directories.
   - Not recommended to upload/download large files. At the moment, they are injected into the LLM context/output.
   - Not supporting websockets
   - Not supporting authentication. The MCP will be automatically disabled if :envvar:`GLOW_AUTH_DISABLED` is set to ``false``.
@@ -216,11 +216,13 @@ Available tools
    * - ``get_fields``
      - Gets the current values of one or more step fields from an existing project.
 
-   * - ``upload_file``
-     - Uploads binary content to an ``EntityHandle`` step field on an existing project.
+   * - ``upload_data``
+     - Uploads binary content to an ``EntityHandle`` step field on an existing project, including entity handles
+       nested within a list, dictionary, or custom object field.
 
-   * - ``download_file``
-     - Downloads binary content from an ``EntityHandle`` step field on an existing project.
+   * - ``download_data``
+     - Downloads binary content from an ``EntityHandle`` step field on an existing project, including entity
+       handles nested within a list, dictionary, or custom object field.
 
 **Transaction execution**
 

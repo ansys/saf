@@ -231,6 +231,98 @@ Data management
      - Downloads binary content from an ``EntityHandle`` step field on an existing project, including entity
        handles nested within a list, dictionary, or custom object field.
 
+.. _mcp-field-path:
+
+Addressing nested entity handles
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+``upload_data`` and ``download_data`` locate the target ``EntityHandle`` through their ``field_path``
+argument, a slash-separated list of segments:
+
+- The **first segment** is always the step field name.
+- Each **following segment** navigates one level into the value stored in that field:
+  a list index (``0``, ``1``, ...), a dictionary key, or an attribute name of a custom
+  (Pydantic model) object.
+
+There is no depth limit, so arbitrary combinations of lists, dictionaries, and custom objects
+can be traversed:
+
+.. list-table::  ``field_path`` examples
+   :stub-columns: 1
+   :header-rows: 1
+   :widths: 35 65
+
+   * - ``field_path``
+     - Field value it addresses
+
+   * - ``my_file``
+     - The step field ``my_file`` is itself an ``EntityHandle``.
+
+   * - ``my_files/0``
+     - First item of the list stored in the ``my_files`` field.
+
+   * - ``my_files_map/geometry``
+     - Value under the ``geometry`` key of the dictionary stored in the ``my_files_map`` field.
+
+   * - ``my_object/file``
+     - The ``file`` attribute of the custom object stored in the ``my_object`` field.
+
+   * - ``my_object/files/0``
+     - First item of the ``files`` list of the custom object stored in the ``my_object`` field.
+
+   * - ``my_nested_map/inputs/mesh``
+     - Value under ``inputs`` → ``mesh`` of the nested dictionary stored in the ``my_nested_map`` field.
+
+``download_data`` returns the bytes referenced by the addressed entity handle. ``upload_data`` stores the
+given content as a new entity in the project storage, replaces the addressed entity handle with the new one,
+and writes the whole step field back, so the surrounding list, dictionary, or custom object is preserved.
+
+.. note::
+  Both tools only read and replace entity handles that already exist at the given path. They do not create
+  missing list items, dictionary keys, or object attributes.
+
+Expected errors
+~~~~~~~~~~~~~~~
+
+Both tools fail with an error (surfaced to the MCP client as a tool error) in the following cases:
+
+.. list-table::  ``upload_data`` and ``download_data`` errors
+   :stub-columns: 1
+   :header-rows: 1
+   :widths: 40 60
+
+   * - Situation
+     - Error message
+
+   * - The first segment is not a field of the step.
+     - ``'<StepClass>' has no field(s) '<name>'.``
+
+   * - A list index is not an integer.
+     - ``'<segment>' is not a valid list index.``
+
+   * - A list index is out of range.
+     - ``List index '<segment>' does not exist.``
+
+   * - A dictionary key is missing.
+     - ``Dictionary key '<segment>' does not exist.``
+
+   * - A custom object has no such attribute.
+     - ``Field '<segment>' does not exist on '<ObjectClass>'.``
+
+   * - A segment tries to navigate into a value that is not a list, dictionary, or custom object
+       (for example, a string or a number).
+     - ``Cannot navigate into a value of type '<type>' using segment '<segment>'.``
+
+   * - The value addressed by the full path is not an ``EntityHandle``.
+     - ``Field path '<field_path>' does not refer to an entity handle field.``
+
+When ``upload_data`` fails, no entity handle is replaced and the step field is left unchanged.
+
+.. important::
+  Directories are not supported: an entity handle referencing a directory cannot be uploaded or downloaded
+  through these tools. Large files should also be avoided, since their content goes through the agent's
+  context.
+
 Transaction execution
 ---------------------
 

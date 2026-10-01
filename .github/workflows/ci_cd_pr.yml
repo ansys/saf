@@ -17,6 +17,10 @@ on:
 # https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#permissions
 permissions: {}
 
+env:
+  MOON_PYTHON_VERSION: ${{ vars.PYTHON_VERSION }}
+  UV_PYTHON: ${{ vars.PYTHON_VERSION }}
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}-pr
   cancel-in-progress: ${{ github.ref != 'refs/heads/main' }} # No cancellation for main branch, to ensure that the workflow runs to completion and deploys the documentation if needed.
@@ -176,6 +180,8 @@ jobs:
       USE_MOON: ${{ contains(needs.ci-cd-config.outputs.moon-packages-matrix, matrix.library-name)
         }}
       PACKAGE: ${{ matrix.library-name }}
+      UV_PYTHON: ${{ vars.PYTHON_VERSION }}
+      MOON_PYTHON_VERSION: ${{ vars.PYTHON_VERSION }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1

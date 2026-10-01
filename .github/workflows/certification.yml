@@ -223,6 +223,8 @@ jobs:
     env:
       USE_MOON: ${{ needs.pre-certification.outputs.use-moon }}
       PACKAGE: ${{ needs.pre-certification.outputs.library-name }}
+      UV_PYTHON: ${{ vars.PYTHON_VERSION }}
+      MOON_PYTHON_VERSION: ${{ vars.PYTHON_VERSION }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1

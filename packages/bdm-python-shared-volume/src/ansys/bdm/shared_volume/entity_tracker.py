@@ -15,6 +15,7 @@
 # limitations under the License.
 
 from pathlib import Path
+from typing import TypeAlias
 
 from ansys.bdm.api import (
     NO_ENTITY,
@@ -25,7 +26,7 @@ from ansys.bdm.api import (
 from ansys.bdm.shared_volume.identifier_parser import IdentifierParser
 from ansys.bdm.shared_volume.storage_configuration import SharedFilesystemConfiguration
 
-type PathTreeDict = dict[str, "PathTreeDict"]
+PathTreeDict: TypeAlias = dict[str, "PathTreeDict"]  # noqa: UP040
 
 
 class PathTree:

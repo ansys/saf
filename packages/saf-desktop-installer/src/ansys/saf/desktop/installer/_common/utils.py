@@ -225,10 +225,10 @@ def safe_extract(file: zipfile.ZipFile | tarfile.TarFile, target_dir: Path) -> N
 
 
 def has_portal_dependency(solution_root_dir: Path) -> bool:
-    """Check if the solution uses the SAF Projects Dashboard by looking for
-    saf-projects-dashboard in the poetry.lock"""
+    """Check if the solution uses the SAF Projects Dashboard or SAF Portal by looking for
+    saf-projects-dashboard, ansys-saf-desktop-portal, or ansys-saf-portal in the poetry.lock"""
     poetry_lock_data = toml.load(solution_root_dir / "poetry.lock")
     for package in poetry_lock_data["package"]:
-        if package["name"] == "saf-projects-dashboard":
+        if package["name"] in ["ansys-saf-desktop-portal", "ansys-saf-portal", "saf-projects-dashboard"]:
             return True
     return False

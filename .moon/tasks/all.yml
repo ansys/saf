@@ -1,13 +1,14 @@
 tasks:
-  
   check-env-var:
-    description: "Check if an environment variable is set"
-    command: "uv"
+    command: pwsh
     args:
-      - "run"
-      - "python"
-      - "$workspaceRoot/.moon/scripts/check_env_var.py"
-      # The value passed via args: ['UV_EXTRA_INDEX_URL'] will naturally append here
+      - -NoProfile
+      - -NonInteractive
+      - -CommandWithArgs
+      - 'if ($args.Count -eq 0) { Write-Error "Specify at least one environment variable name"; exit 1 }; foreach ($name in $args) { if ([string]::IsNullOrEmpty($name) -or [string]::IsNullOrEmpty([Environment]::GetEnvironmentVariable($name))) { Write-Error "Required environment variable is not set: $name"; exit 1 } }'
+    options:
+      shell: false
+      cache: false
 
   install-private-dependency:
     command: "uv"
@@ -52,6 +53,10 @@ tasks:
       - '~:ruff'
       - '~:ruff-format'
       - '~:bandit'
+      - target: "~:check-env-var"
+        args: 
+          - "UV_PYTHON"
+          - "MOON_PYTHON_VERSION"
     inputs:
       - 'src/**/*'
       - 'tests/**/*'
@@ -65,6 +70,11 @@ tasks:
 
   pyright:
     description: "Run pyright"
+    deps:
+      - target: "~:check-env-var"
+        args: 
+          - "UV_PYTHON"
+          - "MOON_PYTHON_VERSION"
     command:
       - "uv"
       - "run"
@@ -77,12 +87,16 @@ tasks:
       - "src/**/*"
       - "tests/**/*"
       - "pyproject.toml"
-      - "/.python-version"
     options:
       runFromWorkspaceRoot: true
 
   ruff:
     description: "Run ruff check"
+    deps:
+      - target: "~:check-env-var"
+        args: 
+          - "UV_PYTHON"
+          - "MOON_PYTHON_VERSION"
     command:
       - "uv"
       - "run"
@@ -96,12 +110,16 @@ tasks:
       - "src/**/*"
       - "tests/**/*"
       - "pyproject.toml"
-      - "/.python-version"
     options:
       runFromWorkspaceRoot: true
 
   ruff-fix:
     description: "Run ruff fix"
+    deps:
+      - target: "~:check-env-var"
+        args: 
+          - "UV_PYTHON"
+          - "MOON_PYTHON_VERSION"
     command:
       - "uv"
       - "run"
@@ -116,11 +134,15 @@ tasks:
       - "src/**/*"
       - "tests/**/*"
       - "pyproject.toml"
-      - "/.python-version"
     options:
       runFromWorkspaceRoot: true
 
   ruff-format:
+    deps:
+      - target: "~:check-env-var"
+        args: 
+          - "UV_PYTHON"
+          - "MOON_PYTHON_VERSION"
     description: "Run ruff format"
     command:
       - "uv"
@@ -136,11 +158,15 @@ tasks:
       - "src/**/*"
       - "tests/**/*"
       - "pyproject.toml"
-      - "/.python-version"
     options:
       runFromWorkspaceRoot: true
 
   bandit:
+    deps:
+      - target: "~:check-env-var"
+        args: 
+          - "UV_PYTHON"
+          - "MOON_PYTHON_VERSION"
     description: "Run bandit"
     command:
       - "uv"
@@ -156,7 +182,6 @@ tasks:
       - "src/**/*"
       - "tests/**/*"
       - "pyproject.toml"
-      - "/.python-version"
     tags:
       - "ubuntu-latest"
     options:
@@ -164,6 +189,11 @@ tasks:
 
   build:
     description: "Build wheel"
+    deps:
+      - target: "~:check-env-var"
+        args: 
+          - "UV_PYTHON"
+          - "MOON_PYTHON_VERSION"
     command:
       - "uv"
       - "build"
@@ -172,7 +202,6 @@ tasks:
     inputs:
       - "src/**/*"
       - "pyproject.toml"
-      - "/.python-version"
     outputs:
       - "/dist"
     tags:
@@ -182,6 +211,11 @@ tasks:
 
   twine-check:
     description: "Check distribution with twine"
+    deps:
+      - target: "~:check-env-var"
+        args: 
+          - "UV_PYTHON"
+          - "MOON_PYTHON_VERSION"
     command: "uvx"
     args:
       - "twine@7.0.0"
@@ -195,6 +229,11 @@ tasks:
       runFromWorkspaceRoot: true
 
   test:
+    deps:
+      - target: "~:check-env-var"
+        args: 
+          - "UV_PYTHON"
+          - "MOON_PYTHON_VERSION"
     description: "Run pytest"
     command: 'uv'
     args:
@@ -220,18 +259,15 @@ tasks:
       - "tests/**/*"
       - "pyproject.toml"
       - "/uv.lock"
-      - "/.python-version"
       - "/extra_packages/**/*"
-
-  test-windows:
-    extends: "test"
-    env:
-      PYTEST_DEBUG_TEMPROOT: 'C:/'
-    options:
-      os: 'windows'
 
   build-doc:
     description: "Build API documentation"
+      deps:
+      - target: "~:check-env-var"
+        args: 
+          - "UV_PYTHON"
+          - "MOON_PYTHON_VERSION"
     command: 'uv'
     args:
       - "run"
@@ -249,12 +285,16 @@ tasks:
     inputs:
       - "doc/**/*"
       - "pyproject.toml"
-      - "/.python-version"
     options:
       runFromWorkspaceRoot: true
 
   export:
     description: "Export the project"
+    deps:
+      - target: "~:check-env-var"
+        args: 
+          - "UV_PYTHON"
+          - "MOON_PYTHON_VERSION"
     command: 'uv'
     args:
       - "export"
@@ -269,7 +309,6 @@ tasks:
     inputs:
       - "src/**/*"
       - "pyproject.toml"
-      - "/.python-version"
       - "uv.lock"
     outputs:
       - "/dist/$projectSource-requirements.txt"
@@ -278,6 +317,11 @@ tasks:
 
   sbom:
     description: "Export sbom"
+    deps:
+      - target: "~:check-env-var"
+        args: 
+          - "UV_PYTHON"
+          - "MOON_PYTHON_VERSION"
     command: 'uv'
     args:
       - "export"
@@ -292,7 +336,6 @@ tasks:
     inputs:
       - "src/**/*"
       - "pyproject.toml"
-      - "/.python-version"
       - "/uv.lock"
     outputs:
       - "/dist/$projectSource-sbom.json"
@@ -301,6 +344,11 @@ tasks:
 
   vulnerability-check:
     description: "Audit production dependencies for known vulnerabilities"
+    deps:
+      - target: "~:check-env-var"
+        args: 
+          - "UV_PYTHON"
+          - "MOON_PYTHON_VERSION"
     command: 'uvx'
     args:
       - "--from"

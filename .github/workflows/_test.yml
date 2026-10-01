@@ -304,7 +304,7 @@ jobs:
       # By pre-setting PlatformToolset to v143 here, the conditional check sees a
       # non-empty value and skips the v140 assignment, using v143 instead.
       PlatformToolset: "v143"
-      PYTHON_VERSION: ${{ vars.PYTHON_VERSION }}
+      PYTHON_VERSION: ${{ inputs.python-version }}
       POETRY_VIRTUALENVS_PREFER_ACTIVE_PYTHON: true
       HTML_REPORT_OPTION: "--html=report/report.html"
       ANS_MINERVA_URL: ${{ secrets.ANS_MINERVA_URL }}

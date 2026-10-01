@@ -311,6 +311,24 @@ def _get_installer_path(workspace: Path) -> Path:
     return workspace / "dist" / f"solution-examples-installer{installer_suffix}"
 
 
+def _get_pywin32_pythonpath_entries(site_packages: str) -> list[str]:
+    """Return the path-only entries from pywin32's ``.pth`` file."""
+    pywin32_pth = Path(site_packages) / "pywin32.pth"
+    if not pywin32_pth.is_file():
+        return []
+
+    entries: list[str] = []
+    for line in pywin32_pth.read_text(encoding="utf-8").splitlines():
+        entry = line.strip()
+        if not entry or entry.startswith("#") or entry.startswith("import "):
+            continue
+
+        entry_path = Path(site_packages) / entry
+        if entry_path.is_dir():
+            entries.append(str(entry_path))
+    return entries
+
+
 def _append_test_environment_site_packages_to_pythonpath(
     environment: dict[str, str],
 ) -> str:
@@ -326,8 +344,11 @@ def _append_test_environment_site_packages_to_pythonpath(
         raise RuntimeError("The test Python environment does not expose a site-packages directory.")
 
     existing_entries = [entry for entry in environment.get("PYTHONPATH", "").split(os.pathsep) if entry]
-    if site_packages not in existing_entries:
-        existing_entries.append(site_packages)
+    entries_to_add = [site_packages, *_get_pywin32_pythonpath_entries(site_packages)]
+    for entry in entries_to_add:
+        if entry not in existing_entries:
+            existing_entries.append(entry)
+    if existing_entries:
         environment["PYTHONPATH"] = os.pathsep.join(existing_entries)
     return site_packages
 

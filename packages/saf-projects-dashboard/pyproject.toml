@@ -45,6 +45,8 @@ group.tests.dependencies.coverage = "^7.2.6"
 group.tests.dependencies.mock = "^4.0.3"
 group.tests.dependencies.pytest = "^9.0.0"
 group.tests.dependencies.pytest-cov = "^7.0.0"
+group.tests.dependencies.pytest-html = "^4.1.1"
+group.tests.dependencies.pytest-md = "^0.2.0"
 group.tests.dependencies.pytest-mock = "^3.10.0"
 source = [ { name = "PyPI", priority = "primary" } ]
 

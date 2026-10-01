@@ -313,7 +313,7 @@ jobs:
       GITHUB_TOKEN: ${{ github.token }}
       ANSYSLMD_LICENSE_FILE: ${{ format('1055@{0}', secrets.LICENSE_SERVER) }}
       USE_MOON: ${{ inputs.use-moon && 'true' || 'false' }}
-      MOON_PYTHON_VERSION: ${{ inputs.python-version }}
+      MOON_PYTHON_VERSION: '3.11'
       PACKAGE: ${{ inputs.library-name }}
     steps:
       - name: Enable git long paths on Windows

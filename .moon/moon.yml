@@ -52,7 +52,6 @@ tasks:
     inputs:
       - "doc/**/*"
       - "pyproject.toml"
-      - "/.python-version"
     options:
       runFromWorkspaceRoot: true
 

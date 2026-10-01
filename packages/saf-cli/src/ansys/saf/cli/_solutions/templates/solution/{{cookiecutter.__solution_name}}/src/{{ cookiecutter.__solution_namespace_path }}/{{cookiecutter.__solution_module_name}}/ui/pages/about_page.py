@@ -72,9 +72,25 @@ def layout():
                     ),
                     dmc.GridCol(
                         [
-                            dmc.Image(
-                                src=dash.get_asset_url("images/workflow-placeholder.png"),
-                                alt="This is the introduction image.",
+                            dmc.Tooltip(
+                                dmc.Image(
+                                    src=dash.get_asset_url("images/workflow-placeholder.png"),
+                                    alt="This is the introduction image placeholder.",
+                                ),
+                                label="Customize this image by modifying /ui/assets/images/workflow-placeholder.png",
+                                withArrow=False,
+                                styles={
+                                    "tooltip": {
+                                        "backgroundColor": "#ffffff",
+                                        "color": "black",
+                                        "fontSize": "12px",
+                                        "border": "1px solid #767676",
+                                        "borderRadius": "0",
+                                        "boxShadow": "none",
+                                        "padding": "2px 5px",
+                                    }
+                                },
+                                position="bottom-end",
                             )
                         ],
                         span=6,

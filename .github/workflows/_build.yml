@@ -53,6 +53,7 @@ jobs:
     if: ${{ inputs.use-moon }}
     env:
       MOON_PYTHON_VERSION: ${{ inputs.python-version }}
+      UV_PYTHON: ${{ inputs.python-version }}
       PACKAGE: ${{ inputs.library-name }}
     steps:
       - name: "Checkout repository"

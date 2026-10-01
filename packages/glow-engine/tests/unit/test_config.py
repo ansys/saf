@@ -78,6 +78,8 @@ def test_default_settings(monkeypatch: pytest.MonkeyPatch):
         "glow_auth_client_id": None,
         "glow_auth_disabled": True,
         "glow_auth_issuer_url": None,
+        "glow_auth_required_roles": None,
+        "glow_auth_bypass_roles": None,
         "glow_api_key": None,
         "glow_api_key_file": None,
         "glow_solution_definition": "tests.mocks.solutions.minimal_solution",

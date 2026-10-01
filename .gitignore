@@ -241,3 +241,9 @@ release_notes.md
 
 !packages/saf-cli/tests/mocks/wheels
 !packages/saf-cli/tests/mocks/wheels/*.whl
+
+# =============================================================================
+# AI / Specific Skills Dev documentation
+# =============================================================================
+docs/
+docs/superpowers/*

@@ -29,6 +29,7 @@ on:
           - saf-product-manager
           - saf-templates
           - saf-testing
+          - saf-projects-dashboard
           - examples
       runner-name:
         description: 'Runner label used to execute tests'

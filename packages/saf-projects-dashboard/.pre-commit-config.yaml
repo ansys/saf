@@ -4,18 +4,19 @@ ci:
 
     For more information, see https://pre-commit.ci
   autofix_prs: true
-  autoupdate_branch: 'chore/pre-commit-autoupdate'
-  autoupdate_commit_msg: 'chore: pre-commit automatic update'
+  autoupdate_branch: "chore/pre-commit-autoupdate"
+  autoupdate_commit_msg: "chore: pre-commit automatic update"
   autoupdate_schedule: weekly
 
 repos:
-
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.16.3 # v0.15.0
     hooks:
       - id: ruff-check
         args: [--fix]
       - id: ruff-format
+        # Auto-generated Dash component wrappers must stay as the generator writes them
+        exclude: ^packages/saf-projects-dashboard/src/ansys_saf_projects_dashboard/([A-Z]\w*|_imports_)\.py$
 
   - repo: https://github.com/zizmorcore/zizmor-pre-commit
     rev: v1.29.0 # 1.18.0
@@ -38,6 +39,7 @@ repos:
     hooks:
       - id: trailing-whitespace
       - id: end-of-file-fixer
+        exclude: ^packages/saf-projects-dashboard/src/ansys_saf_projects_dashboard/
       - id: check-yaml
       - id: check-added-large-files
 
@@ -50,8 +52,9 @@ repos:
         # As per this issue https://github.com/pre-commit/pre-commit/issues/2936,
         # it looks like the `--all-files` only listens for the `exclude` option in a
         # pre-commit hook, ignoring `pyproject.toml` excludes.
-        exclude: ^(tests/|doc/_build|doc/styles/|doc/source/_static)
-        args: [--ignore-words=.codespellignore]
+        files: ^packages/saf-projects-dashboard/
+        exclude: ^packages/saf-projects-dashboard/(tests/|doc/_build|doc/styles/|doc/source/_static|.*poetry\.lock|.*package-lock\.json|.*\.js)$
+        args: [--ignore-words=packages/saf-projects-dashboard/.codespellignore]
         # TODO: pre-commit seems to ignore the configuration declared for codespell
   - repo: https://github.com/ansys/pre-commit-hooks
     # in the `pyproject.toml` file. For more details, see `[tool.codespell]` in
@@ -64,6 +67,7 @@ repos:
       - id: add-license-headers
         # Having a license on the examples causes it to render as Markdown in the
         # documentation of the project.
+        exclude: ^packages/saf-projects-dashboard/src/ansys_saf_projects_dashboard/
         args:
           - --start_year=2026
 

@@ -29,6 +29,7 @@ on:
           - saf-product-manager
           - saf-templates
           - saf-testing
+          - saf-projects-dashboard
 
 # Apply the principle of least privilege to state at job level the right
 # permissions. More information about workflow permissions in the page

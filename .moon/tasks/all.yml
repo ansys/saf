@@ -345,6 +345,7 @@ tasks:
   vulnerability-check:
     description: "Audit production dependencies for known vulnerabilities"
     deps:
+      - '~:export'
       - target: "~:check-env-var"
         args: 
           - "UV_PYTHON"
@@ -361,8 +362,6 @@ tasks:
       - "--strict"
     env:
       UV_MALWARE_CHECK: '1'
-    deps:
-      - '~:export'
     inputs:
       - "pyproject.toml"
       - "/pyproject.toml"

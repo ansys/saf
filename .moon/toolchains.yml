@@ -1,6 +1,6 @@
 unstable_python:
   packageManager: "uv"
-  version: "3.12"
+  version: "3.12.14"
 
 unstable_uv:
   version: "0.12.18"

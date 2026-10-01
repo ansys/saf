@@ -201,9 +201,9 @@ Access the OTel Dashboard
 
 The dashboard provides three main views:
 
-- **Structured Logs**—aggregated, searchable log entries from all solution services.
-- **Traces**—distributed traces showing the execution path of API requests and transactions.
-- **Metrics**—runtime metrics (request rates, latencies, error counts) from the solution stack.
+- **Structured Logs**: Aggregated, searchable log entries from all solution services.
+- **Traces**: Distributed traces showing the execution path of API requests and transactions.
+- **Metrics**: Runtime metrics (request rates, latencies, error counts) from the solution stack.
 
 Disable the OTel Dashboard
 --------------------------
@@ -305,18 +305,19 @@ Additional services specification format
 
 The additional services specification format is a YAML file consisting of a list of dictionaries. Each dictionary should have the following keys:
 
-.. list-table::
+.. list-table::  Additional services specification keys
    :header-rows: 1
+   :stub-columns: 1
    :widths: 20 80
 
    * - Key
      - Description
    * - ``name``
-     - Unique name for the service (displayed in uppercase in the console output).
+     - The unique name for the service. The console output displays it in uppercase.
    * - ``command_line_template``
-     - Command to execute. Use ``$PORT`` as a placeholder—the orchestrator replaces it with a randomly assigned free port. If the command starts with ``python``, the orchestrator substitutes the solution's Python interpreter automatically.
+     - The command to run. Use ``$PORT`` as a placeholder. The orchestrator replaces it with a randomly assigned free port. If the command starts with ``python``, the orchestrator substitutes the solution's Python interpreter.
    * - ``health_check``
-     - A dictionary with a ``type`` key (``HTTP``, ``TCP``, or ``GRPC``) and an optional ``route`` key (for HTTP health checks, for example ``/health``).
+     - A dictionary with a ``type`` key (``HTTP``, ``TCP``, or ``GRPC``) and an optional ``route`` key. Use the ``route`` key for HTTP health checks, such as ``/health``.
 
 .. note::
    Additional services are started **before** all other services in the stack. This ensures

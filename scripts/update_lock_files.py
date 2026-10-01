@@ -67,6 +67,20 @@ def find_poetry_project_dirs(root_dir: Path) -> list[Path]:
     return sorted({poetry_lock_file.parent for poetry_lock_file in poetry_lock_files})
 
 
+def find_uv_project_dirs(root_dir: Path) -> list[Path]:
+    """Find directories that contain uv.lock files below a root directory."""
+    uv_lock_files: list[Path] = []
+
+    for current_dir_name, dir_names, file_names in os.walk(root_dir):
+        dir_names[:] = [
+            dir_name for dir_name in dir_names if dir_name not in EXCLUDED_DIR_NAMES
+        ]
+        if "uv.lock" in file_names:
+            uv_lock_files.append(Path(current_dir_name) / "uv.lock")
+
+    return sorted({uv_lock_file.parent for uv_lock_file in uv_lock_files})
+
+
 def update_poetry_locks(
     project_dirs: Sequence[Path],
     packages: Sequence[str],
@@ -77,6 +91,21 @@ def update_poetry_locks(
     command = ["poetry", "update", *packages, "--lock"]
     for project_dir in project_dirs:
         print(f"Updating {project_dir / 'poetry.lock'}")
+        run(command, cwd=project_dir, check=True)
+
+
+def update_uv_locks(
+    project_dirs: Sequence[Path],
+    packages: Sequence[str],
+    *,
+    run: Callable[..., subprocess.CompletedProcess[str]] = subprocess.run,
+) -> None:
+    """Run uv's lock-only package update in each project directory."""
+    command = ["uv", "lock"]
+    for package in packages:
+        command += ["--upgrade-package", package]
+    for project_dir in project_dirs:
+        print(f"Updating {project_dir / 'uv.lock'}")
         run(command, cwd=project_dir, check=True)
 
 
@@ -107,13 +136,15 @@ def main(argv: Sequence[str] | None = None) -> int:
     except ValueError as error:
         parser.error(str(error))
 
-    project_dirs = find_poetry_project_dirs(args.root_dir)
-    if not project_dirs:
-        print(f"No poetry.lock files found below {args.root_dir}.")
+    poetry_project_dirs = find_poetry_project_dirs(args.root_dir)
+    uv_project_dirs = find_uv_project_dirs(args.root_dir)
+    if not poetry_project_dirs and not uv_project_dirs:
+        print(f"No poetry.lock or uv.lock files found below {args.root_dir}.")
         return 0
 
     try:
-        update_poetry_locks(project_dirs, packages)
+        update_poetry_locks(poetry_project_dirs, packages)
+        update_uv_locks(uv_project_dirs, packages)
     except subprocess.CalledProcessError as error:
         return error.returncode
 

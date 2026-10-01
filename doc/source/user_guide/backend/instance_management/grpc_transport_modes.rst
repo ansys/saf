@@ -22,6 +22,7 @@ The effective transport mode depends on:
 
 .. list-table:: Supported gRPC transport modes
    :header-rows: 1
+   :stub-columns: 1
 
    * - Product instance system
      - Product host scenario

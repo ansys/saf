@@ -23,6 +23,7 @@ debugging, variable inspection, and step-through execution.
 
 .. list-table:: Debug ports
    :header-rows: 1
+   :stub-columns: 1
 
    * - Process
      - Default port
@@ -62,10 +63,10 @@ Before setting up debugging, ensure you have:
 Debugging scenarios
 ====================
 
-.. list-table::
+.. list-table:: Comparison of debugging scenarios
    :header-rows: 1
    :stub-columns: 1
-   :widths: 20 35 45
+   :widths: 20 40 40
 
    * - Scenario
      - VS Code setup

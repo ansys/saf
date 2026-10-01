@@ -296,12 +296,12 @@ Blocking or long-running?
 The two flavors are not interchangeable: the choice is driven by **how long the work takes**
 and by **what the user should be able to do while it runs**.
 
-.. list-table::
+.. list-table::  Comparison of blocking and long-running transactions
    :header-rows: 1
    :stub-columns: 1
    :widths: 20 35 45
 
-   * -
+   * - Aspect
      - Blocking transaction
      - Long-running transaction (``@long_running``)
    * - Declaration
@@ -393,9 +393,10 @@ In ``display_initial_state``, that declaration reads:
 
 Read it like this:
 
-.. list-table::
+.. list-table::  Meaning of ``StepSpec`` arguments
    :header-rows: 1
-   :widths: 20 80
+
+   :widths: 25 75
 
    * - Argument
      - Meaning
@@ -534,10 +535,10 @@ Termination events
 Both transactions of the step enable it, so the ``simulate`` method produces two kinds of
 events:
 
-.. list-table::
+.. list-table::  Termination events
    :header-rows: 1
    :stub-columns: 1
-   :widths: 20 25 55
+   :widths: 20 30 50
 
    * - Stream
      - Emitted by

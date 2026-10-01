@@ -24,7 +24,8 @@ Use SAF GLOW Engine exceptions
 
 Use SAF GLOW Engine exceptions to return an appropriate error to the client when executing a transaction method. The most common exceptions are:
 
-.. list-table::
+.. list-table:: Methods of the SAF GLOW Engine exceptions
+    :stub-columns: 1
     :header-rows: 1
 
     * - Exception

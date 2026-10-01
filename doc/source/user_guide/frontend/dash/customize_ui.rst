@@ -11,7 +11,8 @@ Logo
 
 The solution template includes a placeholder logo displayed in the top-left corner of the navigation bar.
 
-.. list-table::
+.. list-table:: Comparison of logo customization options
+   :stub-columns: 1
    :header-rows: 1
 
    * - Property
@@ -45,7 +46,8 @@ Workflow illustration
 
 The solution template includes a placeholder workflow image displayed on the About page.
 
-.. list-table::
+.. list-table:: Comparison of workflow illustration customization options
+   :stub-columns: 1
    :header-rows: 1
 
    * - Property

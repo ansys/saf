@@ -62,9 +62,10 @@ Configuration
 
 The MCP server is configured through the following environment variables:
 
-.. list-table::
+.. list-table::  MCP server environment variables
+   :stub-columns: 1
    :header-rows: 1
-   :widths: 35 15 50
+   :widths: 20 15 65
 
    * - Environment variable
      - Default
@@ -152,11 +153,13 @@ Example
 Available tools
 ===============
 
-**Workflow guidance**
+Workflow guidance
+------------------
 
-.. list-table::
+.. list-table::  Workflow guidance tools
+   :stub-columns: 1
    :header-rows: 1
-   :widths: 30 70
+   :widths: 20 80
 
    * - Tool
      - Description
@@ -170,11 +173,13 @@ Available tools
        long-running transactions) that apply to every solution, regardless of its specific steps or fields.
 
 
-**Project management**
+Project management
+------------------
 
-.. list-table::
+.. list-table::  Project management tools
+   :stub-columns: 1
    :header-rows: 1
-   :widths: 30 70
+   :widths: 20 80
 
    * - Tool
      - Description
@@ -201,11 +206,13 @@ Available tools
        Because the archive is a binary zip, it is returned base64-encoded and must be decoded before
        being written to a file.
 
-**Data management**
+Data management
+------------------
 
-.. list-table::
+.. list-table::  Data management tools
+   :stub-columns: 1
    :header-rows: 1
-   :widths: 30 70
+   :widths: 20 80
 
    * - Tool
      - Description
@@ -222,11 +229,13 @@ Available tools
    * - ``download_file``
      - Downloads binary content from an ``EntityHandle`` step field on an existing project.
 
-**Transaction execution**
+Transaction execution
+---------------------
 
-.. list-table::
+.. list-table::  Transaction execution tools
+   :stub-columns: 1
    :header-rows: 1
-   :widths: 30 70
+   :widths: 20 80
 
    * - Tool
      - Description

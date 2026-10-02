@@ -209,3 +209,148 @@ def test_open_new_page_on_active_page(solution_ui_page: ModuleType, ui_path_pref
     selected_item = get_navigation_tree_item(first_page_index)
     pathname = f"{ui_path_prefix}/projects/abc123/first-step"
     assert solution_ui_page.open_new_page(selected_item, "abc123", pathname) is solution_ui_page.no_update
+
+
+def get_projects_page_index() -> str:
+    """Return the registry index of the projects dashboard page."""
+    return str(next(i for i, page in enumerate(get_registered_pages()) if page.get("projects_dashboard", False)))
+
+
+@pytest.mark.parametrize("projects_dashboard_installed", [True], indirect=True)
+def test_resolve_active_non_solution_page(
+    solution_ui_page: ModuleType,
+    ui_path_prefix: str,
+    projects_dashboard_installed: bool,
+):
+    """Resolve the projects page from its prefixed URL."""
+    assert solution_ui_page.resolve_active_non_solution_page(f"{ui_path_prefix}/projects") == get_projects_page_index()
+
+
+@pytest.mark.parametrize("projects_dashboard_installed", [True], indirect=True)
+def test_resolve_active_non_solution_page_on_solution_page(
+    solution_ui_page: ModuleType,
+    ui_path_prefix: str,
+    projects_dashboard_installed: bool,
+):
+    """Resolve no non-solution page on a page of a project."""
+    assert solution_ui_page.resolve_active_non_solution_page(f"{ui_path_prefix}/projects/abc123/first-step") is None
+
+
+def test_resolve_active_non_solution_page_without_dashboard(
+    solution_ui_page: ModuleType,
+    ui_path_prefix: str,
+    projects_dashboard_installed: bool,
+):
+    """Resolve the projects page only when it is registered; otherwise /projects shows the 404 page."""
+    index = solution_ui_page.resolve_active_non_solution_page(f"{ui_path_prefix}/projects")
+    assert (index is not None) is projects_dashboard_installed
+
+
+@pytest.mark.parametrize("projects_dashboard_installed", [True], indirect=True)
+def test_resolve_active_page_and_project_information_on_projects_page(
+    solution_ui_page: ModuleType,
+    ui_path_prefix: str,
+    projects_dashboard_installed: bool,
+):
+    """Resolve no solution page and no project on the projects page."""
+    pathname = f"{ui_path_prefix}/projects"
+    assert solution_ui_page.resolve_active_page_and_project_information(pathname) == (None, None)
+
+
+def test_resolve_project_scoped_pathname_on_new_solution_page(solution_ui_page: ModuleType, ui_path_prefix: str):
+    """Store the pathname and bump the generation that renders the solution page."""
+    pathname = f"{ui_path_prefix}/projects/abc123/first-step"
+    assert solution_ui_page.resolve_project_scoped_pathname(pathname, None, 3) == (pathname, 4)
+
+
+def test_resolve_project_scoped_pathname_on_same_solution_page(solution_ui_page: ModuleType, ui_path_prefix: str):
+    """Do not render the solution page again when the pathname did not change."""
+    pathname = f"{ui_path_prefix}/projects/abc123/first-step"
+    no_update = solution_ui_page.no_update
+    assert solution_ui_page.resolve_project_scoped_pathname(pathname, pathname, 3) == (no_update, no_update)
+
+
+@pytest.mark.parametrize("projects_dashboard_installed", [True], indirect=True)
+def test_resolve_project_scoped_pathname_resets_on_projects_page(
+    solution_ui_page: ModuleType,
+    ui_path_prefix: str,
+    projects_dashboard_installed: bool,
+):
+    """Reset the pathname on the projects page so that opening the same project again renders it."""
+    previous_pathname = f"{ui_path_prefix}/projects/abc123/first-step"
+    no_update = solution_ui_page.no_update
+    assert solution_ui_page.resolve_project_scoped_pathname(f"{ui_path_prefix}/projects", previous_pathname, 3) == (
+        None,
+        no_update,
+    )
+    assert solution_ui_page.resolve_project_scoped_pathname(previous_pathname, None, 3) == (previous_pathname, 4)
+
+
+@pytest.mark.parametrize("projects_dashboard_installed", [True], indirect=True)
+def test_get_page_list_excludes_projects_page(solution_ui_page: ModuleType, projects_dashboard_installed: bool):
+    """Do not list the projects page in the navigation tree of the steps."""
+    item_ids = [item["id"] for item in solution_ui_page.get_page_list("light")]
+    assert get_projects_page_index() not in item_ids
+    assert item_ids  # the step pages are still listed
+
+
+NAVBAR = {"width": 300, "breakpoint": "sm", "collapsed": {"mobile": True}}
+
+
+def test_render_nav_tree_on_solution_page(solution_ui_page: ModuleType, first_page_index: str):
+    """Display the navigation tree and expand the navbar on a page of a project."""
+    tree, navbar = solution_ui_page.render_nav_tree(first_page_index, None, False, NAVBAR)
+    assert isinstance(tree, Tree)
+    assert navbar["collapsed"] == {"mobile": True, "desktop": False}
+    assert navbar["width"] == 300
+
+
+@pytest.mark.parametrize("projects_dashboard_installed", [True], indirect=True)
+def test_render_nav_tree_on_projects_page(solution_ui_page: ModuleType, projects_dashboard_installed: bool):
+    """Hide the navigation tree and collapse the navbar on the projects page."""
+    tree, navbar = solution_ui_page.render_nav_tree(None, get_projects_page_index(), False, NAVBAR)
+    assert not isinstance(tree, Tree)
+    assert navbar["collapsed"] == {"mobile": True, "desktop": True}
+
+
+def _get_back_button(children: list[Any]) -> tuple[str, str] | None:
+    """Return the href and the popover text of the back-to-projects button, or None if it is hidden."""
+    if not children:
+        return None
+    link = children[0]
+    popover = link.children[1]
+    return link.href, popover.children
+
+
+@pytest.mark.parametrize(
+    ("deployment", "expected_text"),
+    [("Desktop", "Back to Projects"), ("DockerCompose", "Back to Portal")],
+)
+def test_return_to_portal_uses_portal_url(
+    solution_ui_page: ModuleType,
+    projects_dashboard_installed: bool,
+    monkeypatch: pytest.MonkeyPatch,
+    deployment: str,
+    expected_text: str,
+):
+    """Link to the URL set by the orchestrator first, whichever of the dashboard and the portals it points to."""
+    deployment_type = getattr(solution_ui_page.Deployment, deployment)
+    monkeypatch.setattr(solution_ui_page.DashClient, "get_portal_ui_url", staticmethod(lambda: "http://portal"))
+    monkeypatch.setattr(solution_ui_page.DashClient, "get_deployment_type", staticmethod(lambda: deployment_type))
+    button = _get_back_button(solution_ui_page.return_to_portal("/projects/abc123", False))
+    assert button == ("http://portal", expected_text)
+
+
+def test_return_to_portal_without_portal_url(
+    solution_ui_page: ModuleType,
+    ui_path_prefix: str,
+    projects_dashboard_installed: bool,
+    monkeypatch: pytest.MonkeyPatch,
+):
+    """Link to the projects page when it is registered, otherwise hide the button."""
+    monkeypatch.setattr(solution_ui_page.DashClient, "get_portal_ui_url", staticmethod(lambda: None))
+    button = _get_back_button(solution_ui_page.return_to_portal(f"{ui_path_prefix}/projects/abc123", False))
+    if projects_dashboard_installed:
+        assert button == (f"{ui_path_prefix}/projects", "Back to Projects")
+    else:
+        assert button is None

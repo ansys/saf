@@ -23,7 +23,8 @@ tasks:
       - "--no-deps"
     deps:
       - target: "~:check-env-var"
-        args: ["PIP_EXTRA_INDEX_URL"]
+        args:
+          - "UV_EXTRA_INDEX_URL"
     env:
       PIP_INDEX_URL: "https://pypi.org/simple"
       PIP_QUIET: "1"

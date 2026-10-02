@@ -407,7 +407,7 @@ jobs:
         shell: bash
         run: moon run $PACKAGE:install-pim-light-server
         env:
-          PIP_EXTRA_INDEX_URL: https://PAT:${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}@${{
+          UV_EXTRA_INDEX_URL: https://PAT:${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}@${{
             secrets.PYANSYS_PYPI_PRIVATE_URL }}
 
       - name: Install visor
@@ -428,7 +428,7 @@ jobs:
         shell: bash
         run: moon run $PACKAGE:install-visor
         env:
-          PIP_EXTRA_INDEX_URL: https://PAT:${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}@${{
+          UV_EXTRA_INDEX_URL: https://PAT:${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}@${{
             secrets.PYANSYS_PYPI_PRIVATE_URL }}
 
       - name: Install desktop-portal
@@ -449,7 +449,7 @@ jobs:
         shell: bash
         run: moon run $PACKAGE:install-saf-desktop-portal
         env:
-          PIP_EXTRA_INDEX_URL: https://PAT:${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}@${{
+          UV_EXTRA_INDEX_URL: https://PAT:${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}@${{
             secrets.PYANSYS_PYPI_PRIVATE_URL }}
 
       - name: Install aspire dashboard
@@ -472,7 +472,7 @@ jobs:
         shell: bash
         run: moon run $PACKAGE:install-ansys-saf-aspire
         env:
-          PIP_EXTRA_INDEX_URL: https://PAT:${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}@${{
+          UV_EXTRA_INDEX_URL: https://PAT:${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}@${{
             secrets.PYANSYS_PYPI_PRIVATE_URL }}
 
       - name: Install minerva-python-client

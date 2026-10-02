@@ -1,0 +1,156 @@
+
+
+
+
+
+
+:class:`Geometry251InstanceVersionConfiguration`
+================================================
+
+
+.. py:class:: ansys.saf.product_configuration.geometry.Geometry251InstanceVersionConfiguration(version: str)
+
+   Bases: :py:obj:`BaseGeometryInstanceVersionConfiguration`
+
+
+   
+   Configuration class for a 251 version of Ansys Geometry service with secure gRPC connections.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: Geometry251InstanceVersionConfiguration
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~execution_command`
+            - The command to launch Geometry.
+          * - :py:attr:`~exe_path_for_pim`
+            - Path to the Geometry executable.
+          * - :py:attr:`~environment`
+            - Environment variables for the Geometry service instance.
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.saf.product_configuration.geometry import Geometry251InstanceVersionConfiguration
+
+Property detail
+---------------
+
+.. py:property:: execution_command
+   :type: str
+
+
+   
+   The command to launch Geometry.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: exe_path_for_pim
+   :type: str
+
+
+   
+   Path to the Geometry executable.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: environment
+   :type: dict[str, str]
+
+
+   
+   Environment variables for the Geometry service instance.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+
+

@@ -32,14 +32,6 @@ from typing import Any, Protocol
 import venv
 import zipfile
 
-from ansys.saf.testing.common import YieldFixture
-from ansys.saf.testing.network import get_random_free_port
-from ansys.saf.testing.platform_specific import is_ci_run
-from ansys.saf.testing.selenium import (
-    wait_for_element_and_click,
-    wait_for_element_and_send_text,
-    wait_for_text,
-)
 from dotenv import set_key
 import httpx2
 from packaging.markers import Marker
@@ -55,6 +47,14 @@ from ansys.saf.desktop.installer.__main__ import _load_filtered_dotenv  # pyrigh
 from ansys.saf.desktop.installer._package.download_python import MINIMUM_REQUIRED_VERSIONS
 from ansys.saf.desktop.installer._package.solution import get_solution_namespace_info
 from ansys.saf.desktop.installer.solution_desktop_deployment import TARGET_SOLUTIONS_DIRECTORY_NAME
+from ansys.saf.testing.common import YieldFixture
+from ansys.saf.testing.network import get_random_free_port
+from ansys.saf.testing.platform_specific import is_ci_run
+from ansys.saf.testing.selenium import (
+    wait_for_element_and_click,
+    wait_for_element_and_send_text,
+    wait_for_text,
+)
 from tests.e2e.installer_process import SolutionInstallerProcess
 from tests.e2e.solution_process import SolutionShortcutProcess
 from tests.utils import get_appdata_directory
@@ -236,6 +236,8 @@ def _setup_solution(solution_root_dir: Path) -> tuple[Path, str, str, str]:
     poetry_version: str = solution_pyproject_data["build-system-requirements"]["build-system-version"]
     cmd = [poetry_venv_pip_exec, "install", f"poetry=={poetry_version}"]
     subprocess.run(cmd)
+    if platform.system() == "Windows":
+        subprocess.run([poetry_venv_pip_exec, "install", "pip-system-certs"], check=True)
     # Install poetry-plugin-export if poetry >= 2.0.0 as it is not longer included by default.
     if poetry_version.startswith("2."):
         cmd = [poetry_venv_pip_exec, "install", "poetry-plugin-export>=1.8"]

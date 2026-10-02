@@ -20,7 +20,6 @@ import re
 import subprocess
 from unittest.mock import MagicMock, call
 
-from ansys.saf.testing.platform_specific import windows_only
 from packaging.version import Version
 import pytest
 import pytest_mock
@@ -32,6 +31,7 @@ from ansys.saf.desktop.installer._package.download_python import (
     PythonIndexHTMLParser,
     PythonManager,
 )
+from ansys.saf.testing.platform_specific import windows_only
 
 
 def _get_latest_python_versions() -> dict[str, str]:

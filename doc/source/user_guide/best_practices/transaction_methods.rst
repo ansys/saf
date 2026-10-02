@@ -97,9 +97,10 @@ Key characteristics:
 Comparison
 -----------
 
-.. list-table::
+.. list-table:: Comparison of synchronous and asynchronous transactions
    :header-rows: 1
-   :widths: 40 30 30
+   :stub-columns: 1
+   :widths: 33 33 34
 
    * - Aspect
      - Synchronous

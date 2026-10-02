@@ -385,6 +385,117 @@ def test_cached_hps_client():
     assert not cached_client.is_expired(cache_ttl_seconds=40.0)
 
 
+def test_cached_hps_client_close_releases_resources():
+    mock_client = mock.Mock()
+    cached_client = CachedClient(mock_client, time.time())
+
+    cached_client.close()
+
+    # The refresh thread pins the client and the data transfer client runs as a child process.
+    mock_client._stop_event.set.assert_called_once_with()
+    mock_client._token_refresh_thread.join.assert_called_once_with(timeout=1.0)
+    mock_client._dt_client.stop.assert_called_once_with()
+    mock_client.session.close.assert_called_once_with()
+
+
+def test_cached_hps_client_close_without_background_resources():
+    mock_client = mock.Mock()
+    mock_client._dt_client = None
+    mock_client._stop_event = None
+    mock_client._token_refresh_thread = None
+    cached_client = CachedClient(mock_client, time.time())
+
+    cached_client.close()
+
+    mock_client.session.close.assert_called_once_with()
+
+
+def test_cached_hps_client_close_survives_failures():
+    mock_client = mock.Mock()
+    mock_client._dt_client.stop.side_effect = RuntimeError("boom")
+    mock_client.session.close.side_effect = RuntimeError("boom")
+    cached_client = CachedClient(mock_client, time.time())
+
+    # A failure to release must not propagate into the caller's request.
+    cached_client.close()
+
+
+@pytest.mark.parametrize("authenticator_type", [DesktopHpsAuthenticator, OnPremHpsAuthenticator])
+def test_authenticator_closes_client_it_replaces(
+    authenticator_type: type[IHpsAuthenticator],
+    mocker: MockerFixture,
+):
+    mocker.patch("ansys.hps.client.client.Client.__init__", return_value=None)
+    spy_close = mocker.spy(CachedClient, "close")
+
+    init_args = {"glow_hps_username": "user", "glow_hps_password": "pass"}
+    if authenticator_type is DesktopHpsAuthenticator:
+        init_args["glow_api_url"] = "127.0.0.1:5432"
+        init_args["client_id"] = "rep-jms-web"
+    hps_authenticator = authenticator_type(**init_args)
+
+    hps_url = "https://localhost:8443/hps"
+    current_time = time.time()
+
+    with mocker.patch("time.time", return_value=current_time), hps_authenticator.get_hps_client(hps_url):
+        pass
+    # WHEN: the cached client expires and is replaced
+    with mocker.patch("time.time", return_value=current_time + 70), hps_authenticator.get_hps_client(hps_url):
+        pass
+
+    # THEN: only the replaced client is released
+    assert spy_close.call_count == 1
+
+
+@pytest.mark.parametrize("authenticator_type", [DesktopHpsAuthenticator, OnPremHpsAuthenticator])
+def test_authenticator_does_not_close_reused_client(
+    authenticator_type: type[IHpsAuthenticator],
+    mocker: MockerFixture,
+):
+    mocker.patch("ansys.hps.client.client.Client.__init__", return_value=None)
+    spy_close = mocker.spy(CachedClient, "close")
+
+    init_args = {"glow_hps_username": "user", "glow_hps_password": "pass"}
+    if authenticator_type is DesktopHpsAuthenticator:
+        init_args["glow_api_url"] = "127.0.0.1:5432"
+        init_args["client_id"] = "rep-jms-web"
+    hps_authenticator = authenticator_type(**init_args)
+
+    # WHEN: the cached client is still valid and gets reused
+    hps_url = "https://localhost:8443/hps"
+    with hps_authenticator.get_hps_client(hps_url):
+        pass
+    with hps_authenticator.get_hps_client(hps_url):
+        pass
+
+    # THEN: nothing is released, the client is still in use
+    spy_close.assert_not_called()
+
+
+@pytest.mark.parametrize("authenticator_type", [DesktopHpsAuthenticator, OnPremHpsAuthenticator])
+def test_authenticator_does_not_close_clients_of_other_urls(
+    authenticator_type: type[IHpsAuthenticator],
+    mocker: MockerFixture,
+):
+    mocker.patch("ansys.hps.client.client.Client.__init__", return_value=None)
+    spy_close = mocker.spy(CachedClient, "close")
+
+    init_args = {"glow_hps_username": "user", "glow_hps_password": "pass"}
+    if authenticator_type is DesktopHpsAuthenticator:
+        init_args["glow_api_url"] = "127.0.0.1:5432"
+        init_args["client_id"] = "rep-jms-web"
+    hps_authenticator = authenticator_type(**init_args)
+
+    # WHEN: caching clients for two different servers
+    with hps_authenticator.get_hps_client("https://localhost:8443/hps"):
+        pass
+    with hps_authenticator.get_hps_client("https://remote:8443/hps"):
+        pass
+
+    # THEN: neither entry replaces the other, so neither is released
+    spy_close.assert_not_called()
+
+
 @pytest.mark.parametrize("authenticator_type", [DesktopHpsAuthenticator, OnPremHpsAuthenticator])
 def test_authenticator_caches_clients(authenticator_type: type[IHpsAuthenticator], mocker: MockerFixture):
     mocked_hps_client_class = mocker.patch("ansys.hps.client.client.Client.__init__", return_value=None)

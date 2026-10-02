@@ -1,13 +1,18 @@
 tasks:
   check-env-var:
-    command: pwsh
+    description: "Check that required environment variables are set"
+    command: 'python'
     args:
-      - -NoProfile
-      - -NonInteractive
-      - -CommandWithArgs
-      - 'if ($args.Count -eq 0) { Write-Error "Specify at least one environment variable name"; exit 1 }; foreach ($name in $args) { if ([string]::IsNullOrEmpty($name) -or [string]::IsNullOrEmpty([Environment]::GetEnvironmentVariable($name))) { Write-Error "Required environment variable is not set: $name"; exit 1 } }'
+      - '-c'
+      - >-
+        import os, sys;
+        names = sys.argv[1:];
+        missing = next((name for name in names if not os.environ.get(name)), None);
+        message = "Error: Specify at least one environment variable name" if not names else
+        f"Error: Required environment variable is not set: {missing}" if missing is not None else None;
+        print(message, file=sys.stderr) if message is not None else None;
+        sys.exit(1 if message is not None else 0)
     options:
-      shell: false
       cache: false
 
   install-private-dependency:

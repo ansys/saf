@@ -1,0 +1,49 @@
+
+
+
+
+
+
+:class:`NoIssuerError`
+======================
+
+
+.. py:exception:: ansys.iam.oidc.NoIssuerError
+
+   Bases: :py:obj:`ValueError`
+
+
+   
+   Raised when no issuer is provided but is required for the operation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.iam.oidc import NoIssuerError
+
+
+
+
+

@@ -18,6 +18,8 @@ from pathlib import Path
 import platform
 import subprocess
 import sys
+import tomllib
+from typing import Any
 
 import pytest
 import pytest_mock
@@ -155,3 +157,31 @@ def test_create_solution(tmp_path: Path, ui_framework: str, namespace: str):
             assert "  ui:" in docker_compose_content
         else:
             assert "  ui:" not in docker_compose_content
+
+
+def _scaffold_pyproject(tmp_path: Path, ui_framework: str) -> dict[str, Any]:
+    """Scaffold a solution in the working directory and return its parsed pyproject.toml."""
+    create_solution("dashboard_dependency_solution", "Dashboard Dependency Solution", ui_framework, "saf_cli_tests")
+    return tomllib.loads((tmp_path / "dashboard_dependency_solution" / "pyproject.toml").read_text(encoding="utf-8"))
+
+
+@pytest.mark.usefixtures("tmp_path_as_working_dir", "mock_appdata")
+def test_dash_solution_depends_on_projects_dashboard(tmp_path: Path):
+    """Install the projects dashboard with the UI of a Dash solution, from the private feed only."""
+    poetry = _scaffold_pyproject(tmp_path, "dash")["tool"]["poetry"]
+    dependency = poetry["group"]["ui"]["dependencies"]["saf-projects-dashboard"]
+    assert dependency["source"] == "solutions-private-pypi"
+    assert dependency["allow-prereleases"] is True
+    sources = {source["name"]: source for source in poetry["source"]}
+    assert sources["solutions-private-pypi"]["priority"] == "explicit"
+    assert sources["solutions-private-pypi"]["url"] == (
+        "https://pkgs.dev.azure.com/ansys-solutions/_packaging/ansys-solutions/pypi/simple/"
+    )
+
+
+@pytest.mark.usefixtures("tmp_path_as_working_dir", "mock_appdata")
+def test_solution_without_ui_does_not_depend_on_projects_dashboard(tmp_path: Path):
+    """Do not add the projects dashboard nor the private feed to a solution without UI."""
+    poetry = _scaffold_pyproject(tmp_path, "none")["tool"]["poetry"]
+    assert "ui" not in poetry.get("group", {})
+    assert "solutions-private-pypi" not in {source["name"] for source in poetry["source"]}

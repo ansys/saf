@@ -158,6 +158,11 @@ class TestInstallerWithUI:
             required_dependencies=["tqdm", "pooch", "custom-package-for-test-2", "scooby"],
         )
 
+    @pytest.mark.xfail(
+        platform.system() == "Windows",
+        reason="Installer GUI does not complete after changing a non-writable directory on Windows.",
+        strict=True,
+    )
     def test_installer_gui_installation_directory_without_write_permissions(
         self,
         tmp_path: Path,

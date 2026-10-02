@@ -37,7 +37,8 @@ def register_guidance_tools(app: FastMCP, workflow: str) -> None:
         - Field: a typed piece of data owned by a step (numbers, strings, booleans, custom pydantic models,
         or entity handles). Read and write fields with the get_fields and set_fields tools.
         - Entity handle: a field type that references file content (inputs, results, meshes, images, etc.)
-        stored outside the field itself. Read and write their bytes with download_file and upload_file.
+        stored outside the field itself, either directly or nested in a list, dict, or custom object field.
+        Read and write their bytes with download_data and upload_data.
         - Transaction: a step method that downloads some fields, does work, and uploads other fields.
         Transactions are the only supported way to mutate step data; run them with the generated
         "<step_name>__<transaction_name>" tools. Each transaction tool's description states which fields it

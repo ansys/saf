@@ -94,6 +94,17 @@ class CustomTypeABC(BaseModel):
         return self.a + self.b.x + self.c
 
 
+class CustomTypeWithEntityHandle(BaseModel):
+    label: str = ""
+    file: EntityHandle = NO_ENTITY
+
+
+class CustomTypeWithEntityHandleCollections(BaseModel):
+    files: list[EntityHandle] = []
+    file_map: dict[str, EntityHandle] = {}
+    nested: CustomTypeWithEntityHandle = CustomTypeWithEntityHandle()
+
+
 class TransactionVerificationStep(StepModel):
     # Basic types
     sleepy_seconds: float = 10
@@ -123,6 +134,13 @@ class TransactionVerificationStep(StepModel):
     image_entity: EntityHandle = NO_ENTITY
     e2e_file_entity_api: EntityHandle = NO_ENTITY
     e2e_file_entity_ui: EntityHandle = NO_ENTITY
+    # Entity handles nested in data structures
+    entity_handle_list: list[EntityHandle] = []
+    entity_handle_dict: dict[str, EntityHandle] = {}
+    entity_handle_object: CustomTypeWithEntityHandle = CustomTypeWithEntityHandle()
+    nested_entity_handle_list: list[list[EntityHandle]] = []
+    nested_entity_handle_dict: dict[str, dict[str, EntityHandle]] = {}
+    entity_handle_collections: CustomTypeWithEntityHandleCollections = CustomTypeWithEntityHandleCollections()
     lock_id: str = ""
 
     @transaction(self=StepSpec(upload=["field_1"]))

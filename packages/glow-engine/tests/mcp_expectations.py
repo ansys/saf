@@ -17,6 +17,7 @@
 
 import pytest
 
+from ansys.saf.glow._mcp._data_tools import FIELD_PATH_DESCRIPTION
 from tests.mocks.solution_end_to_end.solution.definition import EndToEndSolution
 
 STATIC_TOOL_DESCRIPTIONS = {
@@ -52,8 +53,8 @@ STATIC_TOOL_DESCRIPTIONS = {
     ),
     "set_fields": "Set field values on a solution step.",
     "get_fields": "Get field values from a solution step.",
-    "upload_file": "Upload file content to an entity handle field.",
-    "download_file": "Download file content from an entity handle field.",
+    "upload_data": "Upload file content to an entity handle, optionally nested in a list, dict, or custom object field.",  # noqa: E501
+    "download_data": "Download file content from an entity handle, optionally nested in a list, dict, or custom object field.",  # noqa: E501
     "wait_for_longrunning_transaction": "Wait for a started long-running transaction to finish.",
 }
 
@@ -94,16 +95,16 @@ STATIC_TOOL_PARAMETER_DESCRIPTIONS: dict[str, dict[str, str]] = {
         "step_name": "Name of the step containing the fields.",
         "field_names": "Names of the fields to read.",
     },
-    "upload_file": {
+    "upload_data": {
         "project_name": "Name of the project to update.",
         "step_name": "Name of the step containing the entity handle field.",
-        "entity_handle_name": "Name of the entity handle field to write.",
+        "field_path": FIELD_PATH_DESCRIPTION,
         "content": "File content to upload.",
     },
-    "download_file": {
+    "download_data": {
         "project_name": "Name of the project to read.",
         "step_name": "Name of the step containing the entity handle field.",
-        "entity_handle_name": "Name of the entity handle field to read.",
+        "field_path": FIELD_PATH_DESCRIPTION,
     },
     "wait_for_longrunning_transaction": {
         "project_name": "Name of the project containing the transaction.",
@@ -197,8 +198,8 @@ TOOLS_WITHOUT_PROJECT_NAME = {"create_project", "list_projects", "delete_project
 NONEXISTENT_STEP_CASES = [
     pytest.param("set_fields", {"fields": {"any_field": 1.0}}, id="set_fields"),
     pytest.param("get_fields", {"field_names": ["any_field"]}, id="get_fields"),
-    pytest.param("upload_file", {"entity_handle_name": "any_field", "content": b"data"}, id="upload_file"),
-    pytest.param("download_file", {"entity_handle_name": "any_field"}, id="download_file"),
+    pytest.param("upload_data", {"field_path": "any_field", "content": b"data"}, id="upload_data"),
+    pytest.param("download_data", {"field_path": "any_field"}, id="download_data"),
     pytest.param(
         "wait_for_longrunning_transaction",
         {"transaction_name": "any_transaction"},
@@ -219,14 +220,14 @@ NONEXISTENT_PROJECT_CASES = [
         id="get_fields",
     ),
     pytest.param(
-        "upload_file",
-        {"step_name": "transaction_verification_step", "entity_handle_name": "text_file", "content": b"data"},
-        id="upload_file",
+        "upload_data",
+        {"step_name": "transaction_verification_step", "field_path": "text_file", "content": b"data"},
+        id="upload_data",
     ),
     pytest.param(
-        "download_file",
-        {"step_name": "transaction_verification_step", "entity_handle_name": "text_file"},
-        id="download_file",
+        "download_data",
+        {"step_name": "transaction_verification_step", "field_path": "text_file"},
+        id="download_data",
     ),
     pytest.param(
         "transaction_verification_step__get_field_1_and_2_and_set_the_sum_in_result",

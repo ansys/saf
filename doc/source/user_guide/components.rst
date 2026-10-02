@@ -225,7 +225,7 @@ SAF Projects Dashboard
 
 Provides a portal for managing projects within a SAF solution. It helps users to launch and control different  project instances.
 
-- **Package name**: ``ansys-saf-projects-dashboard``
+- **Package name**: ``saf-projects-dashboard``
 - **Key features**:
 
   - Project listing with server-backed pagination and configurable page sizes
@@ -387,7 +387,7 @@ Installing ``ansys-saf-sdk`` installs these packages by default:
 * ``ansys-iam-oidc`` (see :ref:`components_iam_oidc`)
 * ``ansys-saf-product-configuration`` (see :ref:`components_product_configuration`)
 * ``ansys-saf-product-manager`` (see :ref:`components_product_manager`)
-* ``ansys-saf-projects-dashboard`` (see :ref:`components_projects_dashboard`)
+* ``saf-projects-dashboard`` (see :ref:`components_projects_dashboard`)
 
 The following diagram shows what the meta-package pulls in. Solid arrows are the core dependencies,
 installed by default; dashed arrows are packages added by an optional extra.

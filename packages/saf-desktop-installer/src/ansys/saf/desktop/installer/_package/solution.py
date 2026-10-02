@@ -259,7 +259,7 @@ def get_solution_version() -> str:
         str: Solution version."""
     try:
         solution_version = (
-            subprocess.run(["poetry", "version", "--no-interaction"], capture_output=True, check=True, text=True)
+            subprocess.run(["poetry", "version", "--no-interaction"], capture_output=True, check=True, text=True)  # noqa: S607
             .stdout.strip()
             .split()[1]
         )
@@ -340,7 +340,7 @@ def create_requirements_txt(pyproject_location: Path, definitions_folder: Path) 
     requirements_txt = definitions_folder / REQ_FILE
     logger.info(f"Creating requirements.txt file to {requirements_txt} using poetry from {pyproject_location.parent}")
     output = subprocess.run(
-        ["poetry", "export", "--with", "desktop,ui,doc", "--without-hashes", "--format", REQ_FILE],
+        ["poetry", "export", "--with", "desktop,ui,doc", "--without-hashes", "--format", REQ_FILE],  # noqa: S607
         cwd=pyproject_location.parent,
         capture_output=True,
     )
@@ -400,7 +400,7 @@ def create_version_file(solution_root_dir: Path, solution_display_name: str, sol
     logger.info(f"Creating version file: {version_file}")
     current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S %Z")
     try:
-        github_sha = subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()
+        github_sha = subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()  # noqa: S607
     except (subprocess.CalledProcessError, FileNotFoundError):
         logger.warning(
             "Could not get the git SHA to populate the version file. Check if git is installed and initialized in the "

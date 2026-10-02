@@ -14,8 +14,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from ansys.saf.testing.process import Process
 from tenacity import TryAgain, retry, stop_after_attempt, wait_fixed
+
+from ansys.saf.testing.process import Process
 
 
 @retry(stop=stop_after_attempt(240), wait=wait_fixed(1))

@@ -15,14 +15,15 @@
 # limitations under the License.
 
 
-from ansys.saf.glow.client import callback
-from ansys.solutions.my_solution_dash_old.solution.definition import MySolutionDashOldSolution
 from dash import Input, Output, State, dcc, html  # pyright: ignore[reportMissingTypeStubs]
 from dash_extensions.enrich import (  # pyright: ignore[reportMissingTypeStubs]
     DashProxy,
     MultiplexerTransform,
     TriggerTransform,
 )
+
+from ansys.saf.glow.client import callback
+from ansys.solutions.my_solution_dash_old.solution.definition import MySolutionDashOldSolution
 
 app = DashProxy(
     __name__,

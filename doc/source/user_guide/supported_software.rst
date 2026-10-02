@@ -55,7 +55,7 @@ Ansys flagships
 ===============
 
 .. list-table:: Supported Ansys products
-   :widths: 25 30 45
+   :widths: 30 30 44
    :header-rows: 1
 
    * - Product
@@ -102,7 +102,7 @@ Additional development tooling
 ==============================
 
 .. list-table:: Development and deployment tooling
-   :widths: 30 70
+   :widths: 20 80
    :header-rows: 1
 
    * - Requirement

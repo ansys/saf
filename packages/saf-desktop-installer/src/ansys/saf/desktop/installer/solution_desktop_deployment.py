@@ -56,6 +56,7 @@ from pathlib import Path
 import platform
 import random
 import shutil
+import signal
 import socket
 import subprocess
 import sys
@@ -399,7 +400,7 @@ def install_shortcut(
         shell_cmd += f"$Shortcut.Description = '{solution_display_name} Application'; "
         shell_cmd += f"$Shortcut.IconLocation = '{installation_icon_path}'; "
         shell_cmd += "$Shortcut.Save()"
-        subprocess.check_output(["powershell.exe", "-Command", shell_cmd], stderr=subprocess.PIPE, text=True)
+        subprocess.check_output(["powershell.exe", "-Command", shell_cmd], stderr=subprocess.PIPE, text=True)  # noqa: S607
     else:
         with shortcut_path.open("w") as file:
             file.write("[Desktop Entry]\n")
@@ -1185,7 +1186,7 @@ def is_port_free(port: int) -> bool:
 
 def get_random_port() -> int:
     while True:
-        port = random.randint(40000, 65000)
+        port = random.randint(40000, 65000)  # noqa: S311
         if is_port_free(port):
             return port
 
@@ -1217,9 +1218,15 @@ def start_dash(args: dict[str, Any], port: int) -> None:
     )
 
 
+def _raise_keyboard_interrupt(signum: int, frame: Any) -> None:
+    raise KeyboardInterrupt
+
+
 def _start_installer_gui(args: dict[str, Any], port: int) -> None:
     dash_process = mp.Process(target=start_dash, args=(args, port))
     dash_process.start()
+    # Installed after start() so the Dash child keeps the default handler; ensures cleanup on SIGTERM.
+    previous_sigterm_handler = signal.signal(signal.SIGTERM, _raise_keyboard_interrupt)
     try:
         if platform.system() == "Windows":
             webview_process = mp.Process(target=start_webview, args=(port,))
@@ -1234,6 +1241,7 @@ def _start_installer_gui(args: dict[str, Any], port: int) -> None:
     except KeyboardInterrupt:
         pass
     finally:
+        signal.signal(signal.SIGTERM, previous_sigterm_handler)
         if dash_process.is_alive():
             dash_process.terminate()
             dash_process.join(timeout=5)

@@ -46,7 +46,8 @@ tasks:
           - "ansys-saf-desktop-portal==0.4.dev2"
 
   pre-commit:
-    description: "Run pre-commit against this package's files only (root-level files are handled by root:pre-commit)"
+    description: "Run pre-commit against this package's files only (root-level files
+      are handled by root:pre-commit)"
     script: 'uv run pre-commit run --files $(git ls-files -- ":(top,glob)$projectSource/**")'
     deps:
       - '~:pyright'
@@ -242,12 +243,12 @@ tasks:
       - "$projectAlias"
       - "--all-extras"
       - "pytest"
-      - "-p"
-      - "no:faulthandler"
       - "--cov=."
       - "--cov-report=term"
       - "--cov-report=xml"
       - "--cov-report=html"
+      - "-p"
+      - "no:faulthandler"
       - "-s" # Disable capturing of stdout and stderr during tests
     env:
       PYTHONUNBUFFERED: '1'

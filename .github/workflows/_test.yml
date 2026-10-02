@@ -1,7 +1,7 @@
 name: Test
 
 run-name: >-
-  Test: ${{ inputs.package-name }} ${{ inputs.python-version }} ${{ inputs.runner-name
+  Test: ${{ inputs.library-name }} ${{ inputs.python-version }} ${{ inputs.runner-name
   }} by ${{ github.actor }}
 on:
   workflow_dispatch:
@@ -11,7 +11,7 @@ on:
         required: true
         type: boolean
         default: false
-      package-name:
+      library-name:
         description: 'Package to test'
         required: true
         type: choice
@@ -175,7 +175,7 @@ on:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}-test-${{ inputs.python-version }}-${{
-    inputs.tests-groups-file-path }}-${{ inputs.package-name }}
+    inputs.tests-groups-file-path }}-${{ inputs.library-name }}
   cancel-in-progress: true
 permissions: {}
 
@@ -187,8 +187,8 @@ jobs:
       || 'Manually triggered' }}
     runs-on: ubuntu-latest
     outputs:
-      working-directory: ${{ inputs.working-directory || (inputs.package-name == 'examples'
-        && 'examples' || format('packages/{0}', inputs.package-name)) }}
+      working-directory: ${{ inputs.working-directory || (inputs.library-name == 'examples'
+        && 'examples' || format('packages/{0}', inputs.library-name)) }}
       test-groups: ${{ steps.configure-tests.outputs.test_groups }}
     steps:
       - name: Checkout repository

@@ -18,9 +18,9 @@ from collections.abc import Callable
 import contextlib
 from pathlib import Path
 
-from ansys.saf.testing.platform_specific import windows_only
 import pytest
 
+from ansys.saf.testing.platform_specific import windows_only
 from tests.e2e.conftest import (
     BuildSolution,
     InstallSolution,

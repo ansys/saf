@@ -7,6 +7,7 @@ projects:
     - "packages/bdm-python-shared-volume"
     - "packages/saf-desktop-orchestrator"
     - "packages/saf-iam-oidc"
+    - "packages/saf-desktop-installer"
     - "packages/saf-product-configuration"
     - "packages/saf-testing"
     - "packages/saf-templates"

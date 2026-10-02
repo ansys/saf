@@ -14,7 +14,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
 from pathlib import Path
+import signal
 import subprocess
 import sys
 
@@ -48,7 +50,18 @@ class InstallerUIProcess:
             str(self.port),
         ]
         args += ["-i", str(self._installation_directory)] if self._installation_directory else []
-        self._process = subprocess.Popen(args, cwd=self._cwd)
+        # BROWSER=true makes webbrowser.open a no-op on Linux.
+        env = {**os.environ, "BROWSER": "true"}
+        # Own session/group so stop() can kill the Dash child too; no inherited pipes to keep CI waiting.
+        self._process = subprocess.Popen(
+            args,
+            cwd=self._cwd,
+            env=env,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            start_new_session=sys.platform != "win32",
+            creationflags=subprocess.CREATE_NEW_PROCESS_GROUP if sys.platform == "win32" else 0,
+        )
         self._wait_for_healthy()
         return self
 
@@ -65,12 +78,26 @@ class InstallerUIProcess:
         raise TimeoutError("Installation UI did not successfully start")
 
     def stop(self):
-        if self._process:
-            self._process.terminate()
-            try:
-                self._process.wait(timeout=5)
-            except subprocess.TimeoutExpired:
-                self._process.kill()
+        if not self._process:
+            return
+        if sys.platform == "win32":
+            subprocess.run(
+                ["taskkill", "/F", "/T", "/PID", str(self._process.pid)],
+                capture_output=True,
+                check=False,
+            )
+        else:
+            try:  # noqa: SIM105
+                os.killpg(self._process.pid, signal.SIGTERM)
+            except ProcessLookupError:
+                pass
+        try:
+            self._process.wait(timeout=5)
+        except subprocess.TimeoutExpired:
+            if sys.platform != "win32":
+                os.killpg(self._process.pid, signal.SIGKILL)
+            self._process.kill()
+            self._process.wait()
 
     @property
     def port(self) -> int:

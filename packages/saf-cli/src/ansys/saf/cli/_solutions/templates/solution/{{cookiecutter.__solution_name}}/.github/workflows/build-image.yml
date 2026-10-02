@@ -1,0 +1,81 @@
+name: build solution images
+
+on:
+  workflow_dispatch:
+    inputs:
+      image_tag:
+        description: "Tag to apply to the built images and to the artifact name."
+        required: false
+        default: "main"
+
+env:
+  APP_NAME: "{{ cookiecutter.__docker_name }}"
+  IMAGE_TAG: {{ "${{ inputs.image_tag }}" }}
+  ARTIFACT_NAME: "{{ cookiecutter.__docker_name }}-images-{{ '${{ inputs.image_tag }}' }}"
+  TAR_FILE: "{{ cookiecutter.__docker_name }}-images-{{ '${{ inputs.image_tag }}' }}.tar"
+
+concurrency:
+  group: {{ "${{ github.workflow }}-${{ github.ref }}-${{ inputs.image_tag }}" }}
+  cancel-in-progress: true
+
+jobs:
+  build-images:
+    name: Build and export solution images
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@e468171a9de216ec08956ac3ada2f0791b6bd435 # v3.11.1
+
+      - name: Build API image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: deployments/Dockerfile
+          target: solution_api
+          tags: {{ "${{ env.APP_NAME }}-api:${{ env.IMAGE_TAG }}" }}
+          load: true
+          push: false
+          cache-from: type=gha,scope=solution-api
+          cache-to: type=gha,scope=solution-api,mode=max
+
+{% if cookiecutter.__ui_framework != "none" %}
+      - name: Build UI image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: deployments/Dockerfile
+          target: solution_ui
+          tags: {{ "${{ env.APP_NAME }}-ui:${{ env.IMAGE_TAG }}" }}
+          load: true
+          push: false
+          cache-from: type=gha,scope=solution-ui
+          cache-to: type=gha,scope=solution-ui,mode=max
+{% endif %}
+
+      - name: Save images to a single tar file
+        run: |
+          docker save \
+            -o "{{ "${{ env.TAR_FILE }}" }}" \
+{%- if cookiecutter.__ui_framework != "none" %}
+            "{{ "${{ env.APP_NAME }}-api:${{ env.IMAGE_TAG }}" }}" \
+            "{{ "${{ env.APP_NAME }}-ui:${{ env.IMAGE_TAG }}" }}"
+{%- else %}
+            "{{ "${{ env.APP_NAME }}-api:${{ env.IMAGE_TAG }}" }}"
+{%- endif %}
+          ls -lh "{{ "${{ env.TAR_FILE }}" }}"
+
+      - name: Upload image tar as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: {{ "${{ env.ARTIFACT_NAME }}" }}
+          path: {{ "${{ env.TAR_FILE }}" }}
+          if-no-files-found: error
+          retention-days: 30

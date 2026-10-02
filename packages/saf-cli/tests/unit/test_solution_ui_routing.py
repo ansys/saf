@@ -17,6 +17,11 @@
 """Tests for the routing callbacks of the Dash UI shipped in the solution template."""
 
 import importlib
+import importlib.util
+from collections.abc import Iterator
+from importlib.machinery import ModuleSpec
+from pathlib import Path
+import sys
 from types import ModuleType, SimpleNamespace
 from typing import Any
 
@@ -30,6 +35,9 @@ SOLUTION_NAME = "ui_routing_solution"
 SOLUTION_NAMESPACE = "saf_cli_tests"  # a dedicated namespace avoids clashing with the installed ansys packages
 SOLUTION_PACKAGE = f"{SOLUTION_NAMESPACE}.{SOLUTION_NAME}"
 FIRST_PAGE_PATH_TEMPLATE = "/projects/<project_id>/first-step"
+
+PROJECTS_DASHBOARD_MODULE = "ansys_saf_projects_dashboard"
+PROJECTS_PAGE_MODULE = "pages.projects_page"  # module name Dash gives to ui/pages/projects_page.py
 
 
 def get_registered_pages() -> list[dict[str, Any]]:
@@ -68,6 +76,99 @@ def ui_path_prefix(request: pytest.FixtureRequest, monkeypatch: pytest.MonkeyPat
 def first_page_index(solution_ui_page: ModuleType) -> str:  # the page module registers the pages on import
     pages = get_registered_pages()
     return str(next(i for i, page in enumerate(pages) if page["path_template"] == FIRST_PAGE_PATH_TEMPLATE))
+
+
+def get_projects_dashboard_modules() -> list[str]:
+    """Return the registry keys of the projects dashboard pages."""
+    page_registry: dict[str, dict[str, Any]] = dash.page_registry  # pyright: ignore[reportUnknownVariableType, reportUnknownMemberType]
+    return [module for module, page in page_registry.items() if page.get("projects_dashboard", False)]
+
+
+@pytest.fixture(params=[True, False], ids=["with_projects_dashboard", "without_projects_dashboard"])
+def projects_dashboard_installed(
+    request: pytest.FixtureRequest,
+    solution_ui_page: ModuleType,
+    monkeypatch: pytest.MonkeyPatch,
+) -> Iterator[bool]:
+    """Register the projects page as Dash does, as if saf-projects-dashboard were installed or not."""
+    installed = bool(request.param)
+    real_find_spec = importlib.util.find_spec
+
+    def find_spec(name: str, package: str | None = None) -> ModuleSpec | None:
+        if name == PROJECTS_DASHBOARD_MODULE:
+            return ModuleSpec(name, None) if installed else None
+        return real_find_spec(name, package)
+
+    page_registry: dict[str, dict[str, Any]] = dash.page_registry  # pyright: ignore[reportUnknownVariableType, reportUnknownMemberType]
+    saved_registry = dict(page_registry)
+    for module in get_projects_dashboard_modules():
+        del page_registry[module]
+
+    monkeypatch.setattr(importlib.util, "find_spec", find_spec)
+    page_path = Path(str(solution_ui_page.__file__)).parent / "projects_page.py"
+    spec = importlib.util.spec_from_file_location(PROJECTS_PAGE_MODULE, page_path)
+    assert spec is not None and spec.loader is not None
+    projects_page = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(projects_page)
+    if installed:
+        # Dash sets the layout of the pages it imports from the pages folder.
+        page_registry[PROJECTS_PAGE_MODULE]["layout"] = projects_page.layout
+
+    yield installed
+
+    page_registry.clear()
+    page_registry.update(saved_registry)
+
+
+@pytest.fixture
+def fake_projects_dashboard(monkeypatch: pytest.MonkeyPatch) -> ModuleType:
+    """Provide a fake ansys_saf_projects_dashboard module whose component returns its arguments."""
+    module = ModuleType(PROJECTS_DASHBOARD_MODULE)
+    module.ProjectsDashboard = lambda **kwargs: kwargs  # type: ignore[attr-defined]
+    monkeypatch.setitem(sys.modules, PROJECTS_DASHBOARD_MODULE, module)
+    return module
+
+
+def test_projects_page_registration(projects_dashboard_installed: bool):
+    """Register the projects page at /projects, outside the project, only if the dashboard is installed."""
+    modules = get_projects_dashboard_modules()
+    if not projects_dashboard_installed:
+        assert modules == []
+        return
+    assert modules == [PROJECTS_PAGE_MODULE]
+    page = dash.page_registry[PROJECTS_PAGE_MODULE]  # pyright: ignore[reportUnknownMemberType]
+    assert page["path"] == "/projects"
+    assert page["name"] == "Projects"
+    assert page["project_scoped"] is False
+
+
+@pytest.mark.parametrize("projects_dashboard_installed", [True], indirect=True)
+def test_projects_page_layout(
+    projects_dashboard_installed: bool,
+    fake_projects_dashboard: ModuleType,
+    monkeypatch: pytest.MonkeyPatch,
+):
+    """Render the dashboard with the API URL of the solution and the requested theme."""
+    monkeypatch.delenv("GLOW_EXTERNAL_API_URL", raising=False)
+    monkeypatch.setenv("GLOW_API_URL", "http://127.0.0.1:8000")
+    layout = dash.page_registry[PROJECTS_PAGE_MODULE]["layout"]  # pyright: ignore[reportUnknownMemberType]
+    kwargs = layout(theme="dark")
+    assert kwargs["id"] == "projects-dashboard"
+    assert kwargs["apiBaseUrl"] == "http://127.0.0.1:8000"
+    assert kwargs["themeMode"] == "dark"
+
+
+@pytest.mark.parametrize("projects_dashboard_installed", [True], indirect=True)
+def test_projects_page_layout_prefers_external_api_url(
+    projects_dashboard_installed: bool,
+    fake_projects_dashboard: ModuleType,
+    monkeypatch: pytest.MonkeyPatch,
+):
+    """Use the external API URL when the UI is served behind a reverse proxy."""
+    monkeypatch.setenv("GLOW_EXTERNAL_API_URL", "https://api.example.com")
+    monkeypatch.setenv("GLOW_API_URL", "http://127.0.0.1:8000")
+    layout = dash.page_registry[PROJECTS_PAGE_MODULE]["layout"]  # pyright: ignore[reportUnknownMemberType]
+    assert layout()["apiBaseUrl"] == "https://api.example.com"
 
 
 def test_resolve_active_page_and_project_information(

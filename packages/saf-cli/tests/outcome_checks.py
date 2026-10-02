@@ -195,6 +195,7 @@ EXPECTED_SOLUTION_TEMPLATE_STRUCTURE = [
     f"src/{_NAMESPACE_PLACEHOLDER}/{_MODULE_PLACEHOLDER}/ui/pages/about_page.py",
     f"src/{_NAMESPACE_PLACEHOLDER}/{_MODULE_PLACEHOLDER}/ui/pages/first_page.py",
     f"src/{_NAMESPACE_PLACEHOLDER}/{_MODULE_PLACEHOLDER}/ui/pages/page.py",
+    f"src/{_NAMESPACE_PLACEHOLDER}/{_MODULE_PLACEHOLDER}/ui/pages/projects_page.py",
     f"src/{_NAMESPACE_PLACEHOLDER}/{_MODULE_PLACEHOLDER}/ui/pages/second_page.py",
     # tests
     "tests/conftest.py",

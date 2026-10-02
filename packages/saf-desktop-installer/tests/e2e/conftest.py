@@ -236,6 +236,8 @@ def _setup_solution(solution_root_dir: Path) -> tuple[Path, str, str, str]:
     poetry_version: str = solution_pyproject_data["build-system-requirements"]["build-system-version"]
     cmd = [poetry_venv_pip_exec, "install", f"poetry=={poetry_version}"]
     subprocess.run(cmd)
+    if platform.system() == "Windows":
+        subprocess.run([poetry_venv_pip_exec, "install", "pip-system-certs"], check=True)
     # Install poetry-plugin-export if poetry >= 2.0.0 as it is not longer included by default.
     if poetry_version.startswith("2."):
         cmd = [poetry_venv_pip_exec, "install", "poetry-plugin-export>=1.8"]

@@ -246,3 +246,6 @@ release_notes.md
 # Assets of saf-desktop-installer tests
 packages/saf-desktop-installer/report/report.html
 packages/saf-desktop-installer/report/assets/style.css
+
+# pytest reports
+report/

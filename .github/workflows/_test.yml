@@ -384,7 +384,7 @@ jobs:
             }}
 
       - name: Setup Moon Toolchain
-        if: ${{ env.USE_MOON == 'true' }}
+        if: ${{ env.USE_MOON == 'true' && runner.environment != 'self-hosted' }}
         uses: moonrepo/setup-toolchain@261c62cb5b0f580c7be7c8cd0f023a2e96756095 # v0.6.4
 
       - name: Install pim-light-server
@@ -411,7 +411,7 @@ jobs:
             secrets.PYANSYS_PYPI_PRIVATE_URL }}
 
       - name: Install visor
-        if: ${{ matrix.install-visor == 'true' }}
+        if: ${{ matrix.install-visor == 'true' && env.USE_MOON == 'false' }}
         shell: bash
         run: |
           ${PYTHON_EXE} -m pip install ansys-visor-viewer==${VISOR_VERSION}
@@ -422,6 +422,14 @@ jobs:
           PIP_EXTRA_INDEX_URL: https://PAT:${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}@${{
             secrets.PYANSYS_PYPI_PRIVATE_URL }}
           PIP_QUIET: 1
+
+      - name: Install visor with Moon
+        if: ${{ matrix.install-visor == 'true' && env.USE_MOON == 'true' }}
+        shell: bash
+        run: moon run $PACKAGE:install-visor
+        env:
+          UV_EXTRA_INDEX_URL: https://PAT:${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}@${{
+            secrets.PYANSYS_PYPI_PRIVATE_URL }}
 
       - name: Install desktop-portal
         if: ${{ matrix.install-portal == 'true' && env.USE_MOON == 'false' }}
@@ -512,11 +520,6 @@ jobs:
           which gtk-launch
           which xvfb-run
 
-      - name: Configure PYTEST_DEBUG_TEMPROOT
-        if: runner.os != 'Linux' && env.USE_MOON == 'false'
-        shell: bash
-        run: echo "PYTEST_DEBUG_TEMPROOT=C:/" >> $GITHUB_ENV
-
       - name: Build pytest additional arguments
         id: pytest-args
         shell: bash
@@ -531,6 +534,8 @@ jobs:
 
       - name: Run tests
         id: run-tests
+        env:
+          PYTEST_DEBUG_TEMPROOT: ${{ runner.os == 'Windows' && 'C:/' || '/tmp' }}
         if: ${{ env.USE_MOON == 'false' }}
         uses: ansys/saf-devops/run-tests@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
         with:
@@ -551,6 +556,7 @@ jobs:
         id: run-tests-moon
         shell: bash
         env:
+          PYTEST_DEBUG_TEMPROOT: ${{ runner.os == 'Windows' && 'C:/' || '/tmp' }}
           PYTEST_ARGS: ${{ steps.pytest-args.outputs.pytest-args }}
           REPORTS_DIR: "${{ github.workspace }}/${{ matrix.test-report-artifact-name-suffix
             }}_${{ inputs.python-version }}"

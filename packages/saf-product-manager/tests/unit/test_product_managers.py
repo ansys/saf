@@ -20,9 +20,9 @@ import pkgutil
 from types import SimpleNamespace
 from typing import Any
 
-from ansys.saf.glow.solution import InstanceManager, ProductInstanceManager
 import pytest
 
+from ansys.saf.glow.solution import InstanceManager, ProductInstanceManager
 import ansys.saf.product_manager as bdm_products
 from ansys.saf.product_manager.aedt import HfssManager, IcepakManager, Maxwell2DManager, Maxwell3DManager
 from ansys.saf.product_manager.fluent import (

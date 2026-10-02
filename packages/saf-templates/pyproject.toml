@@ -23,12 +23,33 @@ classifiers = [
   "Programming Language :: Python :: 3.13",
   "Programming Language :: Python :: 3.14",
 ]
-entry-points."ansys_saf_templates".plugin_path = "ansys.saf.templates:get_plugin_path"
+entry-points.ansys_saf_templates.plugin_path = "ansys.saf.templates:get_plugin_path"
+
+[tool.uv]
+sources.ansys-saf-templates = { workspace = true }
+build-backend.module-name = "ansys.saf.templates"
+build-backend.namespace = true
+
+[tool.pyright]
+pythonVersion = "3.12"
+venv = ".venv"
+venvPath = "../.."
+strict = [
+  "src/ansys/saf/templates",
+  "tests",
+]
+include = [
+  "src/ansys/saf/templates",
+  "tests",
+]
+exclude = [
+  "**/*{{cookiecutter*/**", # Ignore files containing cookiecutter syntax
+  ".git",
+]
+ignore = [ "**/*{{cookiecutter*/**" ]
+extraPaths = [ "src" ]
 
 [tool.pytest]
-log_cli = true
-norecursedirs = [ ".moon", ".venv", "tmp*", ".git" ]
-pythonpath = [ "." ]
 addopts = [
   "--strict-config",
   "--strict-markers",
@@ -36,41 +57,16 @@ addopts = [
   "-nlogical",
   "--dist=loadfile",
 ]
-markers = [  ]
-filterwarnings = [  ]
+filterwarnings = []
+log_cli = true
+markers = []
+norecursedirs = [ ".moon", ".venv", "tmp*", ".git" ]
+pythonpath = [ "." ]
 testpaths = [ "tests" ]
 
-[tool.coverage.run]
-source = [ "ansys.saf.templates" ]
-omit = [
+[tool.coverage]
+run.source = [ "ansys.saf.templates" ]
+run.omit = [
   "tests/*",
 ]
-
-[tool.coverage.report]
-show_missing = true
-
-[tool.pyright]
-pythonVersion = "3.12"
-venvPath = "../.."
-venv = ".venv"
-extraPaths = [ "src" ]
-include = [
-  "src/ansys/saf/templates",
-  "tests",
-]
-exclude = [
-  ".git",
-  "**/*{{cookiecutter*/**", # Ignore files containing cookiecutter syntax
-]
-ignore = [ "**/*{{cookiecutter*/**" ]
-strict = [
-  "src/ansys/saf/templates",
-  "tests",
-]
-
-[tool.uv.sources]
-ansys-saf-templates = { workspace = true }
-
-[tool.uv.build-backend]
-module-name = "ansys.saf.templates"
-namespace = true
+report.show_missing = true

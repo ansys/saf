@@ -1,13 +1,18 @@
 tasks:
   check-env-var:
-    command: pwsh
+    description: "Check that required environment variables are set"
+    command: 'python'
     args:
-      - -NoProfile
-      - -NonInteractive
-      - -CommandWithArgs
-      - 'if ($args.Count -eq 0) { Write-Error "Specify at least one environment variable name"; exit 1 }; foreach ($name in $args) { if ([string]::IsNullOrEmpty($name) -or [string]::IsNullOrEmpty([Environment]::GetEnvironmentVariable($name))) { Write-Error "Required environment variable is not set: $name"; exit 1 } }'
+      - '-c'
+      - >-
+        import os, sys;
+        names = sys.argv[1:];
+        missing = next((name for name in names if not os.environ.get(name)), None);
+        message = "Error: Specify at least one environment variable name" if not names else
+        f"Error: Required environment variable is not set: {missing}" if missing is not None else None;
+        print(message, file=sys.stderr) if message is not None else None;
+        sys.exit(1 if message is not None else 0)
     options:
-      shell: false
       cache: false
 
   install-private-dependency:
@@ -28,22 +33,32 @@ tasks:
       cache: false
 
   install-pim-light-server:
+    description: "Install the ANSYS SAF PIM Light Server package"
     deps:
       - target: "~:install-private-dependency"
         args:
           - "ansys-saf-pim-light-server==0.3.12"
 
   install-ansys-saf-aspire:
+    description: "Install the ANSYS SAF Aspire package"
     deps:
       - target: "~:install-private-dependency"
         args:
           - "ansys-saf-aspire==9.1.6"
 
   install-saf-desktop-portal:
+    description: "Install the ANSYS SAF Desktop Portal package"
     deps:
       - target: "~:install-private-dependency"
         args:
           - "ansys-saf-desktop-portal==0.4.dev2"
+
+  install-visor:
+    description: "Install the ANSYS Visor Viewer package"
+    deps:
+      - target: "~:install-private-dependency"
+        args:
+          - "ansys-visor-viewer==1.0.5b0.dev0+20260831"
 
   pre-commit:
     description: "Run pre-commit against this package's files only (root-level files

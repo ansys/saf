@@ -23,11 +23,9 @@ classifiers = [
   "Programming Language :: Python :: 3.14",
   "Topic :: Scientific/Engineering",
 ]
-
 dependencies = [
   "typing-extensions>=4.10.0,<5.0.0",
 ]
-
 optional-dependencies.aedt = [
   "aiohttp>=3.14.3,<4.0.0",
   "ansys-tools-visualization-interface",
@@ -103,37 +101,42 @@ optional-dependencies.optislang = [
   "uvicorn>=0.24,<1.0",
 ]
 
+[tool.uv]
+sources.ansys-saf-product-configuration = { workspace = true }
+build-backend.module-name = "ansys.saf.product_configuration"
+build-backend.namespace = true
+
 [tool.pytest]
-log_cli = true
-norecursedirs = [ ".moon", ".venv", "tmp*", ".git" ]
-pythonpath = [ "." ]
 addopts = [
   "--strict-config",
   "--strict-markers",
   "--import-mode=importlib",
 ]
-testpaths = [ "tests" ]
 filterwarnings = [
   "error",
-  "ignore:The `__fields__` attribute is deprecated, use `model_fields` instead.*:pydantic.warnings.PydanticDeprecatedSince20",
+  """\
+  ignore:The `__fields__` attribute is deprecated, use `model_fields` \
+  instead.*:pydantic.warnings.PydanticDeprecatedSince20\
+  """,
   "ignore:'asyncio.iscoroutinefunction' is deprecated and slated for removal in Python 3.16:DeprecationWarning",
   "ignore:Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.",
   "ignore:defusedxml.cElementTree is deprecated:DeprecationWarning",
-  "ignore:the imp module is deprecated in favour of importlib and slated for removal in Python 3.12; see the module's documentation for alternative uses:DeprecationWarning",
-  "ignore:The anyio.abc.BlockingPortal alias is deprecated, use anyio.from_thread.BlockingPortal instead.:DeprecationWarning",
+  """\
+  ignore:the imp module is deprecated in favour of importlib and slated for removal in Python 3.12; see the module's \
+  documentation for alternative uses:DeprecationWarning\
+  """,
+  """\
+  ignore:The anyio.abc.BlockingPortal alias is deprecated, use anyio.from_thread.BlockingPortal \
+  instead.:DeprecationWarning\
+  """,
 ]
+log_cli = true
+norecursedirs = [ ".moon", ".venv", "tmp*", ".git" ]
+pythonpath = [ "." ]
+testpaths = [ "tests" ]
 
-[tool.coverage.run]
-source = [ "ansys.saf.product_configuration" ]
-
-[tool.coverage.report]
-show_missing = true
-include = [ "src/*" ]
-omit = [ "*/pytest-of-*/pytest-*/popen-*/*" ]
-
-[tool.uv.sources]
-ansys-saf-product-configuration = { workspace = true }
-
-[tool.uv.build-backend]
-module-name = "ansys.saf.product_configuration"
-namespace = true
+[tool.coverage]
+run.source = [ "ansys.saf.product_configuration" ]
+report.include = [ "src/*" ]
+report.omit = [ "*/pytest-of-*/pytest-*/popen-*/*" ]
+report.show_missing = true

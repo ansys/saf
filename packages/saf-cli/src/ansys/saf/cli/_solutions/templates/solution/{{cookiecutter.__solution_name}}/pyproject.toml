@@ -53,7 +53,7 @@ priority = "primary"
 # Only used by the packages that explicitly name it, until saf-projects-dashboard is published on PyPI.
 [[tool.poetry.source]]
 name = "solutions-private-pypi"
-url = "https://pkgs.dev.azure.com/ansys-solutions/_packaging/ansys-solutions/pypi/simple/"
+url = "{{ cookiecutter.__solutions_private_pypi_url }}"
 priority = "explicit"
 {% endif %}
 

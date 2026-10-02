@@ -24,7 +24,7 @@ from typing import Any
 import pytest
 import pytest_mock
 
-from ansys.saf.cli._config.const import DEFAULT_SOLUTION_NAMESPACE, SOLUTION_TEMPLATE_PATH
+from ansys.saf.cli._config.const import DEFAULT_SOLUTION_NAMESPACE, SOLUTION_TEMPLATE_PATH, SOLUTIONS_PRIVATE_PYPI_URL
 from ansys.saf.cli._solutions.scaffolding import create_solution
 from ansys.saf.cli._utilities.conversion import namespace_to_path, namespace_to_pkg_name
 from tests.outcome_checks import check_agents_file, check_scaffolded_solution_files
@@ -76,6 +76,7 @@ def test_create_solution_sets_proper_cookiecutter_args(
             "__appdata_directory": mock_appdata.as_posix(),
             "__python_version": f"{sys.version_info.major}.{sys.version_info.minor}",
             "__saf_cli_version": expected_saf_cli_version,
+            "__solutions_private_pypi_url": SOLUTIONS_PRIVATE_PYPI_URL,
         },
     )
 
@@ -174,9 +175,7 @@ def test_dash_solution_depends_on_projects_dashboard(tmp_path: Path):
     assert dependency["allow-prereleases"] is True
     sources = {source["name"]: source for source in poetry["source"]}
     assert sources["solutions-private-pypi"]["priority"] == "explicit"
-    assert sources["solutions-private-pypi"]["url"] == (
-        "https://pkgs.dev.azure.com/ansys-solutions/_packaging/ansys-solutions/pypi/simple/"
-    )
+    assert sources["solutions-private-pypi"]["url"] == SOLUTIONS_PRIVATE_PYPI_URL
 
 
 @pytest.mark.usefixtures("tmp_path_as_working_dir", "mock_appdata")

@@ -29,6 +29,7 @@ GLOW_UI_MODULE = "GLOW_UI_MODULE"
 # Env vars for solution scaffolding
 _root_path = Path(__file__).resolve().parent.parent
 SOLUTION_TEMPLATE_PATH = _root_path / "_solutions" / "templates" / "solution"
+SOLUTIONS_PRIVATE_PYPI_URL = "https://pkgs.dev.azure.com/ansys-solutions/_packaging/ansys-solutions/pypi/simple/"
 DEFAULT_SOLUTION_NAME = "my_solution"
 DEFAULT_SOLUTION_DISPLAY_NAME = "My Solution"
 DEFAULT_UI_FRAMEWORK = "dash"

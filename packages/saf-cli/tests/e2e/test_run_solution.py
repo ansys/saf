@@ -177,6 +177,26 @@ def test_saf_run_with_portal(
 
 @pytest.mark.use_session_solution
 @pytest.mark.parametrize("session_solution_ui_framework", ["dash"], indirect=True)
+def test_saf_run_with_portal_opens_projects_dashboard(
+    session_solution: SolutionRegistry,
+    run_solution: RunSolution,
+    session_selenium_webdriver: WebDriver,
+):
+    """
+    Test ``saf run --portal`` opens the projects dashboard of the solution UI instead of starting a portal.
+    """
+    p = run_solution([session_solution.name, "--portal"])
+
+    projects_dashboard_url = p.get_projects_dashboard_url()
+    assert projects_dashboard_url == f"{p.get_solution_ui_url(no_project=True)}/projects"
+    assert p.find_msg_in_output("SAF Portal: not launched")
+
+    session_selenium_webdriver.get(projects_dashboard_url)
+    wait_for_element(session_selenium_webdriver, "projects-dashboard", element_type=By.ID)
+
+
+@pytest.mark.use_session_solution
+@pytest.mark.parametrize("session_solution_ui_framework", ["dash"], indirect=True)
 def test_saf_run_with_env_file(
     session_solution: SolutionRegistry,
     run_solution: RunSolution,
@@ -580,7 +600,6 @@ def test_404_page_on_invalid_urls(
 
     invalid_urls = [
         f"{solution_ui_url}/invalid-step",  # valid project, invalid step
-        f"{solution_ui_url_no_project}/projects",  # no project
         f"{solution_ui_url_no_project}/invalid-route",  # invalid route
         f"{solution_ui_url_no_project}/projects/invalid-project",  # invalid project
     ]

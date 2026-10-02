@@ -74,6 +74,13 @@ class SAFProcess(Process):
         assert project_ui_url
         return project_ui_url.removeprefix("INFO - SAF Portal: ")
 
+    def get_projects_dashboard_url(self) -> str | None:
+        """Return the URL of the projects dashboard, or None if the solution does not use it."""
+        projects_dashboard_url = self.find_msg_in_output(r"Projects Dashboard: http://127\.0\.0\.1:\d+/\S*", regex=True)
+        if not projects_dashboard_url:
+            return None
+        return projects_dashboard_url.removeprefix("INFO - Projects Dashboard: ")
+
     def get_otel_dashboard_url(self) -> str:
         otel_url = self.find_msg_in_output(r"OTEL Dashboard: http://127\.0\.0\.1:\d+", regex=True)
         assert otel_url

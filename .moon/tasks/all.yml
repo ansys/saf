@@ -11,20 +11,16 @@ tasks:
       cache: false
 
   install-private-dependency:
-    description: "Install a private dependency from a private PyPI index"
     command: "uv"
     args:
-      - "run"
-      - "python"
-      - "-m"
       - "pip"
       - "install"
       - "--pre"
       - "--no-deps"
+      # The value passed via args: ["ansys-saf-aspire==9.1.6"] will naturally append here
     deps:
       - target: "~:check-env-var"
-        args:
-          - "UV_EXTRA_INDEX_URL"
+        args: ["UV_EXTRA_INDEX_URL"]
     env:
       PIP_INDEX_URL: "https://pypi.org/simple"
       PIP_QUIET: "1"

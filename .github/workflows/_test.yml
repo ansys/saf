@@ -384,7 +384,7 @@ jobs:
             }}
 
       - name: Setup Moon Toolchain
-        if: ${{ env.USE_MOON == 'true' }}
+        if: ${{ env.USE_MOON == 'true' && env.RUNNER_ENVIRONMENT != 'self-hosted' }}
         uses: moonrepo/setup-toolchain@261c62cb5b0f580c7be7c8cd0f023a2e96756095 # v0.6.4
 
       - name: Install pim-light-server

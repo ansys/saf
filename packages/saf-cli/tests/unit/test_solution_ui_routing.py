@@ -68,7 +68,10 @@ def solution_ui_page(tmp_path_factory: pytest.TempPathFactory) -> ModuleType:
 def ui_path_prefix(request: pytest.FixtureRequest, monkeypatch: pytest.MonkeyPatch) -> str:
     """Serve the UI under the given path prefix, as GLOW_UI_PATH_PREFIX does in distributed deployments."""
     # The config of the app cannot be edited: it becomes read-only once the app is initialized.
-    monkeypatch.setattr("dash._get_paths.CONFIG", SimpleNamespace(requests_pathname_prefix=request.param))
+    monkeypatch.setattr(
+        "dash._get_paths.CONFIG",
+        SimpleNamespace(requests_pathname_prefix=request.param, assets_external_path=None, assets_url_path="assets"),
+    )
     return str(request.param).rstrip("/")
 
 

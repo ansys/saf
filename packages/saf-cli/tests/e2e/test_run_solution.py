@@ -734,7 +734,7 @@ def _check_header_components_theme(
         )
 
 
-@pytest.mark.xfail(reason="Fails often, both in CI and locally.")
+@pytest.mark.xfail(reason="Portal URL test not yet updated for projects-dashboard flow")
 @pytest.mark.use_session_solution
 @pytest.mark.parametrize("session_solution_ui_framework", ["dash"], indirect=True)
 def test_theme_is_preserved_on_return_to_portal(

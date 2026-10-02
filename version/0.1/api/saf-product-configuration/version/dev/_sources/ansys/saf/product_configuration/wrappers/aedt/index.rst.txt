@@ -1,0 +1,179 @@
+
+
+
+
+
+
+The ``aedt.py`` module
+======================
+
+.. py:module:: ansys.saf.product_configuration.wrappers.aedt
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: aedt
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.saf.product_configuration.wrappers.aedt.ConfirmSessionRunningRequest`
+            - Request payload for confirming a running AEDT session.
+
+
+          * - :py:obj:`~ansys.saf.product_configuration.wrappers.aedt.CreateLocalSessionRequest`
+            - Request payload for creating a local AEDT session.
+
+
+          * - :py:obj:`~ansys.saf.product_configuration.wrappers.aedt.State`
+            - Current state exposed by the AEDT wrapper service.
+
+
+          * - :py:obj:`~ansys.saf.product_configuration.wrappers.aedt.DataModel`
+            - 
+
+
+
+
+
+    .. tab-item:: Functions
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~start_service_manager`
+            - 
+
+
+          * - :py:obj:`~get_or_create_local_session`
+            - 
+
+
+          * - :py:obj:`~get_state`
+            - 
+
+
+          * - :py:obj:`~confirm_session_running`
+            - 
+
+
+          * - :py:obj:`~health`
+            - 
+
+
+          * - :py:obj:`~main`
+            - 
+
+
+
+    .. tab-item:: Attributes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~app`
+            - 
+
+
+
+    .. tab-item:: Constants
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ANSYS_GRPC_CERTIFICATES`
+            - 
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> ConfirmSessionRunningRequest</ansys/saf/product_configuration/wrappers/aedt/ConfirmSessionRunningRequest>
+    <span class="nf nf-cod-symbol_class"></span> CreateLocalSessionRequest</ansys/saf/product_configuration/wrappers/aedt/CreateLocalSessionRequest>
+    <span class="nf nf-cod-symbol_class"></span> State</ansys/saf/product_configuration/wrappers/aedt/State>
+    <span class="nf nf-cod-symbol_class"></span> DataModel</ansys/saf/product_configuration/wrappers/aedt/DataModel>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Module detail
+-------------
+
+.. py:function:: start_service_manager()
+   :async:
+
+
+.. py:function:: get_or_create_local_session(payload: CreateLocalSessionRequest)
+   :async:
+
+
+.. py:function:: get_state()
+   :async:
+
+
+.. py:function:: confirm_session_running(payload: ConfirmSessionRunningRequest)
+   :async:
+
+
+.. py:function:: health()
+   :async:
+
+
+.. py:function:: main(port: int, host: str, version: str, transport_mode: ansys.saf.product_configuration.wrappers.types.TransportMode, certs_dir: str | None)
+
+.. py:data:: ANSYS_GRPC_CERTIFICATES
+   :value: 'ANSYS_GRPC_CERTIFICATES'
+
+
+.. py:data:: app
+
+
+

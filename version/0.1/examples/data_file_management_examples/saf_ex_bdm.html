@@ -1,0 +1,1493 @@
+<!--
+Copyright (C) 2026 ANSYS, Inc. and/or its affiliates.
+SPDX-License-Identifier: Apache-2.0
+
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+ <!-- ©2026, ANSYS Inc. Unauthorized use, distribution or duplication is prohibited. -->
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" data-theme="dark">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>BDM &#8212; SAF Doc</title>
+  
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "dark";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "dark";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/ansys-sphinx-theme.css?v=5ffe81b6" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=fd6457a4" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/ansys-sphinx-theme.css?v=5ffe81b6" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://www.nerdfonts.com/assets/css/webfont.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/code-tabs.css?v=1bc26e2f" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=110072de" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/carousel.css?v=272b576a" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/landing_page_banner.css?v=57c45261" />
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../_static/scripts/fontawesome.js?digest=0790524f97105ba85085"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085" />
+
+
+  <!-- Include desired assets -->
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  
+
+  
+    <link href="../../_static/css/breadcrumbs.css" rel="stylesheet" />
+  
+    <script src="../../_static/documentation_options.js?v=8a448e45"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=49e1bf35"></script>
+    <script src="../../_static/sg-tags.js?v=d80f6fa4"></script>
+    <script src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
+    <script src="../../_static/code-tabs.js?v=c983d12e"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'examples/data_file_management_examples/saf_ex_bdm';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.18.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://saf.ansys.com/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.1';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <script src="../../_static/js/sidebar-always-expanded.js?v=6b23dfe7"></script>
+    <script src="../../_static/js/sdI_button_ref_tooltips.js?v=091f9e4c"></script>
+    <script src="../../_static/js/primary-sidebar-sticky-offset.js?v=7ecdf44c"></script>
+    <link rel="icon" href="../../_static/ansys-favicon.png"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="File-based images" href="saf_ex_display_images.html" />
+    <link rel="prev" title="File uploads" href="saf_ex_file_upload.html" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.1.0" />
+  
+    
+    <script src="../../_static/searchtools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <script src="../../searchindex.js"></script>
+  
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+
+  <link rel="canonical" href="https://saf.ansys.com/version/stable/examples/data_file_management_examples/saf_ex_bdm.html" />
+  </head>
+  <body data-default-mode="dark">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+  
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+    
+    <img src="../../_static/endorsed-ansys-logos-full-color-rgb_dark.png" class="logo__image only-dark" alt="SAF Doc - Home"/>
+    <img src="../../_static/endorsed-ansys-logos-full-color-rgb_light.png" class="logo__image only-light pst-js-only" alt="SAF Doc - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../index.html" title="SAF Doc home">Home</a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../overview/index.html">
+    Overview
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started/index.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../user_guide/index.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api/index.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../contribute/index.html">
+    Contribute
+  </a>
+</li>
+
+  </ul>
+</nav>
+</div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+      
+        <div class="navbar-item">
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+  
+</div></div>
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/saf" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+  
+    
+<!--
+  Announcement Version Loader
+  Dynamically loads the announcement.html content into the announcement_msg div.
+-->
+<div id="announcement_msg" aria-live="polite"></div>
+<script>
+  // Fetch and inject the announcement HTML content
+  fetch("announcement.html")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error: ${response.status} Announcement.html file not found, Please ignore this, if you are in dev/stable documentation`);
+      }
+      return response.text();
+    })
+    .then((text) => {
+      var msgDiv = document.getElementById("announcement_msg");
+      if (msgDiv) {
+        msgDiv.innerHTML = text;
+      }
+    })
+    .catch((error) => {
+      // Log only unexpected fetch errors
+      if (!(error.message && error.message.startsWith("HTTP error: 404"))) {
+        console.error(`Fetch problem: ${error.message} Announcement.html could not be loaded.`);
+      }
+    });
+</script>
+  
+
+  <div class="header-nav-banner d-print-none">
+    <div class="header-nav-banner__inner">
+      <div class="header-nav-banner__crumbs">
+        
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+     
+    <li class="breadcrumb-item breadcrumb-home">
+      <a
+        href="../../index.html"
+        class="nav-link"
+        aria-label="Home"
+      >
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="../index.html" class="nav-link">Examples</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="index.html" class="nav-link">Data and file management</a>
+    </li>
+      
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">BDM</span></li>
+    
+  </ul>
+</nav>
+
+      </div>
+    </div>
+  </div>
+
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../index.html" title="SAF Doc home">Home</a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../overview/index.html">
+    Overview
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started/index.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../user_guide/index.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api/index.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../contribute/index.html">
+    Contribute
+  </a>
+</li>
+
+  </ul>
+</nav>
+</div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+  
+</div></div>
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/saf" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item pst-sidebar-collapse"><button id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar"><svg class="pst-icon svg-inline--fa" role="img" aria-hidden="true" focusable="false" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="M3 15.5C2.36232 15.5 1.74874 15.2564 1.28478 14.8189C0.820828 14.3815 0.541576 13.7832 0.504167 13.1467L0.5 13L0.5 3C0.499965 2.36232 0.743605 1.74874 1.18107 1.28478C1.61854 0.820828 2.21676 0.541576 2.85333 0.504167L3 0.5L13 0.5C13.6377 0.499965 14.2513 0.743605 14.7152 1.18107C15.1792 1.61854 15.4584 2.21676 15.4958 2.85333L15.5 3L15.5 13C15.5 13.6377 15.2564 14.2513 14.8189 14.7152C14.3815 15.1792 13.7832 15.4584 13.1467 15.4958L13 15.5L3 15.5ZM3 13.8333L10.5 13.8333L10.5 2.16667L3 2.16667C2.79589 2.16669 2.59889 2.24163 2.44636 2.37726C2.29383 2.5129 2.19638 2.69979 2.1725 2.9025L2.16667 3L2.16667 13C2.16669 13.2041 2.24163 13.4011 2.37726 13.5536C2.5129 13.7062 2.69979 13.8036 2.9025 13.8275L3 13.8333ZM6.65583 10.325L6.5775 10.2558L4.91083 8.58917C4.76735 8.44567 4.68116 8.25476 4.66843 8.05223C4.65569 7.84971 4.71729 7.6495 4.84167 7.48917L4.91083 7.41083L6.5775 5.74417C6.72747 5.59471 6.9287 5.50794 7.14032 5.50148C7.35194 5.49502 7.55809 5.56935 7.7169 5.70937C7.8757 5.8494 7.97525 6.04463 7.99533 6.25539C8.01541 6.46616 7.95451 6.67667 7.825 6.84417L7.75583 6.9225L6.67917 8L7.75583 9.0775C7.89931 9.22099 7.98551 9.41191 7.99824 9.61443C8.01097 9.81695 7.94938 10.0172 7.825 10.1775L7.75583 10.2558C7.61234 10.3993 7.42142 10.4855 7.2189 10.4982C7.01638 10.511 6.81617 10.4494 6.65583 10.325Z"/>
+  </svg>
+  <span class="pst-collapse-sidebar-label">Collapse Sidebar</span>
+  <span class="pst-expand-sidebar-label">Expand Sidebar</span>
+</button></div>
+        <div class="sidebar-primary-item">
+
+
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../ui_components_visualization_examples/index.html">UI components and visualization</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">Data and file management</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="saf_ex_file_upload.html">File uploads</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">BDM</a></li>
+<li class="toctree-l2"><a class="reference internal" href="saf_ex_display_images.html">File-based images</a></li>
+<li class="toctree-l2"><a class="reference internal" href="saf_ex_process_logs.html">Process logs</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../transaction_methods_examples/index.html">Transaction methods</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../product_instance_managers_examples/index.html">Product instance managers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../dash_super_components_examples/index.html">Dash Super Components</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+     
+    <li class="breadcrumb-item breadcrumb-home">
+      <a
+        href="../../index.html"
+        class="nav-link"
+        aria-label="Home"
+      >
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="../index.html" class="nav-link">Examples</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="index.html" class="nav-link">Data and file management</a>
+    </li>
+      
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">BDM</span></li>
+    
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="bdm">
+<span id="saf-ex-bdm"></span><h1>BDM<a class="headerlink" href="#bdm" title="Link to this heading">#</a></h1>
+<aside class="topic" id="saf-ex-bdm-summary">
+<p class="topic-title">Objective</p>
+<p>Use the <code class="docutils literal notranslate"><span class="pre">BDM</span></code> feature to manage files and directories—referred to as BLOBs (Binary Large Objects)—in a solution.</p>
+<p>Source code for this example is in the <a class="reference external" href="https://github.com/ansys/solution-examples" rel="noopener noreferrer" target="_blank">solution-examples</a> repository.</p>
+</aside>
+<section id="svg-version-4-0-0-63c5cb3-width-1-25em-height-1-25em-class-sd-material-icon-sd-material-icon-ads-click-sd-text-primary-viewbox-0-0-20-20-aria-hidden-true-rect-fill-none-height-20-width-20-rect-path-d-m17-09-18-5l-3-47-3-47l12-5-18l10-10l8-2-5l-2-97-1-11l3-47-3-47l17-09-18-5z-m10-3-5c-3-58-0-6-5-2-92-6-5-6-5-s2-92-6-5-6-5-6-5c0-15-0-0-3-0-01-0-45-0-02l0-46-1-46c10-61-17-98-10-31-18-10-18c-4-42-0-8-3-58-8-8s3-58-8-8-8l0-0-c4-42-0-8-3-58-8-8c0-0-31-0-02-0-61-0-05-0-91l-1-46-0-46c0-01-0-15-0-02-0-3-0-02-0-45c16-5-6-42-13-58-3-5-10-3-5-m10-6-5-c-1-93-0-3-5-1-57-3-5-3-5c0-1-76-1-31-3-23-3-01-3-47l10-15c0-0-0-01-0-0-01-0c7-23-15-5-12-76-5-10c0-2-76-2-24-5-5-5l0-0-c2-76-0-5-2-23-5-4-99c0-0-0-0-01-0-0-01l-1-53-0-49c13-23-7-81-11-76-6-5-10-6-5-path-svg-objective">
+<span id="saf-ex-bdm-objective"></span><h2><svg version="4.0.0.63c5cb3" width="1.25em" height="1.25em" class="sd-material-icon sd-material-icon-ads_click sd-text-primary" viewBox="0 0 20 20" aria-hidden="true"><rect fill="none" height="20" width="20"></rect><path d="M17.09,18.5l-3.47-3.47L12.5,18L10,10l8,2.5l-2.97,1.11l3.47,3.47L17.09,18.5z M10,3.5c-3.58,0-6.5,2.92-6.5,6.5 s2.92,6.5,6.5,6.5c0.15,0,0.3-0.01,0.45-0.02l0.46,1.46C10.61,17.98,10.31,18,10,18c-4.42,0-8-3.58-8-8s3.58-8,8-8l0,0 c4.42,0,8,3.58,8,8c0,0.31-0.02,0.61-0.05,0.91l-1.46-0.46c0.01-0.15,0.02-0.3,0.02-0.45C16.5,6.42,13.58,3.5,10,3.5 M10,6.5 c-1.93,0-3.5,1.57-3.5,3.5c0,1.76,1.31,3.23,3.01,3.47L10,15c0,0-0.01,0-0.01,0C7.23,15,5,12.76,5,10c0-2.76,2.24-5,5-5l0,0 c2.76,0,5,2.23,5,4.99c0,0,0,0.01,0,0.01l-1.53-0.49C13.23,7.81,11.76,6.5,10,6.5"></path></svg> Objective<a class="headerlink" href="#svg-version-4-0-0-63c5cb3-width-1-25em-height-1-25em-class-sd-material-icon-sd-material-icon-ads-click-sd-text-primary-viewbox-0-0-20-20-aria-hidden-true-rect-fill-none-height-20-width-20-rect-path-d-m17-09-18-5l-3-47-3-47l12-5-18l10-10l8-2-5l-2-97-1-11l3-47-3-47l17-09-18-5z-m10-3-5c-3-58-0-6-5-2-92-6-5-6-5-s2-92-6-5-6-5-6-5c0-15-0-0-3-0-01-0-45-0-02l0-46-1-46c10-61-17-98-10-31-18-10-18c-4-42-0-8-3-58-8-8s3-58-8-8-8l0-0-c4-42-0-8-3-58-8-8c0-0-31-0-02-0-61-0-05-0-91l-1-46-0-46c0-01-0-15-0-02-0-3-0-02-0-45c16-5-6-42-13-58-3-5-10-3-5-m10-6-5-c-1-93-0-3-5-1-57-3-5-3-5c0-1-76-1-31-3-23-3-01-3-47l10-15c0-0-0-01-0-0-01-0c7-23-15-5-12-76-5-10c0-2-76-2-24-5-5-5l0-0-c2-76-0-5-2-23-5-4-99c0-0-0-0-01-0-0-01l-1-53-0-49c13-23-7-81-11-76-6-5-10-6-5-path-svg-objective" title="Link to this heading">#</a></h2>
+<p>Blob management is an essential part of any solution app. This example shows how to use SAF’s <code class="docutils literal notranslate"><span class="pre">BDM</span></code>
+feature to reference and realize blobs in a solution.</p>
+</section>
+<section id="svg-version-4-0-0-63c5cb3-width-1-25em-height-1-25em-class-sd-material-icon-sd-material-icon-task-sd-text-primary-viewbox-0-0-24-24-aria-hidden-true-g-path-d-m0-0h24v24h0v0z-fill-none-path-g-g-path-d-m14-2h6c4-9-2-4-01-2-9-4-01-4l4-20c0-1-1-0-89-2-1-99-2h18c1-1-0-2-0-9-2-2v8l14-2z-m18-20h6v4h7v5h5v20z-m8-82-13-05-l7-4-14-46l10-94-18l5-66-5-66l-1-41-1-41l-4-24-4-24l8-82-13-05z-path-g-svg-prerequisites">
+<span id="saf-ex-bdm-prerequisites"></span><h2><svg version="4.0.0.63c5cb3" width="1.25em" height="1.25em" class="sd-material-icon sd-material-icon-task sd-text-primary" viewBox="0 0 24 24" aria-hidden="true"><g><path d="M0,0h24v24H0V0z" fill="none"></path></g><g><path d="M14,2H6C4.9,2,4.01,2.9,4.01,4L4,20c0,1.1,0.89,2,1.99,2H18c1.1,0,2-0.9,2-2V8L14,2z M18,20H6V4h7v5h5V20z M8.82,13.05 L7.4,14.46L10.94,18l5.66-5.66l-1.41-1.41l-4.24,4.24L8.82,13.05z"></path></g></svg> Prerequisites<a class="headerlink" href="#svg-version-4-0-0-63c5cb3-width-1-25em-height-1-25em-class-sd-material-icon-sd-material-icon-task-sd-text-primary-viewbox-0-0-24-24-aria-hidden-true-g-path-d-m0-0h24v24h0v0z-fill-none-path-g-g-path-d-m14-2h6c4-9-2-4-01-2-9-4-01-4l4-20c0-1-1-0-89-2-1-99-2h18c1-1-0-2-0-9-2-2v8l14-2z-m18-20h6v4h7v5h5v20z-m8-82-13-05-l7-4-14-46l10-94-18l5-66-5-66l-1-41-1-41l-4-24-4-24l8-82-13-05z-path-g-svg-prerequisites" title="Link to this heading">#</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">BDM</span></code> feature is provided in the <a class="reference external" href="https://glow-engine.docs.solutions.ansys.com">GLOW Engine</a> package, which is available by default in any SAF-based solution.</p>
+</section>
+<section id="svg-version-1-1-width-1-0em-height-1-0em-class-sd-octicon-sd-octicon-code-square-sd-text-primary-viewbox-0-0-16-16-aria-hidden-true-path-d-m0-1-75c0-784-784-0-1-75-0h12-5c15-216-0-16-784-16-1-75v12-5a1-75-1-75-0-0-1-14-25-16h1-75a1-75-1-75-0-0-1-0-14-25zm1-75-25a-25-25-0-0-0-25-25v12-5c0-138-112-25-25-25h12-5a-25-25-0-0-0-25-25v1-75a-25-25-0-0-0-25-25zm7-47-3-97a-75-75-0-0-1-1-06-0l2-2a-75-75-0-0-1-0-1-06l-2-2a-749-749-0-0-1-1-275-326-749-749-0-0-1-215-734l10-69-8-9-22-6-53a-75-75-0-0-1-0-1-06zm6-78-6-53-5-31-8l1-47-1-47a-749-749-0-0-1-326-1-275-749-749-0-0-1-734-215l-2-2a-75-75-0-0-1-0-1-06l2-2a-751-751-0-0-1-1-042-018-751-751-0-0-1-018-1-042z-path-svg-solution">
+<span id="saf-ex-bdm-solution"></span><h2><svg version="1.1" width="1.0em" height="1.0em" class="sd-octicon sd-octicon-code-square sd-text-primary" viewBox="0 0 16 16" aria-hidden="true"><path d="M0 1.75C0 .784.784 0 1.75 0h12.5C15.216 0 16 .784 16 1.75v12.5A1.75 1.75 0 0 1 14.25 16H1.75A1.75 1.75 0 0 1 0 14.25Zm1.75-.25a.25.25 0 0 0-.25.25v12.5c0 .138.112.25.25.25h12.5a.25.25 0 0 0 .25-.25V1.75a.25.25 0 0 0-.25-.25Zm7.47 3.97a.75.75 0 0 1 1.06 0l2 2a.75.75 0 0 1 0 1.06l-2 2a.749.749 0 0 1-1.275-.326.749.749 0 0 1 .215-.734L10.69 8 9.22 6.53a.75.75 0 0 1 0-1.06ZM6.78 6.53 5.31 8l1.47 1.47a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215l-2-2a.75.75 0 0 1 0-1.06l2-2a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042Z"></path></svg> Solution<a class="headerlink" href="#svg-version-1-1-width-1-0em-height-1-0em-class-sd-octicon-sd-octicon-code-square-sd-text-primary-viewbox-0-0-16-16-aria-hidden-true-path-d-m0-1-75c0-784-784-0-1-75-0h12-5c15-216-0-16-784-16-1-75v12-5a1-75-1-75-0-0-1-14-25-16h1-75a1-75-1-75-0-0-1-0-14-25zm1-75-25a-25-25-0-0-0-25-25v12-5c0-138-112-25-25-25h12-5a-25-25-0-0-0-25-25v1-75a-25-25-0-0-0-25-25zm7-47-3-97a-75-75-0-0-1-1-06-0l2-2a-75-75-0-0-1-0-1-06l-2-2a-749-749-0-0-1-1-275-326-749-749-0-0-1-215-734l10-69-8-9-22-6-53a-75-75-0-0-1-0-1-06zm6-78-6-53-5-31-8l1-47-1-47a-749-749-0-0-1-326-1-275-749-749-0-0-1-734-215l-2-2a-75-75-0-0-1-0-1-06l2-2a-751-751-0-0-1-1-042-018-751-751-0-0-1-018-1-042z-path-svg-solution" title="Link to this heading">#</a></h2>
+<p>This section covers a couple of use cases that demonstrate how to use the BDM feature in a solution.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<ul>
+<li><p>Checkout the full backend code of the example in the <a class="reference external" href="https://github.com/ansys/solution-examples/blob/main/src/ansys/solutions/examples/solution/file_handling_step.py" rel="noopener noreferrer" target="_blank">solution-examples</a>.</p></li>
+<li><p>Checkout the full frontend code of the example in the <a class="reference external" href="https://github.com/ansys/solution-examples/blob/main/src/ansys/solutions/examples/ui/pages/file_handling_page.py" rel="noopener noreferrer" target="_blank">solution-examples</a>.</p></li>
+</ul>
+</div>
+<section id="use-case-1-store-and-access-a-file">
+<h3>Use case 1: Store and access a file<a class="headerlink" href="#use-case-1-store-and-access-a-file" title="Link to this heading">#</a></h3>
+<p>This example shows how to store a file in the storage scope from the solution backend and access it from the solution frontend.</p>
+<section id="backend">
+<h4>Backend<a class="headerlink" href="#backend" title="Link to this heading">#</a></h4>
+<p>We want to store a text file, named <code class="docutils literal notranslate"><span class="pre">my_file.txt</span></code>, in the storage scope. The file is generated in a transaction method.
+Let’s create the corresponding backend code.</p>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Backend code</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.saf.glow.solution</span><span class="w"> </span><span class="kn">import</span> <span class="n">NO_ENTITY</span><span class="p">,</span> <span class="n">EntityHandle</span><span class="p">,</span> <span class="n">StepModel</span><span class="p">,</span> <span class="n">StepSpec</span><span class="p">,</span> <span class="n">transaction</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">FileHandlingStep</span><span class="p">(</span><span class="n">StepModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;File handling step model.&quot;&quot;&quot;</span>
+
+    <span class="n">my_file_handle</span><span class="p">:</span> <span class="n">EntityHandle</span> <span class="o">=</span> <span class="n">NO_ENTITY</span>
+
+    <span class="nd">@transaction</span><span class="p">(</span><span class="bp">self</span><span class="o">=</span><span class="n">StepSpec</span><span class="p">(</span><span class="n">upload</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;my_file_handle&quot;</span><span class="p">]))</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">store_my_file_handle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Store a file in the storage scope.&quot;&quot;&quot;</span>
+        <span class="n">filepath</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">storage_scope</span><span class="o">.</span><span class="n">get_storage_root</span><span class="p">()</span> <span class="o">/</span> <span class="s2">&quot;my_file.txt&quot;</span>
+        <span class="n">filepath</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">my_file_handle</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">storage_scope</span><span class="o">.</span><span class="n">store</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</details><p>The step model <code class="docutils literal notranslate"><span class="pre">FileHandlingStep</span></code> has a field named <code class="docutils literal notranslate"><span class="pre">my_file_handle</span></code> of type <code class="docutils literal notranslate"><span class="pre">EntityHandle</span></code>. This field is used to declare a file handle of the text file.
+The default value of this field is <code class="docutils literal notranslate"><span class="pre">NO_ENTITY</span></code>, which means that the field is not initialized.</p>
+<p>The transaction method <code class="docutils literal notranslate"><span class="pre">store_my_file_handle</span></code> contains the logic to create a text file named <code class="docutils literal notranslate"><span class="pre">my_file.txt</span></code> in the storage scope.
+The output field of this method is the file handle, which is stored in the <code class="docutils literal notranslate"><span class="pre">my_file_handle</span></code> field. Th transaction takes a string argument <code class="docutils literal notranslate"><span class="pre">text</span></code>, which is the content
+of the file. This text will be defined in the frontend.</p>
+<p>Within <code class="docutils literal notranslate"><span class="pre">store_my_file_handle</span></code>, we are accessing the method storage scope using <code class="docutils literal notranslate"><span class="pre">self.storage_scope</span></code>. The creation of <code class="docutils literal notranslate"><span class="pre">EntityHandle</span></code> from a file happens in two stages.
+We first need to place the file within the storage scope directory. To do that we are using <code class="docutils literal notranslate"><span class="pre">self.storage_scope.get_storage_root()</span></code> which is returning the directory
+that can be used to stage files. Then we are calling <code class="docutils literal notranslate"><span class="pre">self.storage_scope.store()</span></code> to create an <code class="docutils literal notranslate"><span class="pre">EntityHandle</span></code> from the given file on disk. The created entity handle is
+finally assigned to the step field <code class="docutils literal notranslate"><span class="pre">self.my_file_handle</span></code>.</p>
+</section>
+<section id="frontend">
+<h4>Frontend<a class="headerlink" href="#frontend" title="Link to this heading">#</a></h4>
+<p>We want to allow the user to define the content of the file and trigger the above transaction to store it in the storage scope.
+Let’s create a simple card with a text area and two buttons: one to create the file and another to read it.
+The user can edit the file content by typing in the text area and clicking the “Create file” button.</p>
+<figure class="align-default" id="saf-ex-bdm-use-case-1-frontend">
+<a class="reference internal image-reference" href="../../_images/use_case_1_frontend.png"><img alt="../../_images/use_case_1_frontend.png" src="../../_images/use_case_1_frontend.png" style="width: 50%;" />
+</a>
+</figure>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Frontend code: layout</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">base64</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.saf.glow.client</span><span class="w"> </span><span class="kn">import</span> <span class="n">DashClient</span><span class="p">,</span> <span class="n">callback</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dash_extensions.enrich</span><span class="w"> </span><span class="kn">import</span> <span class="n">Input</span><span class="p">,</span> <span class="n">Output</span><span class="p">,</span> <span class="n">State</span><span class="p">,</span> <span class="n">dcc</span><span class="p">,</span> <span class="n">html</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dash_iconify</span><span class="w"> </span><span class="kn">import</span> <span class="n">DashIconify</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">dash_mantine_components</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dmc</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.solutions.examples.solution.definition</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExamplesSolution</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.solutions.examples.solution.intermediate.file_handling_step</span><span class="w"> </span><span class="kn">import</span> <span class="n">FileHandlingStep</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">layout</span><span class="p">(</span><span class="n">step</span><span class="p">:</span> <span class="n">FileHandlingStep</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Layout of the file handling example page.&quot;&quot;&quot;</span>
+    <span class="n">store_and_access_a_file_card</span> <span class="o">=</span> <span class="n">dmc</span><span class="o">.</span><span class="n">Card</span><span class="p">(</span>
+        <span class="n">children</span><span class="o">=</span><span class="p">[</span>
+            <span class="n">dmc</span><span class="o">.</span><span class="n">CardSection</span><span class="p">(</span>
+                <span class="n">dmc</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="s2">&quot;Store and access a file&quot;</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="mi">500</span><span class="p">),</span>
+                <span class="n">withBorder</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">inheritPadding</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">py</span><span class="o">=</span><span class="s2">&quot;xs&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="n">dmc</span><span class="o">.</span><span class="n">Space</span><span class="p">(</span><span class="n">h</span><span class="o">=</span><span class="mi">10</span><span class="p">),</span>
+            <span class="n">dmc</span><span class="o">.</span><span class="n">Paper</span><span class="p">(</span>
+                <span class="s2">&quot;This example demonstrates how to store a file in the storage scope and access it later. &quot;</span>
+                <span class="s2">&quot;Add text to the file via the text area below and click &#39;Create file&#39;. &quot;</span>
+                <span class="s2">&quot;A transaction will be started to create the file and store it in the storage scope. &quot;</span>
+                <span class="s2">&quot;You can then read the file by clicking &#39;Read file&#39;.&quot;</span><span class="p">,</span>
+                <span class="n">shadow</span><span class="o">=</span><span class="s2">&quot;xs&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="n">dmc</span><span class="o">.</span><span class="n">Space</span><span class="p">(</span><span class="n">h</span><span class="o">=</span><span class="mi">10</span><span class="p">),</span>
+            <span class="n">dmc</span><span class="o">.</span><span class="n">Divider</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;Create and store the file&quot;</span><span class="p">),</span>
+            <span class="n">dmc</span><span class="o">.</span><span class="n">Textarea</span><span class="p">(</span>
+                <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Text to add to the file&quot;</span><span class="p">,</span>
+                <span class="n">placeholder</span><span class="o">=</span><span class="s2">&quot;Enter text here...&quot;</span><span class="p">,</span>
+                <span class="n">autosize</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">minRows</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+                <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;create-file-text-area-1&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="n">dmc</span><span class="o">.</span><span class="n">Space</span><span class="p">(</span><span class="n">h</span><span class="o">=</span><span class="mi">10</span><span class="p">),</span>
+            <span class="n">dmc</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span>
+                <span class="s2">&quot;Create file&quot;</span><span class="p">,</span>
+                <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;create-file-button-1&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="n">dmc</span><span class="o">.</span><span class="n">Space</span><span class="p">(</span><span class="n">h</span><span class="o">=</span><span class="mi">10</span><span class="p">),</span>
+            <span class="n">dmc</span><span class="o">.</span><span class="n">Divider</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;Access the file&quot;</span><span class="p">),</span>
+            <span class="n">dmc</span><span class="o">.</span><span class="n">Space</span><span class="p">(</span><span class="n">h</span><span class="o">=</span><span class="mi">10</span><span class="p">),</span>
+            <span class="n">dmc</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span>
+                <span class="s2">&quot;Read file&quot;</span><span class="p">,</span>
+                <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;read-file-button-1&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="n">dmc</span><span class="o">.</span><span class="n">Space</span><span class="p">(</span><span class="n">h</span><span class="o">=</span><span class="mi">10</span><span class="p">),</span>
+            <span class="n">html</span><span class="o">.</span><span class="n">Div</span><span class="p">(</span>
+                <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;file-content-1&quot;</span><span class="p">,</span>
+                <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;maxHeight&quot;</span><span class="p">:</span> <span class="s2">&quot;600px&quot;</span><span class="p">,</span> <span class="s2">&quot;width&quot;</span><span class="p">:</span> <span class="s2">&quot;100%&quot;</span><span class="p">,</span> <span class="s2">&quot;overflowY&quot;</span><span class="p">:</span> <span class="s2">&quot;scroll&quot;</span><span class="p">},</span>
+            <span class="p">),</span>
+        <span class="p">],</span>
+        <span class="n">withBorder</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">shadow</span><span class="o">=</span><span class="s2">&quot;sm&quot;</span><span class="p">,</span>
+        <span class="n">radius</span><span class="o">=</span><span class="s2">&quot;md&quot;</span><span class="p">,</span>
+        <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;width&quot;</span><span class="p">:</span> <span class="mi">500</span><span class="p">},</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">html</span><span class="o">.</span><span class="n">Div</span><span class="p">(</span>
+        <span class="p">[</span>
+            <span class="n">html</span><span class="o">.</span><span class="n">Br</span><span class="p">(),</span>
+            <span class="n">html</span><span class="o">.</span><span class="n">H1</span><span class="p">(</span><span class="s2">&quot;File Handling&quot;</span><span class="p">,</span> <span class="n">className</span><span class="o">=</span><span class="s2">&quot;display-3&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;font-size&quot;</span><span class="p">:</span> <span class="s2">&quot;48px&quot;</span><span class="p">,</span> <span class="s2">&quot;fontWeight&quot;</span><span class="p">:</span> <span class="s2">&quot;bold&quot;</span><span class="p">}),</span>
+            <span class="n">html</span><span class="o">.</span><span class="n">P</span><span class="p">(</span>
+                <span class="s2">&quot;Use BDM to manipulate files/folders in the storage scope.&quot;</span><span class="p">,</span>
+                <span class="n">className</span><span class="o">=</span><span class="s2">&quot;lead&quot;</span><span class="p">,</span>
+                <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;font-size&quot;</span><span class="p">:</span> <span class="s2">&quot;20px&quot;</span><span class="p">},</span>
+            <span class="p">),</span>
+            <span class="n">html</span><span class="o">.</span><span class="n">Hr</span><span class="p">(</span><span class="n">className</span><span class="o">=</span><span class="s2">&quot;my-2&quot;</span><span class="p">),</span>
+            <span class="n">html</span><span class="o">.</span><span class="n">Br</span><span class="p">(),</span>
+            <span class="n">dmc</span><span class="o">.</span><span class="n">Grid</span><span class="p">(</span>
+                <span class="p">[</span>
+                    <span class="n">dmc</span><span class="o">.</span><span class="n">Col</span><span class="p">(</span>
+                        <span class="p">[</span>
+                            <span class="n">store_and_access_a_file_card</span><span class="p">,</span>
+                        <span class="p">],</span>
+                        <span class="n">span</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+                    <span class="p">),</span>
+                <span class="p">],</span>
+                <span class="n">gutter</span><span class="o">=</span><span class="s2">&quot;xs&quot;</span><span class="p">,</span>
+                <span class="n">grow</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="n">html</span><span class="o">.</span><span class="n">Div</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s2">&quot;notifications-container&quot;</span><span class="p">),</span>
+            <span class="n">DashClient</span><span class="o">.</span><span class="n">create_event_listener</span><span class="p">(</span><span class="n">step</span><span class="p">,</span> <span class="n">stream_name</span><span class="o">=</span><span class="s2">&quot;my-stream&quot;</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;ws&quot;</span><span class="p">),</span>
+        <span class="p">]</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</details><p>Let’s create one callback to handle the “Create file” button click.</p>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Frontend code: callback</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@callback</span><span class="p">(</span>
+    <span class="n">Output</span><span class="p">(</span><span class="s2">&quot;notifications-container&quot;</span><span class="p">,</span> <span class="s2">&quot;children&quot;</span><span class="p">),</span>
+    <span class="n">Input</span><span class="p">(</span><span class="s2">&quot;create-file-button-1&quot;</span><span class="p">,</span> <span class="s2">&quot;n_clicks&quot;</span><span class="p">),</span>
+    <span class="n">State</span><span class="p">(</span><span class="s2">&quot;create-file-text-area-1&quot;</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">),</span>
+    <span class="n">State</span><span class="p">(</span><span class="s2">&quot;url&quot;</span><span class="p">,</span> <span class="s2">&quot;pathname&quot;</span><span class="p">),</span>
+    <span class="n">prevent_initial_call</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_file</span><span class="p">(</span><span class="n">n_clicks</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">pathname</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a file with the given text.&quot;&quot;&quot;</span>
+    <span class="n">project</span> <span class="o">=</span> <span class="n">DashClient</span><span class="p">[</span><span class="n">ExamplesSolution</span><span class="p">]</span><span class="o">.</span><span class="n">get_project</span><span class="p">(</span><span class="n">pathname</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">project</span><span class="o">.</span><span class="n">steps</span><span class="o">.</span><span class="n">file_handling_step</span><span class="o">.</span><span class="n">store_my_file_handle</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">)</span>
+        <span class="n">title</span><span class="p">,</span> <span class="n">icon</span><span class="p">,</span> <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Success&quot;</span><span class="p">,</span> <span class="s2">&quot;ep:success-filled&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;File created successfully.&quot;</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">title</span><span class="p">,</span> <span class="n">icon</span><span class="p">,</span> <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Error&quot;</span><span class="p">,</span> <span class="s2">&quot;material-symbols:error&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Failed to create file: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="k">return</span> <span class="n">dmc</span><span class="o">.</span><span class="n">Notification</span><span class="p">(</span>
+        <span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">,</span>
+        <span class="n">message</span><span class="o">=</span><span class="n">message</span><span class="p">,</span>
+        <span class="n">icon</span><span class="o">=</span><span class="n">DashIconify</span><span class="p">(</span><span class="n">icon</span><span class="o">=</span><span class="n">icon</span><span class="p">),</span>
+        <span class="n">action</span><span class="o">=</span><span class="s2">&quot;show&quot;</span><span class="p">,</span>
+        <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;create-file-notification&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</details><p>Let’s create another callback to handle the “Read file” button click.</p>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Frontend code: callback</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@callback</span><span class="p">(</span>
+    <span class="n">Output</span><span class="p">(</span><span class="s2">&quot;notifications-container&quot;</span><span class="p">,</span> <span class="s2">&quot;children&quot;</span><span class="p">),</span>
+    <span class="n">Output</span><span class="p">(</span><span class="s2">&quot;file-content-1&quot;</span><span class="p">,</span> <span class="s2">&quot;children&quot;</span><span class="p">),</span>
+    <span class="n">Input</span><span class="p">(</span><span class="s2">&quot;read-file-button-1&quot;</span><span class="p">,</span> <span class="s2">&quot;n_clicks&quot;</span><span class="p">),</span>
+    <span class="n">State</span><span class="p">(</span><span class="s2">&quot;url&quot;</span><span class="p">,</span> <span class="s2">&quot;pathname&quot;</span><span class="p">),</span>
+    <span class="n">prevent_initial_call</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">read_file</span><span class="p">(</span><span class="n">n_clicks</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">pathname</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read the file created in the storage scope.&quot;&quot;&quot;</span>
+    <span class="n">project</span> <span class="o">=</span> <span class="n">DashClient</span><span class="p">[</span><span class="n">ExamplesSolution</span><span class="p">]</span><span class="o">.</span><span class="n">get_project</span><span class="p">(</span><span class="n">pathname</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">project</span><span class="o">.</span><span class="n">get_storage_scope</span><span class="p">()</span> <span class="k">as</span> <span class="n">storage_scope</span><span class="p">:</span>
+            <span class="n">content</span> <span class="o">=</span> <span class="n">storage_scope</span><span class="o">.</span><span class="n">get_text</span><span class="p">(</span><span class="n">project</span><span class="o">.</span><span class="n">steps</span><span class="o">.</span><span class="n">file_handling_step</span><span class="o">.</span><span class="n">my_file_handle</span><span class="p">)</span>
+        <span class="n">title</span><span class="p">,</span> <span class="n">icon</span><span class="p">,</span> <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Success&quot;</span><span class="p">,</span> <span class="s2">&quot;ep:success-filled&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;File read successfully.&quot;</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">title</span><span class="p">,</span> <span class="n">icon</span><span class="p">,</span> <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Error&quot;</span><span class="p">,</span> <span class="s2">&quot;material-symbols:error&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Failed to read file: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="n">dmc</span><span class="o">.</span><span class="n">Notification</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">,</span>
+            <span class="n">message</span><span class="o">=</span><span class="n">message</span><span class="p">,</span>
+            <span class="n">icon</span><span class="o">=</span><span class="n">DashIconify</span><span class="p">(</span><span class="n">icon</span><span class="o">=</span><span class="n">icon</span><span class="p">),</span>
+            <span class="n">action</span><span class="o">=</span><span class="s2">&quot;show&quot;</span><span class="p">,</span>
+            <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;read-file-notification&quot;</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">html</span><span class="o">.</span><span class="n">Div</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">html</span><span class="o">.</span><span class="n">Pre</span><span class="p">(</span>
+                    <span class="n">content</span><span class="p">,</span>
+                    <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;whiteSpace&quot;</span><span class="p">:</span> <span class="s2">&quot;pre-wrap&quot;</span><span class="p">,</span> <span class="s2">&quot;wordBreak&quot;</span><span class="p">:</span> <span class="s2">&quot;break-all&quot;</span><span class="p">,</span> <span class="s2">&quot;fontSize&quot;</span><span class="p">:</span> <span class="s2">&quot;10px&quot;</span><span class="p">},</span>
+                <span class="p">)</span>
+            <span class="p">]</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</details></section>
+</section>
+<section id="use-case-2-access-and-modify-a-file">
+<h3>Use case 2: Access and modify a file<a class="headerlink" href="#use-case-2-access-and-modify-a-file" title="Link to this heading">#</a></h3>
+<p>In this use case, we will extend the previous example to allow the user to modify the content of the file and store it back
+in the storage scope. The file edit will take place in the frontend side. No backend code changes are needed.</p>
+<section id="id1">
+<h4>Backend<a class="headerlink" href="#id1" title="Link to this heading">#</a></h4>
+<p>N/A</p>
+</section>
+<section id="id2">
+<h4>Frontend<a class="headerlink" href="#id2" title="Link to this heading">#</a></h4>
+<p>Let’s create a simple card with a text area to allow the user to edit the file content and a button to save the changes.</p>
+<figure class="align-default" id="saf-ex-bdm-use-case-2-frontend">
+<a class="reference internal image-reference" href="../../_images/use_case_2_frontend.png"><img alt="../../_images/use_case_2_frontend.png" src="../../_images/use_case_2_frontend.png" style="width: 50%;" />
+</a>
+</figure>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Frontend code: layout</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">base64</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.saf.glow.client</span><span class="w"> </span><span class="kn">import</span> <span class="n">DashClient</span><span class="p">,</span> <span class="n">callback</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dash_extensions.enrich</span><span class="w"> </span><span class="kn">import</span> <span class="n">Input</span><span class="p">,</span> <span class="n">Output</span><span class="p">,</span> <span class="n">State</span><span class="p">,</span> <span class="n">dcc</span><span class="p">,</span> <span class="n">html</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dash_iconify</span><span class="w"> </span><span class="kn">import</span> <span class="n">DashIconify</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">dash_mantine_components</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dmc</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.solutions.examples.solution.definition</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExamplesSolution</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.solutions.examples.solution.intermediate.file_handling_step</span><span class="w"> </span><span class="kn">import</span> <span class="n">FileHandlingStep</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">layout</span><span class="p">(</span><span class="n">step</span><span class="p">:</span> <span class="n">FileHandlingStep</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Layout of the file handling example page.&quot;&quot;&quot;</span>
+
+    <span class="n">modifiy_file_card</span> <span class="o">=</span> <span class="n">dmc</span><span class="o">.</span><span class="n">Card</span><span class="p">(</span>
+        <span class="n">children</span><span class="o">=</span><span class="p">[</span>
+            <span class="n">dmc</span><span class="o">.</span><span class="n">CardSection</span><span class="p">(</span>
+                <span class="n">dmc</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="s2">&quot;Access and modify a file&quot;</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="mi">500</span><span class="p">),</span>
+                <span class="n">withBorder</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">inheritPadding</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">py</span><span class="o">=</span><span class="s2">&quot;xs&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="n">dmc</span><span class="o">.</span><span class="n">Space</span><span class="p">(</span><span class="n">h</span><span class="o">=</span><span class="mi">10</span><span class="p">),</span>
+            <span class="n">dmc</span><span class="o">.</span><span class="n">Paper</span><span class="p">(</span>
+                <span class="s2">&quot;This example demonstrates how to access and modify a file. &quot;</span>
+                <span class="s2">&quot;The EntityHandle is intended to represent an immutable value. &quot;</span>
+                <span class="s2">&quot;Therefore, you must not modify the file directly. &quot;</span>
+                <span class="s2">&quot;Instead, you can create a copy using the get_copy() method, modify it, and then store it. &quot;</span>
+                <span class="s2">&quot;Use the text area below to modify the file content. &quot;</span>
+                <span class="s2">&quot;Then click &#39;Modify file&#39; to create a new file with the modified content. &quot;</span><span class="p">,</span>
+                <span class="n">shadow</span><span class="o">=</span><span class="s2">&quot;xs&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="n">dmc</span><span class="o">.</span><span class="n">Space</span><span class="p">(</span><span class="n">h</span><span class="o">=</span><span class="mi">10</span><span class="p">),</span>
+            <span class="n">dmc</span><span class="o">.</span><span class="n">Divider</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;Access and modify the file&quot;</span><span class="p">),</span>
+            <span class="n">dmc</span><span class="o">.</span><span class="n">Textarea</span><span class="p">(</span>
+                <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Text to add to the existing file&quot;</span><span class="p">,</span>
+                <span class="n">placeholder</span><span class="o">=</span><span class="s2">&quot;Enter text here...&quot;</span><span class="p">,</span>
+                <span class="n">autosize</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">minRows</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+                <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;modify-file-text-area-2&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="n">dmc</span><span class="o">.</span><span class="n">Space</span><span class="p">(</span><span class="n">h</span><span class="o">=</span><span class="mi">10</span><span class="p">),</span>
+            <span class="n">dmc</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span>
+                <span class="s2">&quot;Modify file&quot;</span><span class="p">,</span>
+                <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;modify-file-button-2&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="n">dmc</span><span class="o">.</span><span class="n">Space</span><span class="p">(</span><span class="n">h</span><span class="o">=</span><span class="mi">10</span><span class="p">),</span>
+            <span class="n">dmc</span><span class="o">.</span><span class="n">Divider</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;Access the file&quot;</span><span class="p">),</span>
+            <span class="n">dmc</span><span class="o">.</span><span class="n">Space</span><span class="p">(</span><span class="n">h</span><span class="o">=</span><span class="mi">10</span><span class="p">),</span>
+            <span class="n">html</span><span class="o">.</span><span class="n">Div</span><span class="p">(</span>
+                <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;file-content-2&quot;</span><span class="p">,</span>
+                <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;maxHeight&quot;</span><span class="p">:</span> <span class="s2">&quot;600px&quot;</span><span class="p">,</span> <span class="s2">&quot;width&quot;</span><span class="p">:</span> <span class="s2">&quot;100%&quot;</span><span class="p">,</span> <span class="s2">&quot;overflowY&quot;</span><span class="p">:</span> <span class="s2">&quot;scroll&quot;</span><span class="p">},</span>
+            <span class="p">),</span>
+        <span class="p">],</span>
+        <span class="n">withBorder</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">shadow</span><span class="o">=</span><span class="s2">&quot;sm&quot;</span><span class="p">,</span>
+        <span class="n">radius</span><span class="o">=</span><span class="s2">&quot;md&quot;</span><span class="p">,</span>
+        <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;width&quot;</span><span class="p">:</span> <span class="mi">500</span><span class="p">},</span>
+    <span class="p">)</span>
+
+
+<span class="k">return</span> <span class="n">html</span><span class="o">.</span><span class="n">Div</span><span class="p">(</span>
+    <span class="p">[</span>
+        <span class="n">html</span><span class="o">.</span><span class="n">Br</span><span class="p">(),</span>
+        <span class="n">html</span><span class="o">.</span><span class="n">H1</span><span class="p">(</span><span class="s2">&quot;File Handling&quot;</span><span class="p">,</span> <span class="n">className</span><span class="o">=</span><span class="s2">&quot;display-3&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;font-size&quot;</span><span class="p">:</span> <span class="s2">&quot;48px&quot;</span><span class="p">,</span> <span class="s2">&quot;fontWeight&quot;</span><span class="p">:</span> <span class="s2">&quot;bold&quot;</span><span class="p">}),</span>
+        <span class="n">html</span><span class="o">.</span><span class="n">P</span><span class="p">(</span>
+            <span class="s2">&quot;Use BDM to manipulate files/folders in the storage scope.&quot;</span><span class="p">,</span>
+            <span class="n">className</span><span class="o">=</span><span class="s2">&quot;lead&quot;</span><span class="p">,</span>
+            <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;font-size&quot;</span><span class="p">:</span> <span class="s2">&quot;20px&quot;</span><span class="p">},</span>
+        <span class="p">),</span>
+        <span class="n">html</span><span class="o">.</span><span class="n">Hr</span><span class="p">(</span><span class="n">className</span><span class="o">=</span><span class="s2">&quot;my-2&quot;</span><span class="p">),</span>
+        <span class="n">html</span><span class="o">.</span><span class="n">Br</span><span class="p">(),</span>
+        <span class="n">dmc</span><span class="o">.</span><span class="n">Grid</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">dmc</span><span class="o">.</span><span class="n">Col</span><span class="p">(</span>
+                    <span class="p">[</span>
+                        <span class="n">modifiy_file_card</span><span class="p">,</span>
+                    <span class="p">],</span>
+                    <span class="n">span</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+                <span class="p">),</span>
+            <span class="p">],</span>
+            <span class="n">gutter</span><span class="o">=</span><span class="s2">&quot;xs&quot;</span><span class="p">,</span>
+            <span class="n">grow</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">html</span><span class="o">.</span><span class="n">Div</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s2">&quot;notifications-container&quot;</span><span class="p">),</span>
+        <span class="n">DashClient</span><span class="o">.</span><span class="n">create_event_listener</span><span class="p">(</span><span class="n">step</span><span class="p">,</span> <span class="n">stream_name</span><span class="o">=</span><span class="s2">&quot;my-stream&quot;</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;ws&quot;</span><span class="p">),</span>
+    <span class="p">]</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</details><p>Let’s create one callback to handle the “Modify file” button click.</p>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Frontend code: callback</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@callback</span><span class="p">(</span>
+    <span class="n">Output</span><span class="p">(</span><span class="s2">&quot;notifications-container&quot;</span><span class="p">,</span> <span class="s2">&quot;children&quot;</span><span class="p">),</span>
+    <span class="n">Output</span><span class="p">(</span><span class="s2">&quot;file-content-2&quot;</span><span class="p">,</span> <span class="s2">&quot;children&quot;</span><span class="p">),</span>
+    <span class="n">Input</span><span class="p">(</span><span class="s2">&quot;modify-file-button-2&quot;</span><span class="p">,</span> <span class="s2">&quot;n_clicks&quot;</span><span class="p">),</span>
+    <span class="n">State</span><span class="p">(</span><span class="s2">&quot;modify-file-text-area-2&quot;</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">),</span>
+    <span class="n">State</span><span class="p">(</span><span class="s2">&quot;url&quot;</span><span class="p">,</span> <span class="s2">&quot;pathname&quot;</span><span class="p">),</span>
+    <span class="n">prevent_initial_call</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">modify_file</span><span class="p">(</span><span class="n">n_clicks</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">pathname</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a file with the given text.&quot;&quot;&quot;</span>
+    <span class="n">project</span> <span class="o">=</span> <span class="n">DashClient</span><span class="p">[</span><span class="n">ExamplesSolution</span><span class="p">]</span><span class="o">.</span><span class="n">get_project</span><span class="p">(</span><span class="n">pathname</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">project</span><span class="o">.</span><span class="n">get_storage_scope</span><span class="p">()</span> <span class="k">as</span> <span class="n">storage_scope</span><span class="p">:</span>
+            <span class="n">root</span> <span class="o">=</span> <span class="n">storage_scope</span><span class="o">.</span><span class="n">get_storage_root</span><span class="p">()</span>
+            <span class="n">new_file</span> <span class="o">=</span> <span class="n">root</span> <span class="o">/</span> <span class="s2">&quot;modified_file.txt&quot;</span>
+            <span class="n">storage_scope</span><span class="o">.</span><span class="n">get_copy</span><span class="p">(</span><span class="n">project</span><span class="o">.</span><span class="n">steps</span><span class="o">.</span><span class="n">file_handling_step</span><span class="o">.</span><span class="n">my_file_handle</span><span class="p">,</span> <span class="n">new_file</span><span class="p">)</span>
+            <span class="n">content</span> <span class="o">=</span> <span class="n">new_file</span><span class="o">.</span><span class="n">read_text</span><span class="p">()</span>
+            <span class="n">content</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">text</span>
+            <span class="n">new_file</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
+            <span class="n">project</span><span class="o">.</span><span class="n">steps</span><span class="o">.</span><span class="n">file_handling_step</span><span class="o">.</span><span class="n">my_file_handle</span> <span class="o">=</span> <span class="n">storage_scope</span><span class="o">.</span><span class="n">store</span><span class="p">(</span><span class="n">new_file</span><span class="p">)</span>
+
+        <span class="n">title</span><span class="p">,</span> <span class="n">icon</span><span class="p">,</span> <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Success&quot;</span><span class="p">,</span> <span class="s2">&quot;ep:success-filled&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;File modified successfully.&quot;</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">title</span><span class="p">,</span> <span class="n">icon</span><span class="p">,</span> <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Error&quot;</span><span class="p">,</span> <span class="s2">&quot;material-symbols:error&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Failed to modify file: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="n">dmc</span><span class="o">.</span><span class="n">Notification</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">,</span>
+            <span class="n">message</span><span class="o">=</span><span class="n">message</span><span class="p">,</span>
+            <span class="n">icon</span><span class="o">=</span><span class="n">DashIconify</span><span class="p">(</span><span class="n">icon</span><span class="o">=</span><span class="n">icon</span><span class="p">),</span>
+            <span class="n">action</span><span class="o">=</span><span class="s2">&quot;show&quot;</span><span class="p">,</span>
+            <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;modify-file-notification&quot;</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">html</span><span class="o">.</span><span class="n">Div</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">html</span><span class="o">.</span><span class="n">Pre</span><span class="p">(</span>
+                    <span class="n">content</span><span class="p">,</span>
+                    <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;whiteSpace&quot;</span><span class="p">:</span> <span class="s2">&quot;pre-wrap&quot;</span><span class="p">,</span> <span class="s2">&quot;wordBreak&quot;</span><span class="p">:</span> <span class="s2">&quot;break-all&quot;</span><span class="p">,</span> <span class="s2">&quot;fontSize&quot;</span><span class="p">:</span> <span class="s2">&quot;10px&quot;</span><span class="p">},</span>
+                <span class="p">)</span>
+            <span class="p">]</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</details><p>In this callback, we are accessing the storage scope using <code class="docutils literal notranslate"><span class="pre">project.get_storage_scope()</span></code>.
+We are creating a copy of the file using <code class="docutils literal notranslate"><span class="pre">storage_scope.get_copy()</span></code>. This is absolutely necessary, because the
+<code class="docutils literal notranslate"><span class="pre">EntityHandle</span></code> is intended to represent an immutable value.</p>
+<p>Then we are modifying the content of the file and storing it back in the storage scope using <code class="docutils literal notranslate"><span class="pre">storage_scope.store()</span></code>.
+Finally, we are updating the step field <code class="docutils literal notranslate"><span class="pre">my_file_handle</span></code> with the new file handle.</p>
+</section>
+</section>
+<section id="use-case-3-store-and-access-directory-content">
+<h3>Use case 3: Store and access directory content<a class="headerlink" href="#use-case-3-store-and-access-directory-content" title="Link to this heading">#</a></h3>
+<p>In this use case, we will store a directory in the storage scope and access its content from the frontend.</p>
+<section id="id3">
+<h4>Backend<a class="headerlink" href="#id3" title="Link to this heading">#</a></h4>
+<p>Let’s create a transaction method that will create a file within a nested directory structure and store it in the storage scope.</p>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Backend code</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.saf.glow.solution</span><span class="w"> </span><span class="kn">import</span> <span class="n">NO_ENTITY</span><span class="p">,</span> <span class="n">EntityHandle</span><span class="p">,</span> <span class="n">StepModel</span><span class="p">,</span> <span class="n">StepSpec</span><span class="p">,</span> <span class="n">transaction</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">FileHandlingStep</span><span class="p">(</span><span class="n">StepModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;File handling step model.&quot;&quot;&quot;</span>
+
+    <span class="n">my_directory_handle</span><span class="p">:</span> <span class="n">EntityHandle</span> <span class="o">=</span> <span class="n">NO_ENTITY</span>
+
+    <span class="nd">@transaction</span><span class="p">(</span><span class="bp">self</span><span class="o">=</span><span class="n">StepSpec</span><span class="p">(</span><span class="n">upload</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;my_directory_handle&quot;</span><span class="p">]))</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">store_my_directory_handle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">relative_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Store a directory in the storage scope.&quot;&quot;&quot;</span>
+        <span class="n">relative_path_stripped</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">relative_path</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span><span class="p">)</span><span class="o">.</span><span class="n">lstrip</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">/&quot;</span><span class="p">)</span>
+        <span class="n">dirpath</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">storage_scope</span><span class="o">.</span><span class="n">get_storage_root</span><span class="p">()</span> <span class="o">/</span> <span class="n">relative_path_stripped</span>
+        <span class="n">dirpath</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">file_name</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">relative_path</span><span class="p">)</span><span class="o">.</span><span class="n">name</span>
+        <span class="p">(</span><span class="n">dirpath</span> <span class="o">/</span> <span class="n">file_name</span><span class="p">)</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">my_directory_handle</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">storage_scope</span><span class="o">.</span><span class="n">store</span><span class="p">(</span><span class="n">dirpath</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</details><p><code class="docutils literal notranslate"><span class="pre">my_directory_handle</span></code> is a field of type <code class="docutils literal notranslate"><span class="pre">EntityHandle</span></code> that will hold the directory handle.
+The transaction method <code class="docutils literal notranslate"><span class="pre">store_my_directory_handle</span></code> takes two arguments: <code class="docutils literal notranslate"><span class="pre">relative_path</span></code> and <code class="docutils literal notranslate"><span class="pre">text</span></code>.
+The <code class="docutils literal notranslate"><span class="pre">relative_path</span></code> is the path to the file within the directory structure, and <code class="docutils literal notranslate"><span class="pre">text</span></code> is the content of the file.
+The method creates a directory structure based on the relative path, writes the file with the given content, and stores
+the directory in the storage scope.</p>
+</section>
+<section id="id4">
+<h4>Frontend<a class="headerlink" href="#id4" title="Link to this heading">#</a></h4>
+<p>Let’s create a simple card with a text input field to allow the user to define the relative path of the file within the directory
+structure, and a text area to allow the user to define the content of the file.</p>
+<figure class="align-default" id="saf-ex-bdm-use-case-3-frontend">
+<a class="reference internal image-reference" href="../../_images/use_case_3_frontend.png"><img alt="../../_images/use_case_3_frontend.png" src="../../_images/use_case_3_frontend.png" style="width: 50%;" />
+</a>
+</figure>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Frontend code: layout</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">base64</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.saf.glow.client</span><span class="w"> </span><span class="kn">import</span> <span class="n">DashClient</span><span class="p">,</span> <span class="n">callback</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dash_extensions.enrich</span><span class="w"> </span><span class="kn">import</span> <span class="n">Input</span><span class="p">,</span> <span class="n">Output</span><span class="p">,</span> <span class="n">State</span><span class="p">,</span> <span class="n">dcc</span><span class="p">,</span> <span class="n">html</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dash_iconify</span><span class="w"> </span><span class="kn">import</span> <span class="n">DashIconify</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">dash_mantine_components</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dmc</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.solutions.examples.solution.definition</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExamplesSolution</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.solutions.examples.solution.intermediate.file_handling_step</span><span class="w"> </span><span class="kn">import</span> <span class="n">FileHandlingStep</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">layout</span><span class="p">(</span><span class="n">step</span><span class="p">:</span> <span class="n">FileHandlingStep</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Layout of the file handling example page.&quot;&quot;&quot;</span>
+
+    <span class="n">store_and_access_a_directory_card</span> <span class="o">=</span> <span class="n">dmc</span><span class="o">.</span><span class="n">Card</span><span class="p">(</span>
+        <span class="n">children</span><span class="o">=</span><span class="p">[</span>
+            <span class="n">dmc</span><span class="o">.</span><span class="n">CardSection</span><span class="p">(</span>
+                <span class="n">dmc</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="s2">&quot;Store and access directory content&quot;</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="mi">500</span><span class="p">),</span>
+                <span class="n">withBorder</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">inheritPadding</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">py</span><span class="o">=</span><span class="s2">&quot;xs&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="n">dmc</span><span class="o">.</span><span class="n">Paper</span><span class="p">(</span>
+                <span class="s2">&quot;This example demonstrates how to store a directory in the storage scope and access it later. &quot;</span>
+                <span class="s2">&quot;Use the relative file path input to generate a file under a directory structure. &quot;</span>
+                <span class="s2">&quot;Add text to the file via the text area below and click &#39;Create file&#39;. &quot;</span>
+                <span class="s2">&quot;A transaction will be started to create the file and parent directories and store them in &quot;</span>
+                <span class="s2">&quot;the storage scope. You can then read the file by clicking &#39;Read file&#39;.&quot;</span><span class="p">,</span>
+                <span class="n">shadow</span><span class="o">=</span><span class="s2">&quot;xs&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="n">dmc</span><span class="o">.</span><span class="n">Space</span><span class="p">(</span><span class="n">h</span><span class="o">=</span><span class="mi">10</span><span class="p">),</span>
+            <span class="n">dmc</span><span class="o">.</span><span class="n">Divider</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;Create and store the folder and file&quot;</span><span class="p">),</span>
+            <span class="n">dmc</span><span class="o">.</span><span class="n">Space</span><span class="p">(</span><span class="n">h</span><span class="o">=</span><span class="mi">10</span><span class="p">),</span>
+            <span class="n">dmc</span><span class="o">.</span><span class="n">TextInput</span><span class="p">(</span>
+                <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Relative file path&quot;</span><span class="p">,</span>
+                <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">placeholder</span><span class="o">=</span><span class="s2">&quot;/dir-A/dir-B/file.txt&quot;</span><span class="p">,</span>
+                <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;file-path-input&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="n">dmc</span><span class="o">.</span><span class="n">Space</span><span class="p">(</span><span class="n">h</span><span class="o">=</span><span class="mi">10</span><span class="p">),</span>
+            <span class="n">dmc</span><span class="o">.</span><span class="n">Textarea</span><span class="p">(</span>
+                <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Text to add to the file&quot;</span><span class="p">,</span>
+                <span class="n">placeholder</span><span class="o">=</span><span class="s2">&quot;Enter text here...&quot;</span><span class="p">,</span>
+                <span class="n">autosize</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">minRows</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+                <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;create-file-text-area-5&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="n">dmc</span><span class="o">.</span><span class="n">Space</span><span class="p">(</span><span class="n">h</span><span class="o">=</span><span class="mi">10</span><span class="p">),</span>
+            <span class="n">dmc</span><span class="o">.</span><span class="n">Divider</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;Access the file&quot;</span><span class="p">),</span>
+            <span class="n">dmc</span><span class="o">.</span><span class="n">Space</span><span class="p">(</span><span class="n">h</span><span class="o">=</span><span class="mi">10</span><span class="p">),</span>
+            <span class="n">dmc</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span>
+                <span class="s2">&quot;Create file&quot;</span><span class="p">,</span>
+                <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;create-file-button-5&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+        <span class="p">],</span>
+        <span class="n">withBorder</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">shadow</span><span class="o">=</span><span class="s2">&quot;sm&quot;</span><span class="p">,</span>
+        <span class="n">radius</span><span class="o">=</span><span class="s2">&quot;md&quot;</span><span class="p">,</span>
+        <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;width&quot;</span><span class="p">:</span> <span class="mi">500</span><span class="p">},</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">html</span><span class="o">.</span><span class="n">Div</span><span class="p">(</span>
+        <span class="p">[</span>
+            <span class="n">html</span><span class="o">.</span><span class="n">Br</span><span class="p">(),</span>
+            <span class="n">html</span><span class="o">.</span><span class="n">H1</span><span class="p">(</span><span class="s2">&quot;File Handling&quot;</span><span class="p">,</span> <span class="n">className</span><span class="o">=</span><span class="s2">&quot;display-3&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;font-size&quot;</span><span class="p">:</span> <span class="s2">&quot;48px&quot;</span><span class="p">,</span> <span class="s2">&quot;fontWeight&quot;</span><span class="p">:</span> <span class="s2">&quot;bold&quot;</span><span class="p">}),</span>
+            <span class="n">html</span><span class="o">.</span><span class="n">P</span><span class="p">(</span>
+                <span class="s2">&quot;Use BDM to manipulate files/folders in the storage scope.&quot;</span><span class="p">,</span>
+                <span class="n">className</span><span class="o">=</span><span class="s2">&quot;lead&quot;</span><span class="p">,</span>
+                <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;font-size&quot;</span><span class="p">:</span> <span class="s2">&quot;20px&quot;</span><span class="p">},</span>
+            <span class="p">),</span>
+            <span class="n">html</span><span class="o">.</span><span class="n">Hr</span><span class="p">(</span><span class="n">className</span><span class="o">=</span><span class="s2">&quot;my-2&quot;</span><span class="p">),</span>
+            <span class="n">html</span><span class="o">.</span><span class="n">Br</span><span class="p">(),</span>
+            <span class="n">dmc</span><span class="o">.</span><span class="n">Grid</span><span class="p">(</span>
+                <span class="p">[</span>
+                    <span class="n">dmc</span><span class="o">.</span><span class="n">Col</span><span class="p">(</span><span class="n">store_and_access_a_directory_card</span><span class="p">,</span> <span class="n">span</span><span class="o">=</span><span class="mi">4</span><span class="p">),</span>
+                <span class="p">],</span>
+                <span class="n">gutter</span><span class="o">=</span><span class="s2">&quot;xs&quot;</span><span class="p">,</span>
+                <span class="n">grow</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="n">html</span><span class="o">.</span><span class="n">Div</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s2">&quot;notifications-container&quot;</span><span class="p">),</span>
+            <span class="n">DashClient</span><span class="o">.</span><span class="n">create_event_listener</span><span class="p">(</span><span class="n">step</span><span class="p">,</span> <span class="n">stream_name</span><span class="o">=</span><span class="s2">&quot;my-stream&quot;</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;ws&quot;</span><span class="p">),</span>
+        <span class="p">]</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</details><p>Let’s create one callback to handle the creation of the file and the directory structure.</p>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Frontend code: callback</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@callback</span><span class="p">(</span>
+    <span class="n">Output</span><span class="p">(</span><span class="s2">&quot;notifications-container&quot;</span><span class="p">,</span> <span class="s2">&quot;children&quot;</span><span class="p">),</span>
+    <span class="n">Input</span><span class="p">(</span><span class="s2">&quot;create-file-button-5&quot;</span><span class="p">,</span> <span class="s2">&quot;n_clicks&quot;</span><span class="p">),</span>
+    <span class="n">State</span><span class="p">(</span><span class="s2">&quot;file-path-input&quot;</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">),</span>
+    <span class="n">State</span><span class="p">(</span><span class="s2">&quot;create-file-text-area-5&quot;</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">),</span>
+    <span class="n">State</span><span class="p">(</span><span class="s2">&quot;url&quot;</span><span class="p">,</span> <span class="s2">&quot;pathname&quot;</span><span class="p">),</span>
+    <span class="n">prevent_initial_call</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_directory</span><span class="p">(</span><span class="n">n_clicks</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">relative_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">pathname</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a file with the given text.&quot;&quot;&quot;</span>
+    <span class="n">project</span> <span class="o">=</span> <span class="n">DashClient</span><span class="p">[</span><span class="n">ExamplesSolution</span><span class="p">]</span><span class="o">.</span><span class="n">get_project</span><span class="p">(</span><span class="n">pathname</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">project</span><span class="o">.</span><span class="n">steps</span><span class="o">.</span><span class="n">file_handling_step</span><span class="o">.</span><span class="n">store_my_directory_handle</span><span class="p">(</span><span class="n">relative_path</span><span class="o">=</span><span class="n">relative_path</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">)</span>
+        <span class="n">title</span><span class="p">,</span> <span class="n">icon</span><span class="p">,</span> <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Success&quot;</span><span class="p">,</span> <span class="s2">&quot;ep:success-filled&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Directory created successfully.&quot;</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">title</span><span class="p">,</span> <span class="n">icon</span><span class="p">,</span> <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Error&quot;</span><span class="p">,</span> <span class="s2">&quot;material-symbols:error&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Failed to create directory: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="k">return</span> <span class="n">dmc</span><span class="o">.</span><span class="n">Notification</span><span class="p">(</span>
+        <span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">,</span>
+        <span class="n">message</span><span class="o">=</span><span class="n">message</span><span class="p">,</span>
+        <span class="n">icon</span><span class="o">=</span><span class="n">DashIconify</span><span class="p">(</span><span class="n">icon</span><span class="o">=</span><span class="n">icon</span><span class="p">),</span>
+        <span class="n">action</span><span class="o">=</span><span class="s2">&quot;show&quot;</span><span class="p">,</span>
+        <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;trigger-transaction-notification&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</details></section>
+</section>
+<section id="use-case-4-store-a-file-uploaded-from-the-frontend">
+<h3>Use case 4: Store a file uploaded from the frontend<a class="headerlink" href="#use-case-4-store-a-file-uploaded-from-the-frontend" title="Link to this heading">#</a></h3>
+<p>A very common use case is to allow the user to upload a file from the frontend and store it in the storage scope.
+In this use case, no backend code changes are needed. The file upload and storage will be handled in the frontend.</p>
+<section id="id5">
+<h4>Backend<a class="headerlink" href="#id5" title="Link to this heading">#</a></h4>
+<p>None</p>
+</section>
+<section id="id6">
+<h4>Frontend<a class="headerlink" href="#id6" title="Link to this heading">#</a></h4>
+<p>Let’s create a simple card with a file upload component to allow the user to upload a file and store it in the storage scope.</p>
+<figure class="align-default" id="saf-ex-bdm-use-case-4-frontend">
+<a class="reference internal image-reference" href="../../_images/use_case_4_frontend.png"><img alt="../../_images/use_case_4_frontend.png" src="../../_images/use_case_4_frontend.png" style="width: 50%;" />
+</a>
+</figure>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Frontend code: layout</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">base64</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.saf.glow.client</span><span class="w"> </span><span class="kn">import</span> <span class="n">DashClient</span><span class="p">,</span> <span class="n">callback</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dash_extensions.enrich</span><span class="w"> </span><span class="kn">import</span> <span class="n">Input</span><span class="p">,</span> <span class="n">Output</span><span class="p">,</span> <span class="n">State</span><span class="p">,</span> <span class="n">dcc</span><span class="p">,</span> <span class="n">html</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dash_iconify</span><span class="w"> </span><span class="kn">import</span> <span class="n">DashIconify</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">dash_mantine_components</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dmc</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.solutions.examples.solution.definition</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExamplesSolution</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.solutions.examples.solution.intermediate.file_handling_step</span><span class="w"> </span><span class="kn">import</span> <span class="n">FileHandlingStep</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">layout</span><span class="p">(</span><span class="n">step</span><span class="p">:</span> <span class="n">FileHandlingStep</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Layout of the file handling example page.&quot;&quot;&quot;</span>
+
+    <span class="n">store_uploaded_file_from_ui</span> <span class="o">=</span> <span class="n">dmc</span><span class="o">.</span><span class="n">Card</span><span class="p">(</span>
+        <span class="n">children</span><span class="o">=</span><span class="p">[</span>
+            <span class="n">dmc</span><span class="o">.</span><span class="n">CardSection</span><span class="p">(</span>
+                <span class="n">dmc</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="s2">&quot;Store uploaded image&quot;</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="mi">500</span><span class="p">),</span>
+                <span class="n">withBorder</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">inheritPadding</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">py</span><span class="o">=</span><span class="s2">&quot;xs&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="n">dmc</span><span class="o">.</span><span class="n">Space</span><span class="p">(</span><span class="n">h</span><span class="o">=</span><span class="mi">10</span><span class="p">),</span>
+            <span class="n">dmc</span><span class="o">.</span><span class="n">Paper</span><span class="p">(</span>
+                <span class="s2">&quot;This example shows how to store a file (.png) uploaded from the UI. &quot;</span>
+                <span class="s2">&quot;Use the upload component below to select an image file. &quot;</span>
+                <span class="s2">&quot;The selected image will be stored in the storage scope and displayed below.&quot;</span><span class="p">,</span>
+                <span class="n">shadow</span><span class="o">=</span><span class="s2">&quot;xs&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="n">dmc</span><span class="o">.</span><span class="n">Space</span><span class="p">(</span><span class="n">h</span><span class="o">=</span><span class="mi">10</span><span class="p">),</span>
+            <span class="n">dcc</span><span class="o">.</span><span class="n">Upload</span><span class="p">(</span>
+                <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;upload-file&quot;</span><span class="p">,</span>
+                <span class="n">multiple</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="n">accept</span><span class="o">=</span><span class="s2">&quot;.png&quot;</span><span class="p">,</span>
+                <span class="n">children</span><span class="o">=</span><span class="n">html</span><span class="o">.</span><span class="n">Div</span><span class="p">(</span>
+                    <span class="s2">&quot;Drag and drop or click to select an image to upload&quot;</span><span class="p">,</span>
+                <span class="p">),</span>
+                <span class="n">style</span><span class="o">=</span><span class="p">{</span>
+                    <span class="s2">&quot;width&quot;</span><span class="p">:</span> <span class="s2">&quot;100%&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;height&quot;</span><span class="p">:</span> <span class="s2">&quot;60px&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;lineHeight&quot;</span><span class="p">:</span> <span class="s2">&quot;60px&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;borderWidth&quot;</span><span class="p">:</span> <span class="s2">&quot;1px&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;borderStyle&quot;</span><span class="p">:</span> <span class="s2">&quot;dashed&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;borderRadius&quot;</span><span class="p">:</span> <span class="s2">&quot;5px&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;textAlign&quot;</span><span class="p">:</span> <span class="s2">&quot;center&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;margin&quot;</span><span class="p">:</span> <span class="s2">&quot;10px&quot;</span><span class="p">,</span>
+                <span class="p">},</span>
+            <span class="p">),</span>
+            <span class="n">dmc</span><span class="o">.</span><span class="n">Space</span><span class="p">(</span><span class="n">h</span><span class="o">=</span><span class="mi">10</span><span class="p">),</span>
+            <span class="n">dmc</span><span class="o">.</span><span class="n">Image</span><span class="p">(</span>
+                <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;uploaded-image&quot;</span><span class="p">,</span>
+                <span class="n">withPlaceholder</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">placeholder</span><span class="o">=</span><span class="s2">&quot;No image uploaded&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+        <span class="p">],</span>
+        <span class="n">withBorder</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">shadow</span><span class="o">=</span><span class="s2">&quot;sm&quot;</span><span class="p">,</span>
+        <span class="n">radius</span><span class="o">=</span><span class="s2">&quot;md&quot;</span><span class="p">,</span>
+        <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;width&quot;</span><span class="p">:</span> <span class="mi">500</span><span class="p">},</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</details><p>Let’s create one callback to handle the file upload and store it in the storage scope.</p>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Frontend code: callback</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@callback</span><span class="p">(</span>
+    <span class="n">Output</span><span class="p">(</span><span class="s2">&quot;uploaded-image&quot;</span><span class="p">,</span> <span class="s2">&quot;src&quot;</span><span class="p">),</span>
+    <span class="n">Input</span><span class="p">(</span><span class="s2">&quot;upload-file&quot;</span><span class="p">,</span> <span class="s2">&quot;contents&quot;</span><span class="p">),</span>
+    <span class="n">State</span><span class="p">(</span><span class="s2">&quot;upload-file&quot;</span><span class="p">,</span> <span class="s2">&quot;filename&quot;</span><span class="p">),</span>
+    <span class="n">State</span><span class="p">(</span><span class="s2">&quot;url&quot;</span><span class="p">,</span> <span class="s2">&quot;pathname&quot;</span><span class="p">),</span>
+    <span class="n">prevent_initial_call</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">upload_file</span><span class="p">(</span><span class="n">contents</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">pathname</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a file with the given text.&quot;&quot;&quot;</span>
+    <span class="n">project</span> <span class="o">=</span> <span class="n">DashClient</span><span class="p">[</span><span class="n">ExamplesSolution</span><span class="p">]</span><span class="o">.</span><span class="n">get_project</span><span class="p">(</span><span class="n">pathname</span><span class="p">)</span>
+    <span class="n">content_type</span><span class="p">,</span> <span class="n">content_string</span> <span class="o">=</span> <span class="n">contents</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
+    <span class="n">content</span> <span class="o">=</span> <span class="n">base64</span><span class="o">.</span><span class="n">b64decode</span><span class="p">(</span><span class="n">content_string</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">project</span><span class="o">.</span><span class="n">get_storage_scope</span><span class="p">()</span> <span class="k">as</span> <span class="n">storage_scope</span><span class="p">:</span>
+        <span class="n">filepath</span> <span class="o">=</span> <span class="n">storage_scope</span><span class="o">.</span><span class="n">get_storage_root</span><span class="p">()</span> <span class="o">/</span> <span class="n">filename</span>
+        <span class="n">filepath</span><span class="o">.</span><span class="n">write_bytes</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
+        <span class="n">project</span><span class="o">.</span><span class="n">steps</span><span class="o">.</span><span class="n">file_handling_step</span><span class="o">.</span><span class="n">my_uploaded_file_handle</span> <span class="o">=</span> <span class="n">storage_scope</span><span class="o">.</span><span class="n">store</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">project</span><span class="o">.</span><span class="n">steps</span><span class="o">.</span><span class="n">file_handling_step</span><span class="o">.</span><span class="n">get_entity_url</span><span class="p">(</span><span class="s2">&quot;my_uploaded_file_handle&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</details></section>
+</section>
+</section>
+<section id="svg-version-1-1-width-1-0em-height-1-0em-class-sd-octicon-sd-octicon-verified-sd-text-primary-viewbox-0-0-16-16-aria-hidden-true-path-d-m9-585-52-929-68c-153-112-331-186-518-215l1-138-175a2-678-2-678-0-0-1-2-24-2-24l-174-1-139c-029-187-103-365-215-518l-68-928a2-677-2-677-0-0-1-0-3-17l-68-928a1-174-1-174-0-0-0-215-518l-175-1-138a2-678-2-678-0-0-1-2-241-2-241l-1-138-175a1-17-1-17-0-0-0-518-215l-928-68a2-677-2-677-0-0-1-3-17-0l-928-68a1-174-1-174-0-0-0-518-215l3-83-14-41a2-678-2-678-0-0-1-2-24-2-24l-175-1-138a1-17-1-17-0-0-0-215-518l-68-928a2-677-2-677-0-0-1-0-3-17l-68-928c-112-153-186-331-215-518l-175-1-14a2-678-2-678-0-0-1-2-24-2-24l1-139-175c-187-029-365-103-518-215l-928-68a2-677-2-677-0-0-1-3-17-0zm7-303-1-728l-927-68a2-67-2-67-0-0-1-1-18-489l-1-137-174a1-179-1-179-0-0-0-987-987l-174-1-136a2-677-2-677-0-0-1-489-1-18l-68-928a1-18-1-18-0-0-0-0-1-394l-68-927c-256-348-424-753-489-1-18l-174-1-137c-078-509-478-909-987-987l1-136-174a2-67-2-67-0-0-1-1-18-489l-928-68c-414-305-979-305-1-394-0l-927-68a2-67-2-67-0-0-1-1-18-489l1-137-174a1-18-1-18-0-0-0-987-987l-174-1-136a2-67-2-67-0-0-1-489-1-18l-68-928a1-176-1-176-0-0-0-0-1-394l-68-927a2-686-2-686-0-0-1-489-1-18l-174-1-137a1-179-1-179-0-0-0-987-987l-1-136-174a2-677-2-677-0-0-1-1-18-489l-928-68a1-176-1-176-0-0-0-1-394-0zm11-28-6-78l-3-75-3-75a-75-75-0-0-1-1-06-0l4-72-8-78a-751-751-0-0-1-018-1-042-751-751-0-0-1-1-042-018l7-8-94l3-22-3-22a-751-751-0-0-1-1-042-018-751-751-0-0-1-018-1-042z-path-svg-testing">
+<span id="saf-ex-bdm-testing"></span><h2><svg version="1.1" width="1.0em" height="1.0em" class="sd-octicon sd-octicon-verified sd-text-primary" viewBox="0 0 16 16" aria-hidden="true"><path d="m9.585.52.929.68c.153.112.331.186.518.215l1.138.175a2.678 2.678 0 0 1 2.24 2.24l.174 1.139c.029.187.103.365.215.518l.68.928a2.677 2.677 0 0 1 0 3.17l-.68.928a1.174 1.174 0 0 0-.215.518l-.175 1.138a2.678 2.678 0 0 1-2.241 2.241l-1.138.175a1.17 1.17 0 0 0-.518.215l-.928.68a2.677 2.677 0 0 1-3.17 0l-.928-.68a1.174 1.174 0 0 0-.518-.215L3.83 14.41a2.678 2.678 0 0 1-2.24-2.24l-.175-1.138a1.17 1.17 0 0 0-.215-.518l-.68-.928a2.677 2.677 0 0 1 0-3.17l.68-.928c.112-.153.186-.331.215-.518l.175-1.14a2.678 2.678 0 0 1 2.24-2.24l1.139-.175c.187-.029.365-.103.518-.215l.928-.68a2.677 2.677 0 0 1 3.17 0ZM7.303 1.728l-.927.68a2.67 2.67 0 0 1-1.18.489l-1.137.174a1.179 1.179 0 0 0-.987.987l-.174 1.136a2.677 2.677 0 0 1-.489 1.18l-.68.928a1.18 1.18 0 0 0 0 1.394l.68.927c.256.348.424.753.489 1.18l.174 1.137c.078.509.478.909.987.987l1.136.174a2.67 2.67 0 0 1 1.18.489l.928.68c.414.305.979.305 1.394 0l.927-.68a2.67 2.67 0 0 1 1.18-.489l1.137-.174a1.18 1.18 0 0 0 .987-.987l.174-1.136a2.67 2.67 0 0 1 .489-1.18l.68-.928a1.176 1.176 0 0 0 0-1.394l-.68-.927a2.686 2.686 0 0 1-.489-1.18l-.174-1.137a1.179 1.179 0 0 0-.987-.987l-1.136-.174a2.677 2.677 0 0 1-1.18-.489l-.928-.68a1.176 1.176 0 0 0-1.394 0ZM11.28 6.78l-3.75 3.75a.75.75 0 0 1-1.06 0L4.72 8.78a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L7 8.94l3.22-3.22a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042Z"></path></svg> Testing<a class="headerlink" href="#svg-version-1-1-width-1-0em-height-1-0em-class-sd-octicon-sd-octicon-verified-sd-text-primary-viewbox-0-0-16-16-aria-hidden-true-path-d-m9-585-52-929-68c-153-112-331-186-518-215l1-138-175a2-678-2-678-0-0-1-2-24-2-24l-174-1-139c-029-187-103-365-215-518l-68-928a2-677-2-677-0-0-1-0-3-17l-68-928a1-174-1-174-0-0-0-215-518l-175-1-138a2-678-2-678-0-0-1-2-241-2-241l-1-138-175a1-17-1-17-0-0-0-518-215l-928-68a2-677-2-677-0-0-1-3-17-0l-928-68a1-174-1-174-0-0-0-518-215l3-83-14-41a2-678-2-678-0-0-1-2-24-2-24l-175-1-138a1-17-1-17-0-0-0-215-518l-68-928a2-677-2-677-0-0-1-0-3-17l-68-928c-112-153-186-331-215-518l-175-1-14a2-678-2-678-0-0-1-2-24-2-24l1-139-175c-187-029-365-103-518-215l-928-68a2-677-2-677-0-0-1-3-17-0zm7-303-1-728l-927-68a2-67-2-67-0-0-1-1-18-489l-1-137-174a1-179-1-179-0-0-0-987-987l-174-1-136a2-677-2-677-0-0-1-489-1-18l-68-928a1-18-1-18-0-0-0-0-1-394l-68-927c-256-348-424-753-489-1-18l-174-1-137c-078-509-478-909-987-987l1-136-174a2-67-2-67-0-0-1-1-18-489l-928-68c-414-305-979-305-1-394-0l-927-68a2-67-2-67-0-0-1-1-18-489l1-137-174a1-18-1-18-0-0-0-987-987l-174-1-136a2-67-2-67-0-0-1-489-1-18l-68-928a1-176-1-176-0-0-0-0-1-394l-68-927a2-686-2-686-0-0-1-489-1-18l-174-1-137a1-179-1-179-0-0-0-987-987l-1-136-174a2-677-2-677-0-0-1-1-18-489l-928-68a1-176-1-176-0-0-0-1-394-0zm11-28-6-78l-3-75-3-75a-75-75-0-0-1-1-06-0l4-72-8-78a-751-751-0-0-1-018-1-042-751-751-0-0-1-1-042-018l7-8-94l3-22-3-22a-751-751-0-0-1-1-042-018-751-751-0-0-1-018-1-042z-path-svg-testing" title="Link to this heading">#</a></h2>
+<p>Finally, test your implementation to confirm it works as expected.</p>
+<p>Run the solution and compare your results with the results shown in the <a class="reference internal" href="#saf-ex-bdm-objective"><span class="std std-ref"> Objective</span></a> section.</p>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#svg-version-4-0-0-63c5cb3-width-1-25em-height-1-25em-class-sd-material-icon-sd-material-icon-ads-click-sd-text-primary-viewbox-0-0-20-20-aria-hidden-true-rect-fill-none-height-20-width-20-rect-path-d-m17-09-18-5l-3-47-3-47l12-5-18l10-10l8-2-5l-2-97-1-11l3-47-3-47l17-09-18-5z-m10-3-5c-3-58-0-6-5-2-92-6-5-6-5-s2-92-6-5-6-5-6-5c0-15-0-0-3-0-01-0-45-0-02l0-46-1-46c10-61-17-98-10-31-18-10-18c-4-42-0-8-3-58-8-8s3-58-8-8-8l0-0-c4-42-0-8-3-58-8-8c0-0-31-0-02-0-61-0-05-0-91l-1-46-0-46c0-01-0-15-0-02-0-3-0-02-0-45c16-5-6-42-13-58-3-5-10-3-5-m10-6-5-c-1-93-0-3-5-1-57-3-5-3-5c0-1-76-1-31-3-23-3-01-3-47l10-15c0-0-0-01-0-0-01-0c7-23-15-5-12-76-5-10c0-2-76-2-24-5-5-5l0-0-c2-76-0-5-2-23-5-4-99c0-0-0-0-01-0-0-01l-1-53-0-49c13-23-7-81-11-76-6-5-10-6-5-path-svg-objective"><svg aria-hidden="true" class="sd-material-icon sd-material-icon-ads_click sd-text-primary" height="1.25em" version="4.0.0.63c5cb3" viewbox="0 0 20 20" width="1.25em"><rect fill="none" height="20" width="20"></rect><path d="M17.09,18.5l-3.47-3.47L12.5,18L10,10l8,2.5l-2.97,1.11l3.47,3.47L17.09,18.5z M10,3.5c-3.58,0-6.5,2.92-6.5,6.5 s2.92,6.5,6.5,6.5c0.15,0,0.3-0.01,0.45-0.02l0.46,1.46C10.61,17.98,10.31,18,10,18c-4.42,0-8-3.58-8-8s3.58-8,8-8l0,0 c4.42,0,8,3.58,8,8c0,0.31-0.02,0.61-0.05,0.91l-1.46-0.46c0.01-0.15,0.02-0.3,0.02-0.45C16.5,6.42,13.58,3.5,10,3.5 M10,6.5 c-1.93,0-3.5,1.57-3.5,3.5c0,1.76,1.31,3.23,3.01,3.47L10,15c0,0-0.01,0-0.01,0C7.23,15,5,12.76,5,10c0-2.76,2.24-5,5-5l0,0 c2.76,0,5,2.23,5,4.99c0,0,0,0.01,0,0.01l-1.53-0.49C13.23,7.81,11.76,6.5,10,6.5"></path></svg> Objective</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#svg-version-4-0-0-63c5cb3-width-1-25em-height-1-25em-class-sd-material-icon-sd-material-icon-task-sd-text-primary-viewbox-0-0-24-24-aria-hidden-true-g-path-d-m0-0h24v24h0v0z-fill-none-path-g-g-path-d-m14-2h6c4-9-2-4-01-2-9-4-01-4l4-20c0-1-1-0-89-2-1-99-2h18c1-1-0-2-0-9-2-2v8l14-2z-m18-20h6v4h7v5h5v20z-m8-82-13-05-l7-4-14-46l10-94-18l5-66-5-66l-1-41-1-41l-4-24-4-24l8-82-13-05z-path-g-svg-prerequisites"><svg aria-hidden="true" class="sd-material-icon sd-material-icon-task sd-text-primary" height="1.25em" version="4.0.0.63c5cb3" viewbox="0 0 24 24" width="1.25em"><g><path d="M0,0h24v24H0V0z" fill="none"></path></g><g><path d="M14,2H6C4.9,2,4.01,2.9,4.01,4L4,20c0,1.1,0.89,2,1.99,2H18c1.1,0,2-0.9,2-2V8L14,2z M18,20H6V4h7v5h5V20z M8.82,13.05 L7.4,14.46L10.94,18l5.66-5.66l-1.41-1.41l-4.24,4.24L8.82,13.05z"></path></g></svg> Prerequisites</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#svg-version-1-1-width-1-0em-height-1-0em-class-sd-octicon-sd-octicon-code-square-sd-text-primary-viewbox-0-0-16-16-aria-hidden-true-path-d-m0-1-75c0-784-784-0-1-75-0h12-5c15-216-0-16-784-16-1-75v12-5a1-75-1-75-0-0-1-14-25-16h1-75a1-75-1-75-0-0-1-0-14-25zm1-75-25a-25-25-0-0-0-25-25v12-5c0-138-112-25-25-25h12-5a-25-25-0-0-0-25-25v1-75a-25-25-0-0-0-25-25zm7-47-3-97a-75-75-0-0-1-1-06-0l2-2a-75-75-0-0-1-0-1-06l-2-2a-749-749-0-0-1-1-275-326-749-749-0-0-1-215-734l10-69-8-9-22-6-53a-75-75-0-0-1-0-1-06zm6-78-6-53-5-31-8l1-47-1-47a-749-749-0-0-1-326-1-275-749-749-0-0-1-734-215l-2-2a-75-75-0-0-1-0-1-06l2-2a-751-751-0-0-1-1-042-018-751-751-0-0-1-018-1-042z-path-svg-solution"><svg aria-hidden="true" class="sd-octicon sd-octicon-code-square sd-text-primary" height="1.0em" version="1.1" viewbox="0 0 16 16" width="1.0em"><path d="M0 1.75C0 .784.784 0 1.75 0h12.5C15.216 0 16 .784 16 1.75v12.5A1.75 1.75 0 0 1 14.25 16H1.75A1.75 1.75 0 0 1 0 14.25Zm1.75-.25a.25.25 0 0 0-.25.25v12.5c0 .138.112.25.25.25h12.5a.25.25 0 0 0 .25-.25V1.75a.25.25 0 0 0-.25-.25Zm7.47 3.97a.75.75 0 0 1 1.06 0l2 2a.75.75 0 0 1 0 1.06l-2 2a.749.749 0 0 1-1.275-.326.749.749 0 0 1 .215-.734L10.69 8 9.22 6.53a.75.75 0 0 1 0-1.06ZM6.78 6.53 5.31 8l1.47 1.47a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215l-2-2a.75.75 0 0 1 0-1.06l2-2a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042Z"></path></svg> Solution</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#use-case-1-store-and-access-a-file">Use case 1: Store and access a file</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#backend">Backend</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#frontend">Frontend</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#use-case-2-access-and-modify-a-file">Use case 2: Access and modify a file</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Backend</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">Frontend</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#use-case-3-store-and-access-directory-content">Use case 3: Store and access directory content</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">Backend</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">Frontend</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#use-case-4-store-a-file-uploaded-from-the-frontend">Use case 4: Store a file uploaded from the frontend</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">Backend</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">Frontend</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#svg-version-1-1-width-1-0em-height-1-0em-class-sd-octicon-sd-octicon-verified-sd-text-primary-viewbox-0-0-16-16-aria-hidden-true-path-d-m9-585-52-929-68c-153-112-331-186-518-215l1-138-175a2-678-2-678-0-0-1-2-24-2-24l-174-1-139c-029-187-103-365-215-518l-68-928a2-677-2-677-0-0-1-0-3-17l-68-928a1-174-1-174-0-0-0-215-518l-175-1-138a2-678-2-678-0-0-1-2-241-2-241l-1-138-175a1-17-1-17-0-0-0-518-215l-928-68a2-677-2-677-0-0-1-3-17-0l-928-68a1-174-1-174-0-0-0-518-215l3-83-14-41a2-678-2-678-0-0-1-2-24-2-24l-175-1-138a1-17-1-17-0-0-0-215-518l-68-928a2-677-2-677-0-0-1-0-3-17l-68-928c-112-153-186-331-215-518l-175-1-14a2-678-2-678-0-0-1-2-24-2-24l1-139-175c-187-029-365-103-518-215l-928-68a2-677-2-677-0-0-1-3-17-0zm7-303-1-728l-927-68a2-67-2-67-0-0-1-1-18-489l-1-137-174a1-179-1-179-0-0-0-987-987l-174-1-136a2-677-2-677-0-0-1-489-1-18l-68-928a1-18-1-18-0-0-0-0-1-394l-68-927c-256-348-424-753-489-1-18l-174-1-137c-078-509-478-909-987-987l1-136-174a2-67-2-67-0-0-1-1-18-489l-928-68c-414-305-979-305-1-394-0l-927-68a2-67-2-67-0-0-1-1-18-489l1-137-174a1-18-1-18-0-0-0-987-987l-174-1-136a2-67-2-67-0-0-1-489-1-18l-68-928a1-176-1-176-0-0-0-0-1-394l-68-927a2-686-2-686-0-0-1-489-1-18l-174-1-137a1-179-1-179-0-0-0-987-987l-1-136-174a2-677-2-677-0-0-1-1-18-489l-928-68a1-176-1-176-0-0-0-1-394-0zm11-28-6-78l-3-75-3-75a-75-75-0-0-1-1-06-0l4-72-8-78a-751-751-0-0-1-018-1-042-751-751-0-0-1-1-042-018l7-8-94l3-22-3-22a-751-751-0-0-1-1-042-018-751-751-0-0-1-018-1-042z-path-svg-testing"><svg aria-hidden="true" class="sd-octicon sd-octicon-verified sd-text-primary" height="1.0em" version="1.1" viewbox="0 0 16 16" width="1.0em"><path d="m9.585.52.929.68c.153.112.331.186.518.215l1.138.175a2.678 2.678 0 0 1 2.24 2.24l.174 1.139c.029.187.103.365.215.518l.68.928a2.677 2.677 0 0 1 0 3.17l-.68.928a1.174 1.174 0 0 0-.215.518l-.175 1.138a2.678 2.678 0 0 1-2.241 2.241l-1.138.175a1.17 1.17 0 0 0-.518.215l-.928.68a2.677 2.677 0 0 1-3.17 0l-.928-.68a1.174 1.174 0 0 0-.518-.215L3.83 14.41a2.678 2.678 0 0 1-2.24-2.24l-.175-1.138a1.17 1.17 0 0 0-.215-.518l-.68-.928a2.677 2.677 0 0 1 0-3.17l.68-.928c.112-.153.186-.331.215-.518l.175-1.14a2.678 2.678 0 0 1 2.24-2.24l1.139-.175c.187-.029.365-.103.518-.215l.928-.68a2.677 2.677 0 0 1 3.17 0ZM7.303 1.728l-.927.68a2.67 2.67 0 0 1-1.18.489l-1.137.174a1.179 1.179 0 0 0-.987.987l-.174 1.136a2.677 2.677 0 0 1-.489 1.18l-.68.928a1.18 1.18 0 0 0 0 1.394l.68.927c.256.348.424.753.489 1.18l.174 1.137c.078.509.478.909.987.987l1.136.174a2.67 2.67 0 0 1 1.18.489l.928.68c.414.305.979.305 1.394 0l.927-.68a2.67 2.67 0 0 1 1.18-.489l1.137-.174a1.18 1.18 0 0 0 .987-.987l.174-1.136a2.67 2.67 0 0 1 .489-1.18l.68-.928a1.176 1.176 0 0 0 0-1.394l-.68-.927a2.686 2.686 0 0 1-.489-1.18l-.174-1.137a1.179 1.179 0 0 0-.987-.987l-1.136-.174a2.677 2.677 0 0 1-1.18-.489l-.928-.68a1.176 1.176 0 0 0-1.394 0ZM11.28 6.78l-3.75 3.75a.75.75 0 0 1-1.06 0L4.72 8.78a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L7 8.94l3.22-3.22a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042Z"></path></svg> Testing</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085"></script>
+
+
+  <!-- Include desired assets -->
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.7/require.min.js"></script>
+
+<script>
+// Passing the search options to the search.js file
+const SEARCH_OPTIONS = JSON.parse('{"keys": ["title", "text", "objectID"], "limit": 10, "threshold": 0.2}');
+const SEARCH_FILE = "../../_static/search.json";
+const ADVANCE_SEARCH_PATH = "../../search.html";
+const EXTRA_SOURCES = JSON.parse('""');
+</script>
+
+
+<script src="../../_static/js/search.js"></script>
+
+  
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<footer class="bd-footer">
+  <div class="bd-footer__inner bd-page-width">
+    <div class="footer-items__start">
+      <div class="footer-item">
+        <div class="footer-items__start">
+          <div class="footer-item">
+            <img src="https://docs.pyansys.com/version/dev/_static/ansys_logo_transparent_white.png" alt="Ansys Logo" class="footer-ansys-logo">
+          </div>
+          <div class="footer-item"><br>
+            <p>2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-items__center">
+      <div class="footer-item">
+        <div class="footer-items__start">
+          <div class="connect-with-ansys">
+            <p>Latest documentation</p> <br>
+            <a href="https://www.ansys.com/" class="external-link" target="_blank" rel="noopener noreferrer">
+              <span class="link-text">Ansys.com</span>
+              <i class="fas fa-up-right-from-square"></i>
+            </a><br>
+            <a href="https://www.ansys.com/services/ansys-learning-hub" class="external-link" target="_blank" rel="noopener noreferrer">
+              <span class="link-text">Ansys Learning</span>
+              <i class="fas fa-up-right-from-square"></i>
+            </a><br>
+            <a href="https://www.ansys.com/support" class="external-link" target="_blank" rel="noopener noreferrer">
+              <span class="link-text">Ansys Support</span>
+              <i class="fas fa-up-right-from-square"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-items__end">
+      <div class="footer-item">
+        <div class="footer-right">
+          <span>Connect with Ansys</span>
+          <div class="social-icons">
+            <a href="https://www.youtube.com/user/ansysinc" target="_blank" rel="noopener" class="icon icon-youtube" aria-label="Youtube"><span class="sr-only">Youtube</span></a>
+            <a href="https://www.facebook.com/ansys" target="_blank" rel="noopener" class="icon icon-facebook" aria-label="Facebook"><span class="sr-only">Facebook</span></a>
+            <a href="https://www.linkedin.com/company/ansys-inc" target="_blank" rel="noopener" class="icon icon-linkedin" aria-label="Linkedin"><span class="sr-only">Linkedin</span></a>
+            <a href="https://github.com/ansys" target="_blank" rel="noopener" class="icon icon-github" aria-label="GitHub"><i class="fab fa-github"></i><span class="sr-only">GitHub</span></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+  </body>
+</html>

@@ -1,0 +1,165 @@
+
+
+
+
+
+
+:class:`OptislangWrapperInstanceConfiguration`
+==============================================
+
+
+.. py:class:: ansys.saf.product_configuration.optislang_wrapper.OptislangWrapperInstanceConfiguration
+
+   Bases: :py:obj:`ansys.saf.product_configuration.interfaces.IProductInstanceConfiguration`
+
+
+   
+   Configuration class for Ansys optiSLang wrapper.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: OptislangWrapperInstanceConfiguration
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~get_version_configuration`
+            - Return the configuration of a product for a specific version.
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~product_name`
+            - Name used to identify the optiSLang wrapper in the product instance management system.
+          * - :py:attr:`~versions`
+            - Supported optiSLang versions.
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.saf.product_configuration.optislang_wrapper import OptislangWrapperInstanceConfiguration
+
+Property detail
+---------------
+
+.. py:property:: product_name
+   :type: str
+
+
+   
+   Name used to identify the optiSLang wrapper in the product instance management system.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: versions
+   :type: list[str]
+
+
+   
+   Supported optiSLang versions.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+Method detail
+-------------
+
+.. py:method:: get_version_configuration(version: str) -> ansys.saf.product_configuration.interfaces.IProductInstanceVersionConfiguration
+
+   
+   Return the configuration of a product for a specific version.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

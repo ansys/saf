@@ -1,0 +1,49 @@
+
+
+
+
+
+
+:class:`EntityWriterHasNotCompletedWritingDataError`
+====================================================
+
+
+.. py:exception:: ansys.bdm.api.storage_exceptions.EntityWriterHasNotCompletedWritingDataError
+
+   Bases: :py:obj:`Exception`
+
+
+   
+   Exception raised when attempting to get handle from EntityWriter before the writing context is closed.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.bdm.api.storage_exceptions import EntityWriterHasNotCompletedWritingDataError
+
+
+
+
+

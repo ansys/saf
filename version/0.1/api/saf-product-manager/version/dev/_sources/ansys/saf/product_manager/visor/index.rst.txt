@@ -1,0 +1,80 @@
+
+
+
+
+
+
+The ``visor`` package
+=========================
+
+.. py:module:: ansys.saf.product_manager.visor
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: visor
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.saf.product_manager.visor.InternalVisorManager`
+            - Private class for Visor Manager
+
+
+          * - :py:obj:`~ansys.saf.product_manager.visor.VisorManager`
+            - A manager of a Visor product instance.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> InternalVisorManager</ansys/saf/product_manager/visor/InternalVisorManager>
+    <span class="nf nf-cod-symbol_class"></span> VisorManager</ansys/saf/product_manager/visor/VisorManager>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

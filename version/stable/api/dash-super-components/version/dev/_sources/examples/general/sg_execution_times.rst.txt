@@ -1,0 +1,55 @@
+
+:orphan:
+
+.. _sphx_glr_examples_general_sg_execution_times:
+
+
+Computation times
+=================
+**00:00.000** total execution time for 7 files **from examples/general**:
+
+.. container::
+
+  .. raw:: html
+
+    <style scoped>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet" />
+    </style>
+    <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+    <script type="text/javascript" class="init">
+    $(document).ready( function () {
+        $('table.sg-datatable').DataTable({order: [[1, 'desc']]});
+    } );
+    </script>
+
+  .. list-table::
+   :header-rows: 1
+   :class: table table-striped sg-datatable
+
+   * - Example
+     - Time
+     - Mem (MB)
+   * - :ref:`sphx_glr_examples_general_example_authenticator.py` (``example_authenticator.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_examples_general_example_dual_input_range_slider.py` (``example_dual_input_range_slider.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_examples_general_example_folder_selector.py` (``example_folder_selector.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_examples_general_example_input_form.py` (``example_input_form.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_examples_general_example_input_row_array.py` (``example_input_row_array.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_examples_general_example_logs_supervisor.py` (``example_logs_supervisor.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_examples_general_example_tree.py` (``example_tree.py``)
+     - 00:00.000
+     - 0.0

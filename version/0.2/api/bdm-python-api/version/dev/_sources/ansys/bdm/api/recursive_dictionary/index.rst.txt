@@ -1,0 +1,117 @@
+
+
+
+
+
+
+The ``recursive_dictionary.py`` module
+======================================
+
+.. py:module:: ansys.bdm.api.recursive_dictionary
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: recursive_dictionary
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.bdm.api.recursive_dictionary.RecursiveDictionaryOfEntityHandles`
+            - A recursive dictionary structure for storing entity handles in a nested hierarchy that maps a filesystem-like
+
+
+
+
+
+    .. tab-item:: Functions
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~get_and_create_nested_dict`
+            - 
+
+
+          * - :py:obj:`~validate_path_component`
+            - Validate that a string is suitable for use as a file or directory name.
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> RecursiveDictionaryOfEntityHandles</ansys/bdm/api/recursive_dictionary/RecursiveDictionaryOfEntityHandles>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Module detail
+-------------
+
+.. py:function:: get_and_create_nested_dict(parts: tuple[str, Ellipsis], value: RecursiveDictionaryOfEntityHandles) -> RecursiveDictionaryOfEntityHandles
+
+.. py:function:: validate_path_component(name: str) -> None
+
+   
+   Validate that a string is suitable for use as a file or directory name.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+

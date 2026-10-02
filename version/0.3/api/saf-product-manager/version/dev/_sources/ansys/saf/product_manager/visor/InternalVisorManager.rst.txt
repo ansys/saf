@@ -1,0 +1,283 @@
+
+
+
+
+
+
+:class:`InternalVisorManager`
+=============================
+
+
+.. py:class:: ansys.saf.product_manager.visor.InternalVisorManager(**kwargs: Any)
+
+   Bases: :py:obj:`ansys.saf.glow.solution.InstanceManager`\ [\ :py:obj:`VisorSafClient`\ , :py:obj:`VisorRecoveryStateInfo`\ ]
+
+
+   
+   Private class for Visor Manager
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:currentmodule:: InternalVisorManager
+
+Overview
+--------
+
+.. tab-set::
+
+
+   .. tab-item:: Constructors
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~get_product_name_implement`
+            - Return the name of the product in the product instance system (PIM or HPS) environment.
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~initialize`
+            - Initialize and start the custom product server.
+          * - :py:attr:`~save_state_implement`
+            - Save changes to the project data and settings.
+          * - :py:attr:`~load_state_implement`
+            - Open the latest Visor project saved within ``protected_state_directory_path``.
+          * - :py:attr:`~get_client_object_implement`
+            - Return an instance of the custom product's client given the host and port of the product instance.
+          * - :py:attr:`~close_client_object_implement`
+            - Close the Visor object.
+          * - :py:attr:`~shutdown_implement`
+            - Gracefully terminates the product instance process.
+
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~PRODUCT_NAME`
+            - 
+          * - :py:attr:`~SERVICE_NAME`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.saf.product_manager.visor import InternalVisorManager
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: PRODUCT_NAME
+   :value: 'visor'
+
+
+.. py:attribute:: SERVICE_NAME
+   :value: 'http'
+
+
+
+
+Method detail
+-------------
+
+.. py:method:: initialize(version: str | None = None, input_file: ansys.bdm.api.EntityHandle = NO_ENTITY, metadata_file: ansys.bdm.api.EntityHandle = NO_ENTITY)
+
+   
+   Initialize and start the custom product server.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_product_name_implement() -> str
+   :classmethod:
+
+
+   
+   Return the name of the product in the product instance system (PIM or HPS) environment.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: save_state_implement() -> None
+
+   
+   Save changes to the project data and settings.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: load_state_implement() -> None
+
+   
+   Open the latest Visor project saved within ``protected_state_directory_path``.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_client_object_implement(hostname: str, port: int) -> VisorSafClient
+
+   
+   Return an instance of the custom product's client given the host and port of the product instance.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: close_client_object_implement() -> None
+
+   
+   Close the Visor object.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: shutdown_implement() -> None
+
+   
+   Gracefully terminates the product instance process.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

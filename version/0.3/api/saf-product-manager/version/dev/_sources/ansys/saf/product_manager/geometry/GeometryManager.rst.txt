@@ -1,0 +1,106 @@
+
+
+
+
+
+
+:class:`GeometryManager`
+========================
+
+
+.. py:class:: ansys.saf.product_manager.geometry.GeometryManager(**kwargs: Any)
+
+   Bases: :py:obj:`ansys.saf.glow.solution.ProductInstanceManager`\ [\ :py:obj:`ansys.geometry.core.modeler.Modeler`\ , :py:obj:`GeometryStateInfo`\ ]
+
+
+   
+   A manager of a Geometry service instance with secure gRPC connections.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: GeometryManager
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~initialize`
+            - Initialize and start a Geometry service instance with secure gRPC connections.
+
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.saf.product_manager.geometry import GeometryManager
+
+
+
+Method detail
+-------------
+
+.. py:method:: initialize(version: str | None = None)
+
+   
+   Initialize and start a Geometry service instance with secure gRPC connections.
+
+
+   :Parameters:
+
+       **version** : str, optional
+           The version of the Geometry service instance that must be used. The format is 3 decimal digits where
+           the first two digits indicate the year of release in the 21st century and the third digit indicates
+           the release within that year.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

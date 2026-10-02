@@ -1,0 +1,80 @@
+
+
+
+
+
+
+The ``iasync_storage_scope.py`` module
+======================================
+
+.. py:module:: ansys.bdm.api.iasync_storage_scope
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: iasync_storage_scope
+.. tab-set::
+
+
+
+    .. tab-item:: Interfaces
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.bdm.api.iasync_storage_scope.IAsyncReadStorageScope`
+            - Represents access to a read only Blob Data Management system.
+
+
+          * - :py:obj:`~ansys.bdm.api.iasync_storage_scope.IAsyncStorageScope`
+            - Represents access to a Blob Data Management system. Allows consumers
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_interface"></span> IAsyncReadStorageScope</ansys/bdm/api/iasync_storage_scope/IAsyncReadStorageScope>
+    <span class="nf nf-cod-symbol_interface"></span> IAsyncStorageScope</ansys/bdm/api/iasync_storage_scope/IAsyncStorageScope>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

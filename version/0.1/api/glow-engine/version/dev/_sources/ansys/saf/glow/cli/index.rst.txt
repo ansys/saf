@@ -1,0 +1,97 @@
+
+
+
+
+
+
+The ``cli`` package
+=======================
+
+.. py:module:: ansys.saf.glow.cli
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+.. py:currentmodule:: cli
+.. tab-set::
+
+
+    .. tab-item:: Submodules
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.saf.glow.cli.__main__`
+            - 
+
+
+
+
+
+
+
+    .. tab-item:: Functions
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~run_analysis`
+            - Perform static analysis of the solution.
+
+
+          * - :py:obj:`~run_api`
+            - Run the solution REST API server.
+
+
+          * - :py:obj:`~run_ui`
+            - Run the solution Dash UI server.
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-fa-file"></span> __main__</ansys/saf/glow/cli/__main__/index>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Module detail
+-------------
+
+
+
+
+
+

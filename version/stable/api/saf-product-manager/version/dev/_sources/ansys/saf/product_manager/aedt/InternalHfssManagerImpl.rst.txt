@@ -1,0 +1,79 @@
+
+
+
+
+
+
+:class:`InternalHfssManagerImpl`
+================================
+
+
+.. py:class:: ansys.saf.product_manager.aedt.InternalHfssManagerImpl(**kwargs: Any)
+
+   Bases: :py:obj:`AbstractAedtManagerImpl`\ [\ :py:obj:`ansys.aedt.core.Hfss`\ ]
+
+
+   
+   A manager of a `AEDT HFSS <https://www.ansys.com/products/electronics/ansys-hfss>`_ product instance.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: InternalHfssManagerImpl
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~get_aedt_product_client`
+            - 
+
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.saf.product_manager.aedt import InternalHfssManagerImpl
+
+
+
+Method detail
+-------------
+
+.. py:method:: get_aedt_product_client(project_name: str, specified_version: str, machine: str, port: int, design_name: str | None = None, solution_type: str | None = None) -> ansys.aedt.core.Hfss
+
+
+
+

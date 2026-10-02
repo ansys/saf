@@ -1,0 +1,79 @@
+
+
+
+
+
+
+The ``ansys.bdm.base`` library
+==============================
+
+.. py:module:: ansys.bdm.base
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+.. py:currentmodule:: base
+.. tab-set::
+
+
+    .. tab-item:: Submodules
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.bdm.base.base_async_storage_scope`
+            - 
+
+
+          * - :py:obj:`~ansys.bdm.base.base_storage_scope`
+            - 
+
+
+          * - :py:obj:`~ansys.bdm.base.encoder`
+            - 
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-fa-file"></span> base_async_storage_scope</ansys/bdm/base/base_async_storage_scope/index>
+    <span class="nf nf-fa-file"></span> base_storage_scope</ansys/bdm/base/base_storage_scope/index>
+    <span class="nf nf-fa-file"></span> encoder</ansys/bdm/base/encoder/index>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

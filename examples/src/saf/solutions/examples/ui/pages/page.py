@@ -100,6 +100,7 @@ def get_page_list(theme: str, active_index: str | None = None) -> list[dict[str,
     ]
     instance_children = [
         leaf("geometry_instance_page", "Geometry", "mdi:cube"),
+        leaf("visor_instance_page", "VISOR", "mdi:cube"),
         leaf("fluent_instance_page", "Fluent", "ic:baseline-water"),
         leaf("mechanical_instance_page", "Mechanical", "mdi:gear"),
         leaf("mapdl_instance_page", "MAPDL", "mdi:gear"),

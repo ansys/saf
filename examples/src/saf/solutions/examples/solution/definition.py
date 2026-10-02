@@ -33,6 +33,7 @@ from saf.solutions.examples.solution.instance_management.geometry_step import Ge
 from saf.solutions.examples.solution.instance_management.mapdl_step import MapdlStep
 from saf.solutions.examples.solution.instance_management.mechanical_step import MechanicalStep
 from saf.solutions.examples.solution.instance_management.optislang_step import OptislangStep
+from saf.solutions.examples.solution.instance_management.visor_step import VisorStep
 from saf.solutions.examples.solution.long_transaction_step import LongTransactionStep
 
 
@@ -46,6 +47,7 @@ class Steps(StepsModel):
     mechanical_step: MechanicalStep
     geometry_step: GeometryStep
     mapdl_step: MapdlStep
+    visor_step: VisorStep
     long_transaction_step: LongTransactionStep
     file_handling_step: FileHandlingStep
     hps_job_submission_step: HpsJobSubmissionStep

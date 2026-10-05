@@ -450,6 +450,33 @@ def test_authenticator_closes_client_it_replaces(
 
 
 @pytest.mark.parametrize("authenticator_type", [DesktopHpsAuthenticator, OnPremHpsAuthenticator])
+def test_authenticator_does_not_support_concurrent_client_contexts(
+    authenticator_type: type[IHpsAuthenticator],
+    mocker: MockerFixture,
+):
+    mocker.patch("ansys.hps.client.client.Client.__init__", return_value=None)
+    spy_close = mocker.spy(CachedClient, "close")
+
+    init_args = {"glow_hps_username": "user", "glow_hps_password": "pass"}
+    if authenticator_type is DesktopHpsAuthenticator:
+        init_args["glow_api_url"] = "127.0.0.1:5432"
+        init_args["client_id"] = "rep-jms-web"
+    hps_authenticator = authenticator_type(**init_args)
+
+    hps_url = "https://localhost:8443/hps"
+    first_context = hps_authenticator.get_hps_client(hps_url)
+    first_context.__enter__()
+
+    # A second request for the expired URL replaces and closes the client still yielded above.
+    with mocker.patch("time.time", return_value=time.time() + 70), hps_authenticator.get_hps_client(hps_url):
+        pass
+
+    # Concurrent use is unsupported; callers must not overlap these contexts.
+    assert spy_close.call_count == 1
+    first_context.__exit__(None, None, None)
+
+
+@pytest.mark.parametrize("authenticator_type", [DesktopHpsAuthenticator, OnPremHpsAuthenticator])
 def test_authenticator_does_not_close_reused_client(
     authenticator_type: type[IHpsAuthenticator],
     mocker: MockerFixture,

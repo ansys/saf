@@ -86,7 +86,11 @@ class CachedClient:
 
 
 class CachedClients:
-    """HPS clients cached per server URL, keyed by the URL they were built for."""
+    """HPS clients cached per server URL, keyed by the URL they were built for.
+
+    Concurrent use of a cached client is not supported. A replacement closes the previous client,
+    even when another context is still using it.
+    """
 
     def __init__(self) -> None:
         self._clients: dict[str, CachedClient] = {}

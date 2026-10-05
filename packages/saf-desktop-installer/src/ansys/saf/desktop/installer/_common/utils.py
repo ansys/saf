@@ -139,7 +139,7 @@ def _get_installed_package_version(package_name: str) -> str:
         # Need to use solution's Python as the package is not available yet
         # in the definitions environment
         result = subprocess.run(
-            ["pip", "show", package_name],
+            ["pip", "show", package_name],  # noqa: S607
             capture_output=True,
             text=True,
             check=True,
@@ -188,7 +188,7 @@ def simplify_wheel_dependency_constraints(wheel_path: Path) -> None:
 def _get_poetry_version() -> Version:
     """Get the Poetry version installed in the solution."""
     try:
-        poetry_version_str = subprocess.check_output(["poetry", "--version"], text=True)
+        poetry_version_str = subprocess.check_output(["poetry", "--version"], text=True)  # noqa: S607
     except subprocess.CalledProcessError as e:
         raise RuntimeError(f"Failed to get Poetry version: {e}") from e
     match = re.search(r"\d+\.\d+\.\d+", poetry_version_str)
@@ -207,7 +207,7 @@ def _check_poetry_version_is_2_or_higher() -> bool:
 
 def check_poetry_plugin_export_is_required(offline_package: bool) -> bool:
     if offline_package and _check_poetry_version_is_2_or_higher():
-        return subprocess.run(["poetry", "export"], capture_output=True, text=True).returncode != 0
+        return subprocess.run(["poetry", "export"], capture_output=True, text=True).returncode != 0  # noqa: S607
     return False
 
 
@@ -225,10 +225,10 @@ def safe_extract(file: zipfile.ZipFile | tarfile.TarFile, target_dir: Path) -> N
 
 
 def has_portal_dependency(solution_root_dir: Path) -> bool:
-    """Check if the solution uses the SAF Portal by looking for
-    ansys-saf-desktop-portal or ansys-saf-portal in the poetry.lock"""
+    """Check if the solution uses the SAF Projects Dashboard or SAF Portal by looking for
+    ansys-saf-projects-dashboard, ansys-saf-desktop-portal, or ansys-saf-portal in the poetry.lock"""
     poetry_lock_data = toml.load(solution_root_dir / "poetry.lock")
     for package in poetry_lock_data["package"]:
-        if package["name"] in ["ansys-saf-desktop-portal", "ansys-saf-portal"]:
+        if package["name"] in ["ansys-saf-desktop-portal", "ansys-saf-portal", "ansys-saf-projects-dashboard"]:
             return True
     return False

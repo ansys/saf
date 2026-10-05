@@ -16,9 +16,10 @@
 
 """Entry point."""
 
-from ansys.saf.glow.runtime import glow_main
 from synopsys.custom_ns_solution.solution import definition
 from synopsys.custom_ns_solution.ui import app
+
+from ansys.saf.glow.runtime import glow_main
 
 
 def main():

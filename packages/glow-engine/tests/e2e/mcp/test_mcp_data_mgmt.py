@@ -24,8 +24,65 @@ import pytest
 
 from tests.e2e.mcp.conftest import assert_mcp_response, assert_no_mcp_response
 from tests.mocks.solution_end_to_end.solution.definition import EndToEndSolution
+from tests.mocks.solution_end_to_end.solution.transaction_verification_step import (
+    CustomTypeWithEntityHandle,
+    CustomTypeWithEntityHandleCollections,
+)
 
 pytestmark = pytest.mark.parametrize("solution_type", [EndToEndSolution], indirect=True)
+
+# Field paths exercising an entity handle directly on a step field, nested in a list, dict, or custom object, nested
+# two levels deep (list of lists / dict of dicts), and combined together in a single custom object.
+ENTITY_HANDLE_FIELD_PATHS: dict[str, str] = {
+    "entity_handle": "text_file",
+    "list": "entity_handle_list/0",
+    "dict": "entity_handle_dict/key1",
+    "custom_object": "entity_handle_object/file",
+    "nested_list": "nested_entity_handle_list/0/0",
+    "nested_dict": "nested_entity_handle_dict/key1/key2",
+    "combination_list_item": "entity_handle_collections/files/0",
+    "combination_dict_item": "entity_handle_collections/file_map/key1",
+    "combination_nested_object": "entity_handle_collections/nested/file",
+}
+
+# Field paths that resolve to a value that exists but is not an entity handle.
+NON_ENTITY_HANDLE_FIELD_PATHS: dict[str, str] = {
+    "entity_handle": "field_1",
+    "custom_object": "entity_handle_object/label",
+    "combination_nested_object": "entity_handle_collections/nested/label",
+}
+
+# Field paths whose final segment does not exist, paired with a substring of the expected error message.
+MISSING_PATH_FIELD_PATHS: dict[str, tuple[str, str]] = {
+    "entity_handle": ("text_file/extra", "does not exist on"),
+    "list": ("entity_handle_list/5", "List index '5' does not exist."),
+    "dict": ("entity_handle_dict/missing_key", "Dictionary key 'missing_key' does not exist."),
+    "custom_object": ("entity_handle_object/missing_attr", "does not exist on"),
+    "nested_list": ("nested_entity_handle_list/0/5", "List index '5' does not exist."),
+    "nested_dict": ("nested_entity_handle_dict/key1/missing_key2", "Dictionary key 'missing_key2' does not exist."),
+    "combination_list_item": ("entity_handle_collections/files/5", "List index '5' does not exist."),
+    "combination_dict_item": (
+        "entity_handle_collections/file_map/missing_key",
+        "Dictionary key 'missing_key' does not exist.",
+    ),
+    "combination_nested_object": ("entity_handle_collections/nested/missing_attr", "does not exist on"),
+}
+
+
+def _initialize_entity_handle_fields(step: Any, storage_scope: Any) -> None:
+    """Populate every container field with a placeholder entity handle so paths into them can be resolved."""
+    placeholder = storage_scope.store_stream(b"placeholder")
+    step.text_file = placeholder
+    step.entity_handle_list = [placeholder]
+    step.entity_handle_dict = {"key1": placeholder}
+    step.entity_handle_object = CustomTypeWithEntityHandle(file=placeholder)
+    step.nested_entity_handle_list = [[placeholder]]
+    step.nested_entity_handle_dict = {"key1": {"key2": placeholder}}
+    step.entity_handle_collections = CustomTypeWithEntityHandleCollections(
+        files=[placeholder],
+        file_map={"key1": placeholder},
+        nested=CustomTypeWithEntityHandle(file=placeholder),
+    )
 
 
 @pytest.mark.usefixtures("enable_mcp_server")
@@ -83,47 +140,40 @@ class TestMCPDataManagement:
         )
         assert result.structured_content == {**fields, "sleepy_seconds": 11.0}
 
-    async def test_upload_file_tool(
+    @pytest.mark.parametrize("combination", ENTITY_HANDLE_FIELD_PATHS)
+    async def test_upload_data_and_download_data_tool_combinations(
         self,
         mcp_client: MCPClient[StreamableHttpTransport],
         function_project: ProjectFixture[EndToEndSolution],
+        combination: str,
     ):
         step = function_project.project.steps.transaction_verification_step
+        _initialize_entity_handle_fields(step, function_project.project.storage_scope)
+        field_path = ENTITY_HANDLE_FIELD_PATHS[combination]
         content = b"uploaded-through-mcp"
 
-        result = await mcp_client.call_tool(
-            "upload_file",
+        upload_result = await mcp_client.call_tool(
+            "upload_data",
             {
                 "project_name": function_project.project_name,
                 "step_name": "transaction_verification_step",
-                "entity_handle_name": "text_file",
+                "field_path": field_path,
                 "content": content,
             },
         )
-        assert_no_mcp_response(result)
+        assert_no_mcp_response(upload_result)
 
-        assert function_project.project.storage_scope.get_bytes(step.text_file) == content
-
-    async def test_download_file_tool(
-        self,
-        mcp_client: MCPClient[StreamableHttpTransport],
-        function_project: ProjectFixture[EndToEndSolution],
-    ):
-        step = function_project.project.steps.transaction_verification_step
-        content = b"downloaded-through-mcp"
-        step.text_file = function_project.project.storage_scope.store_stream(content)
-
-        result = await mcp_client.call_tool(
-            "download_file",
+        download_result = await mcp_client.call_tool(
+            "download_data",
             {
                 "project_name": function_project.project_name,
                 "step_name": "transaction_verification_step",
-                "entity_handle_name": "text_file",
+                "field_path": field_path,
             },
         )
-        assert_mcp_response(result, content.decode(), has_structure_content=False)
+        assert_mcp_response(download_result, content.decode(), has_structure_content=False)
 
-    @pytest.mark.parametrize("tool_name", ["set_fields", "get_fields", "upload_file", "download_file"])
+    @pytest.mark.parametrize("tool_name", ["set_fields", "get_fields", "upload_data", "download_data"])
     async def test_data_tools_with_non_existing_field(
         self,
         mcp_client: MCPClient[StreamableHttpTransport],
@@ -143,29 +193,59 @@ class TestMCPDataManagement:
                 expected_error_msg = "'TransactionVerificationStep' has no field(s) 'non_existing_field'."
             else:
                 call_args["field_names"] = ["non_existing_field"]
-        elif tool_name in ["upload_file", "download_file"]:
-            expected_error_msg = "Field 'non_existing_field' is not an entityhandle field."
-            call_args["entity_handle_name"] = "non_existing_field"
-            if tool_name == "upload_file":
+        elif tool_name in ["upload_data", "download_data"]:
+            call_args["field_path"] = "non_existing_field"
+            if tool_name == "upload_data":
                 call_args["content"] = b"invalid-target-field"
 
         with pytest.raises(ToolError, match=re.escape(expected_error_msg)):
             await mcp_client.call_tool(tool_name, call_args)
 
-    @pytest.mark.parametrize("tool_name", ["upload_file", "download_file"])
-    async def test_file_tools_with_non_entity_handle_field(
+    @pytest.mark.parametrize("tool_name", ["upload_data", "download_data"])
+    @pytest.mark.parametrize("combination", NON_ENTITY_HANDLE_FIELD_PATHS)
+    async def test_data_tools_with_non_entity_handle_leaf(
         self,
         mcp_client: MCPClient[StreamableHttpTransport],
         function_project: ProjectFixture[EndToEndSolution],
+        combination: str,
         tool_name: str,
     ):
+        step = function_project.project.steps.transaction_verification_step
+        _initialize_entity_handle_fields(step, function_project.project.storage_scope)
+        field_path = NON_ENTITY_HANDLE_FIELD_PATHS[combination]
+
         call_args: dict[str, str | bytes] = {
             "project_name": function_project.project_name,
             "step_name": "transaction_verification_step",
-            "entity_handle_name": "field_1",
+            "field_path": field_path,
         }
-        if tool_name == "upload_file":
+        if tool_name == "upload_data":
             call_args["content"] = b"invalid-target-field"
 
-        with pytest.raises(ToolError, match="Field 'field_1' is not an entityhandle field."):
+        expected_error_msg = f"Field path '{field_path}' does not refer to an entity handle field."
+        with pytest.raises(ToolError, match=re.escape(expected_error_msg)):
+            await mcp_client.call_tool(tool_name, call_args)
+
+    @pytest.mark.parametrize("tool_name", ["upload_data", "download_data"])
+    @pytest.mark.parametrize("combination", MISSING_PATH_FIELD_PATHS)
+    async def test_data_tools_with_missing_destination_path(
+        self,
+        mcp_client: MCPClient[StreamableHttpTransport],
+        function_project: ProjectFixture[EndToEndSolution],
+        combination: str,
+        tool_name: str,
+    ):
+        step = function_project.project.steps.transaction_verification_step
+        _initialize_entity_handle_fields(step, function_project.project.storage_scope)
+        field_path, expected_error_msg = MISSING_PATH_FIELD_PATHS[combination]
+
+        call_args: dict[str, str | bytes] = {
+            "project_name": function_project.project_name,
+            "step_name": "transaction_verification_step",
+            "field_path": field_path,
+        }
+        if tool_name == "upload_data":
+            call_args["content"] = b"invalid-target-field"
+
+        with pytest.raises(ToolError, match=re.escape(expected_error_msg)):
             await mcp_client.call_tool(tool_name, call_args)

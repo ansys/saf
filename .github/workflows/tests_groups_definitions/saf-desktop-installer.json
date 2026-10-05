@@ -1,6 +1,6 @@
 [
     {
-        "test-report-artifact-name-suffix": "saf_desktop_installer_core",
+        "test-report-artifact-name-suffix": "saf_desktop_installer_core_linux",
         "install-gtk-xvfb": "true",
         "pytest-additional-arguments": "tests/unit",
         "runner-name": "public-ubuntu-latest-16-cores"

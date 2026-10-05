@@ -65,12 +65,18 @@ class CachedClient:
         """
         stop_event = getattr(self.client, "_stop_event", None)  # pyright: ignore[reportUnknownArgumentType, reportUnknownMemberType]
         if stop_event is not None:
-            stop_event.set()
+            try:
+                stop_event.set()
+            except Exception:
+                logger.warning("Failed to signal the HPS token refresh thread to stop.", exc_info=True)
         refresh_thread = getattr(self.client, "_token_refresh_thread", None)  # pyright: ignore[reportUnknownArgumentType, reportUnknownMemberType]
         if refresh_thread is not None:
             # Upstream waits 5s at exit; keep it short here because this runs inside a request.
             # The thread polls the stop event, so it exits on its own even if the join times out.
-            refresh_thread.join(timeout=1.0)
+            try:
+                refresh_thread.join(timeout=1.0)
+            except Exception:
+                logger.warning("Failed to join the HPS token refresh thread.", exc_info=True)
         dt_client = getattr(self.client, "_dt_client", None)  # pyright: ignore[reportUnknownArgumentType, reportUnknownMemberType]
         if dt_client is not None:
             try:

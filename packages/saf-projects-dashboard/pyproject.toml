@@ -3,7 +3,7 @@ build-backend = "poetry.core.masonry.api"
 requires = [ "poetry-core>=2.0.0", "setuptools>=67.0" ]
 
 [tool.poetry]
-name = "saf-projects-dashboard"
+name = "ansys-saf-projects-dashboard"
 version = "0.1.dev0"
 description = "Dash component for SAF-based solution applications to view and manage project instances."
 license = "MIT"

@@ -93,7 +93,7 @@ def projects_dashboard_installed(
     solution_ui_page: ModuleType,
     monkeypatch: pytest.MonkeyPatch,
 ) -> Iterator[bool]:
-    """Register the projects page as Dash does, as if saf-projects-dashboard were installed or not."""
+    """Register the projects page as Dash does, as if ansys-saf-projects-dashboard were installed or not."""
     installed = bool(request.param)
     real_find_spec = importlib.util.find_spec
 

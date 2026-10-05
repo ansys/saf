@@ -98,7 +98,7 @@ def _match_non_solution_page(pathname: str | None) -> str | None:
 
 
 def _get_projects_dashboard_page() -> dict[str, Any] | None:
-    """Return the projects dashboard page, which is only registered when saf-projects-dashboard is installed."""
+    """Return the projects dashboard page, which is only registered when ansys-saf-projects-dashboard is installed."""
     for page in dash.page_registry.values():
         if page.get("projects_dashboard", False):
             return page

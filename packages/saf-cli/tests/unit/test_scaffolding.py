@@ -170,7 +170,7 @@ def _scaffold_pyproject(tmp_path: Path, ui_framework: str) -> dict[str, Any]:
 def test_dash_solution_depends_on_projects_dashboard(tmp_path: Path):
     """Install the projects dashboard with the UI of a Dash solution, from the private feed only."""
     poetry = _scaffold_pyproject(tmp_path, "dash")["tool"]["poetry"]
-    dependency = poetry["group"]["ui"]["dependencies"]["saf-projects-dashboard"]
+    dependency = poetry["group"]["ui"]["dependencies"]["ansys-saf-projects-dashboard"]
     assert dependency["source"] == "solutions-private-pypi"
     assert dependency["allow-prereleases"] is True
     sources = {source["name"]: source for source in poetry["source"]}

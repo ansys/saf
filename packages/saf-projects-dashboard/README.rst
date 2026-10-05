@@ -6,12 +6,12 @@
 
 |python| |pypi| |GH-CI| |codecov| |MIT| |ruff|
 
-.. |python| image:: https://img.shields.io/pypi/pyversions/saf-projects-dashboard?logo=python&logoColor=white&label=Python
-   :target: https://pypi.org/project/saf-projects-dashboard/
+.. |python| image:: https://img.shields.io/pypi/pyversions/ansys-saf-projects-dashboard?logo=python&logoColor=white&label=Python
+   :target: https://pypi.org/project/ansys-saf-projects-dashboard/
    :alt: Python
 
-.. |pypi| image:: https://img.shields.io/pypi/v/saf-projects-dashboard.svg?logo=pypi&logoColor=white&label=PyPI
-   :target: https://pypi.org/project/saf-projects-dashboard/
+.. |pypi| image:: https://img.shields.io/pypi/v/ansys-saf-projects-dashboard.svg?logo=pypi&logoColor=white&label=PyPI
+   :target: https://pypi.org/project/ansys-saf-projects-dashboard/
    :alt: PyPI
 
 .. |codecov| image:: https://img.shields.io/codecov/c/github/ansys/saf-projects-dashboard
@@ -44,7 +44,7 @@ Install from PyPI:
 
 .. code:: shell
 
-   pip install saf-projects-dashboard
+   pip install ansys-saf-projects-dashboard
 
 For editable/local development installs:
 

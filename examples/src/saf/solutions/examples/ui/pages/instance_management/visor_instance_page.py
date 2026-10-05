@@ -17,19 +17,21 @@
 
 """Frontend of the Visor instance management page."""
 
-import base64
-from pathlib import Path
+import json
+import os
 from typing import Any
 
-from ansys.bdm.api import NO_ENTITY
 from ansys.saf.glow.client import DashClient, callback
 from ansys.saf.glow.solution import MethodState
 import dash
-from dash_extensions.enrich import Input, Output, State, dcc, html, no_update  # pyright: ignore[reportMissingTypeStubs]
+from dash_extensions.enrich import Input, Output, State, html, no_update  # pyright: ignore[reportMissingTypeStubs]
 from dash_iconify import DashIconify  # pyright: ignore[reportMissingTypeStubs]
 import dash_mantine_components as dmc  # pyright: ignore[reportMissingTypeStubs]
 
 from saf.solutions.examples.solution.definition import ExamplesSolution
+from saf.solutions.examples.ui.helpers import handle_method_event
+
+VISOR_BASE_PATH = os.getenv("GLOW_UI_PATH_PREFIX", "/").rstrip("/")
 
 dash.register_page(
     __name__,
@@ -40,31 +42,54 @@ dash.register_page(
 )
 
 
-def _create_visor_viewer(port: int) -> Any:
-    """Create a Visor viewer connected to the local Visor instance."""
-    try:
-        from visordash import Visordash  # pyright: ignore[reportMissingImports, reportMissingTypeStubs]
-    except ModuleNotFoundError as exc:
-        raise RuntimeError(
-            "The Visor UI dependency is not installed. Install ansys-visor-viewer to use this page."
-        ) from exc
-
-    return Visordash(
-        host="localhost",
-        port=port,
-        aspectRatio=1,
-        pixelDensity=800,
+def _create_visor_viewer(host: str, port: int) -> Any:
+    """Create an isolated viewer document connected to the local Visor instance."""
+    viewer_args = json.dumps(
+        {
+            "host": host,
+            "port": port,
+            "basePath": VISOR_BASE_PATH,
+        }
+    ).replace("<", "\\u003c")
+    asset_prefix = VISOR_BASE_PATH or ""
+    src_doc = f"""<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="{asset_prefix}/visordash/css.css">
+</head>
+<body style="margin: 0; width: 100vw; height: 100vh; overflow: hidden;">
+    <div id="VisorContainer" style="width: 100%; height: 100%;"></div>
+    <script>window.__visorArgs = {viewer_args};</script>
+    <script type="module" src="{asset_prefix}/visordash/js.js"></script>
+</body>
+</html>"""
+    return html.Iframe(
+        id="visor-viewer-component",
+        srcDoc=src_doc,
+        title="VISOR viewer",
+        style={
+            "width": "100%",
+            "height": "100%",
+            "border": "0",
+            "display": "block",
+        },
     )
 
 
 def layout(project: ExamplesSolution) -> html.Div:
     """Layout for the VISOR Instance Manager page."""
     step = project.steps.visor_step
+    viewer: Any = []
+    if step.visor_started:
+        if not step.visor_host or step.visor_port is None:
+            raise RuntimeError("VISOR is marked as running without a host and port.")
+        viewer = _create_visor_viewer(step.visor_host, step.visor_port)
 
     controls_card = dmc.Card(
         [
             dmc.CardSection(
-                dmc.Text("Input files", fw=500, style={"font-size": "17px"}),
+                dmc.Text("Controls", fw=500, style={"font-size": "17px"}),
                 withBorder=True,
                 inheritPadding=True,
                 py="xs",
@@ -78,8 +103,10 @@ def layout(project: ExamplesSolution) -> html.Div:
                             id="start-visor-button",
                             size="xl",
                             color="#2790F1",
+                            disabled=step.visor_started,
+                            loading=False,
                         ),
-                        label="Start or refresh Visor",
+                        label="Start Visor",
                         position="top",
                     ),
                     dmc.Tooltip(
@@ -93,6 +120,12 @@ def layout(project: ExamplesSolution) -> html.Div:
                         label="Stop Visor",
                         position="top",
                     ),
+                    dmc.Button(
+                        "Show Shape",
+                        id="show-visor-shape-button",
+                        color="#2790F1",
+                        disabled=not step.visor_started,
+                    ),
                 ],
                 gap="md",
                 justify="center",
@@ -103,7 +136,6 @@ def layout(project: ExamplesSolution) -> html.Div:
         shadow="sm",
         radius="md",
     ),
-    
     logs_container = dmc.Card(
         [
             dmc.CardSection(
@@ -141,7 +173,7 @@ def layout(project: ExamplesSolution) -> html.Div:
                     },
                 ),
                 style={
-                    "height": "600px",
+                    "height": "300px",
                     "width": "100%",
                     "overflowY": "scroll",
                 },
@@ -160,10 +192,7 @@ def layout(project: ExamplesSolution) -> html.Div:
                 style={"font-size": "40px", "font-weight": "bold"},
             ),
             dmc.Blockquote(
-                "This example demonstrates how to leverage the instance management API to control VISOR. \
-                Click the lauch button to start the instance.\
-                A transaction method will start VISOR which can be used across transaction methods of the solution. \
-                run VISOR operations with the TO DEFINE buttons. Close VISOR using the shutdown button.",
+                "This example demonstrates how to use the instance management API to start VISOR, display a cube, and stop it.",
                 icon=DashIconify(icon="material-symbols:info", width=30),
                 style={"font-size": "18px", "fontStyle": "italic"},
             ),
@@ -193,11 +222,12 @@ def layout(project: ExamplesSolution) -> html.Div:
                                     py="xs",
                                 ),
                                 html.Div(
-                                    id="visor-viewer",
+                                    viewer,
+                                    id="visor-viewer-container",
                                     style={
                                         "width": "100%",
                                         "height": "calc(100vh - 240px)",
-                                        "minHeight": "500px",
+                                        "minHeight": "0",
                                         "overflow": "hidden",
                                     },
                                 ),
@@ -206,7 +236,7 @@ def layout(project: ExamplesSolution) -> html.Div:
                             shadow="sm",
                             radius="md",
                         ),
-                        span=9,
+                        span=12,
                     ),
                 ],
                 grow=True,
@@ -218,91 +248,155 @@ def layout(project: ExamplesSolution) -> html.Div:
             DashClient.create_event_listener(
                 step, id="start-visor-listener", stream_name="start-visor"
             ),
-            DashClient.create_event_listener(
-                step, id="refresh-visor-listener", stream_name="refresh-visor"
-            ),
         ],
         style={"paddingLeft": "20px"},
     )
 
 
 @callback(
+    Output("notification-container", "sendNotifications", allow_duplicate=True),
     Output("start-visor-button", "disabled", allow_duplicate=True),
+    Output("start-visor-button", "loading", allow_duplicate=True),
     Input("start-visor-button", "n_clicks"),
     State("url", "pathname"),
     prevent_initial_call=True,
 )
-def start_or_refresh_visor(n_clicks: int | None, project: ExamplesSolution) -> tuple[str, bool]:
-    """Start Visor or refresh the connection to an existing instance."""
+def start_visor_with_notification(
+    n_clicks: int | None,
+    project: ExamplesSolution,
+) -> tuple[list[dict[str, Any]] | Any, bool, bool]:
+    """Start Visor and show an in-progress notification."""
     if not n_clicks:
-        return no_update, no_update
+        return no_update, no_update, no_update
 
-    step = project.steps.visor_step
-    if step.visor_started:
-        step.refresh_visor()
-        return "Refreshing Visor...", True
-
-    step.start_visor()
-    return "Starting Visor...", True
+    project.steps.visor_step.start_visor()
+    return (
+        [
+            dict(
+                title="Info",
+                id="start-visor-notification",
+                action="show",
+                message="Starting VISOR instance... Please wait.",
+                autoClose=False,
+                loading=True,
+                color="blue",
+                withCloseButton=False,
+            )
+        ],
+        True,
+        True,
+    )
 
 
 @callback(
-    Output("visor-viewer", "children"),
-    Output("start-visor-button", "disabled"),
-    Output("stop-visor-button", "disabled"),
+    Output("notification-container", "sendNotifications", allow_duplicate=True),
+    Output("start-visor-button", "disabled", allow_duplicate=True),
+    Output("start-visor-button", "loading", allow_duplicate=True),
+    Output("stop-visor-button", "disabled", allow_duplicate=True),
+    Output("show-visor-shape-button", "disabled", allow_duplicate=True),
+    Input("start-visor-listener", "message"),
+    prevent_initial_call=True,
+)
+def sync_start_controls_on_backend_event(
+    message: dict[str, Any] | None,
+) -> tuple[list[dict[str, Any]] | Any, bool, bool, bool, bool]:
+    """Update the Visor controls and notification after startup completes."""
+    if not message:
+        return no_update, no_update, no_update, no_update, no_update
+
+    method_state = MethodState.model_validate_json(message["data"])
+    notification = handle_method_event(
+        method_state,
+        "start-visor-notification",
+        "VISOR instance launched successfully!",
+        "VISOR initialization failed. Please check the logs.",
+    )
+    if method_state.status.value == "completed":
+        return notification, True, False, False, False
+    if method_state.status.value == "failed":
+        return notification, False, False, True, True
+    return notification, True, True, True, True
+
+
+@callback(
+    Output("notification-container", "sendNotifications", allow_duplicate=True),
+    Input("show-visor-shape-button", "n_clicks"),
+    State("url", "pathname"),
+    prevent_initial_call=True,
+)
+def show_visor_shape(n_clicks: int | None, project: ExamplesSolution) -> list[dict[str, Any]] | Any:
+    """Display the cube in the running VISOR instance."""
+    if not n_clicks:
+        return no_update
+
+    project.steps.visor_step.show_shape()
+    return [
+        dict(
+            title="Success",
+            id="show-visor-shape-notification",
+            action="show",
+            message="Cube displayed in VISOR.",
+            color="green",
+            autoClose=5000,
+            withCloseButton=True,
+        )
+    ]
+
+
+@callback(
+    Output("visor-viewer-container", "children"),
     Input("start-visor-listener", "message"),
     State("url", "pathname"),
     prevent_initial_call=True,
 )
 def display_visor_viewer(
-    start_message: dict[str, Any] | None,
-    refresh_message: dict[str, Any] | None,
+    message: dict[str, Any] | None,
     project: ExamplesSolution,
-) -> tuple[Any, str, bool, bool, bool]:
-    """Display the Visor viewer after its start or refresh transaction completes."""
-    message = start_message or refresh_message
+) -> Any:
+    """Display the Visor viewer after its start transaction completes."""
     if not message:
-        return no_update, no_update, no_update, no_update, no_update
+        return no_update
 
     method_state = MethodState.model_validate_json(message["data"])
     status = method_state.status.value.lower()
     if status == "completed":
         step = project.steps.visor_step
-        if step.visor_port is None:
-            raise RuntimeError("Visor completed without reporting a port.")
-        return (
-            [_create_visor_viewer(step.visor_port)],
-            f"Visor started: {step.visor_started}",
-            False,
-            not (step.visor_started and step.volume_vtp != NO_ENTITY),
-            False,
-        )
-    if status == "failed":
-        return no_update, "Visor failed to start. Check the transaction logs.", False, True, True
+        if not step.visor_host or step.visor_port is None:
+            raise RuntimeError("Visor completed without reporting its host and port.")
+        return [_create_visor_viewer(step.visor_host, step.visor_port)]
 
-    return no_update, f"Visor status: {method_state.status.value}", True, True, True
+    return no_update
 
 
 @callback(
-    Output("visor-viewer", "children", allow_duplicate=True),
-    Output("visor-started-status", "children", allow_duplicate=True),
-    Output("visor-updated-status", "children"),
+    Output("visor-viewer-container", "children", allow_duplicate=True),
     Output("start-visor-button", "disabled", allow_duplicate=True),
-    Output("update-visor-button", "disabled", allow_duplicate=True),
     Output("stop-visor-button", "disabled", allow_duplicate=True),
+    Output("show-visor-shape-button", "disabled", allow_duplicate=True),
     Input("stop-visor-button", "n_clicks"),
     State("url", "pathname"),
     prevent_initial_call=True,
 )
-def stop_visor(
-    n_clicks: int | None,
-    project: ExamplesSolution,
-) -> tuple[list[Any], str, str, bool, bool, bool]:
+def stop_visor(n_clicks: int | None, project: ExamplesSolution) -> tuple[list[Any], bool, bool, bool]:
     """Stop the Visor instance and clear the viewer."""
     if not n_clicks:
-        return no_update, no_update, no_update, no_update, no_update, no_update
+        return no_update, no_update, no_update, no_update
     project.steps.visor_step.close_visor()
-    return [], "Visor started: False", "Visor updated: False", False, True, True
+    return [], False, True, True
+
+
+@callback(
+    Output("visor-console-logs", "children", allow_duplicate=True),
+    Input("output-listener", "message"),
+    State("visor-console-logs", "children"),
+    prevent_initial_call=True,
+)
+def display_visor_output(message: dict[str, Any], current_logs: str) -> str:
+    """Display Visor transaction output."""
+    if message:
+        new_content = message["data"].strip('"').replace("\\n", "\n")
+        return (current_logs or "") + "\n" + new_content
+    return current_logs
 
 
 @callback(

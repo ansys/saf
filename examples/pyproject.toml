@@ -59,6 +59,7 @@ dash-extensions = ">=0.1.13"
 dash-iconify = "^0.1"
 dash-mantine-components = "^2.6"
 dash-uploader = "^0.6"
+ansys-visor-viewer = "^1.0.1"
 pandas = "^2.2.2"
 
 [tool.poetry.group.tests]

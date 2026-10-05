@@ -30,7 +30,7 @@ from pint import Quantity
 class GeometryStep(StepModel):
     """Geometry step for the advanced solution example."""
 
-    version: str = "252"
+    version: str = "261"
     body_faces: int = 0
     body_edges: int = 0
     active_design_name: str = ""

@@ -464,7 +464,7 @@ def test_authenticator_does_not_support_concurrent_client_contexts(
     hps_authenticator = authenticator_type(**init_args)
 
     hps_url = "https://localhost:8443/hps"
-    first_context = hps_authenticator.get_hps_client(hps_url)
+    first_context = hps_authenticator.get_hps_client(hps_url)  # pyright: ignore[reportUnknownVariableType]
     first_context.__enter__()
 
     # A second request for the expired URL replaces and closes the client still yielded above.
@@ -528,21 +528,21 @@ def test_authenticator_does_not_close_clients_of_other_urls(
 def test_cached_clients_close_releases_every_entry():
     cache = CachedClients()
     first, second = mock.Mock(), mock.Mock()
-    cache.set("https://localhost:8443/hps", first)
-    cache.set("https://remote:8443/hps", second)
+    cache.set("https://localhost:8443/hps", first)  # pyright: ignore[reportUnknownMemberType]
+    cache.set("https://remote:8443/hps", second)  # pyright: ignore[reportUnknownMemberType]
 
     cache.close()
 
     first._dt_client.stop.assert_called_once_with()
     second._dt_client.stop.assert_called_once_with()
-    assert cache.get("https://localhost:8443/hps", 60.0) is None
-    assert cache.get("https://remote:8443/hps", 60.0) is None
+    assert cache.get("https://localhost:8443/hps", 60.0) is None  # pyright: ignore[reportUnknownMemberType]
+    assert cache.get("https://remote:8443/hps", 60.0) is None  # pyright: ignore[reportUnknownMemberType]
 
 
 def test_cached_clients_close_is_idempotent():
     cache = CachedClients()
     client = mock.Mock()
-    cache.set("https://localhost:8443/hps", client)
+    cache.set("https://localhost:8443/hps", client)  # pyright: ignore[reportUnknownMemberType]
 
     cache.close()
     cache.close()

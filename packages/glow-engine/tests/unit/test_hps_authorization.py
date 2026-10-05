@@ -15,7 +15,6 @@
 # limitations under the License.
 
 import gc
-import logging
 import os
 import time
 from unittest import mock
@@ -413,8 +412,9 @@ def test_cached_hps_client_close_without_background_resources():
     mock_client.session.close.assert_called_once_with()
 
 
-def test_cached_hps_client_close_survives_failures(caplog: pytest.LogCaptureFixture):
+def test_cached_hps_client_close_survives_failures(mocker: MockerFixture):
     mock_client = mock.Mock()
+    mock_logger = mocker.patch("ansys.saf.glow._hps_auth.hps_authenticator.logger")
     mock_client._stop_event.set.side_effect = RuntimeError("signal failed")
     mock_client._token_refresh_thread.join.side_effect = RuntimeError("join failed")
     mock_client._dt_client.stop.side_effect = RuntimeError("data transfer stop failed")
@@ -422,18 +422,17 @@ def test_cached_hps_client_close_survives_failures(caplog: pytest.LogCaptureFixt
     cached_client = CachedClient(mock_client, time.time())
 
     # A failure in one cleanup step must not prevent later steps from running.
-    with caplog.at_level(logging.WARNING):
-        cached_client.close()
+    cached_client.close()
 
     mock_client._stop_event.set.assert_called_once_with()
     mock_client._token_refresh_thread.join.assert_called_once_with(timeout=1.0)
     mock_client._dt_client.stop.assert_called_once_with()
     mock_client.session.close.assert_called_once_with()
-    assert caplog.messages == [
-        "Failed to signal the HPS token refresh thread to stop.",
-        "Failed to join the HPS token refresh thread.",
-        "Failed to stop the HPS data transfer client.",
-        "Failed to close the HPS client session.",
+    assert mock_logger.warning.call_args_list == [
+        mock.call("Failed to signal the HPS token refresh thread to stop.", exc_info=True),
+        mock.call("Failed to join the HPS token refresh thread.", exc_info=True),
+        mock.call("Failed to stop the HPS data transfer client.", exc_info=True),
+        mock.call("Failed to close the HPS client session.", exc_info=True),
     ]
 
 

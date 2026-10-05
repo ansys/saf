@@ -63,21 +63,21 @@ class CachedClient:
         thread and a data transfer child process (~227 MB), both of which it only stops
         at interpreter exit, so they have to be released through private attributes.
         """
-        stop_event = getattr(self.client, "_stop_event", None)  # pyright: ignore[reportUnknownArgumentType]
+        stop_event = getattr(self.client, "_stop_event", None)  # pyright: ignore[reportUnknownArgumentType, reportUnknownMemberType]
         if stop_event is not None:
             stop_event.set()
-        refresh_thread = getattr(self.client, "_token_refresh_thread", None)  # pyright: ignore[reportUnknownArgumentType]
+        refresh_thread = getattr(self.client, "_token_refresh_thread", None)  # pyright: ignore[reportUnknownArgumentType, reportUnknownMemberType]
         if refresh_thread is not None:
             # Upstream waits 5s at exit; keep it short here because this runs inside a request.
             # The thread polls the stop event, so it exits on its own even if the join times out.
             refresh_thread.join(timeout=1.0)
-        dt_client = getattr(self.client, "_dt_client", None)  # pyright: ignore[reportUnknownArgumentType]
+        dt_client = getattr(self.client, "_dt_client", None)  # pyright: ignore[reportUnknownArgumentType, reportUnknownMemberType]
         if dt_client is not None:
             try:
                 dt_client.stop()
             except Exception:
                 logger.warning("Failed to stop the HPS data transfer client.", exc_info=True)
-        session = getattr(self.client, "session", None)  # pyright: ignore[reportUnknownArgumentType]
+        session = getattr(self.client, "session", None)  # pyright: ignore[reportUnknownArgumentType, reportUnknownMemberType]
         if session is not None:
             try:
                 session.close()
@@ -113,14 +113,14 @@ class CachedClients:
         if cached is None or cached.is_expired(cache_ttl_seconds):
             return None
         logger.debug(f"Using cached HPS client for {hps_server_url}")
-        return cached.client  # pyright: ignore[reportUnknownMemberType]
+        return cached.client  # pyright: ignore[reportUnknownMemberType, reportUnknownVariableType]
 
-    def set(self, hps_server_url: str, client: Client) -> None:  # noqa: F821  # pyright: ignore[reportUndefinedVariable]
+    def set(self, hps_server_url: str, client: Client) -> None:  # noqa: F821  # pyright: ignore[reportUnknownParameterType, reportUndefinedVariable]
         """Cache the client, releasing the entry it replaces."""
         if replaced := self._clients.get(hps_server_url):
             logger.debug(f"Releasing replaced HPS client for {hps_server_url}")
             replaced.close()
-        self._clients[hps_server_url] = CachedClient(client, time.time())
+        self._clients[hps_server_url] = CachedClient(client, time.time())  # pyright: ignore[reportUnknownArgumentType]
 
 
 class DesktopHpsAuthenticator(IHpsAuthenticator):
@@ -147,7 +147,7 @@ class DesktopHpsAuthenticator(IHpsAuthenticator):
 
         # Check if we have a valid cached client
         cache_ttl = float(os.environ.get(TEST_HPS_CLIENT_CACHE_TTL_SECONDS, DEFAULT_HPS_CLIENT_CACHE_TTL_SECONDS))
-        if cached_client := self._client_cache.get(hps_server_url, cache_ttl):
+        if cached_client := self._client_cache.get(hps_server_url, cache_ttl):  # pyright: ignore[reportUnknownVariableType, reportUnknownMemberType]
             yield cached_client
             return
 
@@ -177,7 +177,7 @@ class DesktopHpsAuthenticator(IHpsAuthenticator):
             client = Client(url=hps_server_url, client_id=client_id or self._client_id, refresh_token=refresh_token)
 
         # Cache the new client
-        self._client_cache.set(hps_server_url, client)
+        self._client_cache.set(hps_server_url, client)  # pyright: ignore[reportUnknownMemberType]
         yield client
 
 
@@ -216,7 +216,7 @@ class OnPremHpsAuthenticator(IHpsAuthenticator):
 
         # Check if we have a valid cached client
         cache_ttl = float(os.environ.get(TEST_HPS_CLIENT_CACHE_TTL_SECONDS, DEFAULT_HPS_CLIENT_CACHE_TTL_SECONDS))
-        if cached_client := self._client_cache.get(hps_server_url, cache_ttl):
+        if cached_client := self._client_cache.get(hps_server_url, cache_ttl):  # pyright: ignore[reportUnknownVariableType, reportUnknownMemberType]
             yield cached_client
             return
 
@@ -279,7 +279,7 @@ class OnPremHpsAuthenticator(IHpsAuthenticator):
             client = Client(url=hps_server_url, username=self._hps_user, password=self._hps_pwd)
 
         # Cache the new client
-        self._client_cache.set(hps_server_url, client)
+        self._client_cache.set(hps_server_url, client)  # pyright: ignore[reportUnknownMemberType]
         yield client
 
     @staticmethod

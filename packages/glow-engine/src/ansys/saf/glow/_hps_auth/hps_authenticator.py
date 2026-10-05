@@ -16,7 +16,7 @@
 
 from __future__ import annotations
 
-from contextlib import contextmanager
+from contextlib import contextmanager, suppress
 import json
 import logging
 import os
@@ -90,6 +90,18 @@ class CachedClients:
 
     def __init__(self) -> None:
         self._clients: dict[str, CachedClient] = {}
+
+    def close(self) -> None:
+        """Release every cached client now, instead of waiting for collection."""
+        for cached in self._clients.values():
+            cached.close()
+        self._clients.clear()
+
+    def __del__(self) -> None:
+        # Authenticators are per request in the main API process, so most caches are dropped without their entry ever
+        # being replaced; this is the only point where those clients get released.
+        with suppress(Exception):
+            self.close()
 
     def get(self, hps_server_url: str, cache_ttl_seconds: float) -> Client | None:  # noqa: F821  # pyright: ignore[reportUnknownParameterType, reportUndefinedVariable]
         """Return the cached client for the URL, or None when absent or expired."""

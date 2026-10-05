@@ -14,6 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import gc
 import os
 import time
 from unittest import mock
@@ -34,6 +35,7 @@ from ansys.saf.glow._config.settings import Settings
 from ansys.saf.glow._hps_auth.hps_authentication_type import HpsAuthenticationType
 from ansys.saf.glow._hps_auth.hps_authenticator import (
     CachedClient,
+    CachedClients,
     DesktopHpsAuthenticator,
     NullHpsAuthenticator,
     OnPremHpsAuthenticator,
@@ -494,6 +496,57 @@ def test_authenticator_does_not_close_clients_of_other_urls(
 
     # THEN: neither entry replaces the other, so neither is released
     spy_close.assert_not_called()
+
+
+def test_cached_clients_close_releases_every_entry():
+    cache = CachedClients()
+    first, second = mock.Mock(), mock.Mock()
+    cache.set("https://localhost:8443/hps", first)
+    cache.set("https://remote:8443/hps", second)
+
+    cache.close()
+
+    first._dt_client.stop.assert_called_once_with()
+    second._dt_client.stop.assert_called_once_with()
+    assert cache.get("https://localhost:8443/hps", 60.0) is None
+    assert cache.get("https://remote:8443/hps", 60.0) is None
+
+
+def test_cached_clients_close_is_idempotent():
+    cache = CachedClients()
+    client = mock.Mock()
+    cache.set("https://localhost:8443/hps", client)
+
+    cache.close()
+    cache.close()
+
+    client._dt_client.stop.assert_called_once_with()
+
+
+@pytest.mark.parametrize("authenticator_type", [DesktopHpsAuthenticator, OnPremHpsAuthenticator])
+def test_authenticator_releases_cached_clients_when_collected(
+    authenticator_type: type[IHpsAuthenticator],
+    mocker: MockerFixture,
+):
+    mocker.patch("ansys.hps.client.client.Client.__init__", return_value=None)
+    spy_close = mocker.spy(CachedClient, "close")
+
+    init_args = {"glow_hps_username": "user", "glow_hps_password": "pass"}
+    if authenticator_type is DesktopHpsAuthenticator:
+        init_args["glow_api_url"] = "127.0.0.1:5432"
+        init_args["client_id"] = "rep-jms-web"
+    hps_authenticator = authenticator_type(**init_args)
+
+    with hps_authenticator.get_hps_client("https://localhost:8443/hps"):
+        pass
+    spy_close.assert_not_called()
+
+    # WHEN: the authenticator goes out of scope, as it does at the end of a request
+    del hps_authenticator
+    gc.collect()
+
+    # THEN: the client it cached is released rather than left to the process lifetime
+    assert spy_close.call_count == 1
 
 
 @pytest.mark.parametrize("authenticator_type", [DesktopHpsAuthenticator, OnPremHpsAuthenticator])

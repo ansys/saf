@@ -112,11 +112,7 @@ class CachedClients:
         return cached.client  # pyright: ignore[reportUnknownMemberType]
 
     def set(self, hps_server_url: str, client: Client) -> None:  # noqa: F821  # pyright: ignore[reportUndefinedVariable]
-        """Cache the client, releasing the entry it replaces.
-
-        Only the replaced entry is closed; a client still held by an open
-        get_hps_client context is never touched.
-        """
+        """Cache the client, releasing the entry it replaces."""
         if replaced := self._clients.get(hps_server_url):
             logger.debug(f"Releasing replaced HPS client for {hps_server_url}")
             replaced.close()

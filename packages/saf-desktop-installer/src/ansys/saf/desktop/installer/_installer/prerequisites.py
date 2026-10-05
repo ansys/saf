@@ -55,7 +55,7 @@ def is_webview2_installed() -> tuple[bool, str]:
     )
     for registry, subpath in registry_paths:  # type: ignore
         version = _get_registry_str_value(registry, subpath, "pv")  # type: ignore
-        if version.strip() not in ("", "0.0.0.0"):
+        if version.strip() not in ("", "0.0.0.0"):  # noqa: S104
             return True, version
     return False, ""
 
@@ -74,7 +74,7 @@ def is_long_paths_enabled() -> bool:
     # https://learn.microsoft.com/en-us/windows/win32/fileio/maximum-file-path-limitation
     try:
         # creating a single dir with a very long name was unreliable, so we create a nested structure
-        tmp_dir = Path(tempfile.gettempdir()) / f"saf_desktop_installer_long_paths_check_{random.randint(0, 100)}"
+        tmp_dir = Path(tempfile.gettempdir()) / f"saf_desktop_installer_long_paths_check_{random.randint(0, 100)}"  # noqa: S311
         long_tmp_dir = tmp_dir
         for _ in range(7):  # 38 chars * 7 = 266 chars
             long_tmp_dir = long_tmp_dir / "my_dummy_dir_name_for_long_paths_check"

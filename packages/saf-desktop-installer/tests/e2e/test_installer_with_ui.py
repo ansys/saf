@@ -18,6 +18,9 @@ import logging
 from pathlib import Path
 import platform
 
+import pytest
+from selenium.webdriver.chrome.webdriver import WebDriver
+
 from ansys.saf.testing.selenium import (
     wait_for_element,
     wait_for_element_and_click,
@@ -25,9 +28,6 @@ from ansys.saf.testing.selenium import (
     wait_for_expected_property,
     wait_for_partial_text,
 )
-import pytest
-from selenium.webdriver.chrome.webdriver import WebDriver
-
 from tests.conftest import check_installer_gui_is_using_local_bootstrap_css
 from tests.e2e.conftest import (
     InstallSolutionGUI,
@@ -158,6 +158,11 @@ class TestInstallerWithUI:
             required_dependencies=["tqdm", "pooch", "custom-package-for-test-2", "scooby"],
         )
 
+    @pytest.mark.xfail(
+        platform.system() == "Windows",
+        reason="Installer GUI does not complete after changing a non-writable directory on Windows.",
+        strict=True,
+    )
     def test_installer_gui_installation_directory_without_write_permissions(
         self,
         tmp_path: Path,

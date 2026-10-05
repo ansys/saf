@@ -87,7 +87,7 @@ You never start a SAF solution from a blank folder. The ``saf new`` command inst
     #. Answer the prompts as follows. Press :kbd:`Enter` to accept the default for anything not
        listed here.
 
-       .. list-table::
+       .. list-table::  Prompts and their meanings
           :header-rows: 1
           :stub-columns: 1
           :widths: 25 25 50
@@ -149,22 +149,22 @@ Take a minute to look around. Almost everything you will touch in this tutorial 
 
 Three ideas are baked into this layout, and they hold for every SAF solution:
 
-.. list-table::
+.. list-table::  Folder roles in a SAF solution
    :header-rows: 1
    :stub-columns: 1
-   :widths: 15 85
+   :widths: 20 80
 
    * - Folder
      - Role
    * - ``solution/``
-     - The **backend**. It owns the workflow definition and the step models — the state of the
-       application and the methods that compute it.
+     - The backend. This layer defines the workflow and owns the step models, which hold the
+       application state and the methods that compute it.
    * - ``ui/``
-     - The **frontend**. One page per step, plus a router and shared assets. It never computes
-       anything; it only reads and writes backend state.
+     - The frontend. This layer has one page per step, plus a router and shared assets. It never
+       computes anything; it only reads and writes backend state.
    * - ``tests/``
-     - The test suite. SAF solutions are ordinary Python packages, so ``pytest`` works exactly
-       as you expect.
+     - The test suite. SAF solutions are ordinary Python packages, so ``pytest`` works as
+       expected.
 
 .. tip::
 
@@ -187,7 +187,7 @@ packaging side: building the wheel that is shipped in the final installer. The `
 
 That contract is split across two files:
 
-.. list-table::
+.. list-table::  Poetry files and their roles
    :header-rows: 1
    :stub-columns: 1
    :widths: 20 80
@@ -195,15 +195,14 @@ That contract is split across two files:
    * - File
      - Role
    * - ``pyproject.toml``
-     - The **manifest**, and the file you edit. It declares the solution metadata (name, version,
-       display name), the packaging configuration, and the dependencies with *version
-       constraints* such as ``numpy = "^2.0"``. It says what the solution needs, not which exact
-       build it gets.
+     - The **manifest** that you edit. It declares the solution metadata (name, version, and
+       display name), packaging configuration, and dependencies with *version constraints*, such
+       as ``numpy = "^2.0"``. It specifies what the solution needs, not the exact build it gets.
    * - ``poetry.lock``
-     - The **resolution**, and a generated file you never edit by hand. It pins the exact version
-       and hash of every direct and transitive dependency that satisfies the constraints in
-       ``pyproject.toml``. It guarantees that your machine, your colleague's machine, the CI
-       pipeline, and the final installer all get a byte-identical environment.
+     - The generated **resolution** file. Do not edit it manually. It pins the exact version and
+       hash of every direct and transitive dependency that satisfies the constraints in
+      ``pyproject.toml``. It ensures that your machine, your colleague's machine, the CI
+      pipeline, and the final installer select dependencies from the same locked resolution.
 
 The two files must stay consistent. The ``saf install`` command installs from ``poetry.lock``, and Poetry refuses to do so if the lock file no longer matches the manifest. This is why every dependency change goes through ``poetry lock``, as shown in
 :ref:`Declare the dependencies <game_of_life_declare_dependencies>`.

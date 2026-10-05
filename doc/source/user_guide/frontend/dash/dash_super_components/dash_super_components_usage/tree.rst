@@ -231,7 +231,7 @@ Properties
 Tree structure definition
 -------------------------
 
-.. list-table::
+.. list-table:: Comparison of tree structure definition properties
   :stub-columns: 1
   :header-rows: 1
 
@@ -312,7 +312,7 @@ Constructor parameters
 ----------------------
 
 
-.. list-table::
+.. list-table:: Comparison of constructor parameters
   :stub-columns: 1
   :header-rows: 1
 

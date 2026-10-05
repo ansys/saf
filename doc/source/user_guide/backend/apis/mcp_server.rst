@@ -11,13 +11,13 @@ The MCP URL will be ``http://$SOLUTION_API_URL/$GLOW_MCP_PATH`` (default path: `
 It's independent of how you launch the API Server, either through SAF Desktop Orchestrator, with a Docker compose file, using the GLOW CLI or manually launching the server.
 
 The MCP server provides resources listing the available tools and expected solution workflow, and tools for managing projects,
-setting and retrieving step fields, uploading and downloading single files, and running transaction methods,
-both sync and long running.
+setting and retrieving step fields, uploading and downloading entity handle files (including entity handles nested in lists,
+dictionaries, or custom objects), and running transaction methods, both sync and long running.
 
 .. important::
   This is an **experimental feature** and it's disabled by default. The following limitations apply:
 
-  - Not supporting uploading/downloading directories, nor files within nested data structures (lists, dictionaries, custom objects, etc).
+  - Not supporting uploading/downloading directories.
   - Not recommended to upload/download large files. At the moment, they are injected into the LLM context/output.
   - Not supporting websockets
   - Not supporting authentication. The MCP will be automatically disabled if :envvar:`GLOW_AUTH_DISABLED` is set to ``false``.
@@ -62,9 +62,10 @@ Configuration
 
 The MCP server is configured through the following environment variables:
 
-.. list-table::
+.. list-table::  MCP server environment variables
+   :stub-columns: 1
    :header-rows: 1
-   :widths: 35 15 50
+   :widths: 20 15 65
 
    * - Environment variable
      - Default
@@ -152,11 +153,13 @@ Example
 Available tools
 ===============
 
-**Workflow guidance**
+Workflow guidance
+------------------
 
-.. list-table::
+.. list-table::  Workflow guidance tools
+   :stub-columns: 1
    :header-rows: 1
-   :widths: 30 70
+   :widths: 20 80
 
    * - Tool
      - Description
@@ -170,11 +173,13 @@ Available tools
        long-running transactions) that apply to every solution, regardless of its specific steps or fields.
 
 
-**Project management**
+Project management
+------------------
 
-.. list-table::
+.. list-table::  Project management tools
+   :stub-columns: 1
    :header-rows: 1
-   :widths: 30 70
+   :widths: 20 80
 
    * - Tool
      - Description
@@ -201,11 +206,13 @@ Available tools
        Because the archive is a binary zip, it is returned base64-encoded and must be decoded before
        being written to a file.
 
-**Data management**
+Data management
+------------------
 
-.. list-table::
+.. list-table::  Data management tools
+   :stub-columns: 1
    :header-rows: 1
-   :widths: 30 70
+   :widths: 20 80
 
    * - Tool
      - Description
@@ -216,17 +223,113 @@ Available tools
    * - ``get_fields``
      - Gets the current values of one or more step fields from an existing project.
 
-   * - ``upload_file``
-     - Uploads binary content to an ``EntityHandle`` step field on an existing project.
+   * - ``upload_data``
+     - Uploads binary content to an ``EntityHandle`` step field on an existing project, including entity handles
+       nested within a list, dictionary, or custom object field.
 
-   * - ``download_file``
-     - Downloads binary content from an ``EntityHandle`` step field on an existing project.
+   * - ``download_data``
+     - Downloads binary content from an ``EntityHandle`` step field on an existing project, including entity
+       handles nested within a list, dictionary, or custom object field.
 
-**Transaction execution**
+.. _mcp-field-path:
 
-.. list-table::
+Addressing nested entity handles
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+``upload_data`` and ``download_data`` locate the target ``EntityHandle`` through their ``field_path``
+argument, a slash-separated list of segments:
+
+- The **first segment** is always the step field name.
+- Each **following segment** navigates one level into the value stored in that field:
+  a list index (``0``, ``1``, ...), a dictionary key, or an attribute name of a custom
+  (Pydantic model) object.
+
+There is no depth limit, so arbitrary combinations of lists, dictionaries, and custom objects
+can be traversed:
+
+.. list-table::  ``field_path`` examples
+   :stub-columns: 1
    :header-rows: 1
-   :widths: 30 70
+   :widths: 35 65
+
+   * - ``field_path``
+     - Field value it addresses
+
+   * - ``my_file``
+     - The step field ``my_file`` is itself an ``EntityHandle``.
+
+   * - ``my_files/0``
+     - First item of the list stored in the ``my_files`` field.
+
+   * - ``my_files_map/geometry``
+     - Value under the ``geometry`` key of the dictionary stored in the ``my_files_map`` field.
+
+   * - ``my_object/file``
+     - The ``file`` attribute of the custom object stored in the ``my_object`` field.
+
+   * - ``my_object/files/0``
+     - First item of the ``files`` list of the custom object stored in the ``my_object`` field.
+
+   * - ``my_nested_map/inputs/mesh``
+     - Value under ``inputs`` → ``mesh`` of the nested dictionary stored in the ``my_nested_map`` field.
+
+``download_data`` returns the bytes referenced by the addressed entity handle. ``upload_data`` stores the
+given content as a new entity in the project storage, replaces the addressed entity handle with the new one,
+and writes the whole step field back, so the surrounding list, dictionary, or custom object is preserved.
+
+.. note::
+  Both tools only read and replace entity handles that already exist at the given path. They do not create
+  missing list items, dictionary keys, or object attributes.
+
+Expected errors
+~~~~~~~~~~~~~~~
+
+Both tools fail with an error (surfaced to the MCP client as a tool error) in the following cases:
+
+.. list-table::  ``upload_data`` and ``download_data`` errors
+   :stub-columns: 1
+   :header-rows: 1
+   :widths: 40 60
+
+   * - Situation
+     - Error message
+
+   * - The first segment is not a field of the step.
+     - ``'<StepClass>' has no field(s) '<name>'.``
+
+   * - A list index is not an integer.
+     - ``'<segment>' is not a valid list index.``
+
+   * - A list index is out of range.
+     - ``List index '<segment>' does not exist.``
+
+   * - A dictionary key is missing.
+     - ``Dictionary key '<segment>' does not exist.``
+
+   * - A custom object has no such attribute.
+     - ``Field '<segment>' does not exist on '<ObjectClass>'.``
+
+   * - A segment tries to navigate into a value that is not a list, dictionary, or custom object
+       (for example, a string or a number).
+     - ``Cannot navigate into a value of type '<type>' using segment '<segment>'.``
+
+   * - The value addressed by the full path is not an ``EntityHandle``.
+     - ``Field path '<field_path>' does not refer to an entity handle field.``
+
+When ``upload_data`` fails, no entity handle is replaced and the step field is left unchanged.
+
+.. important::
+  Directories are not supported: an entity handle referencing a directory cannot be uploaded or downloaded
+  through these tools. Large files should also be avoided, since their content goes through the agent's
+  context.
+
+Transaction execution
+---------------------
+
+.. list-table::  Transaction execution tools
+   :stub-columns: 1
+   :header-rows: 1
+   :widths: 20 80
 
    * - Tool
      - Description

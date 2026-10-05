@@ -167,7 +167,7 @@ jobs:
       commit-is-already-tagged: ${{ steps.verify-tag.outputs.commit-is-already-tagged
         }}
       library-name: ${{ steps.library-name.outputs.library-name }}
-      use-moon: ${{ ! contains('dash-super-components,glow-engine,saf-cli,saf-desktop-installer,saf-product-manager',
+      use-moon: ${{ ! contains('dash-super-components,glow-engine,saf-cli,saf-product-manager',
         steps.library-name.outputs.library-name) }}
 
   check-package-changes:
@@ -227,7 +227,7 @@ jobs:
     permissions:
       contents: read # Read the dependencies and source code of the library
     env:
-      USE_MOON: ${{ needs.pre-certification.outputs.use-moon }}
+      USE_MOON: ${{ needs.pre-certification.outputs.use-moon == 'true' }}
       PACKAGE: ${{ needs.pre-certification.outputs.library-name }}
       UV_PYTHON: ${{ vars.PYTHON_VERSION }}
       MOON_PYTHON_VERSION: ${{ vars.PYTHON_VERSION }}

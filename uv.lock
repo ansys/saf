@@ -773,8 +773,8 @@ selenium = [
 
 [package.metadata]
 requires-dist = [
-    { name = "ansys-hps-client", marker = "extra == 'all'", specifier = ">=0.12,<1.0" },
-    { name = "ansys-hps-client", marker = "extra == 'hps'", specifier = ">=0.12,<1.0" },
+    { name = "ansys-hps-client", marker = "extra == 'all'", specifier = ">=0.13,<1.0" },
+    { name = "ansys-hps-client", marker = "extra == 'hps'", specifier = ">=0.13,<1.0" },
     { name = "ansys-saf-product-configuration", marker = "extra == 'all'", editable = "packages/saf-product-configuration" },
     { name = "ansys-saf-product-configuration", marker = "extra == 'hps'", editable = "packages/saf-product-configuration" },
     { name = "ansys-saf-product-configuration", marker = "extra == 'pim'", editable = "packages/saf-product-configuration" },

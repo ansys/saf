@@ -329,16 +329,21 @@ jobs:
           persist-credentials: false
           fetch-depth: 0 # For moon to have full git history
 
+      - name: Setup Moon Toolchain
+        if: ${{ env.USE_MOON == 'true' && runner.environment != 'self-hosted' }}
+        uses: moonrepo/setup-toolchain@261c62cb5b0f580c7be7c8cd0f023a2e96756095 # v0.6.4
+
       - name: Prepare runner for tests
         if: matrix.prepare-runner == 'true' || matrix.upgrade-docker == 'true' ||
           matrix.install-hps == 'true'
-        uses: ansys/saf-devops/prepare-runner-for-tests@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
+        uses: ansys/saf-devops/prepare-runner-for-tests@4b1f5e75f1eef200a8f54be589ba0976a520301d # v1.2.1
         with:
           python-version: ${{ inputs.python-version }}
           upgrade-docker: ${{ matrix.upgrade-docker == 'true' }}
           docker-version: ${{ matrix.docker-version }}
           dot-net-version: '8.0.8'
-          hps-version: ${{ matrix.install-hps == 'true' && 'v1.2.217' || '' }}
+          hps-version: ${{ (matrix.install-hps == 'true' && env.USE_MOON == 'false')
+            && 'v1.2.217' || '' }}
           working-directory: ${{ needs.configure-tests.outputs.working-directory }}
           images-to-pull: >
             [
@@ -372,6 +377,13 @@ jobs:
                 }
             ]
 
+      - name: Install HPS (moon)
+        if: ${{ env.USE_MOON == 'true' && matrix.install-hps == 'true' }}
+        uses: $/.github/actions/install-hps
+        with:
+          hps-version: 'v1.2.217'
+          package: ${{ inputs.library-name }}
+
       - name: Install dependencies
         if: ${{ env.USE_MOON == 'false' }}
         id: prepare-env
@@ -383,10 +395,6 @@ jobs:
             || '--with tests --all-extras' }}
           python-project-path: ${{ needs.configure-tests.outputs.working-directory
             }}
-
-      - name: Setup Moon Toolchain
-        if: ${{ env.USE_MOON == 'true' }}
-        uses: moonrepo/setup-toolchain@261c62cb5b0f580c7be7c8cd0f023a2e96756095 # v0.6.4
 
       - name: Install pim-light-server
         if: ${{ matrix.install-pim-light-server == 'true' && env.USE_MOON == 'false'
@@ -412,7 +420,7 @@ jobs:
             secrets.PYANSYS_PYPI_PRIVATE_URL }}
 
       - name: Install visor
-        if: ${{ matrix.install-visor == 'true' }}
+        if: ${{ matrix.install-visor == 'true' && env.USE_MOON == 'false' }}
         shell: bash
         run: |
           ${PYTHON_EXE} -m pip install ansys-visor-viewer==${VISOR_VERSION}
@@ -423,6 +431,14 @@ jobs:
           PIP_EXTRA_INDEX_URL: https://PAT:${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}@${{
             secrets.PYANSYS_PYPI_PRIVATE_URL }}
           PIP_QUIET: 1
+
+      - name: Install visor with Moon
+        if: ${{ matrix.install-visor == 'true' && env.USE_MOON == 'true' }}
+        shell: bash
+        run: moon run $PACKAGE:install-visor
+        env:
+          UV_EXTRA_INDEX_URL: https://PAT:${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}@${{
+            secrets.PYANSYS_PYPI_PRIVATE_URL }}
 
       - name: Install desktop-portal
         if: ${{ matrix.install-portal == 'true' && env.USE_MOON == 'false' }}
@@ -513,11 +529,6 @@ jobs:
           which gtk-launch
           which xvfb-run
 
-      - name: Configure PYTEST_DEBUG_TEMPROOT
-        if: runner.os != 'Linux' && env.USE_MOON == 'false'
-        shell: bash
-        run: echo "PYTEST_DEBUG_TEMPROOT=C:/" >> $GITHUB_ENV
-
       - name: Build pytest additional arguments
         id: pytest-args
         shell: bash
@@ -532,6 +543,8 @@ jobs:
 
       - name: Run tests
         id: run-tests
+        env:
+          PYTEST_DEBUG_TEMPROOT: ${{ runner.os == 'Windows' && 'C:/' || '/tmp' }}
         if: ${{ env.USE_MOON == 'false' }}
         uses: ansys/saf-devops/run-tests@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
         with:
@@ -552,9 +565,12 @@ jobs:
         id: run-tests-moon
         shell: bash
         env:
+          PYTEST_DEBUG_TEMPROOT: ${{ runner.os == 'Windows' && 'C:/' || '/tmp' }}
           PYTEST_ARGS: ${{ steps.pytest-args.outputs.pytest-args }}
           REPORTS_DIR: "${{ github.workspace }}/${{ matrix.test-report-artifact-name-suffix
             }}_${{ inputs.python-version }}"
+          UV_NO_EDITABLE: ${{ (inputs.library-name == 'saf-product-manager' && contains(matrix.pytest-additional-arguments,
+            'tests/e2e/') && matrix.upgrade-docker == 'true') && '1' || '0' }}
         run: |
           mkdir -p "$REPORTS_DIR"
           moon run $PACKAGE:test -- $PYTEST_ARGS --html="${REPORTS_DIR}/report.html" --md="${REPORTS_DIR}/report.md"

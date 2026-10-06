@@ -282,6 +282,13 @@ jobs:
       - name: Setup Moon Toolchain
         uses: moonrepo/setup-toolchain@261c62cb5b0f580c7be7c8cd0f023a2e96756095 # v0.6.4
 
+      - name: Install visor
+        shell: bash
+        run: moon run saf-product-manager:install-visor
+        env:
+          UV_EXTRA_INDEX_URL: https://PAT:${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}@${{
+            secrets.PYANSYS_PYPI_PRIVATE_URL }}
+
       - name: Run pre-commit (Moon)
         shell: bash
         run: moon run :pre-commit

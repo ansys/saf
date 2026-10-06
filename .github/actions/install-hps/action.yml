@@ -1,0 +1,66 @@
+# Copyright (C) 2026 ANSYS, Inc. and/or its affiliates.
+# SPDX-License-Identifier: Apache-2.0
+#
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+name: Install HPS
+
+description: |
+  Install the HPS
+
+inputs:
+  hps-version:
+    description: "HPS version to install"
+    required: true
+  package:
+    description: "Package"
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Clean-up hps log folder content
+      shell: bash
+      run: moon run root:clean-hps-log
+
+    - name: Setup ORAS
+      uses: oras-project/setup-oras@22ce207df3b08e061f537244349aac6ae1d214f6 # v1.2.4
+
+    - name: Log in to GHCR
+      uses: docker/login-action@5e57cd118135c172c3672efd75eb46360885c0ef # v3.6.0
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ github.token }}
+
+    - name: Get hps_deployment directory
+      working-directory: packages/${{ inputs.package }}
+      shell: bash
+      run: oras pull ghcr.io/${GITHUB_REPOSITORY}/rep-deployments:${HPS_VERSION}
+      env:
+        HPS_VERSION: ${{ inputs.hps-version }}
+
+    - name: Install hps
+      working-directory: packages/${{ inputs.package }}
+      shell: bash
+      env:
+        PACKAGE: ${{ inputs.package }}
+      run: moon run $PACKAGE:hps-installer -- install-hps
+
+    - name: Login
+      working-directory: packages/${{ inputs.package }}
+      shell: bash
+      env:
+        PACKAGE: ${{ inputs.package }}
+      run: moon run $PACKAGE:hps-installer -- login

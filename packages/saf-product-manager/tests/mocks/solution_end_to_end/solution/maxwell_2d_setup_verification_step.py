@@ -26,7 +26,6 @@ from ansys.saf.glow.solution import (
     long_running,
     transaction,
 )
-
 from ansys.saf.product_manager.aedt import Maxwell2DManager
 from tests.mocks.solution_end_to_end.flagship_const import LATEST_VERSION
 

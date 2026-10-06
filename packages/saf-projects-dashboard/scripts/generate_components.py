@@ -164,11 +164,11 @@ def main():
 
         # Stamp all generated .py files as auto-generated so linters skip them.
         output_dir = Path(args.project_shortname).resolve()
-        generated_python_files = []
-        for fpath in output_dir.iterdir():
-            if fpath.suffix != ".py":
-                continue
-            generated_python_files.append(fpath)
+        generated_python_files = [
+            output_dir / f"{component_path.split('/')[-1].split('.')[0]}.py" for component_path in metadata
+        ]
+        generated_python_files.append(output_dir / "_imports_.py")
+        for fpath in generated_python_files:
             with fpath.open(encoding="utf-8") as fh:
                 content = fh.read()
             if not content.startswith(RUFF_HEADER):
@@ -180,7 +180,7 @@ def main():
 
             output_dir = Path(args.project_shortname).resolve()
             for fpath in output_dir.iterdir():
-                if fpath.suffix == ".py":
+                if fpath in generated_python_files:
                     with fpath.open(encoding="utf-8") as fh:
                         content = fh.read()
                     patched = re.sub(
@@ -212,6 +212,9 @@ def main():
                         )
 
         _add_license_headers(generated_python_files)
+
+        for fpath in [*generated_python_files, output_dir / "proptypes.js", output_dir / "metadata.json"]:
+            fpath.write_text(fpath.read_text(encoding="utf-8"), encoding="utf-8", newline="\n")
 
         print("Component generation complete!")
 

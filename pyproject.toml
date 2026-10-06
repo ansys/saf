@@ -230,10 +230,11 @@ lint.isort.known-first-party = [
 pythonVersion = "3.12"
 venv = ".venv"
 venvPath = "."
-strict = [ "src", "tests" ]
+strict = [ "src", "tests", "benchmarks" ]
 include = [
   "src",
   "tests",
+  "benchmarks",
 ]
 exclude = [
   "**/*_pb2.py",

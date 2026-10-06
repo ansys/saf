@@ -6,18 +6,18 @@ requires = [ "uv-build>=0.12.18,<0.13" ]
 name = "ansys-saf-glow-engine"
 version = "2.6.dev0"
 description = "Solution Application Framework / Guided Low-Code Workflow (SAF GLOW) engine"
+readme = "README.rst"
+keywords = [
+  "ansys solutions",
+  "glow",
+  "python",
+  "saf",
+  "solution",
+  "solution application framework",
+]
 license-files = [ "LICENSE" ]
 maintainers = [ { name = "ANSYS, Inc.", email = "pyansys-core@synopsys.com" } ]
 authors = [ { name = "ANSYS, Inc.", email = "pyansys-core@synopsys.com" } ]
-readme = "README.rst"
-keywords = [
-  "solution application framework",
-  "ansys solutions",
-  "python",
-  "glow",
-  "saf",
-  "solution",
-]
 requires-python = ">=3.11,<4"
 classifiers = [
   "Development Status :: 4 - Beta",
@@ -30,21 +30,18 @@ classifiers = [
   "Programming Language :: Python :: 3.14",
   "Topic :: Scientific/Engineering",
 ]
-
-scripts.glow_engine = "ansys.saf.glow.cli.__main__:entry_point"
-
 dependencies = [
   "aiofiles>=23.1.0,<24",
-  "aiosqlite>=0.19.0, <1.0",
-  "ariadne>=1.0.1,<2.0",                                                                    # minimum version compatible with starlette >= 1.x
+  "aiosqlite>=0.19.0,<1.0",
   "ansys-bdm-api>=0.5.0,<1.0",
   "ansys-bdm-shared-volume>=0.4.0,<1.0",
   "ansys-iam-oidc>=0.9.0,<1.0",
   "ansys-saf-product-configuration>=0.22.0,<1.0",
-  "asyncpg>=0.29.0, <1.0",
+  "ariadne>=1.0.1,<2.0",                                # minimum version compatible with starlette >= 1.x
+  "asyncpg>=0.29.0,<1.0",
   "click>=8.1.7,<9.0",
-   "debugpy>=1.6.6,<2.0,!=1.6.8",
-  "fastapi>=0.133, <1.0",                                                                  # minimum version compatible with starlette >= 1.x
+  "debugpy>=1.6.6,<2.0,!=1.6.8",
+  "fastapi>=0.133,<1.0",                                # minimum version compatible with starlette >= 1.x
   "googleapis-common-protos>=1.52.0,<2.0",
   "gql>=3.5.0,<4.0",
   "grpcio>=1.71.2,<2.0",
@@ -53,77 +50,74 @@ dependencies = [
   "joserfc>=1.2.2,<2.0",
   "networkx>=3.0,<4.0",
   "opentelemetry-exporter-otlp-proto-http>=1.18,<2.0",
-  "opentelemetry-instrumentation-fastapi>=0.64b0,<1.0",  # Minimum version compatible with fastapi 0.139
+  "opentelemetry-instrumentation-fastapi>=0.64b0,<1.0", # Minimum version compatible with fastapi 0.139
   "opentelemetry-instrumentation-flask>=0,<1.0",
-  "opentelemetry-instrumentation-httpx>=0.65b0,<1.0",  # Minimum version compatible with httpx2
+  "opentelemetry-instrumentation-httpx>=0.65b0,<1.0",   # Minimum version compatible with httpx2
   "opentelemetry-instrumentation-logging>=0,<1.0",
   "opentelemetry-sdk>=1.39,<2.0",
   "psutil>=7.0,<8.0",
   "pydantic>=2.13.4,<3.0",
-  "pydantic-settings>=2.0.2, !=2.6.0,<3.0",                                                      # In 2.6.0, they changed how Settings.model_validate() works, breaking everything: https://github.com/pydantic/pydantic-settings/issues/445. It was fixed in 2.6.1.
+  "pydantic-settings>=2.0.2,!=2.6.0,<3.0",              # In 2.6.0, they changed how Settings.model_validate() works, breaking everything: https://github.com/pydantic/pydantic-settings/issues/445. It was fixed in 2.6.1.
   "python-dotenv>=1.0.0,<2.0",
-  "python-multipart>=0.0.30, <1.0",                                                        # needed by fastapi for uploading files
+  "python-multipart>=0.0.30,<1.0",                      # needed by fastapi for uploading files
   "pyyaml>=6.0,<7.0",
-  "requests_oauthlib>=2.0,<3.0",
-  "requests-toolbelt>=1.0.0,<2.0",                                                               # needed by gql
+  "requests-oauthlib>=2.0,<3.0",
+  "requests-toolbelt>=1.0.0,<2.0",                      # needed by gql
   "sqlalchemy[asyncio]>=2.0.34,<3.0",
-  "uvicorn>=0.24, <1.0",
-  "wsproto>=1.2.0,<2.0",
   "stream-zip>=0.0.83,<1.0",
-]
-
-# By registering the plugins here, they can be used without needing to declare them in pytest_plugins.
-# https://docs.pytest.org/en/stable/how-to/writing_plugins.html#making-your-plugin-installable-by-others
-entry-points.pytest11.glow_testing = "ansys.saf.glow.testing"
-optional-dependencies.dash = [
-  "dash>=3.0.0,<4.0",
-  "dash-extensions>=2.0.5,<3.0",
-  "ansys-hps-client>=0.13,<1.0",
-  "ansys-platform-instancemanagement>=1.0.2,<2.0",
-  "pytest~=9.0.3",
-  "pytest-mock>=3.15.0,<4.0.0",
-  "mcp==1.28.1",
-  "fastmcp==3.3.1",
-  "isoduration==20.11.0",
-]
-optional-dependencies.pim = [
-  "ansys-platform-instancemanagement>=1.0.2,<2.0",
+  "uvicorn>=0.24,<1.0",
+  "wsproto>=1.2.0,<2.0",
 ]
 optional-dependencies.all = [
-  "dash>=3.0.0,<4.0",          # Minimum version required for ctx.headers.
+  "dash>=3.0.0,<4.0",            # Minimum version required for ctx.headers.
   "dash-extensions>=2.0.5,<3.0", # For creating websocket in DashClient or using Dash callbacks
+]
+optional-dependencies.dash = [
+  "ansys-hps-client>=0.13,<1.0",
+  "ansys-platform-instancemanagement>=1.0.2,<2.0",
+  "dash>=3.0.0,<4.0",
+  "dash-extensions>=2.0.5,<3.0",
+  "fastmcp==3.3.1",
+  "isoduration==20.11.0",
+  "mcp==1.28.1",
+  "pytest~=9.0.3",
+  "pytest-mock>=3.15.0,<4.0.0",
 ]
 optional-dependencies.hps = [
   "ansys-hps-client>=0.13,<1.0",
+]
+optional-dependencies.mcp = [
+  "fastmcp==3.3.1",
+  "isoduration==20.11.0",
+  "mcp==1.28.1",
+]
+optional-dependencies.pim = [
+  "ansys-platform-instancemanagement>=1.0.2,<2.0",
 ]
 optional-dependencies.test = [
   "pytest~=9.0.3",
   "pytest-mock>=3.15.0,<4.0.0",
 ]
-optional-dependencies.mcp = [
-  "mcp==1.28.1",
-  "fastmcp==3.3.1",
-  "isoduration==20.11.0",
-]
+scripts.glow_engine = "ansys.saf.glow.cli.__main__:entry_point"
+# By registering the plugins here, they can be used without needing to declare them in pytest_plugins.
+# https://docs.pytest.org/en/stable/how-to/writing_plugins.html#making-your-plugin-installable-by-others
+entry-points.pytest11.glow_testing = "ansys.saf.glow.testing"
+
 [tool.uv]
 sources.ansys-saf-glow-engine = { workspace = true }
 build-backend.module-name = "ansys.saf.glow"
 build-backend.namespace = true
+prerelease-package.ansys-bdm-api = "allow"
+prerelease-package.ansys-bdm-shared-volume = "allow"
+prerelease-package.ansys-iam-oidc = "allow"
+prerelease-package.ansys-saf-product-configuration = "allow"
+prerelease-package.opentelemetry-instrumentation-fastapi = "allow"
+prerelease-package.opentelemetry-instrumentation-flask = "allow"
+prerelease-package.opentelemetry-instrumentation-httpx = "allow"
+prerelease-package.opentelemetry-instrumentation-logging = "allow"
+prerelease-package.prereleases = "if-necessary"
 
-[tool.uv.prerelease-package]
-ansys-bdm-api = "allow"
-ansys-bdm-shared-volume = "allow" 
-ansys-iam-oidc = "allow" 
-ansys-saf-product-configuration = "allow" 
-opentelemetry-instrumentation-fastapi = "allow"
-opentelemetry-instrumentation-flask = "allow"
-opentelemetry-instrumentation-httpx = "allow"
-opentelemetry-instrumentation-logging = "allow"
-prereleases = "if-necessary"
-
-[tool.coverage.run]
-source = [ "ansys.saf.glow" ]
-
-[tool.coverage.report]
-show_missing = true
-omit = [ "*/pytest-of-*/pytest-*/popen-*/*", "/tmp/*" ]
+[tool.coverage]
+run.source = [ "ansys.saf.glow" ]
+report.omit = [ "*/pytest-of-*/pytest-*/popen-*/*", "/tmp/*" ]
+report.show_missing = true

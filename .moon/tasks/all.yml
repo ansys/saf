@@ -78,7 +78,19 @@ tasks:
   pre-commit:
     description: "Run pre-commit against this package's files only (root-level files
       are handled by root:pre-commit)"
-    script: 'uv run pre-commit run --files $(git ls-files -- ":(top,glob)$projectSource/**")'
+    command: 'uv'
+    args:
+      - 'run'
+      - 'python'
+      - '-c'
+      - >-
+        import subprocess, sys;
+        from pre_commit.main import main;
+        files = subprocess.check_output(
+        ['git', 'ls-files', '-z', '--', f':(top,glob){sys.argv[1]}/**'],
+        text=True, encoding='utf-8', errors='surrogateescape').split(chr(0))[:-1];
+        sys.exit(main(['run', '--files', *files]))
+      - '$projectSource'
     deps:
       - '~:pyright'
       - '~:ruff'
@@ -95,6 +107,7 @@ tasks:
       - 'pyproject.toml'
       - '/.uv.lock'
     options:
+      shell: false
       runFromWorkspaceRoot: true
       # Shared pre-commit hook envs aren't safe for concurrent invocation across projects.
       mutex: 'pre-commit'

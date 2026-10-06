@@ -59,10 +59,15 @@ jobs:
 
   js-build:
     name: "JavaScript build and freshness"
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     permissions:
       contents: read # Read the source code of the package
     steps:
+      - name: Enable git long paths on Windows
+        if: runner.os == 'Windows'
+        shell: powershell
+        run: git config --global core.longpaths true
+
       - name: Checkout repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:

@@ -9,6 +9,7 @@ tasks:
     command: "uv"
     args:
       - "sync"
+      - "--quiet"
     inputs:
       - "/pyproject.toml"
       - "/uv.lock"

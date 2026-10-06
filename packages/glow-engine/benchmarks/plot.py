@@ -17,13 +17,12 @@
 import json
 from pathlib import Path
 
+from benchmarks.model import BenchmarkData
 import click
 import numpy
 import plotly.express as px  # pyright: ignore[reportMissingTypeStubs]
 import plotly.graph_objects as go  # pyright: ignore[reportMissingTypeStubs]
 from pydantic import BaseModel
-
-from benchmarks.model import BenchmarkData
 
 
 class Plot(BaseModel):
@@ -120,7 +119,7 @@ def show_plot(directory_name: str, file_name: str, name: str, plot: Plot, plot_p
 def main(json_file_path: str, plot_name: str):
     json_file = Path(json_file_path)
 
-    assert json_file.is_file(), f"File {json_file_path} does not exist"
+    assert json_file.is_file(), f"File {json_file_path} does not exist"  # noqa: S101
 
     file_name = json_file.name
     directory_name = json_file.parent.name

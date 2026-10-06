@@ -17,6 +17,8 @@
 from collections.abc import Generator
 import time
 
+import pytest
+
 from ansys.saf.testing.solution.end_to_end import (
     BaseGlowConfiguration,
     EnvVarDebug,
@@ -24,8 +26,6 @@ from ansys.saf.testing.solution.end_to_end import (
     GlowBaseProcess,
     OTELconsole,
 )
-import pytest
-
 from tests.mocks.solution_end_to_end.solution.definition import EndToEndSolution
 
 pytestmark = pytest.mark.parametrize("solution_type", [EndToEndSolution], indirect=True)

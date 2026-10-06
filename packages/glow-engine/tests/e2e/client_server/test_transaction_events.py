@@ -17,14 +17,14 @@
 from collections.abc import Generator
 from typing import TypeVar
 
+import pytest
+
+from ansys.saf.glow.solution import Solution
 from ansys.saf.testing.solution.end_to_end import (
     EnvVarDebugLogLevel,
     GlowBaseProcess,
     ProjectFixture,
 )
-import pytest
-
-from ansys.saf.glow.solution import Solution
 from tests.mocks.solution_end_to_end.solution.definition import EndToEndSolution
 
 pytestmark = [

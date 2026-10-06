@@ -14,6 +14,7 @@ classifiers = [
 dependencies = [
   "ansys-bdm-api",
   "ansys-bdm-shared-volume",
+  "ansys-saf-glow-engine[all]",
   "ansys-iam-oidc",
   "ansys-saf-desktop-installer",
   "ansys-saf-desktop-orchestrator",
@@ -36,6 +37,7 @@ dev = [
   { include-group = "tests-desktop-installer" },
   { include-group = "tests-saf-desktop-orchestrator" },
   { include-group = "tests-saf-product-manager" },
+  { include-group = "tests-glow-engine" },
 ]
 doc = [
   "ansys-sphinx-theme[autoapi]>=1.9; python_version>='3.12'",
@@ -84,6 +86,7 @@ tests = [
   "pytest-timeout>=2.3.1,<3",
   "pytest-xdist>=3.6.1,<4",
   "tenacity>=8.0.0,<9",
+  "docker>=7.1.0,<8.0", # lower versions are not compatible with requests >= 2.32 https://github.com/docker/docker-py/pull/3257
 ]
 tests-desktop-installer = [
   "ansys-saf-testing[selenium]>=0.13.0,<1.0",
@@ -106,9 +109,19 @@ tests-saf-desktop-orchestrator = [
 ]
 tests-saf-product-manager = [
   "ansys-saf-glow-engine[dash,hps,pim]>=2.1.0,<3.0.0",
-  "docker>=7.1.0,<8.0",
   "grpcio-health-checking>=1.24.0,<2.0",
   "gunicorn>=23.0.0,<24.0",                            # for launching UI server in DockerCompose
+]
+tests-glow-engine = [
+  "aiohttp>=3.10.2,<4.0",
+  "asgi-lifespan>=2.1.0,<3.0",
+  "dash[diskcache]>=3.0.0,<4.0", # diskcache needed for background callbacks
+  "pyc-wheel>=1.2.7,<2.0",
+  "toml>=0.10.2,<2.0",
+  "waitress>=3.0.1,<4.0",
+  "prettytable>=3.17.0,<4.0",
+  "plotly>=6.5.0,<7.0",
+  "numpy>=2.4.0,<3.0",
 ]
 
 [tool.setuptools]
@@ -117,6 +130,7 @@ py-modules = []
 [tool.uv]
 sources.ansys-bdm-api = { workspace = true }
 sources.ansys-bdm-shared-volume = { workspace = true }
+sources.ansys-saf-glow-engine = { workspace = true }
 sources.ansys-iam-oidc = { workspace = true }
 sources.ansys-saf-desktop-installer = { workspace = true }
 sources.ansys-saf-desktop-orchestrator = { workspace = true }
@@ -128,6 +142,7 @@ package = false
 workspace.members = [
   "packages/bdm-python-api",
   "packages/bdm-python-shared-volume",
+  "packages/glow-engine",
   "packages/saf-desktop-installer",
   "packages/saf-desktop-orchestrator",
   "packages/saf-iam-oidc",
@@ -174,7 +189,7 @@ lint.select = [
   "UP",     # pyupgrade
   "W",      # pycodestyle - warning
 ]
-lint.ignore = [ "COM812", "PTH207", "PYI034", "S112", "S603" ]
+lint.ignore = [ "COM812", "PTH207", "PYI034", "S112", "S603", "UP046", "UP047" ]
 lint.per-file-ignores.".github/**" = [ "S" ]
 lint.per-file-ignores.".venv/**" = [ "S" ]
 lint.per-file-ignores."benchmarks/**" = [ "S" ]

@@ -1,14 +1,14 @@
 [build-system]
-build-backend = "poetry.core.masonry.api"
-requires = [ "poetry-core>=2.0.0", "setuptools>=67.0" ]
+build-backend = "uv_build"
+requires = [ "uv-build>=0.12.18,<0.13" ]
 
-[tool.poetry]
+[project]
 name = "ansys-saf-glow-engine"
 version = "2.6.dev0"
 description = "Solution Application Framework / Guided Low-Code Workflow (SAF GLOW) engine"
-license = "Apache-2.0"
-authors = [ "ANSYS, Inc. <pyansys-core@synopsys.com>" ]
-maintainers = [ "ANSYS, Inc. <pyansys-core@synopsys.com>" ]
+license-files = [ "LICENSE" ]
+maintainers = [ { name = "ANSYS, Inc.", email = "pyansys-core@synopsys.com" } ]
+authors = [ { name = "ANSYS, Inc.", email = "pyansys-core@synopsys.com" } ]
 readme = "README.rst"
 keywords = [
   "solution application framework",
@@ -18,12 +18,12 @@ keywords = [
   "saf",
   "solution",
 ]
+requires-python = ">=3.11,<4"
 classifiers = [
   "Development Status :: 4 - Beta",
   "Intended Audience :: Other Audience",
-  "License :: OSI Approved :: Apache Software License",
   "Natural Language :: English",
-  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
@@ -31,271 +31,95 @@ classifiers = [
   "Topic :: Scientific/Engineering",
 ]
 
-[[tool.poetry.packages]]
-include = "ansys/saf/glow/"
-from = "src"
+scripts.glow_engine = "ansys.saf.glow.cli.__main__:entry_point"
 
-[tool.poetry.scripts]
-glow_engine = "ansys.saf.glow.cli.__main__:entry_point"
-
-[[tool.poetry.source]]
-name = "PyPI"
-priority = "primary"
-
-[tool.poetry.dependencies]
-python = ">=3.11,<4"
-aiofiles = "^23.1.0"
-aiosqlite = ">=0.19.0, <1.0"
-ariadne = "^1.0.1"                                                                         # minimum version compatible with starlette >= 1.x
-ansys-bdm-api = { version = ">=0.5.0, <1.0", allow-prereleases = true }
-ansys-bdm-shared-volume = { version = ">=0.4.0, <1.0", allow-prereleases = true }
-ansys-hps-client = { version = ">=0.13, <1.0", optional = true }                           # for using HPS
-ansys-iam-oidc = { version = ">=0.9.0, <1.0", allow-prereleases = true }
-ansys-platform-instancemanagement = { version = "^1.0.2", optional = true }                # for using PIM
-ansys-saf-product-configuration = { version = ">=0.22.0, <1.0", allow-prereleases = true }
-asyncpg = ">=0.29.0, <1.0"
-click = "^8.1.7"
-dash = { version = "^3.0.0", optional = true }                                             # Minimum version required for ctx.headers.
-dash-extensions = { version = "^2.0.5", optional = true }                                  # For creating websocket in DashClient or using Dash callbacks
-debugpy = "^1.6.6, != 1.6.8"
-fastapi = ">=0.133, <1.0"                                                                  # minimum version compatible with starlette >= 1.x
-googleapis-common-protos = "^1.52.0"
-gql = "^3.5.0"
-grpcio = "^1.71.2"
-grpcio-health-checking = "^1.24.0"
-httpx2 = "^2.5.0"
-joserfc = "^1.2.2"
-networkx = "^3.0"
-opentelemetry-exporter-otlp-proto-http = "^1.18"
-opentelemetry-instrumentation-fastapi = { version = ">=0.64b0, <1.0", allow-prereleases = true }  # Minimum version compatible with fastapi 0.139
-opentelemetry-instrumentation-flask = { version = "^0", allow-prereleases = true }
-opentelemetry-instrumentation-httpx = { version = ">=0.65b0, <1.0", allow-prereleases = true }  # Minimum version compatible with httpx2
-opentelemetry-instrumentation-logging = { version = "^0", allow-prereleases = true }
-opentelemetry-sdk = "^1.39"
-psutil = "^7.0"
-pydantic = "^2.13.4"
-pydantic-settings = "^2.0.2, !=2.6.0"                                                      # In 2.6.0, they changed how Settings.model_validate() works, breaking everything: https://github.com/pydantic/pydantic-settings/issues/445. It was fixed in 2.6.1.
-pytest = { version = "~9.0.3", optional = true }
-pytest-mock = { version = "^3.15.0", optional = true }
-python-dotenv = "^1.0.0"
-python-multipart = ">=0.0.30, <1.0"                                                        # needed by fastapi for uploading files
-pyyaml = "^6.0"
-requests_oauthlib = "^2"
-requests-toolbelt = "^1.0.0"                                                               # needed by gql
-sqlalchemy = { version = "^2.0.34", extras = [ "asyncio" ] }
-uvicorn = ">=0.24, <1.0"
-wsproto = "^1.2.0"
-stream-zip = "^0.0.83"
-fastmcp = { version = "3.3.1", optional = true }                                           # found compatibility versions between fastmcp and mcp to be very fragile. leaving as pinned versions for the time being.
-mcp = { version = "1.28.1", optional = true }
-isoduration = { version = "20.11.0", optional = true }                                     # missing dependency by mcp/jsonschema
-
-[tool.poetry.extras]
-dash = [ "dash", "dash-extensions" ]
-pim = [ "ansys-platform-instancemanagement" ]
-hps = [ "ansys-hps-client" ]
-test = [ "pytest", "pytest-mock" ]
-mcp = [ "fastmcp", "mcp", "isoduration" ]
-# didn't find a way to dynamically include previous groups, so we need to copy all dependencies
-all = [
-  "dash",
-  "dash-extensions",
-  "ansys-platform-instancemanagement",
-  "ansys-hps-client",
-  "pytest",
-  "pytest-mock",
-  "fastmcp",
-  "mcp",
-  "isoduration",
+dependencies = [
+  "aiofiles>=23.1.0,<24",
+  "aiosqlite>=0.19.0, <1.0",
+  "ariadne>=1.0.1,<2.0",                                                                    # minimum version compatible with starlette >= 1.x
+  "ansys-bdm-api>=0.5.0,<1.0",
+  "ansys-bdm-shared-volume>=0.4.0,<1.0",
+  "ansys-iam-oidc>=0.9.0,<1.0",
+  "ansys-saf-product-configuration>=0.22.0,<1.0",
+  "asyncpg>=0.29.0, <1.0",
+  "click>=8.1.7,<9.0",
+   "debugpy>=1.6.6,<2.0,!=1.6.8",
+  "fastapi>=0.133, <1.0",                                                                  # minimum version compatible with starlette >= 1.x
+  "googleapis-common-protos>=1.52.0,<2.0",
+  "gql>=3.5.0,<4.0",
+  "grpcio>=1.71.2,<2.0",
+  "grpcio-health-checking>=1.24.0,<2.0",
+  "httpx2>=2.5.0,<3.0",
+  "joserfc>=1.2.2,<2.0",
+  "networkx>=3.0,<4.0",
+  "opentelemetry-exporter-otlp-proto-http>=1.18,<2.0",
+  "opentelemetry-instrumentation-fastapi>=0.64b0,<1.0",  # Minimum version compatible with fastapi 0.139
+  "opentelemetry-instrumentation-flask>=0,<1.0",
+  "opentelemetry-instrumentation-httpx>=0.65b0,<1.0",  # Minimum version compatible with httpx2
+  "opentelemetry-instrumentation-logging>=0,<1.0",
+  "opentelemetry-sdk>=1.39,<2.0",
+  "psutil>=7.0,<8.0",
+  "pydantic>=2.13.4,<3.0",
+  "pydantic-settings>=2.0.2, !=2.6.0,<3.0",                                                      # In 2.6.0, they changed how Settings.model_validate() works, breaking everything: https://github.com/pydantic/pydantic-settings/issues/445. It was fixed in 2.6.1.
+  "python-dotenv>=1.0.0,<2.0",
+  "python-multipart>=0.0.30, <1.0",                                                        # needed by fastapi for uploading files
+  "pyyaml>=6.0,<7.0",
+  "requests_oauthlib>=2.0,<3.0",
+  "requests-toolbelt>=1.0.0,<2.0",                                                               # needed by gql
+  "sqlalchemy[asyncio]>=2.0.34,<3.0",
+  "uvicorn>=0.24, <1.0",
+  "wsproto>=1.2.0,<2.0",
+  "stream-zip>=0.0.83,<1.0",
 ]
 
-[tool.poetry.group.doc]
-optional = true
-[tool.poetry.group.doc.dependencies]
-ansys-sphinx-theme = { version = "^1.7.0", python = ">=3.12" }
-autodoc-pydantic = { version = "^2.2.0", python = ">=3.12" }
-numpydoc = { version = "^1.10.0", python = ">=3.12" }
-sphinx = { version = "^9.1.0", python = ">=3.12" }
-sphinx-code-tabs = { version = "^0.5.5", python = ">=3.12" }
-sphinx-design = { version = "^0.7.0", python = ">=3.12" }
-sphinx-autobuild = { version = "^2021.3.14", python = ">=3.12" }
-sphinx-autodoc-typehints = { version = "^3.6.3", python = ">=3.12" }
-sphinxcontrib-websupport = { version = "^1.2.4", python = ">=3.12" }
-sphinx-copybutton = { version = "^0.5.2", python = ">=3.12" }
-sphinxemoji = { version = "^0.2", python = ">=3.12" }
-sphinx-gallery = { version = "^0.15", python = ">=3.12" }
-sphinx-jinja = { version = "^2.0.0", python = ">=3.12" }
-sphinx-notfound-page = { version = "^0.8.3", python = ">=3.12" }
-sphinx-tabs = { version = ">=1.2.1,<3.5.0", python = ">=3.12" }
-toml = "^0.10.2"
-tox = "^4.4.6"
-
-[tool.poetry.group.tests]
-optional = true
-[tool.poetry.group.tests.dependencies]
-aiohttp = "^3.10.2"
-ansys-saf-testing = { version = ">=0.14.0, <1.0", allow-prereleases = true, extras = [
-  "docker",
-  "selenium",
-  "hps",
-  "pim",
-] }
-asgi-lifespan = "^2.1.0"
-coverage = "^7.2.6"
-dash = { version = "^3.0.0", extras = [ "diskcache" ] } # diskcache needed for background callbacks
-docker = "^7.1.0" # lower versions are not compatible with requests >= 2.32 https://github.com/docker/docker-py/pull/3257
-mock = "^4.0.3"
-pyc-wheel = "^1.2.7"
-pytest = "~9.0.3"
-pytest-asyncio = "^1.0.0"
-pytest-cov = "^7.0.0"
-pytest-html = "^4.1.1"
-pytest-md = "^0.2.0"
-pytest-mock = "^3.10.0"
-pytest-rerunfailures = "^16.0.0"
-pytest-timeout = "^2.3.1"
-pytest-xdist = "^3.6.1"
-toml = "^0.10.2"
-tox = "^4.4.6"
-tenacity = "^8.2.3"
-gunicorn = "^23.0.0"
-waitress = "^3.0.1"
-prettytable = "^3.17.0"
-plotly = "^6.5.0"
-numpy = "^2.4.0"
-
-[tool.poetry.group.style]
-optional = true
-[tool.poetry.group.style.dependencies]
-codespell = "^2.2.4"
-ruff = ">= 0.0.287, < 1.0.0"
-ruff-lsp = "^0.0"
-tox = "^4.4.6"
-pre-commit = "^4.6.0"
-pyright = "^1.1.407"
-ansys-sphinx-theme = { version = "^1.4", python = ">=3.12" }
-
-[tool.poetry.plugins.pytest11]
 # By registering the plugins here, they can be used without needing to declare them in pytest_plugins.
 # https://docs.pytest.org/en/stable/how-to/writing_plugins.html#making-your-plugin-installable-by-others
-glow_testing = "ansys.saf.glow.testing"
+entry-points.pytest11.glow_testing = "ansys.saf.glow.testing"
+optional-dependencies.dash = [
+  "dash>=3.0.0,<4.0",
+  "dash-extensions>=2.0.5,<3.0",
+  "ansys-hps-client>=0.13,<1.0",
+  "ansys-platform-instancemanagement>=1.0.2,<2.0",
+  "pytest~=9.0.3",
+  "pytest-mock>=3.15.0,<4.0.0",
+  "mcp==1.28.1",
+  "fastmcp==3.3.1",
+  "isoduration==20.11.0",
+]
+optional-dependencies.pim = [
+  "ansys-platform-instancemanagement>=1.0.2,<2.0",
+]
+optional-dependencies.all = [
+  "dash>=3.0.0,<4.0",          # Minimum version required for ctx.headers.
+  "dash-extensions>=2.0.5,<3.0", # For creating websocket in DashClient or using Dash callbacks
+]
+optional-dependencies.hps = [
+  "ansys-hps-client>=0.13,<1.0",
+]
+optional-dependencies.test = [
+  "pytest~=9.0.3",
+  "pytest-mock>=3.15.0,<4.0.0",
+]
+optional-dependencies.mcp = [
+  "mcp==1.28.1",
+  "fastmcp==3.3.1",
+  "isoduration==20.11.0",
+]
+[tool.uv]
+sources.ansys-saf-glow-engine = { workspace = true }
+build-backend.module-name = "ansys.saf.glow"
+build-backend.namespace = true
 
-[tool.ruff]
-target-version = "py311"
-line-length = 120
-extend-exclude = [
-  "*_pb2.py",
-  "*_pb2_grpc.py",
-  "tests/mocks/mock_products/wnua.py",
-]
-
-# in same order as in https://docs.astral.sh/ruff/rules
-lint.select = [
-  "A",      # flake8-builtins
-  "ASYNC",  # flake8-async
-  "B",      # flake8-bugbear
-  "C4",     # flake8-comprehensions
-  "C90",    # mccabe
-  "COM",    # flake8-commas
-  "E",      # pycodestyle - error
-  "F",      # pyflakes
-  "FAST",   # fastapi
-  "I",      # isort
-  "LOG",    # flake8-logging
-  "N",      # pep8-naming
-  "PIE",    # flake8-pie
-  "PT",     # flake8-pytest-style
-  "PTH",    # flake8-use-pathlib
-  "PYI",    # flake8-pyi
-  "Q",      # flake8-quotes
-  "RUF100", # ruff-specific rules: unused noqa
-  "S",      # flake8-bandit
-  "SIM",    # flake8-simplify
-  "TC",     # flake8-type-checking
-  "UP",     # pyupgrade
-  "W",      # pycodestyle - warning
-]
-lint.ignore = [ "COM812", "PTH207", "S112", "S603" ]
-lint.per-file-ignores.".github/**" = [ "S" ]
-lint.per-file-ignores.".poetry/**" = [ "S" ]
-lint.per-file-ignores.".venv/**" = [ "S" ]
-lint.per-file-ignores."benchmarks/**" = [ "S" ]
-lint.per-file-ignores."cache/**" = [ "S" ]
-# rst_epilog contains long URL-based hyperlink targets that cannot be wrapped.
-lint.per-file-ignores."doc/source/conf.py" = [ "E501" ]
-# Ignore `S` rules everywhere except for the `src/` directory.
-lint.per-file-ignores."tests/**.py" = [ "S" ]
-lint.flake8-bugbear.extend-immutable-calls = [
-  "fastapi.Depends",
-  "fastapi.Form",
-  "fastapi.params.Depends",
-  "fastapi.params.Form",
-  "fastapi.params.Query",
-  "fastapi.Query",
-]
-lint.flake8-pytest-style.mark-parentheses = false
-lint.flake8-type-checking.runtime-evaluated-base-classes = [ "pydantic.BaseModel", "pydantic_settings.BaseSettings" ]
-lint.flake8-type-checking.runtime-evaluated-decorators = [ "attrs.define", "pydantic.validate_call" ]
-lint.isort.force-sort-within-sections = true
-lint.isort.known-first-party = [ "src", "doc", "tests", "benchmarks" ]
-
-[tool.codespell]
-ignore-words = ".codespellignore"
-skip = "*.log,*.json,*/architecture/glow_style.dsl,.git,.venv,.poetry,.tox,*.lcov,htmlcov,dist,./doc/build,*.aedt,./hps_deployment/*,hps_deployment_logs.txt,./reports/*,poetry.lock,./docker-compose-customer/*,./doc/styles/Vocab/ANSYS/accept.txt"
-
-[tool.pytest.ini_options]
-pythonpath = "."
-addopts = [
-  "--strict-config",
-  "--strict-markers",
-  "--import-mode=importlib",
-  "-nlogical",
-  "--dist=loadfile",
-]
-markers = [
-  "use_pim",
-  "use_hps",
-  "use_ui",            # run e2e tests with UI server
-  "use_instances",     # run e2e tests using bdm product instance manager
-  "use_batch_job",     # run e2e tests using HPS parametric studies API with BDM
-  "use_ansys_python",  # run e2e flagship hps tests using Ansys Python
-  "use_minerva",       # run e2e tests with Minerva
-  "use_containerized", # run e2e tests with DockerCompose deployment
-]
-asyncio_mode = "auto"
-filterwarnings = [
-  "error",
-  "ignore::UserWarning",
-  "ignore::ResourceWarning",
-  "ignore:Certificate verification is disabled",
-  "ignore::DeprecationWarning:protoc_gen_swagger.*:",
-  "ignore::DeprecationWarning:google.*:",
-  "ignore::DeprecationWarning:grpc_health.*:",
-  "ignore::DeprecationWarning:pkg_resources.*:",
-  "ignore::DeprecationWarning:importlib*",
-  "ignore:pkg_resources is deprecated as an API:DeprecationWarning",
-  "ignore::DeprecationWarning:protobuf.*:",
-  "ignore::DeprecationWarning:websockets*:",
-  "ignore:Server disconnected without sending a response",
-  "ignore:Call to deprecated create function FieldDescriptor",
-  "ignore:Call to deprecated create function Descriptor",
-  "ignore:Call to deprecated create function EnumDescriptor",
-  "ignore:Call to deprecated create function EnumValueDescriptor",
-  "ignore:Call to deprecated create function FileDescriptor",
-  "ignore:Call to deprecated create function OneofDescriptor",
-  "ignore:Call to deprecated create function MethodDescriptor",
-  "ignore:Call to deprecated create function ServiceDescriptor",
-  "ignore:The --rsyncdir command line argument and rsyncdirs config variable are deprecated.:DeprecationWarning",
-  "ignore:the imp module is deprecated in favour of importlib and slated for removal in Python 3.12:DeprecationWarning",
-  "ignore:'typing.ByteString' is deprecated and slated for removal:DeprecationWarning",
-  "ignore:Please use `import python_multipart` instead.:PendingDeprecationWarning",
-  "ignore:websockets.server.WebSocketServerProtocol is deprecated:DeprecationWarning",
-  "ignore:defusedxml.cElementTree is deprecated, import from defusedxml.ElementTree instead.:DeprecationWarning",
-  "ignore:Accessing the 'model_fields' attribute on the instance is deprecated. Instead, you should access this attribute from the model class:DeprecationWarning",
-  "ignore:Accessing the 'model_computed_fields' attribute on the instance is deprecated. Instead, you should access this attribute from the model class:DeprecationWarning",
-  "ignore:'asyncio.iscoroutinefunction' is deprecated and slated for removal in Python 3.16:DeprecationWarning",
-]
-testpaths = [ "tests/unit", "tests/integration", "tests/mocks" ]
+[tool.uv.prerelease-package]
+ansys-bdm-api = "allow"
+ansys-bdm-shared-volume = "allow" 
+ansys-iam-oidc = "allow" 
+ansys-saf-product-configuration = "allow" 
+opentelemetry-instrumentation-fastapi = "allow"
+opentelemetry-instrumentation-flask = "allow"
+opentelemetry-instrumentation-httpx = "allow"
+opentelemetry-instrumentation-logging = "allow"
+prereleases = "if-necessary"
 
 [tool.coverage.run]
 source = [ "ansys.saf.glow" ]
@@ -303,23 +127,3 @@ source = [ "ansys.saf.glow" ]
 [tool.coverage.report]
 show_missing = true
 omit = [ "*/pytest-of-*/pytest-*/popen-*/*", "/tmp/*" ]
-
-[tool.pyright]
-extraPaths = [ "src" ]
-include = [ "src", "tests", "benchmarks", "doc/source" ]
-exclude = [
-  "**/*_pb2.py",
-  "**/*_pb2_grpc.py",
-]
-strict = [ "src", "tests", "benchmarks" ]
-venvPath = "."
-venv = ".venv"
-pythonVersion = "3.11"
-
-[build-system-requirements]
-build-system-version = "2.3.2"
-
-[tool.bandit]
-# targets = ["src"]
-exclude_dirs = [ "tests", ".venv", ".github", ".poetry", "doc", "benchmarks", "cache" ]
-skips = [ "B112", "B603" ]

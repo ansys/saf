@@ -97,7 +97,7 @@ jobs:
         working-directory: packages/${{ inputs.library-name }}
         shell: bash
         run: |
-          source .venv/bin/activate
+          ./.venv/Scripts/activate
           npm run build
 
       - name: Fail if the committed build output is stale

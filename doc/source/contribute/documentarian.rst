@@ -96,18 +96,15 @@ API documentation of a package
 ------------------------------
 
 The dependencies of the API documentation of a package are declared in the
-``doc`` group of the ``pyproject.toml`` file of that package and are managed
-with Poetry. For instructions on how to install Poetry, see
-:ref:`install_for_developers`.
-
-From the directory of the package, install the dependencies and build the
-documentation:
+Package API documentation is built with the Moon task configured for that
+package. From the repository root, run:
 
 .. code-block:: text
 
-    cd packages/<package-name>
-    poetry install --with tests,doc
-    poetry run sphinx-build doc/source doc/_build/html
+    moon run <project-name>:build-doc
+
+  Use ``moon projects`` to find the project name. The task installs and invokes
+  the documentation dependencies through the root uv workspace.
 
 .. _check_the_documentation_style:
 

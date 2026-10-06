@@ -89,7 +89,12 @@ def layout(project: ExamplesSolution) -> html.Div:
     controls_card = dmc.Card(
         [
             dmc.CardSection(
-                dmc.Text("Controls", fw=500, style={"font-size": "17px"}),
+                dmc.Group(
+                    children=[
+                        dmc.Text("Controls", fw=500, style={"font-size": "17px"}),
+                    ],
+                    justify="space-between",
+                ),
                 withBorder=True,
                 inheritPadding=True,
                 py="xs",
@@ -241,11 +246,11 @@ def layout(project: ExamplesSolution) -> html.Div:
                 [
                     dmc.GridCol(
                         controls_card,
-                        span=3,
+                        span={"base": 12, "lg": 3},
                     ),
                     dmc.GridCol(
                         logs_container,
-                        span=9
+                        span={"base": 12, "lg": 9},
                     ),
                     dmc.GridCol(
                         visor_viewer_container,

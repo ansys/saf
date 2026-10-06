@@ -62,6 +62,13 @@ tasks:
         args:
           - "ansys-visor-viewer==1.0.5b0.dev0+20260831"
 
+  install-minerva-python-client:
+    description: "Install the ANSYS Minerva Python Client package"
+    deps:
+      - target: "~:install-private-dependency"
+        args:
+          - "ansys-minerva-python-client==0.3.1"
+
   hps-installer:
     description: "Install HPS"
     command: "uv"

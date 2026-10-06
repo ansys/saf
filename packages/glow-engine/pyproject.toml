@@ -118,25 +118,15 @@ prerelease-package.opentelemetry-instrumentation-logging = "allow"
 prerelease-package.prereleases = "if-necessary"
 
 [tool.pytest]
-ini_options.pythonpath = "."
-ini_options.addopts = [
+addopts = [
   "--strict-config",
   "--strict-markers",
   "--import-mode=importlib",
   "-nlogical",
   "--dist=loadfile",
 ]
-ini_options.markers = [
-  "use_ansys_python",  # run e2e flagship hps tests using Ansys Python
-  "use_batch_job",     # run e2e tests using HPS parametric studies API with BDM
-  "use_containerized", # run e2e tests with DockerCompose deployment
-  "use_hps",
-  "use_instances",     # run e2e tests using bdm product instance manager
-  "use_minerva",       # run e2e tests with Minerva
-  "use_pim",
-  "use_ui",            # run e2e tests with UI server
-]
-ini_options.filterwarnings = [
+asyncio_mode = "auto"
+filterwarnings = [
   "error",
   "ignore::UserWarning",
   "ignore::ResourceWarning",
@@ -174,7 +164,17 @@ ini_options.filterwarnings = [
   """,
   "ignore:'asyncio.iscoroutinefunction' is deprecated and slated for removal in Python 3.16:DeprecationWarning",
 ]
-ini_options.asyncio_mode = "auto"
+markers = [
+  "use_ansys_python",  # run e2e flagship hps tests using Ansys Python
+  "use_batch_job",     # run e2e tests using HPS parametric studies API with BDM
+  "use_containerized", # run e2e tests with DockerCompose deployment
+  "use_hps",
+  "use_instances",     # run e2e tests using bdm product instance manager
+  "use_minerva",       # run e2e tests with Minerva
+  "use_pim",
+  "use_ui",            # run e2e tests with UI server
+]
+pythonpath = "."
 testpaths = [ "tests/unit", "tests/integration", "tests/mocks" ]
 
 [tool.coverage]

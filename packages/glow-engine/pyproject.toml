@@ -164,6 +164,8 @@ filterwarnings = [
   this attribute from the model class:DeprecationWarning\
   """,
   "ignore:'asyncio.iscoroutinefunction' is deprecated and slated for removal in Python 3.16:DeprecationWarning",
+  "ignore:The Row._tuple\\(\\) method is deprecated:sqlalchemy.exc.SADeprecationWarning",
+  "ignore:'isolated_filesystem' is deprecated and will be removed in Click 9.0:DeprecationWarning",
 ]
 markers = [
   "use_ansys_python",  # run e2e flagship hps tests using Ansys Python

@@ -6,7 +6,17 @@ on:
       image_tag:
         description: "Tag to apply to the built images and to the artifact name."
         required: false
+        type: string
         default: "main"
+  workflow_call:
+    inputs:
+      image_tag:
+        description: "Tag to apply to the built images and to the artifact name."
+        required: false
+        type: string
+        default: "main"
+
+permissions: {}
 
 env:
   APP_NAME: "{{ cookiecutter.__docker_name }}"
@@ -27,15 +37,15 @@ jobs:
       contents: read
     steps:
       - name: Checkout repository
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@e468171a9de216ec08956ac3ada2f0791b6bd435 # v3.11.1
+        uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
 
       - name: Build API image
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
         with:
           context: .
           file: deployments/Dockerfile
@@ -48,7 +58,7 @@ jobs:
 
 {% if cookiecutter.__ui_framework != "none" %}
       - name: Build UI image
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
         with:
           context: .
           file: deployments/Dockerfile
@@ -63,17 +73,17 @@ jobs:
       - name: Save images to a single tar file
         run: |
           docker save \
-            -o "{{ "${{ env.TAR_FILE }}" }}" \
+            -o "${TAR_FILE}" \
 {%- if cookiecutter.__ui_framework != "none" %}
-            "{{ "${{ env.APP_NAME }}-api:${{ env.IMAGE_TAG }}" }}" \
-            "{{ "${{ env.APP_NAME }}-ui:${{ env.IMAGE_TAG }}" }}"
+            "${APP_NAME}-api:${IMAGE_TAG}" \
+            "${APP_NAME}-ui:${IMAGE_TAG}"
 {%- else %}
-            "{{ "${{ env.APP_NAME }}-api:${{ env.IMAGE_TAG }}" }}"
+            "${APP_NAME}-api:${IMAGE_TAG}"
 {%- endif %}
-          ls -lh "{{ "${{ env.TAR_FILE }}" }}"
+          ls -lh "${TAR_FILE}"
 
       - name: Upload image tar as artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: {{ "${{ env.ARTIFACT_NAME }}" }}
           path: {{ "${{ env.TAR_FILE }}" }}

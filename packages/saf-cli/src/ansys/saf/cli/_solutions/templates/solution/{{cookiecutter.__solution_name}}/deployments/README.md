@@ -18,7 +18,7 @@ The `external/` recipe does not build any image. It expects the following images
 
 `APP_NAME` and `APP_IMAGE_VERSION` are defined in [`external/.env`](./external/.env).
 
-Images are produced by the `build solution images` GitHub Actions workflow (`.github/workflows/build-image.yml`), which is triggered manually via *Run workflow* on the Actions tab. The workflow builds the images on a GitHub runner and publishes a single tar file as a workflow artifact. To deploy:
+Images are produced by the `build solution images` GitHub Actions workflow (`.github/workflows/build-image.yml`), which can be triggered manually via *Run workflow* on the Actions tab (with a custom `image_tag`) and also runs as part of the `build and release` workflow (with the default `main` tag). The workflow builds the images on a GitHub runner and publishes a single tar file as a workflow artifact. To deploy:
 
 ```bash
 # 1. Download the artifact from the workflow run and extract the tar file.

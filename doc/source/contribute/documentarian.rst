@@ -71,22 +71,12 @@ Centralized documentation
 -------------------------
 
 The dependencies of the centralized documentation are declared in the ``doc``
-group of the root ``pyproject.toml`` file and are managed with ``uv``. Install
-``uv`` first:
+group of the root ``pyproject.toml`` file. Moon installs the configured
+toolchains, including uv, and runs the build from the repository root:
 
 .. code-block:: text
 
-    python -m pip install --user uv
-
-Then, from the root of the repository, install the documentation dependencies,
-activate the virtual environment, and build the documentation:
-
-.. code-block:: text
-
-    uv sync --group doc
-    . .venv/bin/activate        # macOS/Linux
-    # .\.venv\Scripts\Activate.ps1   # PowerShell
-    sphinx-build doc/source doc/build/html
+  moon run root:build-doc
 
 The generated documentation is available in the ``doc/build/html`` directory.
 Open the ``doc/build/html/index.html`` file in a web browser to review it.
@@ -103,8 +93,8 @@ package. From the repository root, run:
 
     moon run <project-name>:build-doc
 
-  Use ``moon projects`` to find the project name. The task installs and invokes
-  the documentation dependencies through the root uv workspace.
+Use ``moon projects`` to find the project name. The task installs and invokes
+the documentation dependencies through the uv workspace.
 
 .. _check_the_documentation_style:
 

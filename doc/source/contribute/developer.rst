@@ -90,19 +90,18 @@ registered projects.
 
 You can leverage the Moon tasks defined in the root ``.moon`` directory to manage and interact with the SAF packages efficiently.
 
-.. list-table::  Tools used for repository-level and package-level tasks
+.. list-table:: Moon tasks for repository-level and package-level work
     :header-rows: 1
-    :stub-columns: 1
-    :widths: 50 30 20
+    :widths: 50 50
 
     * - Work
-        - Command
+      - Command
     * - Synchronize workspace dependencies
-        - ``moon run root:uv-sync``
+      - ``moon run root:uv-sync``
     * - Run root checks
-        - ``moon run root:pre-commit``
+      - ``moon run root:pre-commit``
     * - Run a package task (for example, tests)
-        - ``moon run saf-testing:test``
+      - ``moon run saf-testing:test``
 
 
 .. _install_for_developers:
@@ -115,22 +114,61 @@ the code and see the changes reflected in your environment without having to
 reinstall the package every time you make a change.
 
 All SAF packages require Python 3.11 or a later version, up to but excluding
+Python 4.
 
-    moon run saf-testing:test
+Set up the workspace
+--------------------
+
+Install the Moon CLI. Moon uses the root ``uv.lock`` and creates the shared ``.venv`` at the
+repository root. Package tasks select the relevant workspace member and install
+its extras as needed. Set ``UV_PYTHON`` and ``MOON_PYTHON_VERSION`` to the same
+Python version before running package tasks.
+
+.. _run_tests:
+
+Run the tests
+=============
+
+Tests are declared in each package's ``tests`` directory. From the repository
+root, run the package's Moon task. For example:
+
+.. code-block:: text
+
+  moon run saf-testing:test
 
 The task runs pytest with coverage enabled and writes terminal, XML, and HTML
 coverage reports.
 
+.. note::
+
+  Some packages, such as ``glow-engine``, declare test sessions that require
+  additional services or specific markers. The test sessions run by the
+  CI/CD pipelines are declared in the
+  ``.github/workflows/tests_groups_definitions`` directory. Use them as a
+  reference to reproduce a given test session locally.
+
+.. _run_code_style_checks:
+
+Run the code style checks
+=========================
+
+Code style is enforced with ``pre-commit``. Run root checks from the repository
+root:
+
 .. code-block:: text
 
-    moon run saf-testing:test
+  moon run root:pre-commit
 
+To run a package's checks, use its ``pre-commit`` task. This task also runs the
+package's Ruff, Pyright, and Bandit checks. For example:
 
-    moon run saf-testing:pre-commit
+.. code-block:: text
+
+  moon run saf-testing:pre-commit
 
 Other package tasks include ``test``, ``build``, ``build-doc``, ``ruff``,
-``pyright``, and ``bandit``. Replace ``saf-testing`` with the project name
-shown by ``moon projects``.
+``pyright``, and ``bandit``. Use ``moon projects`` to find registered project
+names.
 
 .. _build_the_documentation_dev:
 

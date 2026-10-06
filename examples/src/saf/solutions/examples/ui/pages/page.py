@@ -73,15 +73,26 @@ def get_asset(asset_name: str, relative_path: str = "", theme: str = "dark") -> 
 def get_page_list(theme: str, active_index: str | None = None) -> list[dict[str, str | bool]]:
     """Return grouped page list while resolving page IDs from dash.page_registry."""
 
-    def page_id(module_suffix: str) -> str | None:
-        for i, page in enumerate(dash.page_registry.values()):
-            if page["module"].split(".")[-1] == "not_found_404":
+    def page_id(module_suffix: str | list[str]) -> str | None:
+        expected_suffix = module_suffix if isinstance(module_suffix, str) else ".".join(module_suffix)
+
+        for index, page in enumerate(dash.page_registry.values()):
+            module_parts = page["module"].split(".")
+            page_name = module_parts[-1]
+            if page_name == "not_found_404":
                 continue
-            if page["module"].split(".")[-1] == module_suffix:
-                return str(i)
+
+            if isinstance(module_suffix, str):
+                page_suffix = page_name
+            else:
+                parent_name = module_parts[-2] if len(module_parts) > 1 else ""
+                page_suffix = f"{parent_name}.{page_name}"
+
+            if page_suffix == expected_suffix:
+                return str(index)
         return None
 
-    def leaf(module_suffix: str, text: str, prefix_icon: str) -> dict[str, Any] | None:
+    def leaf(module_suffix: str | list[str], text: str, prefix_icon: str) -> dict[str, Any] | None:
         id_ = page_id(module_suffix)
         if id_ is None:
             return None
@@ -109,7 +120,13 @@ def get_page_list(theme: str, active_index: str | None = None) -> list[dict[str,
     beam_children = [
         leaf("model_page", "Model", "material-symbols:home"),
         leaf("compute_page", "Compute", "fluent:math-formula-16-filled"),
-        leaf("report_page", "Report", "mdi:file-chart-outline"),
+        leaf(["beam_bending", "report_page"], "Report", "mdi:file-chart-outline"),
+    ]
+    airfoil_explorer_children = [
+        leaf("about_page", "About", "material-symbols:home"),
+        leaf("airfoil_setup_page", "Airfoil Setup", "streamline:airplane-solid"),
+        leaf("simulation_page", "Simulation", "streamline:desktop-code-remix"),
+        leaf(["airfoil_explorer", "report_page"], "Report", "material-symbols:lab-profile"),
     ]
 
     items: list[dict[str, Any]] = [
@@ -160,6 +177,18 @@ def get_page_list(theme: str, active_index: str | None = None) -> list[dict[str,
                 "prefixIcon": "hugeicons:bend-tool",
                 "expanded": is_group_active(beam_nodes),
                 "children": beam_nodes,
+            }
+        )
+
+    airfoil_explorer_nodes = [child for child in airfoil_explorer_children if child is not None]
+    if airfoil_explorer_nodes:
+        items.append(
+            {
+                "id": "airfoil_explorer",
+                "text": "Airfoil Explorer",
+                "prefixIcon": "game-icons:glider",
+                "expanded": is_group_active(airfoil_explorer_nodes),
+                "children": airfoil_explorer_nodes,
             }
         )
 

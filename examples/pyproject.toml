@@ -42,7 +42,9 @@ numpy = "^1.26.4"
 pillow = "^12.1"
 ansys-tools-visualization-interface = "^0.12.1"
 scipy = "^1.15"
-ansys-dynamicreporting-core = "^0.10.6" # Supports only Python 3.10 to 3.12, but not 3.13 or 3.14 yet.
+ansys-dynamicreporting-core = "^0.10.7" # Supports only Python 3.10 to 3.12, but not 3.13 or 3.14 yet.
+ansys-visor-viewer = "^1.0.1"
+ansys-geometry-core = { version = "^0.14.1", extras = [ "graphics" ] }
 
 [tool.poetry.group.desktop]
 optional = true

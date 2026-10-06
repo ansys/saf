@@ -108,11 +108,14 @@ jobs:
         env:
           LIBRARY_NAME: ${{ inputs.library-name }}
         run: |
-          status="$(git status --porcelain -- \
+          status="$(git status --porcelain --untracked-files=all -- \
             "packages/${LIBRARY_NAME}/src" \
             ":(exclude,glob)packages/${LIBRARY_NAME}/src/**/*.py")"
           if [[ -n "$status" ]]; then
             echo "::error::Committed build output is out of date. Run 'npm run build' in packages/${LIBRARY_NAME} and commit the result."
             echo "$status"
+            git diff HEAD -- \
+              "packages/${LIBRARY_NAME}/src" \
+              ":(exclude,glob)packages/${LIBRARY_NAME}/src/**/*.py"
             exit 1
           fi

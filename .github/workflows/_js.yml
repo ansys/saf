@@ -101,21 +101,16 @@ jobs:
           npm run build
 
       - name: Fail if the committed build output is stale
-        # Do not remove the .py exclude: the generated wrappers are
-        # reformatted and license-headered by pre-commit after generation,
-        # so raw generator output can never match them. See the design doc.
         shell: bash
         env:
           LIBRARY_NAME: ${{ inputs.library-name }}
         run: |
           status="$(git status --porcelain --untracked-files=all -- \
-            "packages/${LIBRARY_NAME}/src" \
-            ":(exclude,glob)packages/${LIBRARY_NAME}/src/**/*.py")"
+            "packages/${LIBRARY_NAME}/src")"
           if [[ -n "$status" ]]; then
             echo "::error::Committed build output is out of date. Run 'npm run build' in packages/${LIBRARY_NAME} and commit the result."
             echo "$status"
             git diff HEAD -- \
-              "packages/${LIBRARY_NAME}/src" \
-              ":(exclude,glob)packages/${LIBRARY_NAME}/src/**/*.py"
+              "packages/${LIBRARY_NAME}/src"
             exit 1
           fi

@@ -78,3 +78,17 @@ tasks:
       # (PIP_EXTRA_INDEX_URL for the Ansys private PyPI), which moon does not hash.
       # A cache hit would silently restore the public placeholder wheels.
       cache: false
+
+  clean-hps-log:
+    description: "Clean HPS log files"
+    command: 'rm'
+    args:
+      - '-rf'
+      - '~/.ansys/rep/scaling/*'
+      - '/tmp/hps_*'
+    options:
+      shell: true
+      # Ensures the entire moon pipeline won't fail if the directories don't exist
+      allowFailure: true 
+    toolchains:
+      - 'system'

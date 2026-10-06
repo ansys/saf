@@ -19,15 +19,15 @@ import os
 from pathlib import Path
 from typing import Any
 
-from ansys.bdm.api import EntityHandle
 from ansys.mechanical.core import Mechanical  # pyright: ignore[reportMissingTypeStubs]
+
+from ansys.bdm.api import EntityHandle
 from ansys.saf.glow._server.exceptions import MalformedSolutionError
 from ansys.saf.glow.solution import (
     InstanceManager,
     ProductInstanceManager,
     RecoveryStateInfo,
 )
-
 from ansys.saf.product_manager._utilities.const import (
     ANSYS_GRPC_CERTIFICATES,
     INSECURE_GRPC_MSG,

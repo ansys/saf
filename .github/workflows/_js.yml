@@ -59,7 +59,7 @@ jobs:
 
   js-build:
     name: "JavaScript build and freshness"
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     permissions:
       contents: read # Read the source code of the package
     steps:

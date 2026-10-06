@@ -1,0 +1,57 @@
+{
+  "name": "ansys-saf-projects-dashboard",
+  "version": "0.1.dev0",
+  "description": "Dash component for SAF-based solution applications to view and manage project instances.",
+  "main": "index.ts",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/ansys/saf-projects-dashboard.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ansys/saf-projects-dashboard/issues"
+  },
+  "homepage": "https://github.com/ansys/saf-projects-dashboard",
+  "scripts": {
+    "build:js::dev": "webpack --mode development",
+    "build:js": "webpack",
+    "build:js:analyze": "webpack --mode production --env analyze",
+    "build:backends": "python scripts/generate_components.py ./src/ts/components src/ansys_saf_projects_dashboard -p package-info.json -n ansys_saf_projects_dashboard --ignore \"\\.test\\.|(^|.*[\\\\/])(ContextMenu|ProjectUtils)(\\.[^.]+)?$\"",
+    "build": "node scripts/build.js",
+    "watch": "npm run build:js::dev -- --watch",
+    "dist": "pyproject-build --sdist --wheel --outdir dist/",
+    "format": "pre-commit run --all-files",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^7.0.1",
+    "@testing-library/react": "^16.3.3",
+    "@testing-library/user-event": "^14.6.7",
+    "@types/jest": "^30.0.0",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.5",
+    "css-loader": "^7.1.5",
+    "identity-obj-proxy": "^3.0.0",
+    "jest": "^30.5.1",
+    "jest-environment-jsdom": "^30.5.1",
+    "npm-run-all": "^4.1.5",
+    "prettier": "^3.9.6",
+    "react": "19.2.8",
+    "react-docgen": "^5.4.3",
+    "react-dom": "19.2.8",
+    "style-loader": "^3.3.4",
+    "ts-jest": "^29.4.12",
+    "ts-loader": "^9.6.2",
+    "typescript": "^5.9.3",
+    "webpack": "^5.110.3",
+    "webpack-bundle-analyzer": "^5.3.2",
+    "webpack-cli": "^7.2.3"
+  },
+  "peerDependencies": {
+    "react": "16 - 19",
+    "react-dom": "16 - 19"
+  },
+  "author": "Dave Rojas <dave.rojas@synopsys.com>",
+  "license": "MIT"
+}

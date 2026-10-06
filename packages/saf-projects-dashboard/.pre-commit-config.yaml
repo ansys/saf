@@ -69,6 +69,7 @@ repos:
         # documentation of the project.
         exclude: (?i)^packages/saf-projects-dashboard/src/ansys_saf_projects_dashboard/.*\.(json|js)$
         args:
+          - --custom_license=Apache-2.0
           - --start_year=2026
 
   - repo: https://github.com/google/yamlfmt

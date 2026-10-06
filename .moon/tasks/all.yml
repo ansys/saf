@@ -112,7 +112,7 @@ tasks:
       - 'tests/**/*'
       - '/.pre-commit-config.yaml'
       - 'pyproject.toml'
-      - '/.uv.lock'
+      - '/uv.lock'
     options:
       shell: false
       runFromWorkspaceRoot: true

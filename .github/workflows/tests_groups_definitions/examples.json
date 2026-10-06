@@ -1,7 +1,7 @@
 [
     {
         "test-report-artifact-name-suffix": "examples_windows",
-        "runner-name": "windows-latest",
+        "runner-name": "windows-2022",
         "poetry-install-args": "--with tests,desktop,ui --all-extras",
         "install-pim-light-server": "true"
     },

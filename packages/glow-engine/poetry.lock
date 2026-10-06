@@ -332,19 +332,19 @@ ansys-bdm-api = ">=0.5,<1.0"
 
 [[package]]
 name = "ansys-hps-client"
-version = "0.12.1"
+version = "0.13.0"
 description = "A python client for Ansys HPC Platform Services"
 optional = false
 python-versions = "<4.0,>=3.10"
 groups = ["main", "tests"]
 files = [
-    {file = "ansys_hps_client-0.12.1-py3-none-any.whl", hash = "sha256:8086dc245ae8ff80b0b684a729619fb2ffcc76977faa95e264f680deaccb38d9"},
-    {file = "ansys_hps_client-0.12.1.tar.gz", hash = "sha256:0bd4a3a13ad7e67415d685855e70ae364ac3245f80ce6b3334b5bc7ec33ecaa0"},
+    {file = "ansys_hps_client-0.13.0-py3-none-any.whl", hash = "sha256:fbfa8ab55f34e08f9dbc661c2b8e3723be0d8d70e8c395d1c54ed07f1c64c5c9"},
+    {file = "ansys_hps_client-0.13.0.tar.gz", hash = "sha256:9ffb2f427df3c447cff71ff94597d73e5b4a5b5c5f446c06dcf6e75cc35f5ff1"},
 ]
 markers = {main = "extra == \"hps\" or extra == \"all\""}
 
 [package.dependencies]
-ansys-hps-data-transfer-client = ">=0.4.0,<0.5.0"
+ansys-hps-data-transfer-client = ">=0.5.0,<0.6.0"
 backoff = ">=2.0.0"
 marshmallow = ">=3.0.0"
 marshmallow_oneofschema = ">=2.0.1"
@@ -352,22 +352,23 @@ packaging = "*"
 pydantic = ">=1.10.0"
 PyJWT = ">=2.8.0"
 requests = ">=2.21.0"
+websocket-client = ">=1.8.0"
 
 [package.extras]
-build = ["build (==1.4.0)", "datamodel-code-generator (==0.55.0)", "twine (==6.2.0)", "wheel"]
-doc = ["Sphinx (==8.1.3)", "ansys-sphinx-theme (==1.7.2)", "autodoc_pydantic (==2.1.0)", "jupyter_sphinx (==0.5.3)", "myst-parser (==4.0.1)", "nbsphinx (==0.9.8)", "numpydoc (==1.10.0)", "sphinx-autodoc-typehints (==3.0.1)", "sphinx-copybutton (==0.5.2)", "sphinx-jinja (==2.0.2)", "sphinx-tabs (==3.5.0)", "sphinx_design (==0.6.1)", "sphinxcontrib-globalsubs (==1.1.0)", "sphinxcontrib-httpdomain (==2.0.0)", "sphinxnotes-strike (==1.2.1)"]
-tests = ["coverage (==7.13.4)", "pytest (==9.0.2)", "python-keycloak (>=3.9.1,<4.0.0)"]
+build = ["build (==1.5.0)", "datamodel-code-generator (==0.71.0)", "twine (==7.0.0)", "wheel"]
+doc = ["Sphinx (==8.1.3)", "ansys-sphinx-theme (==1.9.0)", "autodoc_pydantic (==2.2.0)", "jupyter_sphinx (==0.5.3)", "myst-parser (==4.0.1)", "nbsphinx (==0.9.8)", "numpydoc (==1.10.0)", "sphinx-autodoc-typehints (==3.0.1)", "sphinx-copybutton (==0.5.2)", "sphinx-jinja (==2.0.2)", "sphinx-tabs (==3.5.0)", "sphinx_design (==0.6.1)", "sphinxcontrib-globalsubs (==1.1.0)", "sphinxcontrib-httpdomain (==2.0.0)", "sphinxnotes-strike (==1.2.1)"]
+tests = ["coverage (==7.15.2)", "pytest (==9.1.1)", "pytest-asyncio (>=0.23.0)", "pytest-playwright (>=0.4.0)", "python-keycloak (>=3.9.1,<4.0.0)"]
 
 [[package]]
 name = "ansys-hps-data-transfer-client"
-version = "0.4.0"
+version = "0.5.0"
 description = "Python client library for hps data transfer service"
 optional = false
 python-versions = "<4.0,>=3.10"
 groups = ["main", "tests"]
 files = [
-    {file = "ansys_hps_data_transfer_client-0.4.0-py3-none-any.whl", hash = "sha256:78015413f8bdda35b524d8f5a870016cdc14de820a1974c65184942ef8c662cd"},
-    {file = "ansys_hps_data_transfer_client-0.4.0.tar.gz", hash = "sha256:9f2fc121f99dc8e04a0c95498f1920326ac90b25eae0403f8e36d57d48f52751"},
+    {file = "ansys_hps_data_transfer_client-0.5.0-py3-none-any.whl", hash = "sha256:b7fcef29f8371646a02189e6e240778c0dca522520fd5d6c5959f193b3706f9c"},
+    {file = "ansys_hps_data_transfer_client-0.5.0.tar.gz", hash = "sha256:b38a3120017793c7c0e0f3305e130c395a997461bd8b58b34ef205e294cd82df"},
 ]
 markers = {main = "extra == \"hps\" or extra == \"all\""}
 
@@ -383,10 +384,10 @@ pydantic = ">=2.7.1"
 requests = ">=2.21.0"
 
 [package.extras]
-build = ["build (==1.4.2)", "datamodel-code-generator (==0.55.0)", "importlib_metadata (>=7.0)", "pre-commit (==4.5.1)", "twine (==6.2.0)", "wheel"]
-doc = ["Sphinx (==8.1.3)", "ansys-sphinx-theme (==1.7.2)", "autodoc_pydantic (==2.2.0)", "numpydoc (==1.10.0)", "sphinx-autoapi (==3.8.0)", "sphinx-copybutton (==0.5.2)", "sphinx-gallery (==0.20.0)", "sphinx-jinja (==2.0.2)", "sphinx_design (==0.6.1)"]
+build = ["build (==1.5.1)", "datamodel-code-generator (==0.71.0)", "importlib_metadata (>=7.0)", "pre-commit (==4.6.1)", "twine (==7.0.0)", "wheel"]
+doc = ["Sphinx (==8.1.3)", "ansys-sphinx-theme (==1.9.0)", "autodoc_pydantic (==2.2.0)", "numpydoc (==1.10.0)", "sphinx-autoapi (==3.8.0)", "sphinx-copybutton (==0.5.2)", "sphinx-gallery (==0.21.0)", "sphinx-jinja (==2.0.2)", "sphinx_design (==0.6.1)"]
 example = ["typer (>=0.9.0)"]
-tests = ["pytest (==9.0.2)", "pytest-asyncio (==1.3.0)", "pytest-cov (==7.1.0)", "pytest-mock-resources[redis] (==2.12.4)", "pytest-rerunfailures (==16.1)", "pytest-timeout (==2.4.0)", "python-keycloak (==7.1.1)", "python-slugify (>=8.0.4)", "tox (==4.50.3)"]
+tests = ["pytest (==9.1.1)", "pytest-asyncio (==1.4.0)", "pytest-cov (==7.1.0)", "pytest-mock-resources[redis] (==2.12.4)", "pytest-rerunfailures (==16.4)", "pytest-timeout (==2.4.0)", "python-keycloak (==7.1.1)", "python-slugify (>=8.0.4)", "tox (==4.58.0)"]
 
 [[package]]
 name = "ansys-iam-oidc"
@@ -1816,14 +1817,14 @@ tasks = ["pydocket (>=0.20.0)"]
 
 [[package]]
 name = "filelock"
-version = "3.20.3"
+version = "4.0.8"
 description = "A platform independent file lock."
 optional = false
 python-versions = ">=3.10"
 groups = ["main", "doc", "style", "tests"]
 files = [
-    {file = "filelock-3.20.3-py3-none-any.whl", hash = "sha256:4b0dda527ee31078689fc205ec4f1c1bf7d56cf88b6dc9426c4f230e46c2dce1"},
-    {file = "filelock-3.20.3.tar.gz", hash = "sha256:18c57ee915c7ec61cff0ecf7f0f869936c7c30191bb0cf406f1341778d0834e1"},
+    {file = "filelock-4.0.8-py3-none-any.whl", hash = "sha256:325ff22f358c18443b1fcdfa0a7aa3faec4b500c2807c554719da4567b533d31"},
+    {file = "filelock-4.0.8.tar.gz", hash = "sha256:733d9b6b153fc63672f86104324186818b6bbe9dd7db84e9bb9887b6a04a2775"},
 ]
 markers = {main = "extra == \"hps\" or extra == \"all\""}
 
@@ -3311,14 +3312,14 @@ sphinx = ">=6"
 
 [[package]]
 name = "oauthlib"
-version = "3.2.2"
+version = "4.0.0"
 description = "A generic, spec-compliant, thorough implementation of the OAuth request-signing logic"
 optional = false
-python-versions = ">=3.6"
+python-versions = ">=3.9"
 groups = ["main"]
 files = [
-    {file = "oauthlib-3.2.2-py3-none-any.whl", hash = "sha256:8139f29aac13e25d502680e9e19963e83f16838d48a0d71c287fe40e7067fbca"},
-    {file = "oauthlib-3.2.2.tar.gz", hash = "sha256:9859c40929662bec5d64f34d01c99e093149682a3f38915dc0655d5a633dd918"},
+    {file = "oauthlib-4.0.0-py3-none-any.whl", hash = "sha256:624c28c13a0a59cabf9747dfa52af63be3e512a7f2714df16e91b5b3a145e6cd"},
+    {file = "oauthlib-4.0.0.tar.gz", hash = "sha256:efb274799819440f95b4ab3b818869f1ce9ae26c5beacba0201d1a1b76b54f86"},
 ]
 
 [package.extras]
@@ -4473,14 +4474,14 @@ windows-terminal = ["colorama (>=0.4.6)"]
 
 [[package]]
 name = "pyjwt"
-version = "2.13.0"
+version = "2.15.1"
 description = "JSON Web Token implementation in Python"
 optional = false
 python-versions = ">=3.9"
 groups = ["main", "tests"]
 files = [
-    {file = "pyjwt-2.13.0-py3-none-any.whl", hash = "sha256:66adcc2aff09b3f1bbd95fc1e1577df8ac8723c978552fd43304c8a290ac5728"},
-    {file = "pyjwt-2.13.0.tar.gz", hash = "sha256:41571c89ca91598c79e8ef18a2d07367d4810fbbd6f637794879baf1b7703423"},
+    {file = "pyjwt-2.15.1-py3-none-any.whl", hash = "sha256:42d59d631f7768a1028a64c7ff581a9bf7519804daf91fc5b6c56e30eec5e193"},
+    {file = "pyjwt-2.15.1.tar.gz", hash = "sha256:4f259e80cdfb6b3fc18a7de51fd1ef9ec79652f25019bae68975ca2468a34df8"},
 ]
 markers = {main = "extra == \"hps\" or extra == \"all\" or extra == \"mcp\""}
 
@@ -4759,6 +4760,21 @@ markers = {main = "extra == \"hps\" or extra == \"all\" or extra == \"mcp\""}
 
 [package.dependencies]
 six = ">=1.5"
+
+[[package]]
+name = "python-discovery"
+version = "1.6.1"
+description = "Python interpreter discovery"
+optional = false
+python-versions = ">=3.8"
+groups = ["doc", "style", "tests"]
+files = [
+    {file = "python_discovery-1.6.1-py3-none-any.whl", hash = "sha256:d43fcdef879fe795352bd13ccf8d185ba5a9f86f36cfcd00529f596e737442b3"},
+    {file = "python_discovery-1.6.1.tar.gz", hash = "sha256:cf87d3627dfb4412437fdd5b13eae402607722998d21567993aedbc59b23c15e"},
+]
+
+[package.dependencies]
+filelock = ">=3.15.4"
 
 [[package]]
 name = "python-dotenv"
@@ -6081,14 +6097,14 @@ files = [
 
 [[package]]
 name = "urllib3"
-version = "2.7.0"
+version = "2.8.0"
 description = "HTTP library with thread-safe connection pooling, file post, and more."
 optional = false
 python-versions = ">=3.10"
 groups = ["main", "doc", "style", "tests"]
 files = [
-    {file = "urllib3-2.7.0-py3-none-any.whl", hash = "sha256:9fb4c81ebbb1ce9531cce37674bbc6f1360472bc18ca9a553ede278ef7276897"},
-    {file = "urllib3-2.7.0.tar.gz", hash = "sha256:231e0ec3b63ceb14667c67be60f2f2c40a518cb38b03af60abc813da26505f4c"},
+    {file = "urllib3-2.8.0-py3-none-any.whl", hash = "sha256:0cf3cae568d36aa9576b28dfb35f11328f1cb974ca7647d9475ebb86c75ac6e3"},
+    {file = "urllib3-2.8.0.tar.gz", hash = "sha256:63bf2ead4c879426ebf22ef2a781eeb4aa3b4ae798a0435506f8687fd5bb9b63"},
 ]
 markers = {doc = "python_version >= \"3.12\"", style = "python_version >= \"3.12\""}
 
@@ -6122,24 +6138,22 @@ standard = ["httptools (>=0.8.0)", "python-dotenv (>=0.13)", "pyyaml (>=5.1)", "
 
 [[package]]
 name = "virtualenv"
-version = "20.36.1"
+version = "21.14.2"
 description = "Virtual Python Environment builder"
 optional = false
-python-versions = ">=3.8"
+python-versions = ">=3.9"
 groups = ["doc", "style", "tests"]
 files = [
-    {file = "virtualenv-20.36.1-py3-none-any.whl", hash = "sha256:575a8d6b124ef88f6f51d56d656132389f961062a9177016a50e4f507bbcc19f"},
-    {file = "virtualenv-20.36.1.tar.gz", hash = "sha256:8befb5c81842c641f8ee658481e42641c68b5eab3521d8e092d18320902466ba"},
+    {file = "virtualenv-21.14.2-py3-none-any.whl", hash = "sha256:6a8b7fd4e4ee00ebcdc1c5ee8cffd035d1fe130e354e8c9a44f510aac8affdc1"},
+    {file = "virtualenv-21.14.2.tar.gz", hash = "sha256:571930928b11e43db690073ad8228162eca8a3f8fd3a87acdeae07df7dd57068"},
 ]
 
 [package.dependencies]
 distlib = ">=0.3.7,<1"
-filelock = {version = ">=3.20.1,<4", markers = "python_version >= \"3.10\""}
+filelock = {version = ">=3.24.2,<5", markers = "python_version >= \"3.10\""}
+packaging = ">=23.1"
 platformdirs = ">=3.9.1,<5"
-
-[package.extras]
-docs = ["furo (>=2023.7.26)", "proselint (>=0.13)", "sphinx (>=7.1.2,!=7.3)", "sphinx-argparse (>=0.4)", "sphinxcontrib-towncrier (>=0.2.1a0)", "towncrier (>=23.6)"]
-test = ["covdefaults (>=2.3)", "coverage (>=7.2.7)", "coverage-enable-subprocess (>=1)", "flaky (>=3.7)", "packaging (>=23.1)", "pytest (>=7.4)", "pytest-env (>=0.8.2)", "pytest-freezer (>=0.4.8) ; platform_python_implementation == \"PyPy\" or platform_python_implementation == \"GraalVM\" or platform_python_implementation == \"CPython\" and sys_platform == \"win32\" and python_version >= \"3.13\"", "pytest-mock (>=3.11.1)", "pytest-randomly (>=3.12)", "pytest-timeout (>=2.1)", "setuptools (>=68)", "time-machine (>=2.10) ; platform_python_implementation == \"CPython\""]
+python-discovery = ">=1.6"
 
 [[package]]
 name = "waitress"
@@ -6296,11 +6310,12 @@ version = "1.9.0"
 description = "WebSocket client for Python with low level API options"
 optional = false
 python-versions = ">=3.9"
-groups = ["tests"]
+groups = ["main", "tests"]
 files = [
     {file = "websocket_client-1.9.0-py3-none-any.whl", hash = "sha256:af248a825037ef591efbf6ed20cc5faa03d3b47b9e5a2230a529eeee1c1fc3ef"},
     {file = "websocket_client-1.9.0.tar.gz", hash = "sha256:9e813624b6eb619999a97dc7958469217c3176312b3a16a4bd1bc7e08a46ec98"},
 ]
+markers = {main = "extra == \"hps\" or extra == \"all\""}
 
 [package.extras]
 docs = ["Sphinx (>=6.0)", "myst-parser (>=2.0.0)", "sphinx_rtd_theme (>=1.1.0)"]
@@ -6714,4 +6729,4 @@ test = ["pytest", "pytest-mock"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.11,<4"
-content-hash = "0c804b5829df8f4ebb470e7e641ca6d8368cf4ec3468cb373e093ecc5dc93233"
+content-hash = "7700011f1a753997679cf0647704594b51063fd36463b1e73793846788cc776d"

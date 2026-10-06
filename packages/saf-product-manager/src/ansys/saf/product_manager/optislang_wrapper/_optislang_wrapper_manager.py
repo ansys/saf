@@ -24,9 +24,9 @@ from ansys.optislang.core import Optislang  # pyright: ignore[reportMissingTypeS
 from ansys.optislang.core.communication_channels import (  # pyright: ignore[reportMissingTypeStubs]
     CommunicationChannel,
 )
-from ansys.saf.glow.solution import InstanceManager, ProductInstanceManager, RecoveryStateInfo
 import httpx2
 
+from ansys.saf.glow.solution import InstanceManager, ProductInstanceManager, RecoveryStateInfo
 from ansys.saf.product_manager._utilities.const import DEFAULT_SAF_OPTISLANG_TIMEOUT, LOCALHOSTS, SAF_OPTISLANG_TIMEOUT
 from ansys.saf.product_manager._utilities.timeout_utilities import get_timeout_from_environment
 

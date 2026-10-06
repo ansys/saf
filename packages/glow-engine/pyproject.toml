@@ -4,7 +4,7 @@ requires = [ "poetry-core>=2.0.0", "setuptools>=67.0" ]
 
 [tool.poetry]
 name = "ansys-saf-glow-engine"
-version = "2.5.dev0"
+version = "2.6.dev0"
 description = "Solution Application Framework / Guided Low-Code Workflow (SAF GLOW) engine"
 license = "Apache-2.0"
 authors = [ "ANSYS, Inc. <pyansys-core@synopsys.com>" ]
@@ -49,7 +49,7 @@ aiosqlite = ">=0.19.0, <1.0"
 ariadne = "^1.0.1"                                                                         # minimum version compatible with starlette >= 1.x
 ansys-bdm-api = { version = ">=0.5.0, <1.0", allow-prereleases = true }
 ansys-bdm-shared-volume = { version = ">=0.4.0, <1.0", allow-prereleases = true }
-ansys-hps-client = { version = ">=0.12, <1.0", optional = true }                           # for using HPS
+ansys-hps-client = { version = ">=0.13, <1.0", optional = true }                           # for using HPS
 ansys-iam-oidc = { version = ">=0.9.0, <1.0", allow-prereleases = true }
 ansys-platform-instancemanagement = { version = "^1.0.2", optional = true }                # for using PIM
 ansys-saf-product-configuration = { version = ">=0.22.0, <1.0", allow-prereleases = true }

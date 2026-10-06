@@ -197,6 +197,8 @@ class TransactionStepModel:
         self._hps_blob_manager = hps_blob_manager
         self._access_token = access_token
         self._step_type_hints = get_type_hints(step_type)
+        # Shared across all HPS fields so they reuse one cached HPS client instead of one each.
+        self._hps_authenticator: IHpsAuthenticator | None = None
 
         # Assign default step field attribute to this object.
         step_model = step_type()
@@ -230,7 +232,9 @@ class TransactionStepModel:
         field_value = getattr(step_model, field_name)
         transformer = self._get_hps_project_field_transformer(field_name)
         if transformer is not None:
-            hps_authenticator = create_hps_authenticator(self._settings, self._access_token)
+            if self._hps_authenticator is None:
+                self._hps_authenticator = create_hps_authenticator(self._settings, self._access_token)
+            hps_authenticator = self._hps_authenticator
             field_value = transformer.to_dynamic(
                 field_value,
                 f"Field '{field_name}'",

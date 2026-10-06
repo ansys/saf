@@ -18,12 +18,12 @@ from collections.abc import Callable
 from pathlib import Path
 from typing import TYPE_CHECKING
 
+import pytest
+
 from ansys.saf.glow.client import InternalSolutionException
 from ansys.saf.testing.hps import GetHpsJobIdsType
 from ansys.saf.testing.solution.const import TestProductInstanceSystemType
 from ansys.saf.testing.solution.end_to_end import ProjectFixture
-import pytest
-
 from tests.mocks.solution_end_to_end.solution.definition import EndToEndSolution
 
 if TYPE_CHECKING:

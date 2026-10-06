@@ -18,8 +18,10 @@ tasks:
       runFromWorkspaceRoot: true
 
   pre-commit:
-    description: "Run pre-commit against root-level files only (packages run their own pre-commit task)"
-    script: 'uv run pre-commit run --files $(git ls-files -- ":(top,glob)*" ":(top).github/**" ":(top)doc/**")'
+    description: "Run pre-commit against root-level files only (packages run their
+      own pre-commit task)"
+    script: 'uv run pre-commit run --files $(git ls-files -- ":(top,glob)*" ":(top).github/**"
+      ":(top)doc/**")'
     inputs:
       - '/.pre-commit-config.yaml'
       - '/pyproject.toml'
@@ -50,11 +52,12 @@ tasks:
     inputs:
       - "doc/**/*"
       - "pyproject.toml"
-      - "/.python-version"
     options:
       runFromWorkspaceRoot: true
 
   download-wheel-for-e2e-tests:
+    description: "Download the private wheels required by the e2e tests into <workspace
+      root>/extra_packages"
     command: 'pip'
     args:
       - "download"
@@ -65,9 +68,27 @@ tasks:
       - "-d"
       - "./extra_packages"
     outputs:
-      - "./extra_packages"
+      - "/extra_packages"
     env:
       PIP_INDEX_URL: 'https://pypi.org/simple'
       PIP_QUIET: '1'
     options:
+      runFromWorkspaceRoot: true
+      # Never cache: the resolved wheels depend on ambient index configuration
+      # (PIP_EXTRA_INDEX_URL for the Ansys private PyPI), which moon does not hash.
+      # A cache hit would silently restore the public placeholder wheels.
       cache: false
+
+  clean-hps-log:
+    description: "Clean HPS log files"
+    command: 'rm'
+    args:
+      - '-rf'
+      - '~/.ansys/rep/scaling/*'
+      - '/tmp/hps_*'
+    options:
+      shell: true
+      # Ensures the entire moon pipeline won't fail if the directories don't exist
+      allowFailure: true 
+    toolchains:
+      - 'system'

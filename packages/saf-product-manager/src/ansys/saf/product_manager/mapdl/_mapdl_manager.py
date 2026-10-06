@@ -20,8 +20,8 @@ from typing import Any
 
 from ansys.mapdl.core import Mapdl  # pyright: ignore[reportMissingTypeStubs]
 from ansys.mapdl.core.errors import MapdlVersionError  # pyright: ignore[reportMissingTypeStubs]
-from ansys.saf.glow.solution import InstanceManager, ProductInstanceManager, RecoveryStateInfo
 
+from ansys.saf.glow.solution import InstanceManager, ProductInstanceManager, RecoveryStateInfo
 from ansys.saf.product_manager._utilities.const import ANSYS_GRPC_CERTIFICATES, INSECURE_GRPC_MSG
 
 logger = logging.getLogger(__name__)

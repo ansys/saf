@@ -84,9 +84,11 @@ TESTS_DEFINITIONS_PER_TARGET = {
 UV_PACKAGES = [
     "bdm-python-api",
     "bdm-python-shared-volume",
+    "saf-desktop-installer",
     "saf-desktop-orchestrator",
     "saf-iam-oidc",
     "saf-product-configuration",
+    "saf-product-manager",
     "saf-testing",
     "saf-templates",
 ]

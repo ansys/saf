@@ -74,7 +74,7 @@ class VisorStep(StepModel):
 
     @transaction(self=StepSpec(upload=["visor_started"]))
     @instance("visor_manager")
-    def close_visor(self, visor_manager: VisorManager) -> None:
+    def shutdown_visor(self, visor_manager: VisorManager) -> None:
         """Close the Visor instance."""
 
         self.transaction.raise_event(message="Starting to shutdown the instance.", stream_name="visor-output-stream")

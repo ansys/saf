@@ -279,17 +279,16 @@ def layout(project: ExamplesSolution) -> html.Div:
     State("url", "pathname"),
     prevent_initial_call=True,
 )
-def start_visor_with_notification(
-    n_clicks: int | None,
-    project: ExamplesSolution,
-) -> tuple[list[dict[str, Any]] | Any, bool, bool]:
-    """Start Visor and show an in-progress notification."""
+def start_visor(n_clicks: int, project: ExamplesSolution) -> tuple[list[dict[str, Any]] | str, bool, bool]:
+    """Initialize the VISOR instance."""
     if not n_clicks:
-        return no_update, no_update, no_update
+        return no_update, no_update, no_update # No update to notification, start button disabled, start button loading
 
-    project.steps.visor_step.start_visor()
+    step = project.steps.visor_step
+    step.start_visor()
+
     return (
-        [
+        [ # Notification
             dict(
                 title="Info",
                 id="start-visor-notification",
@@ -301,8 +300,8 @@ def start_visor_with_notification(
                 withCloseButton=False,
             )
         ],
-        True,
-        True,
+        True, # disable_launch_button
+        True, # loading_launch_button
     )
 
 
@@ -387,6 +386,7 @@ def display_visor_viewer(
 
 
 @callback(
+    Output("notification-container", "sendNotifications", allow_duplicate=True),
     Output("visor-viewer-container", "children", allow_duplicate=True),
     Output("start-visor-button", "disabled", allow_duplicate=True),
     Output("stop-visor-button", "disabled", allow_duplicate=True),
@@ -395,13 +395,54 @@ def display_visor_viewer(
     State("url", "pathname"),
     prevent_initial_call=True,
 )
-def stop_visor(n_clicks: int | None, project: ExamplesSolution) -> tuple[list[Any], bool, bool, bool]:
-    """Stop the Visor instance and clear the viewer."""
-    if not n_clicks:
-        return no_update, no_update, no_update, no_update
-    project.steps.visor_step.close_visor()
-    return [], False, True, True
+def shutdown_visor(n_clicks: int, project: ExamplesSolution) -> tuple[list[dict[str, Any]] | str, list[Any], bool, bool, bool]:
+    """Shutdown the VISOR instance."""
+    notification = no_update
+    visor_viewer_children = no_update
+    disable_launch_button = no_update
+    disable_shutdown_button = no_update
+    disable_show_shape_button = no_update
 
+    if n_clicks:
+        step = project.steps.visor_step
+
+        try:
+            step.shutdown_visor()
+            notification = [
+                dict(
+                    title="Success",
+                    id="shutdown-visor-notification",
+                    action="show",
+                    message="Visor instance shutdown successfully.",
+                    autoClose=5000,
+                    color="green",
+                    withCloseButton=True,
+                )
+            ]
+            visor_viewer_children = []
+            disable_launch_button = False
+            disable_shutdown_button = True
+            disable_show_shape_button = True
+        except Exception:
+            notification = [
+                dict(
+                    title="Error",
+                    id="shutdown-visor-notification",
+                    action="show",
+                    message="Failed to shutdown Visor instance.",
+                    autoClose=5000,
+                    color="red",
+                    withCloseButton=True,
+                )
+            ]
+            
+    return (
+        notification,
+        visor_viewer_children,
+        disable_launch_button,
+        disable_shutdown_button,
+        disable_show_shape_button,
+    )
 
 @callback(
     Output("visor-console-logs", "children", allow_duplicate=True),
@@ -413,7 +454,8 @@ def display_visor_output(message: dict[str, Any], current_logs: str) -> str:
     """Display Visor transaction output."""
     if message:
         new_content = message["data"].strip('"').replace("\\n", "\n")
-        return (current_logs or "") + "\n" + new_content
+        combined = (current_logs or "") + "\n" + new_content
+        return combined
     return current_logs
 
 

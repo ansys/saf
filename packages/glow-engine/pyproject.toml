@@ -15,6 +15,7 @@ keywords = [
   "solution",
   "solution application framework",
 ]
+license = "Apache-2.0"
 license-files = [ "LICENSE" ]
 maintainers = [ { name = "ANSYS, Inc.", email = "pyansys-core@synopsys.com" } ]
 authors = [ { name = "ANSYS, Inc.", email = "pyansys-core@synopsys.com" } ]
@@ -174,7 +175,7 @@ markers = [
   "use_pim",
   "use_ui",            # run e2e tests with UI server
 ]
-pythonpath = "."
+pythonpath = [ "." ]
 testpaths = [ "tests/unit", "tests/integration", "tests/mocks" ]
 
 [tool.coverage]

@@ -484,7 +484,8 @@ jobs:
             secrets.PYANSYS_PYPI_PRIVATE_URL }}
 
       - name: Install minerva-python-client
-        if: ${{ matrix.install-minerva-python-client == 'true' && env.USE_MOON == 'false' }}
+        if: ${{ matrix.install-minerva-python-client == 'true' && env.USE_MOON ==
+          'false' }}
         shell: bash
         run: |
           ${PYTHON_EXE} -m pip install ansys-minerva-python-client==${MINERVA_PYTHON_CLIENT_VERSION}
@@ -497,7 +498,8 @@ jobs:
           PIP_QUIET: 1
 
       - name: Install minerva-python-client with Moon
-        if: ${{ matrix.install-minerva-python-client == 'true' && env.USE_MOON == 'true' }}
+        if: ${{ matrix.install-minerva-python-client == 'true' && env.USE_MOON ==
+          'true' }}
         shell: bash
         run: moon run $PACKAGE:install-minerva-python-client
         env:

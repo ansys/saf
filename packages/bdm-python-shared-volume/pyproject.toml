@@ -22,16 +22,19 @@ classifiers = [
   "Programming Language :: Python :: 3.13",
   "Programming Language :: Python :: 3.14",
 ]
-
 dependencies = [
   "aioshutil>=1.3,<2",
   "ansys-bdm-api>=0.5,<1.0",
 ]
 
+[tool.uv]
+sources.ansys-bdm-shared-volume = { workspace = true }
+build-backend.module-name = "ansys.bdm.shared_volume"
+build-backend.namespace = true
+prerelease-package = { ansys-bdm-api = "allow" }
+prereleases = "if-necessary"
+
 [tool.pytest]
-log_cli = true
-norecursedirs = [ ".moon", ".venv", "tmp*", ".git" ]
-pythonpath = [ "." ]
 addopts = [
   "--strict-config",
   "--strict-markers",
@@ -44,27 +47,17 @@ filterwarnings = [
   "error",
   "ignore::ResourceWarning",
 ]
+log_cli = true
+norecursedirs = [ ".moon", ".venv", "tmp*", ".git" ]
+pythonpath = [ "." ]
 testpaths = [ "tests/" ]
 
-[tool.coverage.run]
-source = [ "ansys.bdm.shared_volume" ]
-disable_warnings = [ "no-data-collected" ]
-omit = [
+[tool.coverage]
+run.source = [ "ansys.bdm.shared_volume" ]
+run.omit = [
+  "*/ansys/bdm/api/*",
   "read_toml.py",
   "tests/*",
-  "*/ansys/bdm/api/*",
 ]
-
-[tool.coverage.report]
-show_missing = true
-
-[tool.uv]
-prereleases = "if-necessary"
-prerelease-package = { ansys-bdm-api = "allow" }
-
-[tool.uv.sources]
-ansys-bdm-shared-volume = { workspace = true }
-
-[tool.uv.build-backend]
-module-name = "ansys.bdm.shared_volume"
-namespace = true
+run.disable_warnings = [ "no-data-collected" ]
+report.show_missing = true

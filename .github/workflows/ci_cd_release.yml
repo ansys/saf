@@ -264,11 +264,11 @@ jobs:
     with:
       library-name: ${{ inputs.library }}
       python-version: ${{ vars.PYTHON_VERSION }}
-      use-moon: ${{! contains('dash-super-components,glow-engine,saf-cli,saf-product-manager',
-        inputs.library) }}
+      use-moon: ${{! contains('dash-super-components,glow-engine,saf-cli', inputs.library)
+        }}
       artifact-name: ${{ inputs.library }}-${{ needs.release-information.outputs.release-name
-        }}${{ case(contains('dash-super-components,glow-engine,saf-cli,saf-product-manager',
-        inputs.library), '' , '-artifacts') }}
+        }}${{ case(contains('dash-super-components,glow-engine,saf-cli', inputs.library),
+        '' , '-artifacts') }}
 
   bump-version:
     name: Bump Version

@@ -23,7 +23,6 @@ classifiers = [
   "Programming Language :: Python :: 3.14",
   "Topic :: Scientific/Engineering",
 ]
-
 dependencies = [
   "click>=8.1.7,<9",
   "cryptography>=50.0.0,<51",
@@ -36,7 +35,6 @@ dependencies = [
   "tenacity>=8.2.3,<9",           # has to be <9.0.0 to be compatible with ansys-conceptev-core 0.9.4
   "typing-extensions>=4.14.0,<5",
 ]
-
 optional-dependencies.all = [
   "ansys-hps-client>=0.13,<1.0",
   "ansys-saf-product-configuration>=0.20,<1.0",
@@ -57,7 +55,6 @@ optional-dependencies.pim = [
   "grpcio-health-checking>=1.24.0,<2",
 ]
 optional-dependencies.selenium = [ "selenium>=4.0,<5" ]
-
 entry-points.pytest11.saf_testing_common = "ansys.saf.testing.common"
 entry-points.pytest11.saf_testing_database = "ansys.saf.testing.database"
 # By registering the plugins here, they can be used without needing to declare them in pytest_plugins.
@@ -76,6 +73,11 @@ entry-points.pytest11.saf_testing_selenium = "ansys.saf.testing.selenium"
 entry-points.pytest11.saf_testing_solution = "ansys.saf.testing.solution"
 entry-points.pytest11.saf_testing_solution_e2e = "ansys.saf.testing.solution.end_to_end"
 
+[tool.uv]
+sources.ansys-saf-testing = { workspace = true }
+build-backend.module-name = "ansys.saf.testing"
+build-backend.namespace = true
+
 [tool.black]
 line-length = 120
 
@@ -88,30 +90,27 @@ extend-exclude = [
 ]
 
 [tool.pytest]
-log_cli = true
-norecursedirs = [ ".moon", ".venv", "tmp*", ".git" ]
-pythonpath = [ "." ]
 addopts = [
   "--strict-config",
   "--strict-markers",
   "--import-mode=importlib",
 ]
-testpaths = [ "tests" ]
 filterwarnings = [
-  "ignore:Accessing the 'model_fields' attribute on the instance is deprecated. Instead, you should access this attribute from the model class:DeprecationWarning",
-  "ignore:Accessing the 'model_computed_fields' attribute on the instance is deprecated. Instead, you should access this attribute from the model class:DeprecationWarning",
+  """\
+  ignore:Accessing the 'model_fields' attribute on the instance is deprecated. Instead, you should access this \
+  attribute from the model class:DeprecationWarning\
+  """,
+  """\
+  ignore:Accessing the 'model_computed_fields' attribute on the instance is deprecated. Instead, you should access \
+  this attribute from the model class:DeprecationWarning\
+  """,
 ]
+log_cli = true
+norecursedirs = [ ".moon", ".venv", "tmp*", ".git" ]
+pythonpath = [ "." ]
+testpaths = [ "tests" ]
 
-[tool.coverage.run]
-source = [ "ansys.saf.testing" ]
-
-[tool.coverage.report]
-show_missing = true
-omit = [ "*/pytest-of-*/pytest-*/popen-*/*", "/tmp/*" ]
-
-[tool.uv.sources]
-ansys-saf-testing = { workspace = true }
-
-[tool.uv.build-backend]
-module-name = "ansys.saf.testing"
-namespace = true
+[tool.coverage]
+run.source = [ "ansys.saf.testing" ]
+report.omit = [ "*/pytest-of-*/pytest-*/popen-*/*", "/tmp/*" ]
+report.show_missing = true

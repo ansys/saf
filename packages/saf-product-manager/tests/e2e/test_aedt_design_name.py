@@ -17,10 +17,10 @@
 import contextlib
 from pathlib import Path
 
-from ansys.saf.glow.client import InternalSolutionException
-from ansys.saf.testing.solution.end_to_end import ProjectFixture
 import pytest
 
+from ansys.saf.glow.client import InternalSolutionException
+from ansys.saf.testing.solution.end_to_end import ProjectFixture
 from tests.mocks.solution_end_to_end.flagship_const import LATEST_VERSION, PREVIOUS_VERSION
 from tests.mocks.solution_end_to_end.solution.definition import EndToEndSolution
 

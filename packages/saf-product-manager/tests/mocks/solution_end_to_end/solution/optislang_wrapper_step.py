@@ -21,6 +21,7 @@ from typing import Literal
 import uuid
 
 import ansys.optislang.core.examples as examples  # pyright: ignore[reportMissingTypeStubs]
+
 from ansys.saf.glow.solution import (
     NO_ENTITY,
     EntityHandle,
@@ -31,7 +32,6 @@ from ansys.saf.glow.solution import (
     long_running,
     transaction,
 )
-
 from ansys.saf.product_manager.optislang_wrapper import OslManager
 
 logger = logging.getLogger(__name__)

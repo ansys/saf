@@ -25,6 +25,9 @@ import shutil
 from typing import TypeVar
 from unittest import mock
 
+import psutil
+import pytest
+
 from ansys.saf.glow.solution import Solution
 from ansys.saf.testing.common import YieldFixture
 from ansys.saf.testing.network import get_docker_gateway_ip
@@ -34,9 +37,6 @@ from ansys.saf.testing.solution.end_to_end import (
     GlowBaseProcess,
     WithProductHost,
 )
-import psutil
-import pytest
-
 from tests.conftest import IGNORE_PYC_FILES
 from tests.mocks.solution_end_to_end.flagship_const import LATEST_VERSION, PREVIOUS_VERSION
 from tests.mocks.solution_end_to_end.solution.definition import EndToEndSolution
@@ -78,7 +78,7 @@ def mock_appdata(tmp_path_factory: pytest.TempPathFactory) -> YieldFixture[Path]
 
 
 @pytest.fixture(autouse=True)
-def check_session_glow_health(
+def check_session_glow_health(  # noqa: UP047
     session_glow: GlowBaseProcess[T] | None,
     rerun_restart: None,
     keep_container_logs_now: bool | None = None,
@@ -150,7 +150,7 @@ def tmp_solutions_dir(tmp_path_factory: pytest.TempPathFactory) -> dict[type[T],
 
 
 @pytest.fixture(scope="session")
-def solution_type(
+def solution_type(  # noqa: UP047
     tmp_solutions_dir: dict[type[T], Path],
     request: pytest.FixtureRequest,
 ) -> tuple[type[T] | type[Solution], Path] | None:

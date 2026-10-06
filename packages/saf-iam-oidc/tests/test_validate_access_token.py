@@ -26,7 +26,7 @@ import pytest
 from pytest_httpx2 import HTTPXMock
 
 from ansys.iam.oidc import AsyncOidcClient, NoIssuerError, NoIssuerOrAudienceError, OidcClient
-from tests.conftest import IDP_URL
+from tests.conftest import IDP_URL  # pyright: ignore
 
 pytestmark = pytest.mark.httpx_mock(assert_all_responses_were_requested=False)
 

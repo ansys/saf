@@ -31,7 +31,6 @@ classifiers = [
   "Programming Language :: Python :: 3.14",
   "Topic :: Scientific/Engineering",
 ]
-
 dependencies = [
   "ansys-saf-glow-engine[pim]>=2.1.0,<3.0",
   "ansys-saf-product-configuration>=0.21.0,<1.0",
@@ -47,13 +46,14 @@ dependencies = [
   "pyyaml>=6.0,<7.0",
   "typing-extensions>=4.12.2,<5.0",
 ]
-
 scripts.solution-app-starter = "ansys.saf.desktop.orchestrator._scripts.solution_app_starter:run_solution"
 
+[tool.uv]
+sources.ansys-saf-desktop-orchestrator = { workspace = true }
+build-backend.module-name = "ansys.saf.desktop.orchestrator"
+build-backend.namespace = true
+
 [tool.pytest]
-log_cli = true
-norecursedirs = [ ".moon", ".venv", "tmp*", ".git" ]
-pythonpath = [ "." ]
 addopts = [
   "--strict-config",
   "--strict-markers",
@@ -61,23 +61,17 @@ addopts = [
   "-nlogical",
   "--dist=loadfile",
 ]
-markers = [  ]
 filterwarnings = [
   "ignore::DeprecationWarning:pkg_resources.*:",
   "ignore:pkg_resources is deprecated as an API:DeprecationWarning",
 ]
+log_cli = true
+markers = []
+norecursedirs = [ ".moon", ".venv", "tmp*", ".git" ]
+pythonpath = [ "." ]
 testpaths = [ "tests" ]
 
-[tool.coverage.run]
-source = [ "ansys.saf.desktop.orchestrator" ]
-
-[tool.coverage.report]
-show_missing = true
-omit = [ "*/pytest-of-*/pytest-*/popen-*/*", "/tmp/*" ]
-
-[tool.uv.sources]
-ansys-saf-desktop-orchestrator = { workspace = true }
-
-[tool.uv.build-backend]
-module-name = "ansys.saf.desktop.orchestrator"
-namespace = true
+[tool.coverage]
+run.source = [ "ansys.saf.desktop.orchestrator" ]
+report.omit = [ "*/pytest-of-*/pytest-*/popen-*/*", "/tmp/*" ]
+report.show_missing = true

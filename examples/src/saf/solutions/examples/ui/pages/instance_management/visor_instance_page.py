@@ -120,22 +120,34 @@ def layout(project: ExamplesSolution) -> html.Div:
                         label="Stop Visor",
                         position="top",
                     ),
-                    dmc.Button(
-                        "Show Shape",
-                        id="show-visor-shape-button",
-                        color="#2790F1",
-                        disabled=not step.visor_started,
-                    ),
+                    
                 ],
                 gap="md",
                 justify="center",
             ),
             dmc.Space(h=20),
+            dmc.Divider(variant="solid"),
+            dmc.Space(h=20),
+                dmc.Stack(
+                [
+                    dmc.Button(
+                        "Show Shape",
+                        id="show-visor-shape-button",
+                        variant="filled",
+                        color="#2790F1",
+                        leftSection=DashIconify(icon="mdi:eye"),
+                        disabled=not step.visor_started,
+                        style={"width": "70%", "font-size": "15px"},
+                    ),
+                ],
+                align="center",
+            ),
         ],
         withBorder=True,
         shadow="sm",
         radius="md",
-    ),
+    )
+
     logs_container = dmc.Card(
         [
             dmc.CardSection(
@@ -173,9 +185,33 @@ def layout(project: ExamplesSolution) -> html.Div:
                     },
                 ),
                 style={
-                    "height": "300px",
+                    "height": "200px",
                     "width": "100%",
                     "overflowY": "scroll",
+                },
+            ),
+        ],
+        withBorder=True,
+        shadow="sm",
+        radius="md",
+    )
+
+    visor_viewer_container = dmc.Card(
+        [
+            dmc.CardSection(
+                dmc.Text("Viewer", fw=500, style={"font-size": "17px"}),
+                withBorder=True,
+                inheritPadding=True,
+                py="xs",
+            ),
+            html.Div(
+                viewer,
+                id="visor-viewer-container",
+                style={
+                    "width": "100%",
+                    "height": "calc(100vh - 240px)",
+                    "minHeight": "0",
+                    "overflow": "hidden",
                 },
             ),
         ],
@@ -192,17 +228,13 @@ def layout(project: ExamplesSolution) -> html.Div:
                 style={"font-size": "40px", "font-weight": "bold"},
             ),
             dmc.Blockquote(
-                "This example demonstrates how to use the instance management API to start VISOR, display a cube, and stop it.",
+                "This example demonstrates how to leverage the instance management API to control VISOR.\
+                Click the Launch action button to\
+                start the instance. A transaction method will start VISOR which can be used across all transaction\
+                methods of the solution. Run VISOR operations with the Show Shape and\
+                button. Close VISOR using the Shutdown button.",
                 icon=DashIconify(icon="material-symbols:info", width=30),
                 style={"font-size": "18px", "fontStyle": "italic"},
-            ),
-            dmc.Space(h=20),
-            dmc.Alert(
-                dmc.Text(
-                    "⚠️ Install ansys-visor-viewer and configure the VISOR product instance before launching this example.",
-                ),
-                title="Warning",
-                color="yellow",
             ),
             dmc.Space(h=20),
             dmc.Grid(
@@ -211,31 +243,12 @@ def layout(project: ExamplesSolution) -> html.Div:
                         controls_card,
                         span=3,
                     ),
-                    dmc.GridCol(logs_container, span=9),
                     dmc.GridCol(
-                        dmc.Card(
-                            [
-                                dmc.CardSection(
-                                    dmc.Text("Viewer", fw=500, style={"font-size": "17px"}),
-                                    withBorder=True,
-                                    inheritPadding=True,
-                                    py="xs",
-                                ),
-                                html.Div(
-                                    viewer,
-                                    id="visor-viewer-container",
-                                    style={
-                                        "width": "100%",
-                                        "height": "calc(100vh - 240px)",
-                                        "minHeight": "0",
-                                        "overflow": "hidden",
-                                    },
-                                ),
-                            ],
-                            withBorder=True,
-                            shadow="sm",
-                            radius="md",
-                        ),
+                        logs_container,
+                        span=9
+                    ),
+                    dmc.GridCol(
+                        visor_viewer_container,
                         span=12,
                     ),
                 ],
@@ -245,7 +258,7 @@ def layout(project: ExamplesSolution) -> html.Div:
             DashClient.create_event_listener(  # pyright: ignore[reportUnknownMemberType]
                 step, id="output-listener", stream_name="visor-output-stream"
             ),
-            DashClient.create_event_listener(
+            DashClient.create_event_listener(  # pyright: ignore[reportUnknownMemberType]
                 step, id="start-visor-listener", stream_name="start-visor"
             ),
         ],

@@ -17,6 +17,8 @@ import shutil
 import subprocess
 import sys
 
+RUFF_HEADER = "# ruff: noqa\n"
+
 
 def _require_dash_or_exit():
     """Fail fast with actionable guidance when dash is not installed."""
@@ -33,6 +35,29 @@ def _require_dash_or_exit():
             file=sys.stderr,
         )
         raise SystemExit(1) from exc
+
+
+def _add_license_headers(files):
+    """Apply the configured Ansys license-header hook to generated files."""
+    command = [
+        sys.executable,
+        "-m",
+        "pre_commit",
+        "run",
+        "add-license-headers",
+        "--files",
+        *(str(path.relative_to(Path.cwd())) for path in files),
+    ]
+    results = []
+    for _ in range(2):
+        result = subprocess.run(command, check=False, capture_output=True, text=True)
+        results.append(result)
+        if result.returncode == 0:
+            return
+    for result in results:
+        sys.stdout.write(result.stdout)
+        sys.stderr.write(result.stderr)
+    raise subprocess.CalledProcessError(result.returncode, command)
 
 
 def run_node_extract(components_source, ignore, local_extract_path):
@@ -139,15 +164,16 @@ def main():
 
         # Stamp all generated .py files as auto-generated so linters skip them.
         output_dir = Path(args.project_shortname).resolve()
+        generated_python_files = []
         for fpath in output_dir.iterdir():
             if fpath.suffix != ".py":
                 continue
+            generated_python_files.append(fpath)
             with fpath.open(encoding="utf-8") as fh:
                 content = fh.read()
-            noqa_header = "# ruff: noqa\n"
-            if not content.startswith(noqa_header):
+            if not content.startswith(RUFF_HEADER):
                 with fpath.open("w", encoding="utf-8") as fh:
-                    fh.write(noqa_header + content)
+                    fh.write(RUFF_HEADER + content)
 
         if args.namespace and args.namespace != args.project_shortname:
             import re
@@ -185,6 +211,8 @@ def main():
                             file=sys.stderr,
                         )
 
+        _add_license_headers(generated_python_files)
+
         print("Component generation complete!")
 
     finally:
@@ -195,3 +223,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+    

@@ -48,7 +48,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: check-linked-issues-in-pr-description
-        uses: ansys/saf-devops/link-issue-to-pull-request@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
+        uses: ansys/saf-devops/link-issue-to-pull-request@05e496627cef1b70380fe627cfe2b70550e79a87 # v1.1.0
         env:
           ISSUE_GITHUB_TOKEN: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
 
@@ -164,7 +164,7 @@ jobs:
       contents: read
     needs: labels
     if: ${{ contains(fromJson(needs.labels.outputs.labels-json), 'devops') }}
-    uses: ansys/saf-devops/.github/workflows/_action-lint.yml@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
+    uses: ansys/saf-devops/.github/workflows/_action-lint.yml@05e496627cef1b70380fe627cfe2b70550e79a87 # v1.1.0
 
   vulnerabilities:
     name: "Vulnerabilities"
@@ -242,7 +242,7 @@ jobs:
       - name: Prepare python environment of the solution
         id: python-setup
         if: ${{ env.USE_MOON != 'true' }}
-        uses: ansys/saf-devops/prepare-python-environment@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
+        uses: ansys/saf-devops/prepare-python-environment@05e496627cef1b70380fe627cfe2b70550e79a87 # v1.1.0
         with:
           python-version: ${{ vars.PYTHON_VERSION }}
           poetry-version: ${{ vars.POETRY_VERSION }}
@@ -310,7 +310,7 @@ jobs:
             ${{ matrix.target-directory == 'examples' && 'packages/saf-cli/' || '' }}
             ${{ matrix.target-directory == 'packages/glow-engine' && '.github/scripts/' || '' }}
 
-      - uses: ansys/saf-devops/prepare-python-environment@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
+      - uses: ansys/saf-devops/prepare-python-environment@05e496627cef1b70380fe627cfe2b70550e79a87 # v1.1.0
         id: prepare-python
         with:
           python-version: ${{ vars.PYTHON_VERSION }}
@@ -382,7 +382,7 @@ jobs:
       matrix: ${{ fromJson(needs.ci-cd-config.outputs.packages-matrix) }}
     steps:
       - name: Check if wheel can be pip installed
-        uses: ansys/saf-devops/pip-install-production-wheel@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
+        uses: ansys/saf-devops/pip-install-production-wheel@05e496627cef1b70380fe627cfe2b70550e79a87 # v1.1.0
         with:
           python-version: ${{ vars.PYTHON_VERSION }}
           wheel-artifact: '${{ matrix.library-name }}-${{ vars.PYTHON_VERSION }}-artifacts'
@@ -399,7 +399,7 @@ jobs:
       matrix: ${{ fromJson(needs.ci-cd-config.outputs.compatibility-matrix) }}
     steps:
       - name: Checks compatibility with pyansys
-        uses: ansys/saf-devops/compatibility-scan@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
+        uses: ansys/saf-devops/compatibility-scan@05e496627cef1b70380fe627cfe2b70550e79a87 # v1.1.0
         with:
           python-version: ${{ vars.PYTHON_VERSION }}
           compatibility-packages: 'git+https://github.com/ansys/pyansys.git'
@@ -431,7 +431,7 @@ jobs:
 
       - name: generate sbom
         if: ${{ env.USE_MOON == 'false' }}
-        uses: ansys/saf-devops/generate-sbom@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
+        uses: ansys/saf-devops/generate-sbom@05e496627cef1b70380fe627cfe2b70550e79a87 # v1.1.0
         with:
           poetry-version: ${{ vars.POETRY_VERSION }}
           poetry-parent-directory: packages/${{ matrix.library-name }}
@@ -520,7 +520,7 @@ jobs:
           persist-credentials: false
 
       - name: Install uv
-        uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
+        uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
         with:
           python-version: 3.12
           enable-cache: false

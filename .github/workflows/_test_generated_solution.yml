@@ -122,7 +122,7 @@ jobs:
           echo "test-branch-name"=$branch_name >> $GITHUB_OUTPUT
 
       - name: Prepare python environment
-        uses: ansys/saf-devops/prepare-python-environment@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
+        uses: ansys/saf-devops/prepare-python-environment@05e496627cef1b70380fe627cfe2b70550e79a87 # v1.1.0
         with:
           python-version: ${{ inputs.python-version }}
           poetry-version: ${{ vars.POETRY_VERSION }}
@@ -262,7 +262,7 @@ jobs:
           git push origin HEAD:${TEST_BRANCH_NAME}
 
       - name: Trigger build workflow
-        uses: ansys/saf-devops/trigger-workflow@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
+        uses: ansys/saf-devops/trigger-workflow@05e496627cef1b70380fe627cfe2b70550e79a87 # v1.1.0
         with:
           workflow-name: ${{ env.BUILD_WORKFLOW }}
           repository: ${{ github.repository }}

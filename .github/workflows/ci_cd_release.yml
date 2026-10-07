@@ -270,6 +270,8 @@ jobs:
       artifact-name: ${{ inputs.library }}-${{ needs.release-information.outputs.release-name
         }}${{ case(contains('dash-super-components,glow-engine,saf-cli,saf-projects-dashboard',
         inputs.library), '' , '-artifacts') }}
+      ref: ${{ inputs.dev-release && 'main' || needs.release-information.outputs.release-branch-name
+        }}
 
   bump-version:
     name: Bump Version

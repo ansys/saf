@@ -480,6 +480,7 @@ jobs:
       artifact-name: ${{ needs.pre-certification.outputs.library-name }}-${{ matrix.python-version
         }}${{ case(needs.pre-certification.outputs.use-moon == 'false', '', '-artifacts'
         ) }}
+      ref: ${{ github.ref }}
 
   check-wheel-can-be-pip-installed:
     name: "Check wheel can be pip installed"

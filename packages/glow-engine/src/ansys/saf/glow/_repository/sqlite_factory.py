@@ -43,7 +43,7 @@ from ansys.saf.glow._server.solution import SolutionService
 logger = logging.getLogger(__name__)
 
 
-if sys.version_info >= (3, 12):
+if sys.version_info >= (3, 12):  # noqa: UP036
     # The default datetime adapter is deprecated as of Python 3.12, we have to register our own adapters.
     sqlite3.register_adapter(datetime.date, adapt_date_iso)
     sqlite3.register_adapter(datetime.datetime, adapt_datetime_iso)

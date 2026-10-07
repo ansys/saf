@@ -21,14 +21,14 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any
 import zipfile
 
-from ansys.saf.testing.common import YieldFixture
-from ansys.saf.testing.solution.end_to_end import GlowBaseProcess, ProjectFixture
 import httpx2
 from pydantic import ValidationError
 import pytest
 
 from ansys.saf.glow.client import BadRequestException, Client, NotFoundException
 from ansys.saf.glow.solution import NO_ENTITY
+from ansys.saf.testing.common import YieldFixture
+from ansys.saf.testing.solution.end_to_end import GlowBaseProcess, ProjectFixture
 from tests.check_message import check_message
 from tests.e2e.conftest import SetExternalApiUrlConfiguration
 from tests.mocks.solutions.minimal_solution import MinimalSolution, MinimalStep, MyEnum, User, Users

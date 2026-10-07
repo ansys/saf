@@ -17,13 +17,13 @@
 from collections.abc import Callable, Generator
 from pathlib import Path
 
+import pytest
+
 from ansys.saf.testing.solution.end_to_end import (
     GlowBaseProcess,
     HpsMissingAuth,
     HpsUserPswdAuth,
 )
-import pytest
-
 from tests.mocks.solution_with_hps_python_script.hps_parametric_study import ParametricStudySolution
 from tests.mocks.solutions import (
     modify_file_add_entity_handle_for_directory,

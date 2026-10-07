@@ -20,13 +20,13 @@ from pathlib import Path
 import re
 from threading import Thread
 
-from ansys.saf.testing.solution.end_to_end import GlowBaseProcess, ProjectFixture
 import httpx2
 import psutil
 import pytest
 from tenacity import TryAgain, retry, stop_after_attempt, wait_fixed
 
 from ansys.saf.glow.client import BadRequestException, Client, InternalSolutionException
+from ansys.saf.testing.solution.end_to_end import GlowBaseProcess, ProjectFixture
 from tests.mocks.solutions.instances import InstancesSolution
 
 pytestmark = [

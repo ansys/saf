@@ -17,8 +17,6 @@
 from collections.abc import Iterator, Mapping, Sequence
 from typing import Any, cast
 
-from ansys.saf.product_configuration.interfaces import Software
-
 from ansys.saf.glow._executor.local import transaction_local
 from ansys.saf.glow._hps_auth.hps_authenticator import create_hps_authenticator
 from ansys.saf.glow._hps_parametric_studies.base import (
@@ -39,6 +37,7 @@ from ansys.saf.glow._hps_parametric_studies.study_definition import (
     ResourceRequirements,  # TODO: move out of here or create interface! It's bringing HPS dependencies, while
     # the rest of study_definition imports are deliberately conditional in this file.
 )
+from ansys.saf.product_configuration.interfaces import Software
 
 
 class HpsSimpleProject(HpsSimpleProjectBase):

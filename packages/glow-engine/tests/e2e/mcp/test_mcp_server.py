@@ -16,13 +16,13 @@
 import re
 from typing import Any
 
-from ansys.saf.testing.common import YieldFixture
-from ansys.saf.testing.solution.end_to_end import GlowBaseProcess, ProjectFixture
 from fastmcp import Client as MCPClient
 from fastmcp.client.transports import SSETransport, StreamableHttpTransport
 from fastmcp.exceptions import ToolError
 import pytest
 
+from ansys.saf.testing.common import YieldFixture
+from ansys.saf.testing.solution.end_to_end import GlowBaseProcess, ProjectFixture
 from tests.e2e.conftest import (
     CustomPathMCPConfiguration,
     DisableMCPConfiguration,

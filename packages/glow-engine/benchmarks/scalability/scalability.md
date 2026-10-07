@@ -404,6 +404,7 @@ The ``tests/locust/locustfile.py`` file was created with the content:
 ``` python
 from locust import HttpUser, task
 
+
 class SolutionRestApiUser(HttpUser):
 
     @task
@@ -417,20 +418,25 @@ class SolutionRestApiUser(HttpUser):
 
         # set new step input field values
         self.client.patch(f"/{self._project_name}/steps/first-step", json={"first_arg": 5}, name="set first_arg to 5")
-        self.client.patch(f"/{self._project_name}/steps/first-step", json={"second_arg": 10}, name="set second_arg to 10")
+        self.client.patch(
+            f"/{self._project_name}/steps/first-step", json={"second_arg": 10}, name="set second_arg to 10"
+        )
 
         # execute calculate transaction method
-        self.client.post(f"/{self._project_name}/steps/first-step:calculate", name="execute calculate transaction method")
+        self.client.post(
+            f"/{self._project_name}/steps/first-step:calculate", name="execute calculate transaction method"
+        )
 
         # get result field value
         self.client.get(f"/{self._project_name}/steps/first-step?fields=result", name="get result after calculation")
 
         # execute save result transaction method
-        self.client.post(f"/{self._project_name}/steps/first-step:save-result", name="execute save result transaction method")
+        self.client.post(
+            f"/{self._project_name}/steps/first-step:save-result", name="execute save result transaction method"
+        )
 
         # get result file content
         self.client.get(f"/{self._project_name}/steps/first-step/blobs/result-file", name="get result file content")
-
 
     def on_start(self):
         # create new project

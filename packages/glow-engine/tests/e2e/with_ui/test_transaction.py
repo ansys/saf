@@ -14,6 +14,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import pytest
+from selenium.webdriver.chrome.webdriver import WebDriver
+from selenium.webdriver.common.by import By
+
 from ansys.saf.testing.selenium import (
     wait_for_element,
     wait_for_element_and_click,
@@ -21,10 +25,6 @@ from ansys.saf.testing.selenium import (
     wait_for_text,
 )
 from ansys.saf.testing.solution.end_to_end import ProjectFixture
-import pytest
-from selenium.webdriver.chrome.webdriver import WebDriver
-from selenium.webdriver.common.by import By
-
 from tests.mocks.solution_end_to_end.solution.definition import EndToEndSolution
 
 pytestmark = [

@@ -14,7 +14,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import httpx2
+import pytest
+from selenium.webdriver.chrome.webdriver import WebDriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.remote.webelement import WebElement
+from tenacity import TryAgain, retry, stop_after_attempt, wait_fixed
+
 from ansys.bdm.api import NO_ENTITY
+from ansys.saf.glow.solution import MethodStatus
 from ansys.saf.testing.platform_specific import xfail_for_ci
 from ansys.saf.testing.selenium import (
     move_to_element,
@@ -27,14 +35,6 @@ from ansys.saf.testing.selenium import (
 )
 from ansys.saf.testing.solution.const import TestDeployment
 from ansys.saf.testing.solution.end_to_end import GlowBaseProcess, ProjectFixture
-import httpx2
-import pytest
-from selenium.webdriver.chrome.webdriver import WebDriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.remote.webelement import WebElement
-from tenacity import TryAgain, retry, stop_after_attempt, wait_fixed
-
-from ansys.saf.glow.solution import MethodStatus
 from tests.conftest import MOCKS_DIR
 from tests.mocks.solution_end_to_end.solution.definition import EndToEndSolution
 from tests.mocks.solution_end_to_end.solution.transaction_verification_step import (

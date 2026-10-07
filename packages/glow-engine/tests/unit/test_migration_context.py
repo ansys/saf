@@ -17,6 +17,8 @@
 from pathlib import Path
 from typing import Any
 
+import pytest
+
 from ansys.bdm.api import NO_ENTITY, EntityHandle, IStorageScope
 from ansys.bdm.shared_volume.entity_tracker import EntityTracker
 from ansys.bdm.shared_volume.storage_configuration import (
@@ -24,8 +26,6 @@ from ansys.bdm.shared_volume.storage_configuration import (
     SharedFilesystemContextConfiguration,
 )
 from ansys.bdm.shared_volume.storage_scope import StorageScope
-import pytest
-
 from ansys.saf.glow._config.settings import Settings
 from ansys.saf.glow._core.migrations import MigrationContext
 from ansys.saf.glow._server.project_files_manager import ProjectFilesManager

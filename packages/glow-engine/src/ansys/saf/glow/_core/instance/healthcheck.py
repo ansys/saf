@@ -19,7 +19,6 @@ import os
 from pathlib import Path
 import socket
 
-from ansys.saf.product_configuration.interfaces import IProductInstanceVersionConfiguration, ServiceType
 import grpc
 from grpc_health.v1 import (
     health_pb2,
@@ -28,6 +27,7 @@ from grpc_health.v1 import (
 
 from ansys.saf.glow._core.instance.iinstance_system import IHealthClient, IHealthClientFactory, IProductInstanceService
 from ansys.saf.glow._utilities.ip_utilities import try_response
+from ansys.saf.product_configuration.interfaces import IProductInstanceVersionConfiguration, ServiceType
 
 logger = logging.getLogger(__name__)
 

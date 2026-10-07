@@ -20,7 +20,6 @@ from unittest.mock import patch
 from ansys.platform.instancemanagement.exceptions import (  # pyright: ignore[reportMissingTypeStubs]
     UnsupportedProductError,
 )
-from ansys.saf.testing.solution.const import TestProductInstanceSystemType
 import grpc
 import pytest
 
@@ -30,6 +29,7 @@ from ansys.saf.glow._core.instance.iinstance_system import (
     IProductInstanceSystem,
 )
 from ansys.saf.glow._core.instance.manager import JOB_DEFAULT_MAX_RUNNING_TIME
+from ansys.saf.testing.solution.const import TestProductInstanceSystemType
 from tests.integration.conftest import assert_instance, assert_instance_deleted
 
 MAX_EXECUTION_TIME = 60

@@ -641,7 +641,22 @@ def request_3d_geometry(
     )
 
     service_launch_step = project.steps.service_launch_step
-    _ensure_geom_service_running(service_launch_step)
+    try:
+        _ensure_geom_service_running(service_launch_step)
+    except Exception as e:
+        viewer = html.Div(
+            dmc.Alert(
+                title=f"Geometry Service (v{service_launch_step.version}) cannot be found.",
+                color="red",
+                children=[
+                    dmc.Text(f"Make sure that flagship is installed on this machine and that `GEOMETRY_ROOT261` is configured correctly.")
+                ],
+                variant="light",
+            ),
+            style={"padding": "3px"},
+        )
+        return no_update, viewer, no_update, no_update
+
     step.generate_3d()
     _sync_visor_geometry_view(service_launch_step, step)
 

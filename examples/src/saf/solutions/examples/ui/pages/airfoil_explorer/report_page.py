@@ -136,6 +136,24 @@ def layout(report_step: ReportStep):
             children=[report_not_configured_state()],
             style={"height": "100%", "width": "100%"},
         )
+    try:
+        get_instance_of_serverless_adr(report_step)
+    except:
+        return dmc.Center(
+            style={"height": "60vh"},
+            children=dmc.Alert(
+                title="ADR not configured",
+                color="orange",
+                radius="md",
+                children=[
+                    dmc.Text(
+                        "Ansys Dynamic Reporting (ADR) is not installed or configured. "
+                        "See the documentation for setup instructions."
+                    ),
+                ],
+            ),
+        )
+
 
     has_report = bool(report_step.report_html_content)
 
@@ -186,27 +204,21 @@ def _is_failed(method_state: MethodState | None) -> bool:
     return method_state is not None and method_state.status == MethodStatus.Failed
 
 
-@callback(
-    Input("url", "pathname"),
-)
-def create_instance_of_serverless_adr(project: ExamplesSolution):
+def get_instance_of_serverless_adr(report_step: ReportStep):
     """Create the instance of ADR and create the report templates."""
-    if not ADR_INSTALLATION_DIRECTORY:
-        return
 
-    report_step = project.steps.report_step
-    project_id = project.project_display_name
+    project_display_name = report_step.project_name
     try:
-        adr_obj = ADR.get_instance()
+        ADR.get_instance()
     except Exception:
         report_step.setup_adr_instance(
             stored_session_guid=report_step.session_guid, stored_dataset_guid=report_step.dataset_guid
         )
 
     if not report_step.get_method_state("create_report_templates").status == MethodStatus.Completed:
-        project_id = project.project_display_name
+        project_id = project_display_name
         report_step.project_tag = f"project={project_id}"
-        report_step.project_name = project.project_display_name
+        report_step.project_name = project_display_name
         report_step.create_report_templates()
         report_step.create_static_report_items()
 

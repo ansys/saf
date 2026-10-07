@@ -69,6 +69,11 @@ saf-product-manager-visor:
   - 'packages/saf-product-manager/src/ansys/saf/product_manager/visor/**'
   - 'packages/saf-product-manager/tests/e2e/test_visor*.py'
   - '.github/workflows/tests_groups_definitions/saf-product-manager-visor.json'
+saf-projects-dashboard:
+  - 'packages/saf-projects-dashboard/**'
+  - '!packages/saf-projects-dashboard/doc/**'
+  - '.github/workflows/tests_groups_definitions/saf-projects-dashboard.json'
+  - '.github/workflows/_js.yml'
 saf-templates:
   - 'packages/saf-templates/**'
   - '.github/workflows/tests_groups_definitions/saf-templates.json'

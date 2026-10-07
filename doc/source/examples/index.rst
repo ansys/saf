@@ -157,6 +157,14 @@ To get detailed instructions for examples, either click a category in the left n
 
       Use SAF GLOW Engine to create an instance of a MAPDL product and integrate its workflow in your solution.
 
+    .. grid-item-card:: :material-outlined:`device_hub;1.75em` :ref:`saf-ex-visor-product-instance`
+      :class-card: highlight-card
+      :link-type: doc
+      :link: product_instance_managers_examples/saf_ex_visor_product_instance
+      :shadow: lg
+
+      Use SAF GLOW Engine to create an instance of VISOR and integrate its workflow in your solution.
+
 .. card:: :large-bold:`Dash Super Components`
 
   Get started with a collection of simple, single-file Dash applications that highlight the features of the Dash Super Components library.

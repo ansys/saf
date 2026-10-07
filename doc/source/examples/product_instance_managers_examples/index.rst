@@ -26,3 +26,4 @@ Product instance managers
   saf_ex_geometry_product_instance
   saf_ex_mechanical_product_instance
   saf_ex_mapdl_product_instance
+  saf_ex_visor_product_instance

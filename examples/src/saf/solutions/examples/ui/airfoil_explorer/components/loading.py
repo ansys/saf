@@ -14,22 +14,26 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Frontend of simulation -- thin page entrypoint.
+"""Loading wrapper component."""
 
-This module acts as the page entrypoint for the simulation page.
-All implementation lives in the ``simulation`` sub-package, which
-registers callbacks on import.
-"""
+from dash_extensions.enrich import dcc
 
-import dash
-
-from saf.solutions.examples.ui.airfoil_explorer import simulation
-
-dash.register_page(
-    __name__,
-    name="Simulation",
-    path_template="/projects/<project_id>/airfoil-explorer/simulation",
-)
+LOADING_OVERLAY_STYLE = {
+    "visibility": "visible",
+    "filter": "blur(2px)",
+}
 
 
-layout = simulation.layout
+def loading_wrapper(
+    children,
+    *,
+    loading_id: str | None = None,
+):
+    """Wrap children in a standardized loading component."""
+    return dcc.Loading(
+        id=loading_id,
+        type="circle",
+        color="#ffb71b",
+        overlay_style=LOADING_OVERLAY_STYLE,
+        children=children,
+    )

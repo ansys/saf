@@ -339,6 +339,7 @@ layout = dmc.MantineProvider(
         dcc.Store(id="active-page-index", data=None),
         dcc.Store(id="active-project-id", data=None),
         html.Div(id="aedt-instance-event-listeners-container"),
+        html.Div(id="airfoil-explorer-event-listeners-container"),
         html.Div(id="fluent-instance-event-listeners-container"),
         html.Div(id="long-transaction-event-listeners-container"),
         html.Div(id="mapdl-instance-event-listeners-container"),

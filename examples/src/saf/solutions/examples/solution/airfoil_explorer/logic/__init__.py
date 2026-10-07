@@ -14,22 +14,4 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Frontend of simulation -- thin page entrypoint.
-
-This module acts as the page entrypoint for the simulation page.
-All implementation lives in the ``simulation`` sub-package, which
-registers callbacks on import.
-"""
-
-import dash
-
-from saf.solutions.examples.ui.airfoil_explorer import simulation
-
-dash.register_page(
-    __name__,
-    name="Simulation",
-    path_template="/projects/<project_id>/airfoil-explorer/simulation",
-)
-
-
-layout = simulation.layout
+"""Logic module."""

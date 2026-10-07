@@ -21,6 +21,10 @@
 
 from ansys.saf.glow.solution import Solution, StepsModel
 
+from saf.solutions.examples.solution.airfoil_explorer.airfoil_setup_step import AirfoilSetupStep
+from saf.solutions.examples.solution.airfoil_explorer.report_step import ReportStep
+from saf.solutions.examples.solution.airfoil_explorer.service_launch_step import ServiceLaunchStep
+from saf.solutions.examples.solution.airfoil_explorer.simulation_step import SimulationStep
 from saf.solutions.examples.solution.basic_step import BasicStep
 from saf.solutions.examples.solution.beam_bending_report_step import BeamBendingReportStep
 from saf.solutions.examples.solution.beam_bending_step import BeamBendingStep
@@ -52,6 +56,10 @@ class Steps(StepsModel):
     beam_bending_step: BeamBendingStep
     beam_bending_report_step: BeamBendingReportStep
     game_of_life_step: GameOfLifeStep
+    airfoil_setup_step: AirfoilSetupStep
+    simulation_step: SimulationStep
+    report_step: ReportStep
+    service_launch_step: ServiceLaunchStep
 
 
 class ExamplesSolution(Solution):

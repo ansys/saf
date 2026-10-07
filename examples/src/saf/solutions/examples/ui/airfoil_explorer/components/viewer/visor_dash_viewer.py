@@ -14,22 +14,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Frontend of simulation -- thin page entrypoint.
+"""Visor Dash viewer component utilities."""
+from ansys.visor.viewer.config import settings
+import visordash
 
-This module acts as the page entrypoint for the simulation page.
-All implementation lives in the ``simulation`` sub-package, which
-registers callbacks on import.
-"""
-
-import dash
-
-from saf.solutions.examples.ui.airfoil_explorer import simulation
-
-dash.register_page(
-    __name__,
-    name="Simulation",
-    path_template="/projects/<project_id>/airfoil-explorer/simulation",
-)
+VISOR_HOST = settings.default_host
+VISOR_PORT = settings.default_port
 
 
-layout = simulation.layout
+def get_visor_dash_component(id="input", host=VISOR_HOST, port=VISOR_PORT, aspect_ratio=1.77, pixel_density=1000):
+    """Create and return a VisorDash component for visualization."""
+    return visordash.Visordash(id=id, host=host, port=port, aspectRatio=aspect_ratio, pixelDensity=pixel_density)

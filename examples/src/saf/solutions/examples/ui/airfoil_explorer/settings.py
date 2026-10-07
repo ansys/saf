@@ -14,22 +14,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Frontend of simulation -- thin page entrypoint.
+"""UI application settings."""
 
-This module acts as the page entrypoint for the simulation page.
-All implementation lives in the ``simulation`` sub-package, which
-registers callbacks on import.
-"""
-
-import dash
-
-from saf.solutions.examples.ui.airfoil_explorer import simulation
-
-dash.register_page(
-    __name__,
-    name="Simulation",
-    path_template="/projects/<project_id>/airfoil-explorer/simulation",
-)
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
-layout = simulation.layout
+class Settings(BaseSettings):
+    """Application settings, overridable via environment variables."""
+
+    model_config = SettingsConfigDict(extra="ignore")
+
+    visor_enabled: bool = False
+    glow_ui_path_prefix: str = "/"
+
+
+settings = Settings()

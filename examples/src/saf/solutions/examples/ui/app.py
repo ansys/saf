@@ -74,4 +74,12 @@ from saf.solutions.examples.ui.pages.page import layout
 
 _register_adr_asset_routes_if_configured(app)
 
+# Visor endpoints are only needed by the Airfoil Explorer 3D viewers.
+from saf.solutions.examples.ui.airfoil_explorer.settings import settings as airfoil_explorer_settings
+
+if airfoil_explorer_settings.visor_enabled:
+    import visordash
+
+    visordash.init_endpoints(app)
+
 app.layout = layout

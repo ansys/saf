@@ -76,10 +76,10 @@ toolchains, including uv, and runs the build from the repository root:
 
 .. code-block:: text
 
-  moon run root:build-doc
+    moon run root:build-doc
 
-The generated documentation is available in the ``doc/build/html`` directory.
-Open the ``doc/build/html/index.html`` file in a web browser to review it.
+The generated documentation is available in the ``doc/_build/html`` directory.
+Open the ``doc/_build/html/index.html`` file in a web browser to review it.
 The search bar and the version selector are not available in the local build.
 
 API documentation of a package

@@ -4,9 +4,9 @@ requires = [ "poetry-core>=2.0.0", "setuptools>=67.0" ]
 
 [tool.poetry]
 name = "ansys-saf-projects-dashboard"
-version = "0.1.dev0"
+version = "0.2.dev0"
 description = "Dash component for SAF-based solution applications to view and manage project instances."
-license = "MIT"
+license = "Apache-2.0"
 authors = [ "Synopsys, Inc. and ANSYS, Inc. <pyansys-core@synopsys.com>" ]
 maintainers = [ "Synopsys, Inc. and ANSYS, Inc. <pyansys-core@synopsys.com>" ]
 readme = "README.rst"
@@ -15,9 +15,9 @@ classifiers = [
   "Development Status :: 3 - Alpha",
   "Framework :: Dash",
   "Intended Audience :: Other Audience",
-  "License :: OSI Approved :: MIT License",
+  "License :: OSI Approved :: Apache Software License",
   "Natural Language :: English",
-  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",

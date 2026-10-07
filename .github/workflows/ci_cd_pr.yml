@@ -389,6 +389,7 @@ jobs:
         }}
       artifact-name: ${{ matrix.library-name }}-${{ vars.PYTHON_VERSION }}${{ contains(needs.ci-cd-config.outputs.moon-packages-matrix,
         matrix.library-name) && '-artifacts' || '' }}
+      ref: ${{ github.ref }}
 
   check-wheel-can-be-pip-installed:
     name: "Check wheel can be pip installed"

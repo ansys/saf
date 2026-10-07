@@ -84,5 +84,5 @@ For a complete list of changes by release, see the `CHANGELOG`_ file.
 .. _Interface Overview: https://github.com/ansys/saf-projects-dashboard/tree/main/doc/source/user-guide/interface-overview
 .. _User's Guide: https://github.com/ansys/saf-projects-dashboard/tree/main/doc/source/user-guide
 .. _Known Issues and Limitations: https://github.com/ansys/saf-projects-dashboard/tree/main/doc/source/contribute/user
-.. _LICENSE: https://github.com/ansys/saf/tree/main/packages/saf-projects-dashboard/LICENSE
+.. _LICENSE: https://github.com/ansys/saf/blob/main/packages/saf-projects-dashboard/LICENSE
 .. _CHANGELOG: https://github.com/ansys/saf-projects-dashboard/blob/main/CHANGELOG.md

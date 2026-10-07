@@ -4,7 +4,7 @@ requires = [ "poetry-core>=2.0.0", "setuptools>=67.0" ]
 
 [tool.poetry]
 name = "ansys-saf-projects-dashboard"
-version = "0.1.dev0"
+version = "0.1.0"
 description = "Dash component for SAF-based solution applications to view and manage project instances."
 license = "MIT"
 authors = [ "Synopsys, Inc. and ANSYS, Inc. <pyansys-core@synopsys.com>" ]

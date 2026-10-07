@@ -40,9 +40,12 @@ with tempfile.TemporaryDirectory() as temp_dir:
     os.environ["GITHUB_STEP_SUMMARY"] = str(_temp_summary)
 
     from ci_cd_job_matrices import (
+        JS_PACKAGES,
         SAF_PACKAGES,
         TESTS_DEFINITIONS_DIR,
         TESTS_DEFINITIONS_PER_TARGET,
+        UV_PACKAGES,
+        get_changed_js_packages,
         get_changed_moon_packages,
         get_changed_packages,
         get_changed_poetry_packages,
@@ -398,6 +401,48 @@ class TestGetChangedMoonPackages:
         result = get_changed_moon_packages(["invalid-pkg", "saf-cli"])
 
         assert result == []
+
+
+class TestGetChangedJsPackages:
+    """Test the get_changed_js_packages function."""
+
+    def test_get_changed_js_packages_empty_input(self, github_env: tuple[Path, Path]):
+        """Empty input returns no JS packages and writes an empty matrix."""
+        output_file, _ = github_env
+
+        result = get_changed_js_packages([])
+
+        assert result == []
+        outputs = parse_outputs(output_file)
+        assert outputs["js_packages_matrix"] == "{}"
+
+    def test_get_changed_js_packages_returns_js_packages(self, github_env: tuple[Path, Path]):
+        """Node-bearing packages are returned and written to their matrix."""
+        output_file, _ = github_env
+
+        result = get_changed_js_packages(["glow-engine", "saf-projects-dashboard"])
+
+        assert result == ["saf-projects-dashboard"]
+        outputs = parse_outputs(output_file)
+        assert json.loads(outputs["js_packages_matrix"]) == {
+            "include": [{"library-name": "saf-projects-dashboard"}],
+        }
+
+    def test_get_changed_js_packages_filters_non_js_packages(self, github_env: tuple[Path, Path]):
+        """Packages without a Node build, and unknown names, are filtered out."""
+        result = get_changed_js_packages(["invalid-pkg", "saf-testing", "examples"])
+
+        assert result == []
+
+    def test_js_packages_are_registered_saf_packages(self) -> None:
+        """Every Node-bearing package is also a regular SAF package."""
+        for package in JS_PACKAGES:
+            assert package in SAF_PACKAGES
+
+    def test_js_packages_are_not_moon_packages(self) -> None:
+        """Node-bearing packages stay on Poetry until Moon grows a Node toolchain."""
+        for package in JS_PACKAGES:
+            assert package not in UV_PACKAGES
 
 
 class TestGetCodeStyleMatrixEntries:

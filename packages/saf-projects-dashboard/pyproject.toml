@@ -29,6 +29,7 @@ dependencies.dash = ">=3.0.0"
 group.build.optional = true
 group.build.dependencies.build = "^0.8.0"
 group.build.dependencies.dash = ">=3.0.0"
+group.build.dependencies.pre-commit = "^4.6.0"
 group.build.dependencies.pyyaml = "^6.0"
 group.build.dependencies.twine = "^5.1.1"
 group.doc.optional = true
@@ -45,6 +46,8 @@ group.tests.dependencies.coverage = "^7.2.6"
 group.tests.dependencies.mock = "^4.0.3"
 group.tests.dependencies.pytest = "^9.0.0"
 group.tests.dependencies.pytest-cov = "^7.0.0"
+group.tests.dependencies.pytest-html = "^4.1.1"
+group.tests.dependencies.pytest-md = "^0.2.0"
 group.tests.dependencies.pytest-mock = "^3.10.0"
 source = [ { name = "PyPI", priority = "primary" } ]
 

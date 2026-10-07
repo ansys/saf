@@ -404,7 +404,7 @@ Known limitations
 -----------------
 
 - Requires ``ansys-optislang-core`` :bdg-primary:`1.4` or later.
-- For PIM Light Server, there should be an environment variable :envvar:`AWP_ROOTXXX` pointing to the Ansys installation directory.
+- For PIM Light Server, there should be an environment variable ``AWP_ROOT<version>`` (for example, ``AWP_ROOT261`` for 2026 R1) pointing to the Ansys installation directory.
 - ``mTLS`` is not supported yet. Non-localhost bindings fall back to insecure connections and a warning is logged.
 - To use optiSLang with HPS it is required to install the Python package ``ansys-saf-product-configuration[optislang]`` in the HPS scaler environment, and to include in the HPS scaler configuration both ``Ansys optiSLang`` and its wrapper as available applications. For example, adding this snippet to the ``scaling_config.json`` for the wrapper:
 

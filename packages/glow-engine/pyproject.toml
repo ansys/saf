@@ -167,6 +167,7 @@ filterwarnings = [
   "ignore:The Row._tuple\\(\\) method is deprecated:sqlalchemy.exc.SADeprecationWarning",
   "ignore:'isolated_filesystem' is deprecated and will be removed in Click 9.0:DeprecationWarning",
 ]
+log_cli = true
 markers = [
   "use_ansys_python",  # run e2e flagship hps tests using Ansys Python
   "use_batch_job",     # run e2e tests using HPS parametric studies API with BDM
@@ -177,10 +178,25 @@ markers = [
   "use_pim",
   "use_ui",            # run e2e tests with UI server
 ]
+norecursedirs = [ ".moon", ".venv", "tmp*", ".git" ]
 pythonpath = [ "." ]
 testpaths = [ "tests/unit", "tests/integration", "tests/mocks" ]
 
 [tool.coverage]
 run.source = [ "ansys.saf.glow" ]
-report.omit = [ "*/pytest-of-*/pytest-*/popen-*/*", "/tmp/*" ]
+run.omit = [
+  "*/.venv/*",
+  "*/pytest-of-*/pytest-*/popen-*/*",
+  "*/site-packages/*",
+  "*/Temp/*",
+  "*/tests/*",
+  "/tmp/*",
+  "dist/*",
+]
+report.omit = [
+  "*/pytest-of-*/pytest-*/popen-*/*",
+  "*/Temp/*",
+  "/tmp/*",
+  "dist/*",
+]
 report.show_missing = true

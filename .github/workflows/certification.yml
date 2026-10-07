@@ -167,7 +167,7 @@ jobs:
       commit-is-already-tagged: ${{ steps.verify-tag.outputs.commit-is-already-tagged
         }}
       library-name: ${{ steps.library-name.outputs.library-name }}
-      use-moon: ${{ ! contains('dash-super-components,glow-engine,saf-cli,saf-projects-dashboard',
+      use-moon: ${{ ! contains('dash-super-components,saf-cli,saf-projects-dashboard',
         steps.library-name.outputs.library-name) }}
 
   check-package-changes:

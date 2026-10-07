@@ -14,9 +14,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from ansys.saf.testing.solution.end_to_end import ProjectFixture
 import pytest
 
+from ansys.saf.testing.solution.end_to_end import ProjectFixture
 from tests.mocks.solution_end_to_end.flagship_const import LATEST_VERSION, PREVIOUS_VERSION
 from tests.mocks.solution_end_to_end.solution.definition import EndToEndSolution
 

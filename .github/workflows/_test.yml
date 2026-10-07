@@ -579,7 +579,7 @@ jobs:
           REPORTS_DIR: "${{ github.workspace }}/${{ matrix.test-report-artifact-name-suffix
             }}_${{ inputs.python-version }}"
           UV_NO_EDITABLE: ${{ ((inputs.library-name == 'saf-product-manager' || inputs.library-name
-            == 'glow-engine') && contains(matrix.pytest-additional-arguments, 'tests/e2e/')
+            == 'glow-engine') && contains(steps.pytest-args.outputs.pytest-args, 'tests/e2e')
             && matrix.upgrade-docker == 'true') && '1' || '0' }}
         run: |
           mkdir -p "$REPORTS_DIR"

@@ -20,7 +20,6 @@ from pathlib import Path
 import time
 
 from ansys.bdm.api import NO_ENTITY, EntityHandle
-
 from ansys.saf.glow._crud.solution_configuration_models import SolutionConfiguration
 from ansys.saf.glow.solution import Solution, StepModel, StepsModel, StepSpec, transaction
 

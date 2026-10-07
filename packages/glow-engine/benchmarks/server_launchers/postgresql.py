@@ -19,9 +19,10 @@ from pathlib import Path
 import sys
 import tempfile
 
-from ansys.saf.glow._config.const import GLOW_DATABASE_LOCATION, GLOW_DATABASE_TYPE, GLOW_LOG_CONFIG
 from benchmarks.server_launchers.postgresql_container import PostgresContainer
 from benchmarks.server_launchers.run_and_capture_output import run_and_capture_output
+
+from ansys.saf.glow._config.const import GLOW_DATABASE_LOCATION, GLOW_DATABASE_TYPE, GLOW_LOG_CONFIG
 
 with tempfile.TemporaryDirectory() as tmp_dir, PostgresContainer(Path(tmp_dir)) as location:
     env = os.environ.copy()

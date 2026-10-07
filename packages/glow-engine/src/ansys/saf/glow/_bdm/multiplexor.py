@@ -32,7 +32,6 @@ from ansys.bdm.api import (
     IStorageScopeFactory,
 )
 from ansys.iam.oidc import OidcClient
-
 from ansys.saf.glow._bdm.datarepo import DataRepositoryType
 from ansys.saf.glow._bdm.filesystem import FileSystemMinervaMockSubsidiarySystemStorageScopeFactory
 from ansys.saf.glow._bdm.hps_scope import HpsSubsidiarySystemStorageScopeFactory
@@ -61,9 +60,9 @@ if TYPE_CHECKING:
     from pathlib import Path
     from types import TracebackType
 
-    from ansys.bdm.shared_volume.storage_factory import StorageScopeFactory
     from anyio.abc import ByteReceiveStream, ByteSendStream
 
+    from ansys.bdm.shared_volume.storage_factory import StorageScopeFactory
     from ansys.saf.glow._config.settings import Settings
     from ansys.saf.glow._core.solution import Solution
 

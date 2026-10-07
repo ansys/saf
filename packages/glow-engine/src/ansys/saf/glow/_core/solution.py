@@ -214,7 +214,7 @@ class Solution(BaseModel, ABC):
     class derived from ``Solution``.
 
     ``Solution`` is derived from the pydantic ``BaseModel`` class to enable parsing and validation of project data.
-    A Solution definition follows pydantic conventions when defining its schem  .
+    A Solution definition follows pydantic conventions when defining its schema.
     You can read more about pydantic `here <https://docs.pydantic.dev/>`_.
     """
 

@@ -19,9 +19,9 @@ from enum import Enum
 from pathlib import Path
 from typing import Any, Protocol
 
-from ansys.bdm.api import EntityHandle
 from pydantic import BaseModel
 
+from ansys.bdm.api import EntityHandle
 from ansys.saf.glow._bdm.subsystem_scope import SubsidiarySystemStorageScope
 
 DATA_REPO_NO_ENTITY_ERROR_MSG = "entity does not exist"  # same as BDM uses

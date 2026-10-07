@@ -14,9 +14,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from ansys.saf.testing.solution.end_to_end import ProjectFixture
 import pytest
 
+from ansys.saf.testing.solution.end_to_end import ProjectFixture
 from tests.mocks.solution_with_auto_key_method_assets.solution_with_auto_key_method_assets import (
     SolutionAssetsWithAutoKey,
 )

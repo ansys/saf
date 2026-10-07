@@ -23,8 +23,6 @@ from pathlib import Path
 import shutil
 import sys
 
-from ansys.saf.testing.common import YieldFixture
-from ansys.saf.testing.process import Process
 import httpx2
 import pytest
 
@@ -32,6 +30,8 @@ from ansys.saf.glow._utilities.ip_utilities import get_random_free_port
 from ansys.saf.glow._utilities.solution_modules import (
     _AUTODISCOVERY_ENV_VARS_ERROR,  # pyright: ignore[reportPrivateUsage]
 )
+from ansys.saf.testing.common import YieldFixture
+from ansys.saf.testing.process import Process
 from tests.conftest import MOCKS_DIR
 from tests.integration.conftest import BasicGlowProcess
 

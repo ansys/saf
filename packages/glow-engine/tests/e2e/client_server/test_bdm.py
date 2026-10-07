@@ -18,19 +18,19 @@ from pathlib import Path
 import re
 import shutil
 
+import httpx2
+import pytest
+
 from ansys.bdm.api import (
     NO_ENTITY,
     CannotGenerateStreamForDirectoryError,
     EntityNotFoundInBlobStorageError,
     NotFoundInLocalStorageRootError,
 )
-from ansys.saf.testing.solution.end_to_end import GlowBaseProcess, ProjectFixture
-import httpx2
-import pytest
-
 from ansys.saf.glow._bdm.storage_contexts import CLIENT_CONTEXT, METHOD_CONTEXT
 from ansys.saf.glow.client import Client, InternalSolutionException, NotFoundException
 from ansys.saf.glow.solution import EntityHandle
+from ansys.saf.testing.solution.end_to_end import GlowBaseProcess, ProjectFixture
 from tests.conftest import SOLUTIONS_MOCKS_DIR
 from tests.mocks.solutions.bdm_solution import BdmSolution, InnerSubModel, SubModel
 

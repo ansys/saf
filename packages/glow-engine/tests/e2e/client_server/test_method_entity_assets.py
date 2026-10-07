@@ -17,7 +17,12 @@
 from pathlib import Path
 import re
 
+import httpx2
+import pytest
+
 from ansys.bdm.api import InvalidContextError
+from ansys.saf.glow._server.exceptions import INTERNAL_ERROR_MESSAGE
+from ansys.saf.glow.client import InternalSolutionException
 from ansys.saf.testing.solution.end_to_end import (
     BaseGlowConfiguration,
     DebugConfiguration,
@@ -26,11 +31,6 @@ from ansys.saf.testing.solution.end_to_end import (
     GlowBaseProcess,
     ProjectFixture,
 )
-import httpx2
-import pytest
-
-from ansys.saf.glow._server.exceptions import INTERNAL_ERROR_MESSAGE
-from ansys.saf.glow.client import InternalSolutionException
 from tests.mocks.solution_with_method_assets.bdm_method_assets import SolutionBdmAssets, StepWithAssets
 
 pytestmark = pytest.mark.parametrize("solution_type", [SolutionBdmAssets], indirect=True)

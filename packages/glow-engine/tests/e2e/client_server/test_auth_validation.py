@@ -18,7 +18,12 @@ from collections.abc import AsyncGenerator, Generator
 from typing import TypeVar
 
 import aiohttp
+import httpx2
+import pytest
+
 from ansys.iam.oidc import DEFAULT_SUBPROTOCOL_PREFIX, encode_base64_token
+from ansys.saf.glow.client import Client, PermissionException, UnauthorizedException
+from ansys.saf.glow.solution import MethodStatus, Solution
 from ansys.saf.testing.solution.end_to_end import (
     BaseGlowConfiguration,
     DesktopDeploymentConfiguration,
@@ -27,11 +32,6 @@ from ansys.saf.testing.solution.end_to_end import (
     EnableAuthValidationConfiguration,
     GlowBaseProcess,
 )
-import httpx2
-import pytest
-
-from ansys.saf.glow.client import Client, PermissionException, UnauthorizedException
-from ansys.saf.glow.solution import MethodStatus, Solution
 from tests.mocks.solutions.events import EventsSolution
 from tests.mocks.solutions.instances import InstancesSolution
 from tests.mocks.solutions.solution_configuration import SolutionConfigurationSolution

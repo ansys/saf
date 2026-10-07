@@ -18,7 +18,6 @@ from pathlib import Path
 import tempfile
 
 from ansys.bdm.api import NO_ENTITY, EntityHandle
-
 from ansys.saf.glow._core.migrations import Migration, MigrationContext, MigrationTransformation
 from ansys.saf.glow.solution import (
     Solution,

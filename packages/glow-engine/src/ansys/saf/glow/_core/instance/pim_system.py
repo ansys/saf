@@ -19,7 +19,6 @@ from pathlib import Path
 
 import ansys.platform.instancemanagement as pypim  # pyright: ignore[reportMissingTypeStubs]
 import ansys.platform.instancemanagement.exceptions as pypim_exceptions  # pyright: ignore[reportMissingTypeStubs]
-from ansys.saf.product_configuration.interfaces import IProductInstanceVersionConfiguration
 import grpc
 
 from ansys.saf.glow._core.instance.healthcheck import create_health_client_factory
@@ -32,6 +31,7 @@ from ansys.saf.glow._core.instance.iinstance_system import (
     IProductInstanceSystemFactory,
     IProductInstanceVersionDefinition,
 )
+from ansys.saf.product_configuration.interfaces import IProductInstanceVersionConfiguration
 
 logger = logging.getLogger(__name__)
 

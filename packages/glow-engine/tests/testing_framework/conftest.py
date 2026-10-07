@@ -13,8 +13,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from ansys.saf.testing.common import YieldFixture
 import pytest
+
+from ansys.saf.testing.common import YieldFixture
 
 
 @pytest.fixture(scope="package")

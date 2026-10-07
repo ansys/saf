@@ -14,10 +14,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from ansys.saf.product_configuration.interfaces import Software as GlowSoftware
-
 from ansys.saf.glow.solution import StepModel, StepSpec, transaction
 from ansys.saf.glow.solution.hps import NO_HPS_STUDY_PROJECT, HpsJobEvaluationStatus, HpsParametricStudyProject
+from ansys.saf.product_configuration.interfaces import Software as GlowSoftware
 
 
 class ParametricStudiesStep(StepModel):

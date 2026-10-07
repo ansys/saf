@@ -62,6 +62,13 @@ tasks:
         args:
           - "ansys-visor-viewer==1.0.5b0.dev0+20260831"
 
+  install-minerva-python-client:
+    description: "Install the ANSYS Minerva Python Client package"
+    deps:
+      - target: "~:install-private-dependency"
+        args:
+          - "ansys-minerva-python-client==0.3.1"
+
   hps-installer:
     description: "Install HPS"
     command: "uv"
@@ -78,7 +85,19 @@ tasks:
   pre-commit:
     description: "Run pre-commit against this package's files only (root-level files
       are handled by root:pre-commit)"
-    script: 'uv run pre-commit run --files $(git ls-files -- ":(top,glob)$projectSource/**")'
+    command: 'uv'
+    args:
+      - 'run'
+      - 'python'
+      - '-c'
+      - >-
+        import subprocess, sys;
+        from pre_commit.main import main;
+        files = subprocess.check_output(
+        ['git', 'ls-files', '-z', '--', f':(top,glob){sys.argv[1]}/**'],
+        text=True, encoding='utf-8', errors='surrogateescape').split(chr(0))[:-1];
+        sys.exit(main(['run', '--files', *files]))
+      - '$projectSource'
     deps:
       - '~:pyright'
       - '~:ruff'
@@ -93,8 +112,9 @@ tasks:
       - 'tests/**/*'
       - '/.pre-commit-config.yaml'
       - 'pyproject.toml'
-      - '/.uv.lock'
+      - '/uv.lock'
     options:
+      shell: false
       runFromWorkspaceRoot: true
       # Shared pre-commit hook envs aren't safe for concurrent invocation across projects.
       mutex: 'pre-commit'

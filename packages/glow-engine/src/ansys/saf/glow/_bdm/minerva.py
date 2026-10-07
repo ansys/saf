@@ -31,7 +31,6 @@ from ansys.bdm.api import (
     IReadStorageScope,
     IReadStorageScopeFactory,
 )
-
 from ansys.saf.glow._bdm.datarepo import (
     DATA_REPO_NO_ENTITY_ERROR_MSG,
     DataRepository,
@@ -49,7 +48,6 @@ if TYPE_CHECKING:
     from collections.abc import AsyncIterator
 
     from ansys.iam.oidc import OidcClient
-
     from ansys.saf.glow._bdm.multiplexor import BdmMultiplexor
 
 logger = logging.getLogger(__name__)

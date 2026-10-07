@@ -18,17 +18,17 @@ from collections.abc import Callable
 import threading
 import time
 
+import pytest
+from tenacity import TryAgain, retry, stop_after_attempt, wait_fixed
+
+from ansys.saf.glow.client import Client, UnauthorizedException
+from ansys.saf.glow.solution import MethodStatus
 from ansys.saf.testing.common import YieldFixture
 from ansys.saf.testing.solution.const import TestDeployment
 from ansys.saf.testing.solution.end_to_end import (
     EnableAuthValidationConfiguration,
     GlowBaseProcess,
 )
-import pytest
-from tenacity import TryAgain, retry, stop_after_attempt, wait_fixed
-
-from ansys.saf.glow.client import Client, UnauthorizedException
-from ansys.saf.glow.solution import MethodStatus
 from tests.e2e.conftest import GlowApiKeyConfiguration, SetGlowApiKeyConfiguration
 from tests.mocks.solution_end_to_end.solution.definition import EndToEndSolution
 from tests.mocks.solution_end_to_end.solution.transaction_verification_step import TransactionVerificationStep

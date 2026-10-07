@@ -16,12 +16,12 @@
 
 from pathlib import Path
 
-from ansys.bdm.api import NO_ENTITY
 from fastapi import status
 from fastapi.encoders import jsonable_encoder
 import pytest
 import pytest_mock
 
+from ansys.bdm.api import NO_ENTITY
 from ansys.saf.glow._config.const import DatabaseType
 from ansys.saf.glow._config.settings import Settings
 from ansys.saf.glow._crud.crud import Crud

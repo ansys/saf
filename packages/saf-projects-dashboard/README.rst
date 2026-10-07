@@ -4,7 +4,7 @@
 
 |
 
-|python| |pypi| |GH-CI| |codecov| |MIT| |ruff|
+|python| |pypi| |GH-CI| |codecov| |Apache| |ruff|
 
 .. |python| image:: https://img.shields.io/pypi/pyversions/ansys-saf-projects-dashboard?logo=python&logoColor=white&label=Python
    :target: https://pypi.org/project/ansys-saf-projects-dashboard/
@@ -22,9 +22,9 @@
    :target: https://github.com/ansys/saf-projects-dashboard/actions/workflows/ci_cd_pr.yml
    :alt: GH-CI
 
-.. |MIT| image:: https://img.shields.io/badge/License-MIT-white.svg?labelColor=black
-   :target: https://opensource.org/licenses/MIT
-   :alt: MIT
+.. |Apache| image:: https://img.shields.io/badge/License-Apache2.0-white.svg?labelColor=black
+   :target: https://www.apache.org/licenses/
+   :alt: Apache
 
 .. |ruff| image:: https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json
    :target: https://github.com/astral-sh/ruff
@@ -84,5 +84,5 @@ For a complete list of changes by release, see the `CHANGELOG`_ file.
 .. _Interface Overview: https://github.com/ansys/saf-projects-dashboard/tree/main/doc/source/user-guide/interface-overview
 .. _User's Guide: https://github.com/ansys/saf-projects-dashboard/tree/main/doc/source/user-guide
 .. _Known Issues and Limitations: https://github.com/ansys/saf-projects-dashboard/tree/main/doc/source/contribute/user
-.. _LICENSE: https://github.com/ansys/saf-projects-dashboard/blob/main/LICENSE
+.. _LICENSE: https://github.com/ansys/saf/blob/main/packages/saf-projects-dashboard/LICENSE
 .. _CHANGELOG: https://github.com/ansys/saf-projects-dashboard/blob/main/CHANGELOG.md

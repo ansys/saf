@@ -16,10 +16,10 @@
 
 from urllib.parse import quote
 
-from ansys.bdm.api import EntityHandle
 from fastapi import status
 import pytest
 
+from ansys.bdm.api import EntityHandle
 from ansys.saf.glow._config.settings import Settings
 from tests.mocks.solutions import bdm_solution
 from tests.unit.routes.conftest import ProjectFixture

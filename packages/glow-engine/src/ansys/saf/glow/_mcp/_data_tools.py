@@ -15,11 +15,11 @@
 # limitations under the License.
 from typing import Annotated, Any
 
-from ansys.bdm.api import EntityHandle
 from fastmcp import FastMCP
 from fastmcp.server import Context
 from pydantic import BaseModel, Field
 
+from ansys.bdm.api import EntityHandle
 from ansys.saf.glow._mcp._resolution import get_solution_config, get_step
 
 FIELD_PATH_DESCRIPTION = (

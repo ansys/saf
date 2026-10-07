@@ -17,6 +17,7 @@ dependencies = [
   "ansys-iam-oidc",
   "ansys-saf-desktop-installer",
   "ansys-saf-desktop-orchestrator",
+  "ansys-saf-glow-engine[all]",
   "ansys-saf-product-configuration[all]",
   "ansys-saf-product-manager[all]",
   "ansys-saf-templates",
@@ -36,6 +37,7 @@ dev = [
   { include-group = "tests-desktop-installer" },
   { include-group = "tests-saf-desktop-orchestrator" },
   { include-group = "tests-saf-product-manager" },
+  { include-group = "tests-glow-engine" },
 ]
 doc = [
   "ansys-sphinx-theme[autoapi]>=1.9; python_version>='3.12'",
@@ -70,6 +72,7 @@ style-desktop-installer = [
 tests = [
   "authlib>=1.8.0,<2",
   "coverage>=7.10.6,<8",
+  "docker>=7.1.0,<8.0",               # lower versions are not compatible with requests >= 2.32 https://github.com/docker/docker-py/pull/3257
   "filelock>=3.8.0,<4",
   "httpx2-pytest>=1.0,<2",
   "mock>=4.0.3,<5",
@@ -95,6 +98,17 @@ tests-desktop-installer = [
   "pylnk3>=0.4.2,<0.5",
   "pywebview>=6.0,<7.0",
 ]
+tests-glow-engine = [
+  "aiohttp>=3.10.2,<4.0",
+  "asgi-lifespan>=2.1.0,<3.0",
+  "dash[diskcache]>=3.0.0,<4.0", # diskcache needed for background callbacks
+  "numpy>=2.4.0,<3.0",
+  "plotly>=6.5.0,<7.0",
+  "prettytable>=3.17.0,<4.0",
+  "pyc-wheel>=1.2.7,<2.0",
+  "toml>=0.10.2,<2.0",
+  "waitress>=3.0.1,<4.0",
+]
 tests-saf-desktop-orchestrator = [
   "dash>=3.4.0",
   "dash-extensions>=2.0.5,<3.0",
@@ -106,7 +120,6 @@ tests-saf-desktop-orchestrator = [
 ]
 tests-saf-product-manager = [
   "ansys-saf-glow-engine[dash,hps,pim]>=2.1.0,<3.0.0",
-  "docker>=7.1.0,<8.0",
   "grpcio-health-checking>=1.24.0,<2.0",
   "gunicorn>=23.0.0,<24.0",                            # for launching UI server in DockerCompose
 ]
@@ -120,6 +133,7 @@ sources.ansys-bdm-shared-volume = { workspace = true }
 sources.ansys-iam-oidc = { workspace = true }
 sources.ansys-saf-desktop-installer = { workspace = true }
 sources.ansys-saf-desktop-orchestrator = { workspace = true }
+sources.ansys-saf-glow-engine = { workspace = true }
 sources.ansys-saf-product-configuration = { workspace = true }
 sources.ansys-saf-product-manager = { workspace = true }
 sources.ansys-saf-templates = { workspace = true }
@@ -128,6 +142,7 @@ package = false
 workspace.members = [
   "packages/bdm-python-api",
   "packages/bdm-python-shared-volume",
+  "packages/glow-engine",
   "packages/saf-desktop-installer",
   "packages/saf-desktop-orchestrator",
   "packages/saf-iam-oidc",
@@ -174,7 +189,7 @@ lint.select = [
   "UP",     # pyupgrade
   "W",      # pycodestyle - warning
 ]
-lint.ignore = [ "COM812", "PTH207", "PYI034", "S112", "S603" ]
+lint.ignore = [ "COM812", "PTH207", "PYI034", "S112", "S603", "UP046", "UP047" ]
 lint.per-file-ignores.".github/**" = [ "S" ]
 lint.per-file-ignores.".venv/**" = [ "S" ]
 lint.per-file-ignores."benchmarks/**" = [ "S" ]
@@ -215,8 +230,9 @@ lint.isort.known-first-party = [
 pythonVersion = "3.12"
 venv = ".venv"
 venvPath = "."
-strict = [ "src", "tests" ]
+strict = [ "benchmarks", "src", "tests" ]
 include = [
+  "benchmarks",
   "src",
   "tests",
 ]

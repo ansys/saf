@@ -19,13 +19,13 @@ from pathlib import Path
 from unittest.mock import MagicMock
 import uuid
 
-from ansys.bdm.api import EntityHandle, IReadStorageScope
 from ansys.hps.client.jms import (  # pyright: ignore[reportMissingTypeStubs]
     File,
 )
 import pytest
 from pytest_mock.plugin import MockerFixture
 
+from ansys.bdm.api import EntityHandle, IReadStorageScope
 from ansys.saf.glow._bdm.hps_scope import (
     HpsOpaqueIdentifier,
     HpsSubsidiarySystemStorageScope,

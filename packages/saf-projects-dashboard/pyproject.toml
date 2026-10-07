@@ -4,9 +4,9 @@ requires = [ "poetry-core>=2.0.0", "setuptools>=67.0" ]
 
 [tool.poetry]
 name = "ansys-saf-projects-dashboard"
-version = "0.1.dev0"
+version = "0.2.dev0"
 description = "Dash component for SAF-based solution applications to view and manage project instances."
-license = "MIT"
+license = "Apache-2.0"
 authors = [ "Synopsys, Inc. and ANSYS, Inc. <pyansys-core@synopsys.com>" ]
 maintainers = [ "Synopsys, Inc. and ANSYS, Inc. <pyansys-core@synopsys.com>" ]
 readme = "README.rst"
@@ -15,12 +15,13 @@ classifiers = [
   "Development Status :: 3 - Alpha",
   "Framework :: Dash",
   "Intended Audience :: Other Audience",
-  "License :: OSI Approved :: MIT License",
+  "License :: OSI Approved :: Apache Software License",
   "Natural Language :: English",
-  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
   "Topic :: Scientific/Engineering",
 ]
 packages = [ { include = "ansys_saf_projects_dashboard", from = "src" } ]
@@ -32,11 +33,6 @@ group.build.dependencies.dash = ">=3.0.0"
 group.build.dependencies.pre-commit = "^4.6.0"
 group.build.dependencies.pyyaml = "^6.0"
 group.build.dependencies.twine = "^5.1.1"
-group.doc.optional = true
-group.doc.dependencies.ansys-sphinx-theme = "^1.4"
-group.doc.dependencies.numpydoc = "^1.6.0"
-group.doc.dependencies.sphinx = "^8.0"
-group.doc.dependencies.sphinx-copybutton = "^0.5.2"
 group.style.optional = true
 group.style.dependencies.codespell = "^2.2.4"
 group.style.dependencies.pre-commit = "^4.6.0"

@@ -16,10 +16,10 @@
 
 from collections.abc import Callable
 
-from ansys.saf.testing.solution.end_to_end import ProjectFixture
 import pytest
 from tenacity import TryAgain, retry, stop_after_attempt, wait_fixed
 
+from ansys.saf.testing.solution.end_to_end import ProjectFixture
 from tests.mocks.solution_end_to_end.solution.definition import EndToEndSolution
 from tests.mocks.solution_end_to_end.solution.parametric_studies_step import ParametricStudiesStep
 

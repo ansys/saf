@@ -485,7 +485,8 @@ jobs:
             secrets.PYANSYS_PYPI_PRIVATE_URL }}
 
       - name: Install minerva-python-client
-        if: ${{ matrix.install-minerva-python-client == 'true' }}
+        if: ${{ matrix.install-minerva-python-client == 'true' && env.USE_MOON ==
+          'false' }}
         shell: bash
         run: |
           ${PYTHON_EXE} -m pip install ansys-minerva-python-client==${MINERVA_PYTHON_CLIENT_VERSION}
@@ -496,6 +497,15 @@ jobs:
           PIP_EXTRA_INDEX_URL: https://PAT:${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}@${{
             secrets.PYANSYS_PYPI_PRIVATE_URL }}
           PIP_QUIET: 1
+
+      - name: Install minerva-python-client with Moon
+        if: ${{ matrix.install-minerva-python-client == 'true' && env.USE_MOON ==
+          'true' }}
+        shell: bash
+        run: moon run $PACKAGE:install-minerva-python-client
+        env:
+          UV_EXTRA_INDEX_URL: https://PAT:${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}@${{
+            secrets.PYANSYS_PYPI_PRIVATE_URL }}
 
       - name: Download extra packages for e2e tests (Moon)
         if: matrix.download-extra-packages == 'true' && env.USE_MOON == 'true'
@@ -569,15 +579,17 @@ jobs:
           PYTEST_ARGS: ${{ steps.pytest-args.outputs.pytest-args }}
           REPORTS_DIR: "${{ github.workspace }}/${{ matrix.test-report-artifact-name-suffix
             }}_${{ inputs.python-version }}"
-          UV_NO_EDITABLE: ${{ (inputs.library-name == 'saf-product-manager' && contains(matrix.pytest-additional-arguments,
-            'tests/e2e/') && matrix.upgrade-docker == 'true') && '1' || '0' }}
+          UV_NO_EDITABLE: ${{ ((inputs.library-name == 'saf-product-manager' || inputs.library-name
+            == 'glow-engine') && contains(steps.pytest-args.outputs.pytest-args, 'tests/e2e')
+            && matrix.upgrade-docker == 'true') && '1' || '0' }}
         run: |
           mkdir -p "$REPORTS_DIR"
           moon run $PACKAGE:test -- $PYTEST_ARGS --html="${REPORTS_DIR}/report.html" --md="${REPORTS_DIR}/report.md"
 
       - name: Publish pytest reports (Moon)
         if: always() && steps.run-tests-moon.outcome != 'skipped' && env.USE_MOON
-          == 'true'
+          == 'true' && hashFiles(format('{0}/{1}_{2}/report.html', github.workspace,
+          matrix.test-report-artifact-name-suffix , inputs.python-version)) != ''
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: "pytest_reports_${{ matrix.test-report-artifact-name-suffix }}_${{

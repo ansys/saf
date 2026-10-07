@@ -20,12 +20,12 @@ import signal
 import subprocess
 import sys
 
-from ansys.saf.testing.platform_specific import linux_only
 import psutil
 import pytest
 import pytest_mock
 
 from ansys.saf.glow._utilities.procs import kill_pids
+from ansys.saf.testing.platform_specific import linux_only
 
 _SLEEPER_SCRIPT = "import time; time.sleep(30)"
 

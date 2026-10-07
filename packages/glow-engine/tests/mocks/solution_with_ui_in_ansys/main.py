@@ -14,10 +14,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from ansys.saf.glow.runtime import glow_main
 from ansys.solutions.solution_with_ui_in_ansys.solution import definition  # type: ignore
 from ansys.solutions.solution_with_ui_in_ansys.ui import app  # type: ignore
-
-from ansys.saf.glow.runtime import glow_main
 
 
 def main():

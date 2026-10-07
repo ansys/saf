@@ -21,22 +21,22 @@ from pathlib import Path
 import sqlite3
 import time
 
+from fastapi import status
+import httpx2
+import pytest
+from tenacity import TryAgain, retry, stop_after_attempt, stop_after_delay, wait_fixed
+
 from ansys.bdm.api import (
     NO_ENTITY,
     EntityNotFoundInBlobStorageError,
 )
+from ansys.saf.glow.client import Client
 from ansys.saf.testing.solution.end_to_end import (
     DisableGarbageCollection,
     EnvVarDebugLogLevel,
     GlowBaseProcess,
     ProjectFixture,
 )
-from fastapi import status
-import httpx2
-import pytest
-from tenacity import TryAgain, retry, stop_after_attempt, stop_after_delay, wait_fixed
-
-from ansys.saf.glow.client import Client
 from tests.mocks.solutions.bdm_solution import BdmSolution
 
 pytestmark = pytest.mark.parametrize("solution_type", [BdmSolution], indirect=True)

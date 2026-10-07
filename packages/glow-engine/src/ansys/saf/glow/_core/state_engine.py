@@ -20,7 +20,6 @@ import logging
 from typing import TYPE_CHECKING
 
 from ansys.bdm.api import EntityHandle
-
 from ansys.saf.glow._core.field_state import FieldState
 
 if TYPE_CHECKING:

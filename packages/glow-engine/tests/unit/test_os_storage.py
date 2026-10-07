@@ -16,9 +16,8 @@
 
 from typing import cast
 
-from ansys.saf.testing.platform_specific import linux_only, windows_only
-
 from ansys.saf.glow._storage.os import OperatingSystemPath, OperatingSystemStorage
+from ansys.saf.testing.platform_specific import linux_only, windows_only
 
 
 @windows_only()

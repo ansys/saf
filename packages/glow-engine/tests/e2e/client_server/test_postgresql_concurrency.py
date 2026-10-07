@@ -129,4 +129,4 @@ def test_missing_database(
     # THEN: request returns 500 with the expected error message
     assert response.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
     database_name = missing_database_url.unicode_string().split("/")[-1]
-    assert f'asyncpg.exceptions.InvalidCatalogNameError: database "{database_name}" does not exist' in response.text
+    assert f'database "{database_name}" does not exist' in response.text

@@ -19,9 +19,6 @@ from pathlib import Path
 import platform
 from unittest import mock
 
-from ansys.saf.testing.common import YieldFixture
-from ansys.saf.testing.process import Process
-from ansys.saf.testing.solution.const import TestProductInstanceSystemType
 import grpc
 import httpx2
 import pytest
@@ -38,6 +35,9 @@ from ansys.saf.glow._core.instance.null_system import NullSystemFactory
 from ansys.saf.glow._core.instance.pim_system import ExternalPimSystemFactory, LocalPimSystemFactory
 from ansys.saf.glow._hps_auth.hps_authenticator import DesktopHpsAuthenticator
 from ansys.saf.glow._utilities.ip_utilities import get_random_free_port, wait_for_response
+from ansys.saf.testing.common import YieldFixture
+from ansys.saf.testing.process import Process
+from ansys.saf.testing.solution.const import TestProductInstanceSystemType
 from tests.mocks.mock_products.client import (
     IMockProductClient,
     MockGrpcProductClient,

@@ -22,6 +22,15 @@ from threading import Thread
 import time
 from typing import TypeVar
 
+import certifi
+import httpx2
+import pytest
+from selenium.webdriver.chrome.webdriver import WebDriver
+from selenium.webdriver.common.by import By
+from tenacity import TryAgain, retry, stop_after_attempt, wait_fixed
+
+from ansys.saf.glow.client import Client
+from ansys.saf.glow.solution import Solution
 from ansys.saf.testing.common import YieldFixture
 from ansys.saf.testing.hps import GetHpsJobIdsType
 from ansys.saf.testing.hps.scripts.hps_installer import HPS_DEPLOYMENTS_DIRECTORY
@@ -39,15 +48,6 @@ from ansys.saf.testing.solution.end_to_end import (
     HpsUserPswdAuth,
     ProjectFixture,
 )
-import certifi
-import httpx2
-import pytest
-from selenium.webdriver.chrome.webdriver import WebDriver
-from selenium.webdriver.common.by import By
-from tenacity import TryAgain, retry, stop_after_attempt, wait_fixed
-
-from ansys.saf.glow.client import Client
-from ansys.saf.glow.solution import Solution
 from tests.e2e.conftest import interactive_authorization
 import tests.mocks.solution_end_to_end.main as solution_end_to_end_module
 from tests.mocks.solution_end_to_end.solution.definition import EndToEndSolution

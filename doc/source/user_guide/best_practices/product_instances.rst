@@ -33,9 +33,9 @@ resources.
        self=StepSpec(download=["version"], upload=["instance_created"]),
        enable_termination_event=True,
    )
-   @create_instance("mechanical_instance", MechanicalSecureManager)
+   @create_instance("mechanical_instance", MechanicalManager)
    @long_running
-   def launch(self, mechanical_instance: MechanicalSecureManager) -> None:
+   def launch(self, mechanical_instance: MechanicalManager) -> None:
        """Launch the Mechanical instance."""
        mechanical_instance.initialize(version=self.version)
        self.instance_created = True
@@ -49,7 +49,7 @@ resources.
    )
    @instance("mechanical_instance")
    @long_running
-   def add_geometry(self, mechanical_instance: MechanicalSecureManager) -> None:
+   def add_geometry(self, mechanical_instance: MechanicalManager) -> None:
        """Use the running Mechanical instance to add geometry."""
        mechanical_instance.instance.modeler.create_rectangle(self.origin, self.dimension)
 
@@ -59,7 +59,7 @@ resources.
    @transaction(self=StepSpec(upload=["instance_created"]))
    @instance("mechanical_instance")
    @long_running
-   def shutdown(self, mechanical_instance: MechanicalSecureManager) -> None:
+   def shutdown(self, mechanical_instance: MechanicalManager) -> None:
        """Shut down the Mechanical instance."""
        mechanical_instance.instance.exit()
        self.instance_created = False
@@ -91,9 +91,9 @@ This field serves two purposes:
            self=StepSpec(download=["version"], upload=["instance_created"]),
            enable_termination_event=True,
        )
-       @create_instance("mechanical_instance", MechanicalSecureManager)
+       @create_instance("mechanical_instance", MechanicalManager)
        @long_running
-       def launch(self, mechanical_instance: MechanicalSecureManager) -> None:
+       def launch(self, mechanical_instance: MechanicalManager) -> None:
            mechanical_instance.initialize(version=self.version)
            self.instance_created = True  # ← enables UI and guards
 
@@ -103,7 +103,7 @@ This field serves two purposes:
        )
        @instance("mechanical_instance")
        @long_running
-       def run_analysis(self, mechanical_instance: MechanicalSecureManager) -> None:
+       def run_analysis(self, mechanical_instance: MechanicalManager) -> None:
            if not self.instance_created:
                raise RuntimeError("Product not started — call launch() first.")
            # ... use mechanical_instance ...
@@ -111,7 +111,7 @@ This field serves two purposes:
        @transaction(self=StepSpec(upload=["instance_created"]))
        @instance("mechanical_instance")
        @long_running
-       def shutdown(self, mechanical_instance: MechanicalSecureManager) -> None:
+       def shutdown(self, mechanical_instance: MechanicalManager) -> None:
            mechanical_instance.instance.exit()
            self.instance_created = False  # ← disables UI and guards
 

@@ -19,9 +19,9 @@ from pathlib import Path, PurePosixPath, PureWindowsPath
 import re
 import shutil
 
-from ansys.bdm.api import NO_ENTITY, IStorageScope
 import pytest
 
+from ansys.bdm.api import NO_ENTITY, IStorageScope
 from ansys.saf.glow._bdm.multiplexor import BdmMultiplexor
 from ansys.saf.glow._bdm.storage_contexts import METHOD_CONTEXT, PRODUCT_CONTEXT
 from ansys.saf.glow._bdm.storage_factory import create_shared_storage_factory, random_shortid

@@ -21,7 +21,6 @@ from typing import Any
 import uuid
 
 from ansys.bdm.api import EntityHandle
-
 from ansys.saf.glow._core.field_state import FieldState
 from ansys.saf.glow._core.instance.recoverystate import RecoveryStateInfo
 from ansys.saf.glow._core.solution import Solution

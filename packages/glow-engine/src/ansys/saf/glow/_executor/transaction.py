@@ -22,12 +22,12 @@ from types import MethodType
 from typing import Any, ClassVar, get_type_hints
 from urllib.parse import urlparse, urlunparse
 
-from ansys.bdm.api import EntityHandle, IStorageScope
-from ansys.iam.oidc import OidcClient, UserInfo
 from fastapi.encoders import jsonable_encoder
 import httpx2
 from pydantic import BaseModel
 
+from ansys.bdm.api import EntityHandle, IStorageScope
+from ansys.iam.oidc import OidcClient, UserInfo
 from ansys.saf.glow._bdm.datarepo import DataRepository
 from ansys.saf.glow._config.settings import Settings
 from ansys.saf.glow._core.blob_managers import AssetManager, HpsBlobManager

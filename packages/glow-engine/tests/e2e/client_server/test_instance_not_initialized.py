@@ -14,11 +14,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from ansys.saf.testing.solution.end_to_end import GlowDesktopProcess, ProjectFixture
 import pytest
 
 from ansys.saf.glow.client import BadRequestException
 from ansys.saf.glow.solution import MethodStatus
+from ansys.saf.testing.solution.end_to_end import GlowDesktopProcess, ProjectFixture
 from tests.mocks.solution_end_to_end.solution.definition import EndToEndSolution
 
 pytestmark = pytest.mark.parametrize("solution_type", [EndToEndSolution], indirect=True)

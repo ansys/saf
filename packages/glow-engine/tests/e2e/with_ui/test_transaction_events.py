@@ -23,6 +23,12 @@ from typing import TypeVar
 from unittest import mock
 
 import aiohttp
+import pytest
+from selenium.webdriver.chrome.webdriver import WebDriver
+from selenium.webdriver.common.by import By
+
+from ansys.saf.glow.client import Client
+from ansys.saf.glow.solution import Solution
 from ansys.saf.testing.selenium import (
     move_to_element,
     wait_for_element,
@@ -36,12 +42,6 @@ from ansys.saf.testing.solution.end_to_end import (
     ProjectFixture,
     get_solution_root_dir,
 )
-import pytest
-from selenium.webdriver.chrome.webdriver import WebDriver
-from selenium.webdriver.common.by import By
-
-from ansys.saf.glow.client import Client
-from ansys.saf.glow.solution import Solution
 from tests.mocks.solution_end_to_end.solution.definition import EndToEndSolution
 from tests.mocks.solution_end_to_end.solution.transaction_verification_step import (
     CustomTypeABC,

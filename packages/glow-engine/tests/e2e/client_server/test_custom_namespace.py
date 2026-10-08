@@ -33,13 +33,13 @@ import shutil
 import sys
 from unittest import mock
 
-from ansys.saf.testing.solution.end_to_end import GlowDesktopProcess
 import pytest
 
 from ansys.saf.glow._utilities.solution_modules import (
     _AUTODISCOVERY_ENV_VARS_ERROR,  # pyright: ignore[reportPrivateUsage]
 )
 from ansys.saf.glow.client import Client
+from ansys.saf.testing.solution.end_to_end import GlowDesktopProcess
 from tests.conftest import MOCKS_DIR
 from tests.mocks.solution_with_ui_in_ansys.solution.definition import MySolution
 

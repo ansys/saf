@@ -21,15 +21,15 @@ from pathlib import Path
 from types import TracebackType
 from typing import TYPE_CHECKING, Self
 
+import httpx2
+from pydantic import FutureDate, TypeAdapter, ValidationError
+
 from ansys.bdm.api import (
     EntityHandle,
     IAsyncStorageScope,
     IEntityWriter,
     IStorageScope,
 )
-import httpx2
-from pydantic import FutureDate, TypeAdapter, ValidationError
-
 from ansys.saf.glow._bdm.multiplexor import SafMultiplexorStorageScopeFactory
 from ansys.saf.glow._bdm.storage_contexts import CLIENT_CONTEXT
 from ansys.saf.glow._config.settings import Settings

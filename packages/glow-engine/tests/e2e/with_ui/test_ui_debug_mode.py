@@ -16,6 +16,9 @@
 
 from collections.abc import Generator
 
+import pytest
+
+from ansys.saf.glow._utilities.ip_utilities import port_is_free
 from ansys.saf.testing.solution.end_to_end import (
     BaseGlowConfiguration,
     DefaultUIDebug,
@@ -24,9 +27,6 @@ from ansys.saf.testing.solution.end_to_end import (
     GlowBaseProcess,
     UIDebugConfiguration,
 )
-import pytest
-
-from ansys.saf.glow._utilities.ip_utilities import port_is_free
 from tests.mocks.solution_end_to_end.solution.definition import EndToEndSolution
 
 pytestmark = [

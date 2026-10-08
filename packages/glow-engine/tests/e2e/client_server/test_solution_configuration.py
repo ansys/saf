@@ -17,13 +17,13 @@
 from collections.abc import Callable, Generator
 from pathlib import Path
 
-from ansys.saf.testing.solution.end_to_end import GlowBaseProcess, ProjectFixture
 import httpx2
 import pytest
 
 from ansys.saf.glow._crud.solution_configuration_models import GLOW_SCHEMA_VERSION
 from ansys.saf.glow.client import Client
 from ansys.saf.glow.solution import SolutionConfiguration
+from ansys.saf.testing.solution.end_to_end import GlowBaseProcess, ProjectFixture
 from tests.mocks.solutions.extended_solution_configuration_not_defined import NotDefinedSolutionConfigurationSolution
 from tests.mocks.solutions.extended_solution_configuration_not_used import NotUsedSolutionConfigurationSolution
 from tests.mocks.solutions.solution_configuration import SolutionConfigurationSolution

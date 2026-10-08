@@ -17,10 +17,10 @@
 from pathlib import Path
 import tempfile
 
-from ansys.saf.testing.solution.end_to_end import ProjectFixture
 import pytest
 
 from ansys.saf.glow.client import BadRequestException, InternalSolutionException
+from ansys.saf.testing.solution.end_to_end import ProjectFixture
 from tests.mocks.solutions.instances_mocked import InstancesMockedSolution
 
 pytestmark = pytest.mark.parametrize(

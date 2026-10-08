@@ -14,10 +14,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from ansys.saf.testing.solution.end_to_end import ProjectFixture
 import pytest
 
 from ansys.saf.glow.client import BadRequestException
+from ansys.saf.testing.solution.end_to_end import ProjectFixture
 from tests.check_message import check_message
 from tests.mocks.solutions.cross_field_validation_solution import CrossFieldValidationSolution
 

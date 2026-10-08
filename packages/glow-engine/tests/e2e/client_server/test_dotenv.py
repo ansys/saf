@@ -17,10 +17,10 @@
 from pathlib import Path
 from typing import TypeVar
 
-from ansys.saf.testing.solution.end_to_end import GlowDesktopProcess, ProjectFixture
 import pytest
 
 from ansys.saf.glow.solution import Solution
+from ansys.saf.testing.solution.end_to_end import GlowDesktopProcess, ProjectFixture
 from tests.mocks.solution_end_to_end.solution.definition import EndToEndSolution
 
 pytestmark = pytest.mark.parametrize("solution_type", [EndToEndSolution], indirect=True)

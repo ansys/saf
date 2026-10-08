@@ -17,11 +17,11 @@
 import sys
 import time
 
-from ansys.saf.product_configuration.interfaces import Software as GlowSoftware
 import pytest
 
 from ansys.saf.glow._hps_parametric_studies.base import HpsOutputDirectorySpecification, HpsOutputFileSpecification
 from ansys.saf.glow.solution.hps import HpsExecutionSpecification, HpsJobEvaluationStatus
+from ansys.saf.product_configuration.interfaces import Software as GlowSoftware
 from tests.mocks.hps_scripts import echo_context as echo_context_module
 from tests.mocks.hps_scripts.echo_context import echo_context
 import tests.mocks.hps_scripts.module_with_init as module_with_init

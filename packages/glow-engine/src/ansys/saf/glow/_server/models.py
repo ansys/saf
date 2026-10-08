@@ -17,7 +17,6 @@
 from typing import Generic, TypeVar
 import uuid
 
-from ansys.bdm.api import EntityHandle
 from pydantic import (
     UUID4,
     AwareDatetime,
@@ -26,6 +25,7 @@ from pydantic import (
     field_validator,
 )
 
+from ansys.bdm.api import EntityHandle
 from ansys.saf.glow._core.instance.recoverystate import TRecoveryStateInfo
 from ansys.saf.glow._core.method_status import MethodState
 from ansys.saf.glow._core.solution import Solution

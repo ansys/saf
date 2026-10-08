@@ -23,9 +23,9 @@ For example:
 
 .. code-block:: python
 
-    from ansys.saf.product_configuration.optislang import (
-        OptislangInstanceVersionConfiguration,
-        OptislangInstanceConfiguration,
+    from ansys.saf.product_configuration.optislang_wrapper import (
+        OptislangWrapperInstanceConfiguration,
+        OptislangWrapperInstanceVersionConfiguration,
     )
 
 Create a python file and put it inside a directory called ``product_instance_configs`` in the solution directory alongside the ``solution`` and ``ui`` directories. For example:
@@ -38,33 +38,26 @@ Create a python file and put it inside a directory called ``product_instance_con
 
 In this file, you need to implement 2 classes:
 
-- A class that inherits from ``OptislangInstanceVersionConfiguration`` and overrides only what is needed: command arguments, environment variables, etc.
-- A class that inherits from ``OptislangInstanceConfiguration`` and overrides the ``get_version_configuration`` property to return your custom version configuration class and set a new ``product_name``. You can also modify the supported product ``versions`` property.
+- A class that inherits from ``OptislangWrapperInstanceVersionConfiguration`` and overrides only what is needed: command arguments, environment variables, etc.
+- A class that inherits from ``OptislangWrapperInstanceConfiguration`` and overrides the ``get_version_configuration`` method to return your custom version configuration class and set a new ``product_name``. You can also modify the supported product ``versions`` property.
 
 .. code-block:: python
 
-    import tempfile
-    from pathlib import Path
-
-    from ansys.saf.product_configuration.optislang import (
-        OptislangInstanceVersionConfiguration,
-        OptislangInstanceConfiguration,
-    )
     from ansys.saf.product_configuration.interfaces import IProductInstanceVersionConfiguration
+    from ansys.saf.product_configuration.optislang_wrapper import (
+        OptislangWrapperInstanceConfiguration,
+        OptislangWrapperInstanceVersionConfiguration,
+    )
 
 
-    class CustomOptislangInstanceVersionConfiguration(OptislangInstanceVersionConfiguration):
+    class CustomOptislangInstanceVersionConfiguration(OptislangWrapperInstanceVersionConfiguration):
 
         @property
-        def execution_command(self) -> str:
-            project_file = Path(tempfile.gettempdir()) / "_osl_project.opf"
-            return (
-                "${EXECUTABLE} --batch --enable-tcp-server ${PORT} --no-save "
-                f"--no-run --force --new {project_file.as_posix()} --my-custom-args"
-            )
+        def environment(self) -> dict[str, str]:
+            return {**super().environment, "MY_CUSTOM_VARIABLE": "my-value"}
 
 
-    class CustomOptislangInstanceConfiguration(OptislangInstanceConfiguration):
+    class CustomOptislangInstanceConfiguration(OptislangWrapperInstanceConfiguration):
 
         @property
         def product_name(self) -> str:
@@ -86,7 +79,7 @@ Look for the product instance manager classes in the ``ansys.saf.product_manager
 
 .. code-block:: python
 
-    from ansys.saf.product_manager.optislang import OptislangManager, InternalOptislangManager
+    from ansys.saf.product_manager.optislang_wrapper import InternalOptislangManagerImpl, OslManager
 
 Create a python file and put it inside the ``solution`` directory, alongside the step files. For example:
 
@@ -100,19 +93,20 @@ Create a python file and put it inside the ``solution`` directory, alongside the
 
 
 In this file, you need to implement 2 classes:
-- A class that inherits from ``InternalOptislangManager`` and overrides the `PRODUCT_NAME` attribute to match the one that you set in the custom configuration class.
-- A class that inherits from ``OptislangManager`` to point to the new internal manager.
+
+- A class that inherits from ``InternalOptislangManagerImpl`` and overrides the ``PRODUCT_NAME`` attribute to match the one that you set in the custom configuration class.
+- A class that inherits from ``OslManager`` to point to the new internal manager.
 
 .. code-block:: python
 
-    from ansys.saf.product_manager.optislang import OptislangManager, InternalOptislangManager
+    from ansys.saf.product_manager.optislang_wrapper import InternalOptislangManagerImpl, OslManager
 
 
-    class InternalCustomOptislangManager(InternalOptislangManager):
+    class InternalCustomOptislangManager(InternalOptislangManagerImpl):
         PRODUCT_NAME = "custom-optislang"
 
 
-    class CustomOptislangManager(OptislangManager, instance_manager_impl_type=InternalCustomOptislangManager): ...
+    class CustomOptislangManager(OslManager, instance_manager_impl_type=InternalCustomOptislangManager): ...
 
 
 Use the new product instance manager in your solution
@@ -140,14 +134,21 @@ Use the new product instance manager in your solution
         @create_instance("osl_manager", CustomOptislangManager)
         @long_running
         def launch_instance(self, osl_manager: CustomOptislangManager) -> None:
-            osl_manager.initialize()
+            osl_manager.initialize(version="252")
+            osl_manager.instance.start(
+                project_path=Path("path/to/project.opf"),
+                project_properties_file=Path("path/to/working_properties_file.json"),
+                input_files=[],
+                osl_version="252",
+                loglevel="INFO",
+            )
 
         @transaction(self=StepSpec())
         @instance("osl_manager")
         def use_instance(self, osl_manager: CustomOptislangManager) -> None:
-            osl = osl_manager.instance
-            project = osl.application.project
-            # do something with project
+            with osl_manager.instance.optislang_client() as osl:
+                project = osl.application.project
+                # do something with project
 
         @transaction(self=StepSpec())
         @instance("osl_manager")

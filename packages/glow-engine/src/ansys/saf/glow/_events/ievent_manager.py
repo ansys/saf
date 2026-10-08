@@ -36,7 +36,7 @@ class EventSourceIdentifier:
         return self._stream_name
 
 
-EventPayload: TypeAlias = Any  # a JSON derived structure
+EventPayload: TypeAlias = Any  # a JSON derived structure # noqa: UP040
 
 
 class IEventListener(ABC):

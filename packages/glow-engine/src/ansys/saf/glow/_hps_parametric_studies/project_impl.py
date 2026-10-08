@@ -19,12 +19,12 @@ import json
 import logging
 from typing import Any
 
-from ansys.bdm.api import EntityHandle
 from ansys.hps.client.jms import (  # pyright: ignore[reportMissingTypeStubs]
     File,
     Job,
 )
 
+from ansys.bdm.api import EntityHandle
 from ansys.saf.glow._core.blob_managers import HpsBlobManager
 from ansys.saf.glow._hps_auth.ihps_authenticator import IHpsAuthenticator
 from ansys.saf.glow._hps_parametric_studies.api import (

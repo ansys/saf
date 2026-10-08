@@ -15,7 +15,6 @@
 # limitations under the License.
 
 from ansys.bdm.api import NO_ENTITY, EntityHandle
-
 from ansys.saf.glow.solution import (
     Solution,
     StepModel,

@@ -19,17 +19,17 @@ import json
 from pathlib import Path
 import sqlite3
 
+import httpx2
+import pytest
+from tenacity import TryAgain, retry, stop_after_attempt, wait_fixed
+
+from ansys.saf.glow.client import BadRequestException, InternalSolutionException
 from ansys.saf.testing.solution.end_to_end import (
     EnableOverwriteSolutionConfig,
     EnvVarDebug,
     GlowBaseProcess,
     ProjectFixture,
 )
-import httpx2
-import pytest
-from tenacity import TryAgain, retry, stop_after_attempt, wait_fixed
-
-from ansys.saf.glow.client import BadRequestException, InternalSolutionException
 from tests.mocks.solutions.extended_solution_configuration import (
     ExtendedSolutionConfiguration,
     ExtendedSolutionConfigurationSolution,

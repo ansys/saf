@@ -31,7 +31,6 @@ from ansys.bdm.api import (
     IReadStorageScope,
     IReadStorageScopeFactory,
 )
-
 from ansys.saf.glow._bdm.datarepo import (
     DataRepository,
     IClient,
@@ -46,7 +45,6 @@ from ansys.saf.glow._server.hidden_project_directories import bdm_minerva_workin
 
 if TYPE_CHECKING:
     from ansys.iam.oidc import OidcClient
-
     from ansys.saf.glow._bdm.multiplexor import BdmMultiplexor
 
 Param = ParamSpec("Param")

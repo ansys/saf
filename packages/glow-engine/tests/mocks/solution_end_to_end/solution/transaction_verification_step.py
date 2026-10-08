@@ -25,10 +25,10 @@ import subprocess
 import sys
 import time
 
-from ansys.bdm.api import NO_ENTITY, EntityHandle
 import psutil
 from pydantic import BaseModel
 
+from ansys.bdm.api import NO_ENTITY, EntityHandle
 from ansys.saf.glow.solution import (
     BadRequestError,
     SolutionConfiguration,

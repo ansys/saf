@@ -12,8 +12,8 @@ Solution Application Framework - Templates
    :target: https://pypi.org/project/ansys-saf-templates/
    :alt: PyPI
 
-.. |GH-CI| image:: https://github.com/ansys/saf-templates/actions/workflows/ci_cd_release.yml/badge.svg?label=CI
-   :target: https://github.com/ansys/saf-templates/actions/workflows/ci_cd_release.yml
+.. |GH-CI| image:: https://img.shields.io/github/actions/workflow/status/ansys/saf/ci_cd_pr.yml?branch=main&label=CI-CD&logo=github
+   :target: https://github.com/ansys/saf/actions/workflows/ci_cd_pr.yml?query=branch%3Amain
    :alt: GH-CI
 
 .. |codecov| image:: https://img.shields.io/codecov/c/github/ansys/saf-templates
@@ -66,6 +66,8 @@ publishing your own template plugin repository.
 Installation
 ============
 
+Ensure you have all the necessary `prerequisites`_.
+
 SAF Templates comes bundled with SAF CLI since SAF CLI version 3.7. However, **it is
 mandatory to have SAF CLI version 4.0.1 or later installed to use the templates**.
 Using previous versions of SAF CLI might produce unexpected results or even errors
@@ -81,8 +83,14 @@ installed:
     pip install ansys-saf-templates
 
 
+Documentation
+=============
+
+Visit the `official documentation`_ for detailed information on how to use SAF Templates.
+Browse the `Template gallery`_ for all available templates.
+
 Quick start
-===========
+-----------
 
 You can list the available templates by running:
 
@@ -108,24 +116,12 @@ information as command-line arguments:
     saf add-step <my_solution> --step-name <step_name> --ui-framework <ui_framework> --template <template_name>
 
 
-Documentation
-=============
-
-The `official documentation`_ contains:
-
-- `Overview`_ — What SAF Templates is and its key features.
-- `User guide`_ — Installation, prerequisites, and usage instructions.
-- `Template gallery`_ — Browse all available templates.
-- `Contribute`_ — How to add your own templates.
-
-
 Troubleshooting
 ===============
 
-For troubleshooting or reporting issues, open an issue in the
-`project repository <https://github.com/ansys/saf-templates/issues>`_.
+For troubleshooting or reporting issues, please open an issue in the `project repository`_.
 
-Follow these steps to report an issue:
+Please follow these steps to report an issue:
 
 - Go to the project repository.
 - Click on the ``Issues`` tab.
@@ -137,17 +133,37 @@ Additionally, you can refer to the `official documentation`_ for additional
 resources and troubleshooting guides.
 
 
+Contribute
+==========
+
+Contributions are welcome!
+If you would like to contribute, please follow the guidelines provided in the `Contribute`_
+section of the official documentation.
+
+
 License
 =======
 
-This project is licensed under the Apache 2.0 License. See the `LICENSE`_ file
-for details.
+You can find the full text of the license in the `LICENSE`_ file.
 
 
-.. _official documentation: https://saf-templates.docs.solutions.ansys.com
-.. _Overview: https://saf-templates.docs.solutions.ansys.com/version/stable/overview/index.html
-.. _User guide: https://saf-templates.docs.solutions.ansys.com/version/stable/user_guide/index.html
-.. _Template gallery: https://saf-templates.docs.solutions.ansys.com/version/stable/template_gallery/index.html
-.. _Contribute: https://saf-templates.docs.solutions.ansys.com/version/stable/contribute/index.html
-.. _LICENSE: https://github.com/ansys/saf-templates/blob/main/LICENSE
+Changelog
+=========
+
+The changelog section provides a summary of notable changes for each version of
+SAF Templates. It helps you keep track of updates, bug
+fixes, new features, and improvements made to the project over time.
+
+To view the complete changelog, visit the project repository and navigate
+to the `CHANGELOG`_ file. It provides a comprehensive list of changes
+categorized by version, along with brief descriptions of each change.
+
+
+.. _official documentation: https://saf.ansys.com/
+.. _project repository: https://github.com/ansys/saf/
+.. _prerequisites: https://saf.ansys.com/version/stable/getting_started/prerequisites/index.html
+.. _Template gallery: https://saf.ansys.com/version/stable/user_guide/add_step.html#step-template-gallery
+.. _Contribute: https://saf.ansys.com/version/stable/contribute/index.html
+.. _LICENSE: https://github.com/ansys/saf/blob/main/LICENSE
+.. _CHANGELOG: https://github.com/ansys/saf/blob/main/packages/saf-templates/CHANGELOG.md
 

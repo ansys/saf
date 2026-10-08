@@ -2,7 +2,7 @@
 BDM Python Shared Volume
 #########################
 
-|python| |pypi| |GH-CI| |codecov| |APACHE| |ruff|
+|python| |pypi| |GH-CI| |codecov| |Apache| |ruff|
 
 .. |python| image:: https://img.shields.io/pypi/pyversions/ansys-bdm-shared-volume?logo=python&logoColor=white&label=Python
    :target: https://pypi.org/project/ansys-bdm-shared-volume/
@@ -16,13 +16,13 @@ BDM Python Shared Volume
    :target: https://app.codecov.io/gh/ansys/bdm-python-shared-volume
    :alt: Codecov
 
-.. |GH-CI| image:: https://github.com/ansys/bdm-python-shared-volume/actions/workflows/certification.yml/badge.svg?label=CI
-   :target: https://github.com/ansys/bdm-python-shared-volume/actions/workflows/certification.yml
+.. |GH-CI| image:: https://img.shields.io/github/actions/workflow/status/ansys/saf/ci_cd_pr.yml?branch=main&label=CI-CD&logo=github
+   :target: https://github.com/ansys/saf/actions/workflows/ci_cd_pr.yml?query=branch%3Amain
    :alt: GH-CI
 
-.. |APACHE| image:: https://img.shields.io/badge/License-APACHE-white.svg?labelColor=black
-   :target: https://opensource.org/licenses/Apache-2.0
-   :alt: APACHE
+.. |Apache| image:: https://img.shields.io/badge/License-Apache2.0-white.svg?labelColor=black
+   :target: https://www.apache.org/licenses/
+   :alt: Apache
 
 .. |ruff| image:: https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json
    :target: https://github.com/astral-sh/ruff
@@ -34,7 +34,7 @@ Overview
 
 The ``ansys-bdm-shared-volume`` package provides a concrete implementation of
 the Blob Data Management (BDM) interface defined by
-`ansys-bdm-api <https://github.com/ansys/bdm-python-api>`_. It uses a networked
+`ansys-bdm-api <https://saf.ansys.com/version/stable/api/bdm-python-api/index.html>`_. It uses a networked
 shared file-system volume as the underlying storage backend.
 
 Within the SAF ecosystem, this package enables GLOW-based solutions to manage
@@ -56,11 +56,29 @@ backend during local development and against other BDM backends in cloud or
 distributed deployments.
 
 
+Installation
+============
+
+Ensure you have all the necessary `prerequisites`_.
+
+To install the BDM Python Shared Volume, run:
+
+.. code-block:: bash
+
+   pip install ansys-bdm-shared-volume
+
+
+Documentation
+=============
+
+Visit the `official documentation`_ for detailed information on how to use the BDM Python Shared Volume.
+Check the `API reference`_ for a complete list of classes, methods, and usage examples.
+
+
 Troubleshooting
 ===============
 
-For troubleshooting or reporting issues, please open an issue in the project
-repository.
+For troubleshooting or reporting issues, please open an issue in the `project repository`_.
 
 Please follow these steps to report an issue:
 
@@ -72,6 +90,14 @@ Please follow these steps to report an issue:
 
 Additionally, you can refer to the `official documentation`_ for additional
 resources and troubleshooting guides.
+
+
+Contribute
+==========
+
+Contributions are welcome!
+If you would like to contribute, please follow the guidelines provided in the `Contribute`_
+section of the official documentation.
 
 
 License
@@ -92,15 +118,10 @@ to the `CHANGELOG`_ file. It provides a comprehensive list of changes
 categorized by version, along with brief descriptions of each change.
 
 
-.. _prerequisites: https://bdm-python-shared-volume.docs.solutions.ansys.com/version/stable/getting-started#prerequisites
-.. _installation guidelines: https://bdm-python-shared-volume.docs.solutions.ansys.com/version/stable/getting-started#installation
-
-.. _official documentation: https://bdm-python-shared-volume.docs.solutions.ansys.com
-.. _Getting started: https://bdm-python-shared-volume.docs.solutions.ansys.com/version/stable/getting-started.html
-.. _User guide: https://bdm-python-shared-volume.docs.solutions.ansys.com/version/stable/user-guide.html
-.. _API reference: https://bdm-python-shared-volume.docs.solutions.ansys.com/version/stable/api/index.html
-.. _Examples: https://bdm-python-shared-volume.docs.solutions.ansys.com/version/dev/examples.html
-.. _Contribute: https://bdm-python-shared-volume.docs.solutions.ansys.com/version/stable/contribute.html
-
-.. _LICENSE: https://github.com/ansys/bdm-python-shared-volume/blob/main/LICENSE
-.. _CHANGELOG: https://github.com/ansys/bdm-python-shared-volume/blob/main/CHANGELOG.md
+.. _official documentation: https://saf.ansys.com/
+.. _project repository: https://github.com/ansys/saf/
+.. _prerequisites: https://saf.ansys.com/version/stable/getting_started/prerequisites/index.html
+.. _API reference: https://saf.ansys.com/version/stable/api/bdm-python-api/index.html
+.. _Contribute: https://saf.ansys.com/version/stable/contribute/index.html
+.. _LICENSE: https://github.com/ansys/saf/blob/main/LICENSE
+.. _CHANGELOG: https://github.com/ansys/saf/blob/main/packages/bdm-python-shared-volume/CHANGELOG.md

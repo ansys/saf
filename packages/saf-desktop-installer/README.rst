@@ -12,8 +12,8 @@ Solution Application Framework - SAF Desktop Installer
    :target: https://pypi.org/project/ansys-saf-desktop-installer/
    :alt: PyPI
 
-.. |GH-CI| image:: https://github.com/ansys/saf-desktop-installer/actions/workflows/ci_cd_release.yml/badge.svg?label=CI
-   :target: https://github.com/ansys/saf-desktop-installer/actions/workflows/ci_cd_release.yml
+.. |GH-CI| image:: https://img.shields.io/github/actions/workflow/status/ansys/saf/ci_cd_pr.yml?branch=main&label=CI-CD&logo=github
+   :target: https://github.com/ansys/saf/actions/workflows/ci_cd_pr.yml?query=branch%3Amain
    :alt: GH-CI
 
 .. |codecov| image:: https://img.shields.io/codecov/c/github/ansys/saf-desktop-installer
@@ -68,41 +68,27 @@ an organization.
 Installation
 ============
 
-Ensure you have all the necessary `prerequisites`_. Then, refer to the
-`installation guidelines`_ for detailed instructions on how to install the
-project in your system.
+Ensure you have all the necessary `prerequisites`_.
+
+To install SAF Desktop Installer, run:
+
+.. code-block:: bash
+
+   pip install ansys-saf-desktop-installer
 
 
 Documentation
 =============
 
-The `official documentation`_ of SAF Desktop Installer contains
-the following chapters:
-
-- `Getting started`_. This section provides a brief overview and instructions on
-  how to get started with the project. It typically includes information on how
-  to install the project, set up any necessary dependencies, and run a basic
-  example or test to ensure everything is functioning correctly.
-
-- `User guide`_. The user guide section offers detailed documentation and
-  instructions on how to use the project. It provides comprehensive explanations
-  of the project's features, functionalities, and configuration options. The
-  user guide aims to help users understand the project's concepts, best
-  practices, and recommended workflows.
-
-- `Contribute`_. This section provides guidelines and instructions on how to
-  contribute to the project. It includes information on how to set up the
-  development environment, run tests, submit pull requests, and follow
-  contribution guidelines.
+Visit the `official documentation`_ for detailed information on how to use SAF Desktop Installer.
 
 
 Troubleshooting
 ===============
 
-For troubleshooting or reporting issues, open an issue in the project
-repository.
+For troubleshooting or reporting issues, please open an issue in the `project repository`_.
 
-Follow these steps to report an issue:
+Please follow these steps to report an issue:
 
 - Go to the project repository.
 - Click on the ``Issues`` tab.
@@ -114,10 +100,18 @@ Additionally, you can refer to the `official documentation`_ for additional
 resources and troubleshooting guides.
 
 
+Contribute
+==========
+
+Contributions are welcome!
+If you would like to contribute, please follow the guidelines provided in the `Contribute`_
+section of the official documentation.
+
+
 License
 =======
 
-This project is licensed under the Apache 2.0 License - see the `LICENSE`_ file for details.
+You can find the full text of the license in the `LICENSE`_ file.
 
 
 Changelog
@@ -132,13 +126,9 @@ to the `CHANGELOG`_ file. It provides a comprehensive list of changes
 categorized by version, along with brief descriptions of each change.
 
 
-.. _prerequisites: https://saf-desktop-installer.docs.solutions.ansys.com/version/stable/getting_started#prerequisites
-.. _installation guidelines: https://saf-desktop-installer.docs.solutions.ansys.com/version/stable/getting_started#installation
-
-.. _official documentation: https://saf-desktop-installer.docs.solutions.ansys.com
-.. _Getting started: https://saf-desktop-installer.docs.solutions.ansys.com/version/stable/getting_started/index.html
-.. _User guide: https://saf-desktop-installer.docs.solutions.ansys.com/version/stable/user_guide/index.html
-.. _Contribute: https://saf-desktop-installer.docs.solutions.ansys.com/version/stable/contribute/index.html
-
-.. _LICENSE: https://github.com/ansys/saf-desktop-installer/blob/main/LICENSE
-.. _CHANGELOG: https://github.com/ansys/saf-desktop-installer/blob/main/CHANGELOG.md
+.. _prerequisites: https://saf.ansys.com/version/stable/getting_started/prerequisites/index.html
+.. _official documentation: https://saf.ansys.com/
+.. _project repository: https://github.com/ansys/saf/
+.. _Contribute: https://saf.ansys.com/version/stable/contribute/index.html
+.. _LICENSE: https://github.com/ansys/saf/blob/main/LICENSE
+.. _CHANGELOG: https://github.com/ansys/saf/blob/main/packages/saf-desktop-installer/CHANGELOG.md

@@ -12,8 +12,8 @@ Solution Application Framework - Product Manager
    :target: https://pypi.org/project/ansys-saf-product-manager/
    :alt: PyPI
 
-.. |GH-CI| image:: https://github.com/ansys/saf-product-manager/actions/workflows/ci_cd_release.yml/badge.svg?label=CI
-   :target: https://github.com/ansys/saf-product-manager/actions/workflows/ci_cd_release.yml
+.. |GH-CI| image:: https://img.shields.io/github/actions/workflow/status/ansys/saf/ci_cd_pr.yml?branch=main&label=CI-CD&logo=github
+   :target: https://github.com/ansys/saf/actions/workflows/ci_cd_pr.yml?query=branch%3Amain
    :alt: GH-CI
 
 .. |codecov| image:: https://img.shields.io/codecov/c/github/ansys/saf-product-manager
@@ -69,39 +69,26 @@ in the dependencies they actually need.
 Installation
 ============
 
-Ensure you have all the necessary `prerequisites`_. Then, refer to the
-`installation guidelines`_ for detailed instructions on how to install the
-project in your system.
+Ensure you have all the necessary `prerequisites`_.
+
+To install SAF Product Manager, run:
+
+.. code-block:: bash
+
+   pip install ansys-saf-product-manager
 
 
 Documentation
 =============
 
-The `official documentation`_ of SAF Product Manager contains
-the following chapters:
-
-- `Getting started`_. This section provides a brief overview and instructions on
-  how to get started with the project. It typically includes information on how
-  to install the project, set up any necessary dependencies, and run a basic
-  example or test to ensure everything is functioning correctly.
-
-- `User guide`_. The user guide section offers detailed documentation and
-  instructions on how to use the project. It provides comprehensive explanations
-  of the project's features, functionalities, and configuration options. The
-  user guide aims to help users understand the project's concepts, best
-  practices, and recommended workflows.
-
-- `Contribute`_. This section provides guidelines and instructions on how to
-  contribute to the project. It includes information on how to set up the
-  development environment, run tests, submit pull requests, and follow
-  contribution guidelines.
+Visit the `official documentation`_ for detailed information on how to use SAF Product Manager.
+Check the `API reference`_ for a complete list of classes, methods, and usage examples.
 
 
 Troubleshooting
 ===============
 
-For troubleshooting or reporting issues, please open an issue in the project
-repository.
+For troubleshooting or reporting issues, please open an issue in the `project repository`_.
 
 Please follow these steps to report an issue:
 
@@ -115,33 +102,18 @@ Additionally, you can refer to the `official documentation`_ for additional
 resources and troubleshooting guides.
 
 
-Using GitHub Copilot for Development
-=====================================
+Contribute
+==========
 
-This repository includes a `Copilot instructions file <https://github.com/ansys/saf-product-manager/blob/main/.github/copilot-instructions.md>`_ that provides AI-assisted development guidance. When working on SAF Product Manager enhancements or bug fixes:
-
-#. GitHub Copilot will automatically reference the project structure, architecture, and development guidelines from the instructions file.
-#. The instructions cover core concepts like product manager patterns, optional dependency handling, and code style expectations.
-#. Use Copilot to generate code that follows the established patterns for product managers, PyAnsys client integration, and shared utilities.
-#. The instructions emphasize type hints, the fully typed codebase, and the modular structure with one subdirectory per supported product.
-
-This helps ensure consistency across contributions and speeds up development workflows.
-
-**Suggested Copilot Prompt:**
-
-When starting a new feature or fix, you can use a prompt like this to guide Copilot:
-
-    "I'm working on the SAF Product Manager project. [Describe your task]. Please follow the project's Copilot instructions,
-    including type hints, the existing modular structure in src/ansys/saf/product_manager/, and the pattern of one subdirectory
-    per supported product. Ensure the code integrates with the existing modules and includes appropriate error handling."
-
-This prompt helps ensure Copilot generates code that aligns with SAF Product Manager's architecture and standards.
+Contributions are welcome!
+If you would like to contribute, please follow the guidelines provided in the `Contribute`_
+section of the official documentation.
 
 
 License
 =======
 
-This project is licensed under the Apache 2.0 License - see the `LICENSE`_ file for details.
+You can find the full text of the license in the `LICENSE`_ file.
 
 
 Changelog
@@ -156,13 +128,10 @@ to the `CHANGELOG`_ file. It provides a comprehensive list of changes
 categorized by version, along with brief descriptions of each change.
 
 
-.. _prerequisites: https://saf-product-manager.docs.solutions.ansys.com/version/stable/getting-started.html#prerequisites
-.. _installation guidelines: https://saf-product-manager.docs.solutions.ansys.com/version/stable/getting-started.html#installation
-
-.. _official documentation: https://saf-product-manager.docs.solutions.ansys.com
-.. _Getting started: https://saf-product-manager.docs.solutions.ansys.com/version/stable/getting-started.html
-.. _User guide: https://saf-product-manager.docs.solutions.ansys.com/version/stable/user-guide.html
-.. _Contribute: https://saf-product-manager.docs.solutions.ansys.com/version/stable/contribute.html
-
-.. _LICENSE: https://github.com/ansys/saf-product-manager/blob/main/LICENSE
-.. _CHANGELOG: https://github.com/ansys/saf-product-manager/blob/main/CHANGELOG.md
+.. _prerequisites: https://saf.ansys.com/version/stable/getting_started/prerequisites/index.html
+.. _official documentation: https://saf.ansys.com/
+.. _project repository: https://github.com/ansys/saf/
+.. _API reference: https://saf.ansys.com/version/stable/api/saf-product-manager/index.html
+.. _Contribute: https://saf.ansys.com/version/stable/contribute/index.html
+.. _LICENSE: https://github.com/ansys/saf/blob/main/LICENSE
+.. _CHANGELOG: https://github.com/ansys/saf/blob/main/packages/saf-product-manager/CHANGELOG.md

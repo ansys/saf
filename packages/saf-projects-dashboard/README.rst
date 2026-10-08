@@ -1,9 +1,3 @@
-.. image:: https://img.shields.io/badge/PyAnsys-Project-ffb71b?logo=ansys&logoColor=white
-   :target: https://docs.pyansys.com/
-   :alt: PyAnsys
-
-|
-
 |python| |pypi| |GH-CI| |codecov| |Apache| |ruff|
 
 .. |python| image:: https://img.shields.io/pypi/pyversions/ansys-saf-projects-dashboard?logo=python&logoColor=white&label=Python
@@ -18,8 +12,8 @@
    :target: https://app.codecov.io/gh/ansys/saf-projects-dashboard
    :alt: Codecov
 
-.. |GH-CI| image:: https://github.com/ansys/saf-projects-dashboard/actions/workflows/ci_cd_pr.yml/badge.svg?label=CI
-   :target: https://github.com/ansys/saf-projects-dashboard/actions/workflows/ci_cd_pr.yml
+.. |GH-CI| image:: https://img.shields.io/github/actions/workflow/status/ansys/saf/ci_cd_pr.yml?branch=main&label=CI-CD&logo=github
+   :target: https://github.com/ansys/saf/actions/workflows/ci_cd_pr.yml?query=branch%3Amain
    :alt: GH-CI
 
 .. |Apache| image:: https://img.shields.io/badge/License-Apache2.0-white.svg?labelColor=black
@@ -55,19 +49,21 @@ For editable/local development installs:
 Documentation
 =============
 
-The documentation contains the following sections:
-
-- `Quick Start`_
-- `Interface Overview`_
-- `User's Guide`_
-- `Known Issues and Limitations`_
+Visit the `official documentation`_ for detailed information on how to use Projects Dashboard.
 
 Troubleshooting
 ===============
 
-For troubleshooting or reporting issues, open an issue in the repository.
+For troubleshooting or reporting issues, please open an issue in the `project repository`_.
 Include a clear description, reproduction steps, and any relevant logs or
 screenshots.
+
+Contribute
+==========
+
+Contributions are welcome!
+If you would like to contribute, please follow the guidelines provided in the `Contribute`_
+section of the official documentation.
 
 License
 =======
@@ -80,9 +76,8 @@ Changelog
 For a complete list of changes by release, see the `CHANGELOG`_ file.
 
 
-.. _Quick Start: https://github.com/ansys/saf-projects-dashboard/tree/main/doc/source/getting-started
-.. _Interface Overview: https://github.com/ansys/saf-projects-dashboard/tree/main/doc/source/user-guide/interface-overview
-.. _User's Guide: https://github.com/ansys/saf-projects-dashboard/tree/main/doc/source/user-guide
-.. _Known Issues and Limitations: https://github.com/ansys/saf-projects-dashboard/tree/main/doc/source/contribute/user
+.. _official documentation: https://saf.ansys.com/
+.. _project repository: https://github.com/ansys/saf/
+.. _Contribute: https://saf.ansys.com/version/stable/contribute/index.html
 .. _LICENSE: https://github.com/ansys/saf/blob/main/packages/saf-projects-dashboard/LICENSE
-.. _CHANGELOG: https://github.com/ansys/saf-projects-dashboard/blob/main/CHANGELOG.md
+.. _CHANGELOG: https://github.com/ansys/saf/blob/main/packages/saf-projects-dashboard/CHANGELOG.md

@@ -12,8 +12,8 @@ Blob Management API for Python
    :target: https://pypi.org/project/ansys-bdm-api/
    :alt: PyPI
 
-.. |GH-CI| image:: https://github.com/ansys/bdm-python-api/actions/workflows/ci_cd_release.yml/badge.svg?label=CI
-   :target: https://github.com/ansys/bdm-python-api/actions/workflows/ci_cd_release.yml
+.. |GH-CI| image:: https://img.shields.io/github/actions/workflow/status/ansys/saf/ci_cd_pr.yml?branch=main&label=CI-CD&logo=github
+   :target: https://github.com/ansys/saf/actions/workflows/ci_cd_pr.yml?query=branch%3Amain
    :alt: GH-CI
 
 .. |codecov| image:: https://img.shields.io/codecov/c/github/ansys/bdm-python-api
@@ -52,52 +52,26 @@ consistent handling of large engineering datasets and directory structures.
 Installation
 ============
 
-Ensure you have all the necessary `prerequisites`_. Then, refer to the
-`installation guidelines`_ for detailed instructions on how to install the
-project in your system.
+Ensure you have all the necessary `prerequisites`_.
+
+To install the Blob Management API for Python, run:
+
+.. code-block:: bash
+
+   pip install ansys-bdm-api
 
 
 Documentation
 =============
 
-The `official documentation`_ of the Blob Management API for Python contains the following chapters:
-
-- `Getting started`_. This section provides a brief overview and instructions on
-  how to get started with the project. It typically includes information on how
-  to install the project, set up any necessary dependencies, and run a basic
-  example or test to ensure everything is functioning correctly.
-
-- `User guide`_. The user guide section offers detailed documentation and
-  instructions on how to use the project. It provides comprehensive explanations
-  of the project's features, functionalities, and configuration options. The
-  user guide aims to help users understand the project's concepts, best
-  practices, and recommended workflows.
-
-- `API reference`_. The API reference section provides detailed documentation
-  for the project's application programming interface (API). It includes
-  information about classes, functions, methods, and their parameters, return
-  values, and usage examples. This reference helps developers understand the
-  available API endpoints, their functionalities, and how to interact with them
-  programmatically.
-
-- `Examples`_. The examples section showcases practical code examples that
-  demonstrate how to use the project in real-world scenarios. It provides sample
-  code snippets or complete scripts that illustrate different use cases or
-  demonstrate specific features of the project. Examples serve as practical
-  references for developers, helping them understand how to apply the project to
-  their own applications.
-
-- `Contribute`_. This section provides guidelines and instructions on how to
-  contribute to the project. It includes information on how to set up the
-  development environment, run tests, submit pull requests, and follow
-  contribution guidelines.
+Visit the `official documentation`_ for detailed information on how to use the Blob Management API for Python.
+Check the `API reference`_ for a complete list of classes, methods, and usage examples.
 
 
 Troubleshooting
 ===============
 
-For troubleshooting or reporting issues, please open an issue in the project
-repository.
+For troubleshooting or reporting issues, please open an issue in the `project repository`_.
 
 Please follow these steps to report an issue:
 
@@ -109,6 +83,14 @@ Please follow these steps to report an issue:
 
 Additionally, you can refer to the `official documentation`_ for additional
 resources and troubleshooting guides.
+
+
+Contribute
+==========
+
+Contributions are welcome!
+If you would like to contribute, please follow the guidelines provided in the `Contribute`_
+section of the official documentation.
 
 
 License
@@ -129,14 +111,10 @@ to the `CHANGELOG`_ file. It provides a comprehensive list of changes
 categorized by version, along with brief descriptions of each change.
 
 
-.. _prerequisites: https://bdm-python-api.docs.solutions.ansys.com/version/stable/getting-started.html#prerequisites
-.. _installation guidelines: https://bdm-python-api.docs.solutions.ansys.com/version/stable/getting-started.html#installation
-.. _official documentation: https://bdm-python-api.docs.solutions.ansys.com
-.. _Getting started: https://bdm-python-api.docs.solutions.ansys.com/version/stable/getting-started.html
-.. _User guide: https://bdm-python-api.docs.solutions.ansys.com/version/stable/user-guide.html
-.. _API reference: https://bdm-python-api.docs.solutions.ansys.com/version/stable/api/index.html
-.. _Examples: https://bdm-python-api.docs.solutions.ansys.com/version/stable/examples.html
-.. _Contribute: https://bdm-python-api.docs.solutions.ansys.com/version/stable/contribute.html
-.. _LICENSE: https://github.com/ansys/bdm-python-api/blob/main/LICENSE
-.. _CHANGELOG: https://github.com/ansys/bdm-python-api/blob/main/CHANGELOG.md
-
+.. _official documentation: https://saf.ansys.com/
+.. _project repository: https://github.com/ansys/saf/
+.. _prerequisites: https://saf.ansys.com/version/stable/getting_started/prerequisites/index.html
+.. _API reference: https://saf.ansys.com/version/stable/api/bdm-python-api/index.html
+.. _Contribute: https://saf.ansys.com/version/stable/contribute/index.html
+.. _LICENSE: https://github.com/ansys/saf/blob/main/LICENSE
+.. _CHANGELOG: https://github.com/ansys/saf/blob/main/packages/bdm-python-api/CHANGELOG.md

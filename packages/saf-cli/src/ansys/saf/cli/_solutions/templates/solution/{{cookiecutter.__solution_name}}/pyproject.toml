@@ -49,6 +49,14 @@ include = [
 name = "PyPI"
 priority = "primary"
 
+{% if cookiecutter.__ui_framework == "dash" %}
+# Only used by the packages that explicitly name it, until ansys-saf-projects-dashboard is published on PyPI.
+[[tool.poetry.source]]
+name = "solutions-private-pypi"
+url = "{{ cookiecutter.__solutions_private_pypi_url }}"
+priority = "explicit"
+{% endif %}
+
 [tool.poetry.dependencies]
 python = ">=3.11,<3.15"
 ansys-saf-sdk = ">=0.3.0,<1.0.0"
@@ -67,6 +75,7 @@ dash_bootstrap_components = "^1.2"
 ansys-solutions-dash-super-components = "^1.0.0"
 dash-extensions = "^2.0.5"
 dash-mantine-components = "^2.6.0"
+ansys-saf-projects-dashboard = { version = ">=0.1.0.dev0,<1.0.0", allow-prereleases = true, source = "solutions-private-pypi" }
 {% endif %}
 
 [tool.poetry.group.doc]

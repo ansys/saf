@@ -18,11 +18,13 @@ from pathlib import Path
 import platform
 import subprocess
 import sys
+import tomllib
+from typing import Any
 
 import pytest
 import pytest_mock
 
-from ansys.saf.cli._config.const import DEFAULT_SOLUTION_NAMESPACE, SOLUTION_TEMPLATE_PATH
+from ansys.saf.cli._config.const import DEFAULT_SOLUTION_NAMESPACE, SOLUTION_TEMPLATE_PATH, SOLUTIONS_PRIVATE_PYPI_URL
 from ansys.saf.cli._solutions.scaffolding import create_solution
 from ansys.saf.cli._utilities.conversion import namespace_to_path, namespace_to_pkg_name
 from tests.outcome_checks import check_agents_file, check_scaffolded_solution_files
@@ -74,6 +76,7 @@ def test_create_solution_sets_proper_cookiecutter_args(
             "__appdata_directory": mock_appdata.as_posix(),
             "__python_version": f"{sys.version_info.major}.{sys.version_info.minor}",
             "__saf_cli_version": expected_saf_cli_version,
+            "__solutions_private_pypi_url": SOLUTIONS_PRIVATE_PYPI_URL,
         },
     )
 
@@ -155,3 +158,29 @@ def test_create_solution(tmp_path: Path, ui_framework: str, namespace: str):
             assert "  ui:" in docker_compose_content
         else:
             assert "  ui:" not in docker_compose_content
+
+
+def _scaffold_pyproject(tmp_path: Path, ui_framework: str) -> dict[str, Any]:
+    """Scaffold a solution in the working directory and return its parsed pyproject.toml."""
+    create_solution("dashboard_dependency_solution", "Dashboard Dependency Solution", ui_framework, "saf_cli_tests")
+    return tomllib.loads((tmp_path / "dashboard_dependency_solution" / "pyproject.toml").read_text(encoding="utf-8"))
+
+
+@pytest.mark.usefixtures("tmp_path_as_working_dir", "mock_appdata")
+def test_dash_solution_depends_on_projects_dashboard(tmp_path: Path):
+    """Install the projects dashboard with the UI of a Dash solution, from the private feed only."""
+    poetry = _scaffold_pyproject(tmp_path, "dash")["tool"]["poetry"]
+    dependency = poetry["group"]["ui"]["dependencies"]["ansys-saf-projects-dashboard"]
+    assert dependency["source"] == "solutions-private-pypi"
+    assert dependency["allow-prereleases"] is True
+    sources = {source["name"]: source for source in poetry["source"]}
+    assert sources["solutions-private-pypi"]["priority"] == "explicit"
+    assert sources["solutions-private-pypi"]["url"] == SOLUTIONS_PRIVATE_PYPI_URL
+
+
+@pytest.mark.usefixtures("tmp_path_as_working_dir", "mock_appdata")
+def test_solution_without_ui_does_not_depend_on_projects_dashboard(tmp_path: Path):
+    """Do not add the projects dashboard nor the private feed to a solution without UI."""
+    poetry = _scaffold_pyproject(tmp_path, "none")["tool"]["poetry"]
+    assert "ui" not in poetry.get("group", {})
+    assert "solutions-private-pypi" not in {source["name"] for source in poetry["source"]}

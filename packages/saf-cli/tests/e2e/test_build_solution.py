@@ -17,11 +17,11 @@
 from pathlib import Path
 import shutil
 
-from ansys.saf.testing.common import find_exec_in_venv
 import pytest
 
 from ansys.saf.cli._config.const import DEFAULT_SOLUTION_DISPLAY_NAME, DEFAULT_SOLUTION_NAME, DEFAULT_SOLUTION_NAMESPACE
 from ansys.saf.cli._database.models import SolutionRegistry
+from ansys.saf.testing.common import find_exec_in_venv
 from tests.e2e.conftest import (
     BuildSolution,
     InstallSolution,

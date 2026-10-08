@@ -17,7 +17,6 @@
 """Solution definition module."""
 
 from ansys.saf.glow.solution import Solution, StepsModel
-
 from tests.unit.mocks.solutions.solution_with_dash_ui.solution.first_step import FirstStep
 from tests.unit.mocks.solutions.solution_with_dash_ui.solution.second_step import SecondStep
 

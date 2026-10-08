@@ -58,6 +58,8 @@ env:
   EMAIL: "actions@github.com"
   USERNAME: "GitHub-Actions"
   BUILD_WORKFLOW: build-release.yml
+  MOON_PYTHON_VERSION: ${{ inputs.python-version }}
+  UV_PYTHON: ${{ inputs.python-version }}
 
 jobs:
   create-solution:
@@ -80,6 +82,7 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+          fetch-depth: 0
 
       - name: Define arguments to create new solution
         id: information
@@ -121,23 +124,17 @@ jobs:
           echo "TEST_BRANCH_NAME"=$branch_name >> $GITHUB_ENV
           echo "test-branch-name"=$branch_name >> $GITHUB_OUTPUT
 
-      - name: Prepare python environment
-        uses: ansys/saf-devops/prepare-python-environment@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
-        with:
-          python-version: ${{ inputs.python-version }}
-          poetry-version: ${{ vars.POETRY_VERSION }}
-          poetry-install-args: ""
-          python-project-path: "packages/saf-cli"
+      - name: Setup Moon Toolchain
+        if: ${{ runner.environment != 'self-hosted' }}
+        uses: moonrepo/setup-toolchain@261c62cb5b0f580c7be7c8cd0f023a2e96756095 # v0.6.4
 
       - name: Generate solution ${{ env.SOLUTION_NAME }} - encryption ${{ env.USE_ENCRYPTION
           }} - UI ${{ env.UI_FRAMEWORK }}
-        working-directory: packages/saf-cli
         shell: bash
-        run: printf "${SOLUTION_NAME}\n${SOLUTION_DISPLAY_NAME}\n${UI_FRAMEWORK}\n\n"
-          | .venv/bin/saf new
+        run: moon run saf-cli:saf-new -- --solution-name "$SOLUTION_NAME" --solution-display-name
+          "$SOLUTION_DISPLAY_NAME" --ui-framework "$UI_FRAMEWORK" --namespace "myorg.apps"
 
       - name: Add saf-cli-reference
-        working-directory: packages/saf-cli
         shell: bash
         env:
           BRANCH_NAME: ${{ github.head_ref != '' && github.head_ref || 'main' }}
@@ -151,7 +148,6 @@ jobs:
 
       - name: Add files for encryption
         if: ${{ env.USE_ENCRYPTION == 'true' }}
-        working-directory: packages/saf-cli
         shell: bash
         run: |
           mkdir -p ${SOLUTION_NAME}/src/saf/solutions/${SOLUTION_NAME}/method_assets
@@ -160,7 +156,6 @@ jobs:
 
       - name: Enable encryption
         if: ${{ env.USE_ENCRYPTION == 'true' }}
-        working-directory: packages/saf-cli
         shell: bash
         # zizmor: ignore[template-injection]
         run: |
@@ -190,7 +185,6 @@ jobs:
           echo "pycparser==3.0" >> ${SOLUTION_NAME}/requirements/requirements_build.txt
 
       - name: Add license exception for the solution
-        working-directory: packages/saf-cli
         shell: bash
         run: | # zizmor: ignore[template-injection]
           tmpfile=$(mktemp)
@@ -202,7 +196,7 @@ jobs:
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: ${{ env.SOLUTION_ARTIFACT }}
-          path: packages/saf-cli/${{ env.SOLUTION_NAME }}
+          path: ${{ env.SOLUTION_NAME }}
           include-hidden-files: true
 
   testing:

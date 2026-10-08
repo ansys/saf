@@ -201,7 +201,7 @@ def set_user_level_environment_variable(variable_name: str, value: str) -> None:
     if platform.system() == "Windows":
         try:
             subprocess.run(
-                ["setx", variable_name, value],
+                ["setx", variable_name, value],  # noqa: S607
                 check=True,
                 capture_output=True,
                 text=True,
@@ -859,7 +859,7 @@ def _install_build_system(
 
     if platform.system() == "Windows":
         subprocess.run(
-            [
+            [  # noqa: S607
                 "powershell",
                 "-Command",
                 "New-Item",
@@ -874,7 +874,7 @@ def _install_build_system(
         )
     elif platform.system() == "Linux":
         subprocess.run(
-            [
+            [  # noqa: S607
                 "ln",
                 "-sf",
                 POETRY_POETRY_EXEC.absolute().as_posix(),
@@ -1006,6 +1006,7 @@ def _install_dotnet_linux_dependencies():
         print("Skipped\n")
         return
 
+    # ruff: disable[S602, S607]
     subprocess.run(
         """
         set -xe \
@@ -1022,6 +1023,7 @@ def _install_dotnet_linux_dependencies():
         check=True,
         shell=True,
     )
+    # ruff: enable[S602, S607]
     print()
 
 

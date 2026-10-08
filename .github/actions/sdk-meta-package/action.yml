@@ -80,6 +80,11 @@ inputs:
       branch."
     required: false
     default: ""
+  ansys-saf-projects-dashboard-version-override:
+    description: "Override for the Ansys SAF Projects Dashboard version. Only for
+      release branch."
+    required: false
+    default: ""
 
 outputs:
   update-type:
@@ -123,6 +128,8 @@ runs:
         USER_SELECTED_ANSYS_SAF_PRODUCT_CONFIGURATION_VERSION: ${{ inputs.ansys-saf-product-configuration-version-override
           }}
         USER_SELECTED_ANSYS_SAF_PRODUCT_MANAGER_VERSION: ${{ inputs.ansys-saf-product-manager-version-override
+          }}
+        USER_SELECTED_ANSYS_SAF_PROJECTS_DASHBOARD_VERSION: ${{ inputs.ansys-saf-projects-dashboard-version-override
           }}
 
     - name: Upload pyproject.toml artifact

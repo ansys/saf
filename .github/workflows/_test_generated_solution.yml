@@ -132,7 +132,7 @@ jobs:
           }} - UI ${{ env.UI_FRAMEWORK }}
         shell: bash
         run: moon run saf-cli:saf-new -- --solution-name "$SOLUTION_NAME" --solution-display-name
-          "$SOLUTION_DISPLAY_NAME" --ui-framework "$UI_FRAMEWORK" --namespace "myorg.apps"
+          "$SOLUTION_DISPLAY_NAME" --ui-framework "$UI_FRAMEWORK" --namespace "saf.solutions"
 
       - name: Add saf-cli-reference
         shell: bash

@@ -16,11 +16,11 @@
 
 from pathlib import Path
 
-from ansys.bdm.api import NO_ENTITY
-from ansys.bdm.api.entity_handle import EntityHandle
 from fastapi import status
 import pytest
 
+from ansys.bdm.api import NO_ENTITY
+from ansys.bdm.api.entity_handle import EntityHandle
 from ansys.saf.glow._config.const import DatabaseType
 from tests.conftest import SOLUTIONS_MOCKS_DIR
 import tests.mocks.solutions.bdm_solution as bdm_solution

@@ -58,48 +58,50 @@ To clone the repository using SSH, run:
 Understand the repository layout
 ================================
 
-The ``saf`` repository groups all SAF packages in a single repository. Every
-package located under the ``packages`` directory is independent: it has its own
-``pyproject.toml``, its own ``poetry.lock``, its own ``.pre-commit-config.yaml``,
-and its own release lifecycle.
+The ``saf`` repository groups SAF packages in a single repository. The Python
+packages registered in ``.moon/workspace.yml`` are managed as a uv workspace
+rooted at the repository root. Each package keeps its own ``pyproject.toml``
+and release lifecycle; dependency resolution is recorded in the root
+``uv.lock``. Moon provides the common tasks for these packages. Run Moon
+commands from the repository root, and use ``moon projects`` to list the
+registered projects.
 
 .. code-block:: text
 
     saf/
-    |-- architecture/    Design documents of the repository
-    |-- doc/             Centralized documentation
-    |-- packages/        All SAF packages
-    |   |-- bdm-python-api/
-    |   |-- bdm-python-shared-volume/
-    |   |-- dash-super-components/
-    |   |-- glow-engine/
-    |   |-- saf-cli/
-    |   |-- saf-desktop-installer/
-    |   |-- saf-desktop-orchestrator/
-    |   |-- saf-iam-oidc/
-    |   |-- saf-product-configuration/
-    |   |-- saf-product-manager/
-    |   |-- saf-sdk/
-    |   |-- saf-templates/
-    |   |-- saf-testing/
-    |-- pyproject.toml   Root project, documentation dependencies only
+    |__ doc/             Centralized documentation
+    |__ .moon/           Moon workspace and shared task definitions
+    |__ packages/        All SAF packages
+    |   |__ bdm-python-api/
+    |   |__ bdm-python-shared-volume/
+    |   |__ dash-super-components/
+    |   |__ glow-engine/
+    |   |__ saf-cli/
+    |   |__ saf-desktop-installer/
+    |   |__ saf-desktop-orchestrator/
+    |   |__ saf-iam-oidc/
+    |   |__ saf-product-configuration/
+    |   |__ saf-product-manager/
+    |   |__ saf-sdk/
+    |   |__ saf-templates/
+    |   |__ saf-testing/
+    |__ pyproject.toml   Root uv workspace and documentation dependencies
+    |__ uv.lock          Resolved dependencies for the workspace
 
-Two different tools are used, depending on where you work:
+You can leverage the Moon tasks defined in the root ``.moon`` directory to manage and interact with the SAF packages efficiently.
 
-.. list-table::  Tools used for repository-level and package-level tasks
+.. list-table:: Moon tasks for repository-level and package-level work
     :header-rows: 1
-    :stub-columns: 1
-    :widths: 50 30 20
+    :widths: 50 50
 
-    * - Task
-      - Working directory
-      - Tool
-    * - Centralized documentation and repository code style checks
-      - Repository root
-      - ``uv``
-    * - Package development, tests, and package code style checks
-      - ``packages/<package-name>``
-      - ``Poetry``
+    * - Work
+      - Command
+    * - Synchronize workspace dependencies
+      - ``moon run root:uv-sync``
+    * - Run root checks
+      - ``moon run root:pre-commit``
+    * - Run a package task (for example, tests)
+      - ``moon run saf-testing:test``
 
 
 .. _install_for_developers:
@@ -114,195 +116,59 @@ reinstall the package every time you make a change.
 All SAF packages require Python 3.11 or a later version, up to but excluding
 Python 4.
 
+Set up the workspace
+--------------------
 
-Install Poetry
---------------
-
-SAF packages are managed with Poetry 2.3.2.
-
-.. important::
-
-    Install Poetry outside of the virtual environment of the package you work
-    on. When Poetry shares an environment with the project dependencies, it
-    resolves and upgrades its own dependencies together with the project ones,
-    which leads to broken environments. Use a tool that installs Poetry in its
-    own isolated environment instead.
-
-.. tab-set::
-
-    .. tab-item:: pipx
-
-        .. code-block:: text
-
-            python -m pip install --user pipx
-            python -m pipx ensurepath
-            pipx install poetry==2.3.2
-
-    .. tab-item:: uv
-
-        .. code-block:: text
-
-            python -m pip install --user uv
-            uv tool install poetry==2.3.2
-
-    .. tab-item:: Official installer
-
-        .. tab-set::
-
-            .. tab-item:: Windows
-
-                .. code-block:: text
-
-                    (Invoke-WebRequest -Uri https://install.python-poetry.org -UseBasicParsing).Content | py - --version 2.3.2
-
-            .. tab-item:: macOS/Linux/UNIX
-
-                .. code-block:: text
-
-                    curl -sSL https://install.python-poetry.org | python3 - --version 2.3.2
-
-Verify the installation by running:
-
-.. code-block:: text
-
-    poetry --version
-
-Then, configure Poetry to create the virtual environment inside the package
-directory. This keeps the environment next to the sources and makes it easier
-for editors to detect it:
-
-.. code-block:: text
-
-    poetry config virtualenvs.in-project true
-
-
-Install a package in development mode
-----------------------------------------
-
-Start by navigating to the package you want to work on. For example, to work on
-the SAF CLI, run:
-
-.. code-block:: text
-
-    cd packages/saf-cli
-
-Then, install the package in development mode, together with the dependencies
-required to run the tests and to build the documentation:
-
-.. code-block:: text
-
-    poetry install --with tests,doc
-
-Poetry creates the ``.venv`` directory inside the package directory, installs
-the package in editable mode, and installs its dependencies.
-
-.. note::
-
-    Some packages declare optional extras. To install them all, append
-    ``--all-extras`` to the previous command. This is what the CI/CD pipelines
-    do.
-
-Finally, activate the environment by running:
-
-.. tab-set::
-
-    .. tab-item:: Windows
-
-        .. tab-set::
-
-            .. tab-item:: CMD
-
-                .. code-block:: text
-
-                    .venv\Scripts\activate.bat
-
-            .. tab-item:: PowerShell
-
-                .. code-block:: text
-
-                    .venv\Scripts\Activate.ps1
-
-    .. tab-item:: macOS/Linux/UNIX
-
-        .. code-block:: text
-
-            source .venv/bin/activate
-
-Activating the environment is optional. If you prefer not to activate it,
-prefix every command with ``poetry run``.
+Install the Moon CLI. Moon uses the root ``uv.lock`` and creates the shared ``.venv`` at the
+repository root. Package tasks select the relevant workspace member and install
+its extras as needed. Set ``UV_PYTHON`` and ``MOON_PYTHON_VERSION`` to the same
+Python version before running package tasks.
 
 .. _run_tests:
 
 Run the tests
 =============
 
-Tests are declared in the ``tests`` directory of each package and are run with
-pytest. From the directory of the package you work on, run:
+Tests are declared in each package's ``tests`` directory. From the repository
+root, run the package's Moon task. For example:
 
 .. code-block:: text
 
-    poetry run pytest
+  moon run saf-testing:test
 
-To compute the coverage ratio and generate a report, run:
-
-.. code-block:: text
-
-    poetry run pytest --cov=ansys --cov-report=term
+The task runs pytest with coverage enabled and writes terminal, XML, and HTML
+coverage reports.
 
 .. note::
 
-    Some packages, such as ``glow-engine``, declare test sessions that require
-    additional services or specific markers. The test sessions run by the
-    CI/CD pipelines are declared in the
-    ``.github/workflows/tests_groups_definitions`` directory. Use them as a
-    reference to reproduce a given test session locally.
+  Some packages, such as ``glow-engine``, declare test sessions that require
+  additional services or specific markers. The test sessions run by the
+  CI/CD pipelines are declared in the
+  ``.github/workflows/tests_groups_definitions`` directory. Use them as a
+  reference to reproduce a given test session locally.
 
 .. _run_code_style_checks:
 
 Run the code style checks
 =========================
 
-Code style is enforced with ``pre-commit``. There are two levels of
-configuration: the root one, which applies to the whole repository, and one per
-package.
-
-To run the root checks, from the repository root, run:
+Code style is enforced with ``pre-commit``. Run root checks from the repository
+root:
 
 .. code-block:: text
 
-    uv venv .venv --python 3.12
-    uv pip install pre-commit==4.6.0
-    uv run pre-commit run --all-files
+  moon run root:pre-commit
 
-Not every package declares ``pre-commit``. When it does, the dependency group
-that contains it depends on the package:
-
-.. list-table::  Pre-commit dependency groups
-    :header-rows: 1
-    :widths: 20 80
-    :stub-columns: 1
-
-    * - Group
-      - Packages
-    * - ``style``
-      - ``dash-super-components``, ``glow-engine``, ``saf-testing``
-    * - ``dev``
-      - ``saf-cli``, ``saf-desktop-orchestrator``,
-        ``saf-product-configuration``, ``saf-product-manager``
-    * - None
-      - ``bdm-python-api``, ``bdm-python-shared-volume``,
-        ``saf-desktop-installer``, ``saf-iam-oidc``, ``saf-templates``
-
-To run the checks of a package that declares ``pre-commit``, from the directory
-of that package, run:
+To run a package's checks, use its ``pre-commit`` task. This task also runs the
+package's Ruff, Pyright, and Bandit checks. For example:
 
 .. code-block:: text
 
-    poetry install --with tests,doc,style
-    poetry run pre-commit run --all-files
+  moon run saf-testing:pre-commit
 
-Replace ``style`` with ``dev`` for the packages that declare ``pre-commit`` in
-the ``dev`` group.
+Other package tasks include ``test``, ``build``, ``build-doc``, ``ruff``,
+``pyright``, and ``bandit``. Use ``moon projects`` to find registered project
+names.
 
 .. _build_the_documentation_dev:
 

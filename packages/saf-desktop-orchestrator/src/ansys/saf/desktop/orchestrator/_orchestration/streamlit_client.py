@@ -32,7 +32,7 @@ T = TypeVar("T", bound=Solution)
 logger = logging.getLogger(__name__)
 
 
-class StreamlitClient(Generic[T]):  # noqa: UP046
+class StreamlitClient(Generic[T]):
     # TODO: unify with DashClient? There is nothing about Streamlit in this class
 
     _singleton: Client[T]

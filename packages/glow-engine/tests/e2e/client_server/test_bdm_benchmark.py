@@ -16,10 +16,10 @@
 
 import time
 
-from ansys.bdm.api import NO_ENTITY
-from ansys.saf.testing.solution.end_to_end import ProjectFixture
 import pytest
 
+from ansys.bdm.api import NO_ENTITY
+from ansys.saf.testing.solution.end_to_end import ProjectFixture
 from tests.mocks.solutions.bdm_benchmark import BdmBenchmarkSolution
 
 pytestmark = pytest.mark.parametrize("solution_type", [BdmBenchmarkSolution], indirect=True)

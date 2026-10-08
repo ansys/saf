@@ -18,9 +18,9 @@ from contextlib import suppress
 from typing import Any, cast, final
 from urllib.parse import quote
 
-from ansys.bdm.api import EntityHandle, IAsyncStorageScope
 from pydantic import ValidationError
 
+from ansys.bdm.api import EntityHandle, IAsyncStorageScope
 from ansys.saf.glow._config.settings import Settings
 from ansys.saf.glow._server.exceptions import MalformedSolutionError
 from ansys.saf.glow._utilities.conversion import python_identifier_to_url_part

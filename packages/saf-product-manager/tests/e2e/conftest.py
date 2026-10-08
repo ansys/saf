@@ -78,7 +78,7 @@ def mock_appdata(tmp_path_factory: pytest.TempPathFactory) -> YieldFixture[Path]
 
 
 @pytest.fixture(autouse=True)
-def check_session_glow_health(  # noqa: UP047
+def check_session_glow_health(
     session_glow: GlowBaseProcess[T] | None,
     rerun_restart: None,
     keep_container_logs_now: bool | None = None,
@@ -150,7 +150,7 @@ def tmp_solutions_dir(tmp_path_factory: pytest.TempPathFactory) -> dict[type[T],
 
 
 @pytest.fixture(scope="session")
-def solution_type(  # noqa: UP047
+def solution_type(
     tmp_solutions_dir: dict[type[T], Path],
     request: pytest.FixtureRequest,
 ) -> tuple[type[T] | type[Solution], Path] | None:

@@ -25,13 +25,6 @@ import shutil
 from typing import Any, TypeVar
 from unittest import mock
 
-from ansys.saf.testing._solution.end_to_end.glow_execution_configurations import EnvVars, Volumes
-from ansys.saf.testing.common import YieldFixture
-from ansys.saf.testing.network import get_random_free_port
-from ansys.saf.testing.process import Process
-from ansys.saf.testing.selenium import wait_for_element, wait_for_element_and_click, wait_for_element_and_send_text
-from ansys.saf.testing.solution.const import TestDeployment
-from ansys.saf.testing.solution.end_to_end import BaseGlowConfiguration, GlowBaseProcess, ProjectFixture
 import httpx2
 from joserfc import jwt
 from joserfc.jwk import OctKey
@@ -43,6 +36,13 @@ from tenacity import TryAgain, retry, stop_after_attempt, wait_fixed
 
 from ansys.saf.glow.client import Client
 from ansys.saf.glow.solution import Solution
+from ansys.saf.testing._solution.end_to_end.glow_execution_configurations import EnvVars, Volumes
+from ansys.saf.testing.common import YieldFixture
+from ansys.saf.testing.network import get_random_free_port
+from ansys.saf.testing.process import Process
+from ansys.saf.testing.selenium import wait_for_element, wait_for_element_and_click, wait_for_element_and_send_text
+from ansys.saf.testing.solution.const import TestDeployment
+from ansys.saf.testing.solution.end_to_end import BaseGlowConfiguration, GlowBaseProcess, ProjectFixture
 from tests.conftest import IGNORE_PYC_FILES, MOCKS_DIR, PACKAGE_ROOT, SOLUTIONS_MOCKS_DIR
 from tests.mocks.solution_end_to_end.solution.definition import EndToEndSolution
 

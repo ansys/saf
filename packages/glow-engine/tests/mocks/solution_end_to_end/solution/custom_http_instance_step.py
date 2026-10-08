@@ -17,7 +17,6 @@
 import time
 
 from ansys.bdm.api import NO_ENTITY, EntityHandle
-
 from ansys.saf.glow.solution import (
     StepModel,
     StepSpec,

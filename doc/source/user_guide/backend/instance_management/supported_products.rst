@@ -33,9 +33,9 @@ By default, SAF GLOW Engine  includes product instance managers for the followin
    *  - Fluent
       - | 2025 R1 SP4,
         | 2025 R2 SP4
-      - | ``Fluent3DDPSolverSecureManager``
-        | ``Fluent2DDPSolverSecureManager``
-        | ``Fluent3DDPMeshingSecureManager``
+      - | ``Fluent3DDPSolverManager``
+        | ``Fluent2DDPSolverManager``
+        | ``Fluent3DDPMeshingManager``
       - | ``ansys-fluent-core``
         | 0.37.0
       - WNUA, UDS, mTLS, insecure
@@ -43,7 +43,7 @@ By default, SAF GLOW Engine  includes product instance managers for the followin
    *  - Geometry
       - | 2025 R1 SP4,
         | 2025 R2 SP4
-      - ``GeometrySecureManager``
+      - ``GeometryManager``
       - | ``ansys-geometry-core``
         | 0.14.2
       - WNUA, UDS, mTLS, insecure
@@ -51,7 +51,7 @@ By default, SAF GLOW Engine  includes product instance managers for the followin
    *  - MAPDL
       - | 2025 R1 SP4,
         | 2025 R2 SP4
-      - ``MapdlSecureManager``
+      - ``MapdlManager``
       - | ``ansys-mapdl-core``
         | 0.73.0
       - WNUA, UDS, mTLS, insecure
@@ -59,18 +59,21 @@ By default, SAF GLOW Engine  includes product instance managers for the followin
    *  - Mechanical
       - | 2025 R1 SP4,
         | 2025 R2 SP4
-      - ``MechanicalSecureManager``
+      - ``MechanicalManager``
       - | ``ansys-mechanical-core``
         | 0.12.0
       - WNUA, mTLS, insecure
 
    *  - optiSLang
       - | 2024 R1,
-        | 2024 R2
-      - ``OptislangManager``
+        | 2024 R2,
+        | 2025 R1,
+        | 2025 R2,
+        | 2026 R1
+      - ``OslManager``
       - | ``ansys-optislang-core``
-        | 0.9.4
-      - N/A (insecure only)
+        | >=1.4
+      - WNUA, UDS, insecure
 
    *  - Visor
       - 0.2.5b0
@@ -81,8 +84,8 @@ By default, SAF GLOW Engine  includes product instance managers for the followin
 
 .. important::
 
-    gRPC secure transport is available only for product instance managers and configurations that explicitly state secure support (for example, ``GeometrySecureManager``).
-    Product instance managers that are not explicitly marked as secure STILL BYPASS the requirements when interacting with the product instances, relying on insecure connections affected by the gRPC vulnerabilities recently disclosed by Ansys.
+    Secure transport modes are available only for product configurations with ``enable_secure_flags=True``. All built-in product configurations enable it, except Visor's.
+    Custom product configurations that don't enable it STILL BYPASS the requirements when interacting with the product instances, relying on insecure connections affected by the gRPC vulnerabilities recently disclosed by Ansys.
 
 
 Ansys Electronics Desktop
@@ -154,12 +157,9 @@ For a complete example using AEDT product managers, see the |aedt-example|_.
 Fluent
 =========
 
-- ``Fluent3DDPSolverSecureManager``: supports secure gRPC connections.
-- ``Fluent2DDPSolverSecureManager``: supports secure gRPC connections.
-- ``Fluent3DDPMeshingSecureManager``: supports secure gRPC connections.
-- ``Fluent3DDPSolverManager``: deprecated, use ``Fluent3DDPSolverSecureManager`` instead.
-- ``Fluent2DDPSolverManager``: deprecated, use ``Fluent2DDPSolverSecureManager`` instead.
-- ``Fluent3DDPMeshingManager``: deprecated, use ``Fluent3DDPMeshingSecureManager`` instead.
+- ``Fluent3DDPSolverManager``
+- ``Fluent2DDPSolverManager``
+- ``Fluent3DDPMeshingManager``
 
 To be imported from ``ansys.saf.product_manager.fluent``.
 
@@ -192,7 +192,7 @@ Known limitations
 
     Note that the executable in the wrapper points to the Python that has the ``ansys-saf-product-configuration[fluent]`` package installed in its environment.
 
-- The secure managers support all gRPC transport modes described in :ref:`gRPC transport modes <instance_management_grpc_transport_modes>`. However, ``ansys-fluent-core`` enforces secure gRPC connections for local instances and does not permit insecure connections. This has two main implications:
+- These managers support all gRPC transport modes described in :ref:`gRPC transport modes <instance_management_grpc_transport_modes>`. However, ``ansys-fluent-core`` enforces secure gRPC connections for local instances and does not permit insecure connections. This has two main implications:
 
     - **When using HPS**: To use insecure local connections, configure :envvar:`GLOW_PRODUCT_HOST` with your local IP address instead of localhost.
     - **When using PIM Light Server**: The only supported secure mode by PIM Light Server (``WNUA``) does not work. Because SAF GLOW Engine  cannot reliably know if ``WNUA`` or ``insecure`` mode is being used when using PIM Light Server (see :ref:`instance_management_grpc_transport_modes`), it falls back to insecure connections, which ``ansys-fluent-core`` rejects. As a workaround, configure :envvar:`GLOW_PRODUCT_HOST` with your local IP address instead of localhost to establish a connection.
@@ -205,8 +205,7 @@ For a complete example using Fluent product managers, see the |fluent-example|_.
 
 Geometry
 =============
-- ``GeometrySecureManager``: supports secure gRPC connections.
-- ``GeometryManager``: deprecated, use ``GeometrySecureManager`` instead.
+- ``GeometryManager``
 
 To be imported from ``ansys.saf.product_manager.geometry``.
 
@@ -310,7 +309,7 @@ Configuration
                   "executable": "<path-to-dotnet-executable>",
               }
 
-- ``GeometrySecureManager`` supports all gRPC transport modes described in :ref:`gRPC transport modes <instance_management_grpc_transport_modes>`.
+- ``GeometryManager`` supports all gRPC transport modes described in :ref:`gRPC transport modes <instance_management_grpc_transport_modes>`.
 
 Known limitations
 ------------------
@@ -327,8 +326,7 @@ For a complete example using Geometry product manager, see the |geometry-example
 MAPDL
 ========
 
-- ``MapdlSecureManager``: supports secure gRPC connections.
-- ``MapdlManager``: deprecated, use ``MapdlSecureManager`` instead.
+- ``MapdlManager``
 
 To be imported from ``ansys.saf.product_manager.mapdl``.
 
@@ -346,7 +344,7 @@ Known limitations
 - MAPDL :bdg-primary:`2025 R1 SP4` and :bdg-primary:`2025 R2 SP4` are incompatible with the Database module of ``ansys-mapdl-core`` ``0.72.0``.
 - MAPDL spawns a console window in the background when used in Windows.
 - Concurrent instances of MAPDL in Windows are only supported using HPS.
-- The secure manager supports all gRPC transport modes described in :ref:`gRPC transport modes <instance_management_grpc_transport_modes>`.
+- ``MapdlManager`` supports all gRPC transport modes described in :ref:`gRPC transport modes <instance_management_grpc_transport_modes>`.
 
 Example
 ---------
@@ -357,8 +355,7 @@ For a complete example using MAPDL product manager, see the |MAPDL-example|_.
 Mechanical
 ===========
 
-- ``MechanicalSecureManager``: supports secure gRPC connections.
-- ``MechanicalManager``: deprecated, use ``MechanicalSecureManager`` instead.
+- ``MechanicalManager``
 
 To be imported from ``ansys.saf.product_manager.mechanical``.
 
@@ -373,7 +370,7 @@ Known limitations
 - Only tested with ``ansys-mechanical-core`` :bdg-primary:`0.12.0`. Using other versions may lead to unexpected behaviors.
 - When the instance is re-initialized, the internal state of the mechanical interpreter is not restored. Only files are restored.
 - HPS does not provide an official application finder. It requires a custom configuration to recognize Mechanical as an available application. For example, adding this snippet to the ``scaling_config.json``:
-- The secure manager supports all gRPC transport modes described in :ref:`gRPC transport modes <instance_management_grpc_transport_modes>`, except ``UDS``.
+- ``MechanicalManager`` supports all gRPC transport modes described in :ref:`gRPC transport modes <instance_management_grpc_transport_modes>`, except ``UDS``.
   This means that for Linux, the only working secure mode is ``mTLS``.
 
 .. code:: json
@@ -394,21 +391,33 @@ For a complete example using Mechanical product manager, see the |mechanical-exa
 optiSLang
 =============
 
-- ``OptislangManager``
+- ``OslManager``
 
-To be imported from ``ansys.saf.product_manager.optislang``.
+To be imported from ``ansys.saf.product_manager.optislang_wrapper``.
 
 Supported versions
 -------------------
 
-- optiSLang versions :bdg-primary:`2024 R1` and :bdg-primary:`2024 R2`.
+- optiSLang versions :bdg-primary:`2024 R1`, :bdg-primary:`2024 R2`, :bdg-primary:`2025 R1`, :bdg-primary:`2025 R2`, and :bdg-primary:`2026 R1`.
 
 Known limitations
 -----------------
 
-- Only tested with ``ansys-optislang-core`` :bdg-primary:`0.9.4`. Using other versions may lead to unexpected behaviors.
-- For :bdg-primary:`2024 R1`, it is not possible to import a project properties file. This should be fixed in :bdg-primary:`2024 R2`.
-- It's recommended to use the same Python version as the one included in the optiSLang installation. Example: Python 3.11 for :bdg-primary:`2024 R1`.
+- Requires ``ansys-optislang-core`` :bdg-primary:`1.4` or later.
+- For PIM Light Server, there should be an environment variable ``AWP_ROOT<version>`` (for example, ``AWP_ROOT261`` for 2026 R1) pointing to the Ansys installation directory.
+- ``mTLS`` is not supported yet. Non-localhost bindings fall back to insecure connections and a warning is logged.
+- To use optiSLang with HPS it is required to install the Python package ``ansys-saf-product-configuration[optislang]`` in the HPS scaler environment, and to include in the HPS scaler configuration both ``Ansys optiSLang`` and its wrapper as available applications. For example, adding this snippet to the ``scaling_config.json`` for the wrapper:
+
+.. code:: json
+
+    {
+        "name": "Ansys SAF Product Wrapper [optiSLang]",
+        "version": "2.0",
+        "install_path": "<path-to-parent-dir-of-python-executable>",
+        "executable": "<path-to-python-executable>",
+    }
+
+Note that the executable in the wrapper points to the Python that has the ``ansys-saf-product-configuration[optislang]`` package installed in its environment.
 
 Example
 ---------

@@ -22,7 +22,6 @@ import re
 import sqlite3
 import zipfile
 
-from ansys.saf.testing.database import PostgresqlServerInfo
 import asyncpg  # pyright: ignore[reportMissingTypeStubs]
 from fastapi import status
 from fastapi.testclient import TestClient
@@ -32,6 +31,7 @@ import pytest
 from ansys.saf.glow._config.settings import DatabaseType, Settings
 from ansys.saf.glow._server.dependencies import get_settings
 from ansys.saf.glow._storage.os import INVALID_CHARACTERS
+from ansys.saf.testing.database import PostgresqlServerInfo
 from tests.mocks.solutions import has_methods, minimal_solution
 from tests.unit.routes.conftest import ProjectFixture
 

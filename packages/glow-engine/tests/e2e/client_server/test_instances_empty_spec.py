@@ -14,9 +14,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from ansys.saf.testing.solution.end_to_end import ProjectFixture
 import pytest
 
+from ansys.saf.testing.solution.end_to_end import ProjectFixture
 from tests.mocks.solutions.empty_step_spec import EmptySpecSolution
 
 pytestmark = pytest.mark.parametrize("solution_type", [EmptySpecSolution], indirect=True)

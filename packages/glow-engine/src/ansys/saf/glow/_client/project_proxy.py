@@ -20,9 +20,9 @@ import os
 from pathlib import Path
 from typing import Any, TypeVar
 
-from ansys.bdm.api import IStorageScope
 import httpx2
 
+from ansys.bdm.api import IStorageScope
 from ansys.saf.glow._client.step_proxy import StepProxy
 from ansys.saf.glow._client.storagescope import ClientStorageScope
 from ansys.saf.glow._config.settings import Settings

@@ -42,29 +42,25 @@ on:
         type: string
         default: ""
       ansys-bdm-shared-volume-version-override:
-        description:
-          "Override for the Ansys BDM Shared Volume version. Only for release
+        description: "Override for the Ansys BDM Shared Volume version. Only for release
           branch."
         required: false
         type: string
         default: ""
       ansys-saf-glow-engine-version-override:
-        description:
-          "Override for the Ansys SAF Glow Engine version. Only for release
+        description: "Override for the Ansys SAF Glow Engine version. Only for release
           branch."
         required: false
         type: string
         default: ""
       ansys-saf-desktop-installer-version-override:
-        description:
-          "Override for the Ansys SAF Desktop Installer version. Only for
+        description: "Override for the Ansys SAF Desktop Installer version. Only for
           release branch."
         required: false
         type: string
         default: ""
       ansys-saf-desktop-orchestrator-version-override:
-        description:
-          "Override for the Ansys SAF Desktop Orchestrator version. Only
+        description: "Override for the Ansys SAF Desktop Orchestrator version. Only
           for release branch."
         required: false
         type: string
@@ -75,22 +71,19 @@ on:
         type: string
         default: ""
       ansys-saf-product-configuration-version-override:
-        description:
-          "Override for the Ansys SAF Product Configuration version. Only
+        description: "Override for the Ansys SAF Product Configuration version. Only
           for release branch."
         required: false
         type: string
         default: ""
       ansys-saf-product-manager-version-override:
-        description:
-          "Override for the Ansys SAF Product Manager version. Only for
+        description: "Override for the Ansys SAF Product Manager version. Only for
           release branch."
         required: false
         type: string
         default: ""
       ansys-saf-projects-dashboard-version-override:
-        description:
-          "Override for the Ansys SAF Projects Dashboard version. Only
+        description: "Override for the Ansys SAF Projects Dashboard version. Only
           for release branch."
         required: false
         type: string
@@ -180,37 +173,28 @@ jobs:
           python-version: ${{ vars.PYTHON_VERSION }}
           is-for-pypi-release: ${{ inputs.release && 'true' || 'false' }}
           minimum-pip-version: ${{ env.MINIMUM_PIP_VERSION }}
-          meta-package-version-update-type:
-            ${{ github.event_name == 'workflow_dispatch'
+          meta-package-version-update-type: ${{ github.event_name == 'workflow_dispatch'
             && inputs.meta-package-version-update-type || 'auto' }}
-          ansys-bdm-api-version-override:
-            ${{ github.event_name == 'workflow_dispatch'
+          ansys-bdm-api-version-override: ${{ github.event_name == 'workflow_dispatch'
             && inputs.ansys-bdm-api-version-override || '' }}
-          ansys-bdm-shared-volume-version-override:
-            ${{ github.event_name == 'workflow_dispatch'
+          ansys-bdm-shared-volume-version-override: ${{ github.event_name == 'workflow_dispatch'
             && inputs.ansys-bdm-shared-volume-version-override || '' }}
-          ansys-saf-glow-engine-version-override:
-            ${{ github.event_name == 'workflow_dispatch'
+          ansys-saf-glow-engine-version-override: ${{ github.event_name == 'workflow_dispatch'
             && inputs.ansys-saf-glow-engine-version-override || '' }}
-          ansys-saf-desktop-installer-version-override:
-            ${{ github.event_name == 'workflow_dispatch'
+          ansys-saf-desktop-installer-version-override: ${{ github.event_name == 'workflow_dispatch'
             && inputs.ansys-saf-desktop-installer-version-override || '' }}
-          ansys-saf-projects-dashboard-version-override:
-            ${{ github.event_name == 'workflow_dispatch'
-            && inputs.ansys-saf-projects-dashboard-version-override || '' }}
-          ansys-saf-desktop-orchestrator-version-override:
-            ${{ github.event_name ==
+          ansys-saf-projects-dashboard-version-override: ${{ github.event_name ==
+            'workflow_dispatch' && inputs.ansys-saf-projects-dashboard-version-override
+            || '' }}
+          ansys-saf-desktop-orchestrator-version-override: ${{ github.event_name ==
             'workflow_dispatch' && inputs.ansys-saf-desktop-orchestrator-version-override
             || '' }}
-          ansys-iam-oidc-version-override:
-            ${{ github.event_name == 'workflow_dispatch'
+          ansys-iam-oidc-version-override: ${{ github.event_name == 'workflow_dispatch'
             && inputs.ansys-iam-oidc-version-override || '' }}
-          ansys-saf-product-configuration-version-override:
-            ${{ github.event_name
+          ansys-saf-product-configuration-version-override: ${{ github.event_name
             == 'workflow_dispatch' && inputs.ansys-saf-product-configuration-version-override
             || '' }}
-          ansys-saf-product-manager-version-override:
-            ${{ github.event_name == 'workflow_dispatch'
+          ansys-saf-product-manager-version-override: ${{ github.event_name == 'workflow_dispatch'
             && inputs.ansys-saf-product-manager-version-override || '' }}
 
       - name: "Build wheel"
@@ -218,8 +202,7 @@ jobs:
         with:
           library-name: ${{ env.LIBRARY_NAME }}
           checkout: false
-          working-directory:
-            ${{ github.workspace }}/packages/${{ env.LIBRARY_NAME
+          working-directory: ${{ github.workspace }}/packages/${{ env.LIBRARY_NAME
             }}
           use-uv: true
           python-version: ${{ vars.PYTHON_VERSION }}
@@ -287,8 +270,7 @@ jobs:
         env:
           PIP_QUIET: 1
           PIP_INDEX_URL: https://pypi.org/simple
-          PIP_EXTRA_INDEX_URL:
-            https://PAT:${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}@${{
+          PIP_EXTRA_INDEX_URL: https://PAT:${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}@${{
             secrets.PYANSYS_PYPI_PRIVATE_URL }}
 
       - name: Add ansys-saf-pim-light-server to poetry project
@@ -405,8 +387,7 @@ jobs:
       id-token: write # Required for OIDC authentication with PyPI
       contents: write # Required for OIDC authentication with PyPI
     env:
-      RELEASE_BRANCH_NAME:
-        "release/v${{ needs.build-meta-package.outputs.version
+      RELEASE_BRANCH_NAME: "release/v${{ needs.build-meta-package.outputs.version
         }}/saf-sdk"
     steps:
       - name: Checkout code
@@ -483,8 +464,7 @@ jobs:
             --target ${RELEASE_BRANCH_NAME} \
         env:
           GH_TOKEN: ${{ github.token }}
-          RELEASE_NAME:
-            v${{ needs.build-meta-package.outputs.version }}-${{ env.LIBRARY_NAME
+          RELEASE_NAME: v${{ needs.build-meta-package.outputs.version }}-${{ env.LIBRARY_NAME
             }}
 
       - name: "Upload artifacts to PyPI using trusted publisher"
@@ -507,11 +487,9 @@ jobs:
     environment: saf-release
     env:
       RELEASE_BRANCH_NAME: release/v${{ needs.build-meta-package.outputs.version }}/saf-sdk
-      MERGE_BRANCH_NAME:
-        chore/bump-v${{ needs.build-meta-package.outputs.version
+      MERGE_BRANCH_NAME: chore/bump-v${{ needs.build-meta-package.outputs.version
         }}/saf-sdk
-    if:
-      ${{ github.ref_name == 'main' && needs.build-meta-package.outputs.update-type
+    if: ${{ github.ref_name == 'main' && needs.build-meta-package.outputs.update-type
       != 'no_update' }}
     steps:
       - name: Checkout release branch
@@ -547,11 +525,9 @@ jobs:
           pr_number=$(echo "$pr_url" | sed 's|.*/pull/||')
           echo "pr-number=$pr_number" >> $GITHUB_OUTPUT
         env:
-          EMAIL:
-            ${{ secrets.PYANSYS_CI_BOT_EMAIL != '' && secrets.PYANSYS_CI_BOT_EMAIL
+          EMAIL: ${{ secrets.PYANSYS_CI_BOT_EMAIL != '' && secrets.PYANSYS_CI_BOT_EMAIL
             || 'actions@github.com' }}
-          USERNAME:
-            ${{ secrets.PYANSYS_CI_BOT_USERNAME != '' && secrets.PYANSYS_CI_BOT_USERNAME
+          USERNAME: ${{ secrets.PYANSYS_CI_BOT_USERNAME != '' && secrets.PYANSYS_CI_BOT_USERNAME
             || 'actions' }}
           GH_TOKEN: ${{ secrets.BUMP_VERSION_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.BUMP_VERSION_TOKEN }}
@@ -563,7 +539,6 @@ jobs:
           gh pr review --approve "${PR_URL}"
           gh pr merge --auto --squash --delete-branch "${PR_URL}"
         env:
-          GH_TOKEN:
-            ${{ secrets.PYANSYS_CI_BOT_TOKEN != '' && secrets.PYANSYS_CI_BOT_TOKEN
+          GH_TOKEN: ${{ secrets.PYANSYS_CI_BOT_TOKEN != '' && secrets.PYANSYS_CI_BOT_TOKEN
             || github.token }}
           PR_URL: ${{ steps.pr-info.outputs.pr-url }}

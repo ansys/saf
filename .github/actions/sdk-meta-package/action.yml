@@ -47,26 +47,22 @@ inputs:
     required: false
     default: ""
   ansys-bdm-shared-volume-version-override:
-    description:
-      "Override for the Ansys BDM Shared Volume version. Only for release
+    description: "Override for the Ansys BDM Shared Volume version. Only for release
       branch."
     required: false
     default: ""
   ansys-saf-glow-engine-version-override:
-    description:
-      "Override for the Ansys SAF Glow Engine version. Only for release
+    description: "Override for the Ansys SAF Glow Engine version. Only for release
       branch."
     required: false
     default: ""
   ansys-saf-desktop-installer-version-override:
-    description:
-      "Override for the Ansys SAF Desktop Installer version. Only for release
+    description: "Override for the Ansys SAF Desktop Installer version. Only for release
       branch."
     required: false
     default: ""
   ansys-saf-desktop-orchestrator-version-override:
-    description:
-      "Override for the Ansys SAF Desktop Orchestrator version. Only for
+    description: "Override for the Ansys SAF Desktop Orchestrator version. Only for
       release branch."
     required: false
     default: ""
@@ -75,21 +71,18 @@ inputs:
     required: false
     default: ""
   ansys-saf-product-configuration-version-override:
-    description:
-      "Override for the Ansys SAF Product Configuration version. Only for
+    description: "Override for the Ansys SAF Product Configuration version. Only for
       release branch."
     required: false
     default: ""
   ansys-saf-product-manager-version-override:
-    description:
-      "Override for the Ansys SAF Product Manager version. Only for release
+    description: "Override for the Ansys SAF Product Manager version. Only for release
       branch."
     required: false
     default: ""
   ansys-saf-projects-dashboard-version-override:
-    description:
-      "Override for the Ansys SAF Projects Dashboard version. Only for release
-      branch."
+    description: "Override for the Ansys SAF Projects Dashboard version. Only for
+      release branch."
     required: false
     default: ""
 
@@ -110,8 +103,7 @@ runs:
         python-version: ${{ inputs.python-version }}
         ignore-empty-workdir: true
 
-    - name:
-        Update pyproject.toml/poetry.lock of meta package and generate release
+    - name: Update pyproject.toml/poetry.lock of meta package and generate release
         notes
       id: update-pyproject
       shell: bash
@@ -123,29 +115,21 @@ runs:
         IS_FOR_PYPI_RELEASE: ${{ inputs.is-for-pypi-release }}
         USER_SELECTED_UPDATE_TYPE: ${{ inputs.meta-package-version-update-type }}
         USER_SELECTED_BDM_API_VERSION: ${{ inputs.ansys-bdm-api-version-override }}
-        USER_SELECTED_BDM_SHARED_VOLUME_VERSION:
-          ${{ inputs.ansys-bdm-shared-volume-version-override
+        USER_SELECTED_BDM_SHARED_VOLUME_VERSION: ${{ inputs.ansys-bdm-shared-volume-version-override
           }}
-        USER_SELECTED_ANSYS_SAF_GLOW_ENGINE_VERSION:
-          ${{ inputs.ansys-saf-glow-engine-version-override
+        USER_SELECTED_ANSYS_SAF_GLOW_ENGINE_VERSION: ${{ inputs.ansys-saf-glow-engine-version-override
           }}
-        USER_SELECTED_ANSYS_SAF_DESKTOP_INSTALLER_VERSION:
-          ${{ inputs.ansys-saf-desktop-installer-version-override
+        USER_SELECTED_ANSYS_SAF_DESKTOP_INSTALLER_VERSION: ${{ inputs.ansys-saf-desktop-installer-version-override
           }}
-        USER_SELECTED_ANSYS_SAF_DESKTOP_ORCHESTRATOR_VERSION:
-          ${{ inputs.ansys-saf-desktop-orchestrator-version-override
+        USER_SELECTED_ANSYS_SAF_DESKTOP_ORCHESTRATOR_VERSION: ${{ inputs.ansys-saf-desktop-orchestrator-version-override
           }}
-        USER_SELECTED_ANSYS_IAM_OIDC_VERSION:
-          ${{ inputs.ansys-iam-oidc-version-override
+        USER_SELECTED_ANSYS_IAM_OIDC_VERSION: ${{ inputs.ansys-iam-oidc-version-override
           }}
-        USER_SELECTED_ANSYS_SAF_PRODUCT_CONFIGURATION_VERSION:
-          ${{ inputs.ansys-saf-product-configuration-version-override
+        USER_SELECTED_ANSYS_SAF_PRODUCT_CONFIGURATION_VERSION: ${{ inputs.ansys-saf-product-configuration-version-override
           }}
-        USER_SELECTED_ANSYS_SAF_PRODUCT_MANAGER_VERSION:
-          ${{ inputs.ansys-saf-product-manager-version-override
+        USER_SELECTED_ANSYS_SAF_PRODUCT_MANAGER_VERSION: ${{ inputs.ansys-saf-product-manager-version-override
           }}
-        USER_SELECTED_ANSYS_SAF_PROJECTS_DASHBOARD_VERSION:
-          ${{ inputs.ansys-saf-projects-dashboard-version-override
+        USER_SELECTED_ANSYS_SAF_PROJECTS_DASHBOARD_VERSION: ${{ inputs.ansys-saf-projects-dashboard-version-override
           }}
 
     - name: Upload pyproject.toml artifact

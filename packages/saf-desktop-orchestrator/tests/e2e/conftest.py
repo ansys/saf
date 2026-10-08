@@ -42,14 +42,21 @@ logger = logging.getLogger(__name__)
 """
 Remaining gaps in projects-dashboard and desktop-portal support.
 
-The main routing paths are now covered: the dashboard E2E checks /projects responds, and the isolated-venv desktop-portal E2E checks the portal starts when dashboard discovery is suppressed. The remaining gaps are:
+The main routing paths are now covered: the dashboard E2E checks /projects responds, and the isolated-venv
+desktop-portal E2E checks the portal starts when dashboard discovery is suppressed. The remaining gaps are:
 
-- UI workflows: Both tests check service availability, but neither uses Selenium to create/select a project through its UI. The proxy test skips its legacy-portal UI workflow in dashboard mode.
-- Dashboard path override: No E2E test sets SAF_DESKTOP_PROJECTS_DASHBOARD_PATH and verifies the configured route responds. Unit coverage exists for path normalization.
-- Legacy portal custom port: The custom-port E2E exercises the dashboard branch when the package is installed. It does not verify PORTAL_UI_PORT in the isolated desktop-portal fallback environment.
-- Fallback variants: There’s no E2E for --portal with Streamlit, or for the legacy ansys.saf.portal package fallback; the isolated test covers the newer ansys.saf.desktop.portal.
-- Mode combinations: Pre-load and pythonw are tested in the normal environment, but don’t explicitly verify dashboard routing; the isolated desktop-portal case doesn’t cover pythonw.
-- UI environment contract: E2E doesn’t inspect the solution UI’s GLOW_PORTAL_URL or CORS environment directly; those are currently verified by unit tests.
+- UI workflows: Both tests check service availability, but neither uses Selenium to create/select a project
+through its UI. The proxy test skips its legacy-portal UI workflow in dashboard mode.
+- Dashboard path override: No E2E test sets SAF_DESKTOP_PROJECTS_DASHBOARD_PATH and verifies the configured
+route responds. Unit coverage exists for path normalization.
+- Legacy portal custom port: The custom-port E2E exercises the dashboard branch when the package is installed.
+It does not verify PORTAL_UI_PORT in the isolated desktop-portal fallback environment.
+- Fallback variants: There’s no E2E for --portal with Streamlit, or for the legacy ansys.saf.portal package
+fallback; the isolated test covers the newer ansys.saf.desktop.portal.
+- Mode combinations: Pre-load and pythonw are tested in the normal environment, but don’t explicitly verify
+dashboard routing; the isolated desktop-portal case doesn’t cover pythonw.
+- UI environment contract: E2E doesn’t inspect the solution UI’s GLOW_PORTAL_URL or CORS environment directly;
+those are currently verified by unit tests.
 
 Relevant tests: test_orchestrator_process.py, test_otlp.py, and test_verbosity.py.
 """

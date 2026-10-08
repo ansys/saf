@@ -17,6 +17,7 @@
 from pathlib import Path
 import platform
 
+import pytest
 from tenacity import TryAgain, retry, stop_after_attempt, wait_fixed
 
 from tests.e2e.conftest import MINIMAL_COMPLETE_SOLUTION, MINIMAL_SOLUTION_WITH_DASH_UI, OrchestrateSolution
@@ -85,8 +86,17 @@ def find_custom_icon_loaded(process: OrchestratorProcess, custom_icon_file: Path
         raise TryAgain
 
 
-# TODO: parametrize with projects-dashboard and with portal-desktop
-def test_logging_verbosity_complete_run(orchestrate_solution: OrchestrateSolution, tmp_path: Path):
+@pytest.mark.parametrize(
+    "portal_backend",
+    ["projects-dashboard", "desktop-portal"],
+    ids=["projects-dashboard", "desktop-portal"],
+    indirect=True,
+)
+def test_logging_verbosity_complete_run(
+    orchestrate_solution: OrchestrateSolution,
+    portal_backend: tuple[str, dict[str, str], Path | None],
+    tmp_path: Path,
+):
     """
     Test verbosity when orchestrator running with all possible services enabled: OTEL Dashboard, PIM Light Server,
     SAF Portal, Solution API, Solution UI and additional services; and loading an env file and a custom pywebview icon.
@@ -109,9 +119,10 @@ def test_logging_verbosity_complete_run(orchestrate_solution: OrchestrateSolutio
         "--env-file",
         str(env_file),
     ]
-    process = orchestrate_solution(args=args)
+    backend, environment, python_exec = portal_backend
+    process = orchestrate_solution(args=args, env=environment, python_exec=python_exec)
 
-    projects_dashboard_started = process.projects_dashboard_started()
+    projects_dashboard_started = backend == "projects-dashboard"
     assert process.api_running()
     assert process.ui_running(no_project=True)
     assert not process.project_running()

@@ -15,14 +15,19 @@
 # limitations under the License.
 
 from collections.abc import Generator
+from importlib.util import find_spec
 import logging
+import os
 from pathlib import Path
+import sysconfig
 from typing import Protocol
+import venv
 from zipfile import ZipFile
 
 import pytest
 from tenacity import TryAgain, retry, stop_after_attempt, wait_fixed
 
+from ansys.saf.desktop.orchestrator._orchestration.launcher import PROJECTS_DASHBOARD_MODULE
 from ansys.saf.desktop.orchestrator._utilities.ip_utilities import get_local_ip
 from ansys.saf.testing.common import YieldFixture
 from ansys.saf.testing.process import Process
@@ -77,6 +82,57 @@ def solution_app_starter(
         yield sas_process
     finally:
         sas_process.stop()
+
+
+@pytest.fixture
+def isolated_desktop_portal_python(tmp_path: Path) -> tuple[Path, Path]:
+    return _create_isolated_desktop_portal_python(tmp_path)
+
+
+def _create_isolated_desktop_portal_python(tmp_path: Path) -> tuple[Path, Path]:
+    isolated_venv = tmp_path / "desktop-portal-venv"
+    venv.EnvBuilder(with_pip=False).create(isolated_venv)
+
+    bootstrap_directory = tmp_path / "python-bootstrap"
+    bootstrap_directory.mkdir()
+    site_packages = Path(sysconfig.get_paths()["purelib"])
+    (bootstrap_directory / "sitecustomize.py").write_text(
+        "import site\n"
+        f"site.addsitedir({str(site_packages)!r})\n"
+        "import sys\n"
+        "sys.modules['ansys_saf_projects_dashboard'] = None\n",
+    )
+
+    executable = isolated_venv / ("Scripts/python.exe" if os.name == "nt" else "bin/python")
+    return executable, bootstrap_directory
+
+
+@pytest.fixture
+def portal_backend(
+    request: pytest.FixtureRequest,
+    tmp_path: Path,
+) -> tuple[str, dict[str, str], Path | None]:
+    backend = str(request.param)
+    environment = os.environ.copy()
+
+    if backend == "projects-dashboard":
+        if find_spec(PROJECTS_DASHBOARD_MODULE) is None:
+            pytest.skip("Install ansys-saf-projects-dashboard to exercise dashboard mode.")
+        return backend, environment, None
+
+    if backend == "desktop-portal":
+        if find_spec("ansys.saf.desktop.portal") is None:
+            pytest.skip("Install ansys-saf-desktop-portal to exercise desktop portal mode.")
+        executable, bootstrap_directory = _create_isolated_desktop_portal_python(tmp_path)
+        environment["PYTHONPATH"] = os.pathsep.join(
+            [str(bootstrap_directory), environment.get("PYTHONPATH", "")],
+        )
+        return backend, environment, executable
+
+    if backend == "no-portal":
+        return backend, environment, None
+
+    raise ValueError(f"Unknown portal backend: {backend}")
 
 
 # ================================================== [Orchestrator] ================================================== #

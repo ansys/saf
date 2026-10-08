@@ -14,14 +14,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import os
 from importlib.util import find_spec
+import os
 from pathlib import Path
 import platform
 import random
 import subprocess
-import sysconfig
-import venv
 
 import httpx2
 import pytest
@@ -125,25 +123,6 @@ def test_run_orchestrator_with_module(
     assert process.get_log_file_path()
 
 
-@pytest.fixture
-def isolated_desktop_portal_python(tmp_path: Path) -> tuple[Path, Path]:
-    isolated_venv = tmp_path / "desktop-portal-venv"
-    venv.EnvBuilder(with_pip=False).create(isolated_venv)
-
-    bootstrap_directory = tmp_path / "python-bootstrap"
-    bootstrap_directory.mkdir()
-    site_packages = Path(sysconfig.get_paths()["purelib"])
-    (bootstrap_directory / "sitecustomize.py").write_text(
-        "import site\n"
-        f"site.addsitedir({str(site_packages)!r})\n"
-        "import sys\n"
-        "sys.modules['ansys_saf_projects_dashboard'] = None\n",
-    )
-
-    executable = isolated_venv / ("Scripts/python.exe" if platform.system() == "Windows" else "bin/python")
-    return executable, bootstrap_directory
-
-
 @pytest.mark.skipif(
     find_spec("ansys.saf.desktop.portal") is None,
     reason="Install ansys-saf-desktop-portal to run the desktop portal E2E test.",
@@ -205,9 +184,17 @@ def test_run_orchestrator_with_projects_dashboard(orchestrate_solution: Orchestr
     assert not process.portal_running()
 
 
-# TODO: parametrize with projects-dashboard and with portal-desktop
 @pytest.mark.parametrize("stop_orchestrator_after_yield", [False], indirect=True)
-def test_run_orchestrator_with_portal_in_pre_load_mode(orchestrate_solution: OrchestrateSolution):
+@pytest.mark.parametrize(
+    "portal_backend",
+    ["projects-dashboard", "desktop-portal"],
+    ids=["projects-dashboard", "desktop-portal"],
+    indirect=True,
+)
+def test_run_orchestrator_with_portal_in_pre_load_mode(
+    orchestrate_solution: OrchestrateSolution,
+    portal_backend: tuple[str, dict[str, str], Path | None],
+):
     """
     Test running a solution with --pre-load option and verify the AI and UI services are started
     and that the stack shuts down immediately.
@@ -221,20 +208,20 @@ def test_run_orchestrator_with_portal_in_pre_load_mode(orchestrate_solution: Orc
         "--pre-load",
     ]
 
-    process = orchestrate_solution(
-        args=args,
-    )
+    backend, environment, python_exec = portal_backend
+    process = orchestrate_solution(args=args, env=environment, python_exec=python_exec)
 
     assert not process.find_msg_in_output("Splash screen started.")
     assert not process.find_msg_in_output("Splash screen stopped.")
 
     process.assert_started_and_shutting_down()
-    if process.projects_dashboard_started():
+    if backend == "projects-dashboard":
+        assert process.find_msg_in_output("Projects Dashboard: http")
         assert process.find_msg_in_output("SAF Portal: not launched")
         assert not process.find_msg_in_output(r"SAF Portal: http://127\.0\.0\.1:\d+", regex=True)
     else:
-        assert process.get_portal_ui_url()
-        assert not process.projects_dashboard_running()
+        assert process.find_msg_in_output(r"SAF Portal: http://127\.0\.0\.1:\d+", regex=True)
+        assert not process.projects_dashboard_started()
 
 
 def test_run_orchestrator_with_no_ui(orchestrate_solution: OrchestrateSolution):
@@ -449,46 +436,85 @@ def test_run_orchestrator_with_additional_services(orchestrate_solution: Orchest
     assert process.additional_services_running(yaml_file=Path(tmp_yaml_file))
 
 
-# TODO: parametrize with projects-dashboard and with portal-desktop
+@retry(stop=stop_after_attempt(40), wait=wait_fixed(1))
+def _get_pythonw_project_identifier(url: str, project_name: str) -> str:
+    try:
+        list_projects_json = httpx2.get(url).json()["projects"]
+        for project in list_projects_json:
+            if project["display_name"] == project_name:
+                return project["name"].removeprefix("projects/")
+        raise TryAgain
+    except Exception:
+        raise TryAgain from None
+
+
+@retry(stop=stop_after_attempt(30), wait=wait_fixed(1))
+def _check_pythonw_service_health(url: str) -> None:
+    try:
+        if httpx2.get(url).status_code != 200:
+            raise TryAgain
+    except Exception:
+        raise TryAgain from None
+
+
+@retry(stop=stop_after_attempt(20), wait=wait_fixed(0.25))
+def _read_completed_pythonw_log(log_file: Path) -> str:
+    contents = log_file.read_text()
+    if "INFO - Additional services:" not in contents:
+        raise TryAgain
+    return contents
+
+
+def _check_pythonw_backend_services(
+    backend: str,
+    glow_api_port: str,
+    glow_ui_port: str,
+    glow_portal_port: str | None,
+    project_name: str,
+) -> None:
+    if backend == "projects-dashboard":
+        _check_pythonw_service_health(f"http://127.0.0.1:{glow_ui_port}/projects")
+        _check_pythonw_service_health(f"http://127.0.0.1:{glow_ui_port}")
+    elif backend == "desktop-portal":
+        assert glow_portal_port is not None
+        _check_pythonw_service_health(f"http://127.0.0.1:{glow_portal_port}")
+        _check_pythonw_service_health(f"http://127.0.0.1:{glow_ui_port}")
+    else:
+        project_identifier = _get_pythonw_project_identifier(
+            f"http://127.0.0.1:{glow_api_port}/projects",
+            project_name,
+        )
+        _check_pythonw_service_health(f"http://127.0.0.1:{glow_ui_port}/projects/{project_identifier}")
+
+
 @windows_only(reason="pythonw not available on Linux")
-@pytest.mark.parametrize("portal", [True, False], ids=["with_portal", "without_portal"])
-def test_run_orchestrator_with_pythonw(orchestrate_solution: OrchestrateSolution, portal: bool, tmp_path: Path):
+@pytest.mark.parametrize(
+    "portal_backend",
+    ["no-portal", "projects-dashboard", "desktop-portal"],
+    ids=["without-portal", "projects-dashboard", "desktop-portal"],
+    indirect=True,
+)
+def test_run_orchestrator_with_pythonw(
+    orchestrate_solution: OrchestrateSolution,
+    portal_backend: tuple[str, dict[str, str], Path | None],
+    tmp_path: Path,
+):
     """
     Test running a solution with pythonw and verify that all services are available.
     """
 
-    @retry(stop=stop_after_attempt(40), wait=wait_fixed(1))
-    def _is_project_listed(url: str, project_name: str):
-        try:
-            list_projects_json = httpx2.get(url).json()["projects"]
-            for project in list_projects_json:
-                if project["display_name"] == project_name:
-                    project_identifier = project["name"].removeprefix("projects/")
-                    return project_identifier
-            raise TryAgain
-        except Exception:
-            raise TryAgain from None
-
-    @retry(stop=stop_after_attempt(30), wait=wait_fixed(1))
-    def _check_service_health(url: str):
-        try:
-            if not httpx2.get(url).status_code == 200:
-                raise TryAgain
-        except Exception:
-            raise TryAgain from None
-
+    backend, orchestrator_env, python_exec = portal_backend
     glow_api_port = str(get_random_free_port())
     glow_ui_port = str(get_random_free_port())
     otel_dashboard_port = str(get_random_free_port())
     project_name = f"my-project-{random.randint(0, 10000)}"
 
-    orchestrator_env = os.environ.copy()
     orchestrator_env["GLOW_API_PORT"] = glow_api_port
     orchestrator_env["GLOW_UI_PORT"] = glow_ui_port
     orchestrator_env["OTEL_DASHBOARD_PORT"] = otel_dashboard_port
 
-    glow_portal_port = ""
-    if portal:
+    glow_portal_port = None
+    if backend == "desktop-portal":
         glow_portal_port = str(get_random_free_port())
         orchestrator_env["PORTAL_UI_PORT"] = glow_portal_port
 
@@ -498,46 +524,38 @@ def test_run_orchestrator_with_pythonw(orchestrate_solution: OrchestrateSolution
         "--solution-main-module-name",
         MINIMAL_SOLUTION_WITH_DASH_UI + ".main",
     ]
-    args += ["--portal"] if portal else ["--project-display-name", project_name]
+    if backend == "no-portal":
+        args.extend(["--project-display-name", project_name])
+    else:
+        args.append("--portal")
 
     orchestrate_solution(
         args=args,
         pythonw=True,
         env=orchestrator_env,
         wait_for_healthy=False,
+        python_exec=python_exec,
     )
 
-    if portal and find_spec(PROJECTS_DASHBOARD_MODULE) is not None:
-        _check_service_health(f"http://127.0.0.1:{glow_ui_port}/projects")
-        _check_service_health(f"http://127.0.0.1:{glow_ui_port}")
-    elif glow_portal_port:
-        _check_service_health(f"http://127.0.0.1:{glow_portal_port}")
-        _check_service_health(f"http://127.0.0.1:{glow_ui_port}")
-    else:
-        project_identifier = _is_project_listed(
-            url=f"http://127.0.0.1:{glow_api_port}/projects",
-            project_name=project_name,
-        )
-        _check_service_health(f"http://127.0.0.1:{glow_ui_port}/projects/{project_identifier}")
-    _check_service_health(f"http://127.0.0.1:{glow_api_port}/docs")
-    _check_service_health(f"http://127.0.0.1:{otel_dashboard_port}/structuredLogs")
+    _check_pythonw_backend_services(
+        backend,
+        glow_api_port,
+        glow_ui_port,
+        glow_portal_port,
+        project_name,
+    )
+    _check_pythonw_service_health(f"http://127.0.0.1:{glow_api_port}/docs")
+    _check_pythonw_service_health(f"http://127.0.0.1:{otel_dashboard_port}/structuredLogs")
 
     # Orchestrator output is still logged in log file
     log_file = tmp_path / "appdata" / "ansys" / "glow" / "MySolution" / "orchestrator.log"
     assert log_file.is_file()
 
-    @retry(stop=stop_after_attempt(20), wait=wait_fixed(0.25))
-    def _read_completed_log() -> str:
-        contents = log_file.read_text()
-        if "INFO - Additional services:" not in contents:
-            raise TryAgain
-        return contents
-
-    log_content = _read_completed_log()
+    log_content = _read_completed_pythonw_log(log_file)
     assert "Starting Solution API..." in log_content
-    dashboard_selected = portal and find_spec(PROJECTS_DASHBOARD_MODULE) is not None
+    dashboard_selected = backend == "projects-dashboard"
     assert ("Projects Dashboard: http" in log_content) == dashboard_selected
-    assert ("SAF Portal: http" in log_content) == (portal and not dashboard_selected)
+    assert ("SAF Portal: http" in log_content) == (backend == "desktop-portal")
 
 
 def test_run_orchestrator_with_streamlit_ui_option(
@@ -1116,10 +1134,16 @@ def test_run_orchestrator_with_hps_as_product_instance_system(
     assert not process.additional_services_running()
 
 
-# TODO: parametrize with projects-dashboard and with portal-desktop
 @pytest.mark.parametrize("no_proxy_env_var", [None, "", "fake,values", "localhost", "127.0.0.1", "::1"])
+@pytest.mark.parametrize(
+    "portal_backend",
+    ["projects-dashboard", "desktop-portal"],
+    ids=["projects-dashboard", "desktop-portal"],
+    indirect=True,
+)
 def test_run_orchestrator_with_http_proxy_env_vars_set(
     orchestrate_solution: OrchestrateSolution,
+    portal_backend: tuple[str, dict[str, str], Path | None],
     no_proxy_env_var: str | None,
     selenium_webdriver: WebDriver,
 ):
@@ -1137,14 +1161,14 @@ def test_run_orchestrator_with_http_proxy_env_vars_set(
         "--portal",
     ]
 
-    orchestrator_env = os.environ.copy()
+    backend, orchestrator_env, python_exec = portal_backend
     if no_proxy_env_var is not None:
         orchestrator_env["NO_PROXY"] = no_proxy_env_var
         orchestrator_env["no_proxy"] = no_proxy_env_var
     orchestrator_env["HTTP_PROXY"] = "http://myproxy:8080"
     orchestrator_env["HTTPS_PROXY"] = "https://myproxy:8080"
     orchestrator_env["SAF_DEFINITION_PATH"] = str(tmp_yaml_file)
-    process = orchestrate_solution(args=args, env=orchestrator_env)
+    process = orchestrate_solution(args=args, env=orchestrator_env, python_exec=python_exec)
 
     assert process.api_running()
     assert process.ui_running(no_project=True)
@@ -1153,7 +1177,7 @@ def test_run_orchestrator_with_http_proxy_env_vars_set(
     assert process.pim_running()
     assert process.additional_services_running(yaml_file=Path(tmp_yaml_file))
 
-    if process.projects_dashboard_started():
+    if backend == "projects-dashboard":
         assert process.projects_dashboard_running()
         assert not process.portal_running()
         assert process.get_projects_dashboard_url().endswith("/projects")

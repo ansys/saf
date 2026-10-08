@@ -92,6 +92,7 @@ class OrchestrateSolution(Protocol):
         healthy_retries: int = 240,
         pythonw: bool = False,
         bg: bool = True,
+        python_exec: Path | None = None,
     ) -> OrchestratorProcess: ...
 
 
@@ -114,6 +115,7 @@ def orchestrate_solution(stop_orchestrator_after_yield: bool) -> YieldFixture[Or
         healthy_retries: int = 240,
         pythonw: bool = False,
         bg: bool = True,
+        python_exec: Path | None = None,
     ) -> OrchestratorProcess:
 
         @retry(stop=stop_after_attempt(healthy_retries), wait=wait_fixed(0.5))
@@ -128,6 +130,7 @@ def orchestrate_solution(stop_orchestrator_after_yield: bool) -> YieldFixture[Or
             health_check=find_final_orchestrator_startup_message if wait_for_healthy else None,
             use_pythonw=pythonw,
             bg=bg,
+            python_exec=python_exec,
         )
         procs.append(p)
         p.start()

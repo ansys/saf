@@ -81,7 +81,8 @@ def test_services_traces_appear_in_aspire_dashboard(
 
     otel_url = process.get_otel_url()
     selenium_webdriver.get(otel_url)
-    assert selenium_webdriver.find_elements(By.XPATH, "//*[contains(text(), 'PORTAL')]")
+    if not process.projects_dashboard_started():
+        assert selenium_webdriver.find_elements(By.XPATH, "//*[contains(text(), 'PORTAL')]")
     assert selenium_webdriver.find_elements(By.XPATH, "//*[contains(text(), 'GLOW API')]")
     assert selenium_webdriver.find_elements(By.XPATH, "//*[contains(text(), 'GLOW UI')]")
     assert selenium_webdriver.find_elements(By.XPATH, "//*[contains(text(), 'GLOW METHOD RUNNER')]")

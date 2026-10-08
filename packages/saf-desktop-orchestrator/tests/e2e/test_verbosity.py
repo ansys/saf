@@ -127,6 +127,7 @@ def test_logging_verbosity_complete_run(orchestrate_solution: OrchestrateSolutio
     ]
 
     grpc_service_url = process.get_additional_services_urls(yaml_file=Path(tmp_yaml_file))["GRPC_SERVICE"]
+    projects_dashboard_started = process.projects_dashboard_started()
     product_configs_dir = (
         Path(__file__).parent.parent / "mocks" / "solutions" / "minimal_complete_solution" / "product_instance_configs"
     )
@@ -142,17 +143,21 @@ def test_logging_verbosity_complete_run(orchestrate_solution: OrchestrateSolutio
         f"INFO - Using PIM light command args: {str(process.pim_args())}",
         "INFO - Starting Solution API...",
         "INFO - Starting Solution UI...",
-        "INFO - Starting SAF Portal...",
         "INFO - Solution: My Solution",
         "INFO - Project: no project created or selected",
         f"INFO - Solution API: {process.get_api_docs_url()}",
         f"INFO - Solution UI: {process.get_solution_ui_url(no_project=True)}",
         f"INFO - OTEL Dashboard: {process.get_otel_url()}",
-        f"INFO - SAF Portal: {process.get_portal_ui_url()}",
         f"INFO - PIM Light Server: {process.get_pim_url()}",
         "INFO - Additional services:",
         f"INFO - - GRPC_SERVICE: {grpc_service_url}",
     ]
+    if projects_dashboard_started:
+        expected_output.insert(15, f"INFO - Projects Dashboard: {process.get_projects_dashboard_url()}")
+        expected_output.insert(17, "INFO - SAF Portal: not launched")
+    else:
+        expected_output.insert(11, "INFO - Starting SAF Portal...")
+        expected_output.insert(17, f"INFO - SAF Portal: {process.get_portal_ui_url()}")
     if platform.system() == "Windows":
         expected_output.append("INFO - Starting webview...")
     else:

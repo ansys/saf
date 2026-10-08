@@ -16,7 +16,6 @@
 
 from ansys.bdm.api import NO_ENTITY, EntityHandle, RecursiveDictionaryOfEntityHandles
 from ansys.iam.oidc import UserInfo
-
 from ansys.saf.glow._core.field_state import FieldState
 from ansys.saf.glow._core.instance.decorator import create_instance, instance
 from ansys.saf.glow._core.instance.manager import InstanceManager, ProductInstanceManager

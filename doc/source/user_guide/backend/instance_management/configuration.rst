@@ -157,7 +157,7 @@ It requires a running HPS cluster in the same Linux system with HPS deployment l
 
   GLOW_PRODUCT_HOST = "host.docker.internal"  # to connect to the Product from within the Solution API container
 
-  # (Optional but needed to use secure connection for gRPC products)
+  # Required for secure products, which bind to localhost by default and aren't reachable from the container
   GLOW_PRODUCT_BINDING_HOST = "172.17.0.1"  # The docker IP that is resolved from host.docker.internal
 
 Then, the environment variables in the Solution API container:
@@ -216,7 +216,7 @@ It requires a running HPS deployment in WSL listening on the WSL IP (you can fin
 
   GLOW_PRODUCT_HOST = "172.23.80.1"  # to connect to the Product running in the Windows host from within the Solution API container in WSL.
 
-  # (Optional but needed to use secure connection for gRPC products)
+  # Required for secure products, which bind to localhost by default and aren't reachable from WSL
   GLOW_PRODUCT_BINDING_HOST = "172.23.80.1"  # to make the Product listening to connection reaching the Windows host.
 
 Environment variables in the Solution API container:

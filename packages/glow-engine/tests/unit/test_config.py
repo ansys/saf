@@ -22,7 +22,6 @@ import re
 from typing import Any
 from unittest import mock
 
-from ansys.saf.testing.platform_specific import linux_only, windows_only
 from pydantic import PostgresDsn, ValidationError
 from pydantic_core import MultiHostUrl
 import pytest
@@ -51,6 +50,7 @@ from ansys.saf.glow._config.const import (
 )
 from ansys.saf.glow._config.settings import Settings
 from ansys.saf.glow._utilities.path_parser import parse_platform_specific_absolute_path
+from ansys.saf.testing.platform_specific import linux_only, windows_only
 from tests.mocks.solutions.minimal_solution import MinimalSolution
 
 

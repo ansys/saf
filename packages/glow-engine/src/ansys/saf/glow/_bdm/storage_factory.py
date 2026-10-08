@@ -25,7 +25,6 @@ from ansys.bdm.shared_volume.storage_configuration import (
     SharedFilesystemContextConfiguration,
 )
 from ansys.bdm.shared_volume.storage_factory import StorageScopeFactory
-
 from ansys.saf.glow._bdm.storage_contexts import (
     CLIENT_CONTEXT,
     GC_CONTEXT,

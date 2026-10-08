@@ -16,9 +16,9 @@
 
 from collections.abc import Generator
 
-from ansys.saf.testing.solution.end_to_end import EnvVarDebugLogLevel, GlowBaseProcess, ProjectFixture
 import pytest
 
+from ansys.saf.testing.solution.end_to_end import EnvVarDebugLogLevel, GlowBaseProcess, ProjectFixture
 from tests.e2e.client_server.test_bdm_gc import assert_bdm_locks_count
 from tests.mocks.solutions.bdm_solution import BdmSolution
 

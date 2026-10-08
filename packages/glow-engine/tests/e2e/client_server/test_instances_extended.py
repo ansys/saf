@@ -20,16 +20,16 @@ from pathlib import Path
 import platform
 import re
 
-from ansys.saf.testing.hps import GetHpsJobIdsType
-from ansys.saf.testing.network import get_docker_gateway_ip
-from ansys.saf.testing.pim.process import PimProcess
-from ansys.saf.testing.solution.const import TestDeployment, TestProductInstanceSystemType
-from ansys.saf.testing.solution.end_to_end import GlowBaseProcess, ProjectFixture
 import httpx2
 import pytest
 from tenacity import TryAgain, retry, stop_after_attempt, wait_fixed
 
 from ansys.saf.glow.client import Client, InternalSolutionException
+from ansys.saf.testing.hps import GetHpsJobIdsType
+from ansys.saf.testing.network import get_docker_gateway_ip
+from ansys.saf.testing.pim.process import PimProcess
+from ansys.saf.testing.solution.const import TestDeployment, TestProductInstanceSystemType
+from ansys.saf.testing.solution.end_to_end import GlowBaseProcess, ProjectFixture
 from tests.e2e.conftest import PACKAGE_ROOT
 from tests.mocks.solution_end_to_end.solution.definition import EndToEndSolution
 

@@ -15,6 +15,9 @@ on:
       use-moon:
         required: true
         type: boolean
+      ref:
+        required: true
+        type: string
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}-build-${{ inputs.library-name }}-${{
@@ -33,6 +36,12 @@ jobs:
       id-token: write # Write access to a temporary token for signing attestations
     if: ${{ ! inputs.use-moon }}
     steps:
+      - name: checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ inputs.ref }}
+          persist-credentials: false
+
       - name: "Build"
         uses: ansys/actions/build-library@7410037bfb276c79ae91eb3617b9f5d2876f0c94 # v11.0.8
         with:
@@ -42,6 +51,7 @@ jobs:
           attest-provenance: true
           validate-build: true
           use-uv: false
+          checkout: false
 
   build:
     name: "Build (Moon)"
@@ -61,6 +71,7 @@ jobs:
         with:
           persist-credentials: false
           fetch-depth: 0
+          ref: ${{ inputs.ref }}
 
       - name: Setup Moon Toolchain
         uses: moonrepo/setup-toolchain@261c62cb5b0f580c7be7c8cd0f023a2e96756095 # v0.6.4

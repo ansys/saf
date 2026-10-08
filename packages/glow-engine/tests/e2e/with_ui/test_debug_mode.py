@@ -17,6 +17,11 @@
 from collections.abc import Generator
 from pathlib import Path
 
+import pytest
+from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.chrome.webdriver import WebDriver
+from selenium.webdriver.common.by import By
+
 from ansys.saf.testing.selenium import wait_for_element
 from ansys.saf.testing.solution.const import TestDeployment
 from ansys.saf.testing.solution.end_to_end import (
@@ -29,11 +34,6 @@ from ansys.saf.testing.solution.end_to_end import (
     GlowDesktopProcess,
     ProjectFixture,
 )
-import pytest
-from selenium.common.exceptions import TimeoutException
-from selenium.webdriver.chrome.webdriver import WebDriver
-from selenium.webdriver.common.by import By
-
 from tests.mocks.solution_end_to_end.solution.definition import EndToEndSolution
 
 pytestmark = [

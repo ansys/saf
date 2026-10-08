@@ -27,6 +27,7 @@ on:
           - saf-cli
           - saf-product-configuration
           - saf-product-manager
+          - saf-projects-dashboard
           - saf-templates
           - saf-testing
 
@@ -264,11 +265,13 @@ jobs:
     with:
       library-name: ${{ inputs.library }}
       python-version: ${{ vars.PYTHON_VERSION }}
-      use-moon: ${{! contains('dash-super-components,glow-engine,saf-cli', inputs.library)
-        }}
+      use-moon: ${{! contains('dash-super-components,saf-cli,saf-projects-dashboard',
+        inputs.library) }}
       artifact-name: ${{ inputs.library }}-${{ needs.release-information.outputs.release-name
-        }}${{ case(contains('dash-super-components,glow-engine,saf-cli', inputs.library),
-        '' , '-artifacts') }}
+        }}${{ case(contains('dash-super-components,saf-cli,saf-projects-dashboard',
+        inputs.library), '' , '-artifacts') }}
+      ref: ${{ inputs.dev-release && 'main' || needs.release-information.outputs.release-branch-name
+        }}
 
   bump-version:
     name: Bump Version

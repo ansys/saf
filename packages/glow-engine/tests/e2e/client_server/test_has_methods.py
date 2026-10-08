@@ -18,8 +18,6 @@ from collections.abc import Generator
 from multiprocessing.pool import ThreadPool
 import time
 
-from ansys.saf.testing.platform_specific import xfail_for_ci
-from ansys.saf.testing.solution.end_to_end import EnvVarDebug, GlowBaseProcess, ProjectFixture
 import httpx2
 import pytest
 from starlette import status
@@ -36,6 +34,8 @@ from ansys.saf.glow.solution import (
     MethodStatus,
     StepModel,
 )
+from ansys.saf.testing.platform_specific import xfail_for_ci
+from ansys.saf.testing.solution.end_to_end import EnvVarDebug, GlowBaseProcess, ProjectFixture
 from tests.mocks.solutions.has_methods import HasMethods
 
 pytestmark = pytest.mark.parametrize("solution_type", [HasMethods], indirect=True)

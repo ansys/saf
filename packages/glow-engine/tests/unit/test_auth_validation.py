@@ -21,7 +21,6 @@ import logging
 from typing import TYPE_CHECKING
 from unittest.mock import call
 
-from ansys.iam.oidc import DEFAULT_SUBPROTOCOL_PREFIX, OidcClient, encode_base64_token
 from asgi_lifespan import LifespanManager
 from fastapi import WebSocketDisconnect, status
 from fastapi.routing import APIWebSocketRoute, _IncludedRouter  # pyright: ignore[reportPrivateUsage]
@@ -33,6 +32,7 @@ from pytest_mock import MockerFixture
 from starlette.status import WS_1008_POLICY_VIOLATION
 from starlette.testclient import WebSocketDenialResponse
 
+from ansys.iam.oidc import DEFAULT_SUBPROTOCOL_PREFIX, OidcClient, encode_base64_token
 from ansys.saf.glow._config.const import Deployment
 from ansys.saf.glow._config.settings import Settings
 from ansys.saf.glow._server import dependencies

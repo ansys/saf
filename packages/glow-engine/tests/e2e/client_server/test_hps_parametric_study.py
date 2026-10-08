@@ -19,6 +19,12 @@ import json
 import os
 from pathlib import Path
 
+import httpx2
+import pytest
+from selenium.webdriver.chrome.webdriver import WebDriver
+from tenacity import TryAgain, retry, stop_after_attempt, wait_fixed
+
+from ansys.saf.glow.client import Client
 from ansys.saf.testing.solution.end_to_end import (
     GlowBaseProcess,
     HpsKeyCloakAuth,
@@ -28,12 +34,6 @@ from ansys.saf.testing.solution.end_to_end import (
     HpsUserPswdAuth,
     ProjectFixture,
 )
-import httpx2
-import pytest
-from selenium.webdriver.chrome.webdriver import WebDriver
-from tenacity import TryAgain, retry, stop_after_attempt, wait_fixed
-
-from ansys.saf.glow.client import Client
 from tests.e2e.conftest import PACKAGE_ROOT, interactive_authorization
 from tests.mocks.solution_with_hps_python_script.hps_parametric_study import (
     FileJobStep,

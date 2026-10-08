@@ -18,7 +18,6 @@ from collections.abc import Callable
 from datetime import datetime
 from pathlib import Path
 
-from ansys.saf.testing.database import PostgresqlServerInfo
 import pytest
 from sqlalchemy import select, text
 from sqlalchemy.ext.asyncio import create_async_engine
@@ -33,6 +32,7 @@ from ansys.saf.glow._repository.relational_models import Base
 from ansys.saf.glow._repository.sqlite_factory import SqliteSessionFactory
 from ansys.saf.glow._server.schemas import ModifyProjectRequest
 from ansys.saf.glow._server.solution import SolutionService
+from ansys.saf.testing.database import PostgresqlServerInfo
 import tests.mocks.solutions.minimal_solution as minimal_solution_module
 
 

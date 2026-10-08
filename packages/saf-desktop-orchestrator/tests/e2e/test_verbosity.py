@@ -45,6 +45,7 @@ def test_logging_verbosity_minimal_run(orchestrate_solution: OrchestrateSolution
     assert not process.otel_running()
     assert not process.pim_running()
     assert not process.portal_running()
+    assert not process.projects_dashboard_started()
     assert not process.additional_services_running()
 
     # Remove lines from launched services
@@ -84,6 +85,7 @@ def find_custom_icon_loaded(process: OrchestratorProcess, custom_icon_file: Path
         raise TryAgain
 
 
+# TODO: parametrize with projects-dashboard and with portal-desktop
 def test_logging_verbosity_complete_run(orchestrate_solution: OrchestrateSolution, tmp_path: Path):
     """
     Test verbosity when orchestrator running with all possible services enabled: OTEL Dashboard, PIM Light Server,
@@ -109,12 +111,18 @@ def test_logging_verbosity_complete_run(orchestrate_solution: OrchestrateSolutio
     ]
     process = orchestrate_solution(args=args)
 
+    projects_dashboard_started = process.projects_dashboard_started()
     assert process.api_running()
     assert process.ui_running(no_project=True)
     assert not process.project_running()
     assert process.otel_running()
     assert process.pim_running()
-    assert process.portal_running()
+    if projects_dashboard_started:
+        assert process.projects_dashboard_running()
+        assert not process.portal_running()
+    else:
+        assert process.portal_running()
+        assert not process.projects_dashboard_running()
     assert process.additional_services_running(yaml_file=Path(tmp_yaml_file))
 
     # Remove Warnings from product configurations, they will be handled separately
@@ -127,7 +135,6 @@ def test_logging_verbosity_complete_run(orchestrate_solution: OrchestrateSolutio
     ]
 
     grpc_service_url = process.get_additional_services_urls(yaml_file=Path(tmp_yaml_file))["GRPC_SERVICE"]
-    projects_dashboard_started = process.projects_dashboard_started()
     product_configs_dir = (
         Path(__file__).parent.parent / "mocks" / "solutions" / "minimal_complete_solution" / "product_instance_configs"
     )
@@ -161,7 +168,10 @@ def test_logging_verbosity_complete_run(orchestrate_solution: OrchestrateSolutio
     if platform.system() == "Windows":
         expected_output.append("INFO - Starting webview...")
     else:
-        expected_output.append(f"INFO - Opening browser at {process.get_portal_ui_url()}...")
+        destination_url = (
+            process.get_projects_dashboard_url() if projects_dashboard_started else process.get_portal_ui_url()
+        )
+        expected_output.append(f"INFO - Opening browser at {destination_url}...")
     assert expected_output == output
 
     # Log file must contain everything above plus DEBUG information

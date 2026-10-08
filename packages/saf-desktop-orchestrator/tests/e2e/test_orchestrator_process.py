@@ -14,8 +14,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import importlib
 import os
+from importlib.util import find_spec
 from pathlib import Path
 import platform
 import random
@@ -54,7 +54,7 @@ from tests.e2e.conftest import (
 )
 
 pytestmark = pytest.mark.skipif(
-    importlib.util.find_spec("ansys.saf.aspire") is None,  # type: ignore
+    find_spec("ansys.saf.aspire") is None,
     reason="Install ansys-saf-aspire to run the tests in test_orchestrator_process.py module.",
 )
 
@@ -120,6 +120,7 @@ def test_run_orchestrator_with_module(
     assert not process.pim_running()
     assert not process.pim_logging()
     assert not process.portal_running()
+    assert not process.projects_dashboard_started()
     assert not process.additional_services_running()
     assert process.get_log_file_path()
 
@@ -144,7 +145,7 @@ def isolated_desktop_portal_python(tmp_path: Path) -> tuple[Path, Path]:
 
 
 @pytest.mark.skipif(
-    importlib.util.find_spec("ansys.saf.desktop.portal") is None,  # type: ignore[union-attr]
+    find_spec("ansys.saf.desktop.portal") is None,
     reason="Install ansys-saf-desktop-portal to run the desktop portal E2E test.",
 )
 def test_run_orchestrator_with_desktop_portal(
@@ -176,11 +177,12 @@ def test_run_orchestrator_with_desktop_portal(
     assert not process.pim_running()
     assert process.portal_running()
     assert not process.projects_dashboard_started()
+    assert not process.projects_dashboard_running()
     assert not process.additional_services_running()
 
 
 @pytest.mark.skipif(
-    importlib.util.find_spec(PROJECTS_DASHBOARD_MODULE) is None,  # type: ignore[union-attr]
+    find_spec(PROJECTS_DASHBOARD_MODULE) is None,
     reason="Install ansys-saf-projects-dashboard to run the Projects Dashboard E2E test.",
 )
 def test_run_orchestrator_with_projects_dashboard(orchestrate_solution: OrchestrateSolution):
@@ -200,9 +202,10 @@ def test_run_orchestrator_with_projects_dashboard(orchestrate_solution: Orchestr
     assert process.projects_dashboard_started()
     assert process.projects_dashboard_running()
     assert process.get_projects_dashboard_url().endswith("/projects")
-    assert process.portal_running()
+    assert not process.portal_running()
 
 
+# TODO: parametrize with projects-dashboard and with portal-desktop
 @pytest.mark.parametrize("stop_orchestrator_after_yield", [False], indirect=True)
 def test_run_orchestrator_with_portal_in_pre_load_mode(orchestrate_solution: OrchestrateSolution):
     """
@@ -226,6 +229,12 @@ def test_run_orchestrator_with_portal_in_pre_load_mode(orchestrate_solution: Orc
     assert not process.find_msg_in_output("Splash screen stopped.")
 
     process.assert_started_and_shutting_down()
+    if process.projects_dashboard_started():
+        assert process.find_msg_in_output("SAF Portal: not launched")
+        assert not process.find_msg_in_output(r"SAF Portal: http://127\.0\.0\.1:\d+", regex=True)
+    else:
+        assert process.get_portal_ui_url()
+        assert not process.projects_dashboard_running()
 
 
 def test_run_orchestrator_with_no_ui(orchestrate_solution: OrchestrateSolution):
@@ -250,6 +259,7 @@ def test_run_orchestrator_with_no_ui(orchestrate_solution: OrchestrateSolution):
     assert process.otel_running()
     assert not process.pim_running()
     assert not process.portal_running()
+    assert not process.projects_dashboard_started()
     assert not process.additional_services_running()
 
     # --no-ui prevents showing the splash screen window even if the solution has a UI module
@@ -281,6 +291,7 @@ def test_run_orchestrator_with_browser(orchestrate_solution: OrchestrateSolution
     assert process.otel_running()
     assert not process.pim_running()
     assert not process.portal_running()
+    assert not process.projects_dashboard_started()
     assert not process.additional_services_running()
 
 
@@ -341,6 +352,7 @@ def test_run_orchestrator_with_project_display_name(
     assert process.otel_running()
     assert not process.pim_running()
     assert not process.portal_running()
+    assert not process.projects_dashboard_started()
     assert not process.additional_services_running()
 
     api_url = process.get_api_docs_url()
@@ -349,7 +361,7 @@ def test_run_orchestrator_with_project_display_name(
 
 
 @pytest.mark.skipif(
-    importlib.util.find_spec("ansys.saf.desktop.portal") is None,  # type: ignore[union-attr]
+    find_spec("ansys.saf.desktop.portal") is None,
     reason="Install ansys-saf-desktop-portal to run the desktop portal E2E test.",
 )
 def test_run_orchestrator_with_custom_ports(
@@ -401,6 +413,8 @@ def test_run_orchestrator_with_custom_ports(
     assert process.otel_running()
     assert not process.pim_running()
     assert not process.additional_services_running()
+    assert not process.projects_dashboard_started()
+    assert not process.projects_dashboard_running()
 
 
 def test_run_orchestrator_with_additional_services(orchestrate_solution: OrchestrateSolution):
@@ -431,9 +445,11 @@ def test_run_orchestrator_with_additional_services(orchestrate_solution: Orchest
     assert process.otel_running()
     assert not process.pim_running()
     assert not process.portal_running()
+    assert not process.projects_dashboard_started()
     assert process.additional_services_running(yaml_file=Path(tmp_yaml_file))
 
 
+# TODO: parametrize with projects-dashboard and with portal-desktop
 @windows_only(reason="pythonw not available on Linux")
 @pytest.mark.parametrize("portal", [True, False], ids=["with_portal", "without_portal"])
 def test_run_orchestrator_with_pythonw(orchestrate_solution: OrchestrateSolution, portal: bool, tmp_path: Path):
@@ -491,7 +507,7 @@ def test_run_orchestrator_with_pythonw(orchestrate_solution: OrchestrateSolution
         wait_for_healthy=False,
     )
 
-    if portal and importlib.util.find_spec(PROJECTS_DASHBOARD_MODULE) is not None:
+    if portal and find_spec(PROJECTS_DASHBOARD_MODULE) is not None:
         _check_service_health(f"http://127.0.0.1:{glow_ui_port}/projects")
         _check_service_health(f"http://127.0.0.1:{glow_ui_port}")
     elif glow_portal_port:
@@ -509,8 +525,19 @@ def test_run_orchestrator_with_pythonw(orchestrate_solution: OrchestrateSolution
     # Orchestrator output is still logged in log file
     log_file = tmp_path / "appdata" / "ansys" / "glow" / "MySolution" / "orchestrator.log"
     assert log_file.is_file()
-    log_content = log_file.read_text()
+
+    @retry(stop=stop_after_attempt(20), wait=wait_fixed(0.25))
+    def _read_completed_log() -> str:
+        contents = log_file.read_text()
+        if "INFO - Additional services:" not in contents:
+            raise TryAgain
+        return contents
+
+    log_content = _read_completed_log()
     assert "Starting Solution API..." in log_content
+    dashboard_selected = portal and find_spec(PROJECTS_DASHBOARD_MODULE) is not None
+    assert ("Projects Dashboard: http" in log_content) == dashboard_selected
+    assert ("SAF Portal: http" in log_content) == (portal and not dashboard_selected)
 
 
 def test_run_orchestrator_with_streamlit_ui_option(
@@ -565,6 +592,7 @@ def test_run_orchestrator_with_streamlit_ui_option(
     assert process.otel_running()
     assert not process.pim_running()
     assert not process.portal_running()
+    assert not process.projects_dashboard_started()
     assert not process.additional_services_running()
 
 
@@ -625,6 +653,7 @@ def test_run_orchestrator_with_env_file(orchestrate_solution: OrchestrateSolutio
     assert process.otel_running()
     assert not process.pim_running()
     assert not process.portal_running()
+    assert not process.projects_dashboard_started()
     assert not process.additional_services_running()
 
 
@@ -689,6 +718,7 @@ def test_run_orchestrator_passing_env_file_makes_glow_ignore_file_in_cwd(
 @pytest.mark.xfail(reason="Portal does not support passing a path for the .env file, always loads the one in the CWD.")
 def test_run_orchestrator_passing_env_file_makes_portal_ignore_file_in_cwd(
     orchestrate_solution: OrchestrateSolution,
+    isolated_desktop_portal_python: tuple[Path, Path],
     tmp_path: Path,
 ):
     """
@@ -719,13 +749,19 @@ def test_run_orchestrator_passing_env_file_makes_portal_ignore_file_in_cwd(
     ]
 
     orchestrator_env = os.environ.copy()
-    orchestrator_env["PYTHONPATH"] = str(Path(__file__).parent.parent.parent)
+    python_exec, bootstrap_directory = isolated_desktop_portal_python
+    orchestrator_env["PYTHONPATH"] = os.pathsep.join(
+        [str(bootstrap_directory), str(Path(__file__).parent.parent.parent)],
+    )
 
-    orchestrate_solution(
+    process = orchestrate_solution(
         args=args,
         cwd=cwd,
         env=orchestrator_env,
+        python_exec=python_exec,
     )
+    assert process.portal_running()
+    assert not process.projects_dashboard_started()
 
     # Portal creates DB at default location and not in the path specified at the env located in the CWD
     assert not portal_db_file.is_file()
@@ -739,11 +775,14 @@ def test_run_orchestrator_passing_env_file_makes_portal_ignore_file_in_cwd(
     ]
 
     # relaunching without passing --env-file, GLOW will load the env located in the CWD
-    orchestrate_solution(
+    process = orchestrate_solution(
         args=args,
         cwd=cwd,
         env=orchestrator_env,
+        python_exec=python_exec,
     )
+    assert process.portal_running()
+    assert not process.projects_dashboard_started()
 
     # Portal creates DB at the path specified in the env located at the CWD
     assert portal_db_file.is_file()
@@ -906,6 +945,7 @@ def test_run_orchestrator_with_filelogs(
     assert not process.otel_running()
     assert not process.pim_running()
     assert not process.portal_running()
+    assert not process.projects_dashboard_started()
     assert not process.additional_services_running()
 
     assert process.get_log_file_path()
@@ -977,6 +1017,7 @@ def test_run_orchestrator_with_filelogs_env_var_set_to_false(
     assert process.otel_running()
     assert not process.pim_running()
     assert not process.portal_running()
+    assert not process.projects_dashboard_started()
     assert not process.additional_services_running()
 
     for logname in ["API", "UI"]:
@@ -1021,6 +1062,7 @@ def test_run_orchestrator_with_log_to_otel_dashboard_but_aspire_not_installed(
     assert not process.otel_running()
     assert not process.pim_running()
     assert not process.portal_running()
+    assert not process.projects_dashboard_started()
     assert not process.additional_services_running()
 
     assert process.get_log_file_path()
@@ -1070,9 +1112,11 @@ def test_run_orchestrator_with_hps_as_product_instance_system(
     assert process.otel_running()
     assert not process.pim_running()
     assert not process.portal_running()
+    assert not process.projects_dashboard_started()
     assert not process.additional_services_running()
 
 
+# TODO: parametrize with projects-dashboard and with portal-desktop
 @pytest.mark.parametrize("no_proxy_env_var", [None, "", "fake,values", "localhost", "127.0.0.1", "::1"])
 def test_run_orchestrator_with_http_proxy_env_vars_set(
     orchestrate_solution: OrchestrateSolution,
@@ -1107,13 +1151,16 @@ def test_run_orchestrator_with_http_proxy_env_vars_set(
     assert not process.project_running()
     assert process.otel_running()
     assert process.pim_running()
-    assert process.portal_running()
     assert process.additional_services_running(yaml_file=Path(tmp_yaml_file))
 
     if process.projects_dashboard_started():
+        assert process.projects_dashboard_running()
+        assert not process.portal_running()
         assert process.get_projects_dashboard_url().endswith("/projects")
         return
 
+    assert process.portal_running()
+    assert not process.projects_dashboard_running()
     selenium_webdriver.get(process.get_portal_ui_url())
     project_display_name = f"proxy-project-{random.randint(0, 10000)}"
 

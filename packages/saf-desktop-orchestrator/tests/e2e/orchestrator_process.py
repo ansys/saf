@@ -40,8 +40,7 @@ class OrchestratorProcess(Process):
         super().__init__([python_exec.as_posix()] + args, env=env, cwd=cwd, health_check=health_check, bg=bg)
 
     def _portal_started(self) -> bool:
-        portal_started = self.find_msg_in_output("SAF Portal: not launched")
-        return not portal_started
+        return self.find_msg_in_output(r"SAF Portal: http://127\.0\.0\.1:\d+", regex=True) is not None
 
     def _api_started(self) -> bool:
         api_started = self.find_msg_in_output("Solution API: not launched")
@@ -94,9 +93,8 @@ class OrchestratorProcess(Process):
 
     def get_portal_ui_url(self) -> str:
         portal_log_line = self.find_msg_in_output(r"SAF Portal: http://127\.0\.0\.1:\d+", regex=True)
-        if portal_log_line:
-            return portal_log_line.removeprefix("INFO - SAF Portal: ")
-        return self.get_projects_dashboard_url()
+        assert portal_log_line
+        return portal_log_line.removeprefix("INFO - SAF Portal: ")
 
     def get_projects_dashboard_url(self) -> str:
         dashboard_log_line = self.find_msg_in_output(r"Projects Dashboard: http://127\.0\.0\.1:\d+/\S+", regex=True)
@@ -159,7 +157,7 @@ class OrchestratorProcess(Process):
         if self._portal_started():
             portal_url = self.get_portal_ui_url()
             return self._check_url_status(portal_url, 200)
-        return self.projects_dashboard_running()
+        return False
 
     def pim_running(self) -> str | None:
         if self._pim_started():

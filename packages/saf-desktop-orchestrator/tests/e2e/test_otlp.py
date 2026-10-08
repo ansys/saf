@@ -56,6 +56,7 @@ def test_aspire_runs_without_insecure_warnings(
     assert not selenium_webdriver.find_elements(By.XPATH, "//*[contains(text(), 'Telemetry endpoint is unsecured')]")
 
 
+# TODO: parametrize with projects-dashboard and with portal-desktop
 def test_services_traces_appear_in_aspire_dashboard(
     orchestrate_solution: OrchestrateSolution,
     selenium_webdriver: WebDriver,
@@ -70,6 +71,13 @@ def test_services_traces_appear_in_aspire_dashboard(
     ]
 
     process = orchestrate_solution(args=args)
+
+    if process.projects_dashboard_started():
+        assert process.projects_dashboard_running()
+        assert not process.portal_running()
+    else:
+        assert process.portal_running()
+        assert not process.projects_dashboard_running()
 
     # Launch a long running method to ensure we have traces from the method runner in the OTLP data
     api_url = process.get_api_docs_url().replace("/docs", "/projects")

@@ -18,8 +18,10 @@
 import importlib
 from pathlib import Path
 import re
+import subprocess
 import sys
 import types
+from zipfile import ZipFile
 
 from _pytest.monkeypatch import MonkeyPatch
 import pytest
@@ -29,6 +31,28 @@ from ansys.saf.desktop.orchestrator._scripts.solution_app_starter import (
     _resolve_solution_package,  # pyright: ignore[reportPrivateUsage]
 )
 from tests.conftest import copy_mock_solution_to_layout
+
+
+def test_archived_solution_imports_without_repository_tests_package(tmp_path: Path):
+    archive_path = Path(__file__).parent.parent / "mocks" / "solution_with_minimal_dash_ui.saf"
+    with ZipFile(archive_path) as archive:
+        archive.extractall(tmp_path)
+
+    completed = subprocess.run(
+        [
+            sys.executable,
+            "-I",
+            "-c",
+            "import importlib, sys; sys.path.insert(0, sys.argv[1]); "
+            "importlib.import_module('saf_desktop_orchestrator_e2e_fixture.solution_with_minimal_dash_ui.main')",
+            str(tmp_path / "src"),
+        ],
+        capture_output=True,
+        check=False,
+        text=True,
+    )
+
+    assert completed.returncode == 0, completed.stderr
 
 
 @pytest.mark.parametrize(

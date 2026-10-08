@@ -58,7 +58,6 @@ def verify_app_starter(
 
 @pytest.mark.skipif(platform.system() == "Linux", reason="webview disabled temporarily on Linux")
 @pytest.mark.parametrize("solution_app_starter", [True, False], ids=["input_archive", "input_dir"], indirect=True)
-@pytest.mark.xfail(run=False, reason="App-starter startup health check currently times out in E2E.")
 def test_solution_app_starter(selenium_webdriver: WebDriver, solution_app_starter: SolutionAppStarter):
     """
     Test running a solution with the Solution App Starter script. Ensure that it works either using an archived solution
@@ -107,7 +106,6 @@ def test_solution_app_starter_with_namespace_dir_input(
 
 @pytest.mark.skipif(platform.system() == "Linux", reason="webview disabled temporarily on Linux")
 @pytest.mark.parametrize("option", ["cli", "env", None])
-@pytest.mark.xfail(run=False, reason="App-starter startup health check currently times out in E2E.")
 def test_solution_app_starter_log_to_files(
     selenium_webdriver: WebDriver,
     archived_solution: Path,

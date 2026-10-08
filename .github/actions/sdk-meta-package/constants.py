@@ -35,6 +35,7 @@ PACKAGE_LIBRARY_DIRS = {
     "ansys-iam-oidc": "saf-iam-oidc",
     "ansys-saf-product-configuration": "saf-product-configuration",
     "ansys-saf-product-manager": "saf-product-manager",
+    "ansys-saf-projects-dashboard": "saf-projects-dashboard",
 }
 
 DEPENDENCY_PINNING_ENV_VAR = "SAF_SDK_DEPENDENCY_PINNING"
@@ -48,4 +49,5 @@ PACKAGE_VERSION_ENV_VARS = {
     "ansys-iam-oidc": "USER_SELECTED_ANSYS_IAM_OIDC_VERSION",
     "ansys-saf-product-configuration": "USER_SELECTED_ANSYS_SAF_PRODUCT_CONFIGURATION_VERSION",
     "ansys-saf-product-manager": "USER_SELECTED_ANSYS_SAF_PRODUCT_MANAGER_VERSION",
+    "ansys-saf-projects-dashboard": "USER_SELECTED_ANSYS_SAF_PROJECTS_DASHBOARD_VERSION",
 }

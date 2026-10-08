@@ -90,10 +90,10 @@ instance-management-all = [
 ]
 desktop = [
   "ansys-saf-desktop-orchestrator==1.14.0",
-  "ansys-saf-projects-dashboard==0.1.dev0",
+  "ansys-saf-projects-dashboard==0.2.0",
 ]
 ui = [
-  "ansys-saf-projects-dashboard==0.1.dev0",
+  "ansys-saf-projects-dashboard==0.2.0",
 ]
 build = [
   "ansys-saf-desktop-installer==1.17.0",

@@ -17,6 +17,7 @@
 from pathlib import Path
 import platform
 
+import pytest
 from tenacity import TryAgain, retry, stop_after_attempt, wait_fixed
 
 from tests.e2e.conftest import MINIMAL_COMPLETE_SOLUTION, MINIMAL_SOLUTION_WITH_DASH_UI, OrchestrateSolution
@@ -45,6 +46,7 @@ def test_logging_verbosity_minimal_run(orchestrate_solution: OrchestrateSolution
     assert not process.otel_running()
     assert not process.pim_running()
     assert not process.portal_running()
+    assert not process.projects_dashboard_started()
     assert not process.additional_services_running()
 
     # Remove lines from launched services
@@ -84,7 +86,17 @@ def find_custom_icon_loaded(process: OrchestratorProcess, custom_icon_file: Path
         raise TryAgain
 
 
-def test_logging_verbosity_complete_run(orchestrate_solution: OrchestrateSolution, tmp_path: Path):
+@pytest.mark.parametrize(
+    "portal_backend",
+    ["projects-dashboard", "desktop-portal"],
+    ids=["projects-dashboard", "desktop-portal"],
+    indirect=True,
+)
+def test_logging_verbosity_complete_run(
+    orchestrate_solution: OrchestrateSolution,
+    portal_backend: tuple[str, dict[str, str], Path | None],
+    tmp_path: Path,
+):
     """
     Test verbosity when orchestrator running with all possible services enabled: OTEL Dashboard, PIM Light Server,
     SAF Portal, Solution API, Solution UI and additional services; and loading an env file and a custom pywebview icon.
@@ -107,14 +119,21 @@ def test_logging_verbosity_complete_run(orchestrate_solution: OrchestrateSolutio
         "--env-file",
         str(env_file),
     ]
-    process = orchestrate_solution(args=args)
+    backend, environment, python_exec = portal_backend
+    process = orchestrate_solution(args=args, env=environment, python_exec=python_exec)
 
+    projects_dashboard_started = backend == "projects-dashboard"
     assert process.api_running()
     assert process.ui_running(no_project=True)
     assert not process.project_running()
     assert process.otel_running()
     assert process.pim_running()
-    assert process.portal_running()
+    if projects_dashboard_started:
+        assert process.projects_dashboard_running()
+        assert not process.portal_running()
+    else:
+        assert process.portal_running()
+        assert not process.projects_dashboard_running()
     assert process.additional_services_running(yaml_file=Path(tmp_yaml_file))
 
     # Remove Warnings from product configurations, they will be handled separately
@@ -142,21 +161,28 @@ def test_logging_verbosity_complete_run(orchestrate_solution: OrchestrateSolutio
         f"INFO - Using PIM light command args: {str(process.pim_args())}",
         "INFO - Starting Solution API...",
         "INFO - Starting Solution UI...",
-        "INFO - Starting SAF Portal...",
         "INFO - Solution: My Solution",
         "INFO - Project: no project created or selected",
         f"INFO - Solution API: {process.get_api_docs_url()}",
         f"INFO - Solution UI: {process.get_solution_ui_url(no_project=True)}",
         f"INFO - OTEL Dashboard: {process.get_otel_url()}",
-        f"INFO - SAF Portal: {process.get_portal_ui_url()}",
         f"INFO - PIM Light Server: {process.get_pim_url()}",
         "INFO - Additional services:",
         f"INFO - - GRPC_SERVICE: {grpc_service_url}",
     ]
+    if projects_dashboard_started:
+        expected_output.insert(15, f"INFO - Projects Dashboard: {process.get_projects_dashboard_url()}")
+        expected_output.insert(17, "INFO - SAF Portal: not launched")
+    else:
+        expected_output.insert(11, "INFO - Starting SAF Portal...")
+        expected_output.insert(17, f"INFO - SAF Portal: {process.get_portal_ui_url()}")
     if platform.system() == "Windows":
         expected_output.append("INFO - Starting webview...")
     else:
-        expected_output.append(f"INFO - Opening browser at {process.get_portal_ui_url()}...")
+        destination_url = (
+            process.get_projects_dashboard_url() if projects_dashboard_started else process.get_portal_ui_url()
+        )
+        expected_output.append(f"INFO - Opening browser at {destination_url}...")
     assert expected_output == output
 
     # Log file must contain everything above plus DEBUG information

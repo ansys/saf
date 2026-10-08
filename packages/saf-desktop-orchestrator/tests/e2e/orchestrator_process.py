@@ -33,13 +33,14 @@ class OrchestratorProcess(Process):
         health_check: Callable[["Process"], None] | None = None,
         use_pythonw: bool = False,
         bg: bool = True,
+        python_exec: Path | None = None,
     ):
-        python_exec = find_exec_in_venv(Path.cwd().parent.parent, "python" if not use_pythonw else "pythonw")
+        if python_exec is None:
+            python_exec = find_exec_in_venv(Path.cwd().parent.parent, "python" if not use_pythonw else "pythonw")
         super().__init__([python_exec.as_posix()] + args, env=env, cwd=cwd, health_check=health_check, bg=bg)
 
     def _portal_started(self) -> bool:
-        portal_started = self.find_msg_in_output("SAF Portal: not launched")
-        return not portal_started
+        return self.find_msg_in_output(r"SAF Portal: http://127\.0\.0\.1:\d+", regex=True) is not None
 
     def _api_started(self) -> bool:
         api_started = self.find_msg_in_output("Solution API: not launched")
@@ -94,6 +95,19 @@ class OrchestratorProcess(Process):
         portal_log_line = self.find_msg_in_output(r"SAF Portal: http://127\.0\.0\.1:\d+", regex=True)
         assert portal_log_line
         return portal_log_line.removeprefix("INFO - SAF Portal: ")
+
+    def get_projects_dashboard_url(self) -> str:
+        dashboard_log_line = self.find_msg_in_output(r"Projects Dashboard: http://127\.0\.0\.1:\d+/\S+", regex=True)
+        assert dashboard_log_line
+        return dashboard_log_line.removeprefix("INFO - Projects Dashboard: ")
+
+    def projects_dashboard_started(self) -> bool:
+        return self.find_msg_in_output("Projects Dashboard: http://") is not None
+
+    def projects_dashboard_running(self) -> bool:
+        if self.projects_dashboard_started():
+            return self._check_url_status(self.get_projects_dashboard_url(), 200)
+        return False
 
     def get_otel_url(self) -> str:
         otel_log_line = self.find_msg_in_output(r"OTEL Dashboard: http://127\.0\.0\.1:\d+", regex=True)

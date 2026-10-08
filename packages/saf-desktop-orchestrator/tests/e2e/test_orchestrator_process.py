@@ -348,7 +348,14 @@ def test_run_orchestrator_with_project_display_name(
     assert any(project["display_name"] == random_project_name for project in list_projects.json()["projects"])
 
 
-def test_run_orchestrator_with_custom_ports(orchestrate_solution: OrchestrateSolution):
+@pytest.mark.skipif(
+    importlib.util.find_spec("ansys.saf.desktop.portal") is None,  # type: ignore[union-attr]
+    reason="Install ansys-saf-desktop-portal to run the desktop portal E2E test.",
+)
+def test_run_orchestrator_with_custom_ports(
+    orchestrate_solution: OrchestrateSolution,
+    isolated_desktop_portal_python: tuple[Path, Path],
+):
     """
     Test running a solution with services on specific ports and verify that the services are available on those ports.
     """
@@ -371,18 +378,20 @@ def test_run_orchestrator_with_custom_ports(orchestrate_solution: OrchestrateSol
     orchestrator_env["PORTAL_UI_PORT"] = glow_portal_port
     orchestrator_env["OTEL_DASHBOARD_PORT"] = otel_dashboard_port
 
+    python_exec, bootstrap_directory = isolated_desktop_portal_python
+    orchestrator_env["PYTHONPATH"] = os.pathsep.join(
+        [str(bootstrap_directory), orchestrator_env.get("PYTHONPATH", "")],
+    )
+
     process = orchestrate_solution(
         args=args,
         env=orchestrator_env,
+        python_exec=python_exec,
     )
 
     assert glow_api_port in process.get_api_docs_url()
     assert glow_ui_port in process.get_solution_ui_url(no_project=True)
-    if process.projects_dashboard_started():
-        assert glow_ui_port in process.get_projects_dashboard_url()
-        assert glow_portal_port not in process.get_projects_dashboard_url()
-    else:
-        assert glow_portal_port in process.get_portal_ui_url()
+    assert glow_portal_port in process.get_portal_ui_url()
     assert otel_dashboard_port in process.get_otel_url()
 
     assert process.api_running()

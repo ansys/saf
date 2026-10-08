@@ -1064,7 +1064,7 @@ requires-dist = [
     { name = "uvicorn", specifier = ">=0.24,<1.0" },
     { name = "wsproto", specifier = ">=1.2.0,<2.0" },
 ]
-provides-extras = ["dash", "pim", "all", "hps", "test", "mcp"]
+provides-extras = ["all", "dash", "hps", "mcp", "pim", "test"]
 
 [[package]]
 name = "ansys-saf-product-configuration"
@@ -1403,6 +1403,18 @@ requires-dist = [
 provides-extras = ["aedt", "all", "fluent", "geometry", "mapdl", "mechanical", "optislang-wrapper", "visor"]
 
 [[package]]
+name = "ansys-saf-projects-dashboard"
+version = "0.2.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "dash" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/a1/b2/3abefd06d629304e2db55eec4e720ad2b7a97cb75339a67b62957f8eeb57/ansys_saf_projects_dashboard-0.2.0.tar.gz", hash = "sha256:5243bb821da965424284f70d289cc40b8028bbd66066f7bf47a386ced820b998", size = 393429, upload-time = "2026-10-07T12:38:39.429Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/84/5e/4b7273eaaa82114103ddf39261b88d68f85e12ce0890b655bd5333d072a3/ansys_saf_projects_dashboard-0.2.0-py3-none-any.whl", hash = "sha256:edd8b307abe04c502cca8269124a20aa51fa6ad78bb4ee286489ff87ed4c0e25", size = 408853, upload-time = "2026-10-07T12:38:37.951Z" },
+]
+
+[[package]]
 name = "ansys-saf-templates"
 version = "0.4.dev0"
 source = { editable = "packages/saf-templates" }
@@ -1500,6 +1512,7 @@ dependencies = [
 dev = [
     { name = "aiohttp" },
     { name = "ansys-saf-glow-engine", extra = ["dash", "hps", "pim"] },
+    { name = "ansys-saf-projects-dashboard" },
     { name = "ansys-saf-testing", extra = ["selenium"] },
     { name = "ansys-sphinx-theme", extra = ["autoapi"], marker = "python_full_version >= '3.12'" },
     { name = "asgi-lifespan" },
@@ -1640,6 +1653,7 @@ tests-glow-engine = [
     { name = "waitress" },
 ]
 tests-saf-desktop-orchestrator = [
+    { name = "ansys-saf-projects-dashboard" },
     { name = "dash" },
     { name = "dash-extensions" },
     { name = "fastapi" },
@@ -1673,6 +1687,7 @@ dev = [
     { name = "aiohttp", specifier = ">=3.10.2,<4.0" },
     { name = "ansys-saf-glow-engine", extras = ["dash"], editable = "packages/glow-engine" },
     { name = "ansys-saf-glow-engine", extras = ["dash", "hps", "pim"], editable = "packages/glow-engine" },
+    { name = "ansys-saf-projects-dashboard", specifier = ">=0.2.0,<1.0" },
     { name = "ansys-saf-testing", extras = ["selenium"], editable = "packages/saf-testing" },
     { name = "ansys-sphinx-theme", extras = ["autoapi"], marker = "python_full_version >= '3.12'", specifier = ">=1.9" },
     { name = "asgi-lifespan", specifier = ">=2.1.0,<3.0" },
@@ -1815,6 +1830,7 @@ tests-glow-engine = [
     { name = "waitress", specifier = ">=3.0.1,<4.0" },
 ]
 tests-saf-desktop-orchestrator = [
+    { name = "ansys-saf-projects-dashboard", specifier = ">=0.2.0,<1.0" },
     { name = "dash", specifier = ">=3.4.0" },
     { name = "dash-extensions", specifier = ">=2.0.5,<3.0" },
     { name = "fastapi", specifier = ">=0.120.2,<1.0" },

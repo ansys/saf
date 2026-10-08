@@ -94,6 +94,29 @@ def test_get_project_streamlit(mocker: pytest_mock.MockerFixture):
     assert project_url == "http://localhost:8501/test_project"
 
 
+@pytest.fixture
+def no_projects_dashboard(mocker: pytest_mock.MockerFixture) -> None:
+    mocker.patch(
+        "ansys.saf.desktop.orchestrator._orchestration.launcher.importlib.util.find_spec",
+        return_value=None,
+    )
+
+
+@pytest.fixture
+def no_optional_packages(mocker: pytest_mock.MockerFixture) -> None:
+    # A None entry in sys.modules makes the import raise ModuleNotFoundError.
+    mocker.patch.dict(
+        sys.modules,
+        {
+            "ansys.saf.desktop.portal.server.run_portal_server": None,
+            "ansys.saf.portal.desktop.server.run_portal_server": None,
+            "ansys.saf.pim_light_server.locate": None,
+            "ansys.saf.aspire": None,
+        },
+    )
+
+
+@pytest.mark.usefixtures("no_projects_dashboard", "no_optional_packages")
 def test_missing_portal_raise_module_not_found():
     launcher = Launcher(
         Settings(saf_desktop_solution_name="solution"),
@@ -115,6 +138,7 @@ def test_missing_portal_raise_module_not_found():
         launcher.start_portal()
 
 
+@pytest.mark.usefixtures("no_projects_dashboard", "no_optional_packages")
 def test_start_portal_fallback_to_old_portal(mocker: pytest_mock.MockerFixture):
     import tests.mocks.mock_portal
 
@@ -147,6 +171,7 @@ def test_start_portal_fallback_to_old_portal(mocker: pytest_mock.MockerFixture):
     assert mock_python_proc.call_args[0][0] == tests.mocks.mock_portal.run_portal
 
 
+@pytest.mark.usefixtures("no_projects_dashboard")
 def test_start_portal_use_new_portal(mocker: pytest_mock.MockerFixture):
     import tests.mocks.mock_portal
 
@@ -178,7 +203,7 @@ def test_start_portal_use_new_portal(mocker: pytest_mock.MockerFixture):
     assert mock_python_proc.call_args[0][0] == tests.mocks.mock_portal.run_portal
 
 
-@pytest.mark.usefixtures("cleanup_awp_root_env_vars")
+@pytest.mark.usefixtures("cleanup_awp_root_env_vars", "no_optional_packages")
 def test_missing_pim_light_server_raise_module_not_found():
     launcher = Launcher(
         Settings(saf_desktop_solution_name="solution"),
@@ -201,7 +226,7 @@ def test_missing_pim_light_server_raise_module_not_found():
 
 
 @windows_only()
-@pytest.mark.usefixtures("cleanup_awp_root_env_vars")
+@pytest.mark.usefixtures("cleanup_awp_root_env_vars", "no_optional_packages")
 def test_pim_light_server_from_unified_install(
     monkeypatch: pytest.MonkeyPatch,
     tmp_path: Path,
@@ -240,6 +265,7 @@ def test_pim_light_server_from_unified_install(
     assert mock_pim_proc.spy_return[0] == pim_exe.as_posix()
 
 
+@pytest.mark.usefixtures("no_optional_packages")
 def test_missing_aspire_raise_module_not_found():
     launcher = Launcher(
         Settings(saf_desktop_solution_name="solution"),
@@ -282,6 +308,7 @@ def test_configure_solution_ui_environment_sets_ws_events_addr_when_not_set(
     assert ui_env[GLOW_WS_EVENTS_ADDR] == f"ws://{host}:{port}"
 
 
+@pytest.mark.usefixtures("no_projects_dashboard")
 def test_launcher_use_projects_dashboard_false_without_package():
     launcher = Launcher(
         Settings(saf_desktop_solution_name="solution"),

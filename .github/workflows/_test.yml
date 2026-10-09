@@ -616,3 +616,8 @@ jobs:
         with:
           artifact-prefix: "hps_test_reports_${{ matrix.test-report-artifact-name-suffix
             }}_${{ inputs.python-version }}_${{ runner.os }}"
+
+      - name: Run npm test (Moon)
+        if: ${{ inputs.library-name == 'saf-projects-dashboard' }}
+        shell: bash
+        run: moon run $PACKAGE:test

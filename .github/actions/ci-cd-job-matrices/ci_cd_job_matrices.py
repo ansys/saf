@@ -95,10 +95,6 @@ UV_PACKAGES = [
     "saf-templates",
 ]
 
-JS_PACKAGES = [
-    "saf-projects-dashboard",
-]
-
 
 def write_output(name: str, value: str) -> None:
     """Append a multiline output to the ``GITHUB_OUTPUT`` file."""
@@ -133,13 +129,6 @@ def get_pr_changes() -> list[str]:
 def get_changed_moon_packages(pr_changes: list[str]) -> list[str]:
     changed_packages = [pkg for pkg in pr_changes if pkg in UV_PACKAGES]
     write_matrix_to_output("moon_packages_matrix", [{"library-name": pkg} for pkg in changed_packages])
-    return changed_packages
-
-
-def get_changed_js_packages(pr_changes: list[str]) -> list[str]:
-    """Return the changed packages that carry a Node/npm build."""
-    changed_packages = [pkg for pkg in pr_changes if pkg in JS_PACKAGES]
-    write_matrix_to_output("js_packages_matrix", [{"library-name": pkg} for pkg in changed_packages])
     return changed_packages
 
 
@@ -230,7 +219,6 @@ pr_changes = get_pr_changes()
 changed_packages = get_changed_packages(pr_changes)
 get_changed_poetry_packages(pr_changes)
 get_changed_moon_packages(pr_changes)
-get_changed_js_packages(pr_changes)
 get_code_style_matrix_entries(changed_packages, pr_changes)
 get_compatibility_matrix_entries(changed_packages)
 get_tests_matrix_entries(pr_changes, changed_packages)

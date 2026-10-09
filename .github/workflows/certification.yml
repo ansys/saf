@@ -442,20 +442,6 @@ jobs:
       PYANSYS_PYPI_PRIVATE_PAT: ${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}
       PYANSYS_PYPI_PRIVATE_URL: ${{ secrets.PYANSYS_PYPI_PRIVATE_URL }}
 
-  js-checks:
-    name: "JavaScript checks"
-    needs:
-      - pre-certification
-      - check-package-changes
-    if: ${{ needs.check-package-changes.outputs.package-has-changes == 'true' && needs.pre-certification.outputs.library-name
-      == 'saf-projects-dashboard' }}
-    permissions:
-      contents: read # Read the source code of the package
-    uses: ./.github/workflows/_js.yml
-    with:
-      library-name: ${{ needs.pre-certification.outputs.library-name }}
-      python-version: ${{ vars.PYTHON_VERSION }}
-
   build-wheel:
     name: "Wheel ${{ matrix.python-version }}"
     needs: pre-certification
@@ -516,7 +502,6 @@ jobs:
       - run-tests-extended
       - run-tests-flagships
       - run-github-workflows-of-generated-solution
-      - js-checks
       - build-wheel
       - check-wheel-can-be-pip-installed
     if: ${{ always() }}
@@ -537,7 +522,6 @@ jobs:
           RUN_TESTS_FLAGSHIPS_RESULT: ${{ needs.run-tests-flagships.result }}
           RUN_TESTS_GENERATED_SOLUTION_RESULT: ${{ needs.run-github-workflows-of-generated-solution.result
             }}
-          JS_CHECKS_RESULT: ${{ needs.js-checks.result }}
           BUILD_WHEEL_RESULT: ${{ needs.build-wheel.result }}
           CHECK_WHEEL_RESULT: ${{ needs.check-wheel-can-be-pip-installed.result }}
           OVERALL_CERTIFICATION_RESULT: ${{ (contains(needs.*.result, 'failure') ||
@@ -558,7 +542,6 @@ jobs:
             echo "| Tests (extended) | ${RUN_TESTS_EXTENDED_RESULT} |"
             echo "| Tests (flagships) | ${RUN_TESTS_FLAGSHIPS_RESULT} |"
             echo "| Tests (generated solution) | ${RUN_TESTS_GENERATED_SOLUTION_RESULT} |"
-            echo "| JavaScript checks | ${JS_CHECKS_RESULT} |"
             echo "| Wheel build | ${BUILD_WHEEL_RESULT} |"
             echo "| Wheel pip installability | ${CHECK_WHEEL_RESULT} |"
             echo

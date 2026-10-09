@@ -37,6 +37,7 @@ dev = [
   { include-group = "style-desktop-installer" },
   { include-group = "tests" },
 ]
+build-saf-projects-dashboard = [ "build>=1.2.1,<2.0", "pre-commit>=4.6.0,<5.0", "pyyaml>=6.0,<7.0" ]
 doc = [
   "ansys-sphinx-theme[autoapi]>=1.9; python_version>='3.12'",
   "autodoc-pydantic>=2.2.0; python_version>='3.12'",
@@ -129,11 +130,6 @@ tests-saf-product-manager = [
   "grpcio-health-checking>=1.24.0,<2.0",
   "gunicorn>=23.0.0,<24.0",                            # for launching UI server in DockerCompose
 ]
-build-saf-projects-dashboard = [
-  "build>=1.2.1,<2.0",
-  "pyyaml>=6.0,<7.0",
-  "pre-commit>=4.6.0,<5.0"
-]
 
 [tool.setuptools]
 py-modules = []
@@ -183,6 +179,7 @@ extend-exclude = [
   "packages/**/[{][{]cookiecutter.*",                                                      # Ignore files containing cookiecutter syntax
   "packages/**/_solutions/templates/**",                                                   # Ignore files containing cookiecutter syntax
   "packages/**/tests/mocks/plugin/",                                                       # Ignore files containing cookiecutter syntax
+  "packages/saf-projects-dashboard/src/ansys_saf_projects_dashboard/_imports_.py",         # auto-generated
   "packages/saf-projects-dashboard/src/ansys_saf_projects_dashboard/ImportExport.py",      # auto-generated
   "packages/saf-projects-dashboard/src/ansys_saf_projects_dashboard/Pagination.py",        # auto-generated
   "packages/saf-projects-dashboard/src/ansys_saf_projects_dashboard/ProjectForm.py",       # auto-generated

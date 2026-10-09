@@ -1,5 +1,4 @@
 tasks:
-  # 1. Install Python dependencies using uv into a virtual environment
   setup-python:
     toolchain: 'system'
     command: 'uv sync --group build-saf-projects-dashboard'
@@ -9,7 +8,6 @@ tasks:
     outputs:
       - '.venv/**/*'
 
-  # 2. Clean install npm dependencies
   setup-node:
     toolchain: 'node'
     command: 'npm ci'
@@ -19,10 +17,8 @@ tasks:
     outputs:
       - 'node_modules'
 
-  # 3. Execute the build using both environments
-  build:
+  generate-components:
     toolchain: 'node'
-    # Use 'uv run' to automatically execute the npm script with the .venv active
     command: 'npm run build'
     deps:
       - '~:setup-python'
@@ -39,6 +35,4 @@ tasks:
       - 'src/ansys_saf_projects_dashboard/proptypes.js'
       - 'src/ansys_saf_projects_dashboard/assets/**/*'
     options:
-      mergeArgs: 'replace'
-      mergeOutputs: 'replace'
       runFromWorkspaceRoot: false

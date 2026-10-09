@@ -34,5 +34,5 @@ __all__ = [
     "ProjectsFilter",
     "ProjectsList",
     "ProjectsTable",
-    "SolutionMetadata",
+    "SolutionMetadata"
 ]

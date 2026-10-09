@@ -62,6 +62,8 @@ jobs:
     runs-on: windows-latest
     permissions:
       contents: read # Read the source code of the package
+    env:
+      LIBRARY_NAME: ${{ inputs.library-name }}
     steps:
       - name: Enable git long paths on Windows
         if: runner.os == 'Windows'
@@ -74,37 +76,16 @@ jobs:
           persist-credentials: false
           fetch-depth: 0
 
-      # - name: Setup Node
-      #   uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
-      #   with:
-      #     node-version-file: packages/${{ inputs.library-name }}/.nvmrc
-      #     cache: npm
-      #     cache-dependency-path: packages/${{ inputs.library-name }}/package-lock.json
+      - name: Setup Moon Toolchain
+        if: ${{ runner.environment != 'self-hosted' }}
+        uses: moonrepo/setup-toolchain@261c62cb5b0f580c7be7c8cd0f023a2e96756095 # v0.6.4
 
-      # - name: Prepare Python environment
-      #   uses: ansys/saf-devops/prepare-python-environment@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
-      #   with:
-      #     python-version: ${{ inputs.python-version }}
-      #     poetry-version: ${{ vars.POETRY_VERSION }}
-      #     python-project-path: packages/${{ inputs.library-name }}
-      #     poetry-install-args: "--with build"
-
-      - name: Install npm dependencies
-        working-directory: packages/${{ inputs.library-name }}
+      - name: Generate components
         shell: bash
-        run: npm ci
-
-      - name: Build bundle and generate component wrappers
-        working-directory: packages/${{ inputs.library-name }}
-        shell: bash
-        run: |
-          ./.venv/Scripts/activate
-          npm run build
+        run: moon run ${LIBRARY_NAME}:generate-components
 
       - name: Fail if the committed build output is stale
         shell: bash
-        env:
-          LIBRARY_NAME: ${{ inputs.library-name }}
         run: |
           status="$(git status --porcelain --untracked-files=all -- \
             "packages/${LIBRARY_NAME}/src")"

@@ -12,8 +12,8 @@ BDM Python Shared Volume
    :target: https://pypi.org/project/ansys-bdm-shared-volume/
    :alt: PyPI
 
-.. |codecov| image:: https://img.shields.io/codecov/c/github/ansys/bdm-python-shared-volume
-   :target: https://app.codecov.io/gh/ansys/bdm-python-shared-volume
+.. |codecov| image:: https://img.shields.io/codecov/c/github/ansys/saf?flag=bdm-python-shared-volume
+   :target: https://app.codecov.io/gh/ansys/saf?flags[0]=bdm-python-shared-volume
    :alt: Codecov
 
 .. |GH-CI| image:: https://img.shields.io/github/actions/workflow/status/ansys/saf/ci_cd_pr.yml?branch=main&label=CI-CD&logo=github

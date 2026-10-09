@@ -16,8 +16,8 @@ Solution Application Framework - SAF Desktop Installer
    :target: https://github.com/ansys/saf/actions/workflows/ci_cd_pr.yml?query=branch%3Amain
    :alt: GH-CI
 
-.. |codecov| image:: https://img.shields.io/codecov/c/github/ansys/saf-desktop-installer
-   :target: https://app.codecov.io/gh/ansys/saf-desktop-installer
+.. |codecov| image:: https://img.shields.io/codecov/c/github/ansys/saf?flag=saf-desktop-installer
+   :target: https://app.codecov.io/gh/ansys/saf?flags[0]=saf-desktop-installer
    :alt: Codecov
 
 .. |Apache| image:: https://img.shields.io/badge/License-Apache2.0-white.svg?labelColor=black

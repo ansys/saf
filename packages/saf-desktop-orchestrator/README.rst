@@ -16,8 +16,8 @@ Solution Application Framework - Desktop Orchestrator
    :target: https://github.com/ansys/saf/actions/workflows/ci_cd_pr.yml?query=branch%3Amain
    :alt: GH-CI
 
-.. |codecov| image:: https://img.shields.io/codecov/c/github/ansys/saf-desktop-orchestrator
-   :target: https://app.codecov.io/gh/ansys/saf-desktop-orchestrator
+.. |codecov| image:: https://img.shields.io/codecov/c/github/ansys/saf?flag=saf-desktop-orchestrator
+   :target: https://app.codecov.io/gh/ansys/saf?flags[0]=saf-desktop-orchestrator
    :alt: Codecov
 
 .. |Apache| image:: https://img.shields.io/badge/License-Apache2.0-white.svg?labelColor=black

@@ -8,8 +8,8 @@
    :target: https://pypi.org/project/ansys-saf-projects-dashboard/
    :alt: PyPI
 
-.. |codecov| image:: https://img.shields.io/codecov/c/github/ansys/saf-projects-dashboard
-   :target: https://app.codecov.io/gh/ansys/saf-projects-dashboard
+.. |codecov| image:: https://img.shields.io/codecov/c/github/ansys/saf?flag=saf-projects-dashboard
+   :target: https://app.codecov.io/gh/ansys/saf?flags[0]=saf-projects-dashboard
    :alt: Codecov
 
 .. |GH-CI| image:: https://img.shields.io/github/actions/workflow/status/ansys/saf/ci_cd_pr.yml?branch=main&label=CI-CD&logo=github

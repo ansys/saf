@@ -16,8 +16,8 @@ Blob Management API for Python
    :target: https://github.com/ansys/saf/actions/workflows/ci_cd_pr.yml?query=branch%3Amain
    :alt: GH-CI
 
-.. |codecov| image:: https://img.shields.io/codecov/c/github/ansys/bdm-python-api
-   :target: https://app.codecov.io/gh/ansys/bdm-python-api
+.. |codecov| image:: https://img.shields.io/codecov/c/github/ansys/saf?flag=bdm-python-api
+   :target: https://app.codecov.io/gh/ansys/saf?flags[0]=bdm-python-api
    :alt: Codecov
 
 .. |Apache| image:: https://img.shields.io/badge/License-Apache2.0-white.svg?labelColor=black

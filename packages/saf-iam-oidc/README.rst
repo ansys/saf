@@ -12,8 +12,8 @@ IAM OIDC
    :target: https://pypi.org/project/ansys-iam-oidc/
    :alt: PyPI
 
-.. |codecov| image:: https://img.shields.io/codecov/c/github/ansys/ansys-iam-oidc
-   :target: https://app.codecov.io/gh/ansys/ansys-iam-oidc
+.. |codecov| image:: https://img.shields.io/codecov/c/github/ansys/saf?flag=saf-iam-oidc
+   :target: https://app.codecov.io/gh/ansys/saf?flags[0]=saf-iam-oidc
    :alt: Codecov
 
 .. |GH-CI| image:: https://img.shields.io/github/actions/workflow/status/ansys/saf/ci_cd_pr.yml?branch=main&label=CI-CD&logo=github

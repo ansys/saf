@@ -61,6 +61,12 @@ jobs:
           build-result: executable
 {% endif %}
 
+  build-images:
+    name: Build solution images
+    uses: ./.github/workflows/build-image.yml
+    permissions:
+      contents: read
+
   run-tests:
     name: Run tests
     runs-on: windows-latest

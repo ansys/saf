@@ -64,6 +64,8 @@ jobs:
       contents: read # Read the source code of the package
     env:
       LIBRARY_NAME: ${{ inputs.library-name }}
+      MOON_PYTHON_VERSION: ${{ vars.PYTHON_VERSION }}
+      UV_PYTHON_VERSION: ${{ vars.PYTHON_VERSION }}
     steps:
       - name: Enable git long paths on Windows
         if: runner.os == 'Windows'

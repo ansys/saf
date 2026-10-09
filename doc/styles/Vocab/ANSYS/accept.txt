@@ -227,6 +227,7 @@ Python(: Remote Attach)?
 Pythonic
 PyWebView
 pywebview
+rebase
 reimported
 reindexed
 reinitializing

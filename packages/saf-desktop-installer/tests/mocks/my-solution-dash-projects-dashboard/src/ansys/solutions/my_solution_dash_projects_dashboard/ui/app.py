@@ -19,7 +19,6 @@ import importlib
 import os
 from pathlib import Path
 
-from ansys_saf_projects_dashboard import ProjectsDashboard  # pyright: ignore[reportMissingTypeStubs]
 from dash import Input, Output, State, dcc, html  # pyright: ignore[reportMissingTypeStubs]
 from dash_extensions.enrich import (  # pyright: ignore[reportMissingTypeStubs]
     DashProxy,
@@ -31,6 +30,7 @@ from ansys.saf.glow.client import callback
 from ansys.solutions.my_solution_dash_projects_dashboard.solution.definition import (
     MySolutionDashProjectsDashboardSolution,
 )
+from ansys_saf_projects_dashboard import ProjectsDashboard  # pyright: ignore[reportMissingTypeStubs]
 
 # Must match the orchestrator's SAF_DESKTOP_PROJECTS_DASHBOARD_PATH (default "/projects").
 PROJECTS_DASHBOARD_PATH = "/projects"

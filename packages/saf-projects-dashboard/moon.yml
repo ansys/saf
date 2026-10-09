@@ -9,7 +9,7 @@ tasks:
       - '/pyproject.toml'
       - '/uv.lock'
     outputs:
-      - '.venv/**/*'
+      - '/.venv'
 
   setup-node:
     command: 'npm ci'
@@ -21,9 +21,9 @@ tasks:
 
   generate-components:
     command: 'npm'
-    args: 
-     - 'run'
-     - 'build'
+    args:
+      - 'run'
+      - 'build'
     deps:
       - '~:setup-python'
       - '~:setup-node'
@@ -31,7 +31,7 @@ tasks:
       - 'src/**/*'
       - 'package.json'
       - 'pyproject.toml'
-      - '.venv/**/*'
+      - '/.venv/**/*'
     outputs:
       - 'src/ansys_saf_projects_dashboard/ansys_saf_projects_dashboard.js'
       - 'src/ansys_saf_projects_dashboard/*.py'

@@ -12,12 +12,12 @@ Solution Application Framework - Testing
    :target: https://pypi.org/project/ansys-saf-testing/
    :alt: PyPI
 
-.. |GH-CI| image:: https://github.com/ansys/saf-sdk-testing/actions/workflows/ci_cd_release.yml/badge.svg?label=CI
-   :target: https://github.com/ansys/saf-sdk-testing/actions/workflows/ci_cd_release.yml
+.. |GH-CI| image:: https://img.shields.io/github/actions/workflow/status/ansys/saf/ci_cd_pr.yml?branch=main&label=CI-CD&logo=github
+   :target: https://github.com/ansys/saf/actions/workflows/ci_cd_pr.yml?query=branch%3Amain
    :alt: GH-CI
 
-.. |codecov| image:: https://img.shields.io/codecov/c/github/ansys/saf-sdk-testing
-   :target: https://app.codecov.io/gh/ansys/saf-sdk-testing
+.. |codecov| image:: https://img.shields.io/codecov/c/github/ansys/saf?flag=saf-testing
+   :target: https://app.codecov.io/gh/ansys/saf?flags[0]=saf-testing
    :alt: Codecov
 
 .. |Apache| image:: https://img.shields.io/badge/License-Apache2.0-white.svg?labelColor=black
@@ -66,72 +66,16 @@ This package adheres to strict design principles to ensure reliability and ease 
 Installation
 ============
 
-Ensure you have all the necessary `prerequisites`_. Then, refer to the
-`installation guidelines`_ for detailed instructions on how to install the
-project in your system.
+Ensure you have all the necessary `prerequisites`_.
 
+To install SAF Testing, run:
 
-Documentation
-=============
+.. code-block:: bash
 
-The `official documentation`_ of SAF SDK Testing contains
-the following chapters:
+   pip install ansys-saf-testing
 
-- `Getting started`_. This section provides a brief overview and instructions on
-  how to get started with the project. It typically includes information on how
-  to install the project, set up any necessary dependencies, and run a basic
-  example or test to ensure everything is functioning correctly.
-
-- `User guide`_. The user guide section offers detailed documentation and
-  instructions on how to use the project. It provides comprehensive explanations
-  of the project's features, functionalities, and configuration options. The
-  user guide aims to help users understand the project's concepts, best
-  practices, and recommended workflows.
-
-- `Contribute`_. This section provides guidelines and instructions on how to
-  contribute to the project. It includes information on how to set up the
-  development environment, run tests, submit pull requests, and follow
-  contribution guidelines.
-
-
-Troubleshooting
-===============
-
-For troubleshooting or reporting issues, open an issue in the project
-repository.
-
-Follow these steps to report an issue:
-
-- Go to the project repository.
-- Click on the ``Issues`` tab.
-- Click on the ``New Issue`` button.
-- Provide a clear and detailed description of the issue you are facing.
-- Include any relevant error messages, code snippets, or screenshots.
-
-Additionally, you can refer to the `official documentation`_ for additional
-resources and troubleshooting guides.
-
-
-License
-=======
-
-This project is licensed under the Apache 2.0 License - see the `LICENSE`_ file for details.
-
-
-Changelog
-=========
-
-The changelog section provides a summary of notable changes for each version of
-SAF SDK Testing for Python. It helps you keep track of updates, bug
-fixes, new features, and improvements made to the project over time.
-
-To view the complete changelog, visit the project repository and navigate
-to the `CHANGELOG`_ file. It provides a comprehensive list of changes
-categorized by version, along with brief descriptions of each change.
-
-
-Getting Started
-===============
+Getting started
+---------------
 
 Add to your package's ``pyproject.toml``:
 
@@ -153,7 +97,7 @@ For methods, just import them when needed. Example:
     from ansys.saf.testing.selenium import wait_for_element_to_be_clickable, wait_for_partial_text
 
 Extra groups
-===============
+------------
 
 - ``selenium``: if you want to use Selenium-related fixtures and methods.
 - ``hps``: if you want to use fixtures and methods for HPS-related testing.
@@ -161,12 +105,58 @@ Extra groups
 - ``pim``: if you want to use fixtures and methods for PIM light server testing.
 
 
-.. _prerequisites: https://saf-sdk-testing.docs.solutions.ansys.com/version/stable/getting-started#prerequisites
-.. _installation guidelines: https://saf-sdk-testing.docs.solutions.ansys.com/version/stable/getting-started#installation
+Documentation
+=============
 
-.. _official documentation: https://saf-sdk-testing.docs.solutions.ansys.com
-.. _Getting started: https://saf-sdk-testing.docs.solutions.ansys.com/version/stable/getting-started.html
-.. _User guide: https://saf-sdk-testing.docs.solutions.ansys.com/version/stable/user-guide.html
-.. _Contribute: https://saf-sdk-testing.docs.solutions.ansys.com/version/stable/contribute.html
-.. _LICENSE: https://github.com/ansys/saf-sdk-testing/blob/main/LICENSE
-.. _CHANGELOG: https://github.com/ansys/saf-sdk-testing/blob/main/CHANGELOG.md
+Visit the `official documentation`_ for detailed information on how to use SAF Testing.
+
+
+Troubleshooting
+===============
+
+For troubleshooting or reporting issues, please open an issue in the `project repository`_.
+
+Please follow these steps to report an issue:
+
+- Go to the project repository.
+- Click on the ``Issues`` tab.
+- Click on the ``New Issue`` button.
+- Provide a clear and detailed description of the issue you are facing.
+- Include any relevant error messages, code snippets, or screenshots.
+
+Additionally, you can refer to the `official documentation`_ for additional
+resources and troubleshooting guides.
+
+
+Contribute
+==========
+
+Contributions are welcome!
+If you would like to contribute, please follow the guidelines provided in the `Contribute`_
+section of the official documentation.
+
+
+License
+=======
+
+You can find the full text of the license in the `LICENSE`_ file.
+
+
+Changelog
+=========
+
+The changelog section provides a summary of notable changes for each version of
+SAF SDK Testing for Python. It helps you keep track of updates, bug
+fixes, new features, and improvements made to the project over time.
+
+To view the complete changelog, visit the project repository and navigate
+to the `CHANGELOG`_ file. It provides a comprehensive list of changes
+categorized by version, along with brief descriptions of each change.
+
+
+.. _official documentation: https://saf.ansys.com/
+.. _project repository: https://github.com/ansys/saf/
+.. _prerequisites: https://saf.ansys.com/version/stable/getting_started/prerequisites/index.html
+.. _Contribute: https://saf.ansys.com/version/stable/contribute/index.html
+.. _LICENSE: https://github.com/ansys/saf/blob/main/packages/saf-testing/LICENSE
+.. _CHANGELOG: https://github.com/ansys/saf/blob/main/packages/saf-testing/CHANGELOG.md

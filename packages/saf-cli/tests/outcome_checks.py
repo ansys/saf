@@ -21,13 +21,13 @@ import platform
 import subprocess
 import sys
 
-from ansys.saf.testing.common import find_exec_in_venv
 import httpx2
 import tomlkit
 
 from ansys.saf.cli._config.const import DEFAULT_SOLUTION_NAME, DEFAULT_SOLUTION_NAMESPACE, SOLUTION_TEMPLATE_PATH
 from ansys.saf.cli._database.models import SolutionRegistry
 from ansys.saf.cli._utilities.conversion import namespace_to_path
+from ansys.saf.testing.common import find_exec_in_venv
 
 ################################################# Solution Scaffolding #################################################
 
@@ -370,7 +370,7 @@ def _check_poetry_version(solution_path: Path) -> None:
 
 
 def _check_saf_cli_version(solution_path: Path) -> None:
-    saf_executable_path = Path(sys.executable).parent / ("saf.cmd" if platform.system() == "Windows" else "saf")
+    saf_executable_path = Path(sys.executable).parent / ("saf.exe" if platform.system() == "Windows" else "saf")
     cmd = [saf_executable_path, "--version"]
     saf_cli_version = subprocess.check_output(cmd, text=True).strip()
     pyproject_data = tomlkit.loads((solution_path / "pyproject.toml").read_bytes()).unwrap()

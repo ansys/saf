@@ -15,6 +15,7 @@ dependencies = [
   "ansys-bdm-api",
   "ansys-bdm-shared-volume",
   "ansys-iam-oidc",
+  "ansys-saf-cli",
   "ansys-saf-desktop-installer",
   "ansys-saf-desktop-orchestrator",
   "ansys-saf-glow-engine[all]",
@@ -34,10 +35,6 @@ dev = [
   { include-group = "doc" },
   { include-group = "style-desktop-installer" },
   { include-group = "tests" },
-  { include-group = "tests-desktop-installer" },
-  { include-group = "tests-saf-desktop-orchestrator" },
-  { include-group = "tests-saf-product-manager" },
-  { include-group = "tests-glow-engine" },
 ]
 doc = [
   "ansys-sphinx-theme[autoapi]>=1.9; python_version>='3.12'",
@@ -109,13 +106,21 @@ tests-glow-engine = [
   "toml>=0.10.2,<2.0",
   "waitress>=3.0.1,<4.0",
 ]
+tests-saf-cli = [
+  "ansys-solutions-dash-super-components>=1.0.0,<2.0",
+  "dash-bootstrap-components>=1.2,<2.0",
+  "dash-mantine-components>=2.6.0,<3.0",
+  "psutil>=7.2.2,<8.0",
+  "pywinpty>=3.0.5,<4.0; sys_platform=='win32'",
+]
 tests-saf-desktop-orchestrator = [
+  "ansys-saf-projects-dashboard>=0.2.0,<1.0",
   "dash>=3.4.0",
   "dash-extensions>=2.0.5,<3.0",
   "fastapi>=0.120.2,<1.0",
   "pandas>=1.1.0,<4.0",
-  "streamlit>=1.58.0,<2.0",                # For Streamlit-based UI server.
-  "streamlit-antd-components>=0.3.2,<1.0", # typical in Streamlit-based apps
+  "streamlit>=1.58.0,<2.0",                   # For Streamlit-based UI server.
+  "streamlit-antd-components>=0.3.2,<1.0",    # typical in Streamlit-based apps
   "tenacity>=8.5.0,<9",
 ]
 tests-saf-product-manager = [
@@ -128,9 +133,13 @@ tests-saf-product-manager = [
 py-modules = []
 
 [tool.uv]
+override-dependencies = [
+  { package = { name = "ansys-solutions-dash-super-components" }, dependencies = [ "dash>=2.18.2,<4.0" ] },
+]
 sources.ansys-bdm-api = { workspace = true }
 sources.ansys-bdm-shared-volume = { workspace = true }
 sources.ansys-iam-oidc = { workspace = true }
+sources.ansys-saf-cli = { workspace = true }
 sources.ansys-saf-desktop-installer = { workspace = true }
 sources.ansys-saf-desktop-orchestrator = { workspace = true }
 sources.ansys-saf-glow-engine = { workspace = true }
@@ -143,6 +152,7 @@ workspace.members = [
   "packages/bdm-python-api",
   "packages/bdm-python-shared-volume",
   "packages/glow-engine",
+  "packages/saf-cli",
   "packages/saf-desktop-installer",
   "packages/saf-desktop-orchestrator",
   "packages/saf-iam-oidc",
@@ -161,7 +171,10 @@ extend-exclude = [
   "*_pb2.py",
   "*_pb2_grpc.py",
   "conf.py",
+  "conf.py",
   "packages/**/[{][{]cookiecutter.*",     # Ignore files containing cookiecutter syntax
+  "packages/**/_solutions/templates/**",  # Ignore files containing cookiecutter syntax
+  "packages/**/tests/mocks/plugin/",      # Ignore files containing cookiecutter syntax
 ]
 # in same order as in https://docs.astral.sh/ruff/rules
 lint.select = [
@@ -226,13 +239,17 @@ lint.isort.known-first-party = [
   "ansys.solutions",
 ]
 
+[tool.bandit]
+exclude_dirs = [ "**/tests" ]
+
 [tool.pyright]
 pythonVersion = "3.12"
 venv = ".venv"
 venvPath = "."
-strict = [ "benchmarks", "src", "tests" ]
+strict = [ "benchmarks", "scripts", "src", "tests" ]
 include = [
   "benchmarks",
+  "scripts",
   "src",
   "tests",
 ]
@@ -241,7 +258,16 @@ exclude = [
   "**/*_pb2_grpc.py",
   "**/*{{cookiecutter*/**",
   "**/.venv",
+  "**/_solutions/templates/",                                          # Ignore files containing cookiecutter syntax
   "**/{{cookiecutter.project_slug}}",
+  "packages/saf-cli/tests/mocks/pages/first_page_with_file_output.py",
+  "packages/saf-cli/tests/mocks/pages/first_page_with_hps.py",
+  "packages/saf-cli/tests/mocks/pages/first_page_with_minerva.py",
+  "packages/saf-cli/tests/mocks/plugin/",                              # Ignore files containing cookiecutter syntax
+  "packages/saf-cli/tests/mocks/steps/first_step_with_file_output.py",
+  "packages/saf-cli/tests/mocks/steps/first_step_with_hps.py",
+  "packages/saf-cli/tests/mocks/steps/first_step_with_minerva.py",
+  "packages/saf-cli/tests/unit/mocks/solutions/",
 ]
 extraPaths = [ "src" ]
 

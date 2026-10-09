@@ -19,8 +19,9 @@ from pathlib import Path
 import platform
 import subprocess
 
-from ansys.saf.testing.process import Process
 import httpx2
+
+from ansys.saf.testing.process import Process
 
 
 class SolutionShortcutPythonwProcess(Process):

@@ -15,12 +15,14 @@
 # limitations under the License.
 
 from collections.abc import Generator
+import importlib
 import os
 from pathlib import Path
 import platform
 import re
 import shutil
 import subprocess
+import sys
 from unittest.mock import MagicMock, patch
 
 from click.testing import CliRunner
@@ -50,7 +52,7 @@ from ansys.saf.cli._config.const import (
 from ansys.saf.cli._database.models import SolutionRegistry
 from ansys.saf.cli._solutions.plugins import SafTemplate
 from ansys.saf.cli._utilities.solution_modules import get_solution_venv_bin_dir
-from tests.conftest import get_template_path, get_template_plugin_path
+from tests.conftest import _generate_plugin, get_template_path, get_template_plugin_path
 
 CLI_COMMANDS_FOR_A_SOLUTION = ["add-step", "archive", "build", "execute", "install", "run"]
 
@@ -939,7 +941,7 @@ def test_saf_new_with_solution_name(tmp_path_as_working_dir: Path, mocker: pytes
     solution_name = "my-custom-solution"
     solution_display_name = "My Solution"
     ui_framework = "dash"
-    result = runner.invoke(saf, ["new"], input=f"{solution_name}\n\n\n")
+    result = runner.invoke(saf, ["new"], input=f"{solution_name}\n\n\n\n")
     assert result.exit_code == 0
     # create_solution is called with the right arguments
     mocked_create_solution.assert_called_once_with(
@@ -973,6 +975,7 @@ def test_saf_new_with_solution_name_and_solution_display_name(
     result = runner.invoke(
         saf,
         ["new", "--solution-name", solution_name, "--solution-display-name", solution_display_name],
+        input="\n\n",
     )
     assert result.exit_code == 0
     # create_solution is called with the right arguments
@@ -1016,6 +1019,7 @@ def test_saf_new_with_solution_name_and_solution_display_name_no_ui(
             "--ui-framework",
             ui_framework,
         ],
+        input="\n",
     )
     assert result.exit_code == 0
     # create_solution is called with the right arguments
@@ -1059,6 +1063,7 @@ def test_saf_new_with_solution_name_and_solution_display_name_dash_ui(
             "--ui-framework",
             ui_framework,
         ],
+        input="\n",
     )
     assert result.exit_code == 0
     # create_solution is called with the right arguments
@@ -1088,7 +1093,7 @@ def test_saf_new_with_solution_name_and_no_ui(tmp_path_as_working_dir: Path, moc
     solution_name = "my-custom-solution"
     solution_display_name = "My Solution"
     ui_framework = "none"
-    result = runner.invoke(saf, ["new", "--solution-name", solution_name, "--ui-framework", ui_framework])
+    result = runner.invoke(saf, ["new", "--solution-name", solution_name, "--ui-framework", ui_framework], input="\n\n")
     assert result.exit_code == 0
     # create_solution is called with the right arguments
     mocked_create_solution.assert_called_once_with(
@@ -1117,7 +1122,7 @@ def test_saf_new_with_solution_name_and_dash_ui(tmp_path_as_working_dir: Path, m
     solution_name = "my-custom-solution"
     solution_display_name = "My Solution"
     ui_framework = "dash"
-    result = runner.invoke(saf, ["new", "--solution-name", solution_name, "--ui-framework", ui_framework])
+    result = runner.invoke(saf, ["new", "--solution-name", solution_name, "--ui-framework", ui_framework], input="\n\n")
     assert result.exit_code == 0
     # create_solution is called with the right arguments
     mocked_create_solution.assert_called_once_with(
@@ -1146,7 +1151,7 @@ def test_saf_new_with_solution_display_name(tmp_path_as_working_dir: Path, mocke
     solution_name = "my_solution"
     solution_display_name = "My Custom Solution"
     ui_framework = "dash"
-    result = runner.invoke(saf, ["new", "--solution-display-name", solution_display_name])
+    result = runner.invoke(saf, ["new", "--solution-display-name", solution_display_name], input="\n\n\n")
     assert result.exit_code == 0
     # create_solution is called with the right arguments
     mocked_create_solution.assert_called_once_with(
@@ -1174,6 +1179,7 @@ def test_saf_new_with_solution_display_name_and_no_ui(tmp_path_as_working_dir: P
     result = runner.invoke(
         saf,
         ["new", "--solution-display-name", solution_display_name, "--ui-framework", ui_framework],
+        input="\n\n",
     )
     assert result.exit_code == 0
     # create_solution is called with the right arguments
@@ -1202,6 +1208,7 @@ def test_saf_new_with_solution_display_name_and_dash_ui(tmp_path_as_working_dir:
     result = runner.invoke(
         saf,
         ["new", "--solution-display-name", solution_display_name, "--ui-framework", ui_framework],
+        input="\n\n",
     )
     assert result.exit_code == 0
     # create_solution is called with the right arguments
@@ -1227,7 +1234,7 @@ def test_saf_new_with_no_ui(tmp_path_as_working_dir: Path, mocker: pytest_mock.M
     solution_name = "my_solution"
     solution_display_name = "My Solution"
     ui_framework = "none"
-    result = runner.invoke(saf, ["new", "--ui-framework", ui_framework])
+    result = runner.invoke(saf, ["new", "--ui-framework", ui_framework], input="\n\n\n")
     assert result.exit_code == 0
     # create_solution is called with the right arguments
     mocked_create_solution.assert_called_once_with(
@@ -1252,7 +1259,7 @@ def test_saf_new_with_dash_ui(tmp_path_as_working_dir: Path, mocker: pytest_mock
     solution_name = "my_solution"
     solution_display_name = "My Solution"
     ui_framework = "dash"
-    result = runner.invoke(saf, ["new", "--ui-framework", ui_framework])
+    result = runner.invoke(saf, ["new", "--ui-framework", ui_framework], input="\n\n\n")
     assert result.exit_code == 0
     # create_solution is called with the right arguments
     mocked_create_solution.assert_called_once_with(
@@ -1277,7 +1284,7 @@ def test_saf_new_prompt_all_defaults(tmp_path_as_working_dir: Path, mocker: pyte
     solution_name = "my_solution"
     solution_display_name = "My Solution"
     ui_framework = "dash"
-    result = runner.invoke(saf, ["new"])
+    result = runner.invoke(saf, ["new"], input="\n\n\n\n")
     assert result.exit_code == 0
     # create_solution is called with the right arguments
     mocked_create_solution.assert_called_once_with(
@@ -1302,7 +1309,7 @@ def test_saf_new_prompt_custom_solution_name(tmp_path_as_working_dir: Path, mock
     solution_name = "my-custom-solution"
     solution_display_name = "My Solution"
     ui_framework = "dash"
-    result = runner.invoke(saf, ["new"], input=f"{solution_name}")
+    result = runner.invoke(saf, ["new"], input=f"{solution_name}\n\n\n\n")
     assert result.exit_code == 0
     # create_solution is called with the right arguments
     mocked_create_solution.assert_called_once_with(
@@ -1334,7 +1341,7 @@ def test_saf_new_prompt_custom_solution_name_and_solution_display_name(
     solution_name = "my-custom-solution"
     solution_display_name = "My Custom Solution"
     ui_framework = "dash"
-    result = runner.invoke(saf, ["new"], input=f"{solution_name}\n{solution_display_name}\n")
+    result = runner.invoke(saf, ["new"], input=f"{solution_name}\n{solution_display_name}\n\n\n")
     assert result.exit_code == 0
     # create_solution is called with the right arguments
     mocked_create_solution.assert_called_once_with(
@@ -1366,7 +1373,7 @@ def test_saf_new_prompt_custom_solution_name_and_solution_display_name_and_no_ui
     solution_name = "my-custom-solution"
     solution_display_name = "My Custom Solution"
     ui_framework = "none"
-    result = runner.invoke(saf, ["new"], input=f"{solution_name}\n{solution_display_name}\n{ui_framework}\n")
+    result = runner.invoke(saf, ["new"], input=f"{solution_name}\n{solution_display_name}\n{ui_framework}\n\n")
     assert result.exit_code == 0
     # create_solution is called with the right arguments
     mocked_create_solution.assert_called_once_with(
@@ -1397,9 +1404,8 @@ def test_saf_new_prompt_custom_solution_name_and_solution_display_name_and_dash_
     # when running new with a solution name
     solution_name = "my-custom-solution"
     solution_display_name = "My Custom Solution"
-    ui_framework_str = "1"
     ui_framework = "dash"
-    result = runner.invoke(saf, ["new"], input=f"{solution_name}\n{solution_display_name}\n{ui_framework_str}")
+    result = runner.invoke(saf, ["new"], input=f"{solution_name}\n{solution_display_name}\n{ui_framework}\n\n")
     assert result.exit_code == 0
     # create_solution is called with the right arguments
     mocked_create_solution.assert_called_once_with(
@@ -1428,7 +1434,7 @@ def test_saf_new_prompt_custom_solution_name_and_no_ui(tmp_path_as_working_dir: 
     solution_name = "my-custom-solution"
     solution_display_name = "My Solution"
     ui_framework = "none"
-    result = runner.invoke(saf, ["new"], input=f"{solution_name}\n\n{ui_framework}")
+    result = runner.invoke(saf, ["new"], input=f"{solution_name}\n\n{ui_framework}\n\n")
     assert result.exit_code == 0
     # create_solution is called with the right arguments
     mocked_create_solution.assert_called_once_with(
@@ -1459,9 +1465,8 @@ def test_saf_new_prompt_custom_solution_name_and_dash_ui(
     # when running new with a solution name
     solution_name = "my-custom-solution"
     solution_display_name = "My Solution"
-    ui_framework_str = "1"
     ui_framework = "dash"
-    result = runner.invoke(saf, ["new"], input=f"{solution_name}\n\n{ui_framework_str}")
+    result = runner.invoke(saf, ["new"], input=f"{solution_name}\n\n{ui_framework}\n\n")
     assert result.exit_code == 0
     # create_solution is called with the right arguments
     mocked_create_solution.assert_called_once_with(
@@ -1490,7 +1495,7 @@ def test_saf_new_prompt_custom_solution_display_name(tmp_path_as_working_dir: Pa
     solution_name = "my_solution"
     solution_display_name = "My Solution"
     ui_framework = "dash"
-    result = runner.invoke(saf, ["new"], input=f"\n{solution_display_name}")
+    result = runner.invoke(saf, ["new"], input=f"\n{solution_display_name}\n\n\n")
     assert result.exit_code == 0
     # create_solution is called with the right arguments
     mocked_create_solution.assert_called_once_with(
@@ -1518,7 +1523,7 @@ def test_saf_new_prompt_custom_solution_display_name_and_no_ui(
     solution_name = "my_solution"
     solution_display_name = "My Custom Solution"
     ui_framework = "none"
-    result = runner.invoke(saf, ["new"], input=f"\n{solution_display_name}\n{ui_framework}")
+    result = runner.invoke(saf, ["new"], input=f"\n{solution_display_name}\n{ui_framework}\n\n")
     assert result.exit_code == 0
     # create_solution is called with the right arguments
     mocked_create_solution.assert_called_once_with(
@@ -1545,9 +1550,8 @@ def test_saf_new_prompt_custom_solution_display_name_and_dash_ui(
     # when running new with a solution name
     solution_name = "my_solution"
     solution_display_name = "My Custom Solution"
-    ui_framework_str = "1"
     ui_framework = "dash"
-    result = runner.invoke(saf, ["new"], input=f"\n{solution_display_name}\n{ui_framework_str}")
+    result = runner.invoke(saf, ["new"], input=f"\n{solution_display_name}\n{ui_framework}\n\n")
     assert result.exit_code == 0
     # create_solution is called with the right arguments
     mocked_create_solution.assert_called_once_with(
@@ -1572,7 +1576,7 @@ def test_saf_new_prompt_no_ui(tmp_path_as_working_dir: Path, mocker: pytest_mock
     solution_name = "my_solution"
     solution_display_name = "My Solution"
     ui_framework = "none"
-    result = runner.invoke(saf, ["new"], input=f"\n\n{ui_framework}")
+    result = runner.invoke(saf, ["new"], input=f"\n\n{ui_framework}\n\n")
     assert result.exit_code == 0
     # create_solution is called with the right arguments
     mocked_create_solution.assert_called_once_with(
@@ -1596,9 +1600,8 @@ def test_saf_new_prompt_dash_ui(tmp_path_as_working_dir: Path, mocker: pytest_mo
     # when running new with a solution name
     solution_name = "my_solution"
     solution_display_name = "My Solution"
-    ui_framework_str = "1"
     ui_framework = "dash"
-    result = runner.invoke(saf, ["new"], input=f"\n\n{ui_framework_str}")
+    result = runner.invoke(saf, ["new"], input=f"\n\n{ui_framework}\n\n")
     assert result.exit_code == 0
     # create_solution is called with the right arguments
     mocked_create_solution.assert_called_once_with(
@@ -1621,7 +1624,7 @@ def test_saf_new_with_invalid_solution_name(mocker: pytest_mock.MockFixture):
     runner = CliRunner()
     # when running new with a solution name that is invalid
     solution_name = "my_/solution"
-    result = runner.invoke(saf, ["new", "--solution-name", solution_name])
+    result = runner.invoke(saf, ["new", "--solution-name", solution_name], input="\n\n\n")
     assert "Value error, Solution name contains invalid characters" in result.output
     assert result.exit_code == 1
     # create_solution is not called
@@ -1643,6 +1646,7 @@ def test_saf_new_with_valid_namespace_root(tmp_path_as_working_dir: Path, mocker
     result = runner.invoke(
         saf,
         ["new", "--namespace", namespace],
+        input="\n\n\n",
     )
 
     assert result.exit_code == 0
@@ -1701,7 +1705,7 @@ def test_saf_new_with_existing_solution_name_in_cwd(tmp_path_as_working_dir: Pat
     solution_name = "my-solution"
     solution_display_name = "My Solution"
     ui_framework = "dash"
-    result = runner.invoke(saf, ["new", "--solution-name", solution_name])
+    result = runner.invoke(saf, ["new", "--solution-name", solution_name], input="\n\n\n")
     assert result.exit_code == 0
     mocked_create_solution.assert_called_with(
         solution_name,
@@ -1712,7 +1716,7 @@ def test_saf_new_with_existing_solution_name_in_cwd(tmp_path_as_working_dir: Pat
     expected_solution_path = tmp_path_as_working_dir / solution_name
     expected_solution_path.mkdir()
     # the second call fails
-    result = runner.invoke(saf, ["new", "--solution-name", solution_name])
+    result = runner.invoke(saf, ["new", "--solution-name", solution_name], input="\n\n\n")
     assert result.exit_code == 1
     assert f"A file or directory already exists at {expected_solution_path}" in result.output
     # but create_solution was called with the right arguments
@@ -1741,7 +1745,7 @@ def test_saf_new_leaves_user_info_untouched(tmp_path_as_working_dir: Path, mocke
     solution_name = "My-custOm_Sölution for TESTS !!"
     solution_display_name = "My Solution"
     ui_framework = "dash"
-    result = runner.invoke(saf, ["new"], input=f"{solution_name}\n\n\n")
+    result = runner.invoke(saf, ["new"], input=f"{solution_name}\n\n\n\n")
     assert result.exit_code == 0
     # create_solution is called with the right arguments
     mocked_create_solution.assert_called_once_with(
@@ -1767,7 +1771,7 @@ def test_saf_new_invalid_db_raise_error(database_path: Path):
     )
     runner = CliRunner()
     solution_name = "solution"
-    result = runner.invoke(saf, ["new"], input=f"{solution_name}\n\n\n")
+    result = runner.invoke(saf, ["new"], input=f"{solution_name}\n\n\n\n")
     assert result.exit_code == 1
     assert "The solution database is invalid." in result.output
     assert "You may need to delete it from " in result.output
@@ -1782,7 +1786,7 @@ def test_saf_new_invalid_db_does_not_create_solution(mocker: pytest_mock.MockFix
 
     runner = CliRunner()
     solution_name = "solution"
-    runner.invoke(saf, ["new"], input=f"{solution_name}\n\n\n")
+    runner.invoke(saf, ["new"], input=f"{solution_name}\n\n\n\n")
     mocked_store.assert_not_called()
     mocked_create_solution.assert_not_called()
 
@@ -1808,7 +1812,7 @@ def test_saf_new_removes_scaffolded_solution_on_db_error(mocker: pytest_mock.Moc
 
     runner = CliRunner()
     # when running new and an exception happens when registering the solution in the DB
-    result = runner.invoke(saf, ["new"], input="\n\n\n")
+    result = runner.invoke(saf, ["new"], input="\n\n\n\n")
     assert "Error: Database error" in result.output
     assert result.exit_code == 1
     # create_solution is called with the right arguments
@@ -1851,7 +1855,11 @@ def test_saf_resolves_solution_arg_using_registered_solution_names(
     mocker.patch("ansys.saf.cli._cli.main.SolutionDatabaseManager.get_solution_by_root_dir", return_value=solutions[0])
 
     runner = CliRunner()
-    result = runner.invoke(saf, [command, "my-solution"] + (["fake_bin"] if command == "execute" else []))
+    result = runner.invoke(
+        saf,
+        [command, "my-solution"] + (["fake_bin"] if command == "execute" else []),
+        input="\n\n\n",
+    )
     assert result.exit_code == 0
     mocked_store.assert_not_called()
 
@@ -1883,7 +1891,11 @@ def test_saf_resolves_solution_arg_using_relative_path_and_registers_it_in_the_d
     mocker.patch("ansys.saf.cli._cli.main.SolutionDatabaseManager.get_solution_by_root_dir", return_value=None)
 
     runner = CliRunner()
-    result = runner.invoke(saf, [command, "./my-solution"] + (["fake_bin"] if command == "execute" else []))
+    result = runner.invoke(
+        saf,
+        [command, "./my-solution"] + (["fake_bin"] if command == "execute" else []),
+        input="\n\n\n",
+    )
     assert result.exit_code == 0
     mocked_store.assert_called_once_with(
         SolutionRegistry(name="my-solution", root_dir=tmp_path / "my-solution", display_name="My Solution"),
@@ -1919,6 +1931,7 @@ def test_saf_resolves_solution_arg_using_absolute_path_and_registers_it_in_the_d
     result = runner.invoke(
         saf,
         [command, (tmp_path / "my-solution").as_posix()] + (["fake_bin"] if command == "execute" else []),
+        input="\n\n\n",
     )
     assert result.exit_code == 0
     mocked_store.assert_called_once_with(
@@ -1954,7 +1967,7 @@ def test_saf_resolves_solution_arg_using_cwd_and_registers_it_in_the_database(
     mocker.patch("ansys.saf.cli._cli.main.SolutionDatabaseManager.get_solution_by_root_dir", return_value=None)
 
     runner = CliRunner()
-    result = runner.invoke(saf, [command] + (["fake_bin"] if command == "execute" else []))
+    result = runner.invoke(saf, [command] + (["fake_bin"] if command == "execute" else []), input="\n\n\n")
     assert result.exit_code == 0
     mocked_store.assert_called_once_with(
         SolutionRegistry(name="my-solution", root_dir=tmp_path / "my-solution", display_name="My Solution"),
@@ -2106,6 +2119,7 @@ def test_add_step_existing_step_name_via_prompt(
     result = runner.invoke(
         saf,
         ["add-step", "--ui-framework", ui_framework, "--template", "calculator-step"],
+        input="\n\n",
     )
     assert result.exit_code == 0
     assert (
@@ -2128,7 +2142,7 @@ def test_add_step_handles_exception(mocked_add_step: MagicMock):
     mocked_add_step.side_effect = Exception("Mock Error")
 
     runner = CliRunner()
-    result = runner.invoke(saf, ["add-step"])
+    result = runner.invoke(saf, ["add-step"], input="\n\n\n")
     assert "Exception: Mock Error" in result.output
     assert result.exit_code == 1
 
@@ -2138,7 +2152,7 @@ def test_add_step_no_plugin(mocker: pytest_mock.MockFixture):
     mocker.patch("ansys.saf.cli._solutions.plugins.entry_points", return_value=[])
 
     runner = CliRunner()
-    result = runner.invoke(saf, ["add-step"])
+    result = runner.invoke(saf, ["add-step"], input="\n\n\n")
     assert "No template plugins found." in result.output
     assert result.exit_code == 1
 
@@ -2154,7 +2168,7 @@ def test_add_step_invalid_template(mocker: pytest_mock.MockFixture):
     )
 
     runner = CliRunner()
-    result = runner.invoke(saf, ["add-step"])
+    result = runner.invoke(saf, ["add-step"], input="\n\n\n")
     assert result.exit_code == 1
     assert "1 validation error for SafTemplate" in result.output
     assert "Template 'calculator-step' in plugin module 'ansys.saf.templates' is invalid" in result.output
@@ -2168,7 +2182,7 @@ def test_add_step_template_is_not_step(mocker: pytest_mock.MockFixture):
     mocker.patch("ansys.saf.cli._cli.main.resolve_template", return_value=mock_ep)
 
     runner = CliRunner()
-    result = runner.invoke(saf, ["add-step"])
+    result = runner.invoke(saf, ["add-step"], input="\n\n\n")
     assert "Template 'calculator-step' is of type 'not_a_step', expected 'step'" in result.output
     assert result.exit_code == 1
 
@@ -2179,7 +2193,7 @@ def test_add_step_no_templates_in_required_plugin(mocker: pytest_mock.MockFixtur
     mocker.patch("ansys.saf.cli._solutions.plugins.tomlkit.loads", return_value={})
 
     runner = CliRunner()
-    result = runner.invoke(saf, ["add-step", "--template", "second-step"])
+    result = runner.invoke(saf, ["add-step", "--template", "second-step"], input="\n\n")
     assert "Could not find a valid template for template name 'second-step'." in result.output
     assert result.exit_code == 1
 
@@ -2192,7 +2206,7 @@ def test_add_step_no_templates_in_another_plugin(
     default_saf_step_template: SafTemplate,
 ):
     runner = CliRunner()
-    result = runner.invoke(saf, ["add-step"])
+    result = runner.invoke(saf, ["add-step"], input="\n\n\n")
     assert "Could not find a valid template for template name 'calculator-step'." not in result.output
     assert result.exit_code == 0
     mocked_add_step.assert_called_once_with(
@@ -2209,7 +2223,7 @@ def test_add_step_no_templates_in_another_plugin(
 @pytest.mark.usefixtures("install_custom_template_plugin_no_toml")
 def test_add_step_no_templates_toml_in_required_plugin():
     runner = CliRunner()
-    result = runner.invoke(saf, ["add-step", "--template", "second-step"])
+    result = runner.invoke(saf, ["add-step", "--template", "second-step"], input="\n\n")
     assert "Could not find a valid template for template name 'second-step'." in result.output
     assert result.exit_code == 1
 
@@ -2222,7 +2236,7 @@ def test_add_step_no_templates_toml_in_another_plugin(
     default_saf_step_template: SafTemplate,
 ):
     runner = CliRunner()
-    result = runner.invoke(saf, ["add-step"])
+    result = runner.invoke(saf, ["add-step"], input="\n\n\n")
     assert "Could not find a valid template for template name 'calculator-step'." not in result.output
     assert result.exit_code == 0
     mocked_add_step.assert_called_once_with(
@@ -2238,7 +2252,7 @@ def test_add_step_no_templates_toml_in_another_plugin(
 @pytest.mark.usefixtures("mocked_stored_solution", "mocked_solution_module")
 def test_add_step_no_solution_definition(mocked_stored_solution: SolutionRegistry):
     runner = CliRunner()
-    result = runner.invoke(saf, ["add-step"])
+    result = runner.invoke(saf, ["add-step"], input="\n\n\n")
     assert f"Solution source directory not found at {mocked_stored_solution.root_dir / 'src'}" in result.output
     assert result.exit_code == 1
 
@@ -2253,7 +2267,7 @@ def test_add_step_with_default_step_name(
     custom_saf_step_template: SafTemplate,
 ):
     runner = CliRunner()
-    result = runner.invoke(saf, ["add-step", "--ui-framework", ui_framework, "--template", "second-step"])
+    result = runner.invoke(saf, ["add-step", "--ui-framework", ui_framework, "--template", "second-step"], input="\n")
     assert result.exit_code == 0
     mocked_add_step.assert_called_once_with(
         mocked_stored_solution.name,
@@ -2275,7 +2289,7 @@ def test_add_step_with_default_ui_framework(
     runner = CliRunner()
     step_name = "my_step"
     assert step_name != DEFAULT_STEP_NAME
-    result = runner.invoke(saf, ["add-step", "--step-name", step_name, "--template", "second-step"])
+    result = runner.invoke(saf, ["add-step", "--step-name", step_name, "--template", "second-step"], input="\n")
     assert result.exit_code == 0
     mocked_add_step.assert_called_once_with(
         mocked_stored_solution.name,
@@ -2295,7 +2309,7 @@ def test_add_step_with_default_step_name_and_ui(
     custom_saf_step_template: SafTemplate,
 ):
     runner = CliRunner()
-    result = runner.invoke(saf, ["add-step", "--template", "second-step"])
+    result = runner.invoke(saf, ["add-step", "--template", "second-step"], input="\n\n")
     assert result.exit_code == 0
     mocked_add_step.assert_called_once_with(
         mocked_stored_solution.name,
@@ -2305,6 +2319,27 @@ def test_add_step_with_default_step_name_and_ui(
         DEFAULT_UI_FRAMEWORK,
         custom_saf_step_template,
     )
+
+
+def test_generated_plugin_is_importable_in_new_namespace_directory(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    mocker: pytest_mock.MockFixture,
+):
+    module_name = "test_namespace_cache_plugin"
+    qualified_name = f"ansys.saf.{module_name}"
+    monkeypatch.syspath_prepend(str(tmp_path))
+    assert importlib.util.find_spec(qualified_name) is None  # pyright: ignore[reportAttributeAccessIssue]
+    plugin_path = tmp_path / "ansys" / "saf" / module_name
+    mocker.patch("tests.conftest.get_template_plugin_path", return_value=plugin_path)
+
+    _generate_plugin(module_name)
+
+    try:
+        plugin_module = importlib.import_module(qualified_name)
+        assert plugin_module.get_plugin_path() == plugin_path
+    finally:
+        sys.modules.pop(qualified_name, None)
 
 
 def test_list_registered_templates_no_plugin(mocker: pytest_mock.MockFixture):
@@ -2495,7 +2530,7 @@ def test_add_step_with_no_option(
     default_saf_step_template: SafTemplate,
 ):
     runner = CliRunner()
-    result = runner.invoke(saf, ["add-step"])
+    result = runner.invoke(saf, ["add-step"], input="\n\n\n")
     assert result.exit_code == 0
     mocked_add_step.assert_called_once_with(
         mocked_stored_solution.name,
@@ -2517,7 +2552,7 @@ def test_add_step_with_default_step_name_and_template_name(
     default_saf_step_template: SafTemplate,
 ):
     runner = CliRunner()
-    result = runner.invoke(saf, ["add-step", "--ui-framework", ui_framework])
+    result = runner.invoke(saf, ["add-step", "--ui-framework", ui_framework], input="\n\n")
     assert result.exit_code == 0
     mocked_add_step.assert_called_once_with(
         mocked_stored_solution.name,
@@ -2539,7 +2574,7 @@ def test_add_step_with_default_ui_and_template_name(
     runner = CliRunner()
     step_name = "my_step"
     assert step_name != DEFAULT_STEP_NAME
-    result = runner.invoke(saf, ["add-step", "--step-name", step_name])
+    result = runner.invoke(saf, ["add-step", "--step-name", step_name], input="\n\n")
     assert result.exit_code == 0
     mocked_add_step.assert_called_once_with(
         mocked_stored_solution.name,
@@ -2563,7 +2598,7 @@ def test_add_step_with_default_template_name(
     runner = CliRunner()
     step_name = "my_step"
     assert step_name != DEFAULT_STEP_NAME
-    result = runner.invoke(saf, ["add-step", "--step-name", step_name, "--ui-framework", ui_framework])
+    result = runner.invoke(saf, ["add-step", "--step-name", step_name, "--ui-framework", ui_framework], input="\n")
     assert result.exit_code == 0, result.output
     mocked_add_step.assert_called_once_with(
         mocked_stored_solution.name,
@@ -2791,7 +2826,11 @@ def test_saf_commands_outside_virtual_environment(
 ):
     monkeypatch.delenv("VIRTUAL_ENV", raising=False)
     runner = CliRunner()
-    result = runner.invoke(saf, [command, mocked_stored_solution.name] + (["fake_bin"] if command == "execute" else []))
+    result = runner.invoke(
+        saf,
+        [command, mocked_stored_solution.name] + (["fake_bin"] if command == "execute" else []),
+        input="\n\n\n",
+    )
     assert result.exit_code == 0
     assert "VIRTUAL_ENV" not in os.environ
 
@@ -2801,7 +2840,7 @@ def test_saf_version():
     result = runner.invoke(saf, ["--version"])
     assert result.exit_code == 0
     pyproject_data = tomlkit.loads((Path(__file__).parent.parent.parent / "pyproject.toml").read_bytes()).unwrap()
-    expected_version = pyproject_data["tool"]["poetry"]["version"]
+    expected_version = pyproject_data["project"]["version"]
     assert result.output.strip() == expected_version
 
 
@@ -2835,9 +2874,9 @@ def test_saf_version_after_command_raises_error():
     runner = CliRunner()
     result = runner.invoke(saf, ["solutions", "--version"])
     assert result.exit_code == 2
-    assert result.output == (
-        "Usage: saf solutions [OPTIONS]\nTry 'saf solutions --help' for help.\n\nError: No such option: --version\n"
-    )
+    assert result.output.startswith("Usage: saf solutions [OPTIONS]\nTry 'saf solutions --help' for help.\n\n")
+    assert "Error: No such option" in result.output
+    assert "--version" in result.output
 
 
 def test_saf_command_after_version_is_ignored():
@@ -2846,7 +2885,7 @@ def test_saf_command_after_version_is_ignored():
     result = runner.invoke(saf, ["--version", "solutions"])
     assert result.exit_code == 0
     pyproject_data = tomlkit.loads((Path(__file__).parent.parent.parent / "pyproject.toml").read_bytes()).unwrap()
-    expected_version = pyproject_data["tool"]["poetry"]["version"]
+    expected_version = pyproject_data["project"]["version"]
     assert result.output.strip() == expected_version
 
 
@@ -2864,9 +2903,10 @@ def test_saf_new_with_extra_option_raises_error_without_prompting():
     runner = CliRunner()
     result = runner.invoke(saf, ["new", "--extra-option"], input="\n\n\n")
     assert result.exit_code == 2
-    assert result.output == (
-        "Usage: saf new [OPTIONS]\nTry 'saf new --help' for help.\n\nError: No such option: --extra-option\n"
-    )
+    assert result.output.startswith("Usage: saf new [OPTIONS]\nTry 'saf new --help' for help.\n\n")
+    assert "Error: No such option" in result.output
+    assert "--extra-option" in result.output
+    assert "What is" not in result.output
 
 
 @pytest.mark.parametrize("ui_framework", ["dash", "none"])
@@ -2913,7 +2953,7 @@ def test_add_step_backup_manager_exit_called_on_exception(
     )
 
     runner = CliRunner()
-    result = runner.invoke(saf, ["add-step", "--step-name", "my_step"])
+    result = runner.invoke(saf, ["add-step", "--step-name", "my_step"], input="\n\n")
 
     assert result.exit_code == 1
     mock_exit.assert_called_once()

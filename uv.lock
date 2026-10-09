@@ -21,6 +21,7 @@ members = [
     "ansys-bdm-api",
     "ansys-bdm-shared-volume",
     "ansys-iam-oidc",
+    "ansys-saf-cli",
     "ansys-saf-desktop-installer",
     "ansys-saf-desktop-orchestrator",
     "ansys-saf-glow-engine",
@@ -30,6 +31,7 @@ members = [
     "ansys-saf-testing",
     "ansys-saf-workspace",
 ]
+overrides = [{ package = { name = "ansys-solutions-dash-super-components" }, dependencies = [{ name = "dash", specifier = ">=2.18.2,<4.0" }] }]
 
 [[package]]
 name = "accessible-pygments"
@@ -872,6 +874,33 @@ wheels = [
 ]
 
 [[package]]
+name = "ansys-saf-cli"
+version = "4.4.dev0"
+source = { editable = "packages/saf-cli" }
+dependencies = [
+    { name = "ansys-saf-templates" },
+    { name = "chardet" },
+    { name = "click" },
+    { name = "cookiecutter" },
+    { name = "packaging" },
+    { name = "pydantic" },
+    { name = "python-dotenv" },
+    { name = "tomlkit" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "ansys-saf-templates", editable = "packages/saf-templates" },
+    { name = "chardet", specifier = ">=5.2.0,<7" },
+    { name = "click", specifier = ">=8.1.7,<9" },
+    { name = "cookiecutter", specifier = ">=2.6.0,<3" },
+    { name = "packaging", specifier = ">=24.2,<25" },
+    { name = "pydantic", specifier = ">=2.7,<3" },
+    { name = "python-dotenv", specifier = ">=1.0.0,<2" },
+    { name = "tomlkit", specifier = ">=0.14.0,<1.0.0" },
+]
+
+[[package]]
 name = "ansys-saf-desktop-installer"
 version = "1.18.dev0"
 source = { editable = "packages/saf-desktop-installer" }
@@ -1064,7 +1093,7 @@ requires-dist = [
     { name = "uvicorn", specifier = ">=0.24,<1.0" },
     { name = "wsproto", specifier = ">=1.2.0,<2.0" },
 ]
-provides-extras = ["dash", "pim", "all", "hps", "test", "mcp"]
+provides-extras = ["all", "dash", "hps", "mcp", "pim", "test"]
 
 [[package]]
 name = "ansys-saf-product-configuration"
@@ -1403,6 +1432,18 @@ requires-dist = [
 provides-extras = ["aedt", "all", "fluent", "geometry", "mapdl", "mechanical", "optislang-wrapper", "visor"]
 
 [[package]]
+name = "ansys-saf-projects-dashboard"
+version = "0.2.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "dash" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/a1/b2/3abefd06d629304e2db55eec4e720ad2b7a97cb75339a67b62957f8eeb57/ansys_saf_projects_dashboard-0.2.0.tar.gz", hash = "sha256:5243bb821da965424284f70d289cc40b8028bbd66066f7bf47a386ced820b998", size = 393429, upload-time = "2026-10-07T12:38:39.429Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/84/5e/4b7273eaaa82114103ddf39261b88d68f85e12ce0890b655bd5333d072a3/ansys_saf_projects_dashboard-0.2.0-py3-none-any.whl", hash = "sha256:edd8b307abe04c502cca8269124a20aa51fa6ad78bb4ee286489ff87ed4c0e25", size = 408853, upload-time = "2026-10-07T12:38:37.951Z" },
+]
+
+[[package]]
 name = "ansys-saf-templates"
 version = "0.4.dev0"
 source = { editable = "packages/saf-templates" }
@@ -1487,6 +1528,7 @@ dependencies = [
     { name = "ansys-bdm-api" },
     { name = "ansys-bdm-shared-volume" },
     { name = "ansys-iam-oidc" },
+    { name = "ansys-saf-cli" },
     { name = "ansys-saf-desktop-installer" },
     { name = "ansys-saf-desktop-orchestrator" },
     { name = "ansys-saf-glow-engine", extra = ["all"] },
@@ -1498,42 +1540,24 @@ dependencies = [
 
 [package.dev-dependencies]
 dev = [
-    { name = "aiohttp" },
-    { name = "ansys-saf-glow-engine", extra = ["dash", "hps", "pim"] },
-    { name = "ansys-saf-testing", extra = ["selenium"] },
+    { name = "ansys-saf-glow-engine", extra = ["dash"] },
     { name = "ansys-sphinx-theme", extra = ["autoapi"], marker = "python_full_version >= '3.12'" },
-    { name = "asgi-lifespan" },
     { name = "authlib" },
     { name = "autodoc-pydantic", marker = "python_full_version >= '3.12'" },
     { name = "bandit" },
     { name = "click", marker = "python_full_version >= '3.12'" },
     { name = "coverage" },
-    { name = "dash", extra = ["diskcache"] },
     { name = "dash-bootstrap-components" },
-    { name = "dash-extensions" },
     { name = "docker" },
     { name = "docutils", marker = "python_full_version >= '3.12'" },
-    { name = "fastapi" },
     { name = "filelock" },
-    { name = "grpcio-health-checking" },
-    { name = "gunicorn" },
-    { name = "httpx2" },
     { name = "httpx2-pytest" },
     { name = "linkchecker", marker = "python_full_version >= '3.12'" },
     { name = "mock" },
     { name = "nbsphinx", marker = "python_full_version >= '3.12'" },
-    { name = "numpy", version = "2.4.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.12'" },
-    { name = "numpy", version = "2.5.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.12'" },
     { name = "numpydoc", marker = "python_full_version >= '3.12'" },
-    { name = "pandas" },
-    { name = "pillow" },
     { name = "pip" },
-    { name = "plotly" },
-    { name = "poetry" },
     { name = "pre-commit" },
-    { name = "prettytable" },
-    { name = "pyc-wheel" },
-    { name = "pylnk3" },
     { name = "pyright" },
     { name = "pytest" },
     { name = "pytest-asyncio" },
@@ -1562,11 +1586,8 @@ dev = [
     { name = "sphinx-toolbox", marker = "python_full_version >= '3.12'" },
     { name = "sphinxcontrib-mermaid", marker = "python_full_version >= '3.12'" },
     { name = "sphinxemoji", marker = "python_full_version >= '3.12'" },
-    { name = "streamlit" },
-    { name = "streamlit-antd-components" },
     { name = "tenacity" },
-    { name = "toml" },
-    { name = "waitress" },
+    { name = "toml", marker = "python_full_version >= '3.12'" },
 ]
 doc = [
     { name = "ansys-sphinx-theme", extra = ["autoapi"], marker = "python_full_version >= '3.12'" },
@@ -1639,7 +1660,15 @@ tests-glow-engine = [
     { name = "toml" },
     { name = "waitress" },
 ]
+tests-saf-cli = [
+    { name = "ansys-solutions-dash-super-components" },
+    { name = "dash-bootstrap-components" },
+    { name = "dash-mantine-components" },
+    { name = "psutil" },
+    { name = "pywinpty", marker = "sys_platform == 'win32'" },
+]
 tests-saf-desktop-orchestrator = [
+    { name = "ansys-saf-projects-dashboard" },
     { name = "dash" },
     { name = "dash-extensions" },
     { name = "fastapi" },
@@ -1659,6 +1688,7 @@ requires-dist = [
     { name = "ansys-bdm-api", editable = "packages/bdm-python-api" },
     { name = "ansys-bdm-shared-volume", editable = "packages/bdm-python-shared-volume" },
     { name = "ansys-iam-oidc", editable = "packages/saf-iam-oidc" },
+    { name = "ansys-saf-cli", editable = "packages/saf-cli" },
     { name = "ansys-saf-desktop-installer", editable = "packages/saf-desktop-installer" },
     { name = "ansys-saf-desktop-orchestrator", editable = "packages/saf-desktop-orchestrator" },
     { name = "ansys-saf-glow-engine", extras = ["all"], editable = "packages/glow-engine" },
@@ -1670,44 +1700,24 @@ requires-dist = [
 
 [package.metadata.requires-dev]
 dev = [
-    { name = "aiohttp", specifier = ">=3.10.2,<4.0" },
     { name = "ansys-saf-glow-engine", extras = ["dash"], editable = "packages/glow-engine" },
-    { name = "ansys-saf-glow-engine", extras = ["dash", "hps", "pim"], editable = "packages/glow-engine" },
-    { name = "ansys-saf-testing", extras = ["selenium"], editable = "packages/saf-testing" },
     { name = "ansys-sphinx-theme", extras = ["autoapi"], marker = "python_full_version >= '3.12'", specifier = ">=1.9" },
-    { name = "asgi-lifespan", specifier = ">=2.1.0,<3.0" },
     { name = "authlib", specifier = ">=1.8.0,<2" },
     { name = "autodoc-pydantic", marker = "python_full_version >= '3.12'", specifier = ">=2.2.0" },
     { name = "bandit", extras = ["toml"], specifier = "==1.9.4" },
     { name = "click", marker = "python_full_version >= '3.12'", specifier = ">=8.3.2" },
     { name = "coverage", specifier = ">=7.10.6,<8" },
-    { name = "dash", specifier = ">=3.0.0,<4.0" },
-    { name = "dash", specifier = ">=3.4.0" },
-    { name = "dash", extras = ["diskcache"], specifier = ">=3.0.0,<4.0" },
     { name = "dash-bootstrap-components", specifier = ">=1.2,<2.0" },
-    { name = "dash-extensions", specifier = ">=2.0.5,<3.0" },
     { name = "docker", specifier = ">=7.1.0,<8.0" },
     { name = "docutils", marker = "python_full_version >= '3.12' and python_full_version < '4'", specifier = ">=0.21" },
-    { name = "fastapi", specifier = ">=0.120.2,<1.0" },
     { name = "filelock", specifier = ">=3.8.0,<4" },
-    { name = "grpcio-health-checking", specifier = ">=1.24.0,<2.0" },
-    { name = "gunicorn", specifier = ">=23.0.0,<24.0" },
-    { name = "httpx2", specifier = ">=2.5.0,<3.0" },
     { name = "httpx2-pytest", specifier = ">=1.0,<2" },
     { name = "linkchecker", marker = "python_full_version >= '3.12'", specifier = ">=10.6.0" },
     { name = "mock", specifier = ">=4.0.3,<5" },
     { name = "nbsphinx", marker = "python_full_version >= '3.12'", specifier = ">=0.9.8" },
-    { name = "numpy", specifier = ">=2.4.0,<3.0" },
     { name = "numpydoc", marker = "python_full_version >= '3.12'", specifier = ">=1.10.0" },
-    { name = "pandas", specifier = ">=1.1.0,<4.0" },
-    { name = "pillow", specifier = ">=12.1.1,<13.0" },
     { name = "pip", specifier = ">=26.0.0" },
-    { name = "plotly", specifier = ">=6.5.0,<7.0" },
-    { name = "poetry", specifier = "==2.3.2" },
     { name = "pre-commit", specifier = "==4.6.0" },
-    { name = "prettytable", specifier = ">=3.17.0,<4.0" },
-    { name = "pyc-wheel", specifier = ">=1.2.7,<2.0" },
-    { name = "pylnk3", specifier = ">=0.4.2,<0.5" },
     { name = "pyright", specifier = "==1.1.408" },
     { name = "pytest", specifier = ">=9.0.3,<10" },
     { name = "pytest-asyncio", specifier = ">=1.3.0,<2" },
@@ -1736,13 +1746,8 @@ dev = [
     { name = "sphinx-toolbox", marker = "python_full_version >= '3.12'", specifier = ">=4.2.0" },
     { name = "sphinxcontrib-mermaid", marker = "python_full_version >= '3.12'", specifier = ">=0.7.1" },
     { name = "sphinxemoji", marker = "python_full_version >= '3.12'", specifier = ">=0.2" },
-    { name = "streamlit", specifier = ">=1.58.0,<2.0" },
-    { name = "streamlit-antd-components", specifier = ">=0.3.2,<1.0" },
     { name = "tenacity", specifier = ">=8.0.0,<9" },
-    { name = "tenacity", specifier = ">=8.5.0,<9" },
-    { name = "toml", specifier = ">=0.10.2,<2.0" },
     { name = "toml", marker = "python_full_version >= '3.12'", specifier = ">=0.10.2" },
-    { name = "waitress", specifier = ">=3.0.1,<4.0" },
 ]
 doc = [
     { name = "ansys-sphinx-theme", extras = ["autoapi"], marker = "python_full_version >= '3.12'", specifier = ">=1.9" },
@@ -1814,7 +1819,15 @@ tests-glow-engine = [
     { name = "toml", specifier = ">=0.10.2,<2.0" },
     { name = "waitress", specifier = ">=3.0.1,<4.0" },
 ]
+tests-saf-cli = [
+    { name = "ansys-solutions-dash-super-components", specifier = ">=1.0.0,<2.0" },
+    { name = "dash-bootstrap-components", specifier = ">=1.2,<2.0" },
+    { name = "dash-mantine-components", specifier = ">=2.6.0,<3.0" },
+    { name = "psutil", specifier = ">=7.2.2,<8.0" },
+    { name = "pywinpty", marker = "sys_platform == 'win32'", specifier = ">=3.0.5,<4.0" },
+]
 tests-saf-desktop-orchestrator = [
+    { name = "ansys-saf-projects-dashboard", specifier = ">=0.2.0,<1.0" },
     { name = "dash", specifier = ">=3.4.0" },
     { name = "dash-extensions", specifier = ">=2.0.5,<3.0" },
     { name = "fastapi", specifier = ">=0.120.2,<1.0" },
@@ -1827,6 +1840,24 @@ tests-saf-product-manager = [
     { name = "ansys-saf-glow-engine", extras = ["dash", "hps", "pim"], editable = "packages/glow-engine" },
     { name = "grpcio-health-checking", specifier = ">=1.24.0,<2.0" },
     { name = "gunicorn", specifier = ">=23.0.0,<24.0" },
+]
+
+[[package]]
+name = "ansys-solutions-dash-super-components"
+version = "1.1.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "dash" },
+    { name = "dash-ag-grid" },
+    { name = "dash-extensions" },
+    { name = "dash-iconify" },
+    { name = "dash-mantine-components" },
+    { name = "flask" },
+    { name = "pandas" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/8c/ed/a9e3c1fac17d39fdcf7eb7d701bbf162e27328623fedafb6e9100cbbc45b/ansys_solutions_dash_super_components-1.1.0.tar.gz", hash = "sha256:8f1dba9f5e129bd6ad5c9e07ac5a050e229a03c78cdc68330b25a0b63fc089fc", size = 76073, upload-time = "2026-09-09T12:01:10.666Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/65/93/b3b4ad2ffbb1d947caccfc8708c429f34930cd3bc4f0e62695fa8257f8d1/ansys_solutions_dash_super_components-1.1.0-py3-none-any.whl", hash = "sha256:45572ff64c53859ce372307b07fe3221611f5fdae490ce7ff6e61741d5836654", size = 91010, upload-time = "2026-09-09T12:01:09.279Z" },
 ]
 
 [[package]]
@@ -2342,6 +2373,15 @@ wheels = [
 ]
 
 [[package]]
+name = "binaryornot"
+version = "0.6.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/86/72/4755b85101f37707c71526a301c1203e413c715a0016ecb592de3d2dcfff/binaryornot-0.6.0.tar.gz", hash = "sha256:cc8d57cfa71d74ff8c28a7726734d53a851d02fad9e3a5581fb807f989f702f0", size = 478718, upload-time = "2026-03-08T16:26:28.804Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/cd/0c/31cfaa6b56fe23488ecb993bc9fc526c0d84d89607decdf2a10776426c2e/binaryornot-0.6.0-py3-none-any.whl", hash = "sha256:900adfd5e1b821255ba7e63139b0396b14c88b9286e74e03b6f51e0200331337", size = 14185, upload-time = "2026-03-08T16:26:27.466Z" },
+]
+
+[[package]]
 name = "bleach"
 version = "6.4.0"
 source = { registry = "https://pypi.org/simple" }
@@ -2624,6 +2664,15 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/4e/b5/721b8799b04bf9afe054a3899c6cf4e880fcf8563cc71c15610242490a0c/cfgv-3.5.0.tar.gz", hash = "sha256:d5b1034354820651caa73ede66a6294d6e95c1b00acc5e9b098e917404669132", size = 7334, upload-time = "2025-11-19T20:55:51.612Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/db/3c/33bac158f8ab7f89b2e59426d5fe2e4f63f7ed25df84c036890172b412b5/cfgv-3.5.0-py2.py3-none-any.whl", hash = "sha256:a8dc6b26ad22ff227d2634a65cb388215ce6cc96bbcc5cfde7641ae87e8dacc0", size = 7445, upload-time = "2025-11-19T20:55:50.744Z" },
+]
+
+[[package]]
+name = "chardet"
+version = "6.0.0.post1"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/7f/42/fb9436c103a881a377e34b9f58d77b5f503461c702ff654ebe86151bcfe9/chardet-6.0.0.post1.tar.gz", hash = "sha256:6b78048c3c97c7b2ed1fbad7a18f76f5a6547f7d34dbab536cc13887c9a92fa4", size = 12521798, upload-time = "2026-02-22T15:09:17.925Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/66/42/5de54f632c2de53cd3415b3703383d5fff43a94cbc0567ef362515261a21/chardet-6.0.0.post1-py3-none-any.whl", hash = "sha256:c894a36800549adf7bb5f2af47033281b75fdfcd2aa0f0243be0ad22a52e2dcb", size = 627245, upload-time = "2026-02-22T15:09:15.876Z" },
 ]
 
 [[package]]
@@ -2976,6 +3025,25 @@ wheels = [
 ]
 
 [[package]]
+name = "cookiecutter"
+version = "2.7.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "arrow" },
+    { name = "binaryornot" },
+    { name = "click" },
+    { name = "jinja2" },
+    { name = "python-slugify" },
+    { name = "pyyaml" },
+    { name = "requests" },
+    { name = "rich" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/92/03/f4c96d8fd4f5e8af0210bf896eb63927f35d3014a8e8f3bf9d2c43ad3332/cookiecutter-2.7.1.tar.gz", hash = "sha256:ca7bb7bc8c6ff441fbf53921b5537668000e38d56e28d763a1b73975c66c6138", size = 142854, upload-time = "2026-03-04T04:06:02.786Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/14/a9/8c855c14b401dc67d20739345295af5afce5e930a69600ab20f6cfa50b5c/cookiecutter-2.7.1-py3-none-any.whl", hash = "sha256:cee50defc1eaa7ad0071ee9b9893b746c1b3201b66bf4d3686d0f127c8ed6cf9", size = 41317, upload-time = "2026-03-04T04:06:01.221Z" },
+]
+
+[[package]]
 name = "coverage"
 version = "7.16.1"
 source = { registry = "https://pypi.org/simple" }
@@ -3211,6 +3279,18 @@ diskcache = [
 ]
 
 [[package]]
+name = "dash-ag-grid"
+version = "31.3.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "dash" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/74/5e/e8c0b160005c5b01407aa4c739bf28a60043921458b2f25ef7b977f989e9/dash_ag_grid-31.3.1.tar.gz", hash = "sha256:90069c340d893841d4e405fd3759794260946428c9cefcf70a356431e68c5020", size = 3861593, upload-time = "2025-03-19T20:00:59.947Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/84/a9/7d1bd060ca28611e155cf7e3a53756b7244ee3224481c9ff0be0d2d2b2fb/dash_ag_grid-31.3.1-py3-none-any.whl", hash = "sha256:2bce8e2a99c2d08800f6c119e4723c838789a093eea29b121aabdb541e1da156", size = 3878810, upload-time = "2025-03-19T20:00:58.103Z" },
+]
+
+[[package]]
 name = "dash-bootstrap-components"
 version = "1.7.1"
 source = { registry = "https://pypi.org/simple" }
@@ -3237,6 +3317,27 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/f8/75/6ad77416195f3c93e4dbbb380e1d254c8a3927603781901e3826a157bab3/dash_extensions-2.0.6.tar.gz", hash = "sha256:84e0b2d60e48983fa275dc11df87b57b1930bfe0efe9ffafdc253199027c9fa8", size = 998460, upload-time = "2026-07-16T08:20:35.471Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/23/22/4b66512a5c4109e728a4aed324203a4d0583a16fe0c794856c1ab60460f1/dash_extensions-2.0.6-py3-none-any.whl", hash = "sha256:35a9ef516dd9431e472b68a76f4ae63a95223fcf9d319dfac79278157de85670", size = 1019130, upload-time = "2026-07-16T08:20:33.861Z" },
+]
+
+[[package]]
+name = "dash-iconify"
+version = "0.1.2"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/49/d2/03483ed3278cd476c34064bec43675fb6da84a6908e995a699eed76ab32d/dash_iconify-0.1.2.tar.gz", hash = "sha256:564774be6b11b0ac3a8999b7137c3d17a1d351d69b673aa313c7228eacc9d143", size = 17347, upload-time = "2022-04-21T14:40:00.794Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/d2/63/f10cc18533cc9ab899ea81deca9759b3eebe47d01ad95c4e67b6acdada97/dash_iconify-0.1.2-py3-none-any.whl", hash = "sha256:9ab0eda19bb4514e177bf1f8f36947bb9e5b44aba6ce947f22a1cf0f1a45fc14", size = 18928, upload-time = "2022-04-21T14:39:57.491Z" },
+]
+
+[[package]]
+name = "dash-mantine-components"
+version = "2.8.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "dash" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/9a/56/111c6295327ded76481bc9d0a1d3a936029b4e6cc4b0d70b5ea25f4c6a12/dash_mantine_components-2.8.0.tar.gz", hash = "sha256:8891dd8042c93697f673f30df9ea34e5a4e9a0486d6f42499e16825a2a07784a", size = 924142, upload-time = "2026-06-09T15:23:13.276Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/6a/2e/2f104c233fb9d6081007e091936f79094f509ae3942350a220c94c332c49/dash_mantine_components-2.8.0-py3-none-any.whl", hash = "sha256:ad18542b0f376c041232b2b9fd2882065abbd68506f98dc9c75726104c16b54b", size = 1377181, upload-time = "2026-06-09T15:23:11.273Z" },
 ]
 
 [[package]]
@@ -8030,6 +8131,18 @@ wheels = [
 ]
 
 [[package]]
+name = "python-slugify"
+version = "9.1.3"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "text-unidecode" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/bd/e8/26b1af09d728d604dc16427a39f53985b22a170dbd61addac3f48db73f03/python_slugify-9.1.3.tar.gz", hash = "sha256:90e997f2e0987239ce95e12f700086eb18e1d1d3ee22624fbbdbd095afca42b6", size = 66093, upload-time = "2026-10-07T01:06:20.101Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/47/67/5598c98725332a6a4084c7b622d5a1ebe7d6745c1d2f434c9e4e89e04cba/python_slugify-9.1.3-py3-none-any.whl", hash = "sha256:9aced0670e54c5603e2335c0fa9a4011ad4bc41ecb3c46e8097294c46fd60ed4", size = 16032, upload-time = "2026-10-07T01:06:18.891Z" },
+]
+
+[[package]]
 name = "pythonnet"
 version = "3.1.0"
 source = { registry = "https://pypi.org/simple" }
@@ -9835,6 +9948,15 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/8a/11/965c6fd8e5cc254f1fe142d547387da17a8ebfd75a3455f637c663fb38a0/terminado-0.18.1.tar.gz", hash = "sha256:de09f2c4b85de4765f7714688fff57d3e75bad1f909b589fde880460c753fd2e", size = 32701, upload-time = "2024-03-12T14:34:39.026Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/6a/9e/2064975477fdc887e47ad42157e214526dcad8f317a948dee17e1659a62f/terminado-0.18.1-py3-none-any.whl", hash = "sha256:a4468e1b37bb318f8a86514f65814e1afc977cf29b3992a4500d9dd305dcceb0", size = 14154, upload-time = "2024-03-12T14:34:36.569Z" },
+]
+
+[[package]]
+name = "text-unidecode"
+version = "1.3"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/ab/e2/e9a00f0ccb71718418230718b3d900e71a5d16e701a3dae079a21e9cd8f8/text-unidecode-1.3.tar.gz", hash = "sha256:bad6603bb14d279193107714b288be206cac565dfa49aa5b105294dd5c4aab93", size = 76885, upload-time = "2019-08-30T21:36:45.405Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/a6/a5/c0b6468d3824fe3fde30dbb5e1f687b291608f9473681bbf7dabbf5a87d7/text_unidecode-1.3-py2.py3-none-any.whl", hash = "sha256:1311f10e8b895935241623731c2ba64f4c455287888b18189350b67134a822e8", size = 78154, upload-time = "2019-08-30T21:37:03.543Z" },
 ]
 
 [[package]]

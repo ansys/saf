@@ -76,7 +76,10 @@ PROJECTS_DASHBOARD_MODULE = "ansys_saf_projects_dashboard"
 
 
 def _has_projects_dashboard() -> bool:
-    return importlib.util.find_spec(PROJECTS_DASHBOARD_MODULE) is not None  # type: ignore[union-attr]
+    try:
+        return importlib.util.find_spec(PROJECTS_DASHBOARD_MODULE) is not None  # type: ignore[union-attr]
+    except (ModuleNotFoundError, ValueError):
+        return False
 
 
 def _get_or_assign_port(env_var_name: str) -> int:
@@ -170,7 +173,8 @@ class Launcher:
 
         Override with ``SAF_DESKTOP_PROJECTS_DASHBOARD_PATH`` (default: ``/projects``).
         """
-        return os.getenv(SAF_DESKTOP_PROJECTS_DASHBOARD_PATH, PROJECTS_DASHBOARD_PATH)
+        path = os.getenv(SAF_DESKTOP_PROJECTS_DASHBOARD_PATH, PROJECTS_DASHBOARD_PATH).strip().strip("/")
+        return f"/{path}" if path else PROJECTS_DASHBOARD_PATH
 
     def start_pim(self) -> None:
         solution_module = importlib.import_module(self._definition_module_name)

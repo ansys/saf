@@ -1,6 +1,6 @@
-# Copyright (C) 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
+# Copyright (C) 2026 ANSYS, Inc. and/or its affiliates.
+
 # SPDX-License-Identifier: Apache-2.0
-#
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -27,12 +27,10 @@ Uses Playwright for automated browser testing with Performance API.
 
 import asyncio
 from dataclasses import dataclass, field
-import json
 import statistics
-from typing import Optional
 
 try:
-    from playwright.async_api import Browser, Page, async_playwright
+    from playwright.async_api import Page, async_playwright  # type: ignore
 
     PLAYWRIGHT_AVAILABLE = True
 except ImportError:
@@ -279,7 +277,7 @@ async def run_web_vitals_benchmark(
         run_count=run_count,
     )
 
-    async with async_playwright() as p:
+    async with async_playwright() as p:  # pyright: ignore[reportPossiblyUnboundVariable]
         # Use Chromium for best Performance API support
         browser = await p.chromium.launch(headless=headless)
 

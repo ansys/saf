@@ -1,0 +1,60 @@
+tasks:
+  setup-python:
+    command: 'uv'
+    args:
+      - 'sync'
+      - '--group'
+      - 'build-saf-projects-dashboard'
+    inputs:
+      - '/pyproject.toml'
+      - '/uv.lock'
+    outputs:
+      - '/.venv'
+
+  setup-node:
+    command: 'npm ci'
+    inputs:
+      - 'package.json'
+      - 'package-lock.json'
+    outputs:
+      - 'node_modules'
+
+  generate-components:
+    command: 'npm'
+    args:
+      - 'run'
+      - 'build'
+    deps:
+      - '~:setup-python'
+      - '~:setup-node'
+    inputs:
+      - 'src/**/*'
+      - 'package.json'
+      - 'pyproject.toml'
+      - '/.venv/**/*'
+    outputs:
+      - 'src/ansys_saf_projects_dashboard/ansys_saf_projects_dashboard.js'
+      - 'src/ansys_saf_projects_dashboard/*.py'
+      - 'src/ansys_saf_projects_dashboard/metadata.json'
+      - 'src/ansys_saf_projects_dashboard/proptypes.js'
+      - 'src/ansys_saf_projects_dashboard/assets/**/*'
+    toolchains:
+      - 'unstable_uv'
+      - 'unstable_python'
+      - 'node'
+    options:
+      runFromWorkspaceRoot: false
+
+  test-npm:
+    command: 'npm'
+    args:
+      - 'test'
+    deps:
+      - '~:setup-node'
+    inputs:
+      - 'src/**/*'
+      - 'package.json'
+      - 'pyproject.toml'
+      - '/.venv/**/*'
+    options:
+      runFromWorkspaceRoot: false

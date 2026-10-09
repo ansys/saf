@@ -1,6 +1,6 @@
-# Copyright (C) 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
+# Copyright (C) 2026 ANSYS, Inc. and/or its affiliates.
+
 # SPDX-License-Identifier: Apache-2.0
-#
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,18 +14,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import typing  # noqa: F401
+# ruff: noqa: N999
+
+import typing
+from typing import Literal, NotRequired  # noqa: F401
 
 from dash.development.base_component import Component, _explicitize_args
-from typing_extensions import Literal, NotRequired, TypedDict  # noqa: F401
+from typing_extensions import TypedDict
 
-ComponentSingleType = typing.Union[str, int, float, Component, None]
-ComponentType = typing.Union[
+ComponentSingleType = typing.Union[str, int, float, Component, None]  # noqa: UP007
+ComponentType = typing.Union[  # noqa: UP007
     ComponentSingleType,
     typing.Sequence[ComponentSingleType],
 ]
 
-NumberType = typing.Union[typing.SupportsFloat, typing.SupportsInt, typing.SupportsComplex]
+NumberType = typing.Union[typing.SupportsFloat, typing.SupportsInt, typing.SupportsComplex]  # noqa: UP007
 
 
 class ContextMenu(Component):
@@ -46,13 +49,13 @@ class ContextMenu(Component):
 
         - className (string; optional)"""
 
-    _children_props: typing.List[str] = []
+    _children_props: list[str] = []
     _base_nodes = ["children"]
     _namespace = "ansys_saf_projects_dashboard"
     _type = "ContextMenu"
-    Items = TypedDict("Items", {"label": str, "icon": str, "onClick": typing.Any, "className": NotRequired[str]})
+    Items = TypedDict("Items", {"label": str, "icon": str, "onClick": typing.Any, "className": NotRequired[str]})  # noqa: UP013
 
-    def __init__(self, items: typing.Optional[typing.Sequence["Items"]] = None, **kwargs):
+    def __init__(self, items: typing.Sequence["Items"] | None = None, **kwargs):
         self._prop_names = ["items"]
         self._valid_wildcard_attributes = []
         self.available_properties = ["items"]
@@ -66,7 +69,7 @@ class ContextMenu(Component):
             if k not in args:
                 raise TypeError("Required argument `" + k + "` was not specified.")
 
-        super(ContextMenu, self).__init__(**args)
+        super().__init__(**args)
 
 
-setattr(ContextMenu, "__init__", _explicitize_args(ContextMenu.__init__))
+ContextMenu.__init__ = _explicitize_args(ContextMenu.__init__)

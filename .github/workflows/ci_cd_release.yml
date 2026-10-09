@@ -265,11 +265,9 @@ jobs:
     with:
       library-name: ${{ inputs.library }}
       python-version: ${{ vars.PYTHON_VERSION }}
-      use-moon: ${{! contains('dash-super-components,saf-projects-dashboard', inputs.library)
-        }}
+      use-moon: ${{ inputs.library != 'dash-super-components' }}
       artifact-name: ${{ inputs.library }}-${{ needs.release-information.outputs.release-name
-        }}${{ case(contains('dash-super-components,saf-projects-dashboard', inputs.library),
-        '' , '-artifacts') }}
+        }}${{ case(inputs.library == 'dash-super-components', '' , '-artifacts') }}
       ref: ${{ inputs.dev-release && 'main' || needs.release-information.outputs.release-branch-name
         }}
 

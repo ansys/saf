@@ -1,21 +1,22 @@
 [build-system]
-build-backend = "poetry.core.masonry.api"
-requires = [ "poetry-core>=2.0.0", "setuptools>=67.0" ]
+build-backend = "uv_build"
+requires = [ "uv-build>=0.12.18,<0.13" ]
 
-[tool.poetry]
+[project]
 name = "ansys-saf-projects-dashboard"
 version = "0.3.dev0"
 description = "Dash component for SAF-based solution applications to view and manage project instances."
-license = "Apache-2.0"
-authors = [ "Synopsys, Inc. and ANSYS, Inc. <pyansys-core@synopsys.com>" ]
-maintainers = [ "Synopsys, Inc. and ANSYS, Inc. <pyansys-core@synopsys.com>" ]
 readme = "README.rst"
 keywords = [ "ansys", "dash", "dashboard", "glow", "projects", "saf" ]
+license = "Apache-2.0"
+license-files = [ "LICENSE" ]
+maintainers = [ { name = "ANSYS, Inc.", email = "pyansys-core@synopsys.com" } ]
+authors = [ { name = "ANSYS, Inc.", email = "pyansys-core@synopsys.com" } ]
+requires-python = ">=3.11,<3.15"
 classifiers = [
   "Development Status :: 3 - Alpha",
   "Framework :: Dash",
   "Intended Audience :: Other Audience",
-  "License :: OSI Approved :: Apache Software License",
   "Natural Language :: English",
   "Programming Language :: Python :: 3 :: Only",
   "Programming Language :: Python :: 3.11",
@@ -24,76 +25,53 @@ classifiers = [
   "Programming Language :: Python :: 3.14",
   "Topic :: Scientific/Engineering",
 ]
-packages = [ { include = "ansys_saf_projects_dashboard", from = "src" } ]
-dependencies.python = ">=3.11,<3.15"
-dependencies.dash = ">=3.0.0"
-group.build.optional = true
-group.build.dependencies.build = "^0.8.0"
-group.build.dependencies.dash = ">=3.0.0"
-group.build.dependencies.pre-commit = "^4.6.0"
-group.build.dependencies.pyyaml = "^6.0"
-group.build.dependencies.twine = "^5.1.1"
-group.style.optional = true
-group.style.dependencies.codespell = "^2.2.4"
-group.style.dependencies.pre-commit = "^4.6.0"
-group.style.dependencies.ruff = ">= 0.0.287, < 1.0.0"
-group.tests.optional = true
-group.tests.dependencies.coverage = "^7.2.6"
-group.tests.dependencies.mock = "^4.0.3"
-group.tests.dependencies.pytest = "^9.0.0"
-group.tests.dependencies.pytest-cov = "^7.0.0"
-group.tests.dependencies.pytest-html = "^4.1.1"
-group.tests.dependencies.pytest-md = "^0.2.0"
-group.tests.dependencies.pytest-mock = "^3.10.0"
-source = [ { name = "PyPI", priority = "primary" } ]
-
-[tool.ruff]
-target-version = "py311"
-line-length = 120
-lint.select = [
-  "A",   # flake8-builtins
-  "B",   # flake8-bugbear
-  "C4",  # flake8-comprehensions
-  "E",   # pycodestyle - error
-  "F",   # pyflakes
-  "I",   # isort
-  "N",   # pep8-naming
-  "PTH", # flake8-use-pathlib
-  "Q",   # flake8-quotes
-  "SIM", # flake8-simplify
-  "UP",  # pyupgrade
-  "W",   # pycodestyle - warning
+dependencies = [
+  "dash>=3.0.0,<4.0.0",
 ]
-lint.ignore = [ "COM812" ]  # Conflicts with formatter
-# Auto-generated Dash component wrappers — not hand-written code
-lint.per-file-ignores."src/ansys_saf_projects_dashboard/[A-Z]*.py" = [ "A", "B", "COM", "E501", "I", "N", "Q" ]
-# Utility/diagnostic scripts and performance tests — not subject to strict style
-lint.per-file-ignores."tests/check_*.py" = [ "E402", "PTH" ]
-lint.per-file-ignores."tests/e2e/*.py" = [ "E501", "N812" ]
-lint.per-file-ignores."tests/performance/*.py" = [ "A002", "F401", "PTH123" ]
-lint.per-file-ignores."tests/quick_test.py" = [ "E722", "N812" ]
-lint.isort.force-sort-within-sections = true
 
-[tool.codespell]
-ignore-words = ".codespellignore"
-skip = ".git,.venv,.poetry,.tox,dist,node_modules,*.log,*.json,poetry.lock,doc/build,*.js"
+[tool.uv]
+sources.ansys_saf_projects_dashboard = { workspace = true }
+build-backend.module-name = "ansys_saf_projects_dashboard"
+build-backend.namespace = true
 
 [tool.pytest]
-ini_options.testpaths = [ "tests" ]
-ini_options.norecursedirs = [ "e2e", "performance" ]
-ini_options.python_files = [ "test_*.py" ]
-ini_options.python_classes = [ "Test*" ]
-ini_options.python_functions = [ "test_*" ]
-ini_options.addopts = "-v --tb=short"
-ini_options.markers = [
+addopts = [
+  "-v",
+  "--tb=short",
+  "--strict-config",
+  "--strict-markers",
+  "--import-mode=importlib",
+  "-nlogical",
+  "--dist=loadfile",
+]
+markers = [
   "e2e: marks tests as end-to-end browser tests (deselect with '-m \"not e2e\"')",
   "performance: marks tests as performance tests",
   "unit: marks tests as unit tests",
 ]
+norecursedirs = [ "e2e", "performance", ".moon", ".venv", "tmp*", ".git" ]
+python_classes = [ "Test*" ]
+python_files = [ "test_*.py" ]
+python_functions = [ "test_*" ]
+testpaths = [ "tests" ]
 
 [tool.coverage]
 run.source = [ "ansys_saf_projects_dashboard" ]
+run.omit = [
+  "*/.venv/*",
+  "*/pytest-of-*/pytest-*/popen-*/*",
+  "*/site-packages/*",
+  "*/Temp/*",
+  "*/tests/*",
+  "/tmp/*",
+  "dist/*",
+]
+report.omit = [
+  "*/_solutions/templates/*",
+  "*/pytest-of-*/pytest-*/popen-*/*",
+  "*/Temp/*",
+  "*/tests/*",
+  "/tmp/*",
+  "dist/*",
+]
 report.show_missing = true
-
-[build-system-requirements]
-build-system-version = "2.3.2"

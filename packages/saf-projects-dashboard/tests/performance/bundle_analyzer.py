@@ -1,6 +1,6 @@
-# Copyright (C) 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
+# Copyright (C) 2026 ANSYS, Inc. and/or its affiliates.
+
 # SPDX-License-Identifier: Apache-2.0
-#
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -27,9 +27,7 @@ Measures:
 from dataclasses import dataclass
 import gzip
 import json
-import os
 from pathlib import Path
-from typing import Optional
 
 
 @dataclass
@@ -100,7 +98,7 @@ class BundleAnalysis:
 
 def get_gzipped_size(file_path: Path) -> int:
     """Calculate gzipped size of a file."""
-    with open(file_path, "rb") as f:
+    with open(file_path, "rb") as f:  # noqa: PTH123
         content = f.read()
     return len(gzip.compress(content, compresslevel=9))
 
@@ -339,8 +337,6 @@ def compare_bundles() -> dict:
 
 
 if __name__ == "__main__":
-    import sys
-
     print("=" * 60)
     print("Bundle Size Analysis: Web Component vs Dash Component")
     print("=" * 60)

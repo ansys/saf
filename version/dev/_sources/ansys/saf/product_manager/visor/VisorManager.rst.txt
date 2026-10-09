@@ -1,0 +1,110 @@
+
+
+
+
+
+
+:class:`VisorManager`
+=====================
+
+
+.. py:class:: ansys.saf.product_manager.visor.VisorManager(**kwargs: Any)
+
+   Bases: :py:obj:`ansys.saf.glow.solution.ProductInstanceManager`\ [\ :py:obj:`VisorSafClient`\ , :py:obj:`VisorRecoveryStateInfo`\ ]
+
+
+   
+   A manager of a Visor product instance.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: VisorManager
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~initialize`
+            - Initialize and start the Visor product instance.
+
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.saf.product_manager.visor import VisorManager
+
+
+
+Method detail
+-------------
+
+.. py:method:: initialize(version: str | None = None, input_file: ansys.bdm.api.EntityHandle = NO_ENTITY, metadata_file: ansys.bdm.api.EntityHandle = NO_ENTITY)
+
+   
+   Initialize and start the Visor product instance.
+
+
+   :Parameters:
+
+       **version** : str, optional
+           The version of the custom product instance that must be used.
+
+       **input_file** : EntityHandle, optional
+           The input file to open on start.
+
+       **metadata_file** : EntityHandle, optional
+           The input metadata to use on start if a file is provided.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

@@ -1384,3 +1384,95 @@ class TestInstallerCustomNamespace:
             portal_ui_port=portal_ui_port,
             selenium_webdriver=session_selenium_webdriver,
         )
+
+
+@pytest.mark.parametrize("solution_root_dir", ["my-solution-dash-projects-dashboard"], indirect=True)
+@pytest.mark.usefixtures("check_gtk_launch_and_xvfb_are_installed")
+class TestInstallerProjectsDashboard:
+    """End-to-end tests for a solution whose UI serves the SAF Projects Dashboard.
+
+    The installer must create a ``--portal`` shortcut, and the orchestrator must serve the dashboard
+    at ``/projects`` from the solution UI instead of starting SAF Portal.
+    """
+
+    def test_installer_with_projects_dashboard_and_desktop_portal(
+        self,
+        tmp_path: Path,
+        solution_root_dir: Path,
+        setup_solution: SetupSolution,
+        build_solution: BuildSolution,
+        install_solution: InstallSolution,
+        execute_solution: ExecuteSolution,
+        cleanup_shortcut: list[Path],
+        session_selenium_webdriver: WebDriver,
+    ):
+        """When both projects-dashboard and desktop-portal are installed, the dashboard is used."""
+        if not os.getenv("SAF_EXTRA_PACKAGES_DIR"):
+            pytest.skip("SAF_EXTRA_PACKAGES_DIR is required to add ansys-saf-desktop-portal to the solution.")
+
+        solution_venv_python_exec, glow_api_port, glow_ui_port, _ = setup_solution(solution_root_dir)
+        build_solution([], solution_venv_python_exec, solution_root_dir)
+        check_built_solution_files(solution_root_dir)
+        install_solution(solution_root_dir, tmp_path)
+        # The shortcut requests the project selection UI.
+        shortcut_path = check_installed_solution_files(tmp_path, solution_root_dir, use_portal=True)
+        cleanup_shortcut.append(shortcut_path)
+        check_dependencies(
+            tmp_path,
+            solution_root_dir,
+            required_dependencies=["ansys-saf-projects-dashboard", "ansys-saf-desktop-portal"],
+        )
+
+        solution_proc = execute_solution(shortcut_path, solution_root_dir)
+        check_solution_launched_correctly(
+            solution_proc=solution_proc,
+            glow_api_port=glow_api_port,
+            glow_ui_port=glow_ui_port,
+            portal_ui_port="",
+            selenium_webdriver=session_selenium_webdriver,
+            projects_dashboard=True,
+        )
+        # The dashboard wins: SAF Portal is installed but not started.
+        assert solution_proc.find_msg_in_output("SAF Portal: not launched")
+        assert not solution_proc.portal_running()
+        assert solution_proc.projects_dashboard_running()
+
+    def test_installer_with_projects_dashboard_only(
+        self,
+        tmp_path: Path,
+        solution_root_dir: Path,
+        setup_solution: SetupSolution,
+        build_solution: BuildSolution,
+        install_solution: InstallSolution,
+        execute_solution: ExecuteSolution,
+        cleanup_shortcut: list[Path],
+        session_selenium_webdriver: WebDriver,
+    ):
+        """Without desktop-portal, the dashboard alone still makes the installer add --portal."""
+        solution_root_dir = solution_root_dir.rename(
+            solution_root_dir.parent / "my-solution-dash-projects-dashboard-only",
+        )
+        solution_venv_python_exec, glow_api_port, glow_ui_port, _ = setup_solution(solution_root_dir)
+        build_solution([], solution_venv_python_exec, solution_root_dir)
+        check_built_solution_files(solution_root_dir)
+        install_solution(solution_root_dir, tmp_path)
+        shortcut_path = check_installed_solution_files(tmp_path, solution_root_dir, use_portal=True)
+        cleanup_shortcut.append(shortcut_path)
+        check_dependencies(
+            tmp_path,
+            solution_root_dir,
+            required_dependencies=["ansys-saf-projects-dashboard"],
+            excluded_dependencies=["ansys-saf-desktop-portal", "ansys-saf-portal"],
+        )
+
+        solution_proc = execute_solution(shortcut_path, solution_root_dir)
+        check_solution_launched_correctly(
+            solution_proc=solution_proc,
+            glow_api_port=glow_api_port,
+            glow_ui_port=glow_ui_port,
+            portal_ui_port="",
+            selenium_webdriver=session_selenium_webdriver,
+            projects_dashboard=True,
+        )
+        assert solution_proc.find_msg_in_output("SAF Portal: not launched")
+        assert not solution_proc.portal_running()

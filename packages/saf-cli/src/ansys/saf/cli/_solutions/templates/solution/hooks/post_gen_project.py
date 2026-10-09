@@ -20,9 +20,8 @@
 
 from pathlib import Path
 import shutil
-import os
 
-SOLUTION_UI_PATH = Path.cwd() / "src" / f"{{ cookiecutter.__solution_namespace_path }}" / f"{{ cookiecutter.__solution_module_name }}" / "ui"
+SOLUTION_UI_PATH = Path.cwd() / "src" / "{{ cookiecutter.__solution_namespace_path }}" / "{{ cookiecutter.__solution_module_name }}" / "ui"  # noqa: E501
 SOLUTION_UI_TESTS_PATH = Path.cwd() / "tests" / "unit" / "test_solution_ui.py"
 
 
@@ -38,9 +37,9 @@ def _remove_ui_tests() -> None:
 
 def _copy_poetry_lock():
     if "{{ cookiecutter.__ui_framework }}" == "dash":  # pyright: ignore[reportUnnecessaryComparison]
-        shutil.copy(os.path.join("lock_files", "dash", "poetry.lock"), ".")
+        shutil.copy(Path("lock_files") / "dash" / "poetry.lock", ".")
     else:
-        shutil.copy(os.path.join("lock_files", "no_ui", "poetry.lock"), ".")
+        shutil.copy(Path("lock_files") / "no_ui" / "poetry.lock", ".")
     shutil.rmtree("lock_files")
 
 

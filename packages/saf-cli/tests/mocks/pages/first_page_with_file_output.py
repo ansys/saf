@@ -18,12 +18,13 @@
 
 import logging
 
-from ansys.saf.glow.client import callback
 import dash
 from dash_extensions.enrich import Input, Output, State, clientside_callback, dcc, html
 from dash_iconify import DashIconify
 import dash_mantine_components as dmc
 from saf.solutions.my_solution.solution.definition import MySolution
+
+from ansys.saf.glow.client import callback
 
 logger = logging.getLogger(__name__)
 dash.register_page(  # pyright: ignore[reportUnknownMemberType]

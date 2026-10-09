@@ -33,7 +33,14 @@ repos:
         exclude: |
           (?x)^(
             doc/styles/Vocab/ANSYS/accept\.txt|
-            .*\.aedt
+            .*\.aedt|
+            packages/saf-projects-dashboard/tests/|
+            packages/saf-projects-dashboard/doc/_build|
+            packages/saf-projects-dashboard/doc/styles/|
+            packages/saf-projects-dashboard/doc/source/_static|
+            packages/saf-projects-dashboard/.*poetry\.lock|
+            packages/saf-projects-dashboard/.*package-lock\.json|
+            packages/saf-projects-dashboard/.*\.js
           )$
         args: [--ignore-words=doc/styles/Vocab/ANSYS/accept.txt]
 
@@ -51,7 +58,11 @@ repos:
     hooks:
       - id: add-license-headers
         files: '\.(py|bat|html|css|proto)$'
-        exclude: 'src/ansys/saf/desktop/installer/_package/assets/bootstrap\.min\.css'
+        exclude: |
+          (?xi)^(
+            src/ansys/saf/desktop/installer/_package/assets/bootstrap\.min\.css|
+            packages/saf-projects-dashboard/src/ansys_saf_projects_dashboard/.*\.(json)$
+          )
         args:
           - --custom_license=Apache-2.0
           - --start_year=2026
@@ -69,5 +80,6 @@ repos:
     rev: fda77690955e9b63c6687d8806bafd56a526e45f # 1.20.0
     hooks:
       - id: blacken-docs
+        files: '\.(md|rst)$'
         additional_dependencies: [black==25.1.0]
         args: ["--line-length=120"]

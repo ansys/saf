@@ -23,11 +23,9 @@ reference implementation (:func:`reference_next_generation`) is used as an
 independent oracle for the vectorized engine.
 """
 
-from typing import Optional
 
 import numpy as np
 import pytest
-
 from saf.solutions.examples.solution.logic.game_of_life import (
     GameOfLifeEngine,
     Pattern,
@@ -101,7 +99,7 @@ def live_cell_set(grid: np.ndarray) -> set:
     return {(int(row), int(col)) for row, col in zip(*np.nonzero(grid))}
 
 
-def translation_offset(before: np.ndarray, after: np.ndarray) -> Optional[tuple]:
+def translation_offset(before: np.ndarray, after: np.ndarray) -> tuple | None:
     """Return the ``(row, col)`` shift if ``after`` is a pure translation of ``before``.
 
     Parameters

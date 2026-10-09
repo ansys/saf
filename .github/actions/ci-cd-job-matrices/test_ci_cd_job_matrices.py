@@ -439,10 +439,10 @@ class TestGetChangedJsPackages:
         for package in JS_PACKAGES:
             assert package in SAF_PACKAGES
 
-    def test_js_packages_are_not_moon_packages(self) -> None:
-        """Node-bearing packages stay on Poetry until Moon grows a Node toolchain."""
+    def test_js_packages_are_moon_packages(self) -> None:
+        """Node-bearing packages are also Moon packages."""
         for package in JS_PACKAGES:
-            assert package not in UV_PACKAGES
+            assert package in UV_PACKAGES
 
 
 class TestGetCodeStyleMatrixEntries:

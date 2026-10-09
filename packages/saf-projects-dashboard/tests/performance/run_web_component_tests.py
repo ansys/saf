@@ -1,6 +1,6 @@
-# Copyright (C) 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
+# Copyright (C) 2026 ANSYS, Inc. and/or its affiliates.
+
 # SPDX-License-Identifier: Apache-2.0
-#
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,15 +20,13 @@ Run performance tests for the web-component approach.
 
 import gzip
 from pathlib import Path
-import sys
-import time
 
 WEB_COMPONENT_URL = "http://127.0.0.1:5433/projects/6980c39c924613b4604bac3e"
 
 
 def get_gzipped_size(file_path):
     """Calculate gzipped size of a file."""
-    with open(file_path, "rb") as f:
+    with open(file_path, "rb") as f:  # noqa: PTH123
         content = f.read()
     return len(gzip.compress(content, compresslevel=9))
 

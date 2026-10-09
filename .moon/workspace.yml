@@ -5,6 +5,7 @@ projects:
   globs:
     - "packages/bdm-python-api"
     - "packages/bdm-python-shared-volume"
+    - "packages/dash-super-components"
     - "packages/glow-engine"
     - "packages/saf-cli"
     - "packages/saf-desktop-orchestrator"

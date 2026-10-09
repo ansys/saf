@@ -1,173 +1,88 @@
 [build-system]
-build-backend = "poetry.core.masonry.api"
-requires = [ "poetry-core>=2.0.0" ]
+build-backend = "uv_build"
+requires = [ "uv-build>=0.12.18,<0.13" ]
 
 [project]
 name = "ansys-solutions-dash-super-components"
 version = "1.2.dev0"
 description = "A collection of pre-assembled, high-level Dash UI components built on Dash Mantine Components for simulation web applications."
 license = "Apache-2.0"
-authors = [{ name = "ANSYS, Inc.", email = "pyansys-core@synopsys.com" }]
-maintainers = [{ name = "ANSYS, Inc.", email = "pyansys-core@synopsys.com" }]
+license-files = [ "LICENSE" ]
+maintainers = [ { name = "ANSYS, Inc.", email = "pyansys-core@synopsys.com" } ]
+authors = [ { name = "ANSYS, Inc.", email = "pyansys-core@synopsys.com" } ]
+requires-python = ">=3.11,<4"
 readme = "README.rst"
 keywords = [ "Ansys Solutions" ]
-requires-python = ">=3.11,<4"
-dynamic = ["dependencies"]
 classifiers = [
   "Development Status :: 3 - Alpha",
   "Intended Audience :: Other Audience",
-  "License :: OSI Approved :: Apache Software License",
   "Natural Language :: English",
-  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3 :: Only",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
   "Programming Language :: Python :: 3.14",
   "Topic :: Scientific/Engineering",
 ]
+dependencies = [
+  "dash >=2.18.2, <3.4.0",  # >= 3.4.0 incompatible with dash-extensions <2.0.5
+  "dash-ag-grid >=31.2.0, <32.0.0",  # 32.x introduces breaking changes for LogsSupervisor
+  "dash-extensions>=1.0.20",
+  "dash-iconify>=0.1",
+  "dash-mantine-components >=2.3.0, <3.0.0",
+  "flask >=2.2.0, <4.0.0",
+  "pandas >=2.2.2, <3.0.0"
+]
 
 [project.urls]
-Homepage = "https://github.com/ansys/super-components-for-dash"
-Documentation = "https://super-components-for-dash.docs.solutions.ansys.com/"
-Repository = "https://github.com/ansys/super-components-for-dash"
-Issues = "https://github.com/ansys/super-components-for-dash/issues"
+Homepage = "https://github.com/ansys/saf/blob/main/packages/dash-super-components"
+Documentation = "https://saf.ansys.com/"
+Repository = "https://github.com/ansys/saf"
+Issues = "https://github.com/ansys/saf/issues"
 Changelog = "https://super-components-for-dash.docs.solutions.ansys.com/version/stable/changelog.html"
 
-[tool.poetry]
-requires-poetry = ">=2.3.2"
-packages = [
-  { include = "ansys/solutions/dash_super_components", from = "src" },
-]
-include = [
-  "src/ansys/solutions/dash_super_components/assets/*",
-]
+[tool.uv]
+sources.ansys-solutions-dash-super-components = { workspace = true }
+build-backend.module-name = "ansys.solutions.dash_super_components"
+build-backend.namespace = true
 
-[[tool.poetry.source]]
-name = "PyPI"
-priority = "primary"
-
-[tool.poetry.dependencies]
-python = ">=3.11, <4"
-dash = ">=2.18.2, <3.4.0"  # >= 3.4.0 incompatible with dash-extensions <2.0.5
-dash-ag-grid = ">=31.2.0, <32.0.0"  # 32.x introduces breaking changes for LogsSupervisor
-dash-extensions = ">=1.0.20"
-dash-iconify = "^0.1"
-dash-mantine-components = ">=2.3.0, <3.0.0"
-flask = ">=2.2.0, <4.0.0"
-pandas = ">=2.2.2, <3.0.0"
-
-[tool.poetry.group.tests]
-optional = true
-[tool.poetry.group.tests.dependencies]
-coverage = "^7.15.0"
-mock = "^5.2.0"
-pytest = "^9.1.1"
-pytest-cov = "^7.1.0"
-pytest-html = "^4.2.0"
-pytest-md = "^0.2.0"
-pytest-xdist = "^3.8.0"
-pytest-mock = "^3.15.1"
-requests = ">=2.28"
-tox = "^4.56.2"
-
-[tool.poetry.group.doc]
-optional = true
-[tool.poetry.group.doc.dependencies]
-ansys-sphinx-theme = "^1.9.0"
-linkchecker = "^10.6.0"
-numpydoc = "^1.10.0"
-sphinx = "^9.0.0"
-sphinx-copybutton = "^0.5.2"
-sphinx-autobuild = "^2025.8.25"
-sphinx-design = "^0.7.0"
-sphinx_code_tabs = "^0.5.5"
-sphinxcontrib-video = "^0.4.2"
-sphinx-gallery = "^0.21.0"
-toml = "^0.10.2"                # Needed by conf.py
-
-[tool.poetry.group.style]
-optional = true
-[tool.poetry.group.style.dependencies]
-codespell = "^2.4.2"
-numpydoc = "^1.10.0"
-pyright = "^1.1.411"
-ruff = "^0.15.20"
-pre-commit = "^4.6.0"
-vale = ">=3.13.0"
-docformatter = "^1.7.8"
-
-[tool.ruff]
-target-version = "py311"
-
-line-length = 100 # pyansys requirement
-fix = true
-format.indent-style = "space"
-format.quote-style = "double"
-lint.select = [
-  "A",      # flake8-builtins - not part of pyansys requirements
-  "ASYNC",  # flake8-async - not part of pyansys requirements
-  "B",      # flake8-bugbear - not part of pyansys requirements
-  "C4",     # flake8-comprehensions - not part of pyansys requirements
-  "C90",    # mccabe - not part of pyansys requirements
-  "COM",    # flake8-commas - not part of pyansys requirements
-  "D",      # pydocstyle - pyansys requirement
-  "E",      # pycodestyle - pyansys requirement
-  "F",      # pyflakes - pyansys requirement
-  "I",      # isort - pyansys requirement
-  "LOG",    # flake8-logging - not part of pyansys requirements
-  "N",      # pep8-naming - pyansys requirement
-  "PIE",    # flake8-pie - not part of pyansys requirements
-  "PT",     # flake8-pytest-style - not part of pyansys requirements
-  "PTH",    # flake8-use-pathlib - pyansys requirement
-  "PYI",    # flake8-pyi - not part of pyansys requirements
-  "Q",      # flake8-quotes - not part of pyansys requirements
-  "RUF100", # ruff-specific rules: unused noqa - not part of pyansys requirements
-  "SIM",    # flake8-simplify - not part of pyansys requirements
-  "TD",     # flake8-todos - pyansys requirement
-  "UP",     # pyupgrade - not part of pyansys requirements
-  "W",      # pycodestyle - warning - not part of pyansys requirements
-]
-lint.ignore = [
-  "COM812", # This rule conflicts with ruff format settings - not part of pyansys requirements
-  "PYI041", # Allow redundant type specification to be consistent with subsequent type checks
-] # pyansys does not specify any ignores
-# Declaring svg icons with long lines - ignore E501 to avoid line length issues
-lint.per-file-ignores."src/ansys/solutions/dash_super_components/utils/svg_icons.py" = [ "E501" ]
-lint.isort.combine-as-imports = true                                                              # pyansys requirement
-lint.isort.force-sort-within-sections = true                                                      # pyansys requirement
-lint.isort.known-first-party = [ "ansys.solutions.dash_super_components" ]
-lint.pydocstyle.convention = "numpy"                                                              # pyansys requirement
-
-[tool.pytest.ini_options]
+[tool.pytest]
 testpaths = ["tests"]
 pythonpath = ["."]
+addopts = [
+  "--strict-config",
+  "--strict-markers",
+  "--import-mode=importlib",
+  "-nlogical",
+  "--dist=loadfile",
+]
+filterwarnings = []
+log_cli = true
 markers = [
     "smoke: import / layout smoke tests for gallery example apps",
     "run: simple headless run tests for gallery example apps",
 ]
 
-[tool.coverage.run]
-source = [ "ansys.solutions.dash_super_components" ] # pyansys requirement
-
-[tool.coverage.report]
-show_missing = true                                                                           # pyansys requirement
-omit = [ "*/pytest-of-*/pytest-*/popen-*/*", "/tmp*/*", "tests*" ]
-
-[tool.pyright]
-pythonVersion = "3.11"
-extraPaths = [ "src" ]
-include = [
-  "src",
-  "tests",
+[tool.coverage]
+run.source = [ "ansys.solutions.dash_super_components" ] # pyansys requirement
+run.omit = [
+  "*/.venv/*",
+  "*/pytest-of-*/pytest-*/popen-*/*",
+  "*/site-packages/*",
+  "*/Temp/*",
+  "*/tests/*",
+  "/tmp/*",
+  "dist/*",
 ]
-exclude = [
-  "**/.*",
-  "examples/showcase_all",
-  "examples/user_guide/super_components_with_saf",
-  ".git",
+report.omit = [
+  "*/_solutions/templates/*",
+  "*/pytest-of-*/pytest-*/popen-*/*",
+  "*/Temp/*",
+  "*/tests/*",
+  "/tmp/*",
+  "dist/*",
 ]
-venvPath = "."
-venv = ".venv"
+report.show_missing = true  # pyansys requirement
 
 [tool.numpydoc_validation]
 # Keep in sync with numpydoc_validation_checks in doc/source/conf.py.

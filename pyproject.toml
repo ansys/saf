@@ -16,6 +16,7 @@ dependencies = [
   "ansys-bdm-shared-volume",
   "ansys-iam-oidc",
   "ansys-saf-cli",
+  "ansys-solutions-dash-super-components",
   "ansys-saf-desktop-installer",
   "ansys-saf-desktop-orchestrator",
   "ansys-saf-glow-engine[all]",
@@ -138,6 +139,7 @@ override-dependencies = [
 ]
 sources.ansys-bdm-api = { workspace = true }
 sources.ansys-bdm-shared-volume = { workspace = true }
+sources.ansys-solutions-dash-super-components = { workspace = true }
 sources.ansys-iam-oidc = { workspace = true }
 sources.ansys-saf-cli = { workspace = true }
 sources.ansys-saf-desktop-installer = { workspace = true }
@@ -151,6 +153,7 @@ package = false
 workspace.members = [
   "packages/bdm-python-api",
   "packages/bdm-python-shared-volume",
+  "packages/dash-super-components",
   "packages/glow-engine",
   "packages/saf-cli",
   "packages/saf-desktop-installer",

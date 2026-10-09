@@ -19,6 +19,7 @@
 
 import numpy as np
 import pytest
+
 from saf.solutions.examples.solution.scripts.beam_bending.theoretical_model import compute_beam_deflection
 
 

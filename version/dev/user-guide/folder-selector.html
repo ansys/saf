@@ -1,0 +1,1141 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" data-theme="dark">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Folder Selector &#8212; Super Components for Dash</title>
+  
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "dark";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "dark";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/ansys-sphinx-theme.css?v=5ffe81b6" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=fd6457a4" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/ansys-sphinx-theme.css?v=5ffe81b6" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://www.nerdfonts.com/assets/css/webfont.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/code-tabs.css?v=1bc26e2f" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/svg_icons.css?v=97e61e6f" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../_static/scripts/fontawesome.js?digest=0790524f97105ba85085"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=0790524f97105ba85085" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085" />
+
+
+  <!-- Include desired assets -->
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  
+
+  
+    <link href="../_static/css/breadcrumbs.css" rel="stylesheet" />
+  
+    <script src="../_static/documentation_options.js?v=8a448e45"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/sg-tags.js?v=d80f6fa4"></script>
+    <script src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
+    <script src="../_static/code-tabs.js?v=c983d12e"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'user-guide/folder-selector';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.18.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://saf.ansys.com/version/stable/api/dash-super-components/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'dev';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="icon" href="../_static/ansys-favicon.png"/>
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Input Form" href="input-form.html" />
+    <link rel="prev" title="Dual Input Range Slider" href="dual-input-range-slider.html" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="1.2.dev0" />
+  
+    
+    <script src="../_static/searchtools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../searchindex.js"></script>
+  
+  <meta name="robots" content="noindex, follow" />
+  </head>
+  <body data-default-mode="dark">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+    
+    <img src="../_static/endorsed-ansys-logos-gold-white-rgb.svg" class="logo__image only-dark" alt="Super Components for Dash - Home"/>
+    <img src="../_static/endorsed-ansys-logos-gold-black-rgb.svg" class="logo__image only-light pst-js-only" alt="Super Components for Dash - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../index.html" title="Super Components for Dash home">Home</a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../getting-started.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="index.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api/index.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../contribute.html">
+    Contribute
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../changelog.html">
+    Release notes
+  </a>
+</li>
+
+  </ul>
+</nav>
+</div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+      
+        <div class="navbar-item">
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+  
+</div></div>
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/super-components-for-dash" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+  
+    
+<!--
+  Announcement Version Loader
+  Dynamically loads the announcement.html content into the announcement_msg div.
+-->
+<div id="announcement_msg" aria-live="polite"></div>
+<script>
+  // Fetch and inject the announcement HTML content
+  fetch("announcement.html")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error: ${response.status} Announcement.html file not found, Please ignore this, if you are in dev/stable documentation`);
+      }
+      return response.text();
+    })
+    .then((text) => {
+      var msgDiv = document.getElementById("announcement_msg");
+      if (msgDiv) {
+        msgDiv.innerHTML = text;
+      }
+    })
+    .catch((error) => {
+      // Log only unexpected fetch errors
+      if (!(error.message && error.message.startsWith("HTTP error: 404"))) {
+        console.error(`Fetch problem: ${error.message} Announcement.html could not be loaded.`);
+      }
+    });
+</script>
+  
+
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../index.html" title="Super Components for Dash home">Home</a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../getting-started.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="index.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api/index.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../contribute.html">
+    Contribute
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../changelog.html">
+    Release notes
+  </a>
+</li>
+
+  </ul>
+</nav>
+</div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+  
+</div></div>
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/super-components-for-dash" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item pst-sidebar-collapse"><button id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar"><svg class="pst-icon svg-inline--fa" role="img" aria-hidden="true" focusable="false" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="M3 15.5C2.36232 15.5 1.74874 15.2564 1.28478 14.8189C0.820828 14.3815 0.541576 13.7832 0.504167 13.1467L0.5 13L0.5 3C0.499965 2.36232 0.743605 1.74874 1.18107 1.28478C1.61854 0.820828 2.21676 0.541576 2.85333 0.504167L3 0.5L13 0.5C13.6377 0.499965 14.2513 0.743605 14.7152 1.18107C15.1792 1.61854 15.4584 2.21676 15.4958 2.85333L15.5 3L15.5 13C15.5 13.6377 15.2564 14.2513 14.8189 14.7152C14.3815 15.1792 13.7832 15.4584 13.1467 15.4958L13 15.5L3 15.5ZM3 13.8333L10.5 13.8333L10.5 2.16667L3 2.16667C2.79589 2.16669 2.59889 2.24163 2.44636 2.37726C2.29383 2.5129 2.19638 2.69979 2.1725 2.9025L2.16667 3L2.16667 13C2.16669 13.2041 2.24163 13.4011 2.37726 13.5536C2.5129 13.7062 2.69979 13.8036 2.9025 13.8275L3 13.8333ZM6.65583 10.325L6.5775 10.2558L4.91083 8.58917C4.76735 8.44567 4.68116 8.25476 4.66843 8.05223C4.65569 7.84971 4.71729 7.6495 4.84167 7.48917L4.91083 7.41083L6.5775 5.74417C6.72747 5.59471 6.9287 5.50794 7.14032 5.50148C7.35194 5.49502 7.55809 5.56935 7.7169 5.70937C7.8757 5.8494 7.97525 6.04463 7.99533 6.25539C8.01541 6.46616 7.95451 6.67667 7.825 6.84417L7.75583 6.9225L6.67917 8L7.75583 9.0775C7.89931 9.22099 7.98551 9.41191 7.99824 9.61443C8.01097 9.81695 7.94938 10.0172 7.825 10.1775L7.75583 10.2558C7.61234 10.3993 7.42142 10.4855 7.2189 10.4982C7.01638 10.511 6.81617 10.4494 6.65583 10.325Z"/>
+  </svg>
+  <span class="pst-collapse-sidebar-label">Collapse Sidebar</span>
+  <span class="pst-expand-sidebar-label">Expand Sidebar</span>
+</button></div>
+        <div class="sidebar-primary-item">
+
+
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">Components</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="authenticator.html">Authenticator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dual-input-range-slider.html">Dual Input Range Slider</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Folder Selector</a></li>
+<li class="toctree-l1"><a class="reference internal" href="input-form.html">Input Form</a></li>
+<li class="toctree-l1"><a class="reference internal" href="input-row-array.html">Input Row Array</a></li>
+<li class="toctree-l1"><a class="reference internal" href="logs-supervisor.html">Logs Supervisor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="transaction-method-status-badge.html">Transaction Method Status Badge</a></li>
+<li class="toctree-l1"><a class="reference internal" href="transaction-supervisor.html">Transaction Supervisor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tree.html">Tree</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">How-to guides</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="icons.html">Icons</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+     
+    <li class="breadcrumb-item breadcrumb-home">
+      <a
+        href="../index.html"
+        class="nav-link"
+        aria-label="Home"
+      >
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="index.html" class="nav-link">User guide</a>
+    </li>
+      
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Folder Selector</span></li>
+    
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="folder-selector">
+<span id="ref-folder-selector"></span><h1>Folder Selector<a class="headerlink" href="#folder-selector" title="Link to this heading">#</a></h1>
+<p><code class="docutils literal notranslate"><span class="pre">FolderSelector</span></code> is a Dash All-in-One (AIO) component for browsing and selecting a directory. It
+can operate in two modes: a native OS dialog (tkinter mode) and a browser-based modal with a tree
+view of the file system (bootstrap mode).</p>
+<p>Key features:</p>
+<ul class="simple">
+<li><p><strong>Dual operating modes</strong>: Supports tkinter (native OS dialog) and bootstrap (browser modal, requires beta opt-in) modes.</p></li>
+<li><p><strong>Automatic mode selection</strong>: Automatically selects the best mode based on environment and
+<code class="docutils literal notranslate"><span class="pre">tkinter</span></code> availability.</p></li>
+<li><p><strong>Flexible configuration</strong>: Customizable browse and clear buttons, default path, and maximum path
+length.</p></li>
+<li><p><strong>Readable long-path display</strong>: Built-in selected-path display supports line clamping with
+ellipsis and full-path tooltip on hover.</p></li>
+<li><p><strong>Environment variable support</strong>: Mode and root path can be configured via environment variables
+for remote or containerized deployments.</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>tkinter is Python’s standard library for creating graphical user interfaces (GUIs). It is
+included in the standard Python library and thus is available by default in most Python
+installations, but may not be available in some minimal or custom Python installations.</p>
+</div>
+<img alt="../_images/folder_selector_component.png" class="align-center" src="../_images/folder_selector_component.png" />
+<section id="usage">
+<h2>Usage<a class="headerlink" href="#usage" title="Link to this heading">#</a></h2>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">FolderSelector</span></code> component must be wrapped inside a <code class="docutils literal notranslate"><span class="pre">MantineProvider</span></code> with a
+<code class="docutils literal notranslate"><span class="pre">dmc.NotificationContainer</span></code> present in the application layout for error notifications
+to work properly. If the notification container is missing or not properly configured, errors
+fail silently without feedback to the user.
+See the <a class="reference internal" href="../getting-started.html#ref-notification-container"><span class="std std-ref">Add a NotificationContainer</span></a> section of the Getting
+Started page for instructions, including how to customize the container id via
+<code class="xref py py-func docutils literal notranslate"><span class="pre">configure()</span></code>.</p>
+</div>
+<section id="basic-usage">
+<h3>Basic usage<a class="headerlink" href="#basic-usage" title="Link to this heading">#</a></h3>
+<p>Import <code class="docutils literal notranslate"><span class="pre">FolderSelector</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ansys.solutions.dash_super_components</span><span class="w"> </span><span class="kn">import</span> <span class="n">FolderSelector</span>
+</pre></div>
+</div>
+<p>Add <code class="docutils literal notranslate"><span class="pre">FolderSelector</span></code> to the page layout:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">layout</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">html</span><span class="o">.</span><span class="n">Div</span><span class="p">(</span>
+        <span class="p">[</span>
+            <span class="n">FolderSelector</span><span class="p">(</span>
+                <span class="n">aio_id</span><span class="o">=</span><span class="s2">&quot;select_folder_basic&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">]</span>
+    <span class="p">)</span>
+
+
+</pre></div>
+</div>
+<p>The following output is expected:</p>
+<img alt="../_images/default_configuration2.png" class="align-center" src="../_images/default_configuration2.png" />
+</section>
+<section id="advanced-usage">
+<h3>Advanced usage<a class="headerlink" href="#advanced-usage" title="Link to this heading">#</a></h3>
+<p>The following example shows how to use the component in bootstrap mode and customize its button
+properties and options.</p>
+<p>Bootstrap mode is a beta feature and is disabled by default. To enable it, call
+<code class="xref py py-func docutils literal notranslate"><span class="pre">configure()</span></code> during app startup (for the
+package-level beta feature setup, see <a class="reference internal" href="../getting-started.html#ref-enable-beta-features"><span class="std std-ref">Enable beta features</span></a>):</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">ansys.solutions.dash_super_components</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dsc</span>
+
+<span class="n">dsc</span><span class="o">.</span><span class="n">configure</span><span class="p">(</span><span class="n">enable_beta_features</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>To make the <code class="docutils literal notranslate"><span class="pre">FolderSelector</span></code> use bootstrap mode, import <code class="docutils literal notranslate"><span class="pre">FolderSelectorMode</span></code> in addition to
+<code class="docutils literal notranslate"><span class="pre">FolderSelector</span></code> and set the <code class="docutils literal notranslate"><span class="pre">mode</span></code> parameter to <code class="docutils literal notranslate"><span class="pre">FolderSelectorMode.BOOTSTRAP</span></code> when
+instantiating the component. In addition, pass custom settings in the <code class="docutils literal notranslate"><span class="pre">options</span></code>
+dictionary, and customize the appearance of the browse and clear buttons with the
+<code class="docutils literal notranslate"><span class="pre">browse_button_props</span></code> and <code class="docutils literal notranslate"><span class="pre">clear_button_props</span></code> dictionaries:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ansys.solutions.dash_super_components</span><span class="w"> </span><span class="kn">import</span> <span class="n">FolderSelector</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.solutions.dash_super_components.folder_selector</span><span class="w"> </span><span class="kn">import</span> <span class="n">FolderSelectorMode</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">advanced_layout</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">html</span><span class="o">.</span><span class="n">Div</span><span class="p">(</span>
+        <span class="p">[</span>
+            <span class="n">FolderSelector</span><span class="p">(</span>
+                <span class="n">aio_id</span><span class="o">=</span><span class="s2">&quot;select_folder_advanced&quot;</span><span class="p">,</span>
+                <span class="n">mode</span><span class="o">=</span><span class="n">FolderSelectorMode</span><span class="o">.</span><span class="n">BOOTSTRAP</span><span class="p">,</span>
+                <span class="n">browse_button_props</span><span class="o">=</span><span class="p">{</span>
+                    <span class="s2">&quot;disabled&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+                    <span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="s2">&quot;Select the data source directory&quot;</span><span class="p">,</span>
+                <span class="p">},</span>
+                <span class="n">clear_button_props</span><span class="o">=</span><span class="p">{</span>
+                    <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="s2">&quot;lg&quot;</span><span class="p">,</span>
+                <span class="p">},</span>
+                <span class="n">options</span><span class="o">=</span><span class="p">{</span>
+                    <span class="s2">&quot;display_field&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;enabled&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">},</span>
+                    <span class="s2">&quot;default_path&quot;</span><span class="p">:</span> <span class="s2">&quot;/path/to/default&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;browse_from&quot;</span><span class="p">:</span> <span class="s2">&quot;/path/to/root&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;topmost&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                    <span class="s2">&quot;max_path_length&quot;</span><span class="p">:</span> <span class="mi">260</span><span class="p">,</span>
+                    <span class="s2">&quot;max_tree_depth&quot;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span>
+                    <span class="s2">&quot;max_children_per_node&quot;</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span>
+                <span class="p">},</span>
+                <span class="n">value</span><span class="o">=</span><span class="s2">&quot;/path/to/preselected/folder&quot;</span><span class="p">,</span>
+                <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;margin&quot;</span><span class="p">:</span> <span class="s2">&quot;2rem&quot;</span><span class="p">},</span>
+            <span class="p">)</span>
+        <span class="p">]</span>
+    <span class="p">)</span>
+
+
+</pre></div>
+</div>
+<p>The following output is expected:</p>
+<img alt="../_images/custom_configuration2.png" class="align-center" src="../_images/custom_configuration2.png" />
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>In bootstrap mode, you must provide a root path for the folder tree by setting either
+<code class="docutils literal notranslate"><span class="pre">options[&quot;browse_from&quot;]</span></code> or the <code class="docutils literal notranslate"><span class="pre">FOLDER_SELECTOR_BROWSE_FROM</span></code> environment variable.</p>
+</div>
+</section>
+<section id="access-the-selected-folder">
+<h3>Access the selected folder<a class="headerlink" href="#access-the-selected-folder" title="Link to this heading">#</a></h3>
+<p>The selected folder path can be accessed in a callback function using the
+<code class="docutils literal notranslate"><span class="pre">FolderSelector.ids.selected_folder(aio_id)</span></code> store ID. The value is a string representing
+the selected folder path, or <code class="docutils literal notranslate"><span class="pre">None</span></code> if no folder is selected.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@callback</span><span class="p">(</span>
+    <span class="n">Output</span><span class="p">(</span><span class="s2">&quot;output-div&quot;</span><span class="p">,</span> <span class="s2">&quot;children&quot;</span><span class="p">),</span>
+    <span class="n">Input</span><span class="p">(</span><span class="n">FolderSelector</span><span class="o">.</span><span class="n">ids</span><span class="o">.</span><span class="n">selected_folder</span><span class="p">(</span><span class="s2">&quot;select_folder_advanced&quot;</span><span class="p">),</span> <span class="s2">&quot;data&quot;</span><span class="p">),</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">display_selected_folder</span><span class="p">(</span><span class="n">selected_folder</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">selected_folder</span><span class="p">:</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Selected folder: </span><span class="si">{</span><span class="n">selected_folder</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">return</span> <span class="s2">&quot;No folder selected&quot;</span>
+
+
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The selected folder value is client-side browser state and should be treated
+as not trusted input (that is, it should be validated before use).</p>
+</div>
+</section>
+</section>
+<section id="properties">
+<h2>Properties<a class="headerlink" href="#properties" title="Link to this heading">#</a></h2>
+<section id="constructor-parameters">
+<h3>Constructor parameters<a class="headerlink" href="#constructor-parameters" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Required</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>mode</p></td>
+<td><p>The technology to be used to create the folder selector pop-up.
+Can be <code class="docutils literal notranslate"><span class="pre">FolderSelectorMode.TKINTER</span></code> or <code class="docutils literal notranslate"><span class="pre">FolderSelectorMode.BOOTSTRAP</span></code>.
+If not specified, automatically selects based on <code class="docutils literal notranslate"><span class="pre">tkinter</span></code> availability
+and <code class="docutils literal notranslate"><span class="pre">FOLDER_SELECTOR_REMOTE_DEPLOYMENT</span></code> environment variable when
+bootstrap beta is enabled via
+<code class="docutils literal notranslate"><span class="pre">configure(enable_beta_features=True)</span></code>.</p></td>
+<td><p>FolderSelectorMode</p></td>
+<td><p>No</p></td>
+</tr>
+<tr class="row-odd"><td><p>aio_id</p></td>
+<td><p>The unique identifier for the component. If not provided, a UUID is generated.</p></td>
+<td><p>str</p></td>
+<td><p>No</p></td>
+</tr>
+<tr class="row-even"><td><p>browse_button_props</p></td>
+<td><p>Properties for the browse button. See <a class="reference external" href="https://www.dash-mantine-components.com/components/button">dmc.Button properties</a>.
+Default includes a folder icon and “Browse” text.</p></td>
+<td><p>dict</p></td>
+<td><p>No</p></td>
+</tr>
+<tr class="row-odd"><td><p>clear_button_props</p></td>
+<td><p>Properties for the clear button. See <a class="reference external" href="https://www.dash-mantine-components.com/components/actionicon">dmc.ActionIcon properties</a>.
+Default includes a delete icon.</p></td>
+<td><p>dict</p></td>
+<td><p>No</p></td>
+</tr>
+<tr class="row-even"><td><p>style</p></td>
+<td><p>Style properties for the component container.</p></td>
+<td><p>dict</p></td>
+<td><p>No</p></td>
+</tr>
+<tr class="row-odd"><td><p>options</p></td>
+<td><p>Dictionary containing additional configuration options (see below).</p></td>
+<td><p>dict</p></td>
+<td><p>No</p></td>
+</tr>
+<tr class="row-even"><td><p>value</p></td>
+<td><p>The preselected folder path. Populates the selected folder store upon instantiation.</p></td>
+<td><p>str</p></td>
+<td><p>No</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="options-dictionary">
+<h3>Options dictionary<a class="headerlink" href="#options-dictionary" title="Link to this heading">#</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">options</span></code> parameter accepts a dictionary with the following keys:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Key</p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Required</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>default_path</p></td>
+<td><p>The path to be used as a default value for the selected folder
+when no folder has been selected yet or the selection has been
+cleared.</p></td>
+<td><p>str</p></td>
+<td><p>No</p></td>
+</tr>
+<tr class="row-odd"><td><p>browse_from</p></td>
+<td><p>The path to be used as a root for folder selection. Only works
+with bootstrap mode. In bootstrap mode, this value must be
+provided either in <code class="docutils literal notranslate"><span class="pre">options</span></code> or with an environment variable
+<code class="docutils literal notranslate"><span class="pre">FOLDER_SELECTOR_BROWSE_FROM</span></code>.</p></td>
+<td><p>str</p></td>
+<td><p>No</p></td>
+</tr>
+<tr class="row-even"><td><p>topmost</p></td>
+<td><p>If set to <code class="docutils literal notranslate"><span class="pre">True</span></code>, the dialog window is shown in the foreground
+(tkinter mode only).
+Default: <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></td>
+<td><p>bool</p></td>
+<td><p>No</p></td>
+</tr>
+<tr class="row-odd"><td><p>max_path_length</p></td>
+<td><p>The maximum length of the path that can be selected.
+Default: System-dependent maximum path length.</p></td>
+<td><p>int</p></td>
+<td><p>No</p></td>
+</tr>
+<tr class="row-even"><td><p>max_tree_depth</p></td>
+<td><p>The maximum folder depth included in bootstrap tree generation.
+Default: <code class="docutils literal notranslate"><span class="pre">10</span></code>.</p></td>
+<td><p>int</p></td>
+<td><p>No</p></td>
+</tr>
+<tr class="row-odd"><td><p>max_children_per_node</p></td>
+<td><p>The maximum child folders included for each tree node         int
+in bootstrap mode. Additional folders are omitted from the tree.
+Default: <code class="docutils literal notranslate"><span class="pre">100</span></code>.</p></td>
+<td><p>No</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>display_field</p></td>
+<td><p>Dictionary with <code class="docutils literal notranslate"><span class="pre">enabled</span></code> (bool) and optional
+<code class="docutils literal notranslate"><span class="pre">max_display_lines</span></code> (int) keys. If <code class="docutils literal notranslate"><span class="pre">enabled</span></code> is <code class="docutils literal notranslate"><span class="pre">True</span></code>,
+the selected folder path is displayed below the buttons.
+The display is truncated with ellipsis after a maximum number of
+lines specified by <code class="docutils literal notranslate"><span class="pre">max_display_lines</span></code> and the full path is
+available via tooltip on hover.
+Default: <code class="docutils literal notranslate"><span class="pre">{&quot;enabled&quot;:</span> <span class="pre">True,</span> <span class="pre">&quot;max_display_lines&quot;:</span> <span class="pre">2}</span></code>.</p></td>
+<td><p>dict</p></td>
+<td><p>No</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="component-ids">
+<h3>Component IDs<a class="headerlink" href="#component-ids" title="Link to this heading">#</a></h3>
+<p>The component exposes the following IDs for use in callbacks:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">FolderSelector.ids.selected_folder(aio_id)</span></code>: Store containing the selected folder path (str or
+None)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">FolderSelector.ids.browse_button(aio_id)</span></code>: The browse button component</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">FolderSelector.ids.clear_button(aio_id)</span></code>: The clear button component</p></li>
+</ul>
+</section>
+</section>
+<section id="operating-modes">
+<h2>Operating modes<a class="headerlink" href="#operating-modes" title="Link to this heading">#</a></h2>
+<section id="tkinter-mode">
+<h3>Tkinter mode<a class="headerlink" href="#tkinter-mode" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Uses native OS dialog window for folder selection</p></li>
+<li><p>Provides familiar OS-native user experience</p></li>
+<li><p>Requires <code class="docutils literal notranslate"><span class="pre">tkinter</span></code> package to be available</p></li>
+<li><p>Selected via <code class="docutils literal notranslate"><span class="pre">mode=FolderSelectorMode.TKINTER</span></code></p></li>
+<li><p>Respects the <code class="docutils literal notranslate"><span class="pre">topmost</span></code> option to control window layering</p></li>
+</ul>
+<img alt="../_images/tkinter_mode_dialog.png" class="align-center" src="../_images/tkinter_mode_dialog.png" />
+</section>
+<section id="bootstrap-mode">
+<span id="ref-folder-selector-bootstrap"></span><h3>Bootstrap mode<a class="headerlink" href="#bootstrap-mode" title="Link to this heading">#</a></h3>
+<p>Bootstrap mode is a beta capability for browser-based folder selection in controlled environments
+when <code class="docutils literal notranslate"><span class="pre">tkinter</span></code> is not available. It should not be used in production environments.</p>
+<ul class="simple">
+<li><p>Is a beta feature and can only be used when enabled through
+<code class="xref py py-func docutils literal notranslate"><span class="pre">configure()</span></code> with
+<code class="docutils literal notranslate"><span class="pre">enable_beta_features=True</span></code>
+(see <a class="reference internal" href="../getting-started.html#ref-enable-beta-features"><span class="std std-ref">Enable beta features</span></a>).</p></li>
+<li><p>Uses browser-based modal with tree view of file system</p></li>
+<li><p>Works in environments where <code class="docutils literal notranslate"><span class="pre">tkinter</span></code> is not available (for example, remote deployments)</p></li>
+<li><p>Requires <code class="docutils literal notranslate"><span class="pre">browse_from</span></code> to be defined through <code class="docutils literal notranslate"><span class="pre">options</span></code> or
+<code class="docutils literal notranslate"><span class="pre">FOLDER_SELECTOR_BROWSE_FROM</span></code> environment variable</p></li>
+<li><p>Hidden folders and symlink folders are excluded from the tree</p></li>
+<li><p>Supports tree-size controls through <code class="docutils literal notranslate"><span class="pre">max_tree_depth</span></code> and <code class="docutils literal notranslate"><span class="pre">max_children_per_node</span></code></p></li>
+<li><p>Selected via <code class="docutils literal notranslate"><span class="pre">mode=FolderSelectorMode.BOOTSTRAP</span></code></p></li>
+<li><p>Automatically activated (when mode is omitted) if bootstrap beta is enabled and
+<code class="docutils literal notranslate"><span class="pre">FOLDER_SELECTOR_REMOTE_DEPLOYMENT</span></code> environment variable is set to <code class="docutils literal notranslate"><span class="pre">true</span></code>, <code class="docutils literal notranslate"><span class="pre">1</span></code>, or <code class="docutils literal notranslate"><span class="pre">yes</span></code></p></li>
+</ul>
+<img alt="../_images/bootstrap_mode_modal.png" class="align-center" src="../_images/bootstrap_mode_modal.png" />
+<p><strong>Operational guidance</strong></p>
+<ul class="simple">
+<li><p>Set <code class="docutils literal notranslate"><span class="pre">browse_from</span></code> to the narrowest practical root</p></li>
+<li><p>Avoid broad roots such as monorepo roots or system-level roots</p></li>
+<li><p>Keep <code class="docutils literal notranslate"><span class="pre">max_tree_depth</span></code> and <code class="docutils literal notranslate"><span class="pre">max_children_per_node</span></code> conservative for responsiveness</p></li>
+<li><p>Prefer tkinter mode for production workflows when native GUI access is available</p></li>
+</ul>
+</section>
+</section>
+<section id="environment-variables">
+<h2>Environment variables<a class="headerlink" href="#environment-variables" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Variable</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>FOLDER_SELECTOR_REMOTE_DEPLOYMENT</p></td>
+<td><p>If set to <code class="docutils literal notranslate"><span class="pre">true</span></code>, <code class="docutils literal notranslate"><span class="pre">1</span></code>, or <code class="docutils literal notranslate"><span class="pre">yes</span></code>, forces bootstrap mode
+when bootstrap beta is enabled via
+<code class="docutils literal notranslate"><span class="pre">configure(enable_beta_features=True)</span></code>.
+Useful for remote or containerized deployments.</p></td>
+</tr>
+<tr class="row-odd"><td><p>FOLDER_SELECTOR_BROWSE_FROM</p></td>
+<td><p>Specifies the root path for folder browsing in bootstrap mode.
+Can be overridden by the <code class="docutils literal notranslate"><span class="pre">browse_from</span></code> option.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="limitations">
+<h2>Limitations<a class="headerlink" href="#limitations" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>Bootstrap mode is intended for controlled environments with a narrowly scoped
+<code class="docutils literal notranslate"><span class="pre">browse_from</span></code> root and trusted usage patterns.</p></li>
+<li><p>The tree can omit folders when <code class="docutils literal notranslate"><span class="pre">max_tree_depth</span></code> or <code class="docutils literal notranslate"><span class="pre">max_children_per_node</span></code> limits are reached.
+In that case, the affected nodes include a description message indicating truncation.</p></li>
+<li><p>Hidden folders (names beginning with <code class="docutils literal notranslate"><span class="pre">.</span></code>) and symlink folders are intentionally excluded from
+the bootstrap tree.</p></li>
+<li><p>If <code class="docutils literal notranslate"><span class="pre">tkinter</span></code> is unavailable and bootstrap beta is not enabled, folder browsing is blocked and
+the component shows a notification explaining how to enable bootstrap mode.
+See <a class="reference internal" href="../getting-started.html#ref-enable-beta-features"><span class="std std-ref">Enable beta features</span></a>.</p></li>
+</ul>
+</section>
+<section id="full-example">
+<h2>Full example<a class="headerlink" href="#full-example" title="Link to this heading">#</a></h2>
+<p>For a complete working example, check out the <a class="reference external" href="https://github.com/ansys/super-components-for-dash/blob/main/examples/showcase_all/src/ansys/solutions/showcase_dash_super_components/ui/pages/folder_selector_page.py">showcase example</a>.</p>
+<p>The example demonstrates:</p>
+<ul class="simple">
+<li><p>A basic folder selector using default settings, with the selected path displayed via a
+callback</p></li>
+<li><p>Switching between bootstrap and tkinter modes, toggling the built-in path display field,
+toggling a default path, and setting <code class="docutils literal notranslate"><span class="pre">max_display_lines</span></code> via the <code class="docutils literal notranslate"><span class="pre">options</span></code> dictionary</p></li>
+<li><p>Custom styling of the component container, browse button, and clear button</p></li>
+<li><p>Two folder selectors demonstrating persistence strategies: no persistence (resets on
+recreation) and backend persistence (restored from the server per project)</p></li>
+</ul>
+<p>For a minimal self-contained runnable example, see the
+<a class="reference internal" href="../examples/general/example_folder_selector.html#sphx-glr-examples-general-example-folder-selector-py"><span class="std std-ref">Folder Selector</span></a> page in the Examples gallery.</p>
+</section>
+<section id="notes">
+<h2>Notes<a class="headerlink" href="#notes" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>Consider preserving the selected folder value by passing it to the <code class="docutils literal notranslate"><span class="pre">value</span></code> parameter, so it gets
+preserved when recreating the component with different settings etc.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">browse_from</span></code> option is only effective in bootstrap mode and has no effect in tkinter mode</p></li>
+<li><p>Path validation is automatically performed based on the <code class="docutils literal notranslate"><span class="pre">max_path_length</span></code> setting</p></li>
+</ul>
+</section>
+<section id="source-code">
+<h2>Source code<a class="headerlink" href="#source-code" title="Link to this heading">#</a></h2>
+<p>For the full API reference of <code class="docutils literal notranslate"><span class="pre">FolderSelector</span></code>, see
+<a class="reference internal" href="../api/components/_autosummary/ansys.solutions.dash_super_components.FolderSelector.html#ansys.solutions.dash_super_components.FolderSelector" title="ansys.solutions.dash_super_components.FolderSelector"><code class="xref py py-class docutils literal notranslate"><span class="pre">FolderSelector</span></code></a>.</p>
+<p>Check out the <a class="reference external" href="https://github.com/ansys/super-components-for-dash/blob/main/src/ansys/solutions/dash_super_components/folder_selector.py">component source code</a>
+to discover the underlying logic. Contributions are welcomed. You can extend the component
+functionalities by raising a pull request in the
+<a class="reference external" href="https://github.com/ansys/super-components-for-dash">super-components-for-dash</a> repository.</p>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#usage">Usage</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#basic-usage">Basic usage</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#advanced-usage">Advanced usage</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#access-the-selected-folder">Access the selected folder</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#properties">Properties</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#constructor-parameters">Constructor parameters</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#options-dictionary">Options dictionary</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#component-ids">Component IDs</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#operating-modes">Operating modes</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tkinter-mode">Tkinter mode</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bootstrap-mode">Bootstrap mode</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#environment-variables">Environment variables</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#limitations">Limitations</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#full-example">Full example</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#notes">Notes</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#source-code">Source code</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <ul class="this-page-menu">
+      <li><a href="../_sources/user-guide/folder-selector.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=0790524f97105ba85085"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085"></script>
+
+
+  <!-- Include desired assets -->
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.7/require.min.js"></script>
+
+<script>
+// Passing the search options to the search.js file
+const SEARCH_OPTIONS = JSON.parse('{"ignoreLocation": true, "keys": ["title", "text", "objectID"], "limit": 10, "minMatchCharLength": 2, "threshold": 0.5}');
+const SEARCH_FILE = "../_static/search.json";
+const ADVANCE_SEARCH_PATH = "../search.html";
+const EXTRA_SOURCES = JSON.parse('""');
+</script>
+
+
+<script src="../_static/js/search.js"></script>
+
+  
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.0.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<!--
+  Theme Version Footer
+  Displays the Sphinx theme version and the last updated date.
+  Accessibility and semantic improvements included.
+-->
+<footer class="theme-version" aria-label="Theme version and last update">
+  <span>
+    
+      Built with the
+      <a href="https://sphinxdocs.ansys.com/version/stable/index.html" target="_blank" rel="noopener noreferrer">
+        Ansys Sphinx Theme
+      </a>
+      1.9.0.
+    
+  </span>
+  <br />
+  <span>Last updated on <time id="ast_build_date"></time></span>
+</footer>
+<script>
+  // Set the last updated date in a readable format
+  (function() {
+    var options = { day: "numeric", month: "long", year: "numeric" };
+    var ast_lastModifiedDate = new Date(document.lastModified);
+    var ast_build_date = ast_lastModifiedDate.toLocaleDateString("en-US", options);
+    var dateElem = document.getElementById("ast_build_date");
+    if (dateElem) {
+      dateElem.textContent = ast_build_date;
+    }
+  })();
+</script></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

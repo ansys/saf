@@ -620,4 +620,4 @@ jobs:
       - name: Run npm test (Moon)
         if: ${{ inputs.library-name == 'saf-projects-dashboard' }}
         shell: bash
-        run: moon run $PACKAGE:test
+        run: moon run $PACKAGE:test-npm

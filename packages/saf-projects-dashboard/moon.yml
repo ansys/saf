@@ -38,6 +38,10 @@ tasks:
       - 'src/ansys_saf_projects_dashboard/metadata.json'
       - 'src/ansys_saf_projects_dashboard/proptypes.js'
       - 'src/ansys_saf_projects_dashboard/assets/**/*'
+    toolchains:
+      - 'unstable_uv'
+      - 'unstable_python'
+      - 'node'
     options:
       runFromWorkspaceRoot: false
 

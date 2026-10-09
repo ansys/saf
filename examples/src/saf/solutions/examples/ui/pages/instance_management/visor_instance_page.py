@@ -136,8 +136,26 @@ def layout(project: ExamplesSolution) -> html.Div:
                 dmc.Stack(
                 [
                     dmc.Button(
-                        "Show Shape",
-                        id="show-visor-shape-button",
+                        "Show Piston rod",
+                        id="show-visor-piston-button",
+                        variant="filled",
+                        color="#2790F1",
+                        leftSection=DashIconify(icon="mdi:eye"),
+                        disabled=not step.visor_started,
+                        style={"width": "70%", "font-size": "15px"},
+                    ),
+                    dmc.Button(
+                        "Show Spheres",
+                        id="show-visor-spheres-button",
+                        variant="filled",
+                        color="#2790F1",
+                        leftSection=DashIconify(icon="mdi:eye"),
+                        disabled=not step.visor_started,
+                        style={"width": "70%", "font-size": "15px"},
+                    ),
+                    dmc.Button(
+                        "Show Elbow",
+                        id="show-visor-elbow-button",
                         variant="filled",
                         color="#2790F1",
                         leftSection=DashIconify(icon="mdi:eye"),
@@ -190,9 +208,8 @@ def layout(project: ExamplesSolution) -> html.Div:
                     },
                 ),
                 style={
-                    "height": "200px",
+                    "height": "220px",
                     "width": "100%",
-                    "overflowY": "scroll",
                 },
             ),
         ],
@@ -236,8 +253,9 @@ def layout(project: ExamplesSolution) -> html.Div:
                 "This example demonstrates how to leverage the instance management API to control VISOR.\
                 Click the Launch action button to\
                 start the instance. A transaction method will start VISOR which can be used across all transaction\
-                methods of the solution. Run VISOR operations with the Show Shape and\
-                button. Close VISOR using the Shutdown button.",
+                methods of the solution. Run VISOR operations with the \"Show\" buttons. The models used in this\
+                example are selected to represent different capabilities of VISOR, do not hesitate to play with\
+                them to test the possibilities. Close VISOR using the Shutdown button.",
                 icon=DashIconify(icon="material-symbols:info", width=30),
                 style={"font-size": "18px", "fontStyle": "italic"},
             ),
@@ -310,16 +328,18 @@ def start_visor(n_clicks: int, project: ExamplesSolution) -> tuple[list[dict[str
     Output("start-visor-button", "disabled", allow_duplicate=True),
     Output("start-visor-button", "loading", allow_duplicate=True),
     Output("stop-visor-button", "disabled", allow_duplicate=True),
-    Output("show-visor-shape-button", "disabled", allow_duplicate=True),
+    Output("show-visor-piston-button", "disabled", allow_duplicate=True),
+    Output("show-visor-spheres-button", "disabled", allow_duplicate=True),
+    Output("show-visor-elbow-button", "disabled", allow_duplicate=True),
     Input("start-visor-listener", "message"),
     prevent_initial_call=True,
 )
 def sync_start_controls_on_backend_event(
     message: dict[str, Any] | None,
-) -> tuple[list[dict[str, Any]] | Any, bool, bool, bool, bool]:
+) -> tuple[list[dict[str, Any]] | Any, bool, bool, bool, bool, bool, bool]:
     """Update the Visor controls and notification after startup completes."""
     if not message:
-        return no_update, no_update, no_update, no_update, no_update
+        return no_update, no_update, no_update, no_update, no_update, no_update, no_update
 
     method_state = MethodState.model_validate_json(message["data"])
     notification = handle_method_event(
@@ -329,36 +349,85 @@ def sync_start_controls_on_backend_event(
         "VISOR initialization failed. Please check the logs.",
     )
     if method_state.status.value == "completed":
-        return notification, True, False, False, False
+        return notification, True, False, False, False, False, False
     if method_state.status.value == "failed":
-        return notification, False, False, True, True
-    return notification, True, True, True, True
+        return notification, False, False, True, True, True, True
+    return notification, True, True, True, True, True, True
 
 
 @callback(
     Output("notification-container", "sendNotifications", allow_duplicate=True),
-    Input("show-visor-shape-button", "n_clicks"),
+    Input("show-visor-piston-button", "n_clicks"),
     State("url", "pathname"),
     prevent_initial_call=True,
 )
-def show_visor_shape(n_clicks: int | None, project: ExamplesSolution) -> list[dict[str, Any]] | Any:
-    """Display the cube in the running VISOR instance."""
+def show_visor_piston(n_clicks: int | None, project: ExamplesSolution) -> list[dict[str, Any]] | Any:
+    """Display the piston rod in the running VISOR instance."""
     if not n_clicks:
         return no_update
 
-    project.steps.visor_step.show_shape()
+    project.steps.visor_step.show_piston()
     return [
         dict(
             title="Success",
             id="show-visor-shape-notification",
             action="show",
-            message="Cube displayed in VISOR.",
+            message="Piston rod displayed in VISOR.",
             color="green",
             autoClose=5000,
             withCloseButton=True,
         )
     ]
 
+
+@callback(
+    Output("notification-container", "sendNotifications", allow_duplicate=True),
+    Input("show-visor-spheres-button", "n_clicks"),
+    State("url", "pathname"),
+    prevent_initial_call=True,
+)
+def show_visor_spheres(n_clicks: int | None, project: ExamplesSolution) -> list[dict[str, Any]] | Any:
+    """Display the spheres in the running VISOR instance."""
+    if not n_clicks:
+        return no_update
+
+    project.steps.visor_step.show_spheres()
+    return [
+        dict(
+            title="Success",
+            id="show-visor-spheres-notification",
+            action="show",
+            message="Spheres displayed in VISOR.",
+            color="green",
+            autoClose=5000,
+            withCloseButton=True,
+        )
+    ]
+
+
+@callback(
+    Output("notification-container", "sendNotifications", allow_duplicate=True),
+    Input("show-visor-elbow-button", "n_clicks"),
+    State("url", "pathname"),
+    prevent_initial_call=True,
+)
+def show_visor_elbow(n_clicks: int | None, project: ExamplesSolution) -> list[dict[str, Any]] | Any:
+    """Display the elbow in the running VISOR instance."""
+    if not n_clicks:
+        return no_update
+
+    project.steps.visor_step.show_elbow()
+    return [
+        dict(
+            title="Success",
+            id="show-visor-elbow-notification",
+            action="show",
+            message="Elbow displayed in VISOR.",
+            color="green",
+            autoClose=5000,
+            withCloseButton=True,
+        )
+    ]
 
 @callback(
     Output("visor-viewer-container", "children"),
@@ -390,18 +459,22 @@ def display_visor_viewer(
     Output("visor-viewer-container", "children", allow_duplicate=True),
     Output("start-visor-button", "disabled", allow_duplicate=True),
     Output("stop-visor-button", "disabled", allow_duplicate=True),
-    Output("show-visor-shape-button", "disabled", allow_duplicate=True),
+    Output("show-visor-piston-button", "disabled", allow_duplicate=True),
+    Output("show-visor-spheres-button", "disabled", allow_duplicate=True),
+    Output("show-visor-elbow-button", "disabled", allow_duplicate=True),
     Input("stop-visor-button", "n_clicks"),
     State("url", "pathname"),
     prevent_initial_call=True,
 )
-def shutdown_visor(n_clicks: int, project: ExamplesSolution) -> tuple[list[dict[str, Any]] | str, list[Any], bool, bool, bool]:
+def shutdown_visor(n_clicks: int, project: ExamplesSolution) -> tuple[list[dict[str, Any]] | str, list[Any], bool, bool, bool, bool, bool]:
     """Shutdown the VISOR instance."""
     notification = no_update
     visor_viewer_children = no_update
     disable_launch_button = no_update
     disable_shutdown_button = no_update
-    disable_show_shape_button = no_update
+    disable_show_piston_button = no_update
+    disable_show_spheres_button = no_update
+    disable_show_elbow_button = no_update
 
     if n_clicks:
         step = project.steps.visor_step
@@ -422,7 +495,9 @@ def shutdown_visor(n_clicks: int, project: ExamplesSolution) -> tuple[list[dict[
             visor_viewer_children = []
             disable_launch_button = False
             disable_shutdown_button = True
-            disable_show_shape_button = True
+            disable_show_piston_button = True
+            disable_show_spheres_button = True
+            disable_show_elbow_button = True
         except Exception:
             notification = [
                 dict(
@@ -441,7 +516,9 @@ def shutdown_visor(n_clicks: int, project: ExamplesSolution) -> tuple[list[dict[
         visor_viewer_children,
         disable_launch_button,
         disable_shutdown_button,
-        disable_show_shape_button,
+        disable_show_piston_button,
+        disable_show_spheres_button,
+        disable_show_elbow_button,
     )
 
 @callback(

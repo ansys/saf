@@ -1,0 +1,35 @@
+{
+    "name": "vtk_scene_sphere_l2_b3_r32_v3_c1_z0",
+    "unit": "m",
+    "state": {
+        "parts": {
+            "level_1_block_0_part_0": {
+                "opacity": 0.1111111111111111
+            },
+            "level_1_block_0_part_1": {
+                "opacity": 0.1111111111111111
+            },
+            "level_1_block_0_part_2": {
+                "opacity": 0.1111111111111111
+            },
+            "level_1_block_1_part_0": {
+                "opacity": 0.2222222222222222
+            },
+            "level_1_block_1_part_1": {
+                "opacity": 0.2222222222222222
+            },
+            "level_1_block_1_part_2": {
+                "opacity": 0.2222222222222222
+            },
+            "level_1_block_2_part_0": {
+                "opacity": 0.3333333333333333
+            },
+            "level_1_block_2_part_1": {
+                "opacity": 0.3333333333333333
+            },
+            "level_1_block_2_part_2": {
+                "opacity": 0.3333333333333333
+            }
+        }
+    }
+}

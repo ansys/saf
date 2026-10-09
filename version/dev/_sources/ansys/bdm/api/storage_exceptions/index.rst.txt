@@ -1,0 +1,101 @@
+
+
+
+
+
+
+The ``storage_exceptions.py`` module
+====================================
+
+.. py:module:: ansys.bdm.api.storage_exceptions
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+.. py:currentmodule:: storage_exceptions
+.. tab-set::
+
+
+
+
+
+
+    .. tab-item:: Exceptions
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.bdm.api.storage_exceptions.NotFoundInLocalStorageRootError`
+            - Exception raised when attempting to access object that doesn't exist within the local storage root.
+
+
+          * - :py:obj:`~ansys.bdm.api.storage_exceptions.EntityNotFoundInBlobStorageError`
+            - Exception raised when attempting to access entity using handle where the referenced entity does not exist.
+
+
+          * - :py:obj:`~ansys.bdm.api.storage_exceptions.CannotGenerateStreamForDirectoryError`
+            - Exception raised when attempting to generate a stream for a directory entity.
+
+
+          * - :py:obj:`~ansys.bdm.api.storage_exceptions.EntityWriterHasNotCompletedWritingDataError`
+            - Exception raised when attempting to get handle from EntityWriter before the writing context is closed.
+
+
+          * - :py:obj:`~ansys.bdm.api.storage_exceptions.EntityWriterIsNotWritingDataError`
+            - Exception raised when attempting to access stream from EntityWriter
+
+
+          * - :py:obj:`~ansys.bdm.api.storage_exceptions.EntityWriterHasWrittenDataError`
+            - Exception raised when attempting to write to stream from EntityWriter
+
+
+          * - :py:obj:`~ansys.bdm.api.storage_exceptions.InvalidContextError`
+            - Exception raised when unknown context when creating a scope.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-md-lightning_bolt"></span> NotFoundInLocalStorageRootError</ansys/bdm/api/storage_exceptions/NotFoundInLocalStorageRootError>
+    <span class="nf nf-md-lightning_bolt"></span> EntityNotFoundInBlobStorageError</ansys/bdm/api/storage_exceptions/EntityNotFoundInBlobStorageError>
+    <span class="nf nf-md-lightning_bolt"></span> CannotGenerateStreamForDirectoryError</ansys/bdm/api/storage_exceptions/CannotGenerateStreamForDirectoryError>
+    <span class="nf nf-md-lightning_bolt"></span> EntityWriterHasNotCompletedWritingDataError</ansys/bdm/api/storage_exceptions/EntityWriterHasNotCompletedWritingDataError>
+    <span class="nf nf-md-lightning_bolt"></span> EntityWriterIsNotWritingDataError</ansys/bdm/api/storage_exceptions/EntityWriterIsNotWritingDataError>
+    <span class="nf nf-md-lightning_bolt"></span> EntityWriterHasWrittenDataError</ansys/bdm/api/storage_exceptions/EntityWriterHasWrittenDataError>
+    <span class="nf nf-md-lightning_bolt"></span> InvalidContextError</ansys/bdm/api/storage_exceptions/InvalidContextError>
+
+
+
+
+
+
+
+
+
+
+
+
+
+

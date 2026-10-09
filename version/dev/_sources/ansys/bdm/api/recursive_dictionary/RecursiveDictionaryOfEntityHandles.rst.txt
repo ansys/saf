@@ -1,0 +1,107 @@
+
+
+
+
+
+
+:class:`RecursiveDictionaryOfEntityHandles`
+===========================================
+
+
+.. py:class:: ansys.bdm.api.recursive_dictionary.RecursiveDictionaryOfEntityHandles
+
+   Bases: :py:obj:`dict`\ [\ :py:obj:`str`\ , :py:obj:`EntityHandle | RecursiveDictionaryOfEntityHandles`\ ]
+
+
+   
+   A recursive dictionary structure for storing entity handles in a nested hierarchy that maps a filesystem-like
+   directory structure.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:currentmodule:: RecursiveDictionaryOfEntityHandles
+
+Overview
+--------
+
+.. tab-set::
+
+
+   .. tab-item:: Constructors
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~__get_pydantic_core_schema__`
+            - Generate Pydantic core schema to be able to serialize/deserialize this structure with Pydantic.
+
+
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.bdm.api.recursive_dictionary import RecursiveDictionaryOfEntityHandles
+
+
+
+Method detail
+-------------
+
+.. py:method:: __get_pydantic_core_schema__(source_type: Any, handler: pydantic.GetCoreSchemaHandler) -> pydantic_core.CoreSchema
+   :classmethod:
+
+
+   
+   Generate Pydantic core schema to be able to serialize/deserialize this structure with Pydantic.
+
+   We cannot use a simple:
+   > return core_schema.no_info_after_validator_function(cls, handler(dict))
+   because it would not instantiate the nested EntityHandles, leaving them as plain dictionaries.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

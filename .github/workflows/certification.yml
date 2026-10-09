@@ -167,7 +167,8 @@ jobs:
       commit-is-already-tagged: ${{ steps.verify-tag.outputs.commit-is-already-tagged
         }}
       library-name: ${{ steps.library-name.outputs.library-name }}
-      use-moon: ${{ inputs.library-name != 'dash-super-components' }}
+      use-moon: ${{ steps.library-name.outputs.library-name != 'dash-super-components'
+        }}
 
   check-package-changes:
     name: "Check if package files changed since certification"

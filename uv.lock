@@ -1504,6 +1504,11 @@ dependencies = [
 ]
 
 [package.dev-dependencies]
+build-saf-projects-dashboard = [
+    { name = "build" },
+    { name = "pre-commit" },
+    { name = "pyyaml" },
+]
 dev = [
     { name = "ansys-saf-glow-engine", extra = ["dash"] },
     { name = "ansys-sphinx-theme", extra = ["autoapi"], marker = "python_full_version >= '3.12'" },
@@ -1665,6 +1670,11 @@ requires-dist = [
 ]
 
 [package.metadata.requires-dev]
+build-saf-projects-dashboard = [
+    { name = "build", specifier = ">=1.2.1,<2.0" },
+    { name = "pre-commit", specifier = ">=4.6.0,<5.0" },
+    { name = "pyyaml", specifier = ">=6.0,<7.0" },
+]
 dev = [
     { name = "ansys-saf-glow-engine", extras = ["dash"], editable = "packages/glow-engine" },
     { name = "ansys-sphinx-theme", extras = ["autoapi"], marker = "python_full_version >= '3.12'", specifier = ">=1.9" },

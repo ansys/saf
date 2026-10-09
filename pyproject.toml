@@ -129,6 +129,11 @@ tests-saf-product-manager = [
   "grpcio-health-checking>=1.24.0,<2.0",
   "gunicorn>=23.0.0,<24.0",                            # for launching UI server in DockerCompose
 ]
+build-saf-projects-dashboard = [
+  "build>=1.2.1,<2.0",
+  "pyyaml>=6.0,<7.0",
+  "pre-commit>=4.6.0,<5.0"
+]
 
 [tool.setuptools]
 py-modules = []

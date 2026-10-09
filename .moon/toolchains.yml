@@ -3,3 +3,8 @@ unstable_python:
 
 unstable_uv:
   version: "0.12.18"
+
+node:
+  packageManager: "npm"
+  version: "20.19.0"
+  rootPackageLocation: 'packages/saf-projects-dashboard'

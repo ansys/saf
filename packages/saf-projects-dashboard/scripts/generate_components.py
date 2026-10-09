@@ -37,23 +37,6 @@ import sys
 RUFF_HEADER = "# ruff: noqa\n"
 
 
-def _require_dash_or_exit():
-    """Fail fast with actionable guidance when dash is not installed."""
-    try:
-        import dash  # noqa: F401
-    except ModuleNotFoundError as exc:
-        print(
-            "Missing required Python dependency 'dash'.\n"
-            "Install it in the active environment, then rerun the build.\n"
-            "Examples:\n"
-            "  - poetry install --with build\n"
-            '  - pip install "dash[dev]>=3.0.0"\n'
-            "  - pip install -r scripts/requirements.txt",
-            file=sys.stderr,
-        )
-        raise SystemExit(1) from exc
-
-
 def _add_license_headers(files):
     """Apply the configured Ansys license-header hook to generated files."""
     command = [
@@ -145,8 +128,6 @@ def main():  # noqa: C901
     parser.add_argument("-n", "--namespace", default=None, help="Component namespace (defaults to project_shortname)")
 
     args = parser.parse_args()
-
-    _require_dash_or_exit()
 
     from importlib.resources import files
 

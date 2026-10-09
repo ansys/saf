@@ -142,21 +142,8 @@ class SolutionShortcutProcess(Process):
                 pass
         return False
 
-    def get_projects_dashboard_url(self) -> str:
-        dashboard_log_line = self.find_msg_in_output(r"Projects Dashboard: http://127\.0\.0\.1:\d+/\S+", regex=True)
-        assert dashboard_log_line
-        return dashboard_log_line.removeprefix("INFO - Projects Dashboard: ")
-
     def projects_dashboard_started(self) -> bool:
         return self.find_msg_in_output("Projects Dashboard: http://") is not None
-
-    def projects_dashboard_running(self) -> bool:
-        if self.projects_dashboard_started():
-            try:
-                return httpx2.get(self.get_projects_dashboard_url()).status_code == 200
-            except Exception:
-                pass
-        return False
 
     def otel_running(self) -> bool:
         if self._otel_started():

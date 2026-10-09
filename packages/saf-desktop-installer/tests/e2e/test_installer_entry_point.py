@@ -1432,10 +1432,6 @@ class TestInstallerProjectsDashboard:
             selenium_webdriver=session_selenium_webdriver,
             projects_dashboard=True,
         )
-        # The dashboard wins: SAF Portal is installed but not started.
-        assert solution_proc.find_msg_in_output("SAF Portal: not launched")
-        assert not solution_proc.portal_running()
-        assert solution_proc.projects_dashboard_running()
 
     def test_installer_with_projects_dashboard_only(
         self,
@@ -1474,5 +1470,3 @@ class TestInstallerProjectsDashboard:
             selenium_webdriver=session_selenium_webdriver,
             projects_dashboard=True,
         )
-        assert solution_proc.find_msg_in_output("SAF Portal: not launched")
-        assert not solution_proc.portal_running()

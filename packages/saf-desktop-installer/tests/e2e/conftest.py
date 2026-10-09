@@ -51,9 +51,9 @@ from ansys.saf.testing.common import YieldFixture
 from ansys.saf.testing.network import get_random_free_port
 from ansys.saf.testing.platform_specific import is_ci_run
 from ansys.saf.testing.selenium import (
-    wait_for_element,
     wait_for_element_and_click,
     wait_for_element_and_send_text,
+    wait_for_partial_text,
     wait_for_text,
 )
 from tests.e2e.installer_process import SolutionInstallerProcess
@@ -1203,15 +1203,17 @@ def check_solution_launched_correctly(
 
     if projects_dashboard:
         # The orchestrator serves the Projects Dashboard from the solution UI instead of starting SAF Portal.
-        projects_dashboard_url = solution_proc.get_projects_dashboard_url()
-        assert projects_dashboard_url.startswith(f"http://127.0.0.1:{glow_ui_port}")
-        assert projects_dashboard_url.endswith("/projects")
+        # Read orchestrator.log, not stdout: stdout is not captured when the shortcut runs pythonw on Windows.
+        projects_dashboard_url = f"http://127.0.0.1:{glow_ui_port}/projects"
+        _check_message_in_logs(solution_proc, f"INFO - Projects Dashboard: {projects_dashboard_url}", "orchestrator")
+        _check_message_in_logs(solution_proc, "INFO - SAF Portal: not launched", "orchestrator")
+        assert not find_msg_in_output("SAF Portal: http://", solution_proc.orchestrator_logs())
         _check_service_health(projects_dashboard_url)
         selenium_webdriver.get(projects_dashboard_url)
-        # The dashboard component rendered content inside the solution UI container.
-        wait_for_element(selenium_webdriver, "//*[@id='projects-dashboard-container']/*", element_type=By.XPATH)
+        # The dashboard lists the project created above through the GLOW API, proving it reached the API.
+        wait_for_partial_text(selenium_webdriver, "projects-dashboard-container", "test")
     elif portal_ui_port != "":
-        assert not solution_proc.projects_dashboard_started()
+        assert not find_msg_in_output("Projects Dashboard: http://", solution_proc.orchestrator_logs())
 
     return project_ui_url
 

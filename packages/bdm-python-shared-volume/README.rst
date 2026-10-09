@@ -123,5 +123,5 @@ categorized by version, along with brief descriptions of each change.
 .. _prerequisites: https://saf.ansys.com/version/stable/getting_started/prerequisites/index.html
 .. _API reference: https://saf.ansys.com/version/stable/api/bdm-python-api/index.html
 .. _Contribute: https://saf.ansys.com/version/stable/contribute/index.html
-.. _LICENSE: https://github.com/ansys/saf/blob/main/LICENSE
+.. _LICENSE: https://github.com/ansys/saf/blob/main/packages/bdm-python-shared-volume/LICENSE
 .. _CHANGELOG: https://github.com/ansys/saf/blob/main/packages/bdm-python-shared-volume/CHANGELOG.md

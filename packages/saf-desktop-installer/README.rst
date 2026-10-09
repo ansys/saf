@@ -130,5 +130,5 @@ categorized by version, along with brief descriptions of each change.
 .. _official documentation: https://saf.ansys.com/
 .. _project repository: https://github.com/ansys/saf/
 .. _Contribute: https://saf.ansys.com/version/stable/contribute/index.html
-.. _LICENSE: https://github.com/ansys/saf/blob/main/LICENSE
+.. _LICENSE: https://github.com/ansys/saf/blob/main/packages/saf-desktop-installer/LICENSE
 .. _CHANGELOG: https://github.com/ansys/saf/blob/main/packages/saf-desktop-installer/CHANGELOG.md

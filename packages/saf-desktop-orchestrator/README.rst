@@ -128,5 +128,5 @@ categorized by version, along with brief descriptions of each change.
 .. _project repository: https://github.com/ansys/saf/
 .. _prerequisites: https://saf.ansys.com/version/stable/getting_started/prerequisites/index.html
 .. _Contribute: https://saf.ansys.com/version/stable/contribute/index.html
-.. _LICENSE: https://github.com/ansys/saf/blob/main/LICENSE
+.. _LICENSE: https://github.com/ansys/saf/blob/main/packages/saf-desktop-orchestrator/LICENSE
 .. _CHANGELOG: https://github.com/ansys/saf/blob/main/packages/saf-desktop-orchestrator/CHANGELOG.md

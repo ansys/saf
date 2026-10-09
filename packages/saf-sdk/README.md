@@ -91,7 +91,7 @@ section of the official documentation.
 
 ## License
 
-You can find the full text of the license in the [LICENSE](https://github.com/ansys/saf/blob/main/LICENSE) file.
+You can find the full text of the license in the [LICENSE](https://github.com/ansys/saf/blob/main/packages/saf-sdk/LICENSE) file.
 
 ## Changelog
 

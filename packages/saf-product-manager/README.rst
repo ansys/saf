@@ -133,5 +133,5 @@ categorized by version, along with brief descriptions of each change.
 .. _project repository: https://github.com/ansys/saf/
 .. _API reference: https://saf.ansys.com/version/stable/api/saf-product-manager/index.html
 .. _Contribute: https://saf.ansys.com/version/stable/contribute/index.html
-.. _LICENSE: https://github.com/ansys/saf/blob/main/LICENSE
+.. _LICENSE: https://github.com/ansys/saf/blob/main/packages/saf-product-manager/LICENSE
 .. _CHANGELOG: https://github.com/ansys/saf/blob/main/packages/saf-product-manager/CHANGELOG.md

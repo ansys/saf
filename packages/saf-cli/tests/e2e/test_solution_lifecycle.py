@@ -20,7 +20,6 @@ import platform
 import random
 import tempfile
 
-from ansys.saf.testing.network import get_random_free_port
 from dotenv import set_key
 import pytest
 from selenium.webdriver.chrome.webdriver import WebDriver
@@ -28,6 +27,7 @@ from selenium.webdriver.chrome.webdriver import WebDriver
 from ansys.saf.cli._config.const import DEFAULT_SOLUTION_NAMESPACE
 from ansys.saf.cli._database.models import SolutionRegistry
 from ansys.saf.cli._utilities.conversion import to_module_name
+from ansys.saf.testing.network import get_random_free_port
 from tests.e2e.conftest import (
     BuildSolution,
     InstallSolution,

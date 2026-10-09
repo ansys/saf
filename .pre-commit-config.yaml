@@ -59,8 +59,8 @@ repos:
       - id: add-license-headers
         files: '\.(py|bat|html|css|proto)$'
         exclude: |
-          (?xi)^(
-            src/ansys/saf/desktop/installer/_package/assets/bootstrap\.min\.css|
+          (?xi)(
+            packages/saf-desktop-installer/src/ansys/saf/desktop/installer/_package/assets/bootstrap\.min\.css|
             packages/saf-projects-dashboard/src/ansys_saf_projects_dashboard/.*\.(json)$
           )
         args:

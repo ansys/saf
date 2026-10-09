@@ -1,7 +1,10 @@
 tasks:
   setup-python:
-    toolchain: 'system'
-    command: 'uv sync --group build-saf-projects-dashboard'
+    command: 'uv'
+    args:
+      - 'sync'
+      - '--group'
+      - 'build-saf-projects-dashboard'
     inputs:
       - '/pyproject.toml'
       - '/uv.lock'
@@ -9,7 +12,6 @@ tasks:
       - '.venv/**/*'
 
   setup-node:
-    toolchain: 'node'
     command: 'npm ci'
     inputs:
       - 'package.json'
@@ -18,8 +20,10 @@ tasks:
       - 'node_modules'
 
   generate-components:
-    toolchain: 'node'
-    command: 'npm run build'
+    command: 'npm'
+    args: 
+     - 'run'
+     - 'build'
     deps:
       - '~:setup-python'
       - '~:setup-node'

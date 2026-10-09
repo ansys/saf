@@ -40,3 +40,17 @@ tasks:
       - 'src/ansys_saf_projects_dashboard/assets/**/*'
     options:
       runFromWorkspaceRoot: false
+
+  test-npm:
+    command: 'npm'
+    args:
+      - 'test'
+    deps:
+      - '~:setup-node'
+    inputs:
+      - 'src/**/*'
+      - 'package.json'
+      - 'pyproject.toml'
+      - '/.venv/**/*'
+    options:
+      runFromWorkspaceRoot: false

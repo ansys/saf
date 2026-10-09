@@ -15,7 +15,7 @@
     "build:js::dev": "webpack --mode development",
     "build:js": "webpack",
     "build:js:analyze": "webpack --mode production --env analyze",
-    "build:backends": "uv run scripts/generate_components.py ./src/ts/components src/ansys_saf_projects_dashboard -p package-info.json -n ansys_saf_projects_dashboard --ignore \"\\.test\\.|(^|.*[\\\\/])(ContextMenu|ProjectUtils)(\\.[^.]+)?$\"",
+    "build:backends": "python run scripts/generate_components.py ./src/ts/components src/ansys_saf_projects_dashboard -p package-info.json -n ansys_saf_projects_dashboard --ignore \"\\.test\\.|(^|.*[\\\\/])(ContextMenu|ProjectUtils)(\\.[^.]+)?$\"",
     "build": "node scripts/build.js",
     "watch": "npm run build:js::dev -- --watch",
     "dist": "pyproject-build --sdist --wheel --outdir dist/",

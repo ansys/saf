@@ -16,12 +16,12 @@
 
 """Frontend of the first step."""
 
-from ansys.saf.glow.client import callback
-from ansys.solutions.dash_super_components import InputRow, OutputRow  # type: ignore
 import dash  # pyright: ignore[reportMissingTypeStubs]
 from dash_extensions.enrich import Input, Output, State, dcc, html  # pyright: ignore[reportMissingTypeStubs]
 import dash_mantine_components as dmc  # pyright: ignore[reportMissingTypeStubs]
 
+from ansys.saf.glow.client import callback
+from ansys.solutions.dash_super_components import InputRow, OutputRow  # type: ignore
 from tests.unit.mocks.solutions.solution_with_dash_ui.solution.definition import SolutionWithDashUiSolution
 
 dash.register_page(  # pyright: ignore[reportUnknownMemberType]

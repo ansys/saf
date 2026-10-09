@@ -17,7 +17,6 @@
 """Entry point."""
 
 from ansys.saf.glow.runtime import glow_main
-
 from tests.unit.mocks.solutions.solution_with_dash_ui.solution import definition
 from tests.unit.mocks.solutions.solution_with_dash_ui.ui import app
 

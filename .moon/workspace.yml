@@ -6,6 +6,7 @@ projects:
     - "packages/bdm-python-api"
     - "packages/bdm-python-shared-volume"
     - "packages/glow-engine"
+    - "packages/saf-cli"
     - "packages/saf-desktop-orchestrator"
     - "packages/saf-iam-oidc"
     - "packages/saf-desktop-installer"

@@ -1,0 +1,1292 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Logs Supervisor &#8212; Super Components for Dash</title>
+  
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/ansys-sphinx-theme.css?v=5ffe81b6" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=fd6457a4" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/ansys-sphinx-theme.css?v=5ffe81b6" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://www.nerdfonts.com/assets/css/webfont.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/code-tabs.css?v=1bc26e2f" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/svg_icons.css?v=97e61e6f" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../_static/scripts/fontawesome.js?digest=0790524f97105ba85085"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=0790524f97105ba85085" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085" />
+
+
+  <!-- Include desired assets -->
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  
+
+  
+    <link href="../_static/css/breadcrumbs.css" rel="stylesheet" />
+  
+    <script src="../_static/documentation_options.js?v=8a448e45"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/sg-tags.js?v=d80f6fa4"></script>
+    <script src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
+    <script src="../_static/code-tabs.js?v=c983d12e"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'user-guide/logs-supervisor';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.18.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://saf.ansys.com/version/stable/api/dash-super-components/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'dev';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="icon" href="../_static/ansys-favicon.png"/>
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Transaction Method Status Badge" href="transaction-method-status-badge.html" />
+    <link rel="prev" title="Input Row Array" href="input-row-array.html" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="1.2.dev0" />
+  
+    
+    <script src="../_static/searchtools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../searchindex.js"></script>
+  
+  <link rel="canonical" href="https://saf.ansys.com/version/stable/api/dash-super-components/version/dev/user-guide/logs-supervisor.html" />
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/ansys_logo_transparent_black.png" class="logo__image only-light" alt="Super Components for Dash - Home"/>
+    <img src="../_static/ansys_logo_transparent_white.png" class="logo__image only-dark pst-js-only" alt="Super Components for Dash - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../index.html" title="Super Components for Dash home">Home</a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../getting-started.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="index.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api/index.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../contribute.html">
+    Contribute
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../changelog.html">
+    Release notes
+  </a>
+</li>
+
+  </ul>
+</nav>
+</div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+      
+        <div class="navbar-item">
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+  
+</div></div>
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/super-components-for-dash" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+  
+    
+<!--
+  Announcement Version Loader
+  Dynamically loads the announcement.html content into the announcement_msg div.
+-->
+<div id="announcement_msg" aria-live="polite"></div>
+<script>
+  // Fetch and inject the announcement HTML content
+  fetch("announcement.html")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error: ${response.status} Announcement.html file not found, Please ignore this, if you are in dev/stable documentation`);
+      }
+      return response.text();
+    })
+    .then((text) => {
+      var msgDiv = document.getElementById("announcement_msg");
+      if (msgDiv) {
+        msgDiv.innerHTML = text;
+      }
+    })
+    .catch((error) => {
+      // Log only unexpected fetch errors
+      if (!(error.message && error.message.startsWith("HTTP error: 404"))) {
+        console.error(`Fetch problem: ${error.message} Announcement.html could not be loaded.`);
+      }
+    });
+</script>
+  
+
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../index.html" title="Super Components for Dash home">Home</a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../getting-started.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="index.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api/index.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../contribute.html">
+    Contribute
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../changelog.html">
+    Release notes
+  </a>
+</li>
+
+  </ul>
+</nav>
+</div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+  
+</div></div>
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/super-components-for-dash" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item pst-sidebar-collapse"><button id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar"><svg class="pst-icon svg-inline--fa" role="img" aria-hidden="true" focusable="false" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="M3 15.5C2.36232 15.5 1.74874 15.2564 1.28478 14.8189C0.820828 14.3815 0.541576 13.7832 0.504167 13.1467L0.5 13L0.5 3C0.499965 2.36232 0.743605 1.74874 1.18107 1.28478C1.61854 0.820828 2.21676 0.541576 2.85333 0.504167L3 0.5L13 0.5C13.6377 0.499965 14.2513 0.743605 14.7152 1.18107C15.1792 1.61854 15.4584 2.21676 15.4958 2.85333L15.5 3L15.5 13C15.5 13.6377 15.2564 14.2513 14.8189 14.7152C14.3815 15.1792 13.7832 15.4584 13.1467 15.4958L13 15.5L3 15.5ZM3 13.8333L10.5 13.8333L10.5 2.16667L3 2.16667C2.79589 2.16669 2.59889 2.24163 2.44636 2.37726C2.29383 2.5129 2.19638 2.69979 2.1725 2.9025L2.16667 3L2.16667 13C2.16669 13.2041 2.24163 13.4011 2.37726 13.5536C2.5129 13.7062 2.69979 13.8036 2.9025 13.8275L3 13.8333ZM6.65583 10.325L6.5775 10.2558L4.91083 8.58917C4.76735 8.44567 4.68116 8.25476 4.66843 8.05223C4.65569 7.84971 4.71729 7.6495 4.84167 7.48917L4.91083 7.41083L6.5775 5.74417C6.72747 5.59471 6.9287 5.50794 7.14032 5.50148C7.35194 5.49502 7.55809 5.56935 7.7169 5.70937C7.8757 5.8494 7.97525 6.04463 7.99533 6.25539C8.01541 6.46616 7.95451 6.67667 7.825 6.84417L7.75583 6.9225L6.67917 8L7.75583 9.0775C7.89931 9.22099 7.98551 9.41191 7.99824 9.61443C8.01097 9.81695 7.94938 10.0172 7.825 10.1775L7.75583 10.2558C7.61234 10.3993 7.42142 10.4855 7.2189 10.4982C7.01638 10.511 6.81617 10.4494 6.65583 10.325Z"/>
+  </svg>
+  <span class="pst-collapse-sidebar-label">Collapse Sidebar</span>
+  <span class="pst-expand-sidebar-label">Expand Sidebar</span>
+</button></div>
+        <div class="sidebar-primary-item">
+
+
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">Components</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="authenticator.html">Authenticator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dual-input-range-slider.html">Dual Input Range Slider</a></li>
+<li class="toctree-l1"><a class="reference internal" href="folder-selector.html">Folder Selector</a></li>
+<li class="toctree-l1"><a class="reference internal" href="input-form.html">Input Form</a></li>
+<li class="toctree-l1"><a class="reference internal" href="input-row-array.html">Input Row Array</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Logs Supervisor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="transaction-method-status-badge.html">Transaction Method Status Badge</a></li>
+<li class="toctree-l1"><a class="reference internal" href="transaction-supervisor.html">Transaction Supervisor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tree.html">Tree</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">How-to guides</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="icons.html">Icons</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+     
+    <li class="breadcrumb-item breadcrumb-home">
+      <a
+        href="../index.html"
+        class="nav-link"
+        aria-label="Home"
+      >
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="index.html" class="nav-link">User guide</a>
+    </li>
+      
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Logs Supervisor</span></li>
+    
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="logs-supervisor">
+<span id="ref-logs-supervisor"></span><h1>Logs Supervisor<a class="headerlink" href="#logs-supervisor" title="Link to this heading">#</a></h1>
+<p><code class="docutils literal notranslate"><span class="pre">LogsSupervisor</span></code> is a Dash All-in-One (AIO) component for parsing and displaying log files
+generated with Python’s <code class="docutils literal notranslate"><span class="pre">logging</span></code> module. It provides an interactive AG Grid table with filtering,
+sorting, and real-time monitoring capabilities.</p>
+<p>Key features:</p>
+<ul class="simple">
+<li><p><strong>Log parsing</strong>: Parses log files using a user-specified format string.</p></li>
+<li><p><strong>Contextual feedback</strong>: Displays no-rows messages for missing sources, empty logs, and parsing
+failures.</p></li>
+<li><p><strong>Level filtering</strong>: Interactive buttons to filter by INFO, WARNING, ERROR, CRITICAL, and DEBUG.</p></li>
+<li><p><strong>Real-time monitoring</strong>: Optional auto-updates to show new log entries as they are generated.</p></li>
+<li><p><strong>Interactive grid</strong>: Sortable, filterable, and resizable AG Grid columns.</p></li>
+<li><p><strong>File/URL support</strong>: Accepts local file paths or HTTP/HTTPS URLs as log sources.</p></li>
+<li><p><strong>Optional notifications</strong>: Can emit persistent <code class="docutils literal notranslate"><span class="pre">dmc</span></code> notifications for parsing failures.</p></li>
+<li><p><strong>Persistent state</strong>: Saves filter and column states across reloads.</p></li>
+</ul>
+<img alt="../_images/example_output3.png" class="align-center" src="../_images/example_output3.png" />
+<section id="usage">
+<h2>Usage<a class="headerlink" href="#usage" title="Link to this heading">#</a></h2>
+<section id="configure-the-dash-application">
+<h3>Configure the Dash application<a class="headerlink" href="#configure-the-dash-application" title="Link to this heading">#</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">LogsSupervisor</span></code> relies on custom JavaScript code to render log level badges in the
+AG Grid table. Refer to the <a class="reference internal" href="../getting-started.html#ref-register-component-assets"><span class="std std-ref">Register component assets and add external scripts</span></a> section of the Getting
+Started page for instructions on registering component assets. Specifically, you must:</p>
+<ol class="arabic simple">
+<li><p>Add the external script to your Dash app’s <code class="docutils literal notranslate"><span class="pre">external_scripts</span></code> parameter</p></li>
+<li><p>Call <code class="docutils literal notranslate"><span class="pre">add_super_components_assets()</span></code> to register the Flask endpoint that serves the
+JavaScript file</p></li>
+</ol>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Failing to include both the <code class="docutils literal notranslate"><span class="pre">external_scripts</span></code> entry and the
+<code class="docutils literal notranslate"><span class="pre">add_super_components_assets()</span></code> call results in the log level badges not rendering
+correctly in the grid. The custom no-rows renderer also requires these assets, so fallback
+no-rows feedback is affected as well. Core parsing and row rendering still work.</p>
+</div>
+</section>
+<section id="basic-usage">
+<h3>Basic usage<a class="headerlink" href="#basic-usage" title="Link to this heading">#</a></h3>
+<p>Import <code class="docutils literal notranslate"><span class="pre">LogsSupervisor</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ansys.solutions.dash_super_components</span><span class="w"> </span><span class="kn">import</span> <span class="n">LogsSupervisor</span>
+
+</pre></div>
+</div>
+<p>Add <code class="docutils literal notranslate"><span class="pre">LogsSupervisor</span></code> to the page layout with a local log file path and format string:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">layout</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">html</span><span class="o">.</span><span class="n">Div</span><span class="p">(</span>
+        <span class="p">[</span>
+            <span class="n">LogsSupervisor</span><span class="p">(</span>
+                <span class="n">log_file</span><span class="o">=</span><span class="n">log_file_path</span><span class="p">,</span>
+                <span class="n">log_format</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%(levelname)s</span><span class="s2"> - </span><span class="si">%(module)s</span><span class="s2"> - </span><span class="si">%(message)s</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="n">aio_id</span><span class="o">=</span><span class="s2">&quot;logs-supervisor&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+        <span class="p">]</span>
+    <span class="p">)</span>
+
+
+</pre></div>
+</div>
+<p>Assuming the log file contains the following entries:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>INFO - main - Application started
+WARNING - main - Low disk space
+ERROR - main - Unhandled exception occurred
+DEBUG - main - Debugging information
+</pre></div>
+</div>
+<p>The component renders an AG Grid table with columns for <code class="docutils literal notranslate"><span class="pre">levelname</span></code>, <code class="docutils literal notranslate"><span class="pre">module</span></code>, and <code class="docutils literal notranslate"><span class="pre">message</span></code>
+and the following output is expected:</p>
+<img alt="../_images/default_configuration5.png" class="align-center" src="../_images/default_configuration5.png" />
+<p>Real-time monitoring can be enabled by toggling the switch in the top-right corner of the component.
+When enabled, the component polls the log file at regular intervals (default: every 3 seconds). To
+activate monitoring from a callback, refer to the <a class="reference internal" href="#ref-logs-supervisor-activate-monitoring"><span class="std std-ref">Activate monitoring</span></a>
+section below.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>It is critical that the <code class="docutils literal notranslate"><span class="pre">log_format</span></code> parameter exactly matches the format string used in the
+logger’s formatter. Mismatched formats result in no matching rows and a parsing-failed
+message in the grid.</p>
+</div>
+</section>
+<section id="advanced-usage">
+<h3>Advanced usage<a class="headerlink" href="#advanced-usage" title="Link to this heading">#</a></h3>
+<p>To customize the appearance of <code class="docutils literal notranslate"><span class="pre">LogsSupervisor</span></code>, use the <code class="docutils literal notranslate"><span class="pre">width</span></code> and <code class="docutils literal notranslate"><span class="pre">grid_props</span></code>
+parameters. The update frequency can be controlled with the <code class="docutils literal notranslate"><span class="pre">interval</span></code> parameter.
+The following example sets an update interval of 1 second, a custom container width, a fixed grid
+height, and switches to the light AG Grid theme (<code class="docutils literal notranslate"><span class="pre">ag-theme-balham</span></code>):</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">layout_advanced</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">html</span><span class="o">.</span><span class="n">Div</span><span class="p">(</span>
+        <span class="p">[</span>
+            <span class="n">LogsSupervisor</span><span class="p">(</span>
+                <span class="n">log_file</span><span class="o">=</span><span class="n">log_file_path_advanced</span><span class="p">,</span>
+                <span class="n">log_format</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%(levelname)s</span><span class="s2"> - </span><span class="si">%(module)s</span><span class="s2"> - </span><span class="si">%(message)s</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="n">aio_id</span><span class="o">=</span><span class="s2">&quot;logs-supervisor-advanced&quot;</span><span class="p">,</span>
+                <span class="n">width</span><span class="o">=</span><span class="s2">&quot;70%&quot;</span><span class="p">,</span>
+                <span class="n">grid_props</span><span class="o">=</span><span class="p">{</span>
+                    <span class="s2">&quot;style&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="s2">&quot;height&quot;</span><span class="p">:</span> <span class="s2">&quot;600px&quot;</span><span class="p">,</span>
+                    <span class="p">},</span>
+                    <span class="s2">&quot;className&quot;</span><span class="p">:</span> <span class="s2">&quot;ag-theme-balham&quot;</span><span class="p">,</span>
+                <span class="p">},</span>
+                <span class="n">interval</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+                <span class="n">show_error_notifications</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="p">),</span>
+        <span class="p">]</span>
+    <span class="p">)</span>
+
+
+</pre></div>
+</div>
+<p>The expected output is an AG Grid table with a fixed height of 600px, a width of 70%, and the
+light <code class="docutils literal notranslate"><span class="pre">ag-theme-balham</span></code> theme:</p>
+<img alt="../_images/custom_configuration4.png" class="align-center" src="../_images/custom_configuration4.png" />
+<p>In this advanced example, <code class="docutils literal notranslate"><span class="pre">show_error_notifications=False</span></code> disables popup notifications for
+parsing failures while still showing contextual no-rows feedback in the grid.</p>
+</section>
+<section id="integration-with-saf-based-solutions">
+<h3>Integration with SAF-based solutions<a class="headerlink" href="#integration-with-saf-based-solutions" title="Link to this heading">#</a></h3>
+<p>The following example shows how to integrate <code class="docutils literal notranslate"><span class="pre">LogsSupervisor</span></code> in a SAF-based solution where
+a GLOW transaction method generates a log file. Real-time monitoring is activated via a callback.</p>
+<section id="generate-a-log-file">
+<h4>Generate a log file<a class="headerlink" href="#generate-a-log-file" title="Link to this heading">#</a></h4>
+<p>The following example assumes that a log file is generated in a SAF-based solution in a GLOW
+transaction method as follows:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="nd">@transaction</span><span class="p">(</span><span class="bp">self</span><span class="o">=</span><span class="n">StepSpec</span><span class="p">(</span><span class="n">upload</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;logfile&quot;</span><span class="p">]))</span>
+    <span class="nd">@long_running</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">generate_random_logs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate random log messages and periodically upload the log file as an EntityHandle.</span>
+
+<span class="sd">        Emits random log messages at the DEBUG, INFO, WARNING, ERROR, and CRITICAL levels for</span>
+<span class="sd">        30 seconds. After each message the current log file content is stored as a new</span>
+<span class="sd">        EntityHandle and uploaded so that listening clients can display the latest entries.</span>
+<span class="sd">        Old EntityHandle files are not explicitly removed here; they are garbage-collected</span>
+<span class="sd">        automatically once the transaction completes.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>
+
+        <span class="c1"># Create a temporary file used by the logger. Its contents will be copied</span>
+        <span class="c1"># into immutable EntityHandle files for upload.</span>
+        <span class="n">dynamic_log_file</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">storage_scope</span><span class="o">.</span><span class="n">get_storage_root</span><span class="p">()</span> <span class="o">/</span> <span class="s2">&quot;dynamic_log.log&quot;</span>
+
+        <span class="c1"># File handler that writes to the dynamic log file.</span>
+        <span class="n">file_handler</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">FileHandler</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">dynamic_log_file</span><span class="p">))</span>
+
+        <span class="c1"># Log message format.</span>
+        <span class="n">formatter</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%(asctime)s</span><span class="s2"> - </span><span class="si">%(levelname)s</span><span class="s2"> - </span><span class="si">%(module)s</span><span class="s2"> - </span><span class="si">%(message)s</span><span class="s2">&quot;</span>
+        <span class="n">file_handler</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">Formatter</span><span class="p">(</span><span class="n">formatter</span><span class="p">))</span>
+
+        <span class="c1"># Attach the handler to the logger.</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">file_handler</span><span class="p">)</span>
+
+        <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+        <span class="k">while</span> <span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">30</span><span class="p">:</span>
+            <span class="c1"># Emit a random log message.</span>
+            <span class="n">index</span> <span class="o">=</span> <span class="n">randrange</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">index</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;This is an info message.&quot;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">index</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;This is a warning message.&quot;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">index</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;This is an error message.&quot;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">index</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="s2">&quot;This is a critical message.&quot;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">index</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;This is a debug message.&quot;</span><span class="p">)</span>
+
+            <span class="c1"># Copy the current dynamic log file into a new file and store it</span>
+            <span class="c1"># as a fresh EntityHandle. Files stored as EntityHandle are immutable,</span>
+            <span class="c1"># so we create a new file each iteration.</span>
+            <span class="n">bytes_content</span> <span class="o">=</span> <span class="n">dynamic_log_file</span><span class="o">.</span><span class="n">read_bytes</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logfile</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">storage_scope</span><span class="o">.</span><span class="n">store_stream</span><span class="p">(</span><span class="n">bytes_content</span><span class="p">)</span>
+
+            <span class="c1"># Upload the new logfile handle so clients can access the updated log.</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">transaction</span><span class="o">.</span><span class="n">upload</span><span class="p">([</span><span class="s2">&quot;logfile&quot;</span><span class="p">])</span>
+
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">removeHandler</span><span class="p">(</span><span class="n">file_handler</span><span class="p">)</span>
+        <span class="n">file_handler</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This simple example generates random log messages for 30 seconds. In a real application, the
+log file would be generated by the actual application logic, and the component would monitor it
+in real time as new entries are added.</p>
+<p>Due to the way GLOW’s BDM file handles work, a new log file handle must be created and uploaded each time the log file is updated. This is because BDM file handles are immutable, so the same file handle cannot be updated with the new content, but a new handle must be created for each
+update.</p>
+<p>In the current example, the previous log file handles (and their associated files) are not
+deleted and are left to accumulate in storage until the transaction
+completes. In a production application, you would want to implement a cleanup mechanism to
+delete old log file handles and free up storage space. A full implementation
+of this cleanup mechanism can be found in the <a class="reference external" href="https://github.com/ansys/super-components-for-dash/blob/main/examples/showcase_all/src/ansys/solutions/showcase_dash_super_components/ui/pages/logs_supervisor_page.py">showcase example</a>.</p>
+</div>
+</section>
+<section id="add-component-to-layout">
+<h4>Add component to layout<a class="headerlink" href="#add-component-to-layout" title="Link to this heading">#</a></h4>
+<p>Add <code class="docutils literal notranslate"><span class="pre">LogsSupervisor</span></code> to the page layout and pass the log file URL and custom grid height:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">layout_logs_supervisor</span><span class="p">(</span><span class="n">step</span><span class="p">:</span> <span class="n">MyStep</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">html</span><span class="o">.</span><span class="n">Div</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Layout of the basic logs supervisor example.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">html</span><span class="o">.</span><span class="n">Div</span><span class="p">(</span>
+        <span class="p">[</span>
+            <span class="n">LogsSupervisor</span><span class="p">(</span>
+                <span class="n">log_file</span><span class="o">=</span><span class="n">step</span><span class="o">.</span><span class="n">get_entity_url</span><span class="p">(</span><span class="s2">&quot;logfile&quot;</span><span class="p">),</span>
+                <span class="n">log_format</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%(asctime)s</span><span class="s2"> - </span><span class="si">%(levelname)s</span><span class="s2"> - </span><span class="si">%(module)s</span><span class="s2"> - </span><span class="si">%(message)s</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="n">aio_id</span><span class="o">=</span><span class="s2">&quot;logs-supervisor&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+        <span class="p">]</span>
+    <span class="p">)</span>
+
+
+</pre></div>
+</div>
+<p>The expected output is an empty AG Grid table, ready to display log entries as they are generated
+in the transaction method:</p>
+<img alt="../_images/saf_logs_supervisor_empty.png" class="align-center" src="../_images/saf_logs_supervisor_empty.png" />
+</section>
+<section id="activate-monitoring">
+<span id="ref-logs-supervisor-activate-monitoring"></span><h4>Activate monitoring<a class="headerlink" href="#activate-monitoring" title="Link to this heading">#</a></h4>
+<p>To automatically enable real-time monitoring when a log-generating method is triggered, set the
+<code class="docutils literal notranslate"><span class="pre">data</span></code> property of the <code class="docutils literal notranslate"><span class="pre">activate_monitoring</span></code> store to <code class="docutils literal notranslate"><span class="pre">True</span></code> (this code snippet assumes
+that a button with ID
+<code class="docutils literal notranslate"><span class="pre">generate-logs-basic-button</span></code> triggers log generation):</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@callback</span><span class="p">(</span>
+    <span class="n">Output</span><span class="p">(</span><span class="n">LogsSupervisor</span><span class="o">.</span><span class="n">ids</span><span class="o">.</span><span class="n">activate_monitoring</span><span class="p">(</span><span class="s2">&quot;logs-supervisor&quot;</span><span class="p">),</span> <span class="s2">&quot;data&quot;</span><span class="p">),</span>
+    <span class="n">Input</span><span class="p">(</span><span class="s2">&quot;generate-logs-button&quot;</span><span class="p">,</span> <span class="s2">&quot;n_clicks&quot;</span><span class="p">),</span>
+    <span class="n">State</span><span class="p">(</span><span class="s2">&quot;url&quot;</span><span class="p">,</span> <span class="s2">&quot;pathname&quot;</span><span class="p">),</span>
+    <span class="n">prevent_initial_call</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">generate_logs_and_start_monitoring</span><span class="p">(</span>
+    <span class="n">n_clicks</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">project</span><span class="p">:</span> <span class="n">SuperComponentsWithSAFSolution</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Trigger the generate_random_logs transaction and activate the basic supervisor.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">ctx</span><span class="o">.</span><span class="n">triggered_id</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">n_clicks</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">PreventUpdate</span>
+    <span class="n">step</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">steps</span><span class="o">.</span><span class="n">my_step</span>
+    <span class="n">step</span><span class="o">.</span><span class="n">generate_random_logs</span><span class="p">()</span>
+    <span class="k">return</span> <span class="kc">True</span>
+
+
+</pre></div>
+</div>
+<p>As the transaction method generates log entries, the component automatically updates to display new
+logs in real time. The monitoring continues until turned off by setting the store <code class="docutils literal notranslate"><span class="pre">data</span></code> value
+to <code class="docutils literal notranslate"><span class="pre">False</span></code> in a callback, or by toggling the switch in the component’s UI:</p>
+<img alt="../_images/saf_logs_supervisor_populated.png" class="align-center" src="../_images/saf_logs_supervisor_populated.png" />
+</section>
+</section>
+<section id="how-it-works">
+<h3>How it works<a class="headerlink" href="#how-it-works" title="Link to this heading">#</a></h3>
+<ol class="arabic simple">
+<li><p><strong>Initialization</strong>: The component parses the log file using the provided format string</p></li>
+<li><p><strong>Display</strong>: Log entries are displayed in an AG Grid table with columns based on the format
+attributes</p></li>
+<li><p><strong>Filtering</strong>: Click the log level buttons (INFO, WARNING, ERROR, CRITICAL, DEBUG) to filter by
+level</p></li>
+<li><p><strong>Monitoring</strong>: Toggle the switch in the top-right corner to enable or turn off real-time updates</p></li>
+<li><p><strong>Auto-update</strong>: When monitoring is active, the component polls the log file at regular intervals
+(default: 3000 ms)</p></li>
+<li><p><strong>Persistence</strong>: Filter settings and column states are preserved across page reloads. When the
+component is re-initialized with a different log file or format, all filters except for the log
+level filters are cleared and the real-time monitoring is switched off.</p></li>
+<li><p><strong>Feedback states</strong>: The no-rows overlay message changes based on parse status:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">No</span> <span class="pre">logs</span> <span class="pre">to</span> <span class="pre">display.</span></code> when there are no rows after a successful parse</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Log</span> <span class="pre">source</span> <span class="pre">is</span> <span class="pre">not</span> <span class="pre">available.</span></code> when a local file or URL source is missing</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Could</span> <span class="pre">not</span> <span class="pre">process</span> <span class="pre">log.</span> <span class="pre">Please</span> <span class="pre">check</span> <span class="pre">the</span> <span class="pre">log</span> <span class="pre">file</span> <span class="pre">path</span> <span class="pre">and</span> <span class="pre">format.</span></code> for parse failures and
+non-matching formats</p></li>
+</ul>
+</li>
+</ol>
+<section id="filter-logs">
+<h4>Filter logs<a class="headerlink" href="#filter-logs" title="Link to this heading">#</a></h4>
+<p>The log level buttons at the top of the component can be used to filter logs by severity:</p>
+<ul class="simple">
+<li><p><strong>INFO</strong> (blue): Informational messages</p></li>
+<li><p><strong>WARNING</strong> (orange): Warning messages</p></li>
+<li><p><strong>ERROR</strong> (red): Error messages</p></li>
+<li><p><strong>CRITICAL</strong> (pink): Critical error messages</p></li>
+<li><p><strong>DEBUG</strong> (grape): Debug messages</p></li>
+</ul>
+<p>Click a button to toggle that level on or off. Multiple levels can be active simultaneously.</p>
+</section>
+<section id="toggle-monitoring">
+<h4>Toggle monitoring<a class="headerlink" href="#toggle-monitoring" title="Link to this heading">#</a></h4>
+<p>The switch located at the top right corner controls real-time monitoring:</p>
+<ul class="simple">
+<li><p><strong>ON</strong> (blue checkmark): Component automatically updates the table at the specified interval</p></li>
+<li><p><strong>OFF</strong> (gray X): Monitoring is paused; table displays the current snapshot</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>It is recommended to turn off monitoring when log generation has stopped to avoid unnecessary
+polling and API requests.</p>
+</div>
+</section>
+</section>
+</section>
+<section id="properties">
+<h2>Properties<a class="headerlink" href="#properties" title="Link to this heading">#</a></h2>
+<section id="constructor-parameters">
+<h3>Constructor parameters<a class="headerlink" href="#constructor-parameters" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Required</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>log_file</p></td>
+<td><p>Path or URL to the log file to be parsed. Supports local file
+paths (as <code class="docutils literal notranslate"><span class="pre">str</span></code> or <code class="docutils literal notranslate"><span class="pre">Path</span></code> objects) and HTTP/HTTPS URLs.</p></td>
+<td><p>str or Path</p></td>
+<td><p>Yes</p></td>
+</tr>
+<tr class="row-odd"><td><p>log_format</p></td>
+<td><p>Format string of the log messages. Must exactly match the
+formatter used in the logger.
+See <a class="reference external" href="https://docs.python.org/3/library/logging.html#logrecord-|attributes">the Python logging documentation</a>
+for available format attributes.</p></td>
+<td><p>str</p></td>
+<td><p>Yes</p></td>
+</tr>
+<tr class="row-even"><td><p>aio_id</p></td>
+<td><p>The unique identifier for the component. If not provided, a UUID
+is generated.</p></td>
+<td><p>str</p></td>
+<td><p>No</p></td>
+</tr>
+<tr class="row-odd"><td><p>interval</p></td>
+<td><p>The interval in milliseconds for auto-updating the log messages
+when monitoring is enabled. Default: <code class="docutils literal notranslate"><span class="pre">3000</span></code> (3 seconds).</p></td>
+<td><p>int</p></td>
+<td><p>No</p></td>
+</tr>
+<tr class="row-even"><td><p>width</p></td>
+<td><p>The width of the component container. Can be a CSS string (for
+example, <code class="docutils literal notranslate"><span class="pre">&quot;70%&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;800px&quot;</span></code>) or an integer (treated as
+pixels). Default: <code class="docutils literal notranslate"><span class="pre">&quot;100%&quot;</span></code>.</p></td>
+<td><p>str or int</p></td>
+<td><p>No</p></td>
+</tr>
+<tr class="row-odd"><td><p>grid_props</p></td>
+<td><p>Dictionary containing properties for the AG Grid component.
+These properties are merged with defaults. See
+<a class="reference external" href="https://dash.plotly.com/dash-ag-grid">Dash AG Grid documentation</a> for available options.</p></td>
+<td><p>dict</p></td>
+<td><p>No</p></td>
+</tr>
+<tr class="row-even"><td><p>show_error_notifications</p></td>
+<td><p>Whether to show <code class="docutils literal notranslate"><span class="pre">dmc</span></code> error notifications when parsing fails.
+Default: <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></td>
+<td><p>bool</p></td>
+<td><p>No</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="supported-log-format-attributes">
+<span id="ref-logs-supervisor-log-format-attributes"></span><h3>Supported log format attributes<a class="headerlink" href="#supported-log-format-attributes" title="Link to this heading">#</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">log_format</span></code> parameter supports the following Python logging format attributes:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Attribute</p></th>
+<th class="head"><p>Example Output</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">%(asctime)s</span></code></p></td>
+<td><p>2024-01-15 10:30:45,123</p></td>
+<td><p>Human-readable time when LogRecord was created</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">%(created)f</span></code></p></td>
+<td><p>1705315845.123</p></td>
+<td><p>Time when LogRecord was created (Unix timestamp)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">%(filename)s</span></code></p></td>
+<td><p>my_module.py</p></td>
+<td><p>Filename portion of pathname</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">%(funcName)s</span></code></p></td>
+<td><p>my_function</p></td>
+<td><p>Name of function containing the logging call</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">%(levelname)s</span></code></p></td>
+<td><p>INFO</p></td>
+<td><p>Text logging level for the message</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">%(levelno)d</span></code></p></td>
+<td><p>20</p></td>
+<td><p>Numeric logging level for the message</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">%(lineno)d</span></code></p></td>
+<td><p>42</p></td>
+<td><p>Source line number where logging call was issued</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">%(message)s</span></code></p></td>
+<td><p>This is a log message</p></td>
+<td><p>The logged message</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">%(module)s</span></code></p></td>
+<td><p>my_module</p></td>
+<td><p>Module (name portion of filename)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">%(msecs)d</span></code></p></td>
+<td><p>123</p></td>
+<td><p>Millisecond portion of creation time</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">%(name)s</span></code></p></td>
+<td><p>my_logger</p></td>
+<td><p>Name of the logger used to log the call</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">%(pathname)s</span></code></p></td>
+<td><p>/path/to/my_module.py</p></td>
+<td><p>Full pathname of source file</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">%(process)d</span></code></p></td>
+<td><p>12345</p></td>
+<td><p>Process ID</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">%(processName)s</span></code></p></td>
+<td><p>MainProcess</p></td>
+<td><p>Process name</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">%(relativeCreated)d</span></code></p></td>
+<td><p>1234</p></td>
+<td><p>Time in milliseconds since logger was created</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">%(thread)d</span></code></p></td>
+<td><p>67890</p></td>
+<td><p>Thread ID</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">%(threadName)s</span></code></p></td>
+<td><p>MainThread</p></td>
+<td><p>Thread name</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">%(taskName)s</span></code></p></td>
+<td><p>Task-1</p></td>
+<td><p>Task name (Python 3.12+)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>For complete details on format attributes, see the
+<a class="reference external" href="https://docs.python.org/3/library/logging.html#logrecord-attributes">Python logging documentation</a>.</p>
+</section>
+<section id="grid-properties">
+<h3>Grid properties<a class="headerlink" href="#grid-properties" title="Link to this heading">#</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">grid_props</span></code> parameter accepts any valid Dash AG Grid properties. Default properties include:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;rowData&quot;</span><span class="p">:</span> <span class="p">[],</span>  <span class="c1"># Populated from parsed log file</span>
+    <span class="s2">&quot;columnDefs&quot;</span><span class="p">:</span> <span class="p">[],</span>  <span class="c1"># Generated from log_format</span>
+    <span class="s2">&quot;defaultColDef&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;filter&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="s2">&quot;resizable&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="s2">&quot;sortable&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="s2">&quot;editable&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;filterModel&quot;</span><span class="p">:</span> <span class="p">{},</span>
+    <span class="s2">&quot;dashGridOptions&quot;</span><span class="p">:</span> <span class="p">{</span>
+      <span class="s2">&quot;noRowsOverlayComponent&quot;</span><span class="p">:</span> <span class="s2">&quot;DMC_NoRows_Overlay&quot;</span><span class="p">,</span>
+      <span class="s2">&quot;noRowsOverlayComponentParams&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;No logs to display.&quot;</span><span class="p">},</span>
+        <span class="s2">&quot;suppressMovableColumns&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="s2">&quot;tooltipShowDelay&quot;</span><span class="p">:</span> <span class="mi">500</span><span class="p">,</span>
+      <span class="s2">&quot;suppressScrollOnNewData&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;className&quot;</span><span class="p">:</span> <span class="s2">&quot;ag-theme-balham-dark&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;persistence&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="s2">&quot;persisted_props&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;columnState&quot;</span><span class="p">],</span>
+    <span class="s2">&quot;style&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;height&quot;</span><span class="p">:</span> <span class="s2">&quot;200px&quot;</span><span class="p">},</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>User-provided properties are merged with these defaults.</p>
+</section>
+<section id="component-ids">
+<h3>Component IDs<a class="headerlink" href="#component-ids" title="Link to this heading">#</a></h3>
+<p>The component exposes the following IDs for use in callbacks:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">LogsSupervisor.ids.info_button(aio_id)</span></code>: INFO level filter button</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">LogsSupervisor.ids.warning_button(aio_id)</span></code>: WARNING level filter button</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">LogsSupervisor.ids.error_button(aio_id)</span></code>: ERROR level filter button</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">LogsSupervisor.ids.critical_button(aio_id)</span></code>: CRITICAL level filter button</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">LogsSupervisor.ids.debug_button(aio_id)</span></code>: DEBUG level filter button</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">LogsSupervisor.ids.activate_monitoring(aio_id)</span></code>: Store that controls when monitoring
+starts/stops (bool via <code class="docutils literal notranslate"><span class="pre">data</span></code> property)</p></li>
+</ul>
+</section>
+</section>
+<section id="limitations">
+<h2>Limitations<a class="headerlink" href="#limitations" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>The <code class="docutils literal notranslate"><span class="pre">log_format</span></code> string must exactly match the format used in the logger’s formatter, or parsing
+does not return matching rows.</p></li>
+<li><p>Real-time monitoring continues until manually turned off. It does not automatically stop when log
+generation completes.</p></li>
+<li><p>Only the format attributes listed in <a class="reference internal" href="#ref-logs-supervisor-log-format-attributes"><span class="std std-ref">Supported log format attributes</span></a> are
+supported. Custom format attributes raise a <code class="docutils literal notranslate"><span class="pre">ValueError</span></code>.</p></li>
+<li><p>A <code class="docutils literal notranslate"><span class="pre">dmc.NotificationContainer</span></code> is required only when <code class="docutils literal notranslate"><span class="pre">show_error_notifications=True</span></code> and you
+want parse-failure notifications displayed.</p></li>
+</ul>
+</section>
+<section id="full-example">
+<h2>Full example<a class="headerlink" href="#full-example" title="Link to this heading">#</a></h2>
+<p>For a complete working example check out the <a class="reference external" href="https://github.com/ansys/super-components-for-dash/blob/main/examples/showcase_all/src/ansys/solutions/showcase_dash_super_components/ui/pages/logs_supervisor_page.py">showcase example</a>.</p>
+<p>The example shows:</p>
+<ul class="simple">
+<li><p>Triggering a long-running transaction that generates random log messages at multiple
+severity levels for 30 seconds</p></li>
+<li><p>A default supervisor using only the required constructor arguments with a 3-second polling
+interval and the dark AG Grid theme</p></li>
+<li><p>A customized supervisor with a 1-second polling interval, a fixed width, and the light
+AG Grid theme</p></li>
+<li><p>Both supervisors listening to the same log source and activating supervision via a shared
+callback</p></li>
+<li><p>Managing the trigger button loading state via callbacks and re-enabling it when the
+transaction terminates</p></li>
+</ul>
+<p>For a minimal self-contained runnable example, see the
+<a class="reference internal" href="../examples/general/example_logs_supervisor.html#sphx-glr-examples-general-example-logs-supervisor-py"><span class="std std-ref">Logs Supervisor</span></a> page in the Examples gallery.</p>
+</section>
+<section id="source-code">
+<h2>Source code<a class="headerlink" href="#source-code" title="Link to this heading">#</a></h2>
+<p>For the full API reference of <code class="docutils literal notranslate"><span class="pre">LogsSupervisor</span></code>, see
+<a class="reference internal" href="../api/components/_autosummary/ansys.solutions.dash_super_components.LogsSupervisor.html#ansys.solutions.dash_super_components.LogsSupervisor" title="ansys.solutions.dash_super_components.LogsSupervisor"><code class="xref py py-class docutils literal notranslate"><span class="pre">LogsSupervisor</span></code></a>.</p>
+<p>Check out the <a class="reference external" href="https://github.com/ansys/super-components-for-dash/blob/main/src/ansys/solutions/dash_super_components/logs_supervisor.py">component source code</a>
+to discover the underlying logic. Contributions are welcomed. You can extend the component
+functionalities by raising a pull request in the
+<a class="reference external" href="https://github.com/ansys/super-components-for-dash">super-components-for-dash</a> repository.</p>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#usage">Usage</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#configure-the-dash-application">Configure the Dash application</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#basic-usage">Basic usage</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#advanced-usage">Advanced usage</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#integration-with-saf-based-solutions">Integration with SAF-based solutions</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#generate-a-log-file">Generate a log file</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#add-component-to-layout">Add component to layout</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#activate-monitoring">Activate monitoring</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#how-it-works">How it works</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#filter-logs">Filter logs</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#toggle-monitoring">Toggle monitoring</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#properties">Properties</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#constructor-parameters">Constructor parameters</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#supported-log-format-attributes">Supported log format attributes</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#grid-properties">Grid properties</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#component-ids">Component IDs</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#limitations">Limitations</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#full-example">Full example</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#source-code">Source code</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <ul class="this-page-menu">
+      <li><a href="../_sources/user-guide/logs-supervisor.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=0790524f97105ba85085"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085"></script>
+
+
+  <!-- Include desired assets -->
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.7/require.min.js"></script>
+
+<script>
+// Passing the search options to the search.js file
+const SEARCH_OPTIONS = JSON.parse('{"ignoreLocation": true, "keys": ["title", "text", "objectID"], "limit": 10, "minMatchCharLength": 2, "threshold": 0.5}');
+const SEARCH_FILE = "../_static/search.json";
+const ADVANCE_SEARCH_PATH = "../search.html";
+const EXTRA_SOURCES = JSON.parse('""');
+</script>
+
+
+<script src="../_static/js/search.js"></script>
+
+  
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.0.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<!--
+  Theme Version Footer
+  Displays the Sphinx theme version and the last updated date.
+  Accessibility and semantic improvements included.
+-->
+<footer class="theme-version" aria-label="Theme version and last update">
+  <span>
+    
+      Built with the
+      <a href="https://sphinxdocs.ansys.com/version/stable/index.html" target="_blank" rel="noopener noreferrer">
+        Ansys Sphinx Theme
+      </a>
+      1.9.0.
+    
+  </span>
+  <br />
+  <span>Last updated on <time id="ast_build_date"></time></span>
+</footer>
+<script>
+  // Set the last updated date in a readable format
+  (function() {
+    var options = { day: "numeric", month: "long", year: "numeric" };
+    var ast_lastModifiedDate = new Date(document.lastModified);
+    var ast_build_date = ast_lastModifiedDate.toLocaleDateString("en-US", options);
+    var dateElem = document.getElementById("ast_build_date");
+    if (dateElem) {
+      dateElem.textContent = ast_build_date;
+    }
+  })();
+</script></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

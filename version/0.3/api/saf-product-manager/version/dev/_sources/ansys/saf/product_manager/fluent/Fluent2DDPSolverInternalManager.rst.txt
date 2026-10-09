@@ -1,0 +1,120 @@
+
+
+
+
+
+
+:class:`Fluent2DDPSolverInternalManager`
+========================================
+
+
+.. py:class:: ansys.saf.product_manager.fluent.Fluent2DDPSolverInternalManager(**kwargs: Any)
+
+   Bases: :py:obj:`AbstractFluentInternalManager`\ [\ :py:obj:`ansys.fluent.core.session_solver.Solver`\ ]
+
+
+   
+   Private class to manage a Fluent Solver 2DDP instance using secure gRPC connections.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:currentmodule:: Fluent2DDPSolverInternalManager
+
+Overview
+--------
+
+.. tab-set::
+
+
+   .. tab-item:: Constructors
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~get_product_name_implement`
+            - Return the name of Fluent Solver 2DDP in the PIM environment.
+
+
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~PRODUCT_NAME`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.saf.product_manager.fluent import Fluent2DDPSolverInternalManager
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: PRODUCT_NAME
+   :value: 'fluent-2ddp-solver-secure'
+
+
+
+
+Method detail
+-------------
+
+.. py:method:: get_product_name_implement() -> str
+   :classmethod:
+
+
+   
+   Return the name of Fluent Solver 2DDP in the PIM environment.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

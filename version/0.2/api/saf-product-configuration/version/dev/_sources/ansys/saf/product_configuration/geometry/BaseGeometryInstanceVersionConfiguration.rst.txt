@@ -1,0 +1,270 @@
+
+
+
+
+
+
+:class:`BaseGeometryInstanceVersionConfiguration`
+=================================================
+
+
+.. py:class:: ansys.saf.product_configuration.geometry.BaseGeometryInstanceVersionConfiguration(version: str)
+
+   Bases: :py:obj:`ansys.saf.product_configuration.interfaces.IProductInstanceVersionConfiguration`
+
+
+   
+   Base configuration class for Ansys Geometry service.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: BaseGeometryInstanceVersionConfiguration
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~service_name`
+            - The name of the service associated with the Geometry service instance.
+          * - :py:attr:`~execution_command`
+            - The command to launch Geometry.
+          * - :py:attr:`~environment`
+            - Environment variables for the Geometry service instance.
+          * - :py:attr:`~software_requirements`
+            - Required software to run Geometry in HPS.
+          * - :py:attr:`~exe_path_for_pim`
+            - Path to the Geometry executable.
+          * - :py:attr:`~service_type`
+            - Service type use for the health check.
+          * - :py:attr:`~enable_secure_flags`
+            - Enable secure communication with the Geometry service.
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.saf.product_configuration.geometry import BaseGeometryInstanceVersionConfiguration
+
+Property detail
+---------------
+
+.. py:property:: service_name
+   :type: str
+
+
+   
+   The name of the service associated with the Geometry service instance.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: execution_command
+   :type: str
+
+   :abstractmethod:
+
+
+   
+   The command to launch Geometry.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: environment
+   :type: dict[str, str]
+
+   :abstractmethod:
+
+
+   
+   Environment variables for the Geometry service instance.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: software_requirements
+   :type: list[ansys.saf.product_configuration.interfaces.ISoftware]
+
+
+   
+   Required software to run Geometry in HPS.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: exe_path_for_pim
+   :type: str
+
+   :abstractmethod:
+
+
+   
+   Path to the Geometry executable.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: service_type
+   :type: ansys.saf.product_configuration.interfaces.ServiceType
+
+
+   
+   Service type use for the health check.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: enable_secure_flags
+   :type: bool
+
+
+   
+   Enable secure communication with the Geometry service.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+
+

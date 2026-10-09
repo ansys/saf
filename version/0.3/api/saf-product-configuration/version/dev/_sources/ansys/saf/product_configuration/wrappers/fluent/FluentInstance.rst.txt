@@ -1,0 +1,80 @@
+
+
+
+
+
+
+:class:`FluentInstance`
+=======================
+
+
+.. py:class:: ansys.saf.product_configuration.wrappers.fluent.FluentInstance(host: str, version: str, mode: str, geometry: str, precision: str, transport_mode: ansys.saf.product_configuration.wrappers.types.TransportMode, certs_dir: str | None = None)
+
+
+.. py:currentmodule:: FluentInstance
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~get_fluent_pids`
+            - 
+          * - :py:attr:`~initialize`
+            - 
+          * - :py:attr:`~shutdown`
+            - 
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~port`
+            - 
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.saf.product_configuration.wrappers.fluent import FluentInstance
+
+Property detail
+---------------
+
+.. py:property:: port
+   :type: int | None
+
+
+
+
+
+Method detail
+-------------
+
+.. py:method:: get_fluent_pids() -> list[int]
+
+.. py:method:: initialize(working_dir: pathlib.Path) -> None
+
+.. py:method:: shutdown()
+
+
+
+

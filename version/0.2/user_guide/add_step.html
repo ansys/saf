@@ -1,0 +1,1170 @@
+<!--
+Copyright (C) 2026 ANSYS, Inc. and/or its affiliates.
+SPDX-License-Identifier: Apache-2.0
+
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+ <!-- ©2026, ANSYS Inc. Unauthorized use, distribution or duplication is prohibited. -->
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" data-theme="dark">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Add steps &#8212; SAF Doc</title>
+  
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "dark";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "dark";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/ansys-sphinx-theme.css?v=5ffe81b6" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=fd6457a4" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/ansys-sphinx-theme.css?v=5ffe81b6" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://www.nerdfonts.com/assets/css/webfont.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/code-tabs.css?v=1bc26e2f" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=c999ad29" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/carousel.css?v=272b576a" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/landing_page_banner.css?v=57c45261" />
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../_static/scripts/fontawesome.js?digest=0790524f97105ba85085"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=0790524f97105ba85085" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085" />
+
+
+  <!-- Include desired assets -->
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  
+
+  
+    <link href="../_static/css/breadcrumbs.css" rel="stylesheet" />
+  
+    <script src="../_static/documentation_options.js?v=8a448e45"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=49e1bf35"></script>
+    <script src="../_static/sg-tags.js?v=d80f6fa4"></script>
+    <script src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
+    <script src="../_static/code-tabs.js?v=c983d12e"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'user_guide/add_step';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.18.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://saf.ansys.com/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.2';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <script src="../_static/js/sidebar-always-expanded.js?v=6b23dfe7"></script>
+    <script src="../_static/js/sdI_button_ref_tooltips.js?v=091f9e4c"></script>
+    <script src="../_static/js/primary-sidebar-sticky-offset.js?v=7ecdf44c"></script>
+    <link rel="icon" href="../_static/ansys-favicon.png"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Package" href="package/index.html" />
+    <link rel="prev" title="End-to-end testing" href="test/e2e_testing.html" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.2.0" />
+  
+    
+    <script src="../_static/searchtools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../searchindex.js"></script>
+  
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+
+  <link rel="canonical" href="https://saf.ansys.com/version/stable/user_guide/add_step.html" />
+  </head>
+  <body data-default-mode="dark">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+  
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+    
+    <img src="../_static/endorsed-ansys-logos-gold-white-rgb.svg" class="logo__image only-dark" alt="SAF Doc - Home"/>
+    <img src="../_static/endorsed-ansys-logos-gold-black-rgb.svg" class="logo__image only-light pst-js-only" alt="SAF Doc - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../index.html" title="SAF Doc home">Home</a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../overview/index.html">
+    Overview
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../getting_started/index.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="index.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api/index.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../contribute/index.html">
+    Contribute
+  </a>
+</li>
+
+  </ul>
+</nav>
+</div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+      
+        <div class="navbar-item">
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+  
+</div></div>
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/saf" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+  
+    
+<!--
+  Announcement Version Loader
+  Dynamically loads the announcement.html content into the announcement_msg div.
+-->
+<div id="announcement_msg" aria-live="polite"></div>
+<script>
+  // Fetch and inject the announcement HTML content
+  fetch("announcement.html")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error: ${response.status} Announcement.html file not found, Please ignore this, if you are in dev/stable documentation`);
+      }
+      return response.text();
+    })
+    .then((text) => {
+      var msgDiv = document.getElementById("announcement_msg");
+      if (msgDiv) {
+        msgDiv.innerHTML = text;
+      }
+    })
+    .catch((error) => {
+      // Log only unexpected fetch errors
+      if (!(error.message && error.message.startsWith("HTTP error: 404"))) {
+        console.error(`Fetch problem: ${error.message} Announcement.html could not be loaded.`);
+      }
+    });
+</script>
+  
+
+  <div class="header-nav-banner d-print-none">
+    <div class="header-nav-banner__inner">
+      <div class="header-nav-banner__crumbs">
+        
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+     
+    <li class="breadcrumb-item breadcrumb-home">
+      <a
+        href="../index.html"
+        class="nav-link"
+        aria-label="Home"
+      >
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="index.html" class="nav-link">User guide</a>
+    </li>
+      
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Add steps</span></li>
+    
+  </ul>
+</nav>
+
+      </div>
+    </div>
+  </div>
+
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../index.html" title="SAF Doc home">Home</a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../overview/index.html">
+    Overview
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../getting_started/index.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="index.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api/index.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../contribute/index.html">
+    Contribute
+  </a>
+</li>
+
+  </ul>
+</nav>
+</div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+  
+</div></div>
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/saf" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item pst-sidebar-collapse"><button id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar"><svg class="pst-icon svg-inline--fa" role="img" aria-hidden="true" focusable="false" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="M3 15.5C2.36232 15.5 1.74874 15.2564 1.28478 14.8189C0.820828 14.3815 0.541576 13.7832 0.504167 13.1467L0.5 13L0.5 3C0.499965 2.36232 0.743605 1.74874 1.18107 1.28478C1.61854 0.820828 2.21676 0.541576 2.85333 0.504167L3 0.5L13 0.5C13.6377 0.499965 14.2513 0.743605 14.7152 1.18107C15.1792 1.61854 15.4584 2.21676 15.4958 2.85333L15.5 3L15.5 13C15.5 13.6377 15.2564 14.2513 14.8189 14.7152C14.3815 15.1792 13.7832 15.4584 13.1467 15.4958L13 15.5L3 15.5ZM3 13.8333L10.5 13.8333L10.5 2.16667L3 2.16667C2.79589 2.16669 2.59889 2.24163 2.44636 2.37726C2.29383 2.5129 2.19638 2.69979 2.1725 2.9025L2.16667 3L2.16667 13C2.16669 13.2041 2.24163 13.4011 2.37726 13.5536C2.5129 13.7062 2.69979 13.8036 2.9025 13.8275L3 13.8333ZM6.65583 10.325L6.5775 10.2558L4.91083 8.58917C4.76735 8.44567 4.68116 8.25476 4.66843 8.05223C4.65569 7.84971 4.71729 7.6495 4.84167 7.48917L4.91083 7.41083L6.5775 5.74417C6.72747 5.59471 6.9287 5.50794 7.14032 5.50148C7.35194 5.49502 7.55809 5.56935 7.7169 5.70937C7.8757 5.8494 7.97525 6.04463 7.99533 6.25539C8.01541 6.46616 7.95451 6.67667 7.825 6.84417L7.75583 6.9225L6.67917 8L7.75583 9.0775C7.89931 9.22099 7.98551 9.41191 7.99824 9.61443C8.01097 9.81695 7.94938 10.0172 7.825 10.1775L7.75583 10.2558C7.61234 10.3993 7.42142 10.4855 7.2189 10.4982C7.01638 10.511 6.81617 10.4494 6.65583 10.325Z"/>
+  </svg>
+  <span class="pst-collapse-sidebar-label">Collapse Sidebar</span>
+  <span class="pst-expand-sidebar-label">Expand Sidebar</span>
+</button></div>
+        <div class="sidebar-primary-item">
+
+
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="scaffold.html">Scaffold</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="run_locally/index.html">Run locally</a></li>
+<li class="toctree-l1"><a class="reference internal" href="projects.html">Manage projects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="debug/index.html">Debug</a></li>
+<li class="toctree-l1"><a class="reference internal" href="test/index.html">Test</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Add steps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="package/index.html">Package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="deploy/index.html">Deploy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backend/index.html">Backend development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="frontend/index.html">Frontend development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="environment_variables.html">Environment variables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="solution_servers.html">Solution servers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="script.html">Script a solution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="supported_software.html">Supported software</a></li>
+<li class="toctree-l1"><a class="reference internal" href="components.html">SAF components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="best_practices/index.html">Best practices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="migration/index.html">Migration guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting/index.html">Troubleshooting guide</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+     
+    <li class="breadcrumb-item breadcrumb-home">
+      <a
+        href="../index.html"
+        class="nav-link"
+        aria-label="Home"
+      >
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="index.html" class="nav-link">User guide</a>
+    </li>
+      
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Add steps</span></li>
+    
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="add-steps">
+<span id="add-step"></span><h1>Add steps<a class="headerlink" href="#add-steps" title="Link to this heading">#</a></h1>
+<p>Steps are the building blocks of a solution workflow. Each step represents a distinct phase in the solution’s process flow, typically with its own UI and functionality. You can add steps to extend functionality without modifying the solution structure.</p>
+<p class="rubric">When to add a step</p>
+<ul>
+<li><p>Your solution workflow needs additional logical phases</p></li>
+<li><p>You want to break a complex process into smaller parts</p></li>
+<li><p>You’re extending an existing solution with new capabilities</p></li>
+</ul>
+<section id="add-a-step">
+<h2>Add a step<a class="headerlink" href="#add-a-step" title="Link to this heading">#</a></h2>
+<p>You can add a step to your solution using either SAF CLI or Solutions Manager.</p>
+<div class="sd-tab-set docutils">
+<input checked="checked" id="sd-tab-item-0" name="sd-tab-set-0" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-0">
+SAF CLI</label><div class="sd-tab-content docutils">
+<p>Add a step to the solution using SAF CLI:</p>
+<ol class="arabic">
+<li><p>Run the following command:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>saf add-step &lt;solution-name&gt;
+</pre></div>
+</div>
+</li>
+<li><p>When prompted, provide the following values, pressing <kbd class="kbd docutils literal notranslate">Enter</kbd> to select the default value
+or to validate non-default values provided.</p>
+<ol class="loweralpha">
+<li><p>Enter the name for the step.</p>
+<p>Make sure it follows the rules described in <a class="reference internal" href="#user-guide-step-naming-conventions"><span class="std std-ref">Step naming conventions</span></a>.</p>
+</li>
+<li><p>Select a UI framework.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>You must use the same UI framework for all steps in a solution. If you try to add a step with a different UI framework than the one used to create the solution, the command returns an error.</p>
+<p>You can add steps without a UI framework by selecting <code class="docutils literal notranslate"><span class="pre">none</span></code> for any solution, regardless of its UI framework.</p>
+</div>
+</li>
+<li><p>Select a step template (optional).</p></li>
+</ol>
+</li>
+</ol>
+<p>The new step is created and integrated into your solution. Files are created and modified as described in <a class="reference internal" href="#user-guide-add-step-files-output"><span class="std std-ref">saf add-step output</span></a>.</p>
+</div>
+<input id="sd-tab-item-1" name="sd-tab-set-0" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-1">
+Solutions Manager</label><div class="sd-tab-content docutils">
+<p>Add a step to the solution using Solutions Manager:</p>
+<ol class="arabic">
+<li><p>Open Visual Studio Code.</p></li>
+<li><p>In the Activity Bar, click the <strong>Solutions Manager</strong> icon.</p></li>
+<li><p>In the <strong>Solutions Manager</strong> pane, expand the <strong>Customize Solution</strong> view.</p>
+<a class="reference internal image-reference" href="../_images/solutions_manager_customize_solution_view.png"><img alt="Solutions Manager Customize Solution view" src="../_images/solutions_manager_customize_solution_view.png" style="width: 45%;" />
+</a>
+</li>
+<li><p>Under <strong>Add step</strong>, provide the following values:</p>
+<ol class="loweralpha">
+<li><p>Select the solution where you want to add a step.</p>
+<p>You can either select an option from the list of available solutions or browse for the solution folder of a different one.</p>
+</li>
+<li><p>Enter the name for the step.</p>
+<p>Make sure it follows the rules described in <a class="reference internal" href="#user-guide-step-naming-conventions"><span class="std std-ref">Step naming conventions</span></a>.</p>
+</li>
+<li><p>Select the UI framework.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>You must use the same UI framework for all steps in a solution. If you try to add a step with a different UI framework than the one used to create the solution, the command returns an error.</p>
+<p>You can add steps without a UI framework by selecting <code class="docutils literal notranslate"><span class="pre">none</span></code> for any solution, regardless of its UI framework.</p>
+</div>
+</li>
+<li><p>Enter the namespace to use for the solution.</p></li>
+<li><p>Enter the target directory where the solution will be saved.</p></li>
+</ol>
+</li>
+<li><p>Create the step.</p>
+<p>Click the <span class="guilabel">Add step</span> button. Alternatively, you can copy the command under <strong>Add step command</strong> and run it in the terminal.</p>
+</li>
+</ol>
+</div>
+</div>
+<p>When you open the solution, the new step will be visible in the left navigation panel.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p>For more information on available command-line options, see <a class="reference internal" href="#user-guide-add-step-command-options"><span class="std std-ref">saf add-step options</span></a>.</p>
+</div>
+<section id="step-naming-conventions">
+<span id="user-guide-step-naming-conventions"></span><h3>Step naming conventions<a class="headerlink" href="#step-naming-conventions" title="Link to this heading">#</a></h3>
+<p>Make sure your step name follows these conventions:</p>
+<ul>
+<li><p>A step name cannot be a path.</p></li>
+<li><p>A step name cannot contain:</p>
+<ul>
+<li><p>Forward-slash (<code class="docutils literal notranslate"><span class="pre">/</span></code>) or backward-slash (<code class="docutils literal notranslate"><span class="pre">\</span></code>) characters</p></li>
+<li><p>Invalid characters: colons (<code class="docutils literal notranslate"><span class="pre">:</span></code>), semi-colons (<code class="docutils literal notranslate"><span class="pre">;</span></code>), asterisks (<code class="docutils literal notranslate"><span class="pre">*</span></code>), question marks (<code class="docutils literal notranslate"><span class="pre">?</span></code>), or angle quotations (<code class="docutils literal notranslate"><span class="pre">&lt;</span></code>, <code class="docutils literal notranslate"><span class="pre">&gt;</span></code>)</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="the-saf-add-step-command">
+<h3>The <code class="docutils literal notranslate"><span class="pre">saf</span> <span class="pre">add-step</span></code> command<a class="headerlink" href="#the-saf-add-step-command" title="Link to this heading">#</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">saf</span> <span class="pre">add-step</span></code> command is used to add a new step to an existing solution. It integrates the step into the solution’s structure, creating necessary files and updating existing ones as described in the previous section.</p>
+</section>
+<section id="saf-add-step-options">
+<span id="user-guide-add-step-command-options"></span><h3><code class="docutils literal notranslate"><span class="pre">saf</span> <span class="pre">add-step</span></code> options<a class="headerlink" href="#saf-add-step-options" title="Link to this heading">#</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">saf</span> <span class="pre">add-step</span></code> command has multiple options. To see them all, run the following command:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>saf<span class="w"> </span>add-step<span class="w"> </span>--help
+</pre></div>
+</div>
+<p>The following <code class="docutils literal notranslate"><span class="pre">saf</span> <span class="pre">add-step</span></code> options are available:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 75.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head stub"><p>Option</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><th class="stub"><p><code class="docutils literal notranslate"><span class="pre">--step-name</span></code></p></th>
+<td><p>The name of the step to add to the solution.</p></td>
+</tr>
+<tr class="row-odd"><th class="stub"><p><code class="docutils literal notranslate"><span class="pre">--ui-framework</span> <span class="pre">[dash|none]</span></code></p></th>
+<td><p>Type of solution UI.</p></td>
+</tr>
+<tr class="row-even"><th class="stub"><p><code class="docutils literal notranslate"><span class="pre">--template</span> <span class="pre">&lt;template-name&gt;</span></code></p></th>
+<td><p>The name of the step template to use.</p>
+<p>For more information, see <a class="reference internal" href="#step-templates"><span class="std std-ref">Use step templates</span></a>.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Setting these options disables their command prompt.</p>
+</div>
+</section>
+<section id="saf-add-step-output">
+<span id="user-guide-add-step-files-output"></span><h3><code class="docutils literal notranslate"><span class="pre">saf</span> <span class="pre">add-step</span></code> output<a class="headerlink" href="#saf-add-step-output" title="Link to this heading">#</a></h3>
+<p>Adding a step generates new files and modifies existing files in the solution.</p>
+<section id="generated-files">
+<h4>Generated files<a class="headerlink" href="#generated-files" title="Link to this heading">#</a></h4>
+<p>The following files are generated:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&lt;solution-name&gt;/
+├───src
+│   └───ansys
+│       └───solutions
+│           └───&lt;solution_module&gt;
+│               ├───solution
+<span class="hll">│               │   │   my_minimal_step.py # (new)
+</span>│               └───ui
+│                   └───pages
+<span class="hll">│                           my_minimal_page.py # (new)
+</span></pre></div>
+</div>
+</section>
+<section id="modified-files">
+<h4>Modified files<a class="headerlink" href="#modified-files" title="Link to this heading">#</a></h4>
+<p>The following files are modified accordingly:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&lt;solution-name&gt;/
+├───src
+│   └───ansys
+│       └───solutions
+│           └───&lt;solution_module&gt;
+│               ├───solution
+<span class="hll">│               │   │   definition.py # (edited)
+</span>│               └───ui
+│                   └───pages
+<span class="hll">│                           page.py # (edited)
+</span></pre></div>
+</div>
+<div class="tabs docutils container" data-tabgroup="">
+<ul class="tabbar">
+<li class="tabbutton selected" data-id="0" onclick="sphinx_code_tabs_onclick(this)">
+definition.py</li><li class="tabbutton" data-id="1" onclick="sphinx_code_tabs_onclick(this)">
+page.py</li></ul><div class="tab codetab selected" data-id="0">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Added a new import and new step to the class.</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.solutions.</span><span class="o">&lt;</span><span class="n">solution_module</span><span class="o">&gt;.</span><span class="n">solution</span><span class="o">.</span><span class="n">my_minimal_step</span> <span class="kn">import</span><span class="w"> </span><span class="nn">MyMinimalStep</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Steps</span><span class="p">(</span><span class="n">StepsModel</span><span class="p">):</span>
+
+    <span class="n">my_minimal_step</span><span class="p">:</span> <span class="n">MyMinimalStep</span>
+</pre></div>
+</div>
+</div><div class="tab codetab" data-id="1">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Added a new step to the array.</span>
+<span class="n">page_list</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;my_minimal_page&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="s2">&quot;My Minimal Step&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;prefixIcon&quot;</span><span class="p">:</span> <span class="s2">&quot;carbon:ibm-engineering-workflow-mgmt&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;expanded&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="p">},</span>
+<span class="p">]</span>
+
+<span class="c1"># This block is inserted under the function display_page(pathname, value):</span>
+<span class="k">elif</span> <span class="n">value</span><span class="p">[</span><span class="s2">&quot;index&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;my_minimal_page&quot;</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">my_minimal_page</span><span class="o">.</span><span class="n">layout</span><span class="p">(</span><span class="n">project</span><span class="o">.</span><span class="n">steps</span><span class="o">.</span><span class="n">my_minimal_step</span><span class="p">)</span>
+</pre></div>
+</div>
+</div></div></section>
+</section>
+</section>
+<section id="use-step-templates">
+<span id="step-templates"></span><h2>Use step templates<a class="headerlink" href="#use-step-templates" title="Link to this heading">#</a></h2>
+<p>SAF ships a collection of built-in step templates that generate ready-to-use solution
+steps. Instead of writing boilerplate code from scratch, you can scaffold common
+patterns (calculator, HPS job submission, product instance management) and then
+customize them to fit your use case.</p>
+<section id="prerequisites">
+<h3>Prerequisites<a class="headerlink" href="#prerequisites" title="Link to this heading">#</a></h3>
+<p>Before using step templates, ensure you’ve met the following prerequisites:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 20.0%" />
+<col style="width: 80.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head stub"><p>Prerequisite</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><th class="stub"><p>SAF Templates</p></th>
+<td><p>Version 4.0.1 or later.</p>
+<p>Using previous versions of the <code class="docutils literal notranslate"><span class="pre">ansys-saf-templates</span></code> package might produce unexpected results or errors when attempting to add a step.</p>
+</td>
+</tr>
+<tr class="row-odd"><th class="stub"><p>SAF CLI</p></th>
+<td><p>Version 4.0.1 or later.</p></td>
+</tr>
+<tr class="row-even"><th class="stub"><p>Shared Technology Components (STC)</p></th>
+<td><p>Some templates require a deployment of Ansys HPC Platform Services (HPS).</p></td>
+</tr>
+<tr class="row-odd"><th class="stub"><p>Ansys products</p></th>
+<td><p>Depending on the template you intend to use, the corresponding Ansys product must be
+installed and licensed on your machine (for example, AEDT, Mechanical, MAPDL, Fluent, Geometry).</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p>Step templates are available in SAF CLI version 4.0.1 or later. If you are using an earlier version,
+you can still add a step to a solution, but you will need to implement the step logic and UI from scratch.</p>
+<p>To manually install a newer version of the SAF Templates package, run the following command in the Python environment where SAF CLI is installed:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>ansys-saf-templates
+</pre></div>
+</div>
+</div>
+</section>
+<section id="add-a-step-from-a-template">
+<h3>Add a step from a template<a class="headerlink" href="#add-a-step-from-a-template" title="Link to this heading">#</a></h3>
+<p>Add a new step from a template by running the <code class="docutils literal notranslate"><span class="pre">saf</span> <span class="pre">add-step</span></code> command with the <code class="docutils literal notranslate"><span class="pre">--template</span></code> option:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>saf<span class="w"> </span>add-step<span class="w"> </span>&lt;my_solution&gt;<span class="w"> </span>--template<span class="w"> </span>&lt;template_name&gt;
+</pre></div>
+</div>
+<p>If <code class="docutils literal notranslate"><span class="pre">--template</span></code> is omitted, the CLI interactively guides you through selecting a
+template and the rest of the required parameters. You can also pass all information
+as command-line arguments:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>saf<span class="w"> </span>add-step<span class="w"> </span>&lt;my_solution&gt;<span class="w"> </span>--step-name<span class="w"> </span>&lt;step_name&gt;<span class="w"> </span>--ui-framework<span class="w"> </span>&lt;ui_framework&gt;<span class="w"> </span>--template<span class="w"> </span>&lt;template_name&gt;
+</pre></div>
+</div>
+</section>
+<section id="list-available-templates">
+<h3>List available templates<a class="headerlink" href="#list-available-templates" title="Link to this heading">#</a></h3>
+<p>You can list the available templates by running:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>saf<span class="w"> </span>templates
+</pre></div>
+</div>
+<p>This shows all the templates available in <code class="docutils literal notranslate"><span class="pre">ansys-saf-templates</span></code>, as well as any
+additional templates from installed plugins. For information on available templates, see <a class="reference internal" href="#user-guide-add-step-template-gallery"><span class="std std-ref">Step template gallery</span></a>.</p>
+</section>
+<section id="step-template-gallery">
+<span id="user-guide-add-step-template-gallery"></span><h3>Step template gallery<a class="headerlink" href="#step-template-gallery" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 45.0%" />
+<col style="width: 20.0%" />
+<col style="width: 10.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Template</p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>Dependencies</p></th>
+<th class="head"><p>Owner</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">calculator-step</span></code></p></td>
+<td><p>A step that performs calculator operations. Useful as a starting point or
+reference for simple computation steps.</p></td>
+<td><p>None</p></td>
+<td><p>SAF SDK</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">hps-simple-job-step</span></code></p></td>
+<td><p>A step that submits a simple job to Ansys HPC Platform Services (HPS).
+Generates the boilerplate for job submission, status polling, and result
+retrieval.</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ansys-saf-sdk[core-hps]</span></code>, <code class="docutils literal notranslate"><span class="pre">dash-iconify</span></code></p></td>
+<td><p>SAF SDK</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">hps-parametric-study-step</span></code></p></td>
+<td><p>A step that runs a parametric study on HPS. Extends the simple job step
+with parameter sweeps and result aggregation.</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ansys-saf-sdk[core-hps]</span></code>, <code class="docutils literal notranslate"><span class="pre">dash-iconify</span></code></p></td>
+<td><p>SAF SDK</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">instance-mgmt-geometry-step</span></code></p></td>
+<td><p>A step for basic Geometry instance management. Handles starting,
+connecting to, and stopping a Geometry service instance.</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ansys-saf-sdk[instance-management-geometry]</span></code></p></td>
+<td><p>SAF SDK</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<section id="calculator">
+<h4>Calculator<a class="headerlink" href="#calculator" title="Link to this heading">#</a></h4>
+<p>A minimal step template that performs basic calculator operations. This template
+is ideal for learning how SAF step templates are structured or as a starting
+point for custom computation steps that do not require external Ansys products.</p>
+<p><strong>Generated files:</strong></p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">solution/&lt;step_module_name&gt;.py</span></code> — Step model with calculator logic.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ui/pages/&lt;page_file_name&gt;.py</span></code> — UI page for interacting with the step.</p></li>
+</ul>
+</section>
+<section id="hps-simple-job">
+<h4>HPS simple job<a class="headerlink" href="#hps-simple-job" title="Link to this heading">#</a></h4>
+<p>A step template that submits a single job to Ansys HPC Platform Services (HPS).
+It provides the scaffolding for defining job parameters, submitting the job,
+monitoring its status, and retrieving results.</p>
+<p><strong>Prerequisites:</strong> Access to an HPS deployment.</p>
+<p><strong>Generated files:</strong></p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">solution/&lt;step_module_name&gt;.py</span></code> — Step model with HPS job submission logic.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">solution/scripts/&lt;step_module_name&gt;_calculate_sum_simple.py</span></code> — Script executed by the HPS job.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ui/pages/&lt;page_file_name&gt;.py</span></code> — UI page for configuring and monitoring the job.</p></li>
+</ul>
+</section>
+<section id="hps-parametric-study">
+<h4>HPS parametric study<a class="headerlink" href="#hps-parametric-study" title="Link to this heading">#</a></h4>
+<p>A step template that runs a parametric study on HPS. It builds on the simple job
+step by adding support for defining parameter ranges, launching multiple jobs,
+and aggregating results.</p>
+<p><strong>Prerequisites:</strong> Access to an HPS deployment.</p>
+<p><strong>Generated files:</strong></p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">solution/&lt;step_module_name&gt;.py</span></code> — Step model with parametric study logic.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">solution/scripts/&lt;step_module_name&gt;_calculate_sum.py</span></code> — Script executed by each HPS job.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ui/pages/&lt;page_file_name&gt;.py</span></code> — UI page for configuring parameters and viewing results.</p></li>
+</ul>
+</section>
+<section id="geometry-instance-management">
+<h4>Geometry instance management<a class="headerlink" href="#geometry-instance-management" title="Link to this heading">#</a></h4>
+<p>A step template for managing Geometry service instances. It handles starting a
+Geometry service, connecting to it, and cleaning up the instance when the step
+completes.</p>
+<p><strong>Prerequisites:</strong> Ansys Geometry Service.</p>
+<p><strong>Generated files:</strong></p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">solution/&lt;step_module_name&gt;.py</span></code> — Step model with instance management logic.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ui/pages/&lt;page_file_name&gt;.py</span></code> — UI page for instance status and control.</p></li>
+</ul>
+</section>
+</section>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#add-a-step">Add a step</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-naming-conventions">Step naming conventions</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-saf-add-step-command">The <code class="docutils literal notranslate"><span class="pre">saf</span> <span class="pre">add-step</span></code> command</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#saf-add-step-options"><code class="docutils literal notranslate"><span class="pre">saf</span> <span class="pre">add-step</span></code> options</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#saf-add-step-output"><code class="docutils literal notranslate"><span class="pre">saf</span> <span class="pre">add-step</span></code> output</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#generated-files">Generated files</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#modified-files">Modified files</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#use-step-templates">Use step templates</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#prerequisites">Prerequisites</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#add-a-step-from-a-template">Add a step from a template</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#list-available-templates">List available templates</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-template-gallery">Step template gallery</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#calculator">Calculator</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#hps-simple-job">HPS simple job</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#hps-parametric-study">HPS parametric study</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#geometry-instance-management">Geometry instance management</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=0790524f97105ba85085"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085"></script>
+
+
+  <!-- Include desired assets -->
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.7/require.min.js"></script>
+
+<script>
+// Passing the search options to the search.js file
+const SEARCH_OPTIONS = JSON.parse('{"keys": ["title", "text", "objectID"], "limit": 10, "threshold": 0.2}');
+const SEARCH_FILE = "../_static/search.json";
+const ADVANCE_SEARCH_PATH = "../search.html";
+const EXTRA_SOURCES = JSON.parse('""');
+</script>
+
+
+<script src="../_static/js/search.js"></script>
+
+  
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<footer class="bd-footer">
+  <div class="bd-footer__inner bd-page-width">
+    <div class="footer-items__start">
+      <div class="footer-item">
+        <div class="footer-items__start">
+          <div class="footer-item">
+            <img src="https://docs.pyansys.com/version/dev/_static/ansys_logo_transparent_white.png" alt="Ansys Logo" class="footer-ansys-logo">
+          </div>
+          <div class="footer-item"><br>
+            <p>2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-items__center">
+      <div class="footer-item">
+        <div class="footer-items__start">
+          <div class="connect-with-ansys">
+            <p>Latest documentation</p> <br>
+            <a href="https://www.ansys.com/" class="external-link" target="_blank" rel="noopener noreferrer">
+              <span class="link-text">Ansys.com</span>
+              <i class="fas fa-up-right-from-square"></i>
+            </a><br>
+            <a href="https://www.ansys.com/services/ansys-learning-hub" class="external-link" target="_blank" rel="noopener noreferrer">
+              <span class="link-text">Ansys Learning</span>
+              <i class="fas fa-up-right-from-square"></i>
+            </a><br>
+            <a href="https://www.ansys.com/support" class="external-link" target="_blank" rel="noopener noreferrer">
+              <span class="link-text">Ansys Support</span>
+              <i class="fas fa-up-right-from-square"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-items__end">
+      <div class="footer-item">
+        <div class="footer-right">
+          <span>Connect with Ansys</span>
+          <div class="social-icons">
+            <a href="https://www.youtube.com/user/ansysinc" target="_blank" rel="noopener" class="icon icon-youtube" aria-label="Youtube"><span class="sr-only">Youtube</span></a>
+            <a href="https://www.facebook.com/ansys" target="_blank" rel="noopener" class="icon icon-facebook" aria-label="Facebook"><span class="sr-only">Facebook</span></a>
+            <a href="https://www.linkedin.com/company/ansys-inc" target="_blank" rel="noopener" class="icon icon-linkedin" aria-label="Linkedin"><span class="sr-only">Linkedin</span></a>
+            <a href="https://github.com/ansys" target="_blank" rel="noopener" class="icon icon-github" aria-label="GitHub"><i class="fab fa-github"></i><span class="sr-only">GitHub</span></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+  </body>
+</html>

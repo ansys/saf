@@ -1,0 +1,165 @@
+
+
+
+
+
+
+:class:`VisorInstanceConfiguration`
+===================================
+
+
+.. py:class:: ansys.saf.product_configuration.visor.VisorInstanceConfiguration
+
+   Bases: :py:obj:`ansys.saf.product_configuration.interfaces.IProductInstanceConfiguration`
+
+
+   
+   Configuration class for Visor.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: VisorInstanceConfiguration
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~get_version_configuration`
+            - Get configuration class for a particular version of Visor.
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~product_name`
+            - Name used to identify Visor in the product instance management system.
+          * - :py:attr:`~versions`
+            - Supported Visor versions.
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.saf.product_configuration.visor import VisorInstanceConfiguration
+
+Property detail
+---------------
+
+.. py:property:: product_name
+   :type: str
+
+
+   
+   Name used to identify Visor in the product instance management system.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: versions
+   :type: List[str]
+
+
+   
+   Supported Visor versions.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+Method detail
+-------------
+
+.. py:method:: get_version_configuration(version: str) -> ansys.saf.product_configuration.interfaces.IProductInstanceVersionConfiguration
+
+   
+   Get configuration class for a particular version of Visor.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

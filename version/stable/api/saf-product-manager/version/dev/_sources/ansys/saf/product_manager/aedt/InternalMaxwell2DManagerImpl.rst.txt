@@ -1,0 +1,94 @@
+
+
+
+
+
+
+:class:`InternalMaxwell2DManagerImpl`
+=====================================
+
+
+.. py:class:: ansys.saf.product_manager.aedt.InternalMaxwell2DManagerImpl(**kwargs: Any)
+
+   Bases: :py:obj:`AbstractAedtManagerImpl`\ [\ :py:obj:`ansys.aedt.core.Maxwell2d`\ ]
+
+
+   
+   A manager of a shared `AEDT Maxwell <https://www.ansys.com/en-gb/products/electronics/ansys-maxwell>`_ 2D
+   product instance.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   .. rubric:: Notes
+
+   It is not expected that GLOW transaction methods or GLOW clients will directly call the constructor of
+   ``Maxwell2DManager``. Instead, the ``Maxwell2DManager`` class should
+   be passed as an argument to a :py:func:`~ansys.saf.glow.solution.create_instance` decorator to indicate that
+   the created instance is AEDT Maxwell 2D.
+
+   Use the :py:meth:`~ansys.saf.glow.solution.aedt.AbstractAedtManagerImpl.initialize` method to set the initial state
+   of the instance within the method decorated with :py:func:`~ansys.saf.glow.solution.create_instance`.
+
+   The :py:attr:`~ansys.saf.glow.solution.InstanceManager.instance` property returns a
+   `pyAEDT Maxwell2d
+   <https://aedt.docs.pyansys.com/version/stable/API/_autosummary/ansys.aedt.core.maxwell.Maxwell2d.html>`_
+   object which is the API for the managed instance.
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: InternalMaxwell2DManagerImpl
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~get_aedt_product_client`
+            - 
+
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.saf.product_manager.aedt import InternalMaxwell2DManagerImpl
+
+
+
+Method detail
+-------------
+
+.. py:method:: get_aedt_product_client(project_name: str, specified_version: str, machine: str, port: int, design_name: str | None = None, solution_type: str | None = None) -> ansys.aedt.core.Maxwell2d
+
+
+
+

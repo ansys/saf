@@ -1,0 +1,107 @@
+
+
+
+
+
+
+The ``aedt.py`` module
+======================
+
+.. py:module:: ansys.saf.product_configuration.aedt
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: aedt
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.saf.product_configuration.aedt.AedtInstanceVersionConfiguration`
+            - Configuration class for a specific version of Ansys Electronics Desktop (AEDT).
+
+
+          * - :py:obj:`~ansys.saf.product_configuration.aedt.AedtInstanceConfiguration`
+            - Configuration class for Ansys Electronics Desktop (AEDT).
+
+
+
+
+
+
+
+    .. tab-item:: Constants
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~PRODUCT_NAME`
+            - 
+
+
+          * - :py:obj:`~SERVICE_NAME`
+            - 
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> AedtInstanceVersionConfiguration</ansys/saf/product_configuration/aedt/AedtInstanceVersionConfiguration>
+    <span class="nf nf-cod-symbol_class"></span> AedtInstanceConfiguration</ansys/saf/product_configuration/aedt/AedtInstanceConfiguration>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Module detail
+-------------
+
+.. py:data:: PRODUCT_NAME
+   :value: 'aedt'
+
+
+.. py:data:: SERVICE_NAME
+   :value: 'http'
+
+
+
+

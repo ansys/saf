@@ -1,0 +1,113 @@
+# External deployment: expects the solution images to already be present in the
+# local Docker registry (loaded via `docker load < <APP_NAME>-images.tar`).
+# This recipe does not build any image and therefore does not require access to
+# private PyPI sources.
+name: ${APP_NAME}
+
+networks:
+  internal:
+    name: ${APP_NAME}-internal
+    internal: true
+  external:
+    name: ${APP_NAME}-external
+    driver: bridge
+
+services:
+  postgresql:
+    image: postgres:16.0
+    networks:
+      - internal
+    environment:
+      - POSTGRES_USER=glow
+      - POSTGRES_PASSWORD=glow
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-U", "glow" ]
+      interval: 5s
+      retries: 20
+    volumes:
+      - database:/var/lib/postgresql/data
+
+  api:
+    image: ${APP_NAME}-api:${APP_IMAGE_VERSION}
+    pull_policy: never
+    depends_on:
+      postgresql:
+        condition: service_healthy
+    networks:
+      external:
+        aliases:
+          - ${APP_NAME}-api
+      internal:
+    env_file:
+      - .env
+    init: true # to ensure reaping of killed child processes left by long-running transactions
+    environment:
+      - GLOW_API_HOST=0.0.0.0
+      - GLOW_API_PORT=50000
+      - GLOW_DATABASE_TYPE=postgresql
+      - GLOW_DATABASE_LOCATION=postgresql://glow:glow@postgresql:5432
+      - GLOW_PROJECT_FILES_DIRECTORY=/projects
+      - GLOW_METHOD_EXECUTION_DIRECTORY=/transactions
+      - GLOW_EXTERNAL_API_URL=http://127.0.0.1:${GLOW_API_CONTAINER_PORT}
+      - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT}
+    ports:
+      - ${GLOW_API_CONTAINER_PORT}:50000
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:50000/health" ]
+      interval: 5s
+      retries: 20
+    volumes:
+      - ${GLOW_PROJECTS_DIR_SOLUTION}:/projects
+      - ${GLOW_TRANSACTIONS_DIR_SOLUTION}:/transactions
+
+{% if cookiecutter.__ui_framework != "none" %}
+
+  ui:
+    image: ${APP_NAME}-ui:${APP_IMAGE_VERSION}
+    pull_policy: never
+    depends_on:
+      api:
+        condition: service_healthy
+    networks:
+      external:
+        aliases:
+          - ${APP_NAME}-ui
+    env_file:
+      - .env
+    environment:
+      - GLOW_DEPLOYMENT=DockerCompose
+      - GLOW_UI_HOST=0.0.0.0
+      - GLOW_UI_PORT=50001
+      - GLOW_API_URL=http://${APP_NAME}-api:50000
+      - GLOW_UI_PROJECT_FILES_DIRECTORY=/projects
+      - GLOW_WS_EVENTS_ADDR=127.0.0.1:${GLOW_API_CONTAINER_PORT}
+      - GLOW_EXTERNAL_API_URL=http://127.0.0.1:${GLOW_API_CONTAINER_PORT}
+    ports:
+      - ${GLOW_UI_CONTAINER_PORT}:50001
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:50001/health" ]
+      interval: 5s
+      retries: 20
+    volumes:
+      - ${GLOW_PROJECTS_DIR_SOLUTION}:/projects
+
+{% endif %}
+
+  otel-dashboard:
+    image: mcr.microsoft.com/dotnet/aspire-dashboard:9.1.0
+    ports:
+      - 18888:18888 # UI
+      - 18889:18889 # OTLP gRPC
+      - 18890:18890 # OTLP HTTP
+    environment:
+      - DASHBOARD__OTLP__AUTHMODE=ApiKey
+      # !!! Important !!! For production, replace the following env var with secure values
+      # as described here: https://aspire.dev/dashboard/security-considerations/
+      - DASHBOARD__FRONTEND__AUTHMODE=Unsecured
+      - DASHBOARD__OTLP__PRIMARYAPIKEY=YOU_MUST_GENERATE_A_RANDOM_STRING_AND_REPLACE_THIS
+    networks:
+      - external
+
+volumes:
+  database:
+    name: ${APP_NAME}-database

@@ -5,53 +5,163 @@ Contribute as a developer
 
 Developers can contribute by adding features, fixing bugs, improving tests and documentation, reviewing code, and joining technical discussions to ensure project quality.
 
-.. _fork_the_repository:
+.. _choose_your_workflow:
 
-Fork the repository
-===================
+Choose your workflow
+====================
 
-Forking the repository is the first step to contributing to the project. This
-allows you to have your own copy of the project so you can make changes without
-affecting the main project. Once you have made your changes, you can submit a
-pull-request to the main project to have your changes reviewed and merged.
+How you get the code and submit changes depends on your permissions on the
+``ansys/saf`` repository.
 
-.. button-link:: https://github.com/ansys/saf/fork
-    :color: primary
-    :align: center
+By default, all members of the
+`Ansys GitHub organization <https://github.com/ansys>`__ (``ansys``) have
+write access to ``ansys/saf``.
 
-    :fa:`code-fork` Fork this project
+.. important::
 
-.. note::
+    - **Clone the repository** if you are a member of the
+      `Ansys GitHub organization <https://github.com/ansys>`__. You clone
+      ``ansys/saf`` directly, push branches to it, and open a pull-request
+      from those branches.
+    - **Fork the repository** if you are **not** a member of the
+      `Ansys GitHub organization <https://github.com/ansys>`__. You cannot
+      push branches to ``ansys/saf``, so you develop on your own fork and open
+      a pull-request from it.
 
-    If you are an Ansys employee, you can skip this step.
+    If a ``git push`` to ``ansys/saf`` is rejected with a permission error,
+    your access has been restricted: switch to the fork workflow.
+
+.. list-table::
+    :header-rows: 1
+    :widths: 30 35 35
+
+    * -
+      - `Ansys GitHub organization <https://github.com/ansys>`__ member
+      - Not a member
+    * - Get the code
+      - :ref:`Clone <clone_the_repository>` ``ansys/saf``
+      - :ref:`Fork <fork_the_repository>` ``ansys/saf``, then clone your fork
+    * - Push branches to
+      - ``ansys/saf`` (``origin``)
+      - Your fork (``origin``)
+    * - Pull-request source
+      - Branch in ``ansys/saf``
+      - Branch in your fork
+    * - CI/CD pipelines
+      - Run for ``SAF developers team`` members. Otherwise, a team member must
+        authorize the run for every new commit.
+      - Must be authorized by a ``SAF developers team`` member for every new
+        commit
+
+Both workflows share the same prerequisites.
+
+Prerequisites
+-------------
+
+- Install `git`_ on your machine.
+- Set up SSH access by following the instructions to `configure SSH`_ with
+  your GitHub account. This allows you to access the
+  repository without tokens or passwords.
+- On Windows, enable long paths. Some paths in the repository exceed the
+  default Windows path length limit.
+
+  .. code-block:: text
+
+      git config --global core.longpaths true
 
 .. _clone_the_repository:
 
-Clone the repository
-====================
+Clone the repository (Ansys GitHub organization members)
+========================================================
 
-Make sure you `configure SSH`_ with your GitHub
-account. This allows you to clone the repository without having to use tokens
-or passwords. Also, make sure you have `git`_ installed in your machine.
+Use this workflow if you are a member of the
+`Ansys GitHub organization <https://github.com/ansys>`__, which grants you
+write access to ``ansys/saf`` by default. You work
+directly on ``ansys/saf`` without creating a fork.
 
-Some paths in the repository exceed the default Windows path length limit.
-Before cloning on Windows, enable long paths:
+#. Clone the repository using SSH:
 
-.. code-block:: text
+   .. code-block:: bash
 
-    git config --global core.longpaths true
+       git clone git@github.com:ansys/saf.git
+       cd saf
 
-To clone the repository using SSH, run:
+#. Create a branch from an up-to-date ``main``:
 
-.. code-block:: bash
+   .. code-block:: bash
 
-    git clone git@github.com:ansys/saf.git
+       git fetch origin
+       git checkout -b <my-branch> origin/main
 
-.. note::
+#. Make your changes and commit them. Follow the `Conventional Commits`_
+   specification for commit messages.
 
-    If you are not an Ansys employee, you need to :ref:`fork the repository <fork_the_repository>` and
-    replace ``ansys`` with your GitHub user name in the ``git clone``
-    command.
+#. Push the branch to ``ansys/saf``:
+
+   .. code-block:: bash
+
+       git push --set-upstream origin <my-branch>
+
+#. :ref:`Open a pull-request <open_a_pull_request_as_a_member>` from your
+   branch against ``main``.
+
+.. _fork_the_repository:
+
+Fork the repository (non-members of the Ansys GitHub organization)
+==================================================================
+
+Use this workflow if you are **not** a member of the
+`Ansys GitHub organization <https://github.com/ansys>`__, and therefore do not
+have write access to ``ansys/saf``.
+A fork is your own copy of the project, where you can make changes without
+affecting the main project. When your changes are ready, you submit a
+pull-request from your fork to ``ansys/saf`` to have them reviewed and merged.
+
+#. Fork the repository to your own GitHub account:
+
+   .. button-link:: https://github.com/ansys/saf/fork
+       :color: primary
+       :align: center
+
+       :fa:`code-fork` Fork this project
+
+#. Clone your fork, replacing ``<your-user-name>`` with your GitHub user name:
+
+   .. code-block:: bash
+
+       git clone git@github.com:<your-user-name>/saf.git
+       cd saf
+
+#. Add the ``ansys/saf`` repository as the ``upstream`` remote, so that you can
+   keep your fork up to date:
+
+   .. code-block:: bash
+
+       git remote add upstream git@github.com:ansys/saf.git
+
+#. Create a branch from an up-to-date ``upstream/main``:
+
+   .. code-block:: bash
+
+       git fetch upstream
+       git checkout -b <my-branch> upstream/main
+
+#. Make your changes and commit them. Follow the `Conventional Commits`_
+   specification for commit messages.
+
+#. Push the branch to your fork:
+
+   .. code-block:: bash
+
+       git push --set-upstream origin <my-branch>
+
+#. :ref:`Open a pull-request from your fork <open_a_pull_request_from_a_fork>`
+   against the ``main`` branch of ``ansys/saf``.
+
+.. tip::
+
+    To keep your fork up to date, fetch ``upstream`` regularly and rebase or
+    merge ``upstream/main`` into your branch.
 
 .. _repository_layout:
 
@@ -82,6 +192,7 @@ registered projects.
     |   |__ saf-iam-oidc/
     |   |__ saf-product-configuration/
     |   |__ saf-product-manager/
+    |   |__ saf-projects-dashboard/
     |   |__ saf-sdk/
     |   |__ saf-templates/
     |   |__ saf-testing/
@@ -193,6 +304,44 @@ The following rules are verified automatically:
 Labels are applied automatically, based on the title of the pull-request and on
 the files you changed. The labels of the packages you changed determine which
 style, build, and test jobs run.
+
+.. _open_a_pull_request_as_a_member:
+
+Open a pull-request as an organization member
+---------------------------------------------
+
+#. In GitHub, open a pull-request with:
+
+   - **base repository**: ``ansys/saf``, **base** branch: ``main``.
+   - **head repository**: ``ansys/saf``, **compare** branch: ``<my-branch>``.
+
+   Make sure the title and description follow the rules listed above.
+
+.. _open_a_pull_request_from_a_fork:
+
+Open a pull-request from a fork
+-------------------------------
+
+.. important::
+
+    If you are not a member of the
+    `Ansys GitHub organization <https://github.com/ansys>`__, you must open your
+    pull-request **from your fork** against the ``main`` branch of
+    ``ansys/saf``. Pull-requests from branches pushed directly to ``ansys/saf``
+    are only possible for members of the organization.
+
+#. In GitHub, open a pull-request with:
+
+   - **base repository**: ``ansys/saf``, **base** branch: ``main``.
+   - **head repository**: your fork, **compare** branch: ``<my-branch>``.
+
+   Make sure the title and description follow the rules listed above.
+
+.. note::
+
+    The :ref:`CI/CD pipelines <run_pipelines>` do not run automatically on
+    pull-requests from forks. A member of the ``SAF developers team`` must
+    authorize the run for every new commit.
 
 .. _run_pipelines:
 

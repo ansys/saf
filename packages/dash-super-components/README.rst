@@ -108,7 +108,7 @@ Run the example with ``python app.py`` and open ``http://127.0.0.1:8050`` in
 your browser.
 
 For detailed instructions on how to get started with Dash Super Components, see the
-`getting started guide <https://saf.ansys.com/version/stable/getting_started/index.html>`_
+`getting started guide <https://saf.ansys.com/version/stable/user_guide/frontend/dash/dash_super_components/dash_super_components_getting_started.html>`_
 in the documentation.
 
 For more complex examples, see the `gallery applications

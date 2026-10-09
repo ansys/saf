@@ -10,19 +10,26 @@ Developers can contribute by adding features, fixing bugs, improving tests and d
 Choose your workflow
 ====================
 
-How you get the code and submit changes depends on whether you are a member of
-the `Ansys GitHub organization <https://github.com/ansys>`__ (``ansys``).
+How you get the code and submit changes depends on your permissions on the
+``ansys/saf`` repository.
+
+By default, all members of the
+`Ansys GitHub organization <https://github.com/ansys>`__ (``ansys``) have
+write access to ``ansys/saf``.
 
 .. important::
 
+    - **Clone the repository** if you are a member of the
+      `Ansys GitHub organization <https://github.com/ansys>`__. You clone
+      ``ansys/saf`` directly, push branches to it, and open a pull-request
+      from those branches.
     - **Fork the repository** if you are **not** a member of the
       `Ansys GitHub organization <https://github.com/ansys>`__. You cannot
       push branches to ``ansys/saf``, so you develop on your own fork and open
       a pull-request from it.
-    - **Clone the repository** if you **are** a member of the
-      `Ansys GitHub organization <https://github.com/ansys>`__. You clone
-      ``ansys/saf`` directly, push branches to it, and open a pull-request from
-      those branches.
+
+    If a ``git push`` to ``ansys/saf`` is rejected with a permission error,
+    your access has been restricted: switch to the fork workflow.
 
 .. list-table::
     :header-rows: 1
@@ -30,7 +37,7 @@ the `Ansys GitHub organization <https://github.com/ansys>`__ (``ansys``).
 
     * -
       - `Ansys GitHub organization <https://github.com/ansys>`__ member
-      - Not a member (external contributor)
+      - Not a member
     * - Get the code
       - :ref:`Clone <clone_the_repository>` ``ansys/saf``
       - :ref:`Fork <fork_the_repository>` ``ansys/saf``, then clone your fork
@@ -41,8 +48,10 @@ the `Ansys GitHub organization <https://github.com/ansys>`__ (``ansys``).
       - Branch in ``ansys/saf``
       - Branch in your fork
     * - CI/CD pipelines
-      - Run automatically
-      - Must be authorized by a ``SAF developers team`` member
+      - Run for ``SAF developers team`` members. Otherwise, a team member must
+        authorize the run for every new commit.
+      - Must be authorized by a ``SAF developers team`` member for every new
+        commit
 
 Both workflows share the same prerequisites.
 
@@ -65,8 +74,9 @@ Prerequisites
 Clone the repository (Ansys GitHub organization members)
 ========================================================
 
-Use this workflow if you belong to the
-`Ansys GitHub organization <https://github.com/ansys>`__. You work
+Use this workflow if you are a member of the
+`Ansys GitHub organization <https://github.com/ansys>`__, which grants you
+write access to ``ansys/saf`` by default. You work
 directly on ``ansys/saf`` without creating a fork.
 
 #. Clone the repository using SSH:
@@ -97,11 +107,12 @@ directly on ``ansys/saf`` without creating a fork.
 
 .. _fork_the_repository:
 
-Fork the repository (external contributors)
-===========================================
+Fork the repository (non-members of the Ansys GitHub organization)
+==================================================================
 
 Use this workflow if you are **not** a member of the
-`Ansys GitHub organization <https://github.com/ansys>`__.
+`Ansys GitHub organization <https://github.com/ansys>`__, and therefore do not
+have write access to ``ansys/saf``.
 A fork is your own copy of the project, where you can make changes without
 affecting the main project. When your changes are ready, you submit a
 pull-request from your fork to ``ansys/saf`` to have them reviewed and merged.

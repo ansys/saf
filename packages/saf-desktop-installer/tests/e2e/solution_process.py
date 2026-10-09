@@ -75,8 +75,9 @@ class SolutionShortcutProcess(Process):
         return not ui_started
 
     def _portal_started(self) -> bool:
-        portal_started = self.find_msg_in_output("SAF Portal: not launched")
-        return not portal_started
+        # Only a URL means the portal started: "not launched" is logged both when the portal is
+        # disabled and when the Projects Dashboard is served instead.
+        return self.find_msg_in_output(r"SAF Portal: http://127\.0\.0\.1:\d+", regex=True) is not None
 
     def _otel_started(self) -> bool:
         otel_started = self.find_msg_in_output("OTEL Dashboard: not launched")
@@ -137,6 +138,22 @@ class SolutionShortcutProcess(Process):
             portal_url = portal_log_line.removeprefix("INFO - SAF Portal: ")
             try:
                 return httpx2.get(portal_url).status_code == 200
+            except Exception:
+                pass
+        return False
+
+    def get_projects_dashboard_url(self) -> str:
+        dashboard_log_line = self.find_msg_in_output(r"Projects Dashboard: http://127\.0\.0\.1:\d+/\S+", regex=True)
+        assert dashboard_log_line
+        return dashboard_log_line.removeprefix("INFO - Projects Dashboard: ")
+
+    def projects_dashboard_started(self) -> bool:
+        return self.find_msg_in_output("Projects Dashboard: http://") is not None
+
+    def projects_dashboard_running(self) -> bool:
+        if self.projects_dashboard_started():
+            try:
+                return httpx2.get(self.get_projects_dashboard_url()).status_code == 200
             except Exception:
                 pass
         return False

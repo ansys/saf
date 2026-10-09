@@ -260,6 +260,7 @@ class TestInstaller:
         assert process.ui_running()
         assert not process.project_running()
         assert process.portal_running()
+        assert not process.projects_dashboard_started()
         assert not process.otel_running()
 
     def test_installer_with_python_version(

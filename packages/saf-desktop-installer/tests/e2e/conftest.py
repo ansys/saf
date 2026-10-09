@@ -51,6 +51,7 @@ from ansys.saf.testing.common import YieldFixture
 from ansys.saf.testing.network import get_random_free_port
 from ansys.saf.testing.platform_specific import is_ci_run
 from ansys.saf.testing.selenium import (
+    wait_for_element,
     wait_for_element_and_click,
     wait_for_element_and_send_text,
     wait_for_text,
@@ -63,18 +64,25 @@ SOLUTION_DISPLAY_NAME = {
     "my-solution-dash": "My Solution Dash",
     "my-solution-dash-without-portal": "My Solution Dash",
     "my-solution-dash-old": "My Solution Dash Old",
+    "my-solution-dash-projects-dashboard": "My Solution Dash Projects Dashboard",
+    "my-solution-dash-projects-dashboard-only": "My Solution Dash Projects Dashboard",
     "synopsys-custom-ns-solution": "Custom NS Solution",
 }
 SOLUTION_CLASS_NAME = {
     "my-solution-dash": "MySolutionDashSolution",
     "my-solution-dash-without-portal": "MySolutionDashSolution",
     "my-solution-dash-old": "MySolutionDashOldSolution",
+    "my-solution-dash-projects-dashboard": "MySolutionDashProjectsDashboardSolution",
+    "my-solution-dash-projects-dashboard-only": "MySolutionDashProjectsDashboardSolution",
     "synopsys-custom-ns-solution": "MyCustomNSSolution",
 }
 SOLUTION_EXTRA_PACKAGES = {
     "my-solution-dash": {"ansys_saf_desktop_portal": "desktop", "ansys_saf_aspire": "desktop"},
     "my-solution-dash-without-portal": {"ansys_saf_aspire": "desktop"},
     "my-solution-dash-old": {"ansys_saf_desktop_portal": "desktop", "ansys_saf_aspire": "desktop"},
+    # projects-dashboard is a locked dependency of the mock; desktop-portal is injected so both are available.
+    "my-solution-dash-projects-dashboard": {"ansys_saf_desktop_portal": "desktop", "ansys_saf_aspire": "desktop"},
+    "my-solution-dash-projects-dashboard-only": {"ansys_saf_aspire": "desktop"},
     "synopsys-custom-ns-solution": {"ansys_saf_desktop_portal": "desktop", "ansys_saf_aspire": "desktop"},
 }
 logger = logging.getLogger(__name__)
@@ -1157,6 +1165,7 @@ def check_solution_launched_correctly(
     portal_ui_port: str,
     selenium_webdriver: WebDriver,
     is_otlp_enabled: bool = False,
+    projects_dashboard: bool = False,
 ) -> str:
     # We need services to be healthy before checking logs or trying to use the solution
     if portal_ui_port != "":
@@ -1191,6 +1200,18 @@ def check_solution_launched_correctly(
     wait_for_element_and_send_text(selenium_webdriver, "second-arg", str(second_arg))
     wait_for_element_and_click(selenium_webdriver, "calculate")
     wait_for_text(selenium_webdriver, "result", str(first_arg + second_arg))
+
+    if projects_dashboard:
+        # The orchestrator serves the Projects Dashboard from the solution UI instead of starting SAF Portal.
+        projects_dashboard_url = solution_proc.get_projects_dashboard_url()
+        assert projects_dashboard_url.startswith(f"http://127.0.0.1:{glow_ui_port}")
+        assert projects_dashboard_url.endswith("/projects")
+        _check_service_health(projects_dashboard_url)
+        selenium_webdriver.get(projects_dashboard_url)
+        # The dashboard component rendered content inside the solution UI container.
+        wait_for_element(selenium_webdriver, "//*[@id='projects-dashboard-container']/*", element_type=By.XPATH)
+    elif portal_ui_port != "":
+        assert not solution_proc.projects_dashboard_started()
 
     return project_ui_url
 

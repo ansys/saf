@@ -1,0 +1,291 @@
+
+
+
+
+
+
+The ``ansys.iam.oidc`` library
+==============================
+
+.. py:module:: ansys.iam.oidc
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: oidc
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.iam.oidc.AsyncOidcClient`
+            - OIDC Async client.
+
+
+          * - :py:obj:`~ansys.iam.oidc.OidcClient`
+            - OIDC client.
+
+
+          * - :py:obj:`~ansys.iam.oidc.OidcDependency`
+            - FastAPI dependency class for OpenID Connect (OIDC) access token validation.
+
+
+          * - :py:obj:`~ansys.iam.oidc.OidcWebSocketDependency`
+            - FastAPI dependency class for OpenID Connect (OIDC) access token validation for WebSocket connections.
+
+
+          * - :py:obj:`~ansys.iam.oidc.UserInfo`
+            - OpenID Connect set of standard claims about the profile information of the end-user.
+
+
+
+
+    .. tab-item:: Exceptions
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.iam.oidc.NoIssuerError`
+            - Raised when no issuer is provided but is required for the operation.
+
+
+          * - :py:obj:`~ansys.iam.oidc.NoIssuerOrAudienceError`
+            - Raised when no issuer or audience is provided but is required for the operation.
+
+
+
+    .. tab-item:: Functions
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~get_websocket_subprotocol`
+            - Extract the first subprotocol that matches the specified prefix from the WebSocket's subprotocols list.
+
+
+          * - :py:obj:`~decode_base64_token`
+            - Decode a base64-encoded token.
+
+
+          * - :py:obj:`~encode_base64_token`
+            - Encode a token using base64 encoding.
+
+
+
+
+    .. tab-item:: Constants
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~DEFAULT_SUBPROTOCOL_PREFIX`
+            - 
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> AsyncOidcClient</ansys/iam/oidc/AsyncOidcClient>
+    <span class="nf nf-cod-symbol_class"></span> OidcClient</ansys/iam/oidc/OidcClient>
+    <span class="nf nf-cod-symbol_class"></span> OidcDependency</ansys/iam/oidc/OidcDependency>
+    <span class="nf nf-cod-symbol_class"></span> OidcWebSocketDependency</ansys/iam/oidc/OidcWebSocketDependency>
+    <span class="nf nf-cod-symbol_class"></span> UserInfo</ansys/iam/oidc/UserInfo>
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-md-lightning_bolt"></span> NoIssuerError</ansys/iam/oidc/NoIssuerError>
+    <span class="nf nf-md-lightning_bolt"></span> NoIssuerOrAudienceError</ansys/iam/oidc/NoIssuerOrAudienceError>
+
+
+
+
+
+
+
+Description
+-----------
+
+
+IAM OIDC package.
+
+This package provides OAuth2 and OpenID Connect (OIDC) capabilities,
+enabling seamless integration of authentication and authorization features.
+
+The package is built on top of Authlib and provides both synchronous and asynchronous
+OIDC clients, FastAPI dependencies for token validation, and utility functions for
+token handling.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+Module detail
+-------------
+
+.. py:function:: get_websocket_subprotocol(websocket: fastapi.WebSocket, subprotocol_prefix: str = DEFAULT_SUBPROTOCOL_PREFIX) -> str | None
+
+   
+   Extract the first subprotocol that matches the specified prefix from the WebSocket's subprotocols list.
+
+
+   :Parameters:
+
+       **websocket: WebSocket**
+           The WebSocket connection object containing the headers.
+
+       **subprotocol_prefix: str, optional**
+           The prefix to match against WebSocket subprotocols. Defaults to DEFAULT_SUBPROTOCOL_PREFIX.
+
+
+
+   :Returns:
+
+       :class:`python:str` | :data:`python:None`
+           The first matching subprotocol string if found, otherwise None.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: decode_base64_token(encoded_token: str) -> str
+
+   
+   Decode a base64-encoded token.
+
+
+   :Parameters:
+
+       **encoded_token: str**
+           The base64-encoded token to decode.
+
+
+
+   :Returns:
+
+       :class:`python:str`
+           The decoded token.
+
+
+
+
+   :Raises:
+
+       :obj:`ValueError`
+           If the token cannot be decoded.
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: encode_base64_token(token: str) -> str
+
+   
+   Encode a token using base64 encoding.
+
+
+   :Parameters:
+
+       **token: str**
+           The token to encode.
+
+
+
+   :Returns:
+
+       :class:`python:str`
+           The base64-encoded token.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:data:: DEFAULT_SUBPROTOCOL_PREFIX
+   :value: 'saf.auth.bearer.'
+
+
+
+

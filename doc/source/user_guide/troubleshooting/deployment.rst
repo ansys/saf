@@ -180,6 +180,48 @@ Permission errors during installation
  #. If installing on a corporate network, contact your IT administrator for assistance.
 
 
+Access denied error caused by a local path dependency
+=====================================================
+
+**Problem**:
+ The installation fails with an error similar to the following:
+
+ .. code-block:: text
+
+   [WinError 5] Access is denied: 'D:\\a\\<solution-slug>\\<solution-slug>\\dist\\solution\\definitions\\<solution-slug>\\<local-wheel-filename>.whl'
+
+**Cause**:
+ When a solution declares a dependency as a local path, for example
+ ``my-package = { path = "./build/my-package.whl" }``, the ``poetry.lock`` file included in the generated
+ installer stores the **absolute path** of that dependency on the machine where the installer was built. This
+ path appears only in the ``[package.dependencies]`` table of the solution package:
+
+ .. code-block:: toml
+
+   [[package]]
+   name = "<solution-name>"
+   version = "<solution-version>"
+   ...
+
+   [package.dependencies]
+   ...
+   <private-local-dependency> = {path = "D:/a/<solution-slug>/<solution-slug>/dist/solution/definitions/<solution-slug>/<private-local-dependency-name>-<private-local-dependency-version>-py3-none-any.whl"}
+   ...
+
+ This is normally harmless, because Poetry does not fail if the path does not exist. However, if the target
+ machine has a drive with the same letter as the one in the absolute path, and that location is not accessible
+ (for example, due to missing permissions), Poetry fails with the error above. Mapped network drives can also
+ trigger this error, because Poetry does not handle them.
+
+**Solution**:
+ Use one of the following workarounds:
+
+ * Change the permissions of the drive whose letter matches the one in the absolute path, so that Poetry can
+   access it.
+ * If the drive is a mapped network drive, unmap it while the solution is being installed.
+ * Generate the installer in a drive whose letter does not exist on the target machine.
+
+
 Solution fails to start after installation
 ==========================================
 

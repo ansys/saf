@@ -132,7 +132,7 @@ def layout(project: ExamplesSolution) -> html.Div:
             dmc.Space(h=20),
             dmc.Divider(variant="solid"),
             dmc.Space(h=20),
-                dmc.Stack(
+            dmc.Stack(
                 [
                     dmc.Button(
                         "Show Piston rod",
@@ -249,12 +249,12 @@ def layout(project: ExamplesSolution) -> html.Div:
                 style={"font-size": "40px", "font-weight": "bold"},
             ),
             dmc.Blockquote(
-                "This example demonstrates how to leverage the instance management API to control VISOR.\
+                'This example demonstrates how to leverage the instance management API to control VISOR.\
                 Click the Launch action button to\
                 start the instance. A transaction method will start VISOR which can be used across all transaction\
-                methods of the solution. Run VISOR operations with the \"Show\" buttons. The models used in this\
+                methods of the solution. Run VISOR operations with the "Show" buttons. The models used in this\
                 example are selected to represent different capabilities of VISOR, do not hesitate to play with\
-                them to test the possibilities. Close VISOR using the Shutdown button.",
+                them to test the possibilities. Close VISOR using the Shutdown button.',
                 icon=DashIconify(icon="material-symbols:info", width=30),
                 style={"font-size": "18px", "fontStyle": "italic"},
             ),
@@ -299,13 +299,13 @@ def layout(project: ExamplesSolution) -> html.Div:
 def start_visor(n_clicks: int, project: ExamplesSolution) -> tuple[list[dict[str, Any]] | str, bool, bool]:
     """Initialize the VISOR instance."""
     if not n_clicks:
-        return no_update, no_update, no_update # No update to notification, start button disabled, start button loading
+        return no_update, no_update, no_update  # No update to notification, start button disabled, start button loading
 
     step = project.steps.visor_step
     step.start_visor()
 
     return (
-        [ # Notification
+        [  # Notification
             dict(
                 title="Info",
                 id="start-visor-notification",
@@ -317,8 +317,8 @@ def start_visor(n_clicks: int, project: ExamplesSolution) -> tuple[list[dict[str
                 withCloseButton=False,
             )
         ],
-        True, # disable_launch_button
-        True, # loading_launch_button
+        True,  # disable_launch_button
+        True,  # loading_launch_button
     )
 
 
@@ -428,6 +428,7 @@ def show_visor_elbow(n_clicks: int | None, project: ExamplesSolution) -> list[di
         )
     ]
 
+
 @callback(
     Output("visor-viewer-container", "children"),
     Input("start-visor-listener", "message"),
@@ -465,7 +466,9 @@ def display_visor_viewer(
     State("url", "pathname"),
     prevent_initial_call=True,
 )
-def shutdown_visor(n_clicks: int, project: ExamplesSolution) -> tuple[list[dict[str, Any]] | str, list[Any], bool, bool, bool, bool, bool]:
+def shutdown_visor(
+    n_clicks: int, project: ExamplesSolution
+) -> tuple[list[dict[str, Any]] | str, list[Any], bool, bool, bool, bool, bool]:
     """Shutdown the VISOR instance."""
     notification = no_update
     visor_viewer_children = no_update
@@ -519,6 +522,7 @@ def shutdown_visor(n_clicks: int, project: ExamplesSolution) -> tuple[list[dict[
         disable_show_spheres_button,
         disable_show_elbow_button,
     )
+
 
 @callback(
     Output("visor-console-logs", "children", allow_duplicate=True),

@@ -25,7 +25,9 @@ from ansys.visor.viewer import Metadata
 
 CUBE_PATH = Path(__file__).parent.parent / "method_assets" / "visor_shapes" / "cube.vtm"
 PISTON_PATH = Path(__file__).parent.parent / "method_assets" / "visor_shapes" / "piston_rod.vtkhdf"
-SPHERES_PATH = Path(__file__).parent.parent / "method_assets" / "visor_shapes" / "vtk_scene_sphere_l2_b3_r32_v3_c1_z3.vtm"
+SPHERES_PATH = (
+    Path(__file__).parent.parent / "method_assets" / "visor_shapes" / "vtk_scene_sphere_l2_b3_r32_v3_c1_z3.vtm"
+)
 ELBOW_PATH = Path(__file__).parent.parent / "method_assets" / "visor_shapes" / "elbow-2-00005.vtkhdf"
 
 
@@ -45,7 +47,9 @@ class VisorStep(StepModel):
     @long_running
     def start_visor(self, visor_manager: VisorManager) -> None:
         """Start the Visor instance."""
-        self.transaction.raise_event(message="Initializing VISOR instance.", stream_name="visor-output-stream")
+        self.transaction.raise_event(
+            message="Initializing VISOR instance.", stream_name="visor-output-stream"
+        )
         try:
             visor_manager.initialize(
                 version=self.version,
@@ -85,7 +89,6 @@ class VisorStep(StepModel):
             raise
         self.transaction.raise_event(message="Spheres displayed in VISOR.", stream_name="visor-output-stream")
 
-
     @transaction(self=StepSpec())
     @instance("visor_manager")
     def show_elbow(self, visor_manager: VisorManager) -> None:
@@ -97,7 +100,6 @@ class VisorStep(StepModel):
             self.transaction.raise_event(message=f"VISOR elbow update failed: {e}", stream_name="visor-output-stream")
             raise
         self.transaction.raise_event(message="Elbow displayed in VISOR.", stream_name="visor-output-stream")
-
 
     @transaction(self=StepSpec(upload=["visor_started"]))
     @instance("visor_manager")

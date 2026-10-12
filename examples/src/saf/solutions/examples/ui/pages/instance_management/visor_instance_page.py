@@ -125,7 +125,6 @@ def layout(project: ExamplesSolution) -> html.Div:
                         label="Stop Visor",
                         position="top",
                     ),
-                    
                 ],
                 gap="md",
                 justify="center",
@@ -510,7 +509,7 @@ def shutdown_visor(n_clicks: int, project: ExamplesSolution) -> tuple[list[dict[
                     withCloseButton=True,
                 )
             ]
-            
+
     return (
         notification,
         visor_viewer_children,

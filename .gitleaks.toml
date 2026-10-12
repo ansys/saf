@@ -1,7 +1,7 @@
 title = "Custom Gitleaks Rule for Private Azure PyPI Feeds"
 
 [extend]
-use_defaults = true
+useDefault = true
 
 [[rules]]
 id = "private-azure-pypi-url"

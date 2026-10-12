@@ -84,6 +84,10 @@ jobs:
         shell: bash
         run: moon run $PACKAGE:twine-check
 
+      - name: Check license (Moon)
+        shell: bash
+        run: moon run $PACKAGE:check-license
+
       - name: "Upload distribution artifacts to GitHub artifacts"
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:

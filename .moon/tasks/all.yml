@@ -290,7 +290,7 @@ tasks:
         wheels = glob.glob("dist/*.whl");
         cmd = ["uvx"];
         [cmd.extend(["--with", wheel]) for wheel in wheels];
-        cmd.extend(["pip-licenses", "--packages", "$projectAlias", "--allow-only=Apache-2.0"]);
+        cmd.extend(["pip-licenses@5.5.5", "--packages", "$projectAlias", "--allow-only=Apache-2.0"]);
         sys.exit(subprocess.run(cmd).returncode)
     deps:
       - '~:build'

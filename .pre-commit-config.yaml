@@ -13,6 +13,14 @@ repos:
     rev: 2ca41cc1372d1e939a6a879f18cdc19fc1cac1ce # frozen: v8.30.0
     hooks:
       - id: gitleaks
+        name: Scan for hardcoded secrets (Gitleaks)
+        entry: >-
+          uv run python -c 'import os, subprocess, sys; options=["--redact", "--verbose",
+          "--no-banner", "--log-level=error", "--config=.gitleaks.toml"]; log_opts=os.environ.get("GITLEAKS_LOG_OPTS");
+          sys.exit(subprocess.call(["gitleaks", "git", *options, "--log-opts="+log_opts])
+          if log_opts else max((subprocess.call(["gitleaks", "dir", *options, path])
+          for path in sys.argv[1:]), default=0))'
+        pass_filenames: true
 
   - repo: https://github.com/zizmorcore/zizmor-pre-commit
     rev: 451b56af716f9f0d0c2b816503a3fd0cf8b036fa # 1.29.0

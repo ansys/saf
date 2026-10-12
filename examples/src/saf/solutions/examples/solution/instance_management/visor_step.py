@@ -47,9 +47,7 @@ class VisorStep(StepModel):
     @long_running
     def start_visor(self, visor_manager: VisorManager) -> None:
         """Start the Visor instance."""
-        self.transaction.raise_event(
-            message="Initializing VISOR instance.", stream_name="visor-output-stream"
-        )
+        self.transaction.raise_event(message="Initializing VISOR instance.", stream_name="visor-output-stream")
         try:
             visor_manager.initialize(
                 version=self.version,
@@ -69,7 +67,9 @@ class VisorStep(StepModel):
     @instance("visor_manager")
     def show_piston(self, visor_manager: VisorManager) -> None:
         """Display the piston rod in the running Visor instance."""
-        self.transaction.raise_event(message="Loading piston rod in VISOR.", stream_name="visor-output-stream")
+        self.transaction.raise_event(
+            message="Loading piston rod in VISOR.", stream_name="visor-output-stream"
+        )
         try:
             visor_manager.instance.update(PISTON_PATH.as_posix(), Metadata(name="Piston Rod", unit="m"))
         except Exception as e:

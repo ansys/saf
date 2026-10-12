@@ -567,8 +567,8 @@ Solution configuration
      - Default values
 
    * - :envvar:`GLOW_OVERWRITE_SOLUTION_CONFIG`
-    - Specifies whether to overwrite a persisted solution configuration when it is incompatible with
-      the current solution configuration schema.
+     - Specifies whether to overwrite a persisted solution configuration when it is incompatible with
+       the current solution configuration schema.
      - ``None``
 
 Directories

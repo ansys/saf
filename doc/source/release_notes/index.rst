@@ -21,7 +21,7 @@ This section provides release notes for the SAF metapackage (``ansys-saf-sdk``).
 Dependency versions
 --------------------
 
-The following package versions were resolved when this version of ``ansys-saf-sdk`` was generated:
+The public package versions below were resolved for this version of ``ansys-saf-sdk``. The private-package versions were fetched separately as the latest available versions:
 
 .. tab-set::
 

@@ -1,0 +1,14 @@
+title = "Custom Gitleaks Rule for Private Azure PyPI Feeds"
+
+[extend]
+use_defaults = true
+
+[[rules]]
+id = "private-azure-pypi-url"
+description = "Detected a reference or link to a private Azure Artifacts PyPI feed."
+# This regex catches both the standard feed format and the simple index format
+regex = '''pkgs\.dev\.azure\.com/[a-zA-Z0-9_\-]+/.*_packaging/'''
+keywords = [
+    "pkgs.dev.azure.com",
+    "_packaging"
+]

@@ -24,6 +24,7 @@ from typing import Any
 from prepare import (
     BenchmarkConfig,
     command_text,
+    find_saf_repository,
     prepare_benchmark_assets,
     sandbox_environment,
     validate_configuration,
@@ -71,12 +72,7 @@ class PlannedRun:
 
 def default_saf_repository() -> Path:
     """Return the repository containing this benchmarks directory."""
-    repository = SCRIPT_DIRECTORY.parent
-    if not ((repository / "examples").is_dir() and (repository / "packages").is_dir()):
-        repository = repository.parent
-    if (repository / "examples").is_dir() and (repository / "packages").is_dir():
-        return repository.resolve()
-    return (repository / "saf").resolve()
+    return find_saf_repository(SCRIPT_DIRECTORY)
 
 
 def find_default_config() -> Path | None:
@@ -141,7 +137,10 @@ def parse_arguments() -> argparse.Namespace:
     parser.add_argument(
         "--output-dir",
         type=Path,
-        help="Directory for run payloads and reports. Defaults to benchmarks/installation_stage/results/<timestamp>.",
+        help=(
+            "Directory for run payloads and reports. Defaults to "
+            "benchmarks/poetry_uv/installation_stage/results/<timestamp>."
+        ),
     )
     parser.add_argument(
         "--fail-fast",

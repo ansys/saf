@@ -19,6 +19,14 @@ DEFAULT_TARGET_ENVIRONMENT = (
 )
 
 
+def find_saf_repository(start_directory: Path) -> Path:
+    """Find the SAF repository by walking up from a benchmark directory."""
+    for candidate in (start_directory, *start_directory.parents):
+        if (candidate / "examples").is_dir() and (candidate / "packages").is_dir():
+            return candidate.resolve()
+    raise FileNotFoundError(f"Could not find the SAF repository above {start_directory}.")
+
+
 @dataclass(frozen=True)
 class ModeSpec:
     """Prepared source payload and metadata for one installation mode."""
@@ -43,18 +51,7 @@ class BenchmarkConfig:
         """Load and resolve a JSON configuration file."""
         raw = json.loads(config_file.read_text(encoding="utf-8"))
         config_directory = config_file.parent.resolve()
-        default_repository = config_directory.parent
-        if not (
-            (default_repository / "examples").is_dir()
-            and (default_repository / "packages").is_dir()
-        ):
-            default_repository = default_repository.parent
-        if not (
-            (default_repository / "examples").is_dir()
-            and (default_repository / "packages").is_dir()
-        ):
-            default_repository /= "saf"
-        saf_repo = default_repository.resolve()
+        saf_repo = find_saf_repository(config_directory)
         saf_executable = resolve_optional_config_path(raw.get("saf_executable"), config_directory)
         uv_value = raw.get("uv_executable")
         if uv_value is None:

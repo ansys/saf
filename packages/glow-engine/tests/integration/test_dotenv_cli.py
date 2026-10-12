@@ -20,12 +20,12 @@ from pathlib import Path
 import shutil
 import sys
 
-from ansys.saf.testing.common import YieldFixture
 import httpx2
 from pydantic import BaseModel
 import pytest
 
 from ansys.saf.glow._config.settings import Settings
+from ansys.saf.testing.common import YieldFixture
 from tests.conftest import SOLUTIONS_MOCKS_DIR
 from tests.integration.conftest import BasicGlowProcess
 

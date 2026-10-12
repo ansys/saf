@@ -36,6 +36,7 @@ SAF_PACKAGES = [
     "saf-iam-oidc",
     "saf-product-configuration",
     "saf-product-manager",
+    "saf-projects-dashboard",
     "saf-templates",
     "saf-testing",
 ]
@@ -54,9 +55,6 @@ FLAGSHIP_PRODUCTS = [
 DEFAULT_CODE_STYLE_POETRY_ARGS = "--with tests --all-extras"
 
 CODE_STYLE_POETRY_ARGS = {
-    "glow-engine": "--with tests,style --all-extras",
-    "saf-desktop-installer": "--with tests,style --all-extras",
-    "saf-desktop-orchestrator": "--with tests,dev --all-extras",
     "dash-super-components": "--with tests,style --all-extras",
 }
 
@@ -76,6 +74,7 @@ TESTS_DEFINITIONS_PER_TARGET = {
     "saf-iam-oidc": ["saf-iam-oidc"],
     "saf-product-configuration": ["saf-product-configuration"],
     "saf-product-manager": ["saf-product-manager"],
+    "saf-projects-dashboard": ["saf-projects-dashboard"],
     "saf-templates": ["saf-templates"],
     "saf-testing": ["saf-testing"],
     "examples": ["examples"],
@@ -84,10 +83,14 @@ TESTS_DEFINITIONS_PER_TARGET = {
 UV_PACKAGES = [
     "bdm-python-api",
     "bdm-python-shared-volume",
+    "glow-engine",
+    "saf-cli",
     "saf-desktop-installer",
     "saf-desktop-orchestrator",
     "saf-iam-oidc",
     "saf-product-configuration",
+    "saf-product-manager",
+    "saf-projects-dashboard",
     "saf-testing",
     "saf-templates",
 ]

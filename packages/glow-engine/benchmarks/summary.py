@@ -16,11 +16,10 @@
 
 from pathlib import Path
 
+from benchmarks.model import BenchmarkData, Measurement
 import click
 import numpy
 from prettytable import PrettyTable
-
-from benchmarks.model import BenchmarkData, Measurement
 
 
 def _parameters_product(parameters: dict[str, float]) -> float:
@@ -52,7 +51,7 @@ def _parameters_string(item: Measurement) -> str:
 
 
 def _add_row(table: PrettyTable, size: str, old_item: Measurement, new_item: Measurement):
-    assert old_item.name == new_item.name
+    assert old_item.name == new_item.name  # noqa: S101
     row: list[str | float] = [old_item.name, size]
     if not _parameters_match(old_item, new_item):
         row.extend(

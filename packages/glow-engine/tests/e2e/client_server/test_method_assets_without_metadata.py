@@ -15,9 +15,9 @@
 # limitations under the License.
 
 
-from ansys.saf.testing.solution.end_to_end import ProjectFixture
 import pytest
 
+from ansys.saf.testing.solution.end_to_end import ProjectFixture
 from tests.mocks.solution_without_metadata_json.solution_with_method_assets_without_metadata_json import (
     SolutionAssetsWithoutMetadata,
 )

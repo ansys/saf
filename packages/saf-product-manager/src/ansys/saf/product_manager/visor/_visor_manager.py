@@ -21,10 +21,10 @@ import logging
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
-from ansys.bdm.api import NO_ENTITY, EntityHandle
-from ansys.saf.glow.solution import InstanceManager, ProductInstanceManager, RecoveryStateInfo
 import httpx2
 
+from ansys.bdm.api import NO_ENTITY, EntityHandle
+from ansys.saf.glow.solution import InstanceManager, ProductInstanceManager, RecoveryStateInfo
 from ansys.saf.product_manager._utilities.const import DEFAULT_SAF_VISOR_TIMEOUT, SAF_VISOR_TIMEOUT
 from ansys.saf.product_manager._utilities.timeout_utilities import get_timeout_from_environment
 

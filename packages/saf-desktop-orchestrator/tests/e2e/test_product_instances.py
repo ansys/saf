@@ -83,6 +83,7 @@ def solution_with_pim(
     assert process.pim_running()
     assert process.pim_logging()
     assert not process.portal_running()
+    assert not process.projects_dashboard_started()
     assert not process.additional_services_running()
 
     return process

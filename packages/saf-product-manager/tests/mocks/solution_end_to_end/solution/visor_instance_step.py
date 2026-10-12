@@ -25,7 +25,6 @@ from ansys.saf.glow.solution import (
     long_running,
     transaction,
 )
-
 from ansys.saf.product_manager.visor import VisorManager
 
 logger = logging.getLogger(__name__)

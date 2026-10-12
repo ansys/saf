@@ -19,6 +19,7 @@
 # pyright: reportUnusedImport=false
 
 # This is the public module exposing everything related to product instance configurations
+from ansys.saf.glow._core.instance.pim_system import PimProductInstanceVersionDefinition
 from ansys.saf.product_configuration.interfaces import (
     IProductInstanceConfiguration,
     IProductInstanceVersionConfiguration,
@@ -28,8 +29,6 @@ from ansys.saf.product_configuration.interfaces import (
 )
 from ansys.saf.product_configuration.manager.configurations_manager import ProductInstanceConfigurationsManager
 from ansys.saf.product_configuration.pim.config_writer import PimLightConfigWriter
-
-from ansys.saf.glow._core.instance.pim_system import PimProductInstanceVersionDefinition
 
 __all__ = [
     "ProductInstanceConfigurationsManager",

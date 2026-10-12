@@ -92,6 +92,11 @@
           - any-glob-to-any-file: ['packages/saf-product-manager/**']
           - any-glob-to-any-file: ['.github/workflows/tests_groups_definitions/saf-product-manager.json']
           - any-glob-to-any-file: ['.github/workflows/tests_groups_definitions/saf-product-manager-extended.json']
+'saf-projects-dashboard':
+  - any:
+      - changed-files:
+          - any-glob-to-any-file: ['packages/saf-projects-dashboard/**']
+          - any-glob-to-any-file: ['.github/workflows/tests_groups_definitions/saf-projects-dashboard.json']
 'saf-templates':
   - any:
       - changed-files:

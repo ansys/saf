@@ -24,7 +24,6 @@ from ansys.saf.glow._bdm.subsystem_scope import AssetSubsidiarySystemStorageScop
 
 if TYPE_CHECKING:
     from ansys.bdm.api import EntityHandle
-
     from ansys.saf.glow._bdm.multiplexor import BdmMultiplexor
 
 

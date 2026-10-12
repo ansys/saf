@@ -16,10 +16,10 @@
 
 from collections.abc import Generator
 
-from ansys.saf.testing.solution.end_to_end import GlowBaseProcess, GlowDesktopProcess
 import httpx2
 import pytest
 
+from ansys.saf.testing.solution.end_to_end import GlowBaseProcess, GlowDesktopProcess
 from tests.mocks.solutions.minimal_solution import MinimalSolution
 
 pytestmark = pytest.mark.parametrize("solution_type", [MinimalSolution], indirect=True)

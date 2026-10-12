@@ -17,6 +17,9 @@
 from collections.abc import Callable
 from pathlib import Path
 
+import pytest
+
+from ansys.saf.glow.client import Client
 from ansys.saf.testing.network import get_local_ip
 from ansys.saf.testing.platform_specific import linux_only
 from ansys.saf.testing.solution.end_to_end import (
@@ -27,9 +30,6 @@ from ansys.saf.testing.solution.end_to_end import (
     SocketPlusPortsPIMEnvVarConfig,
     WithCertificatesPIMEnvVarConfig,
 )
-import pytest
-
-from ansys.saf.glow.client import Client
 from tests.mocks.solution_end_to_end.solution.definition import EndToEndSolution
 
 

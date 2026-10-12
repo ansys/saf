@@ -20,6 +20,11 @@ from pathlib import Path
 import socket
 import time
 
+import httpx2
+import psutil
+import pytest
+
+from ansys.saf.glow.client import InternalSolutionException
 from ansys.saf.testing.solution.end_to_end import (
     BaseGlowConfiguration,
     DebugConfiguration,
@@ -28,11 +33,6 @@ from ansys.saf.testing.solution.end_to_end import (
     GlowBaseProcess,
     ProjectFixture,
 )
-import httpx2
-import psutil
-import pytest
-
-from ansys.saf.glow.client import InternalSolutionException
 from tests.mocks.solutions.transactions import TransactionsSolution, TransactionStep
 
 pytestmark = pytest.mark.parametrize("solution_type", [TransactionsSolution], indirect=True)

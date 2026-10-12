@@ -19,12 +19,12 @@ import contextlib
 from pathlib import Path
 from typing import Any
 
-from ansys.saf.testing.solution.end_to_end import GlowBaseProcess, ProjectFixture
 import httpx2
 import pytest
 from tenacity import TryAgain, retry, stop_after_attempt, wait_fixed
 
 from ansys.saf.glow.solution import MethodState, MethodStatus
+from ansys.saf.testing.solution.end_to_end import GlowBaseProcess, ProjectFixture
 from tests.mocks.solutions.desktop import DesktopSolution
 
 pytestmark = pytest.mark.parametrize("solution_type", [DesktopSolution], indirect=True)

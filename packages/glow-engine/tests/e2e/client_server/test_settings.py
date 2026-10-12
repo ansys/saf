@@ -17,10 +17,10 @@
 from collections.abc import Callable
 from pathlib import Path
 
-from ansys.saf.testing.solution.end_to_end import EnvVarDebug, GlowBaseProcess
 import pytest
 
 from ansys.saf.glow.client import Client, InternalSolutionException
+from ansys.saf.testing.solution.end_to_end import EnvVarDebug, GlowBaseProcess
 from tests.mocks.solutions.set_env_vars import AStep, SetEnvVarsSolution
 
 

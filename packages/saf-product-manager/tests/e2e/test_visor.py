@@ -16,18 +16,18 @@
 
 from collections.abc import Callable
 
-from ansys.saf.testing.selenium import (
-    wait_for_element,
-    wait_for_element_and_click,
-    wait_for_partial_text,
-)
-from ansys.saf.testing.solution.end_to_end import GlowBaseProcess, ProjectFixture
 import pytest
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.chrome.webdriver import WebDriver
 from selenium.webdriver.common.by import By
 from tenacity import TryAgain, retry, stop_after_attempt, wait_fixed
 
+from ansys.saf.testing.selenium import (
+    wait_for_element,
+    wait_for_element_and_click,
+    wait_for_partial_text,
+)
+from ansys.saf.testing.solution.end_to_end import GlowBaseProcess, ProjectFixture
 from tests.mocks.solution_end_to_end.solution.definition import EndToEndSolution
 
 pytestmark = [

@@ -15,7 +15,6 @@
 # limitations under the License.
 
 from ansys.saf.glow.runtime import glow_main
-
 from tests.mocks.solution_end_to_end.solution import definition
 from tests.mocks.solution_end_to_end.ui import app
 

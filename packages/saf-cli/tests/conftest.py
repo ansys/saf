@@ -15,12 +15,15 @@
 # limitations under the License.
 
 from collections.abc import Generator
+from importlib import invalidate_caches
 from pathlib import Path
 import platform
 import shutil
 import sys
 
 import pytest
+
+from ansys.saf.templates import get_plugin_path
 
 
 @pytest.fixture
@@ -38,6 +41,8 @@ def session_database_path(mock_session_appdata: Path) -> Path:
 
 
 def get_template_plugin_path(module_name: str) -> Path:
+    if module_name == "templates":
+        return get_plugin_path()
     return (
         Path(sys.prefix)
         / ("Lib" if platform.system() == "Windows" else "lib")
@@ -62,17 +67,8 @@ def get_template_path(module_name: str, step_name: str) -> Path:
 
 def _generate_plugin(module_name: str) -> tuple[Path, Path]:
     plugin_source_dir = Path(__file__).parent / "mocks" / "plugin"
-    saf_cli_site_packages_dir = (
-        Path(__file__).parent.parent
-        / ".venv"
-        / ("Lib" if platform.system() == "Windows" else "lib")
-        / (
-            "site-packages"
-            if platform.system() == "Windows"
-            else f"python{sys.version_info.major}.{sys.version_info.minor}/site-packages"
-        )
-    )
-    plugin_destination_dir = saf_cli_site_packages_dir / "ansys" / "saf" / module_name
+    plugin_destination_dir = get_template_plugin_path(module_name)
+    saf_cli_site_packages_dir = plugin_destination_dir.parents[2]
     if plugin_destination_dir.is_dir():
         shutil.rmtree(plugin_destination_dir)
     shutil.copytree(plugin_source_dir, plugin_destination_dir)
@@ -82,6 +78,7 @@ def _generate_plugin(module_name: str) -> tuple[Path, Path]:
     plugin_distribution_entry_point.write_text(
         f"[ansys_saf_templates]\nplugin_path=ansys.saf.{module_name}:get_plugin_path\n",
     )
+    invalidate_caches()
     return plugin_destination_dir, plugin_distribution_dir
 
 

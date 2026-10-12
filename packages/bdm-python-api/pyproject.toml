@@ -29,19 +29,17 @@ dependencies = [
   "pydantic>=2.3,<3",
 ]
 
+[tool.uv]
+sources.ansys-bdm-api = { workspace = true }
+build-backend.module-name = "ansys.bdm"
+build-backend.namespace = true
+
 [tool.pytest]
-log_cli = true
-norecursedirs = [ ".moon", ".venv", "tmp*", ".git" ]
 addopts = [
   "--strict-config",
   "--strict-markers",
   "--import-mode=importlib",
 ]
 asyncio_mode = "auto"
-
-[tool.uv.sources]
-ansys-bdm-api = { workspace = true }
-
-[tool.uv.build-backend]
-module-name = "ansys.bdm"
-namespace = true
+log_cli = true
+norecursedirs = [ ".moon", ".venv", "tmp*", ".git" ]

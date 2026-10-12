@@ -9,6 +9,7 @@ tasks:
     command: "uv"
     args:
       - "sync"
+      - "--quiet"
     inputs:
       - "/pyproject.toml"
       - "/uv.lock"
@@ -17,9 +18,44 @@ tasks:
     options:
       runFromWorkspaceRoot: true
 
+  gitleaks:
+    description: "Scan branch-changed tracked files with Gitleaks"
+    command: "uv"
+    args:
+      - "run"
+      - "python"
+      - "-c"
+      - >-
+        import os, subprocess, sys;
+        from pre_commit.main import main;
+        base_ref = os.environ.get("GITLEAKS_BASE_REF", "origin/main");
+        base = subprocess.check_output(["git", "merge-base", "HEAD", base_ref], text=True).strip();
+        os.environ["GITLEAKS_LOG_OPTS"] = base + "..HEAD";
+        print(f"Gitleaks: scanning commit history from {base_ref} to HEAD", flush=True);
+        history_result = main(["run", "gitleaks", "--files", ".gitleaks.toml"]);
+        os.environ.pop("GITLEAKS_LOG_OPTS");
+        files = subprocess.check_output(
+        ["git", "diff", "--name-only", "--diff-filter=ACMRT", "-z", base, "--"],
+        text=True, encoding="utf-8", errors="surrogateescape").split(chr(0))[:-1];
+        print(f"Gitleaks: scanning current contents of {len(files)} changed tracked files", flush=True);
+        working_tree_result = main(["run", "gitleaks", "--files", *files]) if files else 0;
+        sys.exit(max(history_result, working_tree_result))
+    inputs:
+      - '/.pre-commit-config.yaml'
+      - '/.gitleaks.toml'
+      - '/pyproject.toml'
+      - '/uv.lock'
+    options:
+      cache: false
+      shell: false
+      runFromWorkspaceRoot: true
+      mutex: 'pre-commit'
+
   pre-commit:
     description: "Run pre-commit against root-level files only (packages run their
       own pre-commit task)"
+    deps:
+      - '~:gitleaks'
     script: 'uv run pre-commit run --files $(git ls-files -- ":(top,glob)*" ":(top).github/**"
       ":(top)doc/**")'
     inputs:
@@ -78,3 +114,17 @@ tasks:
       # (PIP_EXTRA_INDEX_URL for the Ansys private PyPI), which moon does not hash.
       # A cache hit would silently restore the public placeholder wheels.
       cache: false
+
+  clean-hps-log:
+    description: "Clean HPS log files"
+    command: 'rm'
+    args:
+      - '-rf'
+      - '~/.ansys/rep/scaling/*'
+      - '/tmp/hps_*'
+    options:
+      shell: true
+      # Ensures the entire moon pipeline won't fail if the directories don't exist
+      allowFailure: true 
+    toolchains:
+      - 'system'

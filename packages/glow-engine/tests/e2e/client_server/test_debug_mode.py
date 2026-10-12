@@ -22,6 +22,12 @@ import shutil
 import signal
 from typing import Any, TypeVar
 
+import pytest
+from tenacity import RetryError, TryAgain, retry, stop_after_attempt, wait_fixed
+
+from ansys.saf.glow._utilities.ip_utilities import port_is_free
+from ansys.saf.glow.client import Client, NotFoundException
+from ansys.saf.glow.solution import Solution
 from ansys.saf.testing.common import YieldFixture
 from ansys.saf.testing.platform_specific import xfail_for_ci_on_windows
 from ansys.saf.testing.solution.end_to_end import (
@@ -40,12 +46,6 @@ from ansys.saf.testing.solution.end_to_end import (
     UnconfigureApiHotReload,
     get_solution_root_dir,
 )
-import pytest
-from tenacity import RetryError, TryAgain, retry, stop_after_attempt, wait_fixed
-
-from ansys.saf.glow._utilities.ip_utilities import port_is_free
-from ansys.saf.glow.client import Client, NotFoundException
-from ansys.saf.glow.solution import Solution
 from tests.e2e.conftest import EnableMCPConfiguration
 from tests.mocks.solution_end_to_end.solution.definition import EndToEndSolution
 from tests.mocks.solution_end_to_end.solution.transaction_verification_step import (

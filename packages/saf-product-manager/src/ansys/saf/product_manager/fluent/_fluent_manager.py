@@ -23,9 +23,9 @@ from ansys.fluent.core.session_meshing import Meshing  # pyright: ignore[reportM
 from ansys.fluent.core.session_pure_meshing import PureMeshing  # pyright: ignore[reportMissingTypeStubs]
 from ansys.fluent.core.session_solver import Solver  # pyright: ignore[reportMissingTypeStubs]
 from ansys.fluent.core.session_solver_icing import SolverIcing  # pyright: ignore[reportMissingTypeStubs]
-from ansys.saf.glow.solution import InstanceManager, ProductInstanceManager, RecoveryStateInfo
 import httpx2
 
+from ansys.saf.glow.solution import InstanceManager, ProductInstanceManager, RecoveryStateInfo
 from ansys.saf.product_manager._utilities.const import ANSYS_GRPC_CERTIFICATES, INSECURE_GRPC_MSG
 
 if TYPE_CHECKING:

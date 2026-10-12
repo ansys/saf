@@ -24,7 +24,6 @@ from typing import Any
 from urllib.parse import urljoin, urlparse
 
 from ansys.iam.oidc import OidcClient
-
 from ansys.saf.glow._config.const import (
     AUTH_SCRIPT_MARKER,
     DEFAULT_GLOW_AUTH_DISABLED,

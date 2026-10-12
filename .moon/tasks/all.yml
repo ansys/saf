@@ -1,13 +1,20 @@
 tasks:
   check-env-var:
-    command: pwsh
+    description: "Check that required environment variables are set"
+    command: 'uv'
     args:
-      - -NoProfile
-      - -NonInteractive
-      - -CommandWithArgs
-      - 'if ($args.Count -eq 0) { Write-Error "Specify at least one environment variable name"; exit 1 }; foreach ($name in $args) { if ([string]::IsNullOrEmpty($name) -or [string]::IsNullOrEmpty([Environment]::GetEnvironmentVariable($name))) { Write-Error "Required environment variable is not set: $name"; exit 1 } }'
+      - "run"
+      - "python"
+      - '-c'
+      - >-
+        import os, sys;
+        names = sys.argv[1:];
+        missing = next((name for name in names if not os.environ.get(name)), None);
+        message = "Error: Specify at least one environment variable name" if not names else
+        f"Error: Required environment variable is not set: {missing}" if missing is not None else None;
+        print(message, file=sys.stderr) if message is not None else None;
+        sys.exit(1 if message is not None else 0)
     options:
-      shell: false
       cache: false
 
   install-private-dependency:
@@ -28,27 +35,69 @@ tasks:
       cache: false
 
   install-pim-light-server:
+    description: "Install the ANSYS SAF PIM Light Server package"
     deps:
       - target: "~:install-private-dependency"
         args:
           - "ansys-saf-pim-light-server==0.3.12"
 
   install-ansys-saf-aspire:
+    description: "Install the ANSYS SAF Aspire package"
     deps:
       - target: "~:install-private-dependency"
         args:
           - "ansys-saf-aspire==9.1.6"
 
   install-saf-desktop-portal:
+    description: "Install the ANSYS SAF Desktop Portal package"
     deps:
       - target: "~:install-private-dependency"
         args:
           - "ansys-saf-desktop-portal==0.4.dev2"
 
+  install-visor:
+    description: "Install the ANSYS Visor Viewer package"
+    deps:
+      - target: "~:install-private-dependency"
+        args:
+          - "ansys-visor-viewer==1.0.5b0.dev0+20260831"
+
+  install-minerva-python-client:
+    description: "Install the ANSYS Minerva Python Client package"
+    deps:
+      - target: "~:install-private-dependency"
+        args:
+          - "ansys-minerva-python-client==0.3.1"
+
+  hps-installer:
+    description: "Install HPS"
+    command: "uv"
+    args:
+      - "run"
+      - "--project"
+      - "$workspaceRoot"
+      - "python"
+      - "-m"
+      - "ansys.saf.testing.hps.scripts.hps_installer"
+    options:
+      cache: false
+
   pre-commit:
     description: "Run pre-commit against this package's files only (root-level files
       are handled by root:pre-commit)"
-    script: 'uv run pre-commit run --files $(git ls-files -- ":(top,glob)$projectSource/**")'
+    command: 'uv'
+    args:
+      - 'run'
+      - 'python'
+      - '-c'
+      - >-
+        import subprocess, sys;
+        from pre_commit.main import main;
+        files = subprocess.check_output(
+        ['git', 'ls-files', '-z', '--', f':(top,glob){sys.argv[1]}/**'],
+        text=True, encoding='utf-8', errors='surrogateescape').split(chr(0))[:-1];
+        sys.exit(main(['run', '--files', *files]))
+      - '$projectSource'
     deps:
       - '~:pyright'
       - '~:ruff'
@@ -63,8 +112,9 @@ tasks:
       - 'tests/**/*'
       - '/.pre-commit-config.yaml'
       - 'pyproject.toml'
-      - '/.uv.lock'
+      - '/uv.lock'
     options:
+      shell: false
       runFromWorkspaceRoot: true
       # Shared pre-commit hook envs aren't safe for concurrent invocation across projects.
       mutex: 'pre-commit'
@@ -76,8 +126,8 @@ tasks:
         args: 
           - "UV_PYTHON"
           - "MOON_PYTHON_VERSION"
-    command:
-      - "uv"
+    command: "uv"
+    args:
       - "run"
       - "--package"
       - "$projectAlias"
@@ -226,6 +276,26 @@ tasks:
     inputs:
       - "dist/*.whl"
       - "dist/*.tar.gz"
+    options:
+      runFromWorkspaceRoot: true
+
+  check-license:
+    command: 'uv'
+    args:
+      - "run"
+      - "python"
+      - '-c'
+      - >-
+        import glob, subprocess, sys;
+        wheels = glob.glob("dist/*.whl");
+        cmd = ["uvx"];
+        [cmd.extend(["--with", wheel]) for wheel in wheels];
+        cmd.extend(["pip-licenses@5.5.5", "--packages", "$projectAlias", "--allow-only=Apache-2.0"]);
+        sys.exit(subprocess.run(cmd).returncode)
+    deps:
+      - '~:build'
+    inputs:
+      - '/dist/*.whl'
     options:
       runFromWorkspaceRoot: true
 

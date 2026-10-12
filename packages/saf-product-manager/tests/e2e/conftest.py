@@ -25,6 +25,9 @@ import shutil
 from typing import TypeVar
 from unittest import mock
 
+import psutil
+import pytest
+
 from ansys.saf.glow.solution import Solution
 from ansys.saf.testing.common import YieldFixture
 from ansys.saf.testing.network import get_docker_gateway_ip
@@ -34,9 +37,6 @@ from ansys.saf.testing.solution.end_to_end import (
     GlowBaseProcess,
     WithProductHost,
 )
-import psutil
-import pytest
-
 from tests.conftest import IGNORE_PYC_FILES
 from tests.mocks.solution_end_to_end.flagship_const import LATEST_VERSION, PREVIOUS_VERSION
 from tests.mocks.solution_end_to_end.solution.definition import EndToEndSolution

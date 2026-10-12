@@ -23,14 +23,15 @@ import time
 from typing import Any
 import uuid
 
+import docker
+import jwt
+import pytest
+
 from ansys.saf.testing.common import find_exec_in_venv
 from ansys.saf.testing.docker import is_docker_installed_fun
 from ansys.saf.testing.hps.process import HpsDeploymentProcess
 from ansys.saf.testing.platform_specific import is_ci_run
 from ansys.saf.testing.pytest import is_marker_within_collected_tests
-import docker
-import jwt
-import pytest
 
 IGNORE_PYC_FILES = shutil.ignore_patterns("*__pycache__*", "*.pyc*")
 PYTEST_LOGS_DIR = "pytest_logs"

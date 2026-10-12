@@ -18,7 +18,6 @@ import json
 import logging
 from typing import Any
 
-from ansys.saf.glow.client import DashClient, Deployment, callback
 from dash_extensions.enrich import (  # pyright: ignore[reportMissingTypeStubs]
     ALL,
     Input,
@@ -28,6 +27,7 @@ from dash_extensions.enrich import (  # pyright: ignore[reportMissingTypeStubs]
     html,
 )
 
+from ansys.saf.glow.client import DashClient, Deployment, callback
 from tests.mocks.solution_end_to_end.solution.definition import (
     EndToEndSolution,
 )

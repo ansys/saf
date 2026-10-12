@@ -19,3 +19,7 @@ paths:
     ignore:
       - 'specifying action "\$/\.github/actions/[^\"]+" in invalid format because
         ref is missing'
+  .github/workflows/_test.yml:
+    ignore:
+      - 'specifying action "\$/\.github/actions/[^\"]+" in invalid format because
+        ref is missing'

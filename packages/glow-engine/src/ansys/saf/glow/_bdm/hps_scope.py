@@ -23,14 +23,14 @@ from typing import Self
 import uuid
 import zipfile
 
+from pydantic import BaseModel
+
 from ansys.bdm.api import (
     EntityHandle,
     IAsyncReadStorageScope,
     IReadStorageScope,
     IReadStorageScopeFactory,
 )
-from pydantic import BaseModel
-
 from ansys.saf.glow._bdm.storage_variable_names import PROJECT_ID, ROOT, SHORTID
 from ansys.saf.glow._bdm.subsystem_scope import (
     AsyncProxySubsidiarySystemStorageScope,

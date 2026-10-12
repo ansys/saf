@@ -19,10 +19,10 @@ from dataclasses import dataclass
 import sys
 from time import sleep
 
-from ansys.saf.testing.process import Process
 import pytest
 
 from ansys.saf.glow._utilities.ip_utilities import get_random_free_port
+from ansys.saf.testing.process import Process
 from tests.mocks.mock_products.client import (
     IMockProductClient,
 )

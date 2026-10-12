@@ -21,7 +21,6 @@ import subprocess
 import sys
 from unittest import mock
 
-from ansys.saf.testing.common import find_exec_in_venv
 import click
 import pytest
 import pytest_mock
@@ -33,6 +32,7 @@ from ansys.saf.cli._solutions.environment import (
     _run_poetry_install,  # pyright: ignore[reportPrivateUsage]
     setup_environment,
 )
+from ansys.saf.testing.common import find_exec_in_venv
 
 PYPROJECT_CONTENT_BASE = """
 [build-system-requirements]

@@ -17,8 +17,11 @@
 import logging
 from pathlib import Path
 
-from ansys.bdm.api import NO_ENTITY, EntityHandle
 from ansys.mapdl.core.plotting.theme import PyMAPDL_cmap  # pyright: ignore[reportMissingTypeStubs]
+import numpy as np
+import pyvista as pv
+
+from ansys.bdm.api import NO_ENTITY, EntityHandle
 from ansys.saf.glow.solution import (
     StepModel,
     StepSpec,
@@ -27,9 +30,6 @@ from ansys.saf.glow.solution import (
     long_running,
     transaction,
 )
-import numpy as np
-import pyvista as pv
-
 from ansys.saf.product_manager.mapdl import MapdlManager
 
 logger = logging.getLogger(__name__)

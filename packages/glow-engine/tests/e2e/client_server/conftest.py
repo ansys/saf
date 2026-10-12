@@ -18,11 +18,11 @@ from collections.abc import Callable, Generator
 from pathlib import Path
 from typing import TypeVar
 
-from ansys.saf.testing.solution.end_to_end import EnableAutomaticProjectMigrationConfig, GlowBaseProcess, ProjectFixture
 import pytest
 
 from ansys.saf.glow.client import Client
 from ansys.saf.glow.solution import Solution
+from ansys.saf.testing.solution.end_to_end import EnableAutomaticProjectMigrationConfig, GlowBaseProcess, ProjectFixture
 from tests.e2e.client_server.migration_helper import upgrade_or_import_project
 
 Orig = TypeVar("Orig", bound=Solution)

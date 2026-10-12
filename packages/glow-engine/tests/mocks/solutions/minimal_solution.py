@@ -17,9 +17,9 @@
 from enum import Enum
 from typing import Annotated, Self
 
-from ansys.bdm.api import NO_ENTITY, EntityHandle
 from pydantic import AfterValidator, BaseModel, field_validator, model_validator
 
+from ansys.bdm.api import NO_ENTITY, EntityHandle
 from ansys.saf.glow._core.step_spec import StepSpec
 from ansys.saf.glow._core.transaction import transaction
 from ansys.saf.glow.solution import (

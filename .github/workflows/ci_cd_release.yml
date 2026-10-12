@@ -27,6 +27,7 @@ on:
           - saf-cli
           - saf-product-configuration
           - saf-product-manager
+          - saf-projects-dashboard
           - saf-templates
           - saf-testing
 
@@ -262,15 +263,13 @@ jobs:
       id-token: write # Write access to a temporary token for signing attestations
     uses: ./.github/workflows/_build.yml
     with:
-      library-name: ${{ inputs.library }}${{ case(! contains('dash-super-components,glow-engine,saf-cli,saf-product-manager',
-        inputs.library), '', format('-{0}', needs.release-information.outputs.release-name))
-        }}
+      library-name: ${{ inputs.library }}
       python-version: ${{ vars.PYTHON_VERSION }}
-      use-moon: ${{! contains('dash-super-components,glow-engine,saf-cli,saf-product-manager',
-        inputs.library) }}
+      use-moon: ${{ inputs.library != 'dash-super-components' }}
       artifact-name: ${{ inputs.library }}-${{ needs.release-information.outputs.release-name
-        }}${{! case(contains('dash-super-components,glow-engine,saf-cli,saf-product-manager',
-        inputs.library), '-artifacts', '') }}
+        }}${{ case(inputs.library == 'dash-super-components', '' , '-artifacts') }}
+      ref: ${{ inputs.dev-release && 'main' || needs.release-information.outputs.release-branch-name
+        }}
 
   bump-version:
     name: Bump Version

@@ -16,9 +16,9 @@
 
 from collections.abc import Generator
 
-from ansys.bdm.api import IStorageScope
 import pytest
 
+from ansys.bdm.api import IStorageScope
 from ansys.saf.glow._bdm.multiplexor import BdmMultiplexor, SafMultiplexorStorageScopeFactory
 from ansys.saf.glow._bdm.storage_contexts import METHOD_CONTEXT
 from ansys.saf.glow._config.const import (

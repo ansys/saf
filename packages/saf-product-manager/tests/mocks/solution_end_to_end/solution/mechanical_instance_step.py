@@ -27,7 +27,6 @@ from ansys.saf.glow.solution import (
     long_running,
     transaction,
 )
-
 from ansys.saf.product_manager.mechanical import MechanicalManager
 
 logger = logging.getLogger(__name__)

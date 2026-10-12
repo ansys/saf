@@ -22,14 +22,13 @@ import time
 from types import ModuleType
 from typing import Protocol
 
-from ansys.saf.product_configuration.manager.configurations_manager import ProductInstanceConfigurationsManager
-
 from ansys.saf.glow._config.const import (
     GLOW_PRODUCT_INSTANCE_SYSTEM_PLATFORM,
     GLOW_PRODUCT_INSTANCE_SYSTEM_PROJECT_FILES_DIRECTORY,
 )
 from ansys.saf.glow._config.directories import find_product_instance_configs_dir
 from ansys.saf.glow._utilities.path_parser import parse_platform_specific_absolute_path
+from ansys.saf.product_configuration.manager.configurations_manager import ProductInstanceConfigurationsManager
 
 
 class IProductInstanceVersionDefinition(Protocol):

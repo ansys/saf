@@ -19,8 +19,8 @@ import os
 from typing import Any
 
 from ansys.geometry.core.modeler import Modeler
-from ansys.saf.glow.solution import InstanceManager, ProductInstanceManager, RecoveryStateInfo
 
+from ansys.saf.glow.solution import InstanceManager, ProductInstanceManager, RecoveryStateInfo
 from ansys.saf.product_manager._utilities.const import ANSYS_GRPC_CERTIFICATES, INSECURE_GRPC_MSG
 
 logger = logging.getLogger(__name__)

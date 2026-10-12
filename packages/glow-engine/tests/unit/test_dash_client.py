@@ -22,11 +22,11 @@ from typing import TYPE_CHECKING
 from unittest import mock
 import uuid
 
-from ansys.iam.oidc import DEFAULT_SUBPROTOCOL_PREFIX, encode_base64_token
 import httpx2
 import pytest
 from pytest_mock.plugin import MockerFixture
 
+from ansys.iam.oidc import DEFAULT_SUBPROTOCOL_PREFIX, encode_base64_token
 from ansys.saf.glow._client.step_proxy import StepProxy
 from ansys.saf.glow._config.const import Deployment
 from ansys.saf.glow._core.gql import GqlClientConnectionPool

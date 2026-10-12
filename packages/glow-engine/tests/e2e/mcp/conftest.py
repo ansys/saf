@@ -16,14 +16,14 @@
 from collections.abc import AsyncGenerator
 from typing import Any
 
-from ansys.saf.testing.common import YieldFixture
-from ansys.saf.testing.solution.end_to_end import GlowBaseProcess
 from fastmcp import Client as MCPClient
 from fastmcp.client.client import CallToolResult
 from fastmcp.client.transports import StreamableHttpTransport
 from mcp.types import TextContent
 import pytest
 
+from ansys.saf.testing.common import YieldFixture
+from ansys.saf.testing.solution.end_to_end import GlowBaseProcess
 from tests.e2e.conftest import EnableMCPConfiguration
 from tests.mocks.solution_end_to_end.solution.definition import EndToEndSolution
 

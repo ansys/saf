@@ -15,7 +15,6 @@
 # limitations under the License.
 
 from ansys.saf.glow.solution import StepModel, StepSpec, create_instance, transaction
-
 from tests.mocks.solution_end_to_end.solution.custom_fluent_manager import CustomFluent2DDPSolverManager
 
 

@@ -14,10 +14,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from ansys.saf.testing.solution.end_to_end import ProjectFixture
 import httpx2
 import pytest
 
+from ansys.saf.testing.solution.end_to_end import ProjectFixture
 from tests.mocks.solutions.bdm_solution import BdmSolution
 
 pytestmark = pytest.mark.parametrize("solution_type", [BdmSolution], indirect=True)

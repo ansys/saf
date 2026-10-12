@@ -15,7 +15,6 @@
 # limitations under the License.
 
 from ansys.saf.glow.solution import Solution, StepsModel
-
 from tests.mocks.solution_end_to_end.solution.aedt_solution_types_verification_step import (
     AedtSolutionTypesVerificationStep,
 )

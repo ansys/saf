@@ -19,10 +19,10 @@ from enum import Enum
 from pathlib import Path
 from typing import Any, Generic, Protocol, TypeVar
 
-# IMPORTANT: Keep HPS dependencies out of here. These classes are imported in core.
-from ansys.bdm.api import NO_ENTITY, EntityHandle
 from pydantic import BaseModel
 
+# IMPORTANT: Keep HPS dependencies out of here. These classes are imported in core.
+from ansys.bdm.api import NO_ENTITY, EntityHandle
 from ansys.saf.glow._core.blob_managers import HpsBlobManager
 from ansys.saf.glow._hps_auth.ihps_authenticator import IHpsAuthenticator
 from ansys.saf.glow._hps_parametric_studies.serialization import encode_string_for_hps

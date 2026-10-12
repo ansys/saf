@@ -17,6 +17,9 @@
 from collections.abc import Callable
 from typing import Literal
 
+import pytest
+
+from ansys.saf.product_manager._utilities.const import LOCALHOSTS
 from ansys.saf.testing.common import YieldFixture
 from ansys.saf.testing.hps import GetHpsJobIdsType
 from ansys.saf.testing.network import get_local_ip
@@ -25,9 +28,6 @@ from ansys.saf.testing.solution.end_to_end import (
     GlowBaseProcess,
     ProjectFixture,
 )
-import pytest
-
-from ansys.saf.product_manager._utilities.const import LOCALHOSTS
 from tests.e2e.conftest import (
     DOCKER_GATEWAY_IP,
 )

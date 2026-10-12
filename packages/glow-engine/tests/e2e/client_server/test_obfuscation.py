@@ -22,11 +22,11 @@ import subprocess
 import sys
 from typing import TypeVar
 
-from ansys.saf.testing.solution.end_to_end import GlowDesktopProcess, ProjectFixture
 import pytest
 
 from ansys.saf.glow.client import Client
 from ansys.saf.glow.solution import Solution
+from ansys.saf.testing.solution.end_to_end import GlowDesktopProcess, ProjectFixture
 from tests.e2e.conftest import PACKAGE_ROOT
 from tests.mocks.solution_end_to_end.solution.definition import EndToEndSolution
 

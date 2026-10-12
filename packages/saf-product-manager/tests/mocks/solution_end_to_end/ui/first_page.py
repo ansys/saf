@@ -18,10 +18,10 @@
 
 import base64
 
-from ansys.saf.glow.client import callback
 from dash import dcc  # pyright: ignore[reportMissingTypeStubs]
 from dash_extensions.enrich import Input, Output, State, html  # pyright: ignore[reportMissingTypeStubs]
 
+from ansys.saf.glow.client import callback
 from tests.mocks.solution_end_to_end.solution.definition import EndToEndSolution
 from tests.mocks.solution_end_to_end.solution.maxwell_2d_setup_verification_step import Maxwell2DSetupVerificationStep
 

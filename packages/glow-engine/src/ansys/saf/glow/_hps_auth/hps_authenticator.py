@@ -16,7 +16,7 @@
 
 from __future__ import annotations
 
-from contextlib import contextmanager
+from contextlib import contextmanager, suppress
 import json
 import logging
 import os
@@ -56,6 +56,78 @@ class CachedClient:
         # TODO: replace with token validation, bringing logic from get_hps_auth_info
         return (time.time() - self.timestamp) > cache_ttl_seconds
 
+    def close(self) -> None:
+        """Release the resources held by the cached client.
+
+        ansys-hps-client exposes no close(). As of 0.13.0 it holds a token refresh
+        thread and a data transfer child process (~227 MB), both of which it only stops
+        at interpreter exit, so they have to be released through private attributes.
+        """
+        stop_event = getattr(self.client, "_stop_event", None)  # pyright: ignore[reportUnknownArgumentType, reportUnknownMemberType]
+        if stop_event is not None:
+            try:
+                stop_event.set()
+            except Exception:
+                logger.warning("Failed to signal the HPS token refresh thread to stop.", exc_info=True)
+        refresh_thread = getattr(self.client, "_token_refresh_thread", None)  # pyright: ignore[reportUnknownArgumentType, reportUnknownMemberType]
+        if refresh_thread is not None:
+            # Upstream waits 5s at exit; keep it short here because this runs inside a request.
+            # The thread polls the stop event, so it exits on its own even if the join times out.
+            try:
+                refresh_thread.join(timeout=1.0)
+            except Exception:
+                logger.warning("Failed to join the HPS token refresh thread.", exc_info=True)
+        dt_client = getattr(self.client, "_dt_client", None)  # pyright: ignore[reportUnknownArgumentType, reportUnknownMemberType]
+        if dt_client is not None:
+            try:
+                dt_client.stop()
+            except Exception:
+                logger.warning("Failed to stop the HPS data transfer client.", exc_info=True)
+        session = getattr(self.client, "session", None)  # pyright: ignore[reportUnknownArgumentType, reportUnknownMemberType]
+        if session is not None:
+            try:
+                session.close()
+            except Exception:
+                logger.warning("Failed to close the HPS client session.", exc_info=True)
+
+
+class CachedClients:
+    """HPS clients cached per server URL, keyed by the URL they were built for.
+
+    Concurrent use of a cached client is not supported. A replacement closes the previous client,
+    even when another context is still using it.
+    """
+
+    def __init__(self) -> None:
+        self._clients: dict[str, CachedClient] = {}
+
+    def close(self) -> None:
+        """Release every cached client now, instead of waiting for collection."""
+        for cached in self._clients.values():
+            cached.close()
+        self._clients.clear()
+
+    def __del__(self) -> None:
+        # Authenticators are per request in the main API process, so most caches are dropped without their entry ever
+        # being replaced; this is the only point where those clients get released.
+        with suppress(Exception):
+            self.close()
+
+    def get(self, hps_server_url: str, cache_ttl_seconds: float) -> Client | None:  # noqa: F821  # pyright: ignore[reportUnknownParameterType, reportUndefinedVariable]
+        """Return the cached client for the URL, or None when absent or expired."""
+        cached = self._clients.get(hps_server_url)
+        if cached is None or cached.is_expired(cache_ttl_seconds):
+            return None
+        logger.debug(f"Using cached HPS client for {hps_server_url}")
+        return cached.client  # pyright: ignore[reportUnknownMemberType, reportUnknownVariableType]
+
+    def set(self, hps_server_url: str, client: Client) -> None:  # noqa: F821  # pyright: ignore[reportUnknownParameterType, reportUndefinedVariable]
+        """Cache the client, releasing the entry it replaces."""
+        if replaced := self._clients.get(hps_server_url):
+            logger.debug(f"Releasing replaced HPS client for {hps_server_url}")
+            replaced.close()
+        self._clients[hps_server_url] = CachedClient(client, time.time())  # pyright: ignore[reportUnknownArgumentType]
+
 
 class DesktopHpsAuthenticator(IHpsAuthenticator):
     def __init__(
@@ -69,7 +141,7 @@ class DesktopHpsAuthenticator(IHpsAuthenticator):
         self._hps_pwd = glow_hps_password
         self._auth_url = f"{glow_api_url}/desktop:hps-auth-info"
         self._client_id = client_id
-        self._client_cache: dict[str, CachedClient] = {}
+        self._client_cache = CachedClients()
 
     @contextmanager
     def get_hps_client(  # pyright: ignore[reportUnknownParameterType]
@@ -81,9 +153,8 @@ class DesktopHpsAuthenticator(IHpsAuthenticator):
 
         # Check if we have a valid cached client
         cache_ttl = float(os.environ.get(TEST_HPS_CLIENT_CACHE_TTL_SECONDS, DEFAULT_HPS_CLIENT_CACHE_TTL_SECONDS))
-        if hps_server_url in self._client_cache and not self._client_cache[hps_server_url].is_expired(cache_ttl):
-            logger.debug(f"Using cached HPS client for {hps_server_url}")
-            yield self._client_cache[hps_server_url].client  # pyright: ignore[reportUnknownMemberType]
+        if cached_client := self._client_cache.get(hps_server_url, cache_ttl):  # pyright: ignore[reportUnknownVariableType, reportUnknownMemberType]
+            yield cached_client
             return
 
         # Create a new client if not cached or expired
@@ -112,7 +183,7 @@ class DesktopHpsAuthenticator(IHpsAuthenticator):
             client = Client(url=hps_server_url, client_id=client_id or self._client_id, refresh_token=refresh_token)
 
         # Cache the new client
-        self._client_cache[hps_server_url] = CachedClient(client, time.time())
+        self._client_cache.set(hps_server_url, client)  # pyright: ignore[reportUnknownMemberType]
         yield client
 
 
@@ -132,7 +203,7 @@ class OnPremHpsAuthenticator(IHpsAuthenticator):
         self._hps_user = glow_hps_username
         self._hps_pwd = glow_hps_password
         self._glow_auth_issuer_url = glow_auth_issuer_url
-        self._client_cache: dict[str, CachedClient] = {}
+        self._client_cache = CachedClients()
         self._service_account_client_id = glow_auth_service_account_client_id
         self._service_account_client_secret = glow_auth_service_account_client_secret
 
@@ -151,9 +222,8 @@ class OnPremHpsAuthenticator(IHpsAuthenticator):
 
         # Check if we have a valid cached client
         cache_ttl = float(os.environ.get(TEST_HPS_CLIENT_CACHE_TTL_SECONDS, DEFAULT_HPS_CLIENT_CACHE_TTL_SECONDS))
-        if hps_server_url in self._client_cache and not self._client_cache[hps_server_url].is_expired(cache_ttl):
-            logger.debug(f"Using cached HPS client for {hps_server_url}")
-            yield self._client_cache[hps_server_url].client  # pyright: ignore[reportUnknownMemberType]
+        if cached_client := self._client_cache.get(hps_server_url, cache_ttl):  # pyright: ignore[reportUnknownVariableType, reportUnknownMemberType]
+            yield cached_client
             return
 
         # Create a new client if not cached or expired
@@ -215,7 +285,7 @@ class OnPremHpsAuthenticator(IHpsAuthenticator):
             client = Client(url=hps_server_url, username=self._hps_user, password=self._hps_pwd)
 
         # Cache the new client
-        self._client_cache[hps_server_url] = CachedClient(client, time.time())
+        self._client_cache.set(hps_server_url, client)  # pyright: ignore[reportUnknownMemberType]
         yield client
 
     @staticmethod

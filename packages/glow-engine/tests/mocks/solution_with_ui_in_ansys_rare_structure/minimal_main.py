@@ -14,12 +14,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from ansys.saf.glow.runtime import glow_main
 from ansys.solutions.solution_with_ui_in_ansys_rare_structure.my_solution import (  # type: ignore
     my_definition as definition,  # type: ignore
 )
 from ansys.solutions.solution_with_ui_in_ansys_rare_structure.my_ui import my_app as app  # type: ignore
-
-from ansys.saf.glow.runtime import glow_main
 
 
 def main():

@@ -1,24 +1,18 @@
-# Copyright (C) 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
-# SPDX-License-Identifier: MIT
+# Copyright (C) 2026 ANSYS, Inc. and/or its affiliates.
+
+# SPDX-License-Identifier: Apache-2.0
 #
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
 #
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
+# http://www.apache.org/licenses/LICENSE-2.0
 #
-# The above copyright notice and this permission notice shall be included in all
-# copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-# SOFTWARE.
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
 """
 Web Vitals measurement utilities for performance comparison.
@@ -33,12 +27,10 @@ Uses Playwright for automated browser testing with Performance API.
 
 import asyncio
 from dataclasses import dataclass, field
-import json
 import statistics
-from typing import Optional
 
 try:
-    from playwright.async_api import Browser, Page, async_playwright
+    from playwright.async_api import Page, async_playwright  # type: ignore
 
     PLAYWRIGHT_AVAILABLE = True
 except ImportError:
@@ -285,7 +277,7 @@ async def run_web_vitals_benchmark(
         run_count=run_count,
     )
 
-    async with async_playwright() as p:
+    async with async_playwright() as p:  # pyright: ignore[reportPossiblyUnboundVariable]
         # Use Chromium for best Performance API support
         browser = await p.chromium.launch(headless=headless)
 

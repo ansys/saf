@@ -21,10 +21,10 @@ import tempfile
 from typing import Any
 from unittest.mock import patch
 
-from ansys.bdm.api import EntityHandle
 import pytest
 from starlette import status
 
+from ansys.bdm.api import EntityHandle
 from ansys.saf.glow._config.settings import Settings
 from ansys.saf.glow._server.exceptions import INTERNAL_ERROR_MESSAGE
 from tests.conftest import MOCKS_DIR

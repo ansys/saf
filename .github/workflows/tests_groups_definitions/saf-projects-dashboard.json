@@ -1,0 +1,14 @@
+[
+    {
+        "test-report-artifact-name-suffix": "saf_projects_dashboard_linux",
+        "pytest-additional-arguments": "tests/",
+        "pytest-markers": "not e2e and not performance",
+        "runner-name": "ubuntu-latest"
+    },
+    {
+        "test-report-artifact-name-suffix": "saf_projects_dashboard_windows",
+        "pytest-additional-arguments": "tests/",
+        "pytest-markers": "not e2e and not performance",
+        "runner-name": "windows-latest"
+    }
+]

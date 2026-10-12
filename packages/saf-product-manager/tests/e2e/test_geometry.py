@@ -18,16 +18,16 @@ from collections.abc import Callable
 from pathlib import Path
 import platform
 
+import pytest
+
 from ansys.saf.glow.client import InternalSolutionException
+from ansys.saf.product_manager._utilities.const import LOCALHOSTS
 from ansys.saf.testing.common import YieldFixture
 from ansys.saf.testing.hps import GetHpsJobIdsType
 from ansys.saf.testing.network import get_local_ip
 from ansys.saf.testing.pim.process import PimProcess
 from ansys.saf.testing.solution.const import TestDeployment
 from ansys.saf.testing.solution.end_to_end import GeometryVersionConfiguration, GlowBaseProcess, ProjectFixture
-import pytest
-
-from ansys.saf.product_manager._utilities.const import LOCALHOSTS
 from tests.e2e.conftest import (
     DOCKER_GATEWAY_IP,
     GEOMETRY_251_ERROR_MSGS,

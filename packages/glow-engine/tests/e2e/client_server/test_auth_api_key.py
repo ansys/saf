@@ -17,15 +17,15 @@
 from collections.abc import Callable
 from pathlib import Path
 
+import pytest
+
+from ansys.saf.glow.client import Client, PermissionException, UnauthorizedException
 from ansys.saf.testing.common import YieldFixture
 from ansys.saf.testing.solution.const import TestDeployment
 from ansys.saf.testing.solution.end_to_end import (
     EnableAuthValidationConfiguration,
     GlowBaseProcess,
 )
-import pytest
-
-from ansys.saf.glow.client import Client, PermissionException, UnauthorizedException
 from tests.e2e.conftest import GlowApiKeyConfiguration, SetGlowApiKeyConfiguration, SetGlowApiKeyFileConfiguration
 from tests.mocks.solution_end_to_end.solution.definition import EndToEndSolution
 

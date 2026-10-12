@@ -18,10 +18,10 @@ from pathlib import Path
 import random
 import uuid
 
-from ansys.bdm.api import NO_ENTITY, EntityHandle
 from fastapi import status
 import pytest
 
+from ansys.bdm.api import NO_ENTITY, EntityHandle
 from ansys.saf.glow._bdm.datarepo import DataRepositoryType
 from ansys.saf.glow._config.const import GLOW_DATA_REPOSITORY_TYPE
 from ansys.saf.glow._config.settings import Settings

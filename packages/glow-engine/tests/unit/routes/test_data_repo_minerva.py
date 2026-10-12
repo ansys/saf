@@ -17,11 +17,11 @@
 import sys
 from unittest.mock import ANY, MagicMock
 
-from ansys.iam.oidc import OidcClient, UserInfo
 from fastapi import status
 import pytest
 import pytest_mock
 
+from ansys.iam.oidc import OidcClient, UserInfo
 from ansys.saf.glow._bdm.datarepo import DataRepositoryType
 from ansys.saf.glow._config.const import GLOW_DATA_REPOSITORY_TYPE
 from ansys.saf.glow._config.settings import Settings

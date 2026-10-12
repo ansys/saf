@@ -16,8 +16,9 @@
 
 from pathlib import Path
 
-from ansys.bdm.api import NO_ENTITY, EntityHandle
 from ansys.fluent.core.session_solver import Solver  # pyright: ignore[reportMissingTypeStubs]
+
+from ansys.bdm.api import NO_ENTITY, EntityHandle
 from ansys.saf.glow.solution import (
     StepModel,
     StepSpec,
@@ -26,7 +27,6 @@ from ansys.saf.glow.solution import (
     long_running,
     transaction,
 )
-
 from ansys.saf.product_manager.fluent import (
     Fluent2DDPSolverManager,
     Fluent3DDPMeshingManager,

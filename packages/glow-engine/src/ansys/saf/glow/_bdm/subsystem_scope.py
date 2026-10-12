@@ -24,6 +24,9 @@ import shutil
 from typing import TYPE_CHECKING, Any, NamedTuple
 import uuid
 
+from anyio import create_memory_object_stream
+from anyio.streams.buffered import BufferedByteReceiveStream
+
 from ansys.bdm.api import (
     EntityHandle,
     EntityNotFoundInBlobStorageError,
@@ -33,21 +36,17 @@ from ansys.bdm.api import (
     IReadStorageScopeFactory,
 )
 from ansys.bdm.base.encoder import encode_text
-from anyio import create_memory_object_stream
-from anyio.streams.buffered import BufferedByteReceiveStream
-
 from ansys.saf.glow._bdm.storage_contexts import METHOD_CONTEXT, PRODUCT_CONTEXT
 from ansys.saf.glow._bdm.storage_variable_names import PROJECT_ID, ROOT, SHORTID
 from ansys.saf.glow._server.hidden_project_directories import bdm_asset_cache_dir_name
 from ansys.saf.glow._utilities.decrypt_file import decrypt_file
 
 if TYPE_CHECKING:
-    from collections.abc import AsyncIterator
+    from collections.abc import AsyncIterator, Buffer
     from types import TracebackType
     from typing import Self
 
     from anyio.abc import ByteReceiveStream
-    from typing_extensions import Buffer
 
     from ansys.saf.glow._core.solution import Solution
 

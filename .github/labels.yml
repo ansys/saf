@@ -19,6 +19,9 @@
 - name: saf-product-manager
   description: Package saf-product-manager
   color: #0052cc
+- name: saf-projects-dashboard
+  description: Package saf-projects-dashboard
+  color: ffffff
 - name: saf-templates
   description: Package saf-templates
   color: '#0052cc'

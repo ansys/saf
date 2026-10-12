@@ -31,7 +31,6 @@ classifiers = [
   "Programming Language :: Python :: 3.14",
   "Topic :: Scientific/Engineering",
 ]
-
 dependencies = [
   "click>=8.1.7,<9",
   "packaging>=24.0,<25",
@@ -41,10 +40,12 @@ dependencies = [
   "toml>=0.10.2,<0.11",
 ]
 
+[tool.uv]
+sources.ansys-saf-desktop-installer = { workspace = true }
+build-backend.module-name = "ansys.saf.desktop.installer"
+build-backend.namespace = true
+
 [tool.pytest]
-log_cli = true
-pythonpath = [ "." ]
-norecursedirs = [ ".moon", ".venv", "tmp*", ".git" ]
 addopts = [
   "--strict-config",
   "--strict-markers",
@@ -61,33 +62,27 @@ filterwarnings = [
   "ignore::DeprecationWarning",
   "ignore::UserWarning",
 ]
-markers = [  ]
+log_cli = true
+markers = []
+norecursedirs = [ ".moon", ".venv", "tmp*", ".git" ]
+pythonpath = [ "." ]
 testpaths = [ "tests/" ]
 
-[tool.coverage.run]
-source = [ "ansys.saf.desktop.installer" ]
-omit = [
-  "*/pytest-of-*/pytest-*/popen-*/*",
-  "/tmp/*",
-  "*/Temp/*",
-  "dist/*",
+[tool.coverage]
+run.source = [ "ansys.saf.desktop.installer" ]
+run.omit = [
   "*/.venv/*",
-  "*/site-packages/*",
-  "*/tests/*",
-]
-
-[tool.coverage.report]
-show_missing = true
-omit = [
   "*/pytest-of-*/pytest-*/popen-*/*",
-  "/tmp/*",
+  "*/site-packages/*",
   "*/Temp/*",
+  "*/tests/*",
+  "/tmp/*",
   "dist/*",
 ]
-
-[tool.uv.sources]
-ansys-saf-desktop-installer = { workspace = true }
-
-[tool.uv.build-backend]
-module-name = "ansys.saf.desktop.installer"
-namespace = true
+report.omit = [
+  "*/pytest-of-*/pytest-*/popen-*/*",
+  "*/Temp/*",
+  "/tmp/*",
+  "dist/*",
+]
+report.show_missing = true

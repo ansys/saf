@@ -35,17 +35,32 @@ classifiers = [
   "Programming Language :: Python :: 3.14",
   "Topic :: Software Development :: Libraries",
 ]
-
 dependencies = [
   "fastapi>=0.115.2,<1.0",
   "httpx2>=2.5.0,<3",
   "joserfc>=1.6.3,<2",
 ]
 
+[tool.uv]
+sources.ansys-iam-oidc = { workspace = true }
+build-backend.module-name = "ansys.iam.oidc"
+build-backend.namespace = true
+
+[tool.pyright]
+pythonVersion = "3.12"
+venv = ".venv"
+venvPath = "../.."
+strict = [ "src/ansys/iam/oidc", "tests" ]
+include = [ "src/ansys/iam/oidc", "tests" ]
+exclude = [
+  ".git",
+  ".poetry",
+  ".venv",
+  "doc",
+]
+extraPaths = [ "src" ]
+
 [tool.pytest]
-log_cli = true
-norecursedirs = [ ".moon", ".venv", "tmp*", ".git" ]
-pythonpath = [ "." ]
 addopts = [
   "--strict-config",
   "--strict-markers",
@@ -53,32 +68,19 @@ addopts = [
   "-nlogical",
   "--dist=loadfile",
 ]
-asyncio_mode = "auto"
 asyncio_default_fixture_loop_scope = "function"
-filterwarnings = [  ]
-markers = [  ]
-testpaths = [ "tests/" ]
+asyncio_mode = "auto"
+filterwarnings = []
+log_cli = true
+markers = []
+norecursedirs = [ ".moon", ".venv", "tmp*", ".git" ]
+pythonpath = [ "." ]
+testpaths = [ "tests" ]
 
-[tool.coverage.run]
-source = [ "ansys.iam.oidc" ]
-
-[tool.coverage.report]
-omit = [ "*/pytest-of-*/pytest-*/popen-*/*", "/tmp/*" ]
-show_missing = true
-
-[tool.pyright]
-pythonVersion = "3.12"
-extraPaths = [ "src" ]
-include = [ "src/ansys/iam/oidc", "tests" ]
-exclude = [
-  ".venv",
-  ".poetry",
-  ".git",
-  "doc",
-]
-strict = [ "src/ansys/iam/oidc", "tests" ]
-venvPath = "../.."
-venv = ".venv"
+[tool.coverage]
+run.source = [ "ansys.iam.oidc" ]
+report.omit = [ "*/pytest-of-*/pytest-*/popen-*/*", "/tmp/*" ]
+report.show_missing = true
 
 [tool.copyright]
 exclude = [
@@ -86,10 +88,3 @@ exclude = [
   "tests/*",
   ".github/*",
 ]
-
-[tool.uv.sources]
-ansys-iam-oidc = { workspace = true }
-
-[tool.uv.build-backend]
-module-name = "ansys.iam.oidc"
-namespace = true

@@ -19,16 +19,16 @@ from pathlib import Path
 import platform
 import re
 
+import pytest
+
+from ansys.saf.glow._config.const import LOCALHOST_HOSTS
+from ansys.saf.glow.client import InternalSolutionException
 from ansys.saf.testing.common import YieldFixture
 from ansys.saf.testing.hps import GetHpsJobIdsType
 from ansys.saf.testing.network import get_docker_gateway_ip, get_local_ip
 from ansys.saf.testing.pim.process import PimProcess
 from ansys.saf.testing.solution.const import TestDeployment
 from ansys.saf.testing.solution.end_to_end import GlowBaseProcess, NoGrpcCertificates, ProjectFixture
-import pytest
-
-from ansys.saf.glow._config.const import LOCALHOST_HOSTS
-from ansys.saf.glow.client import InternalSolutionException
 from tests.mocks.solution_end_to_end.solution.definition import EndToEndSolution
 
 pytestmark = [

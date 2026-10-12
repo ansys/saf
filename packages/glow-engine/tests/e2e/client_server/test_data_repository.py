@@ -24,7 +24,11 @@ import time
 import uuid
 import xml.etree.ElementTree as ET
 
+import httpx2
+import pytest
+
 from ansys.bdm.api import NO_ENTITY, EntityHandle
+from ansys.saf.glow.client import InternalSolutionException
 from ansys.saf.testing.common import YieldFixture
 from ansys.saf.testing.solution.end_to_end import (
     DataRepositoryConfiguration,
@@ -35,10 +39,6 @@ from ansys.saf.testing.solution.end_to_end import (
     MinervaDataRepoConfiguration,
     ProjectFixture,
 )
-import httpx2
-import pytest
-
-from ansys.saf.glow.client import InternalSolutionException
 from tests.conftest import E2E_TESTS_DIR
 from tests.mocks.solutions.data_repository import (
     DataRepositorySolution,

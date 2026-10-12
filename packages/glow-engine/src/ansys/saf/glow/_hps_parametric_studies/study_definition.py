@@ -29,7 +29,6 @@ import tempfile
 from typing import Any, Protocol, cast
 import uuid
 
-from ansys.bdm.api import EntityHandle
 from ansys.hps.client.jms import (  # pyright: ignore[reportMissingTypeStubs]
     BoolParameterDefinition,
     File,
@@ -50,8 +49,8 @@ from ansys.hps.client.jms import (  # pyright: ignore[reportMissingTypeStubs]
 from ansys.hps.client.jms.resource.parameter_definition import (  # pyright: ignore[reportMissingTypeStubs]
     ParameterDefinition,
 )
-from ansys.saf.product_configuration.interfaces import Software as GlowSoftware
 
+from ansys.bdm.api import EntityHandle
 from ansys.saf.glow._core.blob_managers import HpsBlobManager
 from ansys.saf.glow._executor.local import transaction_local
 from ansys.saf.glow._hps_auth.hps_authenticator import create_hps_authenticator
@@ -71,6 +70,7 @@ from ansys.saf.glow._hps_parametric_studies.inner_exec_python import INNER_EXEC_
 from ansys.saf.glow._hps_parametric_studies.serialization import encode_data_for_hps, encode_string_for_hps
 from ansys.saf.glow._hps_parametric_studies.system import HpsParametricStudySystem
 from ansys.saf.glow.hps_execution_str import HPS_EXECUTION_CONTENT
+from ansys.saf.product_configuration.interfaces import Software as GlowSoftware
 
 logger = logging.getLogger(__name__)
 

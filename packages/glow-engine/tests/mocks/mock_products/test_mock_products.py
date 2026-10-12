@@ -16,9 +16,9 @@
 
 from pathlib import Path
 
-from ansys.saf.testing.platform_specific import xfail_for_ci_on_linux
 import pytest
 
+from ansys.saf.testing.platform_specific import xfail_for_ci_on_linux
 from tests.mocks.mock_products.client import (
     MockGrpcProductClient,
     MockHttpProductClient,

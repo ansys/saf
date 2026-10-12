@@ -5,101 +5,214 @@ Contribute as a developer
 
 Developers can contribute by adding features, fixing bugs, improving tests and documentation, reviewing code, and joining technical discussions to ensure project quality.
 
-.. _fork_the_repository:
+.. _choose_your_workflow:
 
-Fork the repository
-===================
+Choose your workflow
+====================
 
-Forking the repository is the first step to contributing to the project. This
-allows you to have your own copy of the project so you can make changes without
-affecting the main project. Once you have made your changes, you can submit a
-pull-request to the main project to have your changes reviewed and merged.
+How you get the code and submit changes depends on your permissions on the
+``ansys/saf`` repository.
 
-.. button-link:: https://github.com/ansys/saf/fork
-    :color: primary
-    :align: center
+By default, all members of the
+`Ansys GitHub organization <https://github.com/ansys>`__ (``ansys``) have
+write access to ``ansys/saf``.
 
-    :fa:`code-fork` Fork this project
+.. important::
 
-.. note::
+    - **Clone the repository** if you are a member of the
+      `Ansys GitHub organization <https://github.com/ansys>`__. You clone
+      ``ansys/saf`` directly, push branches to it, and open a pull-request
+      from those branches.
+    - **Fork the repository** if you are **not** a member of the
+      `Ansys GitHub organization <https://github.com/ansys>`__. You cannot
+      push branches to ``ansys/saf``, so you develop on your own fork and open
+      a pull-request from it.
 
-    If you are an Ansys employee, you can skip this step.
+    If a ``git push`` to ``ansys/saf`` is rejected with a permission error,
+    your access has been restricted: switch to the fork workflow.
+
+.. list-table::
+    :header-rows: 1
+    :widths: 30 35 35
+
+    * -
+      - `Ansys GitHub organization <https://github.com/ansys>`__ member
+      - Not a member
+    * - Get the code
+      - :ref:`Clone <clone_the_repository>` ``ansys/saf``
+      - :ref:`Fork <fork_the_repository>` ``ansys/saf``, then clone your fork
+    * - Push branches to
+      - ``ansys/saf`` (``origin``)
+      - Your fork (``origin``)
+    * - Pull-request source
+      - Branch in ``ansys/saf``
+      - Branch in your fork
+    * - CI/CD pipelines
+      - Run for ``SAF developers team`` members. Otherwise, a team member must
+        authorize the run for every new commit.
+      - Must be authorized by a ``SAF developers team`` member for every new
+        commit
+
+Both workflows share the same prerequisites.
+
+Prerequisites
+-------------
+
+- Install `git`_ on your machine.
+- Set up SSH access by following the instructions to `configure SSH`_ with
+  your GitHub account. This allows you to access the
+  repository without tokens or passwords.
+- On Windows, enable long paths. Some paths in the repository exceed the
+  default Windows path length limit.
+
+  .. code-block:: text
+
+      git config --global core.longpaths true
 
 .. _clone_the_repository:
 
-Clone the repository
-====================
+Clone the repository (Ansys GitHub organization members)
+========================================================
 
-Make sure you `configure SSH`_ with your GitHub
-account. This allows you to clone the repository without having to use tokens
-or passwords. Also, make sure you have `git`_ installed in your machine.
+Use this workflow if you are a member of the
+`Ansys GitHub organization <https://github.com/ansys>`__, which grants you
+write access to ``ansys/saf`` by default. You work
+directly on ``ansys/saf`` without creating a fork.
 
-Some paths in the repository exceed the default Windows path length limit.
-Before cloning on Windows, enable long paths:
+#. Clone the repository using SSH:
 
-.. code-block:: text
+   .. code-block:: bash
 
-    git config --global core.longpaths true
+       git clone git@github.com:ansys/saf.git
+       cd saf
 
-To clone the repository using SSH, run:
+#. Create a branch from an up-to-date ``main``:
 
-.. code-block:: bash
+   .. code-block:: bash
 
-    git clone git@github.com:ansys/saf.git
+       git fetch origin
+       git checkout -b <my-branch> origin/main
 
-.. note::
+#. Make your changes and commit them. Follow the `Conventional Commits`_
+   specification for commit messages.
 
-    If you are not an Ansys employee, you need to :ref:`fork the repository <fork_the_repository>` and
-    replace ``ansys`` with your GitHub user name in the ``git clone``
-    command.
+#. Push the branch to ``ansys/saf``:
+
+   .. code-block:: bash
+
+       git push --set-upstream origin <my-branch>
+
+#. :ref:`Open a pull-request <open_a_pull_request_as_a_member>` from your
+   branch against ``main``.
+
+.. _fork_the_repository:
+
+Fork the repository (non-members of the Ansys GitHub organization)
+==================================================================
+
+Use this workflow if you are **not** a member of the
+`Ansys GitHub organization <https://github.com/ansys>`__, and therefore do not
+have write access to ``ansys/saf``.
+A fork is your own copy of the project, where you can make changes without
+affecting the main project. When your changes are ready, you submit a
+pull-request from your fork to ``ansys/saf`` to have them reviewed and merged.
+
+#. Fork the repository to your own GitHub account:
+
+   .. button-link:: https://github.com/ansys/saf/fork
+       :color: primary
+       :align: center
+
+       :fa:`code-fork` Fork this project
+
+#. Clone your fork, replacing ``<your-user-name>`` with your GitHub user name:
+
+   .. code-block:: bash
+
+       git clone git@github.com:<your-user-name>/saf.git
+       cd saf
+
+#. Add the ``ansys/saf`` repository as the ``upstream`` remote, so that you can
+   keep your fork up to date:
+
+   .. code-block:: bash
+
+       git remote add upstream git@github.com:ansys/saf.git
+
+#. Create a branch from an up-to-date ``upstream/main``:
+
+   .. code-block:: bash
+
+       git fetch upstream
+       git checkout -b <my-branch> upstream/main
+
+#. Make your changes and commit them. Follow the `Conventional Commits`_
+   specification for commit messages.
+
+#. Push the branch to your fork:
+
+   .. code-block:: bash
+
+       git push --set-upstream origin <my-branch>
+
+#. :ref:`Open a pull-request from your fork <open_a_pull_request_from_a_fork>`
+   against the ``main`` branch of ``ansys/saf``.
+
+.. tip::
+
+    To keep your fork up to date, fetch ``upstream`` regularly and rebase or
+    merge ``upstream/main`` into your branch.
 
 .. _repository_layout:
 
 Understand the repository layout
 ================================
 
-The ``saf`` repository groups all SAF packages in a single repository. Every
-package located under the ``packages`` directory is independent: it has its own
-``pyproject.toml``, its own ``poetry.lock``, its own ``.pre-commit-config.yaml``,
-and its own release lifecycle.
+The ``saf`` repository groups SAF packages in a single repository. The Python
+packages registered in ``.moon/workspace.yml`` are managed as a uv workspace
+rooted at the repository root. Each package keeps its own ``pyproject.toml``
+and release lifecycle; dependency resolution is recorded in the root
+``uv.lock``. Moon provides the common tasks for these packages. Run Moon
+commands from the repository root, and use ``moon projects`` to list the
+registered projects.
 
 .. code-block:: text
 
     saf/
-    |-- architecture/    Design documents of the repository
-    |-- doc/             Centralized documentation
-    |-- packages/        All SAF packages
-    |   |-- bdm-python-api/
-    |   |-- bdm-python-shared-volume/
-    |   |-- dash-super-components/
-    |   |-- glow-engine/
-    |   |-- saf-cli/
-    |   |-- saf-desktop-installer/
-    |   |-- saf-desktop-orchestrator/
-    |   |-- saf-iam-oidc/
-    |   |-- saf-product-configuration/
-    |   |-- saf-product-manager/
-    |   |-- saf-sdk/
-    |   |-- saf-templates/
-    |   |-- saf-testing/
-    |-- pyproject.toml   Root project, documentation dependencies only
+    |__ doc/             Centralized documentation
+    |__ .moon/           Moon workspace and shared task definitions
+    |__ packages/        All SAF packages
+    |   |__ bdm-python-api/
+    |   |__ bdm-python-shared-volume/
+    |   |__ dash-super-components/
+    |   |__ glow-engine/
+    |   |__ saf-cli/
+    |   |__ saf-desktop-installer/
+    |   |__ saf-desktop-orchestrator/
+    |   |__ saf-iam-oidc/
+    |   |__ saf-product-configuration/
+    |   |__ saf-product-manager/
+    |   |__ saf-projects-dashboard/
+    |   |__ saf-sdk/
+    |   |__ saf-templates/
+    |   |__ saf-testing/
+    |__ pyproject.toml   Root uv workspace and documentation dependencies
+    |__ uv.lock          Resolved dependencies for the workspace
 
-Two different tools are used, depending on where you work:
+You can leverage the Moon tasks defined in the root ``.moon`` directory to manage and interact with the SAF packages efficiently.
 
-.. list-table::  Tools used for repository-level and package-level tasks
+.. list-table:: Moon tasks for repository-level and package-level work
     :header-rows: 1
-    :stub-columns: 1
-    :widths: 50 30 20
+    :widths: 50 50
 
-    * - Task
-      - Working directory
-      - Tool
-    * - Centralized documentation and repository code style checks
-      - Repository root
-      - ``uv``
-    * - Package development, tests, and package code style checks
-      - ``packages/<package-name>``
-      - ``Poetry``
+    * - Work
+      - Command
+    * - Synchronize workspace dependencies
+      - ``moon run root:uv-sync``
+    * - Run root checks
+      - ``moon run root:pre-commit``
+    * - Run a package task (for example, tests)
+      - ``moon run saf-testing:test``
 
 
 .. _install_for_developers:
@@ -114,195 +227,59 @@ reinstall the package every time you make a change.
 All SAF packages require Python 3.11 or a later version, up to but excluding
 Python 4.
 
+Set up the workspace
+--------------------
 
-Install Poetry
---------------
-
-SAF packages are managed with Poetry 2.3.2.
-
-.. important::
-
-    Install Poetry outside of the virtual environment of the package you work
-    on. When Poetry shares an environment with the project dependencies, it
-    resolves and upgrades its own dependencies together with the project ones,
-    which leads to broken environments. Use a tool that installs Poetry in its
-    own isolated environment instead.
-
-.. tab-set::
-
-    .. tab-item:: pipx
-
-        .. code-block:: text
-
-            python -m pip install --user pipx
-            python -m pipx ensurepath
-            pipx install poetry==2.3.2
-
-    .. tab-item:: uv
-
-        .. code-block:: text
-
-            python -m pip install --user uv
-            uv tool install poetry==2.3.2
-
-    .. tab-item:: Official installer
-
-        .. tab-set::
-
-            .. tab-item:: Windows
-
-                .. code-block:: text
-
-                    (Invoke-WebRequest -Uri https://install.python-poetry.org -UseBasicParsing).Content | py - --version 2.3.2
-
-            .. tab-item:: macOS/Linux/UNIX
-
-                .. code-block:: text
-
-                    curl -sSL https://install.python-poetry.org | python3 - --version 2.3.2
-
-Verify the installation by running:
-
-.. code-block:: text
-
-    poetry --version
-
-Then, configure Poetry to create the virtual environment inside the package
-directory. This keeps the environment next to the sources and makes it easier
-for editors to detect it:
-
-.. code-block:: text
-
-    poetry config virtualenvs.in-project true
-
-
-Install a package in development mode
-----------------------------------------
-
-Start by navigating to the package you want to work on. For example, to work on
-the SAF CLI, run:
-
-.. code-block:: text
-
-    cd packages/saf-cli
-
-Then, install the package in development mode, together with the dependencies
-required to run the tests and to build the documentation:
-
-.. code-block:: text
-
-    poetry install --with tests,doc
-
-Poetry creates the ``.venv`` directory inside the package directory, installs
-the package in editable mode, and installs its dependencies.
-
-.. note::
-
-    Some packages declare optional extras. To install them all, append
-    ``--all-extras`` to the previous command. This is what the CI/CD pipelines
-    do.
-
-Finally, activate the environment by running:
-
-.. tab-set::
-
-    .. tab-item:: Windows
-
-        .. tab-set::
-
-            .. tab-item:: CMD
-
-                .. code-block:: text
-
-                    .venv\Scripts\activate.bat
-
-            .. tab-item:: PowerShell
-
-                .. code-block:: text
-
-                    .venv\Scripts\Activate.ps1
-
-    .. tab-item:: macOS/Linux/UNIX
-
-        .. code-block:: text
-
-            source .venv/bin/activate
-
-Activating the environment is optional. If you prefer not to activate it,
-prefix every command with ``poetry run``.
+Install the Moon CLI. Moon uses the root ``uv.lock`` and creates the shared ``.venv`` at the
+repository root. Package tasks select the relevant workspace member and install
+its extras as needed. Set ``UV_PYTHON`` and ``MOON_PYTHON_VERSION`` to the same
+Python version before running package tasks.
 
 .. _run_tests:
 
 Run the tests
 =============
 
-Tests are declared in the ``tests`` directory of each package and are run with
-pytest. From the directory of the package you work on, run:
+Tests are declared in each package's ``tests`` directory. From the repository
+root, run the package's Moon task. For example:
 
 .. code-block:: text
 
-    poetry run pytest
+  moon run saf-testing:test
 
-To compute the coverage ratio and generate a report, run:
-
-.. code-block:: text
-
-    poetry run pytest --cov=ansys --cov-report=term
+The task runs pytest with coverage enabled and writes terminal, XML, and HTML
+coverage reports.
 
 .. note::
 
-    Some packages, such as ``glow-engine``, declare test sessions that require
-    additional services or specific markers. The test sessions run by the
-    CI/CD pipelines are declared in the
-    ``.github/workflows/tests_groups_definitions`` directory. Use them as a
-    reference to reproduce a given test session locally.
+  Some packages, such as ``glow-engine``, declare test sessions that require
+  additional services or specific markers. The test sessions run by the
+  CI/CD pipelines are declared in the
+  ``.github/workflows/tests_groups_definitions`` directory. Use them as a
+  reference to reproduce a given test session locally.
 
 .. _run_code_style_checks:
 
 Run the code style checks
 =========================
 
-Code style is enforced with ``pre-commit``. There are two levels of
-configuration: the root one, which applies to the whole repository, and one per
-package.
-
-To run the root checks, from the repository root, run:
+Code style is enforced with ``pre-commit``. Run root checks from the repository
+root:
 
 .. code-block:: text
 
-    uv venv .venv --python 3.12
-    uv pip install pre-commit==4.6.0
-    uv run pre-commit run --all-files
+  moon run root:pre-commit
 
-Not every package declares ``pre-commit``. When it does, the dependency group
-that contains it depends on the package:
-
-.. list-table::  Pre-commit dependency groups
-    :header-rows: 1
-    :widths: 20 80
-    :stub-columns: 1
-
-    * - Group
-      - Packages
-    * - ``style``
-      - ``dash-super-components``, ``glow-engine``, ``saf-testing``
-    * - ``dev``
-      - ``saf-cli``, ``saf-desktop-orchestrator``,
-        ``saf-product-configuration``, ``saf-product-manager``
-    * - None
-      - ``bdm-python-api``, ``bdm-python-shared-volume``,
-        ``saf-desktop-installer``, ``saf-iam-oidc``, ``saf-templates``
-
-To run the checks of a package that declares ``pre-commit``, from the directory
-of that package, run:
+To run a package's checks, use its ``pre-commit`` task. This task also runs the
+package's Ruff, Pyright, and Bandit checks. For example:
 
 .. code-block:: text
 
-    poetry install --with tests,doc,style
-    poetry run pre-commit run --all-files
+  moon run saf-testing:pre-commit
 
-Replace ``style`` with ``dev`` for the packages that declare ``pre-commit`` in
-the ``dev`` group.
+Other package tasks include ``test``, ``build``, ``build-doc``, ``ruff``,
+``pyright``, and ``bandit``. Use ``moon projects`` to find registered project
+names.
 
 .. _build_the_documentation_dev:
 
@@ -327,6 +304,44 @@ The following rules are verified automatically:
 Labels are applied automatically, based on the title of the pull-request and on
 the files you changed. The labels of the packages you changed determine which
 style, build, and test jobs run.
+
+.. _open_a_pull_request_as_a_member:
+
+Open a pull-request as an organization member
+---------------------------------------------
+
+#. In GitHub, open a pull-request with:
+
+   - **base repository**: ``ansys/saf``, **base** branch: ``main``.
+   - **head repository**: ``ansys/saf``, **compare** branch: ``<my-branch>``.
+
+   Make sure the title and description follow the rules listed above.
+
+.. _open_a_pull_request_from_a_fork:
+
+Open a pull-request from a fork
+-------------------------------
+
+.. important::
+
+    If you are not a member of the
+    `Ansys GitHub organization <https://github.com/ansys>`__, you must open your
+    pull-request **from your fork** against the ``main`` branch of
+    ``ansys/saf``. Pull-requests from branches pushed directly to ``ansys/saf``
+    are only possible for members of the organization.
+
+#. In GitHub, open a pull-request with:
+
+   - **base repository**: ``ansys/saf``, **base** branch: ``main``.
+   - **head repository**: your fork, **compare** branch: ``<my-branch>``.
+
+   Make sure the title and description follow the rules listed above.
+
+.. note::
+
+    The :ref:`CI/CD pipelines <run_pipelines>` do not run automatically on
+    pull-requests from forks. A member of the ``SAF developers team`` must
+    authorize the run for every new commit.
 
 .. _run_pipelines:
 

@@ -1,4 +1,21 @@
 #!/usr/bin/env python
+
+# Copyright (C) 2026 ANSYS, Inc. and/or its affiliates.
+# SPDX-License-Identifier: Apache-2.0
+#
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 """
 Wrapper script to run dash-generate-components with proper path handling on Windows.
 
@@ -17,22 +34,30 @@ import shutil
 import subprocess
 import sys
 
+RUFF_HEADER = "# ruff: noqa\n"
 
-def _require_dash_or_exit():
-    """Fail fast with actionable guidance when dash is not installed."""
-    try:
-        import dash  # noqa: F401
-    except ModuleNotFoundError as exc:
-        print(
-            "Missing required Python dependency 'dash'.\n"
-            "Install it in the active environment, then rerun the build.\n"
-            "Examples:\n"
-            "  - poetry install --with build\n"
-            '  - pip install "dash[dev]>=3.0.0"\n'
-            "  - pip install -r scripts/requirements.txt",
-            file=sys.stderr,
-        )
-        raise SystemExit(1) from exc
+
+def _add_license_headers(files):
+    """Apply the configured Ansys license-header hook to generated files."""
+    command = [
+        sys.executable,
+        "-m",
+        "pre_commit",
+        "run",
+        "add-license-headers",
+        "--files",
+        *(str(path.relative_to(Path.cwd())) for path in files),
+    ]
+    results = []
+    for _ in range(2):
+        result = subprocess.run(command, check=False, capture_output=True, text=True)
+        results.append(result)
+        if result.returncode == 0:
+            return
+    for result in results:
+        sys.stdout.write(result.stdout)
+        sys.stderr.write(result.stderr)
+    raise subprocess.CalledProcessError(result.returncode, command)  # pyright: ignore[reportPossiblyUnboundVariable]
 
 
 def run_node_extract(components_source, ignore, local_extract_path):
@@ -91,7 +116,7 @@ def _filter_metadata(metadata):
     return metadata
 
 
-def main():
+def main():  # noqa: C901
     """Run component generation with Windows path fix."""
     parser = argparse.ArgumentParser(description="Generate Dash component Python wrappers")
     parser.add_argument("components_source", help="Path to TypeScript/React components")
@@ -103,8 +128,6 @@ def main():
     parser.add_argument("-n", "--namespace", default=None, help="Component namespace (defaults to project_shortname)")
 
     args = parser.parse_args()
-
-    _require_dash_or_exit()
 
     from importlib.resources import files
 
@@ -139,22 +162,23 @@ def main():
 
         # Stamp all generated .py files as auto-generated so linters skip them.
         output_dir = Path(args.project_shortname).resolve()
-        for fpath in output_dir.iterdir():
-            if fpath.suffix != ".py":
-                continue
+        generated_python_files = [
+            output_dir / f"{component_path.split('/')[-1].split('.')[0]}.py" for component_path in metadata
+        ]
+        generated_python_files.append(output_dir / "_imports_.py")
+        for fpath in generated_python_files:
             with fpath.open(encoding="utf-8") as fh:
                 content = fh.read()
-            noqa_header = "# ruff: noqa\n"
-            if not content.startswith(noqa_header):
+            if not content.startswith(RUFF_HEADER):
                 with fpath.open("w", encoding="utf-8") as fh:
-                    fh.write(noqa_header + content)
+                    fh.write(RUFF_HEADER + content)
 
         if args.namespace and args.namespace != args.project_shortname:
             import re
 
             output_dir = Path(args.project_shortname).resolve()
             for fpath in output_dir.iterdir():
-                if fpath.suffix == ".py":
+                if fpath in generated_python_files:
                     with fpath.open(encoding="utf-8") as fh:
                         content = fh.read()
                     patched = re.sub(
@@ -184,6 +208,11 @@ def main():
                             "Verify Dash generator output format hasn't changed.",
                             file=sys.stderr,
                         )
+
+        _add_license_headers(generated_python_files)
+
+        for fpath in [*generated_python_files, output_dir / "proptypes.js", output_dir / "metadata.json"]:
+            fpath.write_text(fpath.read_text(encoding="utf-8"), encoding="utf-8", newline="\n")
 
         print("Component generation complete!")
 

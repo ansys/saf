@@ -532,6 +532,8 @@ jobs:
       - name: Run tests
         id: run-tests
         if: ${{ env.USE_MOON == 'false' }}
+        env:
+          APPDATA: ${{ runner.temp }}
         uses: ansys/saf-devops/run-tests@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
         with:
           python-version: ${{ inputs.python-version }}

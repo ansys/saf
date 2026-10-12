@@ -56,7 +56,7 @@ GLOW provides Pythonic APIs that you can use to develop solutions. This document
         :link: cli
         :shadow: lg
 
-        Provides a command-line interface for accessing SAF CLI commands.
+        Provides the command-line interface for running GLOW API and UI servers and analysis commands.
 
 
 .. toctree::

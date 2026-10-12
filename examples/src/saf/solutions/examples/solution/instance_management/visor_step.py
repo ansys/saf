@@ -23,10 +23,10 @@ from ansys.saf.glow.solution import StepModel, StepSpec, create_instance, instan
 from ansys.saf.product_manager.visor import VisorManager
 from ansys.visor.viewer import Metadata
 
-CUBE_PATH = Path(__file__).parent / "shapes" / "cube.vtm"
-PISTON_PATH = Path(__file__).parent / "shapes" / "piston_rod.vtkhdf"
-SPHERES_PATH = Path(__file__).parent / "shapes" / "vtk_scene_sphere_l2_b3_r32_v3_c1_z3.vtm"
-ELBOW_PATH = Path(__file__).parent / "shapes" / "elbow-2-00005.vtkhdf"
+CUBE_PATH = Path(__file__).parent.parent / "method_assets" / "visor_shapes" / "cube.vtm"
+PISTON_PATH = Path(__file__).parent.parent / "method_assets" / "visor_shapes" / "piston_rod.vtkhdf"
+SPHERES_PATH = Path(__file__).parent.parent / "method_assets" / "visor_shapes" / "vtk_scene_sphere_l2_b3_r32_v3_c1_z3.vtm"
+ELBOW_PATH = Path(__file__).parent.parent / "method_assets" / "visor_shapes" / "elbow-2-00005.vtkhdf"
 
 
 class VisorStep(StepModel):

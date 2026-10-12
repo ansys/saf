@@ -170,7 +170,7 @@ The following versions were resolved when this version of ``ansys-saf-sdk`` was 
         :widths: 80 20
 
         * - Add installer support for repeated dependencies across groups
-          - `#25 <https://github.com/ansys/saf/pull/6>`_
+          - `#25 <https://github.com/ansys/saf/pull/25>`_
 
 
 `0.1.0 <https://github.com/ansys/saf/releases?page=2#release-v0.1.0-saf-sdk>`_ — September 9, 2026

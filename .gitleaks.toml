@@ -6,7 +6,6 @@ useDefault = true
 [[rules]]
 id = "private-azure-pypi-url"
 description = "Detected a reference or link to a private Azure Artifacts PyPI feed."
-# This regex catches both the standard feed format and the simple index format
 regex = '''pkgs\.dev\.azure\.com/[a-zA-Z0-9_\-]+/.*_packaging/'''
 keywords = [
     "pkgs.dev.azure.com",
@@ -15,6 +14,20 @@ keywords = [
 
 [[allowlists]]
 description = "Allow the dummy Keycloak test secret"
+condition = "AND"
 paths = ['''^packages/saf-testing/src/ansys/saf/testing/_hps/scripts/keycloak/\.env$''']
 regexTarget = "line"
 regexes = ['''^KC_CLIENT_SECRET=FRJILPV9NVKIAfcQqOtlkjo8inR5eVMWHyfNmlisLDw=\s*$''']
+
+[[allowlists]]
+description = "Allow the dummy HPS test secret"
+condition = "AND"
+paths = ['''^packages/glow-engine/tests/e2e/client_server/test_hps_authorization.py$''']
+regexTarget = "line"
+regexes = ['''^client_secret": "6z1Y3oqKi7iyrTItRr10zGyNIkBsI0uN\s*$''']
+
+[[allowlists]]
+description = "Test certificates for Minerva OAuth E2E"
+paths = [
+  '''^packages/glow-engine/tests/e2e/minerva_oauth/App_Data/Certificates/.*$''',
+]

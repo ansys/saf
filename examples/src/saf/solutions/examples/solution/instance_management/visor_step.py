@@ -67,13 +67,13 @@ class VisorStep(StepModel):
     @instance("visor_manager")
     def show_piston(self, visor_manager: VisorManager) -> None:
         """Display the piston rod in the running Visor instance."""
-        self.transaction.raise_event(
-            message="Loading piston rod in VISOR.", stream_name="visor-output-stream"
-        )
+        self.transaction.raise_event(message="Loading piston rod in VISOR.", stream_name="visor-output-stream")
         try:
             visor_manager.instance.update(PISTON_PATH.as_posix(), Metadata(name="Piston Rod", unit="m"))
         except Exception as e:
-            self.transaction.raise_event(message=f"VISOR piston rod update failed: {e}", stream_name="visor-output-stream")
+            self.transaction.raise_event(
+                message=f"VISOR piston rod update failed: {e}", stream_name="visor-output-stream"
+            )
             raise
         self.transaction.raise_event(message="Piston rod displayed in VISOR.", stream_name="visor-output-stream")
 

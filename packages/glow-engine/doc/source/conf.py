@@ -192,6 +192,7 @@ html_theme_options = {
         ("SAF", f"https://{cname}/version/stable/api/index.html"),
     ],
     "check_switcher": False,
+    "header_links_before_dropdown": 8,
 }
 
 html_theme_options["switcher"] = {

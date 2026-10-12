@@ -199,6 +199,10 @@ html_theme_options["switcher"] = {
     "version_match": get_version_match(version),
 }
 
+html_css_files = [
+    "css/custom.css",
+]
+
 # ============================================================================
 # Jinja configuration
 # ============================================================================

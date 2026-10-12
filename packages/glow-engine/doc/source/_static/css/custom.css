@@ -752,7 +752,7 @@ svg.saf-concept-icon {
     color: #ff8c00 !important;
 }
 
-/* Sphinx seealso admonition — Synopsys tea border and icon */
+/* Sphinx seealso admonition — Synopsys teal border and icon */
 
 .admonition.seealso    {
     --ast-admonition-seealso-icon: #038589;

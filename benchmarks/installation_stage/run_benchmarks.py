@@ -36,6 +36,12 @@ from uv_prepare import prepare_poetry_payload, prepare_uv_payload
 SCRIPT_DIRECTORY = Path(__file__).resolve().parent
 DEPLOY_SCRIPT = SCRIPT_DIRECTORY / "deploy.py"
 DEFAULT_CONFIG_NAMES = ("config.local.json", "config.json")
+DEPLOYMENT_PROGRESS_MESSAGES = {
+    "Installing dependencies with poetry.",
+    "Installing dependencies with uv.",
+    "Preloading the application.",
+    "Creating the shortcut.",
+}
 
 
 def start_package_server(root: Path) -> tuple[ThreadingHTTPServer, Thread, str]:
@@ -66,6 +72,8 @@ class PlannedRun:
 def default_saf_repository() -> Path:
     """Return the repository containing this benchmarks directory."""
     repository = SCRIPT_DIRECTORY.parent
+    if not ((repository / "examples").is_dir() and (repository / "packages").is_dir()):
+        repository = repository.parent
     if (repository / "examples").is_dir() and (repository / "packages").is_dir():
         return repository.resolve()
     return (repository / "saf").resolve()
@@ -133,7 +141,7 @@ def parse_arguments() -> argparse.Namespace:
     parser.add_argument(
         "--output-dir",
         type=Path,
-        help="Directory for run payloads and reports. Defaults to benchmarks/results/<timestamp>.",
+        help="Directory for run payloads and reports. Defaults to benchmarks/installation_stage/results/<timestamp>.",
     )
     parser.add_argument(
         "--fail-fast",
@@ -244,6 +252,7 @@ def run_one(
     local_server: ThreadingHTTPServer | None = None
     server_thread: Thread | None = None
     try:
+        print("Preparing payload.", flush=True)
         copy_payload(source_payload, run_directory)
         run_metadata = run_directory / "solution-metadata.json"
         if item.backend == "uv":
@@ -273,10 +282,12 @@ def run_one(
         else:
             preparation_log.write_text("Poetry payload copied without UV preparation.\n", encoding="utf-8")
         record["preparation_seconds"] = time.perf_counter() - preparation_started
+        print("Running deployment.", flush=True)
 
         shortcut_root = run_directory / "shortcut"
         command: list[str | Path] = [
             sys.executable,
+            "-u",
             DEPLOY_SCRIPT,
             "--backend",
             item.backend,
@@ -293,36 +304,44 @@ def run_one(
             command.append("--poetry-wheelhouse")
         elif item.backend == "poetry" and item.variant == "server":
             command.append("--poetry-server")
-
-        runner_started = time.perf_counter()
-        completed = subprocess.run(
-            [str(argument) for argument in command],
-            cwd=SCRIPT_DIRECTORY,
-            env=(
+        runner_environment = sandbox_environment(run_directory)
+        if item.variant == "server":
+            runner_environment.update(
                 {
-                    **sandbox_environment(run_directory),
                     "NO_PROXY": "127.0.0.1,localhost",
                     "no_proxy": "127.0.0.1,localhost",
-                }
-                if item.variant == "server"
-                else sandbox_environment(run_directory)
-            ),
+                },
+            )
+        runner_started = time.perf_counter()
+        process = subprocess.Popen(
+            [str(argument) for argument in command],
+            cwd=SCRIPT_DIRECTORY,
+            env=runner_environment,
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
             text=True,
-            check=False,
+            bufsize=1,
         )
+        if process.stdout is None:
+            raise RuntimeError("Deployment process did not provide a standard output stream.")
+        output_lines: list[str] = []
+        for line in process.stdout:
+            output_lines.append(line)
+            if line.strip() in DEPLOYMENT_PROGRESS_MESSAGES:
+                print(line, end="", flush=True)
+        completed_output = "".join(output_lines)
+        returncode = process.wait()
         record["runner_seconds"] = time.perf_counter() - runner_started
         runner_log.write_text(
-            f"$ {command_text(command)}\n\n{completed.stdout}",
+            f"$ {command_text(command)}\n\n{completed_output}",
             encoding="utf-8",
         )
-        if completed.returncode != 0:
+        if returncode != 0:
             raise RuntimeError(
-                f"Deployment failed with exit code {completed.returncode}. "
-                f"See {runner_log}.\n{completed.stdout[-4000:]}",
+                f"Deployment failed with exit code {returncode}. "
+                f"See {runner_log} for details.",
             )
-        result = extract_result(completed.stdout)
+        result = extract_result(completed_output)
         record.update(result)
         record["status"] = "passed"
     except (OSError, RuntimeError, ValueError, subprocess.SubprocessError) as error:
@@ -371,9 +390,9 @@ def main() -> int:
         config = BenchmarkConfig.defaults(default_saf_repository())
     plan = build_plan(arguments)
     validate_configuration(config, plan)
-    print(f"Selected {len(plan)} benchmark runs:")
+    print(f"Selected {len(plan)} benchmark runs:", flush=True)
     for item in plan:
-        print(f"  - {item.label}")
+        print(f"  - {item.label}", flush=True)
     output_root = resolve_output_directory(arguments.output_dir)
     if arguments.dry_run:
         return 0
@@ -381,26 +400,29 @@ def main() -> int:
     if output_root.exists() and any(output_root.iterdir()):
         raise FileExistsError(f"Output directory is not empty: {output_root}")
     output_root.mkdir(parents=True, exist_ok=True)
+    print("\n----- Creating assets -----", flush=True)
     config, preparation_records = prepare_benchmark_assets(
         config,
         sorted({item.mode for item in plan}),
         output_root / "preparation",
     )
     validate_prepared_configuration(config, plan)
+    print("Assets created.", flush=True)
 
     records: list[dict[str, Any]] = []
-    for index, item in enumerate(plan, start=1):
-        print(f"\n[{index}/{len(plan)}] Starting {item.label}")
+    for item in plan:
+        print(f"\n----- {item.label} -----", flush=True)
         record = run_one(item, config, output_root)
         records.append(record)
         if record["status"] == "passed":
             print(
-                f"[{index}/{len(plan)}] Passed {item.label}: "
+                f"Passed {item.label}: "
                 f"backend={float(record['backend_seconds']):.3f}s, "
                 f"total={float(record['total_seconds']):.3f}s",
+                flush=True,
             )
         else:
-            print(f"[{index}/{len(plan)}] Failed {item.label}: {record['error']}")
+            print(f"Failed {item.label}: {record['error']}", flush=True)
             if arguments.fail_fast:
                 break
 
@@ -411,8 +433,8 @@ def main() -> int:
         config_file,
         preparation_records,
     )
-    print("\nBenchmark reports:")
-    print(f"  Markdown: {markdown_file}")
+    print("\nBenchmark reports:", flush=True)
+    print(f"  Markdown: {markdown_file}", flush=True)
     return 1 if any(record["status"] == "failed" for record in records) else 0
 
 

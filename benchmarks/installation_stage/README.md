@@ -84,7 +84,7 @@ are reported as preparation time.
 Run the harness from the SAF repository root:
 
 ```powershell
-python benchmarks\run_benchmarks.py
+python benchmarks\installation_stage\run_benchmarks.py
 ```
 
 The harness discovers `uv` on `PATH`. It first looks for the SAF CLI in the
@@ -92,9 +92,13 @@ repository's existing Examples environment. If it is unavailable, it creates a
 private CLI environment under the benchmark result directory; that fallback
 may need network access. Use `config.example.json` when executable paths differ.
 
-Harness-controlled writes remain inside `benchmarks`. An explicit
-`--output-dir` must name a directory under `benchmarks`; relative paths are
-resolved relative to the harness directory.
+Harness-controlled writes remain inside `benchmarks\installation_stage`. An
+explicit `--output-dir` must name a directory under that path; relative paths
+are resolved relative to the harness directory.
+
+The harness prints progress for source preparation, payload setup, dependency
+installation, application preload, and shortcut creation. Detailed command
+output remains in each run's log files.
 
 ## Commands
 
@@ -102,7 +106,7 @@ Use the double-dash form for all long options. With no selection options, the
 harness runs three repetitions of the default matrix:
 
 ```powershell
-python benchmarks\run_benchmarks.py
+python benchmarks\installation_stage\run_benchmarks.py
 ```
 
 The default matrix contains three runs for each of:
@@ -115,17 +119,17 @@ The default matrix contains three runs for each of:
 ### Select the scope
 
 ```powershell
-python benchmarks\run_benchmarks.py --online
-python benchmarks\run_benchmarks.py --offline
-python benchmarks\run_benchmarks.py --online --offline
-python benchmarks\run_benchmarks.py --offline --poetry-only
-python benchmarks\run_benchmarks.py --offline --uv-only
+python benchmarks\installation_stage\run_benchmarks.py --online
+python benchmarks\installation_stage\run_benchmarks.py --offline
+python benchmarks\installation_stage\run_benchmarks.py --online --offline
+python benchmarks\installation_stage\run_benchmarks.py --offline --poetry-only
+python benchmarks\installation_stage\run_benchmarks.py --offline --uv-only
 ```
 
 Use `--run N` to set the number of repetitions:
 
 ```powershell
-python benchmarks\run_benchmarks.py --online --run 5
+python benchmarks\installation_stage\run_benchmarks.py --online --run 5
 ```
 
 ### Select an offline source variant
@@ -134,9 +138,9 @@ Without a variant option, offline UV uses direct local wheel paths and offline
 Poetry uses its standard offline setup:
 
 ```powershell
-python benchmarks\run_benchmarks.py --offline --uv-only --uv-wheelhouse --run 3
-python benchmarks\run_benchmarks.py --offline --poetry-only --poetry-wheelhouse --run 3
-python benchmarks\run_benchmarks.py --offline --poetry-only --poetry-server --run 3
+python benchmarks\installation_stage\run_benchmarks.py --offline --uv-only --uv-wheelhouse --run 3
+python benchmarks\installation_stage\run_benchmarks.py --offline --poetry-only --poetry-wheelhouse --run 3
+python benchmarks\installation_stage\run_benchmarks.py --offline --poetry-only --poetry-server --run 3
 ```
 
 The Poetry wheelhouse and server options are mutually exclusive.
@@ -146,14 +150,14 @@ The Poetry wheelhouse and server options are mutually exclusive.
 Preview the selected cases without preparing payloads:
 
 ```powershell
-python benchmarks\run_benchmarks.py --offline --poetry-only --dry-run
+python benchmarks\installation_stage\run_benchmarks.py --offline --poetry-only --dry-run
 ```
 
 | Option | Description |
 |---|---|
 | `--run N` | Repeat each selected case `N` times. |
 | `--config PATH` | Use a JSON configuration file. |
-| `--output-dir PATH` | Write results to a subdirectory under `benchmarks`. |
+| `--output-dir PATH` | Write results under `benchmarks\installation_stage`. |
 | `--dry-run` | Print the selected cases without running them. |
 | `--fail-fast` | Stop after the first failed case. |
 

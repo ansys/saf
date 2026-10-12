@@ -56,7 +56,7 @@ def run_process(
 ) -> subprocess.CompletedProcess[str]:
     """Run a command, print its output, and raise with useful context on failure."""
     normalized_command = [str(argument) for argument in command]
-    print(f"Executing: {command_text(normalized_command)}")
+    print(f"Executing: {command_text(normalized_command)}", flush=True)
     completed = subprocess.run(
         normalized_command,
         cwd=cwd,
@@ -67,7 +67,11 @@ def run_process(
         check=False,
     )
     if completed.stdout:
-        print(completed.stdout, end="" if completed.stdout.endswith("\n") else "\n")
+        print(
+            completed.stdout,
+            end="" if completed.stdout.endswith("\n") else "\n",
+            flush=True,
+        )
     if completed.returncode != 0:
         raise RuntimeError(
             f"Command failed with exit code {completed.returncode}: "
@@ -215,7 +219,6 @@ def install_tool(
 def install_poetry(
     payload: Path,
     solution_directory: Path,
-    metadata: dict[str, Any],
     source_variant: str,
 ) -> bool:
     """Install dependencies with Poetry and return whether Portal is present."""
@@ -251,7 +254,6 @@ def install_poetry(
     attempts = 5
     last_output = ""
     for attempt in range(1, attempts + 1):
-        print(f"Poetry installation attempt {attempt}/{attempts}")
         completed = subprocess.run(
             [str(argument) for argument in install_command],
             cwd=solution_directory,
@@ -263,12 +265,15 @@ def install_poetry(
         )
         last_output = completed.stdout
         if completed.stdout:
-            print(completed.stdout, end="" if completed.stdout.endswith("\n") else "\n")
+            print(
+                completed.stdout,
+                end="" if completed.stdout.endswith("\n") else "\n",
+                flush=True,
+            )
         if completed.returncode == 0:
             break
     else:
         raise RuntimeError(f"Poetry installation failed after {attempts} attempts.\n{last_output[-4000:]}")
-
     portal_present = has_portal_dependency(solution_directory / "poetry.lock")
     for path in (
         temporary_tools_environment,
@@ -430,8 +435,9 @@ def run_benchmark(
     metadata = json.loads(metadata_file.read_text(encoding="utf-8"))
     solution_directory = validate_payload(payload, metadata, backend, source_variant)
     backend_started = time.perf_counter()
+    print(f"Installing dependencies with {backend}.", flush=True)
     if backend == "poetry":
-        portal_present = install_poetry(payload, solution_directory, metadata, source_variant)
+        portal_present = install_poetry(payload, solution_directory, source_variant)
     else:
         portal_present = install_uv(payload, solution_directory, metadata, source_variant == "wheelhouse")
     backend_seconds = time.perf_counter() - backend_started
@@ -441,11 +447,13 @@ def run_benchmark(
     if preload_python.name.lower() == "pythonw.exe":
         preload_python = preload_python.with_name("python.exe")
     preload_started = time.perf_counter()
+    print("Preloading the application.", flush=True)
     run_process([preload_python, *arguments, "--pre-load"], cwd=solution_directory)
     preload_seconds = time.perf_counter() - preload_started
 
     icon_suffix = ".ico" if platform.system() == "Windows" else ".png"
     shortcut_started = time.perf_counter()
+    print("Creating the shortcut.", flush=True)
     create_shortcut(
         shortcut_root,
         solution_python,

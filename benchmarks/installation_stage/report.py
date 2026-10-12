@@ -6,6 +6,11 @@ from pathlib import Path
 from typing import Any
 
 
+def format_seconds(value: Any) -> str:
+    """Format an optional timing value for a Markdown table."""
+    return "-" if value is None else f"{float(value):.3f}"
+
+
 def write_reports(
     output_root: Path,
     records: list[dict[str, Any]],
@@ -37,8 +42,7 @@ def write_reports(
         "|---|---|---:|---|",
     ]
     for preparation in preparation_records:
-        seconds = preparation.get("seconds")
-        seconds_text = "-" if seconds is None else f"{float(seconds):.3f}"
+        seconds_text = format_seconds(preparation.get("seconds"))
         markdown.append(
             f"| {preparation['mode']} | {preparation['status']} | {seconds_text} | "
             f"`{preparation.get('payload', '-')}` |",
@@ -54,14 +58,13 @@ def write_reports(
         ],
     )
     for record in records:
-        def formatted(field: str) -> str:
-            value = record.get(field)
-            return "-" if value is None else f"{float(value):.3f}"
-
         markdown.append(
-            f"| `{record['label']}` | {record['status']} | {formatted('preparation_seconds')} | "
-            f"{formatted('backend_seconds')} | {formatted('preload_seconds')} | "
-            f"{formatted('shortcut_seconds')} | {formatted('total_seconds')} |",
+            f"| `{record['label']}` | {record['status']} | "
+            f"{format_seconds(record.get('preparation_seconds'))} | "
+            f"{format_seconds(record.get('backend_seconds'))} | "
+            f"{format_seconds(record.get('preload_seconds'))} | "
+            f"{format_seconds(record.get('shortcut_seconds'))} | "
+            f"{format_seconds(record.get('total_seconds'))} |",
         )
 
     markdown.extend(["", "## Averages", ""])

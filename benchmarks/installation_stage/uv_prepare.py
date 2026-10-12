@@ -304,6 +304,7 @@ def prepare_uv_payload(
         lock_command.append("--offline")
     if variant == "wheelhouse":
         lock_command.extend(["--no-index", "--find-links", wheelhouse])
+    print(f"{mode}: running 'uv lock'.", flush=True)
     run_preparation_command(lock_command, cwd=solution_directory, output=log_lines)
     preparation_log.write_text("\n\n".join(log_lines) + "\n", encoding="utf-8")
 

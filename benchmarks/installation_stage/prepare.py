@@ -48,6 +48,11 @@ class BenchmarkConfig:
             (default_repository / "examples").is_dir()
             and (default_repository / "packages").is_dir()
         ):
+            default_repository = default_repository.parent
+        if not (
+            (default_repository / "examples").is_dir()
+            and (default_repository / "packages").is_dir()
+        ):
             default_repository /= "saf"
         saf_repo = default_repository.resolve()
         saf_executable = resolve_optional_config_path(raw.get("saf_executable"), config_directory)
@@ -145,7 +150,6 @@ def run_preparation_command(
     normalized = [str(argument) for argument in command]
     if attempts < 1:
         raise ValueError("Preparation command attempts must be at least 1.")
-    last_output = ""
     for attempt in range(1, attempts + 1):
         output.append(f"$ {command_text(normalized)}")
         completed = subprocess.run(
@@ -157,7 +161,6 @@ def run_preparation_command(
             check=False,
             env=environment,
         )
-        last_output = completed.stdout
         if completed.stdout:
             output.append(completed.stdout)
         if completed.returncode == 0:
@@ -166,7 +169,7 @@ def run_preparation_command(
             output.append(f"Preparation attempt {attempt}/{attempts} failed; retrying.")
     raise RuntimeError(
         f"Preparation command failed after {attempts} attempt(s) with exit code "
-        f"{completed.returncode}: {command_text(normalized)}\n{last_output[-4000:]}",
+        f"{completed.returncode}. See the preparation log for details.",
     )
 
 
@@ -399,6 +402,7 @@ def prepare_source_payload(
         f"Examples workspace: {examples_directory}",
     ]
     try:
+        print(f"{mode}: running 'saf install'.", flush=True)
         run_preparation_command(
             [saf_executable, "install", examples_directory, "-F"],
             cwd=examples_directory,
@@ -414,13 +418,13 @@ def prepare_source_payload(
         ]
         if mode == "offline":
             build_command.append("--offline-package")
+        print(f"{mode}: running 'saf build'.", flush=True)
         run_preparation_command(
             build_command,
             cwd=examples_directory,
             output=log_lines,
             environment=environment,
         )
-
         payload = preparation_root / "payloads" / mode
         normalization_note = normalize_build_payload(examples_directory / "dist" / "solution", payload)
         if normalization_note is not None:

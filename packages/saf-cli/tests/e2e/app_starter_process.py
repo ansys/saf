@@ -16,9 +16,10 @@
 
 from pathlib import Path
 
+from tenacity import TryAgain, retry, stop_after_attempt, wait_fixed
+
 from ansys.saf.testing.common import find_exec_in_venv
 from ansys.saf.testing.process import Process
-from tenacity import TryAgain, retry, stop_after_attempt, wait_fixed
 
 
 @retry(stop=stop_after_attempt(200), wait=wait_fixed(0.5))

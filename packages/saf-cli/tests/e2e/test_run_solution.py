@@ -20,13 +20,6 @@ import platform
 import re
 import shutil
 
-from ansys.saf.testing.selenium import (
-    wait_for_element,
-    wait_for_element_and_click,
-    wait_for_element_and_send_text,
-    wait_for_expected_attribute,
-    wait_for_expected_property,
-)
 import httpx2
 import pytest
 from selenium.common.exceptions import TimeoutException
@@ -37,6 +30,13 @@ from tenacity import TryAgain, retry, stop_after_attempt, wait_fixed
 from ansys.saf.cli._config.const import DEFAULT_SOLUTION_NAME, SAF_DESKTOP_LOG_TO_FILES
 from ansys.saf.cli._database.models import SolutionRegistry
 from ansys.saf.cli._utilities.conversion import namespace_to_path
+from ansys.saf.testing.selenium import (
+    wait_for_element,
+    wait_for_element_and_click,
+    wait_for_element_and_send_text,
+    wait_for_expected_attribute,
+    wait_for_expected_property,
+)
 from tests.e2e.conftest import (
     ListSolutions,
     NewSolution,

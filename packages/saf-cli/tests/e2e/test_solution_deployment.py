@@ -20,16 +20,16 @@ import re
 import subprocess
 from typing import cast
 
-from ansys.saf.testing.selenium import (
-    wait_for_element,
-    wait_for_element_and_click,
-    wait_for_expected_property,
-)
 from dotenv import dotenv_values
 import pytest
 from selenium.webdriver.chrome.webdriver import WebDriver
 from selenium.webdriver.common.by import By
 
+from ansys.saf.testing.selenium import (
+    wait_for_element,
+    wait_for_element_and_click,
+    wait_for_expected_property,
+)
 from tests.e2e.conftest import (
     InstallSolution,
     NewSolution,
@@ -83,7 +83,7 @@ def setup_deployment(
     """Creates a new solution, starts Docker Compose, yields ports, then tears down."""
 
     # Create a new solution
-    param = cast(tuple[bool, str] | str, request.param)
+    param = cast("tuple[bool, str] | str", request.param)
     result_via_file, deployment_type = param if isinstance(param, tuple) else (False, param)
     solution_name = "my_solution"
     new_solution(

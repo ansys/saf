@@ -126,8 +126,8 @@ tasks:
         args: 
           - "UV_PYTHON"
           - "MOON_PYTHON_VERSION"
-    command:
-      - "uv"
+    command: "uv"
+    args:
       - "run"
       - "--package"
       - "$projectAlias"
@@ -276,6 +276,26 @@ tasks:
     inputs:
       - "dist/*.whl"
       - "dist/*.tar.gz"
+    options:
+      runFromWorkspaceRoot: true
+
+  check-license:
+    command: 'uv'
+    args:
+      - "run"
+      - "python"
+      - '-c'
+      - >-
+        import glob, subprocess, sys;
+        wheels = glob.glob("dist/*.whl");
+        cmd = ["uvx"];
+        [cmd.extend(["--with", wheel]) for wheel in wheels];
+        cmd.extend(["pip-licenses@5.5.5", "--packages", "$projectAlias", "--allow-only=Apache-2.0"]);
+        sys.exit(subprocess.run(cmd).returncode)
+    deps:
+      - '~:build'
+    inputs:
+      - '/dist/*.whl'
     options:
       runFromWorkspaceRoot: true
 

@@ -16,8 +16,9 @@
 
 from collections.abc import Callable
 from pathlib import Path
+import shutil
+import sysconfig
 
-from ansys.saf.testing.common import find_exec_in_venv
 from ansys.saf.testing.process import Process
 
 
@@ -32,9 +33,11 @@ class SAFProcess(Process):
         health_check: Callable[["Process"], None] | None = None,
         expected_return_code: int | None = None,
     ) -> None:
-        starter_exec = find_exec_in_venv(Path.cwd(), "saf")
+        starter_exec = shutil.which("saf", path=sysconfig.get_path("scripts"))
+        if starter_exec is None:
+            raise FileNotFoundError(f"Executable saf not found in {sysconfig.get_path('scripts')}")
         super().__init__(
-            cmd=[starter_exec.as_posix()] + cmd,
+            cmd=[Path(starter_exec).as_posix()] + cmd,
             env=env,
             cwd=cwd,
             bg=bg,

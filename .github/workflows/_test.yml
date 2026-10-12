@@ -356,8 +356,8 @@ jobs:
                     "private_image": "postgres:17"
                 },
                 {
-                    "image": "eqalpha/keydb:alpine_x86_64_v6.3.3",
-                    "private_image": "keydb:alpine_x86_64_v6.3.3"
+                    "image": "eqalpha/keydb:alpine_x86_64_v6.3.3",  # gitleaks:allow
+                    "private_image": "keydb:alpine_x86_64_v6.3.3"  # gitleaks:allow
                 },
                 {
                     "image": "influxdb:1.8.10",
@@ -616,3 +616,8 @@ jobs:
         with:
           artifact-prefix: "hps_test_reports_${{ matrix.test-report-artifact-name-suffix
             }}_${{ inputs.python-version }}_${{ runner.os }}"
+
+      - name: Run npm test (Moon)
+        if: ${{ inputs.library-name == 'saf-projects-dashboard' }}
+        shell: bash
+        run: moon run $PACKAGE:test-npm

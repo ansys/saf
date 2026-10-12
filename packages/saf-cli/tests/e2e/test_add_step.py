@@ -19,13 +19,6 @@ from pathlib import Path
 import shutil
 import subprocess
 
-from ansys.saf.testing.common import find_exec_in_venv
-from ansys.saf.testing.selenium import (
-    wait_for_element,
-    wait_for_element_and_click,
-    wait_for_element_and_send_text,
-    wait_for_expected_property,
-)
 import httpx2
 import pytest
 from selenium.webdriver.chrome.webdriver import WebDriver
@@ -42,6 +35,13 @@ from ansys.saf.cli._config.const import (
 )
 from ansys.saf.cli._database.models import SolutionRegistry
 from ansys.saf.cli._utilities.conversion import namespace_to_path
+from ansys.saf.testing.common import find_exec_in_venv
+from ansys.saf.testing.selenium import (
+    wait_for_element,
+    wait_for_element_and_click,
+    wait_for_element_and_send_text,
+    wait_for_expected_property,
+)
 from tests.e2e.conftest import (
     AddStep,
     ExecuteCommand,

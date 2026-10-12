@@ -40,12 +40,10 @@ with tempfile.TemporaryDirectory() as temp_dir:
     os.environ["GITHUB_STEP_SUMMARY"] = str(_temp_summary)
 
     from ci_cd_job_matrices import (
-        JS_PACKAGES,
         SAF_PACKAGES,
         TESTS_DEFINITIONS_DIR,
         TESTS_DEFINITIONS_PER_TARGET,
         UV_PACKAGES,
-        get_changed_js_packages,
         get_changed_moon_packages,
         get_changed_packages,
         get_changed_poetry_packages,
@@ -356,11 +354,11 @@ class TestGetChangedPoetryPackages:
         """Moon-managed packages are excluded from the Poetry package matrix."""
         output_file, _ = github_env
 
-        result = get_changed_poetry_packages(["bdm-python-api", "saf-cli"])
+        result = get_changed_poetry_packages(["bdm-python-api", "dash-super-components"])
 
-        assert result == ["saf-cli"]
+        assert result == ["dash-super-components"]
         outputs = parse_outputs(output_file)
-        assert json.loads(outputs["poetry_packages_matrix"]) == {"include": [{"library-name": "saf-cli"}]}
+        assert json.loads(outputs["poetry_packages_matrix"]) == {"include": [{"library-name": "dash-super-components"}]}
 
     def test_get_changed_poetry_packages_empty_input(self, github_env: tuple[Path, Path]):
         """Empty input returns no Poetry packages."""
@@ -398,51 +396,9 @@ class TestGetChangedMoonPackages:
 
     def test_get_changed_moon_packages_filters_invalid_packages(self, github_env: tuple[Path, Path]):
         """Invalid and non-Moon packages are filtered out."""
-        result = get_changed_moon_packages(["invalid-pkg", "saf-cli"])
+        result = get_changed_moon_packages(["invalid-pkg", "dash-super-components"])
 
         assert result == []
-
-
-class TestGetChangedJsPackages:
-    """Test the get_changed_js_packages function."""
-
-    def test_get_changed_js_packages_empty_input(self, github_env: tuple[Path, Path]):
-        """Empty input returns no JS packages and writes an empty matrix."""
-        output_file, _ = github_env
-
-        result = get_changed_js_packages([])
-
-        assert result == []
-        outputs = parse_outputs(output_file)
-        assert outputs["js_packages_matrix"] == "{}"
-
-    def test_get_changed_js_packages_returns_js_packages(self, github_env: tuple[Path, Path]):
-        """Node-bearing packages are returned and written to their matrix."""
-        output_file, _ = github_env
-
-        result = get_changed_js_packages(["glow-engine", "saf-projects-dashboard"])
-
-        assert result == ["saf-projects-dashboard"]
-        outputs = parse_outputs(output_file)
-        assert json.loads(outputs["js_packages_matrix"]) == {
-            "include": [{"library-name": "saf-projects-dashboard"}],
-        }
-
-    def test_get_changed_js_packages_filters_non_js_packages(self, github_env: tuple[Path, Path]):
-        """Packages without a Node build, and unknown names, are filtered out."""
-        result = get_changed_js_packages(["invalid-pkg", "saf-testing", "examples"])
-
-        assert result == []
-
-    def test_js_packages_are_registered_saf_packages(self) -> None:
-        """Every Node-bearing package is also a regular SAF package."""
-        for package in JS_PACKAGES:
-            assert package in SAF_PACKAGES
-
-    def test_js_packages_are_not_moon_packages(self) -> None:
-        """Node-bearing packages stay on Poetry until Moon grows a Node toolchain."""
-        for package in JS_PACKAGES:
-            assert package not in UV_PACKAGES
 
 
 class TestGetCodeStyleMatrixEntries:
@@ -459,12 +415,12 @@ class TestGetCodeStyleMatrixEntries:
     def test_get_code_style_matrix_single_package(self, github_env: tuple[Path, Path]):
         """Single package includes one package entry."""
         output_file, _ = github_env
-        get_code_style_matrix_entries(["saf-cli"])
+        get_code_style_matrix_entries(["dash-super-components"])
 
         outputs = parse_outputs(output_file)
         matrix = json.loads(outputs["code_style_matrix"])
         assert len(matrix["include"]) == 1
-        assert matrix["include"][0]["target-directory"] == "packages/saf-cli"
+        assert matrix["include"][0]["target-directory"] == "packages/dash-super-components"
         assert matrix["include"][0]["dependency-manager"] == "poetry"
 
     def test_get_code_style_matrix_includes_examples(self, github_env: tuple[Path, Path]):
@@ -481,39 +437,30 @@ class TestGetCodeStyleMatrixEntries:
             "poetry-install-args": "--with tests --all-extras",
         }
 
-    def test_get_code_style_matrix_uses_default_poetry_args(self, github_env: tuple[Path, Path]):
-        """Packages without custom args use default."""
-        output_file, _ = github_env
-        get_code_style_matrix_entries(["saf-cli"])
-
-        outputs = parse_outputs(output_file)
-        matrix = json.loads(outputs["code_style_matrix"])
-        package_entry = matrix["include"][0]
-        assert package_entry["poetry-install-args"] == "--with tests --all-extras"
-
     def test_get_code_style_matrix_multiple_packages_custom_args(self, github_env: tuple[Path, Path]):
         """Multiple packages with different custom args are handled correctly."""
         output_file, _ = github_env
-        get_code_style_matrix_entries(["saf-cli"])
+        get_code_style_matrix_entries(["dash-super-components"])
 
         outputs = parse_outputs(output_file)
         matrix = json.loads(outputs["code_style_matrix"])
 
-        # Check saf-cli entry (default args)
-        saf_cli_entry = [e for e in matrix["include"] if e["target-directory"] == "packages/saf-cli"][0]
-        assert saf_cli_entry["poetry-install-args"] == "--with tests --all-extras"
+        # Check dash-super-components entry (default args)
+        dash_super_components_entry = [e for e in matrix["include"] if e["target-directory"] == "packages/dash-super-components"][0]
+        assert dash_super_components_entry["poetry-install-args"] == "--with tests,style --all-extras"
 
         assert all(e["target-directory"] != "packages/saf-desktop-orchestrator" for e in matrix["include"])
 
     def test_get_code_style_matrix_filters_invalid_packages(self, github_env: tuple[Path, Path]):
         """Invalid packages are filtered out."""
         output_file, _ = github_env
-        get_code_style_matrix_entries(["saf-cli", "invalid-pkg"])
+        get_code_style_matrix_entries(["dash-super-components", "invalid-pkg"])
 
         outputs = parse_outputs(output_file)
         matrix = json.loads(outputs["code_style_matrix"])
-        # Only saf-cli is included; invalid-pkg is filtered out.
+        # Only dash-super-components is included; invalid-pkg is filtered out.
         assert len(matrix["include"]) == 1
+        assert all("dash-super-components" in str(e) for e in matrix["include"])
         assert all("invalid-pkg" not in str(e) for e in matrix["include"])
 
 
@@ -802,8 +749,8 @@ class TestIntegration:
             "poetry-install-args": "--with tests --all-extras",
         }
 
-        assert moon_packages == ["bdm-python-api", "glow-engine"]
-        assert json.loads(outputs["moon_packages_matrix"]) == {"include": [{"library-name": "bdm-python-api"}, {"library-name": "glow-engine"}]}
+        assert moon_packages == ["bdm-python-api", "glow-engine", "saf-cli"]
+        assert json.loads(outputs["moon_packages_matrix"]) == {"include": [{"library-name": "bdm-python-api"}, {"library-name": "glow-engine"}, {"library-name": "saf-cli"}]}
 
         # Verify that the working directory for examples is correctly set
         tests = json.loads(outputs["tests_matrix"])

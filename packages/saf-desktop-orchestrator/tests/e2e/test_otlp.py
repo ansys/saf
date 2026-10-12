@@ -15,7 +15,10 @@
 # limitations under the License.
 
 
+from pathlib import Path
+
 import httpx2
+import pytest
 from selenium.webdriver.chrome.webdriver import WebDriver
 from selenium.webdriver.common.by import By
 from tenacity import TryAgain, retry, stop_after_attempt, wait_fixed
@@ -56,9 +59,16 @@ def test_aspire_runs_without_insecure_warnings(
     assert not selenium_webdriver.find_elements(By.XPATH, "//*[contains(text(), 'Telemetry endpoint is unsecured')]")
 
 
+@pytest.mark.parametrize(
+    "portal_backend",
+    ["projects-dashboard", "desktop-portal"],
+    ids=["projects-dashboard", "desktop-portal"],
+    indirect=True,
+)
 def test_services_traces_appear_in_aspire_dashboard(
     orchestrate_solution: OrchestrateSolution,
     selenium_webdriver: WebDriver,
+    portal_backend: tuple[str, dict[str, str], Path | None],
 ):
     """Test that traces from GLOW API, GLOW METHOD RUNNER, GLOW UI and Portal are visible in Aspire dashboard."""
     args = [
@@ -69,7 +79,15 @@ def test_services_traces_appear_in_aspire_dashboard(
         "--portal",
     ]
 
-    process = orchestrate_solution(args=args)
+    backend, environment, python_exec = portal_backend
+    process = orchestrate_solution(args=args, env=environment, python_exec=python_exec)
+
+    if backend == "projects-dashboard":
+        assert process.projects_dashboard_running()
+        assert not process.portal_running()
+    else:
+        assert process.portal_running()
+        assert not process.projects_dashboard_running()
 
     # Launch a long running method to ensure we have traces from the method runner in the OTLP data
     api_url = process.get_api_docs_url().replace("/docs", "/projects")
@@ -81,7 +99,10 @@ def test_services_traces_appear_in_aspire_dashboard(
 
     otel_url = process.get_otel_url()
     selenium_webdriver.get(otel_url)
-    assert selenium_webdriver.find_elements(By.XPATH, "//*[contains(text(), 'PORTAL')]")
+    if backend == "desktop-portal":
+        assert selenium_webdriver.find_elements(By.XPATH, "//*[contains(text(), 'PORTAL')]")
+    else:
+        assert not selenium_webdriver.find_elements(By.XPATH, "//*[contains(text(), 'PORTAL')]")
     assert selenium_webdriver.find_elements(By.XPATH, "//*[contains(text(), 'GLOW API')]")
     assert selenium_webdriver.find_elements(By.XPATH, "//*[contains(text(), 'GLOW UI')]")
     assert selenium_webdriver.find_elements(By.XPATH, "//*[contains(text(), 'GLOW METHOD RUNNER')]")

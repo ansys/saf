@@ -356,8 +356,8 @@ jobs:
                     "private_image": "postgres:17"
                 },
                 {
-                    "image": "eqalpha/keydb:alpine_x86_64_v6.3.3",
-                    "private_image": "keydb:alpine_x86_64_v6.3.3"
+                    "image": "eqalpha/keydb:alpine_x86_64_v6.3.3",  # gitleaks:allow
+                    "private_image": "keydb:alpine_x86_64_v6.3.3"  # gitleaks:allow
                 },
                 {
                     "image": "influxdb:1.8.10",

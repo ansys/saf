@@ -12,3 +12,9 @@ keywords = [
     "pkgs.dev.azure.com",
     "_packaging"
 ]
+
+[[allowlists]]
+description = "Allow the dummy Keycloak test secret"
+paths = ['''^packages/saf-testing/src/ansys/saf/testing/_hps/scripts/keycloak/\.env$''']
+regexTarget = "line"
+regexes = ['''^KC_CLIENT_SECRET=FRJILPV9NVKIAfcQqOtlkjo8inR5eVMWHyfNmlisLDw=\s*$''']

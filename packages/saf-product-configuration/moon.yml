@@ -5,14 +5,15 @@ stack: "backend"
 layer: "library"
 
 project:
-  description: "A Python package for providing configuration information about Ansys products to SAF solutions"
+  description: "A Python package for providing configuration information about Ansys
+    products to SAF solutions"
 
 tasks:
   build-doc:
     description: "Build API documentation"
     deps:
       - target: "~:check-env-var"
-        args: 
+        args:
           - "UV_PYTHON"
           - "MOON_PYTHON_VERSION"
     command: 'uv'

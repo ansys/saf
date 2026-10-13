@@ -19,7 +19,7 @@ from __future__ import annotations
 import json
 import logging
 from pathlib import Path
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Dict, List
 
 import httpx2
 
@@ -60,13 +60,33 @@ class VisorSafClient:
             "metadata": metadata.model_dump(),
         }
         logger.debug(f"Updating Visor with payload: {update_payload}")
-        httpx2.post(
+        response = httpx2.post(
             f"http://{self._service_host}:{self._service_port}/update",
             json=update_payload,
             timeout=self._timeout,
         ).raise_for_status()
         logger.info("Visor service updated.")
+        return int(response.json()["dataset_id"])
 
+    def test_method(self) -> None:
+        """Test method for Visor SAF Client."""
+        logger.info("Test method called.")
+        print("\n\n\nTest method called.")
+    
+    def update_variables(self, dataset_id: int, variables: List[Dict[str, Any]]) -> None:
+        """Update variables for a given dataset in the Visor instance."""
+        update_payload = {
+            "dataset_id": dataset_id,
+            "variables": variables,
+        }
+        logger.debug(f"Updating Visor variables with payload: {update_payload}")
+        response = httpx2.post(
+            f"http://{self._service_host}:{self._service_port}/{dataset_id}/update_variables",
+            json={"variables": variables},
+            timeout=self._timeout,
+        ).raise_for_status()
+        logger.info("Visor service variables updated.")
+    
     @property
     def host(self):
         return self._host

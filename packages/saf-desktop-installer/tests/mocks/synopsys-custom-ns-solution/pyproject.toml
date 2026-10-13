@@ -39,7 +39,7 @@ ansys-saf-glow-engine = { version = "^2.2.0", allow-prereleases = true }
 [tool.poetry.group.desktop]
 optional = true
 [tool.poetry.group.desktop.dependencies]
-ansys-saf-desktop-orchestrator = { version = "^1.13", allow-prereleases = true, extras = [ "all" ] }
+ansys-saf-desktop-orchestrator = { version = "^1.14", allow-prereleases = true, extras = [ "all" ] }
 
 [tool.poetry.group.ui]
 optional = true

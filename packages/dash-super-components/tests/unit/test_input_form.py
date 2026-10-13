@@ -1738,12 +1738,8 @@ def test_make_row_all_props_only_some_columns_selected():
         "memory",
     )
 
-    expected_modal_title = (
-        "Test Label"  # Modal title is from label even if label column not included
-    )
-    expected_modal_help_text = (
-        "This is a help text"  # Modal help text is from help even if help column not included
-    )
+    expected_modal_title = "Test Label"  # Modal title is from label even if label column not included
+    expected_modal_help_text = "This is a help text"  # Modal help text is from help even if help column not included
 
     _assert_cells_and_modal(
         form_id,
@@ -2851,9 +2847,7 @@ def _assert_cells(
 
         assert isinstance(cell, dmc.GridCol)
         expected_span = (
-            column_widths.get(column, DEFAULT_COLUMN_WIDTHS[column])
-            if column_widths
-            else DEFAULT_COLUMN_WIDTHS[column]
+            column_widths.get(column, DEFAULT_COLUMN_WIDTHS[column]) if column_widths else DEFAULT_COLUMN_WIDTHS[column]
         )
         assert cell.span == expected_span
 
@@ -2934,18 +2928,12 @@ def _assert_input_field_div(
     expected_persistence = reference_field.get("persistence", global_persistence)
     expected_persistence_type = reference_field.get("persistence_type", global_persistence_type)
 
-    expected_div_id = InputForm.ids.field_div(
-        form_id, expected_field_type, input_field_id, row_index
-    )
-    expected_div_style = (
-        EXPECTED_DIV_STYLE_HIDDEN if expected_hidden else EXPECTED_DIV_STYLE_REGULAR
-    )
+    expected_div_id = InputForm.ids.field_div(form_id, expected_field_type, input_field_id, row_index)
+    expected_div_style = EXPECTED_DIV_STYLE_HIDDEN if expected_hidden else EXPECTED_DIV_STYLE_REGULAR
 
     expected_field_id = InputForm.ids.field(form_id, expected_field_type, input_field_id, row_index)
 
-    expected_field_style: dict[str, Any] = (
-        {} if "style" not in reference_field else reference_field["style"].copy()
-    )
+    expected_field_style: dict[str, Any] = {} if "style" not in reference_field else reference_field["style"].copy()
     expected_field_style["width"] = "100%"
 
     assert isinstance(input_field_div, html.Div)
@@ -3051,9 +3039,7 @@ def _assert_description_cell(
     assert description.children == expected_description
 
 
-def _assert_help_cell(
-    form_id: str, row_index: int | str, cell: dmc.GridCol, expected_help: Any | None
-):
+def _assert_help_cell(form_id: str, row_index: int | str, cell: dmc.GridCol, expected_help: Any | None):
     assert cell.style == {
         "display": "flex",
         "alignItems": "center",

@@ -26,6 +26,7 @@ import tempfile
 import dash
 from dash_extensions.enrich import DashProxy, MultiplexerTransform, TriggerTransform
 import dash_uploader as du
+from visordash import init_endpoints
 
 dash._dash_renderer._set_react_version("18.2.0")
 
@@ -39,6 +40,9 @@ app = DashProxy(
     requests_pathname_prefix=f"{os.getenv('GLOW_UI_PATH_PREFIX', '/')}",
     use_pages=True,
 )
+
+VISOR_BASE_PATH = os.getenv("GLOW_UI_PATH_PREFIX", "/").rstrip("/")
+init_endpoints(app, base_path=VISOR_BASE_PATH)
 
 # If folder doesn't exist, it will be created later
 UPLOAD_DIRECTORY = os.path.join(tempfile.gettempdir(), "GLOW")

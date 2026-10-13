@@ -24,6 +24,7 @@ dependencies = [
   "ansys-saf-projects-dashboard",
   "ansys-saf-templates",
   "ansys-saf-testing[all]",
+  "ansys-solutions-dash-super-components",
 ]
 
 [dependency-groups]
@@ -50,6 +51,7 @@ doc = [
   "rst2html5>=2.0.1; python_version>='3.12' and python_version<'4.0'",
   "ruamel-yaml>=0.19.1; python_version>='3.12'",
   "sphinx>=9.1; python_version>='3.12'",
+  "sphinx-autobuild>=2025.8.25; python_version>='3.12'",
   "sphinx-code-tabs>=0.5.5; python_version>='3.12'",
   "sphinx-copybutton>=0.5.2; python_version>='3.12'",
   "sphinx-design>=0.7.0; python_version>='3.12'",
@@ -59,6 +61,7 @@ doc = [
   "sphinx-tabs>=3.5.0; python_version>='3.12'",
   "sphinx-toolbox>=4.2.0; python_version>='3.12'",
   "sphinxcontrib-mermaid>=0.7.1; python_version>='3.12'",
+  "sphinxcontrib-video>=0.4.2; python_version>='3.12'",
   "sphinxemoji>=0.2; python_version>='3.12'",
   "toml>=0.10.2; python_version>='3.12'",
 ]
@@ -150,10 +153,12 @@ sources.ansys-saf-product-manager = { workspace = true }
 sources.ansys-saf-projects-dashboard = { workspace = true }
 sources.ansys-saf-templates = { workspace = true }
 sources.ansys-saf-testing = { workspace = true }
+sources.ansys-solutions-dash-super-components = { workspace = true }
 package = false
 workspace.members = [
   "packages/bdm-python-api",
   "packages/bdm-python-shared-volume",
+  "packages/dash-super-components",
   "packages/glow-engine",
   "packages/saf-cli",
   "packages/saf-desktop-installer",

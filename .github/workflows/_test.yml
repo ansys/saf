@@ -182,7 +182,7 @@ jobs:
       working-directory: ${{ inputs.working-directory || (inputs.library-name == 'examples'
         && 'examples' || format('packages/{0}', inputs.library-name)) }}
       test-groups: ${{ steps.configure-tests.outputs.test_groups }}
-      use-moon: ${{ inputs.library-name != 'examples' }}
+      use-moon: ${{ inputs.library-name != 'examples' && 'true' || 'false' }}
     steps:
       - name: Checkout repository
         if: ${{ inputs.runner-name == '' }}
@@ -305,7 +305,7 @@ jobs:
       PIP_INDEX_URL: https://pypi.org/simple
       GITHUB_TOKEN: ${{ github.token }}
       ANSYSLMD_LICENSE_FILE: ${{ format('1055@{0}', secrets.LICENSE_SERVER) }}
-      USE_MOON: ${{ needs.configure-tests.outputs.use-moon && 'true' || 'false' }}
+      USE_MOON: ${{ needs.configure-tests.outputs.use-moon }}
       MOON_PYTHON_VERSION: ${{ inputs.python-version }}
       UV_PYTHON: ${{ inputs.python-version }}
       PACKAGE: ${{ inputs.library-name }}

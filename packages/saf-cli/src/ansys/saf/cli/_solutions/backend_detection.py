@@ -135,7 +135,7 @@ def _build_uv_project(
     dependency_groups_value = configuration.get("dependency-groups", {})
     if not isinstance(dependency_groups_value, dict):
         raise SolutionBackendError(f"'dependency-groups' must be a table in '{pyproject_path}'.")
-    dependency_groups = cast(dict[str, Any], dependency_groups_value)
+    dependency_groups = cast("dict[str, Any]", dependency_groups_value)
 
     return SolutionBackendInfo(
         root_dir=root_dir,
@@ -191,10 +191,10 @@ def _get_poetry_python_requirement(
     dependencies_value = poetry.get("dependencies", {})
     if not isinstance(dependencies_value, dict):
         raise SolutionBackendError(f"'tool.poetry.dependencies' must be a table in '{pyproject_path}'.")
-    dependencies = cast(dict[str, Any], dependencies_value)
+    dependencies = cast("dict[str, Any]", dependencies_value)
     python_requirement: object = dependencies.get("python")
     if isinstance(python_requirement, dict):
-        python_requirement = cast(dict[str, Any], python_requirement).get("version")
+        python_requirement = cast("dict[str, Any]", python_requirement).get("version")
     if python_requirement is not None and not isinstance(python_requirement, str):
         raise SolutionBackendError(
             f"'tool.poetry.dependencies.python' must be a string or table with a version in '{pyproject_path}'.",
@@ -212,12 +212,12 @@ def _get_poetry_group_names(
         groups_value = poetry.get("group", {})
         if not isinstance(groups_value, dict):
             raise SolutionBackendError(f"'tool.poetry.group' must be a table in '{pyproject_path}'.")
-        poetry_groups = cast(dict[str, Any], groups_value)
+        poetry_groups = cast("dict[str, Any]", groups_value)
 
     dependency_groups_value = configuration.get("dependency-groups", {})
     if not isinstance(dependency_groups_value, dict):
         raise SolutionBackendError(f"'dependency-groups' must be a table in '{pyproject_path}'.")
-    dependency_groups = cast(dict[str, Any], dependency_groups_value)
+    dependency_groups = cast("dict[str, Any]", dependency_groups_value)
     return tuple(dict.fromkeys((*poetry_groups, *dependency_groups)))
 
 
@@ -225,7 +225,7 @@ def _get_table(configuration: dict[str, Any], key: str, pyproject_path: Path) ->
     value = configuration.get(key, {})
     if not isinstance(value, dict):
         raise SolutionBackendError(f"'{key}' must be a table in '{pyproject_path}'.")
-    return cast(dict[str, Any], value)
+    return cast("dict[str, Any]", value)
 
 
 def _get_optional_table(
@@ -238,7 +238,7 @@ def _get_optional_table(
     value = configuration[key]
     if not isinstance(value, dict):
         raise SolutionBackendError(f"'{key}' must be a table in '{pyproject_path}'.")
-    return cast(dict[str, Any], value)
+    return cast("dict[str, Any]", value)
 
 
 def _get_optional_string(configuration: dict[str, Any], key: str, pyproject_path: Path) -> str | None:

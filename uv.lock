@@ -25,6 +25,7 @@ members = [
     "ansys-saf-templates",
     "ansys-saf-testing",
     "ansys-saf-workspace",
+    "ansys-solutions-dash-super-components",
 ]
 overrides = [{ package = { name = "ansys-solutions-dash-super-components" }, dependencies = [{ name = "dash", specifier = ">=2.18.2,<4.0" }] }]
 
@@ -1501,6 +1502,7 @@ dependencies = [
     { name = "ansys-saf-projects-dashboard" },
     { name = "ansys-saf-templates" },
     { name = "ansys-saf-testing", extra = ["all"] },
+    { name = "ansys-solutions-dash-super-components" },
 ]
 
 [package.dev-dependencies]
@@ -1546,6 +1548,7 @@ dev = [
     { name = "ruamel-yaml", marker = "python_full_version >= '3.12'" },
     { name = "ruff" },
     { name = "sphinx", marker = "python_full_version >= '3.12'" },
+    { name = "sphinx-autobuild", marker = "python_full_version >= '3.12'" },
     { name = "sphinx-code-tabs", marker = "python_full_version >= '3.12'" },
     { name = "sphinx-copybutton", marker = "python_full_version >= '3.12'" },
     { name = "sphinx-design", marker = "python_full_version >= '3.12'" },
@@ -1555,6 +1558,7 @@ dev = [
     { name = "sphinx-tabs", marker = "python_full_version >= '3.12'" },
     { name = "sphinx-toolbox", marker = "python_full_version >= '3.12'" },
     { name = "sphinxcontrib-mermaid", marker = "python_full_version >= '3.12'" },
+    { name = "sphinxcontrib-video", marker = "python_full_version >= '3.12'" },
     { name = "sphinxemoji", marker = "python_full_version >= '3.12'" },
     { name = "tenacity" },
     { name = "toml", marker = "python_full_version >= '3.12'" },
@@ -1571,6 +1575,7 @@ doc = [
     { name = "rst2html5", marker = "python_full_version >= '3.12'" },
     { name = "ruamel-yaml", marker = "python_full_version >= '3.12'" },
     { name = "sphinx", marker = "python_full_version >= '3.12'" },
+    { name = "sphinx-autobuild", marker = "python_full_version >= '3.12'" },
     { name = "sphinx-code-tabs", marker = "python_full_version >= '3.12'" },
     { name = "sphinx-copybutton", marker = "python_full_version >= '3.12'" },
     { name = "sphinx-design", marker = "python_full_version >= '3.12'" },
@@ -1580,6 +1585,7 @@ doc = [
     { name = "sphinx-tabs", marker = "python_full_version >= '3.12'" },
     { name = "sphinx-toolbox", marker = "python_full_version >= '3.12'" },
     { name = "sphinxcontrib-mermaid", marker = "python_full_version >= '3.12'" },
+    { name = "sphinxcontrib-video", marker = "python_full_version >= '3.12'" },
     { name = "sphinxemoji", marker = "python_full_version >= '3.12'" },
     { name = "toml", marker = "python_full_version >= '3.12'" },
 ]
@@ -1667,6 +1673,7 @@ requires-dist = [
     { name = "ansys-saf-projects-dashboard", editable = "packages/saf-projects-dashboard" },
     { name = "ansys-saf-templates", editable = "packages/saf-templates" },
     { name = "ansys-saf-testing", extras = ["all"], editable = "packages/saf-testing" },
+    { name = "ansys-solutions-dash-super-components", editable = "packages/dash-super-components" },
 ]
 
 [package.metadata.requires-dev]
@@ -1712,6 +1719,7 @@ dev = [
     { name = "ruamel-yaml", marker = "python_full_version >= '3.12'", specifier = ">=0.19.1" },
     { name = "ruff", specifier = "==0.15.0" },
     { name = "sphinx", marker = "python_full_version >= '3.12'", specifier = ">=9.1" },
+    { name = "sphinx-autobuild", marker = "python_full_version >= '3.12'", specifier = ">=2025.8.25" },
     { name = "sphinx-code-tabs", marker = "python_full_version >= '3.12'", specifier = ">=0.5.5" },
     { name = "sphinx-copybutton", marker = "python_full_version >= '3.12'", specifier = ">=0.5.2" },
     { name = "sphinx-design", marker = "python_full_version >= '3.12'", specifier = ">=0.7.0" },
@@ -1721,6 +1729,7 @@ dev = [
     { name = "sphinx-tabs", marker = "python_full_version >= '3.12'", specifier = ">=3.5.0" },
     { name = "sphinx-toolbox", marker = "python_full_version >= '3.12'", specifier = ">=4.2.0" },
     { name = "sphinxcontrib-mermaid", marker = "python_full_version >= '3.12'", specifier = ">=0.7.1" },
+    { name = "sphinxcontrib-video", marker = "python_full_version >= '3.12'", specifier = ">=0.4.2" },
     { name = "sphinxemoji", marker = "python_full_version >= '3.12'", specifier = ">=0.2" },
     { name = "tenacity", specifier = ">=8.0.0,<9" },
     { name = "toml", marker = "python_full_version >= '3.12'", specifier = ">=0.10.2" },
@@ -1737,6 +1746,7 @@ doc = [
     { name = "rst2html5", marker = "python_full_version >= '3.12' and python_full_version < '4'", specifier = ">=2.0.1" },
     { name = "ruamel-yaml", marker = "python_full_version >= '3.12'", specifier = ">=0.19.1" },
     { name = "sphinx", marker = "python_full_version >= '3.12'", specifier = ">=9.1" },
+    { name = "sphinx-autobuild", marker = "python_full_version >= '3.12'", specifier = ">=2025.8.25" },
     { name = "sphinx-code-tabs", marker = "python_full_version >= '3.12'", specifier = ">=0.5.5" },
     { name = "sphinx-copybutton", marker = "python_full_version >= '3.12'", specifier = ">=0.5.2" },
     { name = "sphinx-design", marker = "python_full_version >= '3.12'", specifier = ">=0.7.0" },
@@ -1746,6 +1756,7 @@ doc = [
     { name = "sphinx-tabs", marker = "python_full_version >= '3.12'", specifier = ">=3.5.0" },
     { name = "sphinx-toolbox", marker = "python_full_version >= '3.12'", specifier = ">=4.2.0" },
     { name = "sphinxcontrib-mermaid", marker = "python_full_version >= '3.12'", specifier = ">=0.7.1" },
+    { name = "sphinxcontrib-video", marker = "python_full_version >= '3.12'", specifier = ">=0.4.2" },
     { name = "sphinxemoji", marker = "python_full_version >= '3.12'", specifier = ">=0.2" },
     { name = "toml", marker = "python_full_version >= '3.12'", specifier = ">=0.10.2" },
 ]
@@ -1796,7 +1807,7 @@ tests-glow-engine = [
     { name = "waitress", specifier = ">=3.0.1,<4.0" },
 ]
 tests-saf-cli = [
-    { name = "ansys-solutions-dash-super-components", specifier = ">=1.0.0,<2.0" },
+    { name = "ansys-solutions-dash-super-components", editable = "packages/dash-super-components" },
     { name = "dash-bootstrap-components", specifier = ">=1.2,<2.0" },
     { name = "dash-mantine-components", specifier = ">=2.6.0,<3.0" },
     { name = "psutil", specifier = ">=7.2.2,<8.0" },
@@ -1820,8 +1831,8 @@ tests-saf-product-manager = [
 
 [[package]]
 name = "ansys-solutions-dash-super-components"
-version = "1.1.0"
-source = { registry = "https://pypi.org/simple" }
+version = "1.2.dev0"
+source = { editable = "packages/dash-super-components" }
 dependencies = [
     { name = "dash" },
     { name = "dash-ag-grid" },
@@ -1831,9 +1842,16 @@ dependencies = [
     { name = "flask" },
     { name = "pandas" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/8c/ed/a9e3c1fac17d39fdcf7eb7d701bbf162e27328623fedafb6e9100cbbc45b/ansys_solutions_dash_super_components-1.1.0.tar.gz", hash = "sha256:8f1dba9f5e129bd6ad5c9e07ac5a050e229a03c78cdc68330b25a0b63fc089fc", size = 76073, upload-time = "2026-09-09T12:01:10.666Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/65/93/b3b4ad2ffbb1d947caccfc8708c429f34930cd3bc4f0e62695fa8257f8d1/ansys_solutions_dash_super_components-1.1.0-py3-none-any.whl", hash = "sha256:45572ff64c53859ce372307b07fe3221611f5fdae490ce7ff6e61741d5836654", size = 91010, upload-time = "2026-09-09T12:01:09.279Z" },
+
+[package.metadata]
+requires-dist = [
+    { name = "dash", specifier = ">=2.18.2,<3.4.0" },
+    { name = "dash-ag-grid", specifier = ">=31.2.0,<32.0.0" },
+    { name = "dash-extensions", specifier = ">=1.0.20" },
+    { name = "dash-iconify", specifier = ">=0.1,<0.2" },
+    { name = "dash-mantine-components", specifier = ">=2.3.0,<3.0.0" },
+    { name = "flask", specifier = ">=2.2.0,<4.0.0" },
+    { name = "pandas", specifier = ">=2.2.2,<3.0.0" },
 ]
 
 [[package]]
@@ -8831,6 +8849,23 @@ wheels = [
 ]
 
 [[package]]
+name = "sphinx-autobuild"
+version = "2025.8.25"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "colorama" },
+    { name = "sphinx" },
+    { name = "starlette" },
+    { name = "uvicorn" },
+    { name = "watchfiles" },
+    { name = "websockets" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/e0/3c/a59a3a453d4133777f7ed2e83c80b7dc817d43c74b74298ca0af869662ad/sphinx_autobuild-2025.8.25.tar.gz", hash = "sha256:9cf5aab32853c8c31af572e4fecdc09c997e2b8be5a07daf2a389e270e85b213", size = 15200, upload-time = "2025-08-25T18:44:55.436Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/d7/20/56411b52f917696995f5ad27d2ea7e9492c84a043c5b49a3a3173573cd93/sphinx_autobuild-2025.8.25-py3-none-any.whl", hash = "sha256:b750ac7d5a18603e4665294323fd20f6dcc0a984117026d1986704fa68f0379a", size = 12535, upload-time = "2025-08-25T18:44:54.164Z" },
+]
+
+[[package]]
 name = "sphinx-autodoc-typehints"
 version = "3.5.2"
 source = { registry = "https://pypi.org/simple" }
@@ -9061,6 +9096,18 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/3b/44/6716b257b0aa6bfd51a1b31665d1c205fb12cb5ad56de752dfa15657de2f/sphinxcontrib_serializinghtml-2.0.0.tar.gz", hash = "sha256:e9d912827f872c029017a53f0ef2180b327c3f7fd23c87229f7a8e8b70031d4d", size = 16080, upload-time = "2024-07-29T01:10:09.332Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/52/a7/d2782e4e3f77c8450f727ba74a8f12756d5ba823d81b941f1b04da9d033a/sphinxcontrib_serializinghtml-2.0.0-py3-none-any.whl", hash = "sha256:6e2cb0eef194e10c27ec0023bfeb25badbbb5868244cf5bc5bdc04e4464bf331", size = 92072, upload-time = "2024-07-29T01:10:08.203Z" },
+]
+
+[[package]]
+name = "sphinxcontrib-video"
+version = "0.4.2"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "sphinx" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/cc/18/ca17d2f66d519f1a9d0020da0bcdf33881e02471096377b3e993d1acb952/sphinxcontrib_video-0.4.2.tar.gz", hash = "sha256:18477fd9454ac8c69259e6d24e782d8b802345b6475de6216351c2305b06c898", size = 11992, upload-time = "2026-01-14T10:00:29.298Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/0b/85/5a61ac88dc21df340a5999ca3ab94edaf58287010c62020be426703b8dd3/sphinxcontrib_video-0.4.2-py3-none-any.whl", hash = "sha256:7dfd01e5e2025de39536457854052b18723575d6213d96ca35f83e3154dc0315", size = 10275, upload-time = "2026-01-14T10:00:28.477Z" },
 ]
 
 [[package]]

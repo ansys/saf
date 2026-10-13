@@ -21,7 +21,6 @@ from pathlib import Path
 import subprocess
 import sys
 
-
 EXCLUDED_DIR_NAMES = {
     ".git",
     ".hg",

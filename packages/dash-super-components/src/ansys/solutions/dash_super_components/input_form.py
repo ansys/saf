@@ -230,9 +230,7 @@ def make_row(
         elif column == "help":
             column_content = _create_help_column(aio_id, item, row_index)
         elif column == "fields":
-            column_content = _create_input_fields_column(
-                aio_id, item, row_index, persistence, persistence_type
-            )
+            column_content = _create_input_fields_column(aio_id, item, row_index, persistence, persistence_type)
         else:
             raise ValueError(f"Unknown column: {column}")
 
@@ -294,9 +292,7 @@ def _create_help_column(
     row_index: int | str,
 ) -> dmc.ActionIcon:
     return dmc.ActionIcon(
-        create_icon_span(
-            IconNames.MATERIAL_HELP, size_px=16, color=CommonColors.MANTINE_PRIMARY_COLOR
-        ),
+        create_icon_span(IconNames.MATERIAL_HELP, size_px=16, color=CommonColors.MANTINE_PRIMARY_COLOR),
         size="xl",
         variant="subtle",
         id=InputForm.ids.help(aio_id, row_index),
@@ -338,9 +334,7 @@ def _create_input_fields_column(
         if "hidden" in field and field["hidden"]:
             div_style["display"] = "none"
 
-        field_properties = {
-            k: copy.deepcopy(v) for k, v in field.items() if k not in ["hidden", "type", "id"]
-        }
+        field_properties = {k: copy.deepcopy(v) for k, v in field.items() if k not in ["hidden", "type", "id"]}
 
         if "persistence" not in field_properties:
             field_properties["persistence"] = persistence
@@ -353,9 +347,7 @@ def _create_input_fields_column(
         else:
             field_properties["style"] = {"width": "100%"}
 
-        input_fields.append(
-            _create_field(field_id, field_type, field_properties, div_id, div_style)
-        )
+        input_fields.append(_create_field(field_id, field_type, field_properties, div_id, div_style))
 
     return html.Div(
         input_fields,
@@ -556,9 +548,7 @@ class InputForm(html.Div):
             return cls._make_id_dict_with_row_index("unit", aio_id, row_index)
 
         @classmethod
-        def description(
-            cls, aio_id: str | _Wildcard, row_index: str | int | _Wildcard
-        ) -> dict[str, Any]:
+        def description(cls, aio_id: str | _Wildcard, row_index: str | int | _Wildcard) -> dict[str, Any]:
             """
             Return the id for an input form description.
 
@@ -868,14 +858,12 @@ def _validate_items(items: list[dict[str, Any]]) -> None:
 
             if field_type is None:
                 raise ValueError(
-                    "Each field must have a type key. Supported types are: "
-                    f"{', '.join(SUPPORTED_FIELD_TYPES)}.",
+                    f"Each field must have a type key. Supported types are: {', '.join(SUPPORTED_FIELD_TYPES)}.",
                 )
 
             if field_type not in SUPPORTED_FIELD_TYPES:
                 raise ValueError(
-                    f"Unsupported field type: {field_type}. Supported types are: "
-                    f"{', '.join(SUPPORTED_FIELD_TYPES)}.",
+                    f"Unsupported field type: {field_type}. Supported types are: {', '.join(SUPPORTED_FIELD_TYPES)}.",
                 )
 
             field_id = field.get("id", None)

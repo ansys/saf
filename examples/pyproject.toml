@@ -43,6 +43,7 @@ pillow = "^12.1"
 ansys-tools-visualization-interface = "^0.12.1"
 scipy = "^1.15"
 ansys-dynamicreporting-core = "^0.10.6" # Supports only Python 3.10 to 3.12, but not 3.13 or 3.14 yet.
+ansys-visor-viewer = "^1.0.1"
 
 [tool.poetry.group.desktop]
 optional = true
@@ -59,7 +60,6 @@ dash-extensions = ">=0.1.13"
 dash-iconify = "^0.1"
 dash-mantine-components = "^2.6"
 dash-uploader = "^0.6"
-ansys-visor-viewer = "^1.0.1"
 pandas = "^2.2.2"
 
 [tool.poetry.group.tests]

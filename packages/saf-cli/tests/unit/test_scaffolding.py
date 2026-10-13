@@ -137,6 +137,7 @@ def test_create_solution(tmp_path: Path, ui_framework: str, namespace: str):
         "standalone",
         "standalone-with-hps",
         "distributed-deployment-template",
+        "external",
     ]:
         deployment_dir = tmp_path / solution_name / "deployments" / configuration
 

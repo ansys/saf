@@ -13,6 +13,14 @@ repos:
     rev: 2ca41cc1372d1e939a6a879f18cdc19fc1cac1ce # frozen: v8.30.0
     hooks:
       - id: gitleaks
+        name: Scan for hardcoded secrets (Gitleaks)
+        entry: >-
+          uv run python -c 'import os, subprocess, sys; options=["--redact", "--verbose",
+          "--no-banner", "--log-level=error", "--config=.gitleaks.toml"]; log_opts=os.environ.get("GITLEAKS_LOG_OPTS");
+          sys.exit(subprocess.call(["gitleaks", "git", *options, "--log-opts="+log_opts])
+          if log_opts else max((subprocess.call(["gitleaks", "dir", *options, path])
+          for path in sys.argv[1:]), default=0))'
+        pass_filenames: true
 
   - repo: https://github.com/zizmorcore/zizmor-pre-commit
     rev: 451b56af716f9f0d0c2b816503a3fd0cf8b036fa # 1.29.0
@@ -33,7 +41,14 @@ repos:
         exclude: |
           (?x)^(
             doc/styles/Vocab/ANSYS/accept\.txt|
-            .*\.aedt
+            .*\.aedt|
+            packages/saf-projects-dashboard/tests/|
+            packages/saf-projects-dashboard/doc/_build|
+            packages/saf-projects-dashboard/doc/styles/|
+            packages/saf-projects-dashboard/doc/source/_static|
+            packages/saf-projects-dashboard/.*poetry\.lock|
+            packages/saf-projects-dashboard/.*package-lock\.json|
+            packages/saf-projects-dashboard/.*\.js
           )$
         args: [--ignore-words=doc/styles/Vocab/ANSYS/accept.txt]
 
@@ -51,7 +66,11 @@ repos:
     hooks:
       - id: add-license-headers
         files: '\.(py|bat|html|css|proto)$'
-        exclude: 'src/ansys/saf/desktop/installer/_package/assets/bootstrap\.min\.css'
+        exclude: |
+          (?xi)(
+            packages/saf-desktop-installer/src/ansys/saf/desktop/installer/_package/assets/bootstrap\.min\.css|
+            packages/saf-projects-dashboard/src/ansys_saf_projects_dashboard/.*\.(json)$
+          )
         args:
           - --custom_license=Apache-2.0
           - --start_year=2026
@@ -69,5 +88,6 @@ repos:
     rev: fda77690955e9b63c6687d8806bafd56a526e45f # 1.20.0
     hooks:
       - id: blacken-docs
+        files: '\.(md|rst)$'
         additional_dependencies: [black==25.1.0]
         args: ["--line-length=120"]

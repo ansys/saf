@@ -125,6 +125,7 @@ EXPECTED_SOLUTION_TEMPLATE_STRUCTURE = [
     # .github
     ".github/labeler.yml",
     ".github/labels.yml",
+    ".github/workflows/build-image.yml",
     ".github/workflows/build-release.yml",
     ".github/workflows/label.yml",
     # .vscode
@@ -135,6 +136,8 @@ EXPECTED_SOLUTION_TEMPLATE_STRUCTURE = [
     "deployments/README.md",
     "deployments/distributed-deployment-template/.env",
     "deployments/distributed-deployment-template/compose.yaml",
+    "deployments/external/.env",
+    "deployments/external/compose.yaml",
     "deployments/standalone/.env",
     "deployments/standalone/compose.yaml",
     "deployments/standalone-with-hps/.env",

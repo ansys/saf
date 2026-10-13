@@ -1,6 +1,6 @@
-# Copyright (C) 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
+# Copyright (C) 2026 ANSYS, Inc. and/or its affiliates.
+
 # SPDX-License-Identifier: Apache-2.0
-#
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@ from typing import Optional
 
 # Try to import Dash components
 try:
-    from dash import Dash, Input, Output, callback, html
+    from dash import Dash, html
     from projects_dashboard import ProjectsDashboard
 
     DASH_AVAILABLE = True
@@ -62,9 +62,8 @@ class MockAPIServer(BaseHTTPRequestHandler):
 
     project_count = 50  # Default project count
 
-    def log_message(self, format, *args):
+    def log_message(self, format, *args):  # noqa:A002
         """Suppress request logging."""
-        pass
 
     def do_GET(self):
         """Handle GET requests."""

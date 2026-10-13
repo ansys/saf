@@ -28,8 +28,6 @@ outputs:
     value: ${{ steps.script.outputs.poetry_packages_matrix }}
   moon-packages-matrix:
     value: ${{ steps.script.outputs.moon_packages_matrix }}
-  js-packages-matrix:
-    value: ${{ steps.script.outputs.js_packages_matrix }}
   code-style-matrix:
     value: ${{ steps.script.outputs.code_style_matrix }}
   compatibility-matrix:

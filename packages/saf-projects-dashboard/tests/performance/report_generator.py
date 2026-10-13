@@ -1,6 +1,6 @@
-# Copyright (C) 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
+# Copyright (C) 2026 ANSYS, Inc. and/or its affiliates.
+
 # SPDX-License-Identifier: Apache-2.0
-#
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -29,7 +29,6 @@ from dataclasses import dataclass, field
 from datetime import datetime
 import json
 from pathlib import Path
-from typing import Optional
 
 from .bundle_analyzer import BundleAnalysis, compare_bundle_analyses
 from .memory_profiler import MemoryProfile, compare_memory_profiles
@@ -283,7 +282,7 @@ def generate_report(
     vitals_2: WebVitalsAnalysis | None = None,
     memory_1: MemoryProfile | None = None,
     memory_2: MemoryProfile | None = None,
-    format: str = "json",  # "json" or "markdown"
+    format: str = "json",  # "json" or "markdown"  # noqa: A002
 ) -> str:
     """
     Generate a performance comparison report.

@@ -21,6 +21,7 @@ dependencies = [
   "ansys-saf-glow-engine[all]",
   "ansys-saf-product-configuration[all]",
   "ansys-saf-product-manager[all]",
+  "ansys-saf-projects-dashboard",
   "ansys-saf-templates",
   "ansys-saf-testing[all]",
 ]
@@ -36,6 +37,7 @@ dev = [
   { include-group = "style-desktop-installer" },
   { include-group = "tests" },
 ]
+build-saf-projects-dashboard = [ "build>=1.2.1,<2.0", "pre-commit>=4.6.0,<5.0", "pyyaml>=6.0,<7.0" ]
 doc = [
   "ansys-sphinx-theme[autoapi]>=1.9; python_version>='3.12'",
   "autodoc-pydantic>=2.2.0; python_version>='3.12'",
@@ -145,6 +147,7 @@ sources.ansys-saf-desktop-orchestrator = { workspace = true }
 sources.ansys-saf-glow-engine = { workspace = true }
 sources.ansys-saf-product-configuration = { workspace = true }
 sources.ansys-saf-product-manager = { workspace = true }
+sources.ansys-saf-projects-dashboard = { workspace = true }
 sources.ansys-saf-templates = { workspace = true }
 sources.ansys-saf-testing = { workspace = true }
 package = false
@@ -158,6 +161,7 @@ workspace.members = [
   "packages/saf-iam-oidc",
   "packages/saf-product-configuration",
   "packages/saf-product-manager",
+  "packages/saf-projects-dashboard",
   "packages/saf-templates",
   "packages/saf-testing",
 ]
@@ -172,9 +176,19 @@ extend-exclude = [
   "*_pb2_grpc.py",
   "conf.py",
   "conf.py",
-  "packages/**/[{][{]cookiecutter.*",     # Ignore files containing cookiecutter syntax
-  "packages/**/_solutions/templates/**",  # Ignore files containing cookiecutter syntax
-  "packages/**/tests/mocks/plugin/",      # Ignore files containing cookiecutter syntax
+  "packages/**/[{][{]cookiecutter.*",                                                      # Ignore files containing cookiecutter syntax
+  "packages/**/_solutions/templates/**",                                                   # Ignore files containing cookiecutter syntax
+  "packages/**/tests/mocks/plugin/",                                                       # Ignore files containing cookiecutter syntax
+  "packages/saf-projects-dashboard/src/ansys_saf_projects_dashboard/_imports_.py",         # auto-generated
+  "packages/saf-projects-dashboard/src/ansys_saf_projects_dashboard/ImportExport.py",      # auto-generated
+  "packages/saf-projects-dashboard/src/ansys_saf_projects_dashboard/Pagination.py",        # auto-generated
+  "packages/saf-projects-dashboard/src/ansys_saf_projects_dashboard/ProjectForm.py",       # auto-generated
+  "packages/saf-projects-dashboard/src/ansys_saf_projects_dashboard/ProjectInfo.py",       # auto-generated
+  "packages/saf-projects-dashboard/src/ansys_saf_projects_dashboard/ProjectsDashboard.py", # auto-generated
+  "packages/saf-projects-dashboard/src/ansys_saf_projects_dashboard/ProjectsFilter.py",    # auto-generated
+  "packages/saf-projects-dashboard/src/ansys_saf_projects_dashboard/ProjectsList.py",      # auto-generated
+  "packages/saf-projects-dashboard/src/ansys_saf_projects_dashboard/ProjectsTable.py",     # auto-generated
+  "packages/saf-projects-dashboard/src/ansys_saf_projects_dashboard/SolutionMetadata.py",  # auto-generated
 ]
 # in same order as in https://docs.astral.sh/ruff/rules
 lint.select = [
@@ -258,16 +272,26 @@ exclude = [
   "**/*_pb2_grpc.py",
   "**/*{{cookiecutter*/**",
   "**/.venv",
-  "**/_solutions/templates/",                                          # Ignore files containing cookiecutter syntax
+  "**/_solutions/templates/",                                                              # Ignore files containing cookiecutter syntax
   "**/{{cookiecutter.project_slug}}",
   "packages/saf-cli/tests/mocks/pages/first_page_with_file_output.py",
   "packages/saf-cli/tests/mocks/pages/first_page_with_hps.py",
   "packages/saf-cli/tests/mocks/pages/first_page_with_minerva.py",
-  "packages/saf-cli/tests/mocks/plugin/",                              # Ignore files containing cookiecutter syntax
+  "packages/saf-cli/tests/mocks/plugin/",                                                  # Ignore files containing cookiecutter syntax
   "packages/saf-cli/tests/mocks/steps/first_step_with_file_output.py",
   "packages/saf-cli/tests/mocks/steps/first_step_with_hps.py",
   "packages/saf-cli/tests/mocks/steps/first_step_with_minerva.py",
   "packages/saf-cli/tests/unit/mocks/solutions/",
+  "packages/saf-projects-dashboard/src/ansys_saf_projects_dashboard/ImportExport.py",      # auto-generated
+  "packages/saf-projects-dashboard/src/ansys_saf_projects_dashboard/Pagination.py",        # auto-generated
+  "packages/saf-projects-dashboard/src/ansys_saf_projects_dashboard/ProjectForm.py",       # auto-generated
+  "packages/saf-projects-dashboard/src/ansys_saf_projects_dashboard/ProjectInfo.py",       # auto-generated
+  "packages/saf-projects-dashboard/src/ansys_saf_projects_dashboard/ProjectsDashboard.py", # auto-generated
+  "packages/saf-projects-dashboard/src/ansys_saf_projects_dashboard/ProjectsFilter.py",    # auto-generated
+  "packages/saf-projects-dashboard/src/ansys_saf_projects_dashboard/ProjectsList.py",      # auto-generated
+  "packages/saf-projects-dashboard/src/ansys_saf_projects_dashboard/ProjectsTable.py",     # auto-generated
+  "packages/saf-projects-dashboard/src/ansys_saf_projects_dashboard/SolutionMetadata.py",  # auto-generated
+  "packages/saf-projects-dashboard/tests",
 ]
 extraPaths = [ "src" ]
 

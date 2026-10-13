@@ -17,18 +17,9 @@
 
 """Visor step for the instance management examples."""
 
-from pathlib import Path
-
 from ansys.saf.glow.solution import StepModel, StepSpec, create_instance, instance, long_running, transaction
 from ansys.saf.product_manager.visor import VisorManager
 from ansys.visor.viewer import Metadata
-
-CUBE_PATH = Path(__file__).parent.parent / "method_assets" / "visor_shapes" / "cube.vtm"
-PISTON_PATH = Path(__file__).parent.parent / "method_assets" / "visor_shapes" / "piston_rod.vtkhdf"
-SPHERES_PATH = (
-    Path(__file__).parent.parent / "method_assets" / "visor_shapes" / "vtk_scene_sphere_l2_b3_r32_v3_c1_z3.vtm"
-)
-ELBOW_PATH = Path(__file__).parent.parent / "method_assets" / "visor_shapes" / "elbow-2-00005.vtkhdf"
 
 
 class VisorStep(StepModel):
@@ -69,7 +60,9 @@ class VisorStep(StepModel):
         """Display the piston rod in the running Visor instance."""
         self.transaction.raise_event(message="Loading piston rod in VISOR.", stream_name="visor-output-stream")
         try:
-            visor_manager.instance.update(PISTON_PATH.as_posix(), Metadata(name="Piston Rod", unit="m"))
+            asset_handle = self.transaction.get_asset_entity_handle("visor_shapes/piston_rod.vtkhdf")
+            asset_path = self.storage_scope.get_cached(asset_handle).as_posix()
+            visor_manager.instance.update(asset_path, Metadata(name="Piston Rod", unit="m"))
         except Exception as e:
             self.transaction.raise_event(
                 message=f"VISOR piston rod update failed: {e}", stream_name="visor-output-stream"
@@ -83,7 +76,11 @@ class VisorStep(StepModel):
         """Display the spheres in the running Visor instance."""
         self.transaction.raise_event(message="Loading spheres in VISOR.", stream_name="visor-output-stream")
         try:
-            visor_manager.instance.update(SPHERES_PATH.as_posix(), Metadata(name="Spheres", unit="m"))
+            asset_handle = self.transaction.get_asset_entity_handle(
+                "visor_shapes/vtk_scene_sphere_l2_b3_r32_v3_c1_z3.vtm"
+            )
+            asset_path = self.storage_scope.get_cached(asset_handle).as_posix()
+            visor_manager.instance.update(asset_path, Metadata(name="Spheres", unit="m"))
         except Exception as e:
             self.transaction.raise_event(message=f"VISOR shape update failed: {e}", stream_name="visor-output-stream")
             raise
@@ -95,7 +92,9 @@ class VisorStep(StepModel):
         """Display the elbow in the running Visor instance."""
         self.transaction.raise_event(message="Loading elbow in VISOR.", stream_name="visor-output-stream")
         try:
-            visor_manager.instance.update(ELBOW_PATH.as_posix(), Metadata(name="Elbow", unit="m"))
+            asset_handle = self.transaction.get_asset_entity_handle("visor_shapes/elbow-2-00005.vtkhdf")
+            asset_path = self.storage_scope.get_cached(asset_handle).as_posix()
+            visor_manager.instance.update(asset_path, Metadata(name="Elbow", unit="m"))
         except Exception as e:
             self.transaction.raise_event(message=f"VISOR elbow update failed: {e}", stream_name="visor-output-stream")
             raise

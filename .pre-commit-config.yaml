@@ -41,14 +41,13 @@ repos:
         exclude: |
           (?x)^(
             uv.lock|
-            doc/styles/Vocab/ANSYS/accept\.txt|
-            packages/dash-super-components/doc/styles/config/vocabularies/ANSYS/accept\.txt|
+            .*poetry\.lock|
+            .*accept\.txt|
             .*\.aedt|
             packages/saf-projects-dashboard/tests/|
             packages/saf-projects-dashboard/doc/_build|
             packages/saf-projects-dashboard/doc/styles/|
             packages/saf-projects-dashboard/doc/source/_static|
-            packages/saf-projects-dashboard/.*poetry\.lock|
             packages/saf-projects-dashboard/.*package-lock\.json|
             packages/saf-projects-dashboard/.*\.js
           )$

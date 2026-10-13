@@ -5,7 +5,8 @@ stack: "backend"
 layer: "library"
 
 project:
-  description: "Command line interface for developing SAF solutions from scaffolding to packaging"
+  description: "Command line interface for developing SAF solutions from scaffolding
+    to packaging"
 
 tasks:
   test:

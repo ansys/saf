@@ -197,3 +197,5 @@ scaffolded
 (?i)Uvicorn
 synopsys
 UPTODATE
+THIRDPARTY
+SME

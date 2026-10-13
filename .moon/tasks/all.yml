@@ -332,33 +332,6 @@ tasks:
       - "/uv.lock"
       - "/extra_packages/**/*"
 
-  build-doc:
-    description: "Build API documentation"
-    deps:
-      - target: "~:check-env-var"
-        args: 
-          - "UV_PYTHON"
-          - "MOON_PYTHON_VERSION"
-    command: 'uv'
-    args:
-      - "run"
-      - "sphinx-build"
-      - "-M"
-      - "html"
-      - "$projectSource/doc/source"
-      - "$projectSource/doc/_build"
-      - "-j"
-      - "auto"
-      - "--keep-going"
-      - "-v"
-    env:
-      DISABLE_INTERSPHINX: 'true'
-    inputs:
-      - "doc/**/*"
-      - "pyproject.toml"
-    options:
-      runFromWorkspaceRoot: true
-
   export:
     description: "Export the project"
     deps:

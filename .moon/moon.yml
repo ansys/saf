@@ -5,6 +5,24 @@ workspace:
     include: []
 
 tasks:
+  check-env-var:
+    description: "Check that required environment variables are set"
+    command: 'uv'
+    args:
+      - "run"
+      - "python"
+      - '-c'
+      - >-
+        import os, sys;
+        names = sys.argv[1:];
+        missing = next((name for name in names if not os.environ.get(name)), None);
+        message = "Error: Specify at least one environment variable name" if not names else
+        f"Error: Required environment variable is not set: {missing}" if missing is not None else None;
+        print(message, file=sys.stderr) if message is not None else None;
+        sys.exit(1 if message is not None else 0)
+    options:
+      cache: false
+
   uv-sync:
     command: "uv"
     args:
@@ -69,8 +87,55 @@ tasks:
       # Shared pre-commit hook envs aren't safe for concurrent invocation across projects.
       mutex: 'pre-commit'
 
+  vale-sync:
+    description: "Sync Vale linter configuration"
+    command: "uv"
+    args:
+      - 'run'
+      - "--locked"
+      - 'vale'
+      - '--config=$workspaceRoot/doc/.vale.ini'
+      - sync
+    deps:
+      - target: "~:check-env-var"
+        args: 
+          - UV_PYTHON
+          - MOON_PYTHON_VERSION
+    inputs:
+      - "pyproject.toml"
+      - "uv.lock"
+      - "doc/.vale.ini"
+    outputs:
+      - 'doc/styles/**'
+    options:
+      # runFromWorkspaceRoot: true
+      cache: false
+
+  vale:
+    description: "Run Vale linter against documentation files"
+    command: "uv"
+    args:
+      - "run"
+      - "--locked"
+      - "vale"
+      - "--config=$workspaceRoot/doc/.vale.ini"
+      - "--no-wrap"
+      - "--output=line"
+      - "$workspaceRoot/doc/source"
+    deps:
+      - '~:vale-sync'
+    inputs:
+      - "/doc/**/*"
+      - "/pyproject.toml"
+      - "/uv.lock"
+      - "/doc/.vale.ini"
+    options:
+      runFromWorkspaceRoot: true
+
   build-doc:
     description: "Build general documentation"
+    deps:
+      - target: "~:vale"
     command: 'uv'
     args:
       - "run"

@@ -1,3 +1,8 @@
+workspace:
+  inheritedTasks:
+    exclude:
+      - build-doc
+
 tasks:
   test:
     args:

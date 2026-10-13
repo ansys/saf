@@ -40,6 +40,7 @@ dev = [
 ]
 build-saf-projects-dashboard = [ "build>=1.2.1,<2.0", "pre-commit>=4.6.0,<5.0", "pyyaml>=6.0,<7.0" ]
 doc = [
+  "vale==3.22.0.0",
   "ansys-sphinx-theme[autoapi]>=1.9; python_version>='3.12'",
   "autodoc-pydantic>=2.2.0; python_version>='3.12'",
   "click>=8.3.2; python_version>='3.12'",

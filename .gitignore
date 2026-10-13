@@ -257,3 +257,6 @@ report/
 
 # Environment variables
 .env
+
+# Documentation styles
+doc/styles/Google/

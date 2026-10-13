@@ -229,9 +229,7 @@ class DualInputRangeSlider(html.Div):
             "clampBehavior": "strict",  # Prevents user from entering values outside of [min, max]
         }
         self._populate_with_defaults(self._lower_bound_input_props, default_lower_bound_input_props)
-        self._enforce_controlled_props(
-            self._lower_bound_input_props, controlled_lower_bound_input_props
-        )
+        self._enforce_controlled_props(self._lower_bound_input_props, controlled_lower_bound_input_props)
 
         default_upper_bound_input_props: dict[str, Any] = {
             "label": "Max",
@@ -249,9 +247,7 @@ class DualInputRangeSlider(html.Div):
             "clampBehavior": "strict",  # Prevents user from entering values outside of [min, max]
         }
         self._populate_with_defaults(self._upper_bound_input_props, default_upper_bound_input_props)
-        self._enforce_controlled_props(
-            self._upper_bound_input_props, controlled_upper_bound_input_props
-        )
+        self._enforce_controlled_props(self._upper_bound_input_props, controlled_upper_bound_input_props)
 
         super().__init__(
             [
@@ -280,8 +276,8 @@ class DualInputRangeSlider(html.Div):
 
     def _check_mandatory_inputs(
         self,
-        input_min: int | float,
-        input_max: int | float,
+        input_min: float,
+        input_max: float,
     ) -> None:
         if input_max is None or input_min is None:  # type: ignore - deliberately checking input value types
             raise ValueError("Both 'min' and 'max' parameters must be provided.")
@@ -297,9 +293,9 @@ class DualInputRangeSlider(html.Div):
 
     def _check_optional_inputs_and_defaults(
         self,
-        checked_min: int | float,
-        checked_max: int | float,
-        step: int | float,
+        checked_min: float,
+        checked_max: float,
+        step: float,
         decimal_scale: int,
         value: list[int | float],
     ) -> None:
@@ -307,18 +303,13 @@ class DualInputRangeSlider(html.Div):
         self._check_decimal_scale(decimal_scale)
         self._check_value(checked_min, checked_max, value)
 
-    def _check_step(
-        self, checked_min: int | float, checked_max: int | float, step: int | float
-    ) -> None:
+    def _check_step(self, checked_min: float, checked_max: float, step: float) -> None:
         if not isinstance(step, int | float):  # type: ignore - deliberately checking input value types
             raise ValueError("'step' parameter must be a number.")
         if step <= 0:
             raise ValueError("'step' parameter must be positive.")
         if step > (checked_max - checked_min):
-            raise ValueError(
-                "'step' parameter must be less than or equal to the range defined by 'min' "
-                "and 'max'."
-            )
+            raise ValueError("'step' parameter must be less than or equal to the range defined by 'min' and 'max'.")
 
     def _check_decimal_scale(self, decimal_scale: int) -> None:
         if not isinstance(decimal_scale, int):  # type: ignore - checking inputs
@@ -326,36 +317,26 @@ class DualInputRangeSlider(html.Div):
         if decimal_scale < 0:
             raise ValueError("'decimal_scale' parameter must be non-negative.")
 
-    def _check_value(
-        self, checked_min: int | float, checked_max: int | float, value: list[int | float]
-    ) -> None:
+    def _check_value(self, checked_min: float, checked_max: float, value: list[int | float]) -> None:
         if len(value) != 2:
             raise ValueError("'value' parameter must be a list of two elements.")
         if not all(isinstance(v, int | float) for v in value):  # type: ignore - checking inputs
             raise ValueError("'value' parameter must be a list of numbers.")
-        if not (checked_min <= value[0] <= checked_max) or not (
-            checked_min <= value[1] <= checked_max
-        ):
+        if not (checked_min <= value[0] <= checked_max) or not (checked_min <= value[1] <= checked_max):
             raise ValueError(
-                "'value' parameter elements must each be within the range defined by 'min' "
-                "and 'max'.",
+                "'value' parameter elements must each be within the range defined by 'min' and 'max'.",
             )
         if value[0] > value[1]:
             raise ValueError(
-                "The first element of the 'value' parameter must be less than or equal to the "
-                "second element."
+                "The first element of the 'value' parameter must be less than or equal to the second element."
             )
 
-    def _populate_with_defaults(
-        self, properties: dict[str, Any], default_properties: dict[str, Any]
-    ) -> None:
+    def _populate_with_defaults(self, properties: dict[str, Any], default_properties: dict[str, Any]) -> None:
         for key, val in default_properties.items():
             if key not in properties:
                 properties[key] = val
 
-    def _enforce_controlled_props(
-        self, properties: dict[str, Any], controlled_properties: dict[str, Any]
-    ) -> None:
+    def _enforce_controlled_props(self, properties: dict[str, Any], controlled_properties: dict[str, Any]) -> None:
         for key, val in controlled_properties.items():
             properties[key] = val
 
@@ -373,8 +354,8 @@ class DualInputRangeSlider(html.Div):
     )
     def update_slider_or_inputs_values(
         slider_value: list[float | int],
-        lower_bound_value: float | int | str,
-        upper_bound_value: float | int | str,
+        lower_bound_value: float | str,
+        upper_bound_value: float | str,
         slider_id: dict[str, Any],
         lower_bound_id: dict[str, Any],
         upper_bound_id: dict[str, Any],

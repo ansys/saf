@@ -41,6 +41,7 @@ repos:
         exclude: |
           (?x)^(
             doc/styles/Vocab/ANSYS/accept\.txt|
+            packages/dash-super-components/doc/styles/config/vocabularies/ANSYS/accept\.txt|
             .*\.aedt|
             packages/saf-projects-dashboard/tests/|
             packages/saf-projects-dashboard/doc/_build|

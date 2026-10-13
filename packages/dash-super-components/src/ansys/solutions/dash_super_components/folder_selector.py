@@ -379,9 +379,7 @@ class FolderSelector(html.Div):
             "mode": self.mode,
             "browse_from": self.browse_from,
             "max_tree_depth": options.get("max_tree_depth", _DEFAULT_MAX_TREE_DEPTH),
-            "max_children_per_node": options.get(
-                "max_children_per_node", _DEFAULT_MAX_CHILDREN_PER_NODE
-            ),
+            "max_children_per_node": options.get("max_children_per_node", _DEFAULT_MAX_CHILDREN_PER_NODE),
         }
 
         folders_structure = (
@@ -538,9 +536,7 @@ class FolderSelector(html.Div):
 
         return fallback_mode()
 
-    def _populate_with_defaults(
-        self, properties: dict[str, Any], default_properties: dict[str, Any]
-    ) -> None:
+    def _populate_with_defaults(self, properties: dict[str, Any], default_properties: dict[str, Any]) -> None:
         for key, val in default_properties.items():
             if key not in properties:
                 properties[key] = val
@@ -558,7 +554,7 @@ class FolderSelector(html.Div):
         """Populate the selected_folder store with default_path upon component instantiation."""
         default_path = settings["default_path"]
         if default_path and not selected_folder:
-            return cast(str, default_path)
+            return cast("str", default_path)
         else:
             return no_update
 
@@ -621,9 +617,7 @@ class FolderSelector(html.Div):
         current_selected_folder: str | None,
         folders_structure: dict[str, Any],
         component_id: dict[str, str],
-    ) -> tuple[
-        bool | NoUpdate, str | NoUpdate | None, bool | NoUpdate, dict[str, Any] | NoUpdate | None
-    ]:
+    ) -> tuple[bool | NoUpdate, str | NoUpdate | None, bool | NoUpdate, dict[str, Any] | NoUpdate | None]:
         """
         Open a OS-provided or a browser-generated popup.
 
@@ -633,9 +627,9 @@ class FolderSelector(html.Div):
         if not folder_selector_is_open:
             raise PreventUpdate
 
-        topmost = cast(bool, settings["topmost"])
-        max_path_length = cast(int, settings["max_path_length"])
-        folder_selector_mode = cast(FolderSelectorMode, settings["mode"])
+        topmost = cast("bool", settings["topmost"])
+        max_path_length = cast("int", settings["max_path_length"])
+        folder_selector_mode = cast("FolderSelectorMode", settings["mode"])
         notification = no_update
         selected_directory = None
 
@@ -674,8 +668,7 @@ class FolderSelector(html.Div):
                 )
             except Exception as exc:
                 if not (
-                    isinstance(exc, RuntimeError)
-                    or (TKINTER_AVAILABLE and isinstance(exc, tkinter.TclError))  # type: ignore[reportOptionalMemberAccess]
+                    isinstance(exc, RuntimeError) or (TKINTER_AVAILABLE and isinstance(exc, tkinter.TclError))  # type: ignore[reportOptionalMemberAccess]
                 ):
                     raise  # re-raise unexpected exceptions
 
@@ -748,10 +741,7 @@ class FolderSelector(html.Div):
             raise PreventUpdate
 
         if not folders_structure:
-            message = (
-                "The folder structure could not be retrieved. Please try again or "
-                "select another folder."
-            )
+            message = "The folder structure could not be retrieved. Please try again or select another folder."
             notification = {
                 "title": "Error during folder selection",
                 "id": "folder-selector-notify-failure" + "-" + str(n_clicks),
@@ -780,13 +770,10 @@ class FolderSelector(html.Div):
 
                 validation = FolderSelector._validate_bootstrap_selected_path(
                     resolved_folder,
-                    cast(int, settings["max_path_length"]),
+                    cast("int", settings["max_path_length"]),
                 )
                 if isinstance(validation, Exception):
-                    message = (
-                        "The selected folder path is invalid. Please try again or select "
-                        "another folder."
-                    )
+                    message = "The selected folder path is invalid. Please try again or select another folder."
                     notification = {
                         "title": "Error during folder selection",
                         "id": "folder-selector-notify-failure" + "-" + str(n_clicks),
@@ -804,10 +791,7 @@ class FolderSelector(html.Div):
             except ValueError:
                 # In case the selected nav item id is not found in the tree structure
                 # we consider it as an invalid selection:
-                message = (
-                    "The selected folder path could not be resolved. Please try again or "
-                    "select another folder."
-                )
+                message = "The selected folder path could not be resolved. Please try again or select another folder."
                 notification = {
                     "title": "Error during folder selection",
                     "id": "folder-selector-notify-failure" + "-" + str(n_clicks),
@@ -911,9 +895,7 @@ class FolderSelector(html.Div):
                 "children": [],
             }
             if excluded_count > 0:
-                result["description"] = (
-                    f"⚠ subfolders not shown (maximum depth of {max_depth} reached)"
-                )
+                result["description"] = f"⚠ subfolders not shown (maximum depth of {max_depth} reached)"
             return result
 
         children = sorted(

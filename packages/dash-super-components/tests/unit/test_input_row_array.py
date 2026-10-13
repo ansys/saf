@@ -160,13 +160,13 @@ def test_input_row_array_initialization_enable_multiple_rows_defaults(
 
     # Test add and delete buttons
     buttons = component.children[0]
-    _assert_buttons(buttons, cast(InputRowArray.InputRowArrayIds, component.ids))
+    _assert_buttons(buttons, cast("InputRowArray.InputRowArrayIds", component.ids))
 
     # Test content
     rows_container = component.children[1]
     _assert_initial_rows(
         rows_container,
-        cast(InputRowArray.InputRowArrayIds, component.ids),
+        cast("InputRowArray.InputRowArrayIds", component.ids),
         input_items_defaults,
         expected_full_width=False,
     )
@@ -175,7 +175,7 @@ def test_input_row_array_initialization_enable_multiple_rows_defaults(
     storage = component.children[-1]
     _assert_storage(
         storage,
-        cast(InputRowArray.InputRowArrayIds, component.ids),
+        cast("InputRowArray.InputRowArrayIds", component.ids),
         input_items_defaults,
         enable_multiple_rows=True,
     )
@@ -193,13 +193,13 @@ def test_input_row_array_initialization_enable_multiple_rows_custom_properties(
 
     # Test add and delete buttons
     buttons = component.children[0]
-    _assert_buttons(buttons, cast(InputRowArray.InputRowArrayIds, component.ids))
+    _assert_buttons(buttons, cast("InputRowArray.InputRowArrayIds", component.ids))
 
     # Test content
     rows_container = component.children[1]
     _assert_initial_rows(
         rows_container,
-        cast(InputRowArray.InputRowArrayIds, component.ids),
+        cast("InputRowArray.InputRowArrayIds", component.ids),
         input_items,
         expected_full_width=False,
     )
@@ -208,7 +208,7 @@ def test_input_row_array_initialization_enable_multiple_rows_custom_properties(
     storage = component.children[-1]
     _assert_storage(
         storage,
-        cast(InputRowArray.InputRowArrayIds, component.ids),
+        cast("InputRowArray.InputRowArrayIds", component.ids),
         input_items,
         enable_multiple_rows=True,
     )
@@ -228,7 +228,7 @@ def test_input_row_array_initialization_not_enable_multiple_rows_defaults(
     rows_container = component.children[0]
     _assert_initial_rows(
         rows_container,
-        cast(InputRowArray.InputRowArrayIds, component.ids),
+        cast("InputRowArray.InputRowArrayIds", component.ids),
         input_items_defaults,
         expected_full_width=False,
     )
@@ -237,7 +237,7 @@ def test_input_row_array_initialization_not_enable_multiple_rows_defaults(
     storage = component.children[-1]
     _assert_storage(
         storage,
-        cast(InputRowArray.InputRowArrayIds, component.ids),
+        cast("InputRowArray.InputRowArrayIds", component.ids),
         input_items_defaults,
         enable_multiple_rows=False,
     )
@@ -257,7 +257,7 @@ def test_input_row_array_initialization_not_enable_multiple_rows_custom_properti
     rows_container = component.children[0]
     _assert_initial_rows(
         rows_container,
-        cast(InputRowArray.InputRowArrayIds, component.ids),
+        cast("InputRowArray.InputRowArrayIds", component.ids),
         input_items,
         expected_full_width=False,
     )
@@ -280,7 +280,7 @@ def test_input_row_array_initialization_full_width(
     rows_container = component.children[1]
     _assert_initial_rows(
         rows_container,
-        cast(InputRowArray.InputRowArrayIds, component.ids),
+        cast("InputRowArray.InputRowArrayIds", component.ids),
         input_items_defaults,
         expected_full_width=True,
     )
@@ -289,7 +289,7 @@ def test_input_row_array_initialization_full_width(
     storage = component.children[-1]
     _assert_storage(
         storage,
-        cast(InputRowArray.InputRowArrayIds, component.ids),
+        cast("InputRowArray.InputRowArrayIds", component.ids),
         input_items_defaults,
         enable_multiple_rows=True,
     )

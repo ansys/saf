@@ -1,4 +1,21 @@
 #!/usr/bin/env python
+
+# Copyright (C) 2026 ANSYS, Inc. and/or its affiliates.
+# SPDX-License-Identifier: Apache-2.0
+#
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 """
 Wrapper script to run dash-generate-components with proper path handling on Windows.
 
@@ -18,23 +35,6 @@ import subprocess
 import sys
 
 RUFF_HEADER = "# ruff: noqa\n"
-
-
-def _require_dash_or_exit():
-    """Fail fast with actionable guidance when dash is not installed."""
-    try:
-        import dash  # noqa: F401
-    except ModuleNotFoundError as exc:
-        print(
-            "Missing required Python dependency 'dash'.\n"
-            "Install it in the active environment, then rerun the build.\n"
-            "Examples:\n"
-            "  - poetry install --with build\n"
-            '  - pip install "dash[dev]>=3.0.0"\n'
-            "  - pip install -r scripts/requirements.txt",
-            file=sys.stderr,
-        )
-        raise SystemExit(1) from exc
 
 
 def _add_license_headers(files):
@@ -57,7 +57,7 @@ def _add_license_headers(files):
     for result in results:
         sys.stdout.write(result.stdout)
         sys.stderr.write(result.stderr)
-    raise subprocess.CalledProcessError(result.returncode, command)
+    raise subprocess.CalledProcessError(result.returncode, command)  # pyright: ignore[reportPossiblyUnboundVariable]
 
 
 def run_node_extract(components_source, ignore, local_extract_path):
@@ -116,7 +116,7 @@ def _filter_metadata(metadata):
     return metadata
 
 
-def main():
+def main():  # noqa: C901
     """Run component generation with Windows path fix."""
     parser = argparse.ArgumentParser(description="Generate Dash component Python wrappers")
     parser.add_argument("components_source", help="Path to TypeScript/React components")
@@ -128,8 +128,6 @@ def main():
     parser.add_argument("-n", "--namespace", default=None, help="Component namespace (defaults to project_shortname)")
 
     args = parser.parse_args()
-
-    _require_dash_or_exit()
 
     from importlib.resources import files
 

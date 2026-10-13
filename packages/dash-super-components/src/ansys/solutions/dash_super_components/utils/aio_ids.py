@@ -58,9 +58,7 @@ class AIOIds:
     """
 
     @classmethod
-    def make_id_dict(
-        cls, component: str, subcomponent: str | _Wildcard, aio_id: str | _Wildcard
-    ) -> dict[str, Any]:
+    def make_id_dict(cls, component: str, subcomponent: str | _Wildcard, aio_id: str | _Wildcard) -> dict[str, Any]:
         """Return a standardized dict-style ID for Dash pattern-matching callbacks.
 
         The returned dict follows the pattern expected by Dash pattern-matching callbacks:

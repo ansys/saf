@@ -18,6 +18,8 @@
 
 import time
 
+from saf.solutions.my_solution.solution.scripts.simple_add import simple_add  #
+
 from ansys.saf.glow.solution import StepModel, StepSpec, transaction
 from ansys.saf.glow.solution.hps import (
     NO_HPS_SIMPLE_PROJECT,
@@ -25,7 +27,6 @@ from ansys.saf.glow.solution.hps import (
     HpsJobEvaluationStatus,
     HpsSimpleProject,
 )
-from saf.solutions.my_solution.solution.scripts.simple_add import simple_add
 
 
 class FirstStep(StepModel):
@@ -54,6 +55,6 @@ class FirstStep(StepModel):
             time.sleep(5)
 
         if self.hps_project.status.evaluation_status == HpsJobEvaluationStatus.EVALUATED:
-            self.result = self.hps_project.result
+            self.result = self.hps_project.result  # pyright: ignore[reportAttributeAccessIssue]
         else:
             raise Exception(f"HPS job failed with status {self.hps_project.status.evaluation_status}")

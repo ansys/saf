@@ -46,9 +46,7 @@ def test_logs_parser_initialization_with_string_path():
 
     # Verify pattern is a string containing regex for the placeholders
     assert isinstance(parser.pattern, str)
-    assert (
-        parser.pattern == "(?P<asctime>[\\d-]+\\s[\\d:,]+)\\ (?P<levelname>\\w+)\\ (?P<message>.+)"
-    )
+    assert parser.pattern == "(?P<asctime>[\\d-]+\\s[\\d:,]+)\\ (?P<levelname>\\w+)\\ (?P<message>.+)"
 
 
 def test_logs_parser_initialization_with_path_object():
@@ -152,9 +150,7 @@ def test_logs_parser_initialization_all_formatting_strings(
 
 def test_logs_parser_parse_file_path(monkeypatch: pytest.MonkeyPatch):
     """Test parsing log content from a file and ensure correct path is used."""
-    log_content = (
-        "2025-11-17 12:00:00,123 INFO Hello world\n2025-11-17 12:01:00,456 ERROR Something failed"
-    )
+    log_content = "2025-11-17 12:00:00,123 INFO Hello world\n2025-11-17 12:01:00,456 ERROR Something failed"
     called_paths: list[Path] = []
 
     def mock_exists(self: Path) -> bool:
@@ -193,9 +189,7 @@ def test_logs_parser_parse_file_path(monkeypatch: pytest.MonkeyPatch):
 
 def test_logs_parser_parse_file_string_path(monkeypatch: pytest.MonkeyPatch):
     """Test parsing log content from a path passed as a string."""
-    log_content = (
-        "2025-11-17 12:00:00,123 INFO Hello world\n2025-11-17 12:01:00,456 ERROR Something failed"
-    )
+    log_content = "2025-11-17 12:00:00,123 INFO Hello world\n2025-11-17 12:01:00,456 ERROR Something failed"
     called_paths: list[Path] = []
 
     def mock_exists(self: Path) -> bool:
@@ -234,9 +228,7 @@ def test_logs_parser_parse_file_string_path(monkeypatch: pytest.MonkeyPatch):
 
 def test_logs_parser_parse_url():
     """Test parsing log content from a URL."""
-    log_content = (
-        "2025-11-17 12:00:00,123 INFO Hello world\n2025-11-17 12:01:00,456 ERROR Something failed"
-    )
+    log_content = "2025-11-17 12:00:00,123 INFO Hello world\n2025-11-17 12:01:00,456 ERROR Something failed"
     mock_response = MagicMock()
     mock_response.text = log_content
     mock_response.raise_for_status = MagicMock()
@@ -621,9 +613,7 @@ def test_logs_parser_parse_missing_fields(monkeypatch: pytest.MonkeyPatch):
 def test_logs_parser_mixed_matching_lines(monkeypatch: pytest.MonkeyPatch):
     """Test parse_with_status when some lines match and some don't."""
     log_content = (
-        "2025-11-17 12:00:00,123 INFO Valid line\n"
-        "Invalid line format\n"
-        "2025-11-17 12:01:00,456 ERROR Another valid line"
+        "2025-11-17 12:00:00,123 INFO Valid line\nInvalid line format\n2025-11-17 12:01:00,456 ERROR Another valid line"
     )
     monkeypatch.setattr(Path, "exists", lambda self: True)  # type: ignore
     monkeypatch.setattr(Path, "read_text", lambda self: log_content)  # type: ignore

@@ -1,25 +1,32 @@
+#####################
 Dash Super Components
-=========================
-|pyansys| |pypi| |python| |apache|
+#####################
 
-.. |pyansys| image:: https://img.shields.io/badge/Py-Ansys-ffc107.svg?logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAIAAACQkWg2AAABDklEQVQ4jWNgoDfg5mD8vE7q/3bpVyskbW0sMRUwofHD7Dh5OBkZGBgW7/3W2tZpa2tLQEOyOzeEsfumlK2tbVpaGj4N6jIs1lpsDAwMJ278sveMY2BgCA0NFRISwqkhyQ1q/Nyd3zg4OBgYGNjZ2ePi4rB5loGBhZnhxTLJ/9ulv26Q4uVk1NXV/f///////69du4Zdg78lx//t0v+3S88rFISInD59GqIH2esIJ8G9O2/XVwhjzpw5EAam1xkkBJn/bJX+v1365hxxuCAfH9+3b9/+////48cPuNehNsS7cDEzMTAwMMzb+Q2u4dOnT2vWrMHu9ZtzxP9vl/69RVpCkBlZ3N7enoDXBwEAAA+YYitOilMVAAAAAElFTkSuQmCC
-   :target: https://docs.pyansys.com/
-   :alt: PyAnsys
+|python| |pypi| |GH-CI| |Apache| |ruff|
 
-.. |pypi| image:: https://img.shields.io/pypi/v/ansys-solutions-dash-super-components.svg?logo=python&logoColor=white
-   :target: https://pypi.org/project/ansys-solutions-dash-super-components/
-   :alt: PyPI
-
-.. |python| image:: https://img.shields.io/pypi/pyversions/ansys-solutions-dash-super-components?logo=pypi
+.. |python| image:: https://img.shields.io/pypi/pyversions/ansys-solutions-dash-super-components?logo=python&logoColor=white&label=Python
    :target: https://pypi.org/project/ansys-solutions-dash-super-components/
    :alt: Python
 
-.. |apache| image:: https://img.shields.io/badge/License-Apache%202.0-blue.svg
-   :target: https://opensource.org/licenses/Apache-2.0
-   :alt: Apache 2.0
+.. |pypi| image:: https://img.shields.io/pypi/v/ansys-solutions-dash-super-components.svg?logo=pypi&logoColor=white&label=PyPI
+   :target: https://pypi.org/project/ansys-solutions-dash-super-components/
+   :alt: PyPI
+
+.. |GH-CI| image:: https://img.shields.io/github/actions/workflow/status/ansys/saf/ci_cd_pr.yml?branch=main&label=CI-CD&logo=github
+   :target: https://github.com/ansys/saf/actions/workflows/ci_cd_pr.yml?query=branch%3Amain
+   :alt: GH-CI
+
+.. |Apache| image:: https://img.shields.io/badge/License-Apache2.0-white.svg?labelColor=black
+   :target: https://www.apache.org/licenses/
+   :alt: Apache
+
+.. |ruff| image:: https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json
+   :target: https://github.com/astral-sh/ruff
+   :alt: Ruff
+
 
 Overview
---------
+========
 
 Dash Super Components is a collection of pre-assembled, high-level UI components
 built on top of the `Dash Mantine Components (DMC) <https://www.dash-mantine-components.com/>`_
@@ -30,32 +37,27 @@ building blocks.
 Dash is a trademark of Plotly Technologies Inc. This project is not affiliated with, endorsed by,
 or sponsored by Plotly Technologies Inc.
 
-Documentation and issues
-------------------------
-
-For full documentation, including the getting started guide, user guide, and API
-reference, see the `Dash Super Components documentation
-<https://super-components-for-dash.docs.solutions.ansys.com/>`_.
-In the upper right corner of the documentation's title bar, there is an option for
-switching from viewing the documentation for the latest stable release to viewing
-the documentation for the development version or previously released versions.
-
-On the `Dash Super Components Issues
-<https://github.com/ansys/super-components-for-dash/issues>`_ page, you can create
-issues to report bugs and request new features.
 
 Installation
-------------
+============
+
+Ensure you have all the necessary `prerequisites`_.
 
 The ``ansys-solutions-dash-super-components`` package supports Python 3.11
 through 3.14 on Windows and Linux.
 
-Install the latest release from `PyPI
-<https://pypi.org/project/ansys-solutions-dash-super-components/>`_ with:
+To install Dash Super Components, run:
 
-.. code:: console
+.. code-block:: bash
 
    pip install ansys-solutions-dash-super-components
+
+
+Documentation
+=============
+
+Visit the `official documentation`_ for detailed information on how to use Dash Super Components.
+Check the `API reference`_ for a complete list of classes, methods, and usage examples.
 
 Quick start
 -----------
@@ -106,24 +108,61 @@ Run the example with ``python app.py`` and open ``http://127.0.0.1:8050`` in
 your browser.
 
 For detailed instructions on how to get started with Dash Super Components, see the
-`getting started guide
-<https://super-components-for-dash.docs.solutions.ansys.com/version/dev/getting-started.html>`_
+`getting started guide <https://saf.ansys.com/version/stable/user_guide/frontend/dash/dash_super_components/dash_super_components_getting_started.html>`_
 in the documentation.
 
-For more complex examples, see the `showcase application
-<https://github.com/ansys/super-components-for-dash/tree/main/examples/showcase_all>`_
+For more complex examples, see the `gallery applications
+<https://github.com/ansys/saf/tree/main/packages/dash-super-components/examples/gallery_apps>`_
 in the repository.
 
-Contributing
-------------
 
-Contributions are welcome! See the `contributing guide
-<https://super-components-for-dash.docs.solutions.ansys.com/version/dev/contribute.html>`_ for
-developer installation instructions and guidelines on how to contribute code,
-documentation, and examples to this project.
+Troubleshooting
+===============
+
+For troubleshooting or reporting issues, please open an issue in the `project repository`_.
+
+Please follow these steps to report an issue:
+
+- Go to the project repository.
+- Click on the ``Issues`` tab.
+- Click on the ``New Issue`` button.
+- Provide a clear and detailed description of the issue you are facing.
+- Include any relevant error messages, code snippets, or screenshots.
+
+Additionally, you can refer to the `official documentation`_ for additional
+resources and troubleshooting guides.
+
+
+Contribute
+==========
+
+Contributions are welcome!
+If you would like to contribute, please follow the guidelines provided in the `Contribute`_
+section of the official documentation.
+
 
 License
--------
+=======
 
-This project is licensed under the Apache 2.0 License. For more information,
-see the `LICENSE <LICENSE>`_ file.
+You can find the full text of the license in the `LICENSE`_ file.
+
+
+Changelog
+=========
+
+The changelog section provides a summary of notable changes for each version of
+Dash Super Components. It helps you keep track of updates, bug
+fixes, new features, and improvements made to the project over time.
+
+To view the complete changelog, visit the project repository and navigate
+to the `CHANGELOG`_ file. It provides a comprehensive list of changes
+categorized by version, along with brief descriptions of each change.
+
+
+.. _official documentation: https://saf.ansys.com/
+.. _project repository: https://github.com/ansys/saf/
+.. _prerequisites: https://saf.ansys.com/version/stable/getting_started/prerequisites/index.html
+.. _API reference: https://saf.ansys.com/version/stable/api/dash-super-components/index.html
+.. _Contribute: https://saf.ansys.com/version/stable/contribute/index.html
+.. _LICENSE: https://github.com/ansys/saf/blob/main/packages/dash-super-components/LICENSE
+.. _CHANGELOG: https://github.com/ansys/saf/blob/main/packages/dash-super-components/CHANGELOG.md

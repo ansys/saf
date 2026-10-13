@@ -97,9 +97,7 @@ def test_endpoint_calls_send_from_directory(mock_dash_app: DashProxy):
 
     expected_assets_path = str(Path(assets_server.__file__).parent.parent / "assets")
 
-    with mock.patch(
-        "ansys.solutions.dash_super_components.utils.assets_server.send_from_directory"
-    ) as mock_send:
+    with mock.patch("ansys.solutions.dash_super_components.utils.assets_server.send_from_directory") as mock_send:
         # Set up the mock to return a valid response
         mock_return = mock.MagicMock()
         mock_send.return_value = mock_return

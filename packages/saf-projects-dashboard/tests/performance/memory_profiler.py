@@ -1,6 +1,6 @@
-# Copyright (C) 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
+# Copyright (C) 2026 ANSYS, Inc. and/or its affiliates.
+
 # SPDX-License-Identifier: Apache-2.0
-#
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -28,12 +28,10 @@ Uses Playwright CDP (Chrome DevTools Protocol) for accurate memory profiling.
 
 import asyncio
 from dataclasses import dataclass, field
-import json
 import statistics
-from typing import Optional
 
 try:
-    from playwright.async_api import CDPSession, Page, async_playwright
+    from playwright.async_api import CDPSession, Page, async_playwright  # pyright: ignore[reportMissingImports]
 
     PLAYWRIGHT_AVAILABLE = True
 except ImportError:
@@ -264,7 +262,7 @@ async def profile_memory(
         duration_ms=duration_seconds * 1000,
     )
 
-    async with async_playwright() as p:
+    async with async_playwright() as p:  # pyright: ignore[reportPossiblyUnboundVariable]
         # Enable memory measurement flags
         browser = await p.chromium.launch(
             headless=headless,

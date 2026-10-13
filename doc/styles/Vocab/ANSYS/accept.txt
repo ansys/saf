@@ -227,6 +227,7 @@ Python(: Remote Attach)?
 Pythonic
 PyWebView
 pywebview
+rebase
 reimported
 reindexed
 reinitializing
@@ -302,6 +303,7 @@ upper_bound_input_props
 UPTODATE
 uptodate
 userinfo
+uv
 Uvicorn
 uvicorn
 validate_(access_token|token_with_introspection)

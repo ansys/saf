@@ -21,12 +21,13 @@ import pytest_mock
 from ansys.saf.cli.integrations.solutions_manager import main
 
 
-def test_no_command_provided():
+@pytest.mark.parametrize(("args", "expected_exit_code"), [([], 2), (["--help"], 0)])
+def test_no_command_provided(args: list[str], expected_exit_code: int):
     """Test that running the CLI without a command shows help."""
     runner = CliRunner()
-    result = runner.invoke(main, [])
+    result = runner.invoke(main, args)
 
-    assert result.exit_code == 0
+    assert result.exit_code == expected_exit_code
     assert "Solutions Manager Integration CLI" in result.output
     assert "Usage:" in result.output
 

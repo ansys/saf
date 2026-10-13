@@ -91,7 +91,6 @@ saf-projects-dashboard:
   - 'packages/saf-projects-dashboard/**'
   - '!packages/saf-projects-dashboard/doc/**'
   - '.github/workflows/tests_groups_definitions/saf-projects-dashboard.json'
-  - '.github/workflows/_js.yml'
 saf-templates:
   - 'packages/saf-templates/src/**'
   - 'packages/saf-templates/tests/**'

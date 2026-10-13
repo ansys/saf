@@ -19,12 +19,12 @@
 # pyright: reportUnusedFunction=false
 from typing import TypeVar
 
-from ansys.bdm.api import NO_ENTITY, InvalidContextError
-from ansys.bdm.api.entity_handle import EntityHandle
 import fastapi
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
 
+from ansys.bdm.api import NO_ENTITY, InvalidContextError
+from ansys.bdm.api.entity_handle import EntityHandle
 from ansys.saf.glow._core.gc import bdm_garbage_collector
 from ansys.saf.glow._core.solution import Solution
 from ansys.saf.glow._core.step_model import StepModel

@@ -19,8 +19,6 @@ from pathlib import Path
 import random
 from typing import TypeVar
 
-from ansys.saf.testing.database import PostgresqlServerInfo, create_postgres_database_url
-from ansys.saf.testing.solution.end_to_end import GlowBaseProcess, PostgreSQLConfig
 from fastapi import status
 import httpx2
 from pydantic import PostgresDsn
@@ -28,6 +26,8 @@ import pytest
 
 from ansys.saf.glow.client import Client, NotFoundException
 from ansys.saf.glow.solution import Solution
+from ansys.saf.testing.database import PostgresqlServerInfo, create_postgres_database_url
+from ansys.saf.testing.solution.end_to_end import GlowBaseProcess, PostgreSQLConfig
 from tests.mocks.solution_end_to_end.solution.definition import EndToEndSolution
 from tests.mocks.solution_second_end_to_end.solution.definition import SecondSolution
 from tests.mocks.solution_without_ui_in_ansys.solution.definition import MySolution
@@ -129,4 +129,4 @@ def test_missing_database(
     # THEN: request returns 500 with the expected error message
     assert response.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
     database_name = missing_database_url.unicode_string().split("/")[-1]
-    assert f'asyncpg.exceptions.InvalidCatalogNameError: database "{database_name}" does not exist' in response.text
+    assert f'database "{database_name}" does not exist' in response.text

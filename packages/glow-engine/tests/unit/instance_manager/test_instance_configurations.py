@@ -24,8 +24,6 @@ from typing import Any
 from unittest import mock
 import warnings
 
-from ansys.saf.product_configuration.manager.configurations_manager import ProductInstanceConfigurationsManager
-from ansys.saf.testing.platform_specific import xfail_for_ci
 import httpx2
 import pytest
 import pytest_mock
@@ -33,6 +31,8 @@ import pytest_mock
 from ansys.saf.glow._config.directories import find_product_instance_configs_dir
 from ansys.saf.glow._core.instance.healthcheck import create_health_client_factory
 from ansys.saf.glow._core.instance.hps_system import HpsProductInstanceService, HpsSystem
+from ansys.saf.product_configuration.manager.configurations_manager import ProductInstanceConfigurationsManager
+from ansys.saf.testing.platform_specific import xfail_for_ci
 from tests.conftest import MOCKS_DIR
 
 

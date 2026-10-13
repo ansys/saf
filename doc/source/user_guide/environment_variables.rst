@@ -382,10 +382,13 @@ Product Instance Manager
 
        (Not to be confused with the ``GLOW_PRODUCT_HOST`` environment variable. ``GLOW_PRODUCT_HOST`` is the address used to connect to the product instance from outside, whereas ``GLOW_PRODUCT_BINDING_HOST`` is the address where the product instance listens for connections).
 
-       * For HPS, must be set in the environment where the product instance runs, not in the GLOW API environment.
+       * For HPS, must be set in the environment where the product instance runs (the HPS evaluator or scaler process), not in the GLOW API environment.
        * For PIM, must be set in the environment where PIM runs.
 
-     - ``0.0.0.0``
+       Product instances bound to ``localhost`` are only reachable from the same system. For more information, see :ref:`instance_management_grpc_transport_modes`.
+
+     - * ``localhost`` for secure product configurations
+       * ``0.0.0.0`` for insecure product configurations
 
    * - :envvar:`GLOW_PRODUCT_INSTANCE_SYSTEM_PROJECT_FILES_DIRECTORY`
      - Specifies the absolute path to the project files directory shared with

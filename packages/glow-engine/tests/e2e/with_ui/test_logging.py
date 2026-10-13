@@ -16,6 +16,9 @@
 
 from typing import TypeVar
 
+import pytest
+
+from ansys.saf.glow.solution import Solution
 from ansys.saf.testing.solution.end_to_end import (
     BaseGlowConfiguration,
     DefaultLoggingConfig,
@@ -23,9 +26,6 @@ from ansys.saf.testing.solution.end_to_end import (
     GlowBaseProcess,
     LoggingConfiguration,
 )
-import pytest
-
-from ansys.saf.glow.solution import Solution
 from tests.e2e.conftest import STEPS_WITH_LOGGING_METHODS
 from tests.mocks.solution_end_to_end.solution.definition import EndToEndSolution
 from tests.mocks.solution_end_to_end.solution.transaction_verification_step import (

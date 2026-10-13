@@ -20,8 +20,6 @@ import inspect
 import logging
 from typing import Annotated, Any, ParamSpec, TypeVar, get_origin, get_type_hints
 
-from ansys.bdm.api import IStorageScope
-from ansys.iam.oidc import OidcClient
 from fastapi import Body
 import httpx2
 from pydantic import (
@@ -31,6 +29,8 @@ from pydantic import (
     create_model,
 )
 
+from ansys.bdm.api import IStorageScope
+from ansys.iam.oidc import OidcClient
 from ansys.saf.glow._bdm.datarepo import DataRepository
 from ansys.saf.glow._bdm.multiplexor import SafMultiplexorStorageScopeFactory
 from ansys.saf.glow._config.settings import Settings

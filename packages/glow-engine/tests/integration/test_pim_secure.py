@@ -18,13 +18,13 @@ import logging
 from pathlib import Path
 import platform
 
-from ansys.saf.testing.pim.process import PimProcess
 import pytest
 from pytest_mock import MockerFixture
 
 from ansys.saf.glow._core.instance.iinstance_system import IProductInstanceSystemFactory
 from ansys.saf.glow._core.instance.manager import JOB_DEFAULT_MAX_RUNNING_TIME
 from ansys.saf.glow._utilities.ip_utilities import get_local_ip
+from ansys.saf.testing.pim.process import PimProcess
 from tests.integration.conftest import assert_instance, assert_instance_deleted, create_product_instance_system
 
 

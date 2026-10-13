@@ -16,9 +16,9 @@
 
 from pathlib import Path
 
-from ansys.saf.testing.solution.end_to_end import GlowBaseProcess, ProjectFixture
 import pytest
 
+from ansys.saf.testing.solution.end_to_end import GlowBaseProcess, ProjectFixture
 from tests.mocks.solutions.entity_handle_solution import EntityHandleSolution
 
 pytestmark = pytest.mark.parametrize("solution_type", [EntityHandleSolution], indirect=True)

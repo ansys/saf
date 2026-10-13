@@ -14,10 +14,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from ansys.solutions.solution_with_missing_import_in_ansys.solution import definition  # type: ignore
 import junk  # type: ignore  # noqa: F401
 
 from ansys.saf.glow.runtime import glow_main
+from ansys.solutions.solution_with_missing_import_in_ansys.solution import definition  # type: ignore
 
 
 def main():

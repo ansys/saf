@@ -22,16 +22,16 @@ import shutil
 from typing import TypeVar
 import zipfile
 
+import pytest
+
+from ansys.saf.glow.client import Client
+from ansys.saf.glow.solution import FieldState, Solution
 from ansys.saf.testing.solution.end_to_end import (
     EnableAutomaticProjectMigrationConfig,
     GlowBaseProcess,
     LogContainerManager,
     ProjectFixture,
 )
-import pytest
-
-from ansys.saf.glow.client import Client
-from ansys.saf.glow.solution import FieldState, Solution
 from tests.mocks.solutions import (
     modify_add_field_with_migration,
     modify_add_step_with_migration,

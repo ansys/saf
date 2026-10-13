@@ -26,5 +26,5 @@ def test_saf_version(get_saf_version: GetSAFVersion):
     Test ``saf version`` returns the version of the installed SAF CLI, that matches the one in the pyproject.toml file.
     """
     pyproject_data = tomlkit.loads((Path(__file__).parent.parent.parent / "pyproject.toml").read_bytes()).unwrap()
-    expected_version = pyproject_data["tool"]["poetry"]["version"]
+    expected_version = pyproject_data["project"]["version"]
     assert get_saf_version().find_msg_in_output(expected_version)

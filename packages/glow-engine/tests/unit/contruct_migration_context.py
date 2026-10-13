@@ -23,7 +23,6 @@ from ansys.bdm.shared_volume.storage_configuration import (
     SharedFilesystemContextConfiguration,
 )
 from ansys.bdm.shared_volume.storage_scope import StorageScope
-
 from ansys.saf.glow._config.settings import Settings
 from ansys.saf.glow._core.migrations import MigrationContext
 from ansys.saf.glow._server.project_files_manager import ProjectFilesManager

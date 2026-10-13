@@ -17,11 +17,12 @@
 import datetime
 from typing import Annotated, Any
 
-from ansys.iam.oidc import UserInfo
 from fastapi import Depends, FastAPI, Request
 from joserfc import jwt
 from joserfc.jwk import OctKey
 from pydantic import BaseModel
+
+from ansys.iam.oidc import UserInfo
 
 
 class State(BaseModel):

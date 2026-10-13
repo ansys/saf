@@ -21,10 +21,10 @@ import sys
 from typing import TypeVar
 from unittest import mock
 
-from ansys.saf.testing.solution.end_to_end import GlowDesktopProcess, get_solution_root_dir
 import pytest
 
 from ansys.saf.glow.solution import Solution
+from ansys.saf.testing.solution.end_to_end import GlowDesktopProcess, get_solution_root_dir
 from tests.mocks.solution_end_to_end.solution.definition import EndToEndSolution
 from tests.mocks.solution_second_end_to_end.solution.definition import SecondSolution
 

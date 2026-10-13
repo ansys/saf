@@ -21,16 +21,16 @@ from pathlib import Path
 from typing import Any, Generic, TypeVar, get_args
 import uuid
 
-from ansys.bdm.api import NO_ENTITY, EntityHandle
-from ansys.saf.product_configuration.interfaces import ServiceType
 from pydantic import BaseModel, Field
 
+from ansys.bdm.api import NO_ENTITY, EntityHandle
 from ansys.saf.glow._config.const import ANSYS_GRPC_CERTIFICATES
 from ansys.saf.glow.solution import (
     InstanceManager,
     ProductInstanceManager,
     RecoveryStateInfo,
 )
+from ansys.saf.product_configuration.interfaces import ServiceType
 from tests.mocks.mock_products.client import (
     IMockProductClient,
     MockDummyProductClient,

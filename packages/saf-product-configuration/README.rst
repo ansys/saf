@@ -12,12 +12,12 @@ Solution Application Framework - Product Configuration
    :target: https://pypi.org/project/ansys-saf-product-configuration/
    :alt: PyPI
 
-.. |GH-CI| image:: https://github.com/ansys/saf-product-configuration/actions/workflows/ci_cd_release.yml/badge.svg?label=CI
-   :target: https://github.com/ansys/saf-product-configuration/actions/workflows/ci_cd_release.yml
+.. |GH-CI| image:: https://img.shields.io/github/actions/workflow/status/ansys/saf/ci_cd_pr.yml?branch=main&label=CI-CD&logo=github
+   :target: https://github.com/ansys/saf/actions/workflows/ci_cd_pr.yml?query=branch%3Amain
    :alt: GH-CI
 
-.. |codecov| image:: https://img.shields.io/codecov/c/github/ansys/saf-product-configuration
-   :target: https://app.codecov.io/gh/ansys/saf-product-configuration
+.. |codecov| image:: https://img.shields.io/codecov/c/github/ansys/saf?flag=saf-product-configuration
+   :target: https://app.codecov.io/gh/ansys/saf?flags[0]=saf-product-configuration
    :alt: Codecov
 
 .. |Apache| image:: https://img.shields.io/badge/License-Apache2.0-white.svg?labelColor=black
@@ -71,55 +71,28 @@ configuration workflow.
 Installation
 ============
 
-Ensure you have all the necessary `prerequisites`_. Then, refer to the
-`installation guidelines`_ for detailed instructions on how to install the
-project in your system.
+Ensure you have all the necessary `prerequisites`_.
+
+To install SAF Product Configuration, run:
+
+.. code-block:: bash
+
+   pip install ansys-saf-product-configuration
 
 
 Documentation
 =============
 
-The `official documentation`_ of SAF Product Configuration contains
-the following chapters:
-
-- `Getting started`_. This section provides a brief overview and instructions on
-  how to get started with the project. It typically includes information on how
-  to install the project, set up any necessary dependencies, and run a basic
-  example or test to ensure everything is functioning correctly.
-
-- `User guide`_. The user guide section offers detailed documentation and
-  instructions on how to use the project. It provides comprehensive explanations
-  of the project's features, functionalities, and configuration options. The
-  user guide aims to help users understand the project's concepts, best
-  practices, and recommended workflows.
-
-- `API reference`_. The API reference section provides detailed documentation
-  for the project's application programming interface (API). It includes
-  information about classes, functions, methods, and their parameters, return
-  values, and usage examples. This reference helps developers understand the
-  available API endpoints, their functionalities, and how to interact with them
-  programmatically.
-
-- `Examples`_. The examples section showcases practical code examples that
-  demonstrate how to use the project in real-world scenarios. It provides sample
-  code snippets or complete scripts that illustrate different use cases or
-  demonstrate specific features of the project. Examples serve as practical
-  references for developers, helping them understand how to apply the project to
-  their own applications.
-
-- `Contribute`_. This section provides guidelines and instructions on how to
-  contribute to the project. It includes information on how to set up the
-  development environment, run tests, submit pull requests, and follow
-  contribution guidelines.
+Visit the `official documentation`_ for detailed information on how to use SAF Product Configuration.
+Check the `API reference`_ for a complete list of classes, methods, and usage examples.
 
 
 Troubleshooting
 ===============
 
-For troubleshooting or reporting issues, open an issue in the project
-repository.
+For troubleshooting or reporting issues, please open an issue in the `project repository`_.
 
-Follow these steps to report an issue:
+Please follow these steps to report an issue:
 
 - Go to the project repository.
 - Click on the ``Issues`` tab.
@@ -131,10 +104,18 @@ Additionally, you can refer to the `official documentation`_ for additional
 resources and troubleshooting guides.
 
 
+Contribute
+==========
+
+Contributions are welcome!
+If you would like to contribute, please follow the guidelines provided in the `Contribute`_
+section of the official documentation.
+
+
 License
 =======
 
-This project is licensed under the Apache 2.0 License - see the `LICENSE`_ file for details.
+You can find the full text of the license in the `LICENSE`_ file.
 
 
 Changelog
@@ -149,17 +130,10 @@ to the `CHANGELOG`_ file. It provides a comprehensive list of changes
 categorized by version, along with brief descriptions of each change.
 
 
-.. Prerequisites and installation guidelines
-.. _prerequisites: https://saf-product-configuration.docs.solutions.ansys.com/version/stable/getting-started#prerequisites
-.. _installation guidelines: https://saf-product-configuration.docs.solutions.ansys.com/version/stable/getting-started#installation
-
-.. Documentation chapters
-.. _official documentation: https://saf-product-configuration.docs.solutions.ansys.com
-.. _Getting started: https://saf-product-configuration.docs.solutions.ansys.com/version/stable/getting-started.html
-.. _User guide: https://saf-product-configuration.docs.solutions.ansys.com/version/stable/user-guide.html
-.. _API reference: https://saf-product-configuration.docs.solutions.ansys.com/version/stable/api/index.html
-.. _Examples: https://saf-product-configuration.docs.solutions.ansys.com/version/dev/examples.html
-.. _Contribute: https://saf-product-configuration.docs.solutions.ansys.com/version/stable/contribute.html
-
-.. _LICENSE: https://github.com/ansys/saf-product-configuration/blob/main/LICENSE
-.. _CHANGELOG: https://github.com/ansys/saf-product-configuration/blob/main/CHANGELOG.md
+.. _prerequisites: https://saf.ansys.com/version/stable/getting_started/prerequisites/index.html
+.. _official documentation: https://saf.ansys.com/
+.. _project repository: https://github.com/ansys/saf/
+.. _API reference: https://saf.ansys.com/version/stable/api/saf-product-configuration/index.html
+.. _Contribute: https://saf.ansys.com/version/stable/contribute/index.html
+.. _LICENSE: https://github.com/ansys/saf/blob/main/packages/saf-product-configuration/LICENSE
+.. _CHANGELOG: https://github.com/ansys/saf/blob/main/packages/saf-product-configuration/CHANGELOG.md

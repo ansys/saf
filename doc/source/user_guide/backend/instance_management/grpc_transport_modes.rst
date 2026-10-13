@@ -3,11 +3,11 @@
 gRPC transport modes
 ####################
 
-This section summarizes the supported gRPC transport modes between SAF GLOW Engine and product instances. These modes apply when using product instance managers that expose gRPC services and use product configurations that have ``enable_secure_flags=True``, such as ``GeometrySecureManager``.
+This section summarizes the supported gRPC transport modes between SAF GLOW Engine and product instances. These modes apply to product configurations that have ``enable_secure_flags=True``, which is the case for all built-in product instance managers except ``VisorManager``.
 
 .. important::
 
-    Existing Product Instance managers and configurations that use gRPC continue to use insecure gRPC connections in all cases to avoid breaking changes. To benefit from the supported secure connection modes, make sure to use product instance managers and configurations with ``secure_flags`` enabled, such as ``GeometrySecureManager``.
+    Custom product configurations use insecure gRPC connections by default to avoid breaking changes. To benefit from the supported secure connection modes, set ``enable_secure_flags=True`` in your product configuration. For more information, see :ref:`instance_management_custom`.
 
 
 Supported modes by product instance system
@@ -63,7 +63,15 @@ These modes describe the product instance system capabilities. However, the actu
 Configuration variables
 ========================
 
-- Use :envvar:`GLOW_PRODUCT_BINDING_HOST` to control whether the product binds to localhost or a non-localhost IP. This is set in the environment where the product instance is running, **NOT** in the GLOW API environment. When using products with ``secure_flags`` enabled, it defaults to ``localhost``, which enables either ``WNUA`` or ``UDS`` modes depending on the operating system. On the other hand, in insecure products, it defaults to all interfaces (``0.0.0.0``) to avoid breaking changes.
+- Use :envvar:`GLOW_PRODUCT_BINDING_HOST` to control whether the product binds to localhost or a non-localhost IP. This is set in the environment where the product instance is running, **NOT** in the GLOW API environment. For HPS, set it in the process that launches the HPS evaluator or scaler. When using products with ``secure_flags`` enabled, it defaults to ``localhost``, which enables either ``WNUA`` or ``UDS`` modes depending on the operating system. On the other hand, in insecure products, it defaults to all interfaces (``0.0.0.0``) to avoid breaking changes.
+
+  Product instances bound to ``localhost`` are only reachable from the same system. When SAF GLOW Engine runs in a different system or container, set it to a non-localhost address, such as the IP of the system or ``0.0.0.0``.
+
+  The following products don't bind to the exact configured address:
+
+  - MAPDL binds to localhost for localhost values, and to all interfaces otherwise.
+  - Visor always binds to all interfaces (``0.0.0.0``).
+
 - Use :envvar:`ANSYS_GRPC_CERTIFICATES` to enable ``mTLS`` in non-localhost scenarios. Certificates directory must contain:
 
   - ``client.crt``

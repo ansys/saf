@@ -14,11 +14,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from ansys.bdm.api import EntityHandle, RecursiveDictionaryOfEntityHandles
-from ansys.saf.testing.solution.end_to_end import ProjectFixture
 import pytest
 
+from ansys.bdm.api import EntityHandle, RecursiveDictionaryOfEntityHandles
 from ansys.saf.glow.solution import MethodStatus
+from ansys.saf.testing.solution.end_to_end import ProjectFixture
 from tests.mocks.solutions.complex_bdm import ComplexBdmSolution, MyFile, MyOther
 
 pytestmark = pytest.mark.parametrize("solution_type", [ComplexBdmSolution], indirect=True)

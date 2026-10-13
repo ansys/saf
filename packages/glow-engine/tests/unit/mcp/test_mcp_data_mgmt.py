@@ -19,13 +19,13 @@ from typing import Any
 from unittest.mock import MagicMock
 from uuid import uuid4
 
-from ansys.bdm.api import EntityHandle
 from fastmcp.client import Client
 from fastmcp.client.transports import FastMCPTransport
 from fastmcp.exceptions import ToolError
 from pydantic import BaseModel, ConfigDict
 import pytest
 
+from ansys.bdm.api import EntityHandle
 from tests.e2e.mcp.conftest import assert_mcp_response, assert_no_mcp_response
 
 

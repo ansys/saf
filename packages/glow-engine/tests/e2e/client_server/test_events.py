@@ -20,6 +20,9 @@ from typing import Any
 
 import aiohttp
 from aiohttp.http_websocket import WSMsgType
+import pytest
+
+from ansys.saf.glow.client import InternalSolutionException
 from ansys.saf.testing.solution.end_to_end import (
     BaseGlowConfiguration,
     DebugConfiguration,
@@ -28,9 +31,6 @@ from ansys.saf.testing.solution.end_to_end import (
     GlowBaseProcess,
     ProjectFixture,
 )
-import pytest
-
-from ansys.saf.glow.client import InternalSolutionException
 from tests.mocks.solutions.events import CustomField, EventsSolution
 
 pytestmark = pytest.mark.parametrize("solution_type", [EventsSolution], indirect=True)

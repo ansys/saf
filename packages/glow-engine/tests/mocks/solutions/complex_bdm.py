@@ -14,9 +14,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from ansys.bdm.api import RecursiveDictionaryOfEntityHandles
 from pydantic import BaseModel
 
+from ansys.bdm.api import RecursiveDictionaryOfEntityHandles
 from ansys.saf.glow.solution import (
     NO_ENTITY,
     EntityHandle,

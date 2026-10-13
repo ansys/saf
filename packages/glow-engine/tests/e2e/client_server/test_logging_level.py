@@ -16,6 +16,8 @@
 
 from collections.abc import Generator
 
+import pytest
+
 from ansys.saf.testing.solution.end_to_end import (
     BaseGlowConfiguration,
     DefaultLogLevel,
@@ -25,8 +27,6 @@ from ansys.saf.testing.solution.end_to_end import (
     LogLevelConfiguration,
     ProjectFixture,
 )
-import pytest
-
 from tests.mocks.solution_end_to_end.solution.definition import EndToEndSolution
 from tests.mocks.solution_end_to_end.solution.transaction_verification_step import (
     LOGGING_DEBUG_TESTING_STRING,

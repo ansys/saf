@@ -20,8 +20,9 @@ from pathlib import Path
 import shutil
 from typing import TYPE_CHECKING, Any
 
-from ansys.bdm.api import NO_ENTITY, EntityHandle, IStorageScope
 from pydantic import BaseModel
+
+from ansys.bdm.api import NO_ENTITY, EntityHandle, IStorageScope
 
 if TYPE_CHECKING:
     from ansys.saf.glow._config.settings import Settings

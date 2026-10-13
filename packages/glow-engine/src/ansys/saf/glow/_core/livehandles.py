@@ -19,9 +19,10 @@ from collections.abc import Iterable
 from types import NoneType, UnionType
 from typing import Any, Self, final, get_args, get_origin
 
-from ansys.bdm.api import NO_ENTITY, EntityHandle, RecursiveDictionaryOfEntityHandles
 from pydantic import BaseModel, Field, PrivateAttr, model_validator
 from pydantic_settings import BaseSettings
+
+from ansys.bdm.api import NO_ENTITY, EntityHandle, RecursiveDictionaryOfEntityHandles
 
 
 class TypeContainingHandleTypeMismatchError(Exception):

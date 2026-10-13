@@ -20,9 +20,9 @@ import platform
 import re
 import uuid
 
-from ansys.bdm.api import EntityHandle, EntityNotFoundInBlobStorageError, IReadStorageScope
 import pytest
 
+from ansys.bdm.api import EntityHandle, EntityNotFoundInBlobStorageError, IReadStorageScope
 from ansys.saf.glow._bdm.storage_contexts import METHOD_CONTEXT
 from ansys.saf.glow._bdm.storage_variable_names import PROJECT_ID, ROOT, SHORTID
 from ansys.saf.glow._bdm.subsystem_scope import (

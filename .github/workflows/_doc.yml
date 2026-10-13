@@ -93,7 +93,7 @@ jobs:
           path: doc/_build/html
           retention-days: 7
 
-  doc-api-build-moon:
+  doc-api-build:
     name: "API documentation building (Moon)"
     needs: doc-get-changes
     permissions:
@@ -103,6 +103,8 @@ jobs:
       matrix:
         package:
           - bdm-python-api
+          - dash-super-components
+          - glow-engine
           - saf-iam-oidc
           - saf-product-configuration
           - saf-product-manager
@@ -166,90 +168,10 @@ jobs:
           repository: ${{ github.repository }}
           branch: gh-pages-${{ matrix.package }}
 
-  doc-api-build:
-    name: "API documentation building"
-    needs: doc-get-changes
-    permissions:
-      contents: read
-    strategy:
-      fail-fast: false
-      matrix:
-        package:
-          - dash-super-components
-          - glow-engine
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          ref: ${{ (inputs.ref != '' && contains(inputs.ref, matrix.package)) && inputs.ref
-            || (inputs.ref != '' && 'main' || github.ref) }}
-          fetch-depth: 0
-          persist-credentials: false
-          sparse-checkout: |
-            packages/${{ matrix.package }}
-
-      - name: Install dependencies
-        id: prepare-env
-        uses: ansys/saf-devops/prepare-python-environment@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
-        with:
-          python-version: ${{ vars.PYTHON_VERSION }}
-          poetry-version: ${{ vars.POETRY_VERSION }}
-          poetry-install-args: '--with doc --all-extras'
-          python-project-path: packages/${{ matrix.package }}
-
-      - name: Build ${{ matrix.package }} API documentation
-        env:
-          POETRY_EXE: ${{ steps.prepare-env.outputs.poetry-cmd }}
-        working-directory: packages/${{ matrix.package }}
-        run: ${POETRY_EXE} run make -C doc html SPHINXOPTS="-j auto -W --keep-going"
-
-      - name: Upload API documentation
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-        with:
-          name: ${{ vars.DOC_ARTIFACT }}-${{ matrix.package }}-html
-          path: packages/${{ matrix.package }}/doc/_build/html
-          overwrite: true
-          if-no-files-found: error
-
-      - name: Get version
-        id: info
-        uses: ansys/saf-devops/get-information-from-pyproject@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
-        with:
-          pyproject-path: packages/${{ matrix.package }}/pyproject.toml
-
-      - name: Deploy dev doc
-        if: ${{ contains(steps.info.outputs.patch-version, 'dev') }}
-        uses: ansys/actions/doc-deploy-dev@7410037bfb276c79ae91eb3617b9f5d2876f0c94 # v11.0.8
-        with:
-          cname: ${{ vars.CNAME }}
-          token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
-          doc-artifact-name: ${{ vars.DOC_ARTIFACT }}-${{ matrix.package }}-html
-          bot-user: "github-actions"
-          bot-email: "github-actions@github.com"
-          repository: ${{ github.repository }}
-          branch: gh-pages-${{ matrix.package }}
-
-      - name: Deploy stable doc
-        if: ${{ !contains(steps.info.outputs.patch-version, 'dev') }}
-        uses: ansys/saf-devops/doc-deploy-stable@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
-        with:
-          cname: ${{ vars.CNAME }}
-          token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
-          render-last: "5"
-          doc-artifact-name: ${{ vars.DOC_ARTIFACT }}-${{ matrix.package }}-html
-          bot-user: "github-actions"
-          bot-email: "github-actions@github.com"
-          version: ${{ steps.info.outputs.major-version }}.${{ steps.info.outputs.minor-version
-            }}
-          repository: ${{ github.repository }}
-          branch: gh-pages-${{ matrix.package }}
-
   doc-merge:
     name: "Merge documentation"
     needs:
       - doc-centralized-build
-      - doc-api-build-moon
       - doc-api-build
     permissions:
       contents: read

@@ -102,10 +102,6 @@ jobs:
     outputs:
       pr-changes: ${{ steps.info.outputs.pr-changes }}
       packages-matrix: ${{ steps.info.outputs.packages-matrix }}
-      poetry-packages-matrix: ${{ steps.info.outputs.poetry-packages-matrix }}
-      moon-packages-matrix: ${{ steps.info.outputs.moon-packages-matrix }}
-      js-packages-matrix: ${{ steps.info.outputs.js-packages-matrix }}
-      code-style-matrix: ${{ steps.info.outputs.code-style-matrix }}
       compatibility-matrix: ${{ steps.info.outputs.compatibility-matrix }}
       tests-matrix: ${{ steps.info.outputs.tests-matrix }}
       tests-generated-solution-flag: ${{ steps.info.outputs.tests-generated-solution-flag
@@ -178,8 +174,6 @@ jobs:
       fail-fast: false
       matrix: ${{ fromJson(needs.ci-cd-config.outputs.packages-matrix) }}
     env:
-      USE_MOON: ${{ contains(needs.ci-cd-config.outputs.moon-packages-matrix, matrix.library-name)
-        }}
       PACKAGE: ${{ matrix.library-name }}
       UV_PYTHON: ${{ vars.PYTHON_VERSION }}
       MOON_PYTHON_VERSION: ${{ vars.PYTHON_VERSION }}
@@ -191,28 +185,11 @@ jobs:
           fetch-depth: 0
 
       - name: Setup Moon Toolchain
-        if: ${{ env.USE_MOON == 'true' }}
         uses: moonrepo/setup-toolchain@261c62cb5b0f580c7be7c8cd0f023a2e96756095 # v0.6.4
 
       - name: Vulnerability Check
-        if: ${{ env.USE_MOON == 'true' }}
         shell: bash
         run: moon run ${PACKAGE}:vulnerability-check
-
-      - uses: ansys/saf-devops/check-deps-vulnerabilities@5d9e84af215372b7b125bbf12f5b0093600eb06d # v1.2.0
-        with:
-          python-version: ${{ vars.PYTHON_VERSION }}
-          poetry-version: ${{ vars.POETRY_VERSION }}
-          poetry-install-args: '--all-extras'
-          upgrade-pip: true
-          poetry-parent-directory: packages/${{ matrix.library-name }}
-          max-allowed-severity: medium
-          skip-install: ${{ env.USE_MOON == 'true' }}
-          checkout: false
-          requirements-file: ${{ env.USE_MOON == 'true' && format('{0}/dist/packages/{1}-requirements.txt',
-            github.workspace, matrix.library-name) || 'dependencies.txt' }}
-        env:
-          UV_VENV_CLEAR: ${{ env.USE_MOON == 'true' }}
 
   check-dependencies-licenses:
     name: "Check dependencies licenses"
@@ -224,34 +201,17 @@ jobs:
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.ci-cd-config.outputs.packages-matrix) }}
-    env:
-      USE_MOON: ${{ contains( needs.ci-cd-config.outputs.moon-packages-matrix, matrix.library-name)
-        }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-          sparse-checkout: ${{ case(env.USE_MOON == 'true', '', format('packages/{0}/',
-            matrix.library-name)) }}
           fetch-depth: 0
 
       - name: Setup Moon Toolchain
-        if: ${{ env.USE_MOON == 'true' }}
         uses: moonrepo/setup-toolchain@261c62cb5b0f580c7be7c8cd0f023a2e96756095 # v0.6.4
 
-      - name: Prepare python environment of the solution
-        id: python-setup
-        if: ${{ env.USE_MOON != 'true' }}
-        uses: ansys/saf-devops/prepare-python-environment@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
-        with:
-          python-version: ${{ vars.PYTHON_VERSION }}
-          poetry-version: ${{ vars.POETRY_VERSION }}
-          python-project-path: "packages/${{ matrix.library-name }}"
-          poetry-install-args: "--all-extras"
-
       - name: Install dependencies (Moon)
-        if: ${{ env.USE_MOON == 'true' }}
         shell: bash
         run: moon run :uv-sync -- --no-dev
 
@@ -263,12 +223,11 @@ jobs:
           whitelist-license-check: ${{ vars.WHITELIST_LICENSE_CHECK }}
           skip-install: true
           use-uv: false
-          activate-venv: "source ${{ case(env.USE_MOON == 'true', '', format('packages/{0}/',
-            matrix.library-name)) }}.venv/bin/activate"
+          activate-venv: "source .venv/bin/activate"
           checkout: false
 
   code-style-moon:
-    name: "Check code style (moon)"
+    name: "Check code style (Moon)"
     permissions:
       contents: read
     runs-on: ubuntu-latest
@@ -293,42 +252,34 @@ jobs:
         shell: bash
         run: moon run :pre-commit
 
-  code-style:
-    name: "Check code style"
+  code-style-examples:
+    name: "Check code style (examples)"
     needs: ci-cd-config
     permissions:
       contents: read
     runs-on: ubuntu-latest
-    if: ${{ needs.ci-cd-config.outputs.code-style-matrix != '{}' }}
-    strategy:
-      matrix: ${{ fromJson(needs.ci-cd-config.outputs.code-style-matrix) }}
-      fail-fast: false
-    env:
-      LIBRARY_NAME: ${{ matrix.target-directory }}
+    if: ${{ contains(needs.ci-cd-config.outputs.pr-changes, 'examples') }}
     steps:
       - name: "Checkout repository"
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-          sparse-checkout-cone-mode: ${{ contains(matrix.target-directory, '.github')
-            }}
+          sparse-checkout-cone-mode: false
           sparse-checkout: |
-            ${{ matrix.target-directory }}
+            examples
             doc/styles/Vocab/ANSYS/accept.txt
-            ${{ matrix.target-directory == 'examples' && 'packages/saf-cli/' || '' }}
-            ${{ matrix.target-directory == 'packages/glow-engine' && '.github/scripts/' || '' }}
+            packages/saf-cli/
 
       - uses: ansys/saf-devops/prepare-python-environment@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
         id: prepare-python
         with:
           python-version: ${{ vars.PYTHON_VERSION }}
           poetry-version: ${{ vars.POETRY_VERSION }}
-          poetry-install-args: ${{ matrix.poetry-install-args }}
-          python-project-path: ${{ matrix.target-directory }}
+          poetry-install-args: "--with tests --all-extras"
+          python-project-path: examples
 
       - name: Install pre-commit
-        working-directory: ${{ matrix.target-directory }}
-        if: ${{ matrix.dependency-manager == 'poetry' }}
+        working-directory: examples
         env:
           PYTHON_CMD: ${{ steps.prepare-python.outputs.python-cmd }}
         shell: bash
@@ -337,27 +288,13 @@ jobs:
           ${PYTHON_CMD} -m pip install pre-commit
 
       - name: Run pre-commit
-        working-directory: ${{ matrix.target-directory }}
+        working-directory: examples
         env:
           ACTIVATE_CMD: '.venv/bin/activate'
         shell: bash
         run: |
           source ${ACTIVATE_CMD}
           pre-commit run --all-files --show-diff-on-failure
-
-  js-checks:
-    name: "JavaScript checks"
-    needs: ci-cd-config
-    if: ${{ needs.ci-cd-config.outputs.js-packages-matrix != '{}' }}
-    permissions:
-      contents: read # Read the source code of the package
-    strategy:
-      fail-fast: false
-      matrix: ${{ fromJson(needs.ci-cd-config.outputs.js-packages-matrix) }}
-    uses: ./.github/workflows/_js.yml
-    with:
-      library-name: ${{ matrix.library-name }}
-      python-version: ${{ vars.PYTHON_VERSION }}
 
   doc:
     name: "Documentation"
@@ -385,10 +322,7 @@ jobs:
     with:
       library-name: ${{ matrix.library-name }}
       python-version: ${{ vars.PYTHON_VERSION }}
-      use-moon: ${{ contains(needs.ci-cd-config.outputs.moon-packages-matrix, matrix.library-name)
-        }}
-      artifact-name: ${{ matrix.library-name }}-${{ vars.PYTHON_VERSION }}${{ contains(needs.ci-cd-config.outputs.moon-packages-matrix,
-        matrix.library-name) && '-artifacts' || '' }}
+      artifact-name: ${{ matrix.library-name }}-${{ vars.PYTHON_VERSION }}-artifacts
       ref: ${{ github.ref }}
 
   check-wheel-can-be-pip-installed:
@@ -441,35 +375,22 @@ jobs:
       fail-fast: false
       matrix: ${{ fromJson(needs.ci-cd-config.outputs.packages-matrix) }}
     env:
-      USE_MOON: ${{ contains(needs.ci-cd-config.outputs.moon-packages-matrix, matrix.library-name)
-        }}
       PACKAGE: ${{ matrix.library-name }}
     steps:
       - name: Checkout repository
-        if: ${{ env.USE_MOON == 'true' }}
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
           fetch-depth: 0
 
-      - name: generate sbom
-        if: ${{ env.USE_MOON == 'false' }}
-        uses: ansys/saf-devops/generate-sbom@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
-        with:
-          poetry-version: ${{ vars.POETRY_VERSION }}
-          poetry-parent-directory: packages/${{ matrix.library-name }}
-
       - name: Setup Moon Toolchain
-        if: ${{ env.USE_MOON == 'true' }}
         uses: moonrepo/setup-toolchain@261c62cb5b0f580c7be7c8cd0f023a2e96756095 # v0.6.4
 
       - name: generate sbom with Moon
-        if: ${{ env.USE_MOON == 'true' }}
         shell: bash
         run: moon run ${PACKAGE}:sbom
 
       - name: Publish SBOM
-        if: ${{ env.USE_MOON == 'true' }}
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: sbom-${{ matrix.library-name }}
@@ -492,8 +413,6 @@ jobs:
       python-version: ${{ vars.PYTHON_VERSION }}
       tests-groups-file-path: ${{ matrix.tests-groups-file-path }}
       working-directory: ${{ matrix.working-directory }}
-      use-moon: ${{ contains(needs.ci-cd-config.outputs.moon-packages-matrix, matrix.library-name)
-        }}
       library-name: ${{ matrix.library-name }}
     secrets:
       ANS_MINERVA_URL: ${{ secrets.ANS_MINERVA_URL }}
@@ -581,8 +500,7 @@ jobs:
       - github-workflows-lint
       - vulnerabilities
       - code-style-moon
-      - code-style
-      - js-checks
+      - code-style-examples
       - check-dependencies-licenses
       - build-wheel
       - check-wheel-can-be-pip-installed

@@ -16,11 +16,11 @@
 
 from collections.abc import Generator
 
-from ansys.bdm.api import NO_ENTITY
-from ansys.saf.testing.solution.end_to_end import EnvVarDebugLogLevel, GlowBaseProcess, ProjectFixture
 import pytest
 from tenacity import TryAgain, retry, stop_after_attempt, stop_after_delay, wait_fixed
 
+from ansys.bdm.api import NO_ENTITY
+from ansys.saf.testing.solution.end_to_end import EnvVarDebugLogLevel, GlowBaseProcess, ProjectFixture
 from tests.mocks.solutions.bdm_recursive_solution import BdmSolution, RecursiveThing
 
 pytestmark = pytest.mark.parametrize("solution_type", [BdmSolution], indirect=True)

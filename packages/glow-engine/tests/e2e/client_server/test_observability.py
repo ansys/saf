@@ -18,12 +18,12 @@ from collections.abc import Generator
 import json
 import time
 
-from ansys.saf.testing.solution.end_to_end import GlowBaseProcess, OTELconsole, ProjectFixture
 import httpx2
 import pytest
 from tenacity import TryAgain, retry, stop_after_attempt, wait_fixed
 
 from ansys.saf.glow.client import NotFoundException
+from ansys.saf.testing.solution.end_to_end import GlowBaseProcess, OTELconsole, ProjectFixture
 from tests.mocks.solutions.minimal_solution import MinimalSolution
 
 pytestmark = pytest.mark.parametrize("solution_type", [MinimalSolution], indirect=True)

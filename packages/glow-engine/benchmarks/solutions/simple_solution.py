@@ -14,6 +14,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from benchmarks.utils import randomword
+
 from ansys.saf.glow.solution import (
     Solution,
     StepModel,
@@ -21,7 +23,6 @@ from ansys.saf.glow.solution import (
     StepSpec,
     transaction,
 )
-from benchmarks.utils import randomword
 
 
 class PaddingStep0(StepModel):

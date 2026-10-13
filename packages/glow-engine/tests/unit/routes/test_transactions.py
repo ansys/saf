@@ -26,7 +26,6 @@ from unittest import mock
 from unittest.mock import patch
 import zipfile
 
-from ansys.iam.oidc import OidcDependency
 from fastapi import Request, status
 from fastapi.testclient import TestClient
 import httpx2
@@ -35,6 +34,7 @@ import pytest
 from pytest_mock.plugin import MockerFixture
 from starlette.datastructures import URL
 
+from ansys.iam.oidc import OidcDependency
 from ansys.saf.glow._config.const import DatabaseType, Deployment, ProductInstanceSystemType
 from ansys.saf.glow._config.settings import Settings
 from ansys.saf.glow._core.exceptions import SolutionLoadException

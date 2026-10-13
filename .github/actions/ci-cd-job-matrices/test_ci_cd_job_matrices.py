@@ -40,16 +40,10 @@ with tempfile.TemporaryDirectory() as temp_dir:
     os.environ["GITHUB_STEP_SUMMARY"] = str(_temp_summary)
 
     from ci_cd_job_matrices import (
-        JS_PACKAGES,
         SAF_PACKAGES,
         TESTS_DEFINITIONS_DIR,
         TESTS_DEFINITIONS_PER_TARGET,
-        UV_PACKAGES,
-        get_changed_js_packages,
-        get_changed_moon_packages,
         get_changed_packages,
-        get_changed_poetry_packages,
-        get_code_style_matrix_entries,
         get_compatibility_matrix_entries,
         get_pr_changes,
         get_tests_generated_solution_flag,
@@ -349,197 +343,6 @@ class TestGetChangedPackages:
         }
 
 
-class TestGetChangedPoetryPackages:
-    """Test the get_changed_poetry_packages function."""
-
-    def test_get_changed_poetry_packages_excludes_moon_packages(self, github_env: tuple[Path, Path]):
-        """Moon-managed packages are excluded from the Poetry package matrix."""
-        output_file, _ = github_env
-
-        result = get_changed_poetry_packages(["bdm-python-api", "glow-engine"])
-
-        assert result == ["glow-engine"]
-        outputs = parse_outputs(output_file)
-        assert json.loads(outputs["poetry_packages_matrix"]) == {"include": [{"library-name": "glow-engine"}]}
-
-    def test_get_changed_poetry_packages_empty_input(self, github_env: tuple[Path, Path]):
-        """Empty input returns no Poetry packages."""
-        output_file, _ = github_env
-
-        result = get_changed_poetry_packages([])
-
-        assert result == []
-        outputs = parse_outputs(output_file)
-        assert outputs["poetry_packages_matrix"] == "{}"
-
-
-class TestGetChangedMoonPackages:
-    """Test the get_changed_moon_packages function."""
-
-    def test_get_changed_moon_packages_empty_input(self, github_env: tuple[Path, Path]):
-        """Empty input returns no Moon packages."""
-        output_file, _ = github_env
-
-        result = get_changed_moon_packages([])
-
-        assert result == []
-        outputs = parse_outputs(output_file)
-        assert outputs["moon_packages_matrix"] == "{}"
-
-    def test_get_changed_moon_packages_returns_moon_packages(self, github_env: tuple[Path, Path]):
-        """Moon-managed packages are returned and written to their matrix."""
-        output_file, _ = github_env
-
-        result = get_changed_moon_packages(["glow-engine", "bdm-python-api"])
-
-        assert result == ["bdm-python-api"]
-        outputs = parse_outputs(output_file)
-        assert json.loads(outputs["moon_packages_matrix"]) == {"include": [{"library-name": "bdm-python-api"}]}
-
-    def test_get_changed_moon_packages_filters_invalid_packages(self, github_env: tuple[Path, Path]):
-        """Invalid and non-Moon packages are filtered out."""
-        result = get_changed_moon_packages(["invalid-pkg", "saf-cli"])
-
-        assert result == []
-
-
-class TestGetChangedJsPackages:
-    """Test the get_changed_js_packages function."""
-
-    def test_get_changed_js_packages_empty_input(self, github_env: tuple[Path, Path]):
-        """Empty input returns no JS packages and writes an empty matrix."""
-        output_file, _ = github_env
-
-        result = get_changed_js_packages([])
-
-        assert result == []
-        outputs = parse_outputs(output_file)
-        assert outputs["js_packages_matrix"] == "{}"
-
-    def test_get_changed_js_packages_returns_js_packages(self, github_env: tuple[Path, Path]):
-        """Node-bearing packages are returned and written to their matrix."""
-        output_file, _ = github_env
-
-        result = get_changed_js_packages(["glow-engine", "saf-projects-dashboard"])
-
-        assert result == ["saf-projects-dashboard"]
-        outputs = parse_outputs(output_file)
-        assert json.loads(outputs["js_packages_matrix"]) == {
-            "include": [{"library-name": "saf-projects-dashboard"}],
-        }
-
-    def test_get_changed_js_packages_filters_non_js_packages(self, github_env: tuple[Path, Path]):
-        """Packages without a Node build, and unknown names, are filtered out."""
-        result = get_changed_js_packages(["invalid-pkg", "saf-testing", "examples"])
-
-        assert result == []
-
-    def test_js_packages_are_registered_saf_packages(self) -> None:
-        """Every Node-bearing package is also a regular SAF package."""
-        for package in JS_PACKAGES:
-            assert package in SAF_PACKAGES
-
-    def test_js_packages_are_not_moon_packages(self) -> None:
-        """Node-bearing packages stay on Poetry until Moon grows a Node toolchain."""
-        for package in JS_PACKAGES:
-            assert package not in UV_PACKAGES
-
-
-class TestGetCodeStyleMatrixEntries:
-    """Test the get_code_style_matrix_entries function."""
-
-    def test_get_code_style_matrix_empty_packages(self, github_env: tuple[Path, Path]):
-        """Empty packages produce an empty matrix."""
-        output_file, _ = github_env
-        get_code_style_matrix_entries([])
-
-        outputs = parse_outputs(output_file)
-        assert outputs["code_style_matrix"] == "{}"
-
-    def test_get_code_style_matrix_single_package(self, github_env: tuple[Path, Path]):
-        """Single package includes one package entry."""
-        output_file, _ = github_env
-        get_code_style_matrix_entries(["saf-cli"])
-
-        outputs = parse_outputs(output_file)
-        matrix = json.loads(outputs["code_style_matrix"])
-        assert len(matrix["include"]) == 1
-        assert matrix["include"][0]["target-directory"] == "packages/saf-cli"
-        assert matrix["include"][0]["dependency-manager"] == "poetry"
-
-    def test_get_code_style_matrix_includes_examples(self, github_env: tuple[Path, Path]):
-        """Examples changes add a style job for the examples project."""
-        output_file, _ = github_env
-        get_code_style_matrix_entries([], ["examples"])
-
-        outputs = parse_outputs(output_file)
-        matrix = json.loads(outputs["code_style_matrix"])
-        assert len(matrix["include"]) == 1
-        assert matrix["include"][0] == {
-            "target-directory": "examples",
-            "dependency-manager": "poetry",
-            "poetry-install-args": "--with tests --all-extras",
-        }
-
-    def test_get_code_style_matrix_multiple_packages(self, github_env: tuple[Path, Path]):
-        """Multiple packages are all included."""
-        output_file, _ = github_env
-        get_code_style_matrix_entries(["glow-engine", "saf-cli"])
-
-        outputs = parse_outputs(output_file)
-        matrix = json.loads(outputs["code_style_matrix"])
-        assert len(matrix["include"]) == 2
-
-    def test_get_code_style_matrix_uses_default_poetry_args(self, github_env: tuple[Path, Path]):
-        """Packages without custom args use default."""
-        output_file, _ = github_env
-        get_code_style_matrix_entries(["saf-cli"])
-
-        outputs = parse_outputs(output_file)
-        matrix = json.loads(outputs["code_style_matrix"])
-        package_entry = matrix["include"][0]
-        assert package_entry["poetry-install-args"] == "--with tests --all-extras"
-
-    def test_get_code_style_matrix_uses_custom_poetry_args(self, github_env: tuple[Path, Path]):
-        """Packages with custom args use those args."""
-        output_file, _ = github_env
-        get_code_style_matrix_entries(["glow-engine"])
-
-        outputs = parse_outputs(output_file)
-        matrix = json.loads(outputs["code_style_matrix"])
-        package_entry = matrix["include"][0]
-        assert package_entry["poetry-install-args"] == "--with tests,style --all-extras"
-
-    def test_get_code_style_matrix_multiple_packages_custom_args(self, github_env: tuple[Path, Path]):
-        """Multiple packages with different custom args are handled correctly."""
-        output_file, _ = github_env
-        get_code_style_matrix_entries(["glow-engine", "saf-cli"])
-
-        outputs = parse_outputs(output_file)
-        matrix = json.loads(outputs["code_style_matrix"])
-
-        # Check glow-engine entry
-        glow_entry = [e for e in matrix["include"] if e["target-directory"] == "packages/glow-engine"][0]
-        assert glow_entry["poetry-install-args"] == "--with tests,style --all-extras"
-
-        # Check saf-cli entry (default args)
-        saf_cli_entry = [e for e in matrix["include"] if e["target-directory"] == "packages/saf-cli"][0]
-        assert saf_cli_entry["poetry-install-args"] == "--with tests --all-extras"
-
-        assert all(e["target-directory"] != "packages/saf-desktop-orchestrator" for e in matrix["include"])
-
-    def test_get_code_style_matrix_filters_invalid_packages(self, github_env: tuple[Path, Path]):
-        """Invalid packages are filtered out."""
-        output_file, _ = github_env
-        get_code_style_matrix_entries(["glow-engine", "invalid-pkg"])
-
-        outputs = parse_outputs(output_file)
-        matrix = json.loads(outputs["code_style_matrix"])
-        # Only glow-engine is included; invalid-pkg is filtered out.
-        assert len(matrix["include"]) == 1
-        assert all("invalid-pkg" not in str(e) for e in matrix["include"])
-
-
 class TestGetCompatibilityMatrixEntries:
     """Test the get_compatibility_matrix_entries function."""
 
@@ -780,15 +583,12 @@ class TestIntegration:
         monkeypatch.delenv("PR_CHANGES_JSON", raising=False)
 
         pr_changes = get_pr_changes()
-        get_changed_moon_packages(pr_changes)
         changed_packages = get_changed_packages(pr_changes)
-        get_code_style_matrix_entries(changed_packages, pr_changes)
         get_compatibility_matrix_entries(changed_packages)
         get_tests_matrix_entries(pr_changes, changed_packages)
         get_tests_generated_solution_flag(changed_packages)
 
         outputs = parse_outputs(output_file)
-        assert outputs["code_style_matrix"] == "{}"
         assert outputs["compatibility_matrix"] == "{}"
         assert outputs["tests_matrix"] == "{}"
         assert outputs["tests_generated_solution_flag"] == "false"
@@ -802,9 +602,7 @@ class TestIntegration:
         )
 
         pr_changes = get_pr_changes()
-        moon_packages = get_changed_moon_packages(pr_changes)
         changed_packages = get_changed_packages(pr_changes)
-        get_code_style_matrix_entries(changed_packages, pr_changes)
         get_compatibility_matrix_entries(changed_packages)
         get_tests_matrix_entries(pr_changes, changed_packages)
         get_tests_generated_solution_flag(changed_packages)
@@ -812,21 +610,9 @@ class TestIntegration:
         outputs = parse_outputs(output_file)
 
         # Check all matrices are present
-        assert "code_style_matrix" in outputs
-        assert "moon_packages_matrix" in outputs
         assert "compatibility_matrix" in outputs
         assert "tests_matrix" in outputs
         assert "tests_generated_solution_flag" in outputs
-
-        code_style = json.loads(outputs["code_style_matrix"])
-        assert code_style["include"][-1] == {
-            "target-directory": "examples",
-            "dependency-manager": "poetry",
-            "poetry-install-args": "--with tests --all-extras",
-        }
-
-        assert moon_packages == ["bdm-python-api"]
-        assert json.loads(outputs["moon_packages_matrix"]) == {"include": [{"library-name": "bdm-python-api"}]}
 
         # Verify that the working directory for examples is correctly set
         tests = json.loads(outputs["tests_matrix"])
@@ -853,20 +639,16 @@ class TestIntegration:
         monkeypatch.setenv("PR_CHANGES_JSON", json.dumps(["glow-engine"]))
 
         pr_changes = get_pr_changes()
-        get_changed_moon_packages(pr_changes)
         changed_packages = get_changed_packages(pr_changes)
-        get_code_style_matrix_entries(changed_packages, pr_changes)
         get_compatibility_matrix_entries(changed_packages)
         get_tests_matrix_entries(pr_changes, changed_packages)
 
         summary = read_summary(summary_file)
         assert "### pr_changes:" in summary
-        assert "### moon_packages_matrix:" in summary
         assert "### packages_matrix:" in summary
-        assert "### code_style_matrix:" in summary
         assert "### compatibility_matrix:" in summary
         assert "### tests_matrix:" in summary
-        assert summary.count("```json") == 6
+        assert summary.count("```json") == 4
 
 
 class TestDataValidation:

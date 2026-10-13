@@ -23,9 +23,9 @@ import string
 from types import TracebackType
 from typing import Any, Generic, Protocol, Self, TypeVar, cast, get_args
 
-from ansys.bdm.api import EntityHandle, IStorageScope
 from pydantic import ValidationError
 
+from ansys.bdm.api import EntityHandle, IStorageScope
 from ansys.saf.glow._bdm.storage_contexts import PRODUCT_CONTEXT, PRODUCT_MANAGER_CONTEXT
 from ansys.saf.glow._config.const import JOB_DEFAULT_MAX_RUNNING_TIME
 from ansys.saf.glow._core.exceptions import SolutionLoadException

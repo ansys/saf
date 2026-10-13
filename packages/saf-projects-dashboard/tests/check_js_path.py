@@ -1,6 +1,6 @@
-# Copyright (C) 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
+# Copyright (C) 2026 ANSYS, Inc. and/or its affiliates.
+
 # SPDX-License-Identifier: Apache-2.0
-#
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -26,13 +26,13 @@ print()
 
 # The _js_dist path is relative to the module that defines _js_dist
 # Since we import from .ansys_saf_projects_dashboard, let's check where that is
-import ansys_saf_projects_dashboard.ansys_saf_projects_dashboard as inner
+import ansys_saf_projects_dashboard.ansys_saf_projects_dashboard as inner  # noqa: E402
 
 print("inner.__file__:", inner.__file__)
 print()
 
 # Check if JS exists relative to inner module
-inner_dir = os.path.dirname(inner.__file__)
-js_path = os.path.join(inner_dir, "ansys_saf_projects_dashboard.js")
+inner_dir = os.path.dirname(inner.__file__)  # noqa: PTH120
+js_path = os.path.join(inner_dir, "ansys_saf_projects_dashboard.js")  # noqa: PTH118
 print("JS expected at:", js_path)
-print("JS exists:", os.path.exists(js_path))
+print("JS exists:", os.path.exists(js_path))  # noqa: PTH110

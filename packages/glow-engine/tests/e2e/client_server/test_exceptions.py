@@ -17,6 +17,9 @@
 from collections.abc import Generator
 import re
 
+import pytest
+
+from ansys.saf.glow.client import BadRequestException, InternalSolutionException
 from ansys.saf.testing.solution.end_to_end import (
     BaseGlowConfiguration,
     DebugConfiguration,
@@ -25,9 +28,6 @@ from ansys.saf.testing.solution.end_to_end import (
     GlowBaseProcess,
     ProjectFixture,
 )
-import pytest
-
-from ansys.saf.glow.client import BadRequestException, InternalSolutionException
 from tests.check_message import MATCH_ANYTHING, check_message
 from tests.mocks.solutions.exceptions import ExceptionsSolution
 

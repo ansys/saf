@@ -23,8 +23,6 @@ from types import ModuleType
 from typing import Any
 
 from ansys.bdm.api import EntityHandle
-from ansys.saf.product_configuration.interfaces import Software
-
 from ansys.saf.glow._core.get_step_resource_directory import get_step_resource_directory
 from ansys.saf.glow._executor.local import transaction_local
 from ansys.saf.glow._hps_parametric_studies.api import HpsParametricStudyProject, HpsSimpleProject
@@ -41,6 +39,7 @@ from ansys.saf.glow._hps_parametric_studies.study_definition import (
     # the rest of study_definition imports are deliberately conditional in this file.
 )
 from ansys.saf.glow._utilities.compute_source_root import compute_source_root
+from ansys.saf.product_configuration.interfaces import Software
 
 
 class HpsExecutionSpecification:

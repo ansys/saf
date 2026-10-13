@@ -73,5 +73,19 @@ testpaths = [ "tests" ]
 
 [tool.coverage]
 run.source = [ "ansys.saf.desktop.orchestrator" ]
-report.omit = [ "*/pytest-of-*/pytest-*/popen-*/*", "/tmp/*" ]
+run.omit = [
+  "*/.venv/*",
+  "*/pytest-of-*/pytest-*/popen-*/*",
+  "*/site-packages/*",
+  "*/Temp/*",
+  "*/tests/*",
+  "/tmp/*",
+  "dist/*",
+]
+report.omit = [
+  "*/pytest-of-*/pytest-*/popen-*/*",
+  "*/Temp/*",
+  "/tmp/*",
+  "dist/*",
+]
 report.show_missing = true

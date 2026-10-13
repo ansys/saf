@@ -16,8 +16,8 @@
 
 from pathlib import Path
 import shutil
+import sys
 
-from ansys.saf.testing.selenium import wait_for_element_and_click, wait_for_text
 import pytest
 from selenium.webdriver.chrome.webdriver import WebDriver
 
@@ -30,6 +30,7 @@ from ansys.saf.cli._config.const import (
 )
 from ansys.saf.cli._database.models import SolutionRegistry
 from ansys.saf.cli._utilities.conversion import namespace_to_path, to_module_name
+from ansys.saf.testing.selenium import wait_for_element_and_click, wait_for_text
 from tests.e2e.conftest import (
     ExecuteCommand,
     ListSolutions,
@@ -442,8 +443,9 @@ def test_saf_new_solution_extra_argument_raises_error(tmp_path: Path, new_soluti
     Test that creating a solution with an extra argument raises an exception before prompting.
     """
     p = new_solution(["extra_argument"], cwd=tmp_path, expected_return_code=2)
+    saf_executable = f"saf{'.EXE' if sys.platform == 'win32' else ''}"
     expected_output = (
-        "Usage: saf new [OPTIONS]\nTry 'saf new --help' for help.\n\n"
+        f"Usage: {saf_executable} new [OPTIONS]\nTry '{saf_executable} new --help' for help.\n\n"
         "Error: Got unexpected extra argument (extra_argument)"
     )
     assert "\n".join(p.output) == expected_output
@@ -452,7 +454,7 @@ def test_saf_new_solution_extra_argument_raises_error(tmp_path: Path, new_soluti
     # even if other valid options are provided, the extra argument should still early raise the error
     p = new_solution(["--solution-name", "my_solution", "extra_argument"], cwd=tmp_path, expected_return_code=2)
     expected_output = (
-        "Usage: saf new [OPTIONS]\nTry 'saf new --help' for help.\n\n"
+        f"Usage: {saf_executable} new [OPTIONS]\nTry '{saf_executable} new --help' for help.\n\n"
         "Error: Got unexpected extra argument (extra_argument)"
     )
     assert "\n".join(p.output) == expected_output
@@ -464,16 +466,21 @@ def test_saf_new_solution_invalid_option_raises_error(tmp_path: Path, new_soluti
     Test that creating a solution with an invalid option raises an exception before prompting.
     """
     p = new_solution(["--wrong-option"], cwd=tmp_path, expected_return_code=2)
+
+    saf_executable = f"saf{'.EXE' if sys.platform == 'win32' else ''}"
     expected_output = (
-        "Usage: saf new [OPTIONS]\nTry 'saf new --help' for help.\n\nError: No such option: --wrong-option"
+        f"Usage: {saf_executable} new [OPTIONS]\nTry "
+        f"'{saf_executable} new --help' for help.\n\nError: No such option '--wrong-option'."
     )
+
     assert "\n".join(p.output) == expected_output
     assert not (tmp_path / DEFAULT_SOLUTION_NAME).exists()
 
     # even if other valid options are provided, the wrong option should still early raise the error
     p = new_solution(["--solution-name", "my_solution", "--wrong-option"], cwd=tmp_path, expected_return_code=2)
     expected_output = (
-        "Usage: saf new [OPTIONS]\nTry 'saf new --help' for help.\n\nError: No such option: --wrong-option"
+        f"Usage: {saf_executable} new [OPTIONS]\nTry "
+        f"'{saf_executable} new --help' for help.\n\nError: No such option '--wrong-option'."
     )
     assert "\n".join(p.output) == expected_output
     assert not (tmp_path / "my_solution").exists()

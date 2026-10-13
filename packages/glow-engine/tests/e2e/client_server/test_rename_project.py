@@ -17,12 +17,12 @@
 from collections.abc import Callable
 import re
 
-from ansys.saf.testing.solution.end_to_end import GlowBaseProcess, ProjectFixture
 from fastapi import status
 import httpx2
 import pytest
 
 from ansys.saf.glow.client import BadRequestException, Client
+from ansys.saf.testing.solution.end_to_end import GlowBaseProcess, ProjectFixture
 from tests.mocks.solution_end_to_end.solution.definition import EndToEndSolution
 from tests.mocks.solution_end_to_end.solution.transaction_verification_step import TEXT_FILE_DUMMY_STRING
 

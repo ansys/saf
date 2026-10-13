@@ -23,12 +23,12 @@ import statistics
 import time
 from typing import Any, cast
 
-import click
-
-from ansys.saf.glow.client import Client
 from benchmarks.model import BenchmarkData, Measurement
 from benchmarks.solutions.simple_solution import BenchmarkSolution
 from benchmarks.utils import randomword
+import click
+
+from ansys.saf.glow.client import Client
 
 
 class BenchmarkContext: ...

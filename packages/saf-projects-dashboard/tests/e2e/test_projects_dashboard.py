@@ -1,6 +1,6 @@
-# Copyright (C) 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
+# Copyright (C) 2026 ANSYS, Inc. and/or its affiliates.
+
 # SPDX-License-Identifier: Apache-2.0
-#
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@ import urllib.request
 import pytest
 from selenium.common.exceptions import NoSuchElementException, TimeoutException
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support import expected_conditions as EC  # noqa: N812
 from selenium.webdriver.support.ui import WebDriverWait
 
 
@@ -173,7 +173,7 @@ class TestProjectsDashboardFunctionality:
                 EC.presence_of_element_located(
                     (
                         By.XPATH,
-                        "//*[contains(text(), 'Create') or contains(text(), 'New Project') or contains(text(), '+ Create')]",
+                        "//*[contains(text(), 'Create') or contains(text(), 'New Project') or contains(text(), '+ Create')]",  # noqa: E501
                     ),
                 ),
             )
@@ -192,7 +192,7 @@ class TestProjectsDashboardFunctionality:
                 EC.element_to_be_clickable(
                     (
                         By.XPATH,
-                        "//*[contains(text(), 'Create') or contains(text(), 'New Project') or contains(@class, 'btn-primary')]",
+                        "//*[contains(text(), 'Create') or contains(text(), 'New Project') or contains(@class, 'btn-primary')]",  # noqa: E501
                     ),
                 ),
             )

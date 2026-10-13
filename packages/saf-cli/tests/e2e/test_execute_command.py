@@ -19,11 +19,11 @@ import platform
 import shutil
 import uuid
 
-from ansys.saf.testing.common import find_exec_in_venv
 import pytest
 
 from ansys.saf.cli._database.models import SolutionRegistry
 from ansys.saf.cli._utilities.conversion import namespace_to_pkg_name, to_package_name
+from ansys.saf.testing.common import find_exec_in_venv
 from tests.e2e.conftest import ExecuteCommand, ListSolutions, is_solution_registered
 
 

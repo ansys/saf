@@ -16,12 +16,12 @@
 import re
 from typing import Any
 
-from ansys.saf.testing.solution.end_to_end import ProjectFixture
 from fastmcp import Client as MCPClient
 from fastmcp.client.transports import StreamableHttpTransport
 from fastmcp.exceptions import ToolError
 import pytest
 
+from ansys.saf.testing.solution.end_to_end import ProjectFixture
 from tests.e2e.mcp.conftest import assert_mcp_response, assert_no_mcp_response
 from tests.mocks.solution_end_to_end.solution.definition import EndToEndSolution
 from tests.mocks.solution_end_to_end.solution.transaction_verification_step import (

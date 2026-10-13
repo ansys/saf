@@ -20,11 +20,11 @@ import importlib
 from types import ModuleType, SimpleNamespace
 from typing import Any
 
-from ansys.solutions.dash_super_components import Tree  # pyright: ignore[reportMissingTypeStubs]
 import dash
 import pytest
 
 from ansys.saf.cli._solutions.scaffolding import create_solution
+from ansys.solutions.dash_super_components import Tree  # pyright: ignore[reportMissingImports]
 
 SOLUTION_NAME = "ui_routing_solution"
 SOLUTION_NAMESPACE = "saf_cli_tests"  # a dedicated namespace avoids clashing with the installed ansys packages

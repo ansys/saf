@@ -23,14 +23,6 @@ import time
 from typing import Any
 import zipfile
 
-from ansys.saf.testing.solution.end_to_end import (
-    BaseGlowConfiguration,
-    CustomMethodExecutionDirectory,
-    EnvVarDebug,
-    GlowBaseProcess,
-    GlowDesktopProcess,
-    ProjectFixture,
-)
 import httpx2
 from pydantic import BaseModel, ValidationError
 import pytest
@@ -40,6 +32,14 @@ from ansys.saf.glow.client import (
     InternalSolutionException,
 )
 from ansys.saf.glow.solution import MethodStatus
+from ansys.saf.testing.solution.end_to_end import (
+    BaseGlowConfiguration,
+    CustomMethodExecutionDirectory,
+    EnvVarDebug,
+    GlowBaseProcess,
+    GlowDesktopProcess,
+    ProjectFixture,
+)
 from tests.mocks.solutions.transactions import (
     CustomField,
     CustomFieldWithNestedCustomField,

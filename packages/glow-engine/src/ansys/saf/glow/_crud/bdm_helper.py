@@ -18,10 +18,10 @@ from pathlib import Path
 import platform
 import re
 
-from ansys.bdm.api import EntityHandle, IAsyncStorageScope
 from anyio import EndOfStream
 from fastapi import UploadFile
 
+from ansys.bdm.api import EntityHandle, IAsyncStorageScope
 from ansys.saf.glow._core.solution import Solution
 from ansys.saf.glow._server.exceptions import NotFoundError
 from ansys.saf.glow._server.models import ProjectModel

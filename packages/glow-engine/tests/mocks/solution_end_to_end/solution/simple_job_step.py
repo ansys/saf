@@ -19,9 +19,9 @@ import logging
 import sys
 from typing import cast
 
-from ansys.bdm.api import NO_ENTITY, EntityHandle
 from pydantic import Field
 
+from ansys.bdm.api import NO_ENTITY, EntityHandle
 from ansys.saf.glow._hps_parametric_studies.api import (
     NO_HPS_SIMPLE_PROJECT,
 )

@@ -18,7 +18,6 @@ import importlib.util
 from pathlib import Path
 
 from ansys.bdm.api import NO_ENTITY, EntityHandle
-
 from ansys.saf.glow.solution import (
     Solution,
     StepModel,

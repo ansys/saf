@@ -220,9 +220,9 @@ outermost, ``@long_running`` is always innermost.
    :caption: Complete example — all three decorators
 
    @transaction(self=StepSpec(download=["version"], upload=["instance_created"]), enable_termination_event=True)
-   @create_instance("mechanical_instance", MechanicalSecureManager)
+   @create_instance("mechanical_instance", MechanicalManager)
    @long_running
-   def launch_mechanical(self, mechanical_instance: MechanicalSecureManager) -> None:
+   def launch_mechanical(self, mechanical_instance: MechanicalManager) -> None:
        """Launch the Mechanical instance."""
        self.transaction.raise_event(
            message="Initializing Mechanical instance.",

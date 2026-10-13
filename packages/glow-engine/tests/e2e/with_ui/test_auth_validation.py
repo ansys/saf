@@ -19,6 +19,11 @@ from pathlib import Path
 import platform
 from typing import TypeVar
 
+import pytest
+from selenium.webdriver.chrome.webdriver import WebDriver
+from selenium.webdriver.common.by import By
+
+from ansys.saf.glow.solution import Solution
 from ansys.saf.testing.common import YieldFixture
 from ansys.saf.testing.platform_specific import is_ci_run
 from ansys.saf.testing.selenium import (
@@ -37,11 +42,6 @@ from ansys.saf.testing.solution.end_to_end import (
     GlowBaseProcess,
     InvalidAuthValidationConfiguration,
 )
-import pytest
-from selenium.webdriver.chrome.webdriver import WebDriver
-from selenium.webdriver.common.by import By
-
-from ansys.saf.glow.solution import Solution
 from tests.mocks.solution_end_to_end.solution.definition import EndToEndSolution
 
 pytestmark = [

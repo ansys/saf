@@ -29,7 +29,6 @@ from ansys.saf.glow._core.livehandles import LiveHandlesModel
 if TYPE_CHECKING:
     from ansys.bdm.api import EntityHandle, IStorageScope
     from ansys.iam.oidc import UserInfo
-
     from ansys.saf.glow._bdm.datarepo import DataRepository
     from ansys.saf.glow._core.instance.attribute import CreateInstance
     from ansys.saf.glow._core.instance.decorator import InstancesUsedByMethod

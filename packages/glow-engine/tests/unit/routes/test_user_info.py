@@ -14,9 +14,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from ansys.iam.oidc import OidcDependency, UserInfo
 import pytest
 
+from ansys.iam.oidc import OidcDependency, UserInfo
 from ansys.saf.glow._config.const import DatabaseType
 from ansys.saf.glow._server.dependencies import get_oidc_client, oidc_scheme
 import tests.mocks.solutions.user_info as user_info

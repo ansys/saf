@@ -25,7 +25,6 @@ from unittest import mock
 from unittest.mock import patch
 import uuid
 
-from ansys.saf.testing.platform_specific import windows_only
 import pytest
 
 from ansys.saf.glow._utilities.solution_modules import (
@@ -38,6 +37,7 @@ from ansys.saf.glow._utilities.solution_modules import (
     get_autodiscovery_ui_module_str,
     get_main_module,
 )
+from ansys.saf.testing.platform_specific import windows_only
 from tests.conftest import IGNORE_PYC_FILES, MOCKS_DIR, SOLUTIONS_MOCKS_DIR
 
 

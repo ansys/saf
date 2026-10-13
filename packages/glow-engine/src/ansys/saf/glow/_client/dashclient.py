@@ -22,10 +22,10 @@ import logging
 import os
 from typing import Any, Generic, TypeVar
 
-from ansys.iam.oidc import DEFAULT_SUBPROTOCOL_PREFIX, encode_base64_token
 from fastapi.security.utils import get_authorization_scheme_param
 from opentelemetry import trace
 
+from ansys.iam.oidc import DEFAULT_SUBPROTOCOL_PREFIX, encode_base64_token
 from ansys.saf.glow._client.client import Client
 from ansys.saf.glow._config.const import (
     GLOW_API_URL,

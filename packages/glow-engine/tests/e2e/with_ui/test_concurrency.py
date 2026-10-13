@@ -19,6 +19,11 @@ from pathlib import Path
 import platform
 from typing import TypeVar
 
+from fastapi import status
+import httpx2
+import pytest
+
+from ansys.saf.glow.solution import Solution
 from ansys.saf.testing.solution.end_to_end import (
     DefaultDebug,
     DefaultUIDebug,
@@ -26,11 +31,6 @@ from ansys.saf.testing.solution.end_to_end import (
     EnvVarUIDebug,
     GlowDesktopProcess,
 )
-from fastapi import status
-import httpx2
-import pytest
-
-from ansys.saf.glow.solution import Solution
 from tests.mocks.solution_end_to_end.solution.definition import EndToEndSolution
 from tests.mocks.solution_second_end_to_end.solution.definition import SecondSolution
 

@@ -16,11 +16,11 @@
 
 from pathlib import Path
 
-from ansys.saf.testing.solution.end_to_end import ProjectFixture
 import pytest
 from tenacity import TryAgain, retry, stop_after_attempt, wait_fixed
 
 from ansys.saf.glow.solution import EntityHandle, RecursiveDictionaryOfEntityHandles
+from ansys.saf.testing.solution.end_to_end import ProjectFixture
 from tests.mocks.solutions.bdm_dictionaries import BdmDictionariesSolution
 
 pytestmark = pytest.mark.parametrize("solution_type", [BdmDictionariesSolution], indirect=True)

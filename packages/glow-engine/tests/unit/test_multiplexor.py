@@ -19,10 +19,10 @@ from dataclasses import dataclass
 from pathlib import Path
 from uuid import uuid4
 
-from ansys.bdm.api import IAsyncReadStorageScope, IAsyncStorageScope, IReadStorageScope, IStorageScope
-from ansys.bdm.api.entity_handle import EntityHandle
 import pytest
 
+from ansys.bdm.api import IAsyncReadStorageScope, IAsyncStorageScope, IReadStorageScope, IStorageScope
+from ansys.bdm.api.entity_handle import EntityHandle
 from ansys.saf.glow._bdm.multiplexor import PRIMARY_BDM_SYSTEM_NAME, AsyncBdmMultiplexor, BdmMultiplexor
 from ansys.saf.glow._bdm.storage_contexts import METHOD_CONTEXT, PROJECT_BOUNDARY
 from ansys.saf.glow._bdm.storage_factory import create_shared_storage_factory

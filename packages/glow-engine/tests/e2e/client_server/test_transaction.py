@@ -18,6 +18,11 @@ import asyncio
 import threading
 import time
 
+import httpx2
+import pytest
+
+from ansys.saf.glow.client import BadRequestException, InternalSolutionException
+from ansys.saf.glow.solution import MethodStatus
 from ansys.saf.testing.solution.const import TestDeployment
 from ansys.saf.testing.solution.end_to_end import (
     DefaultDebug,
@@ -25,11 +30,6 @@ from ansys.saf.testing.solution.end_to_end import (
     GlowBaseProcess,
     ProjectFixture,
 )
-import httpx2
-import pytest
-
-from ansys.saf.glow.client import BadRequestException, InternalSolutionException
-from ansys.saf.glow.solution import MethodStatus
 from tests.e2e.conftest import ChildCleanupConfiguration, DisableChildCleanupConfiguration
 from tests.mocks.solution_end_to_end.solution.definition import EndToEndSolution
 from tests.mocks.solution_end_to_end.solution.transaction_verification_step import (

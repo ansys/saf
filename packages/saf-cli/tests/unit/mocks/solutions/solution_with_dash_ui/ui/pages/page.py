@@ -19,8 +19,6 @@
 import inspect
 from typing import Any
 
-from ansys.saf.glow.client import DashClient, Deployment, NotFoundException, callback
-from ansys.solutions.dash_super_components import Tree  # pyright: ignore[reportMissingTypeStubs]
 import dash  # pyright: ignore[reportMissingTypeStubs]
 import dash_bootstrap_components as dbc  # pyright: ignore[reportMissingTypeStubs]
 from dash_extensions.enrich import (  # pyright: ignore[reportMissingTypeStubs, reportUnknownVariableType]
@@ -34,6 +32,8 @@ from dash_extensions.enrich import (  # pyright: ignore[reportMissingTypeStubs, 
 )
 import dash_mantine_components as dmc  # pyright: ignore[reportMissingTypeStubs]
 
+from ansys.saf.glow.client import DashClient, Deployment, NotFoundException, callback
+from ansys.solutions.dash_super_components import Tree  # pyright: ignore[reportMissingTypeStubs]
 from tests.unit.mocks.solutions.solution_with_dash_ui.solution.definition import SolutionWithDashUiSolution
 
 

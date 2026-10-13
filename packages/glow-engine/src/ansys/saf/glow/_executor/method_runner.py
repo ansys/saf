@@ -27,8 +27,6 @@ import traceback
 from typing import Any, TypeVar
 from uuid import UUID
 
-from ansys.bdm.api import IStorageScope
-from ansys.iam.oidc import OidcClient
 from fastapi import BackgroundTasks, HTTPException
 import httpx2
 from opentelemetry import trace
@@ -36,6 +34,8 @@ from opentelemetry.trace.propagation.tracecontext import TraceContextTextMapProp
 import psutil
 from pydantic_core import PydanticSerializationError
 
+from ansys.bdm.api import IStorageScope
+from ansys.iam.oidc import OidcClient
 from ansys.saf.glow._bdm.datarepo import DataRepositoryType
 from ansys.saf.glow._bdm.minerva import MinervaDataRepository
 from ansys.saf.glow._bdm.multiplexor import SafMultiplexorStorageScopeFactory

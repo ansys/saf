@@ -25,7 +25,6 @@ import time
 from typing import Any, NoReturn, TypeVar, cast
 import uuid
 
-from ansys.bdm.api import EntityHandle
 from opentelemetry import trace
 from pydantic import BaseModel, TypeAdapter
 from sqlalchemy import delete, exists, func, insert, inspect, not_, select, text, update
@@ -33,6 +32,7 @@ from sqlalchemy.exc import OperationalError
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker
 from sqlalchemy.orm import InstrumentedAttribute
 
+from ansys.bdm.api import EntityHandle
 from ansys.saf.glow._config.settings import Settings
 from ansys.saf.glow._core.field_state import FieldState
 from ansys.saf.glow._core.instance.recoverystate import RecoveryStateInfo

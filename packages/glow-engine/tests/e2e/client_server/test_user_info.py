@@ -14,7 +14,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import httpx2
+import pytest
+
 from ansys.iam.oidc import UserInfo
+from ansys.saf.glow.client import Client, InternalSolutionException, PermissionException, UnauthorizedException
 from ansys.saf.testing.common import YieldFixture
 from ansys.saf.testing.solution.const import TestDeployment
 from ansys.saf.testing.solution.end_to_end import (
@@ -24,10 +28,6 @@ from ansys.saf.testing.solution.end_to_end import (
     GlowBaseProcess,
     SolutionAuthConfiguration,
 )
-import httpx2
-import pytest
-
-from ansys.saf.glow.client import Client, InternalSolutionException, PermissionException, UnauthorizedException
 from tests.e2e.conftest import GlowApiKeyConfiguration, SetGlowApiKeyConfiguration
 from tests.mocks.solution_end_to_end.solution.definition import EndToEndSolution
 

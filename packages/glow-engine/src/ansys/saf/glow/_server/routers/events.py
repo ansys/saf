@@ -18,10 +18,10 @@ import asyncio
 from json import JSONDecodeError
 import logging
 
-from ansys.iam.oidc import get_websocket_subprotocol
 from fastapi import APIRouter, Depends, HTTPException, Request, WebSocket, WebSocketDisconnect
 from wsproto.utilities import LocalProtocolError
 
+from ansys.iam.oidc import get_websocket_subprotocol
 from ansys.saf.glow._events.ievent_manager import EventPayload, EventSourceIdentifier
 from ansys.saf.glow._server.dependencies import (
     EventManagerDep,

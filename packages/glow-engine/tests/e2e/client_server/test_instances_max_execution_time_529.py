@@ -16,14 +16,14 @@
 
 from typing import TypeVar
 
-from ansys.saf.testing.platform_specific import CONNECTION_ERROR
-from ansys.saf.testing.solution.end_to_end import GlowBaseProcess, ProjectFixture
 import httpx2
 import pytest
 
 from ansys.saf.glow._core.instance.manager import JOB_DEFAULT_MAX_RUNNING_TIME  # type: ignore
 from ansys.saf.glow.client import InternalSolutionException
 from ansys.saf.glow.solution import Solution
+from ansys.saf.testing.platform_specific import CONNECTION_ERROR
+from ansys.saf.testing.solution.end_to_end import GlowBaseProcess, ProjectFixture
 from tests.mocks.solution_end_to_end.solution.custom_http_instance_step import (
     INSTANCE_MAX_EXECUTION_TIME,
 )

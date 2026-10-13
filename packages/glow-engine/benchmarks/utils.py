@@ -20,4 +20,4 @@ import string
 
 def randomword(length: int):
     letters = string.ascii_lowercase
-    return "".join(random.choice(letters) for _ in range(length))
+    return "".join(random.choice(letters) for _ in range(length))  # noqa: S311

@@ -22,7 +22,6 @@ from typing import Any, cast
 
 from ansys.hps.client import Client  # pyright: ignore[reportMissingTypeStubs]
 from ansys.hps.client.jms import JmsApi, Project  # pyright: ignore[reportMissingTypeStubs]
-from ansys.saf.product_configuration.interfaces import Software as GlowSoftware
 import pytest
 from tenacity import TryAgain, retry, stop_after_attempt, wait_fixed
 
@@ -42,6 +41,7 @@ from ansys.saf.glow.solution.hps import (
     HpsProjectNotStartedError,
     HpsSimpleProject,
 )
+from ansys.saf.product_configuration.interfaces import Software as GlowSoftware
 import tests.mocks.solution_with_hps_python_script.hps_parametric_study as hps_parametric_study_module
 
 METHOD_ASSETS = Path(hps_parametric_study_module.__file__).parent / "method_assets"

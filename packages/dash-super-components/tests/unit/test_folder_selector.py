@@ -30,6 +30,7 @@ import uuid
 try:
     import tkinter
 except ImportError:
+
     class _TclError(Exception):
         pass
 

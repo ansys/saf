@@ -51,7 +51,9 @@ def layout():
         [
             FolderSelector(
                 aio_id="select_folder_basic",
-                options={"browse_from": str(Path.home())} if sys.platform.startswith("linux") else None,
+                options={"browse_from": str(Path.home())}
+                if sys.platform.startswith("linux")
+                else None,
             )
         ]
     )

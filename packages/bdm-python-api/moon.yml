@@ -7,13 +7,12 @@ layer: "library"
 project:
   description: "Python API for BDM"
 
-
 tasks:
   build-doc:
     description: "Build API documentation"
     deps:
       - target: "~:check-env-var"
-        args: 
+        args:
           - "UV_PYTHON"
           - "MOON_PYTHON_VERSION"
     command: 'uv'

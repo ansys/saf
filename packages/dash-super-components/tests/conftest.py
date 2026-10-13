@@ -23,6 +23,7 @@ from pathlib import Path
 from typing import Any
 from unittest import mock
 
+from dash import Dash
 from dash._callback_context import CallbackContext
 import plotly
 import pytest
@@ -30,6 +31,12 @@ import pytest
 tests_directory = Path(__file__).parent.absolute()
 
 project_directory = Path(__file__).parent.parent.absolute()
+
+
+@pytest.fixture(autouse=True)
+def dash_app() -> None:
+    """Initialize Dash config for components that resolve app-relative asset paths."""
+    Dash(__name__)
 
 
 def as_json(component: Any) -> dict[str, Any]:

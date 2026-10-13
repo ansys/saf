@@ -1,4 +1,8 @@
-workspace:
-  inheritedTasks:
-    exclude:
-      - build-doc
+$schema: "https://moonrepo.dev/schemas/project.json"
+
+language: "python"
+stack: "backend"
+layer: "library"
+
+project:
+  description: "Collection of templates to develop in SAF solutions"

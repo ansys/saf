@@ -1,7 +1,11 @@
-workspace:
-  inheritedTasks:
-    exclude:
-      - build-doc
+$schema: "https://moonrepo.dev/schemas/project.json"
+
+language: "python"
+stack: "backend"
+layer: "library"
+
+project:
+  description: "Command line interface for developing SAF solutions from scaffolding to packaging"
 
 tasks:
   test:

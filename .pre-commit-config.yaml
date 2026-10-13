@@ -40,6 +40,7 @@ repos:
       - id: codespell
         exclude: |
           (?x)^(
+            uv.lock|
             doc/styles/Vocab/ANSYS/accept\.txt|
             packages/dash-super-components/doc/styles/config/vocabularies/ANSYS/accept\.txt|
             .*\.aedt|
@@ -51,7 +52,7 @@ repos:
             packages/saf-projects-dashboard/.*package-lock\.json|
             packages/saf-projects-dashboard/.*\.js
           )$
-        args: [--ignore-words=doc/styles/Vocab/ANSYS/accept.txt]
+        args: [--ignore-words=doc/styles/config/vocabularies/ANSYS/accept.txt]
 
   - repo: https://github.com/google/yamlfmt
     rev: b5ca1890231d5e1e5181fef75a1be609d1e25029 # frozen: v0.21.0

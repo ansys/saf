@@ -1,7 +1,11 @@
-workspace:
-  inheritedTasks:
-    exclude:
-      - build-doc
+$schema: "https://moonrepo.dev/schemas/project.json"
+
+language: "python"
+stack: "frontend"
+layer: "library"
+
+project:
+  description: "Dash component for SAF-based solution applications to view and manage project instances"
 
 tasks:
   setup-python:

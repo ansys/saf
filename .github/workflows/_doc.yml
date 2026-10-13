@@ -22,6 +22,8 @@ env:
   CNAME: ${{ vars.CNAME }}
   MOON_PYTHON_VERSION: ${{ vars.PYTHON_VERSION }}
   UV_PYTHON: ${{ vars.PYTHON_VERSION }}
+  MOON_ARGS: ${{ case((github.event_name == 'workflow_dispatch' || github.ref == 'refs/heads/main'),
+    '', '--affected') }}
 
 jobs:
   doc-centralized-build:
@@ -44,7 +46,7 @@ jobs:
 
       - name: Build centralized documentation
         shell: bash
-        run: moon run root:build-doc
+        run: moon run root:build-doc $MOON_ARGS
 
       - name: Upload HTML documentation artifact
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
@@ -85,9 +87,11 @@ jobs:
 
       - name: Build centralized documentation
         shell: bash
-        run: moon run $PACKAGE:build-doc
+        run: moon run $PACKAGE:build-doc $MOON_ARGS
 
       - name: Upload HTML documentation artifact
+        if: ${{ hashFiles('packages/${{ matrix.package }}/doc/_build/html/') != ''
+          }}
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: ${{ vars.DOC_ARTIFACT }}-${{ matrix.package }}-html
@@ -96,6 +100,9 @@ jobs:
           if-no-files-found: error
 
       - name: Get version
+        if: |
+          github.event_name == 'workflow_dispatch' ||
+          github.ref == 'refs/heads/main'
         id: info
         uses: ansys/saf-devops/get-information-from-pyproject@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
         with:
@@ -136,6 +143,9 @@ jobs:
     permissions:
       contents: read
     runs-on: ubuntu-latest
+    if: |
+      github.event_name == 'workflow_dispatch' ||
+      github.ref == 'refs/heads/main'
     steps:
       - name: Checkout gh-pages-bdm-python-api
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1

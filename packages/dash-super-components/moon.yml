@@ -5,14 +5,15 @@ stack: "backend"
 layer: "library"
 
 project:
-  description: "A collection of pre-assembled, high-level Dash UI components built on Dash Mantine Components for simulation web applications"
+  description: "A collection of pre-assembled, high-level Dash UI components built
+    on Dash Mantine Components for simulation web applications"
 
 tasks:
   build-doc:
     description: "Build API documentation"
     deps:
       - target: "~:check-env-var"
-        args: 
+        args:
           - "UV_PYTHON"
           - "MOON_PYTHON_VERSION"
     command: 'uv'

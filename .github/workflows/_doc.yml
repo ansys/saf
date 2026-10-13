@@ -122,7 +122,8 @@ jobs:
           branch: gh-pages-${{ matrix.package }}
 
       - name: Deploy stable doc
-        if: ${{ !contains(steps.info.outputs.patch-version, 'dev') }}
+        if: ${{ !contains(steps.info.outputs.patch-version, 'dev') && (github.event_name
+          == 'workflow_dispatch' || github.ref == 'refs/heads/main') }}
         uses: ansys/saf-devops/doc-deploy-stable@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
         with:
           cname: ${{ vars.CNAME }}

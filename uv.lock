@@ -1548,6 +1548,7 @@ dev = [
     { name = "ruamel-yaml", marker = "python_full_version >= '3.12'" },
     { name = "ruff" },
     { name = "sphinx", marker = "python_full_version >= '3.12'" },
+    { name = "sphinx-autobuild", marker = "python_full_version >= '3.12'" },
     { name = "sphinx-code-tabs", marker = "python_full_version >= '3.12'" },
     { name = "sphinx-copybutton", marker = "python_full_version >= '3.12'" },
     { name = "sphinx-design", marker = "python_full_version >= '3.12'" },
@@ -1557,6 +1558,7 @@ dev = [
     { name = "sphinx-tabs", marker = "python_full_version >= '3.12'" },
     { name = "sphinx-toolbox", marker = "python_full_version >= '3.12'" },
     { name = "sphinxcontrib-mermaid", marker = "python_full_version >= '3.12'" },
+    { name = "sphinxcontrib-video", marker = "python_full_version >= '3.12'" },
     { name = "sphinxemoji", marker = "python_full_version >= '3.12'" },
     { name = "tenacity" },
     { name = "toml", marker = "python_full_version >= '3.12'" },
@@ -1573,6 +1575,7 @@ doc = [
     { name = "rst2html5", marker = "python_full_version >= '3.12'" },
     { name = "ruamel-yaml", marker = "python_full_version >= '3.12'" },
     { name = "sphinx", marker = "python_full_version >= '3.12'" },
+    { name = "sphinx-autobuild", marker = "python_full_version >= '3.12'" },
     { name = "sphinx-code-tabs", marker = "python_full_version >= '3.12'" },
     { name = "sphinx-copybutton", marker = "python_full_version >= '3.12'" },
     { name = "sphinx-design", marker = "python_full_version >= '3.12'" },
@@ -1582,6 +1585,7 @@ doc = [
     { name = "sphinx-tabs", marker = "python_full_version >= '3.12'" },
     { name = "sphinx-toolbox", marker = "python_full_version >= '3.12'" },
     { name = "sphinxcontrib-mermaid", marker = "python_full_version >= '3.12'" },
+    { name = "sphinxcontrib-video", marker = "python_full_version >= '3.12'" },
     { name = "sphinxemoji", marker = "python_full_version >= '3.12'" },
     { name = "toml", marker = "python_full_version >= '3.12'" },
 ]
@@ -1715,6 +1719,7 @@ dev = [
     { name = "ruamel-yaml", marker = "python_full_version >= '3.12'", specifier = ">=0.19.1" },
     { name = "ruff", specifier = "==0.15.0" },
     { name = "sphinx", marker = "python_full_version >= '3.12'", specifier = ">=9.1" },
+    { name = "sphinx-autobuild", marker = "python_full_version >= '3.12'", specifier = ">=2025.8.25" },
     { name = "sphinx-code-tabs", marker = "python_full_version >= '3.12'", specifier = ">=0.5.5" },
     { name = "sphinx-copybutton", marker = "python_full_version >= '3.12'", specifier = ">=0.5.2" },
     { name = "sphinx-design", marker = "python_full_version >= '3.12'", specifier = ">=0.7.0" },
@@ -1724,6 +1729,7 @@ dev = [
     { name = "sphinx-tabs", marker = "python_full_version >= '3.12'", specifier = ">=3.5.0" },
     { name = "sphinx-toolbox", marker = "python_full_version >= '3.12'", specifier = ">=4.2.0" },
     { name = "sphinxcontrib-mermaid", marker = "python_full_version >= '3.12'", specifier = ">=0.7.1" },
+    { name = "sphinxcontrib-video", marker = "python_full_version >= '3.12'", specifier = ">=0.4.2" },
     { name = "sphinxemoji", marker = "python_full_version >= '3.12'", specifier = ">=0.2" },
     { name = "tenacity", specifier = ">=8.0.0,<9" },
     { name = "toml", marker = "python_full_version >= '3.12'", specifier = ">=0.10.2" },
@@ -1740,6 +1746,7 @@ doc = [
     { name = "rst2html5", marker = "python_full_version >= '3.12' and python_full_version < '4'", specifier = ">=2.0.1" },
     { name = "ruamel-yaml", marker = "python_full_version >= '3.12'", specifier = ">=0.19.1" },
     { name = "sphinx", marker = "python_full_version >= '3.12'", specifier = ">=9.1" },
+    { name = "sphinx-autobuild", marker = "python_full_version >= '3.12'", specifier = ">=2025.8.25" },
     { name = "sphinx-code-tabs", marker = "python_full_version >= '3.12'", specifier = ">=0.5.5" },
     { name = "sphinx-copybutton", marker = "python_full_version >= '3.12'", specifier = ">=0.5.2" },
     { name = "sphinx-design", marker = "python_full_version >= '3.12'", specifier = ">=0.7.0" },
@@ -1749,6 +1756,7 @@ doc = [
     { name = "sphinx-tabs", marker = "python_full_version >= '3.12'", specifier = ">=3.5.0" },
     { name = "sphinx-toolbox", marker = "python_full_version >= '3.12'", specifier = ">=4.2.0" },
     { name = "sphinxcontrib-mermaid", marker = "python_full_version >= '3.12'", specifier = ">=0.7.1" },
+    { name = "sphinxcontrib-video", marker = "python_full_version >= '3.12'", specifier = ">=0.4.2" },
     { name = "sphinxemoji", marker = "python_full_version >= '3.12'", specifier = ">=0.2" },
     { name = "toml", marker = "python_full_version >= '3.12'", specifier = ">=0.10.2" },
 ]
@@ -8841,6 +8849,23 @@ wheels = [
 ]
 
 [[package]]
+name = "sphinx-autobuild"
+version = "2025.8.25"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "colorama" },
+    { name = "sphinx" },
+    { name = "starlette" },
+    { name = "uvicorn" },
+    { name = "watchfiles" },
+    { name = "websockets" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/e0/3c/a59a3a453d4133777f7ed2e83c80b7dc817d43c74b74298ca0af869662ad/sphinx_autobuild-2025.8.25.tar.gz", hash = "sha256:9cf5aab32853c8c31af572e4fecdc09c997e2b8be5a07daf2a389e270e85b213", size = 15200, upload-time = "2025-08-25T18:44:55.436Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/d7/20/56411b52f917696995f5ad27d2ea7e9492c84a043c5b49a3a3173573cd93/sphinx_autobuild-2025.8.25-py3-none-any.whl", hash = "sha256:b750ac7d5a18603e4665294323fd20f6dcc0a984117026d1986704fa68f0379a", size = 12535, upload-time = "2025-08-25T18:44:54.164Z" },
+]
+
+[[package]]
 name = "sphinx-autodoc-typehints"
 version = "3.5.2"
 source = { registry = "https://pypi.org/simple" }
@@ -9071,6 +9096,18 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/3b/44/6716b257b0aa6bfd51a1b31665d1c205fb12cb5ad56de752dfa15657de2f/sphinxcontrib_serializinghtml-2.0.0.tar.gz", hash = "sha256:e9d912827f872c029017a53f0ef2180b327c3f7fd23c87229f7a8e8b70031d4d", size = 16080, upload-time = "2024-07-29T01:10:09.332Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/52/a7/d2782e4e3f77c8450f727ba74a8f12756d5ba823d81b941f1b04da9d033a/sphinxcontrib_serializinghtml-2.0.0-py3-none-any.whl", hash = "sha256:6e2cb0eef194e10c27ec0023bfeb25badbbb5868244cf5bc5bdc04e4464bf331", size = 92072, upload-time = "2024-07-29T01:10:08.203Z" },
+]
+
+[[package]]
+name = "sphinxcontrib-video"
+version = "0.4.2"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "sphinx" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/cc/18/ca17d2f66d519f1a9d0020da0bcdf33881e02471096377b3e993d1acb952/sphinxcontrib_video-0.4.2.tar.gz", hash = "sha256:18477fd9454ac8c69259e6d24e782d8b802345b6475de6216351c2305b06c898", size = 11992, upload-time = "2026-01-14T10:00:29.298Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/0b/85/5a61ac88dc21df340a5999ca3ab94edaf58287010c62020be426703b8dd3/sphinxcontrib_video-0.4.2-py3-none-any.whl", hash = "sha256:7dfd01e5e2025de39536457854052b18723575d6213d96ca35f83e3154dc0315", size = 10275, upload-time = "2026-01-14T10:00:28.477Z" },
 ]
 
 [[package]]

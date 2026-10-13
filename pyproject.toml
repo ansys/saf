@@ -51,6 +51,7 @@ doc = [
   "rst2html5>=2.0.1; python_version>='3.12' and python_version<'4.0'",
   "ruamel-yaml>=0.19.1; python_version>='3.12'",
   "sphinx>=9.1; python_version>='3.12'",
+  "sphinx-autobuild>=2025.8.25; python_version>='3.12'",
   "sphinx-code-tabs>=0.5.5; python_version>='3.12'",
   "sphinx-copybutton>=0.5.2; python_version>='3.12'",
   "sphinx-design>=0.7.0; python_version>='3.12'",
@@ -60,6 +61,7 @@ doc = [
   "sphinx-tabs>=3.5.0; python_version>='3.12'",
   "sphinx-toolbox>=4.2.0; python_version>='3.12'",
   "sphinxcontrib-mermaid>=0.7.1; python_version>='3.12'",
+  "sphinxcontrib-video>=0.4.2; python_version>='3.12'",
   "sphinxemoji>=0.2; python_version>='3.12'",
   "toml>=0.10.2; python_version>='3.12'",
 ]

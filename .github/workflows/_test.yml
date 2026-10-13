@@ -207,7 +207,7 @@ jobs:
           SELECTED_RUNNER_NAME: ${{ inputs.runner-name }}
           RUN_AS_ADMIN: ${{ inputs.run-as-admin }}
           OFFLINE: ${{ inputs.offline }}
- 
+
       - name: Retrieve test groups configuration
         id: configure-tests
         shell: python

@@ -23,9 +23,17 @@
 import copy
 import os
 from pathlib import Path
-import tkinter
+from types import SimpleNamespace
 from typing import Any
 import uuid
+
+try:
+    import tkinter
+except ImportError:
+    class _TclError(Exception):
+        pass
+
+    tkinter = SimpleNamespace(TclError=_TclError)
 
 try:
     # dash >=3.2.0
@@ -39,6 +47,7 @@ import dash_mantine_components as dmc
 import pytest
 from pytest_mock import MockerFixture
 
+import ansys.solutions.dash_super_components.folder_selector as folder_selector_module
 from ansys.solutions.dash_super_components.folder_selector import FolderSelector, FolderSelectorMode
 from ansys.solutions.dash_super_components.tree import Tree
 from ansys.solutions.dash_super_components.utils import config as dsc_config
@@ -48,13 +57,25 @@ from ansys.solutions.dash_super_components.utils.svg_icons import IconNames, cre
 
 
 @pytest.fixture(autouse=True)
-def reset_folder_selector_config():
+def reset_folder_selector_config(mocker: MockerFixture):
     """Reset shared FolderSelector-related config around each test.
 
     Most tests in this module exercise bootstrap behavior, so they opt in by default.
     """
     dsc_config._config.notification_container_id = dsc_config._DEFAULT_NOTIFICATION_CONTAINER_ID
     dsc_config._config.enable_beta_features = True
+    if not folder_selector_module.TKINTER_AVAILABLE:
+        mocker.patch.object(
+            folder_selector_module,
+            "tkinter",
+            new=SimpleNamespace(TclError=tkinter.TclError, Tk=None),
+        )
+        mocker.patch.object(
+            folder_selector_module,
+            "filedialog",
+            new=SimpleNamespace(askdirectory=None),
+        )
+        mocker.patch.object(folder_selector_module, "TKINTER_AVAILABLE", new=True)
     yield
     dsc_config._config.notification_container_id = dsc_config._DEFAULT_NOTIFICATION_CONTAINER_ID
     dsc_config._config.enable_beta_features = dsc_config._DEFAULT_ENABLE_BETA_FEATURES

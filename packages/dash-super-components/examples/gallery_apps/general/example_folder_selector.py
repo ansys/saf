@@ -60,6 +60,9 @@ page in the User Guide for the full reference documentation.
 from pathlib import Path
 
 import ansys.solutions.dash_super_components as dsc
+from pathlib import Path
+import sys
+
 from ansys.solutions.dash_super_components import FolderSelector
 from ansys.solutions.dash_super_components.folder_selector import FolderSelectorMode
 from dash import _dash_renderer
@@ -122,6 +125,7 @@ app.layout = dmc.MantineProvider(
                 dmc.Text("Default mode (tkinter if available)", fw=600, mb="xs"),
                 FolderSelector(
                     aio_id="folder-default",
+                    options={"browse_from": str(Path.home())} if sys.platform.startswith("linux") else None,
                 ),
                 dmc.Divider(my="xl"),
                 # ── Section 2: Callback-driven custom display ───────────────

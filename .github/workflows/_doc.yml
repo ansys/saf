@@ -49,6 +49,7 @@ jobs:
         run: moon run root:build-doc $MOON_ARGS
 
       - name: Upload HTML documentation artifact
+        if: ${{ hashFiles('doc/_build/html/') != '' }}
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: ${{ vars.DOC_ARTIFACT }}-html
@@ -90,8 +91,8 @@ jobs:
         run: moon run $PACKAGE:build-doc $MOON_ARGS
 
       - name: Upload HTML documentation artifact
-        if: ${{ hashFiles('packages/${{ matrix.package }}/doc/_build/html/') != ''
-          }}
+        if: ${{ hashFiles(format('packages/{0}/doc/_build/html/', matrix.package))
+          != '' }}
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: ${{ vars.DOC_ARTIFACT }}-${{ matrix.package }}-html

@@ -1,6 +1,0 @@
-documentation:
-  - '.github/workflows/_doc.yml'
-  - 'doc/**'
-  - 'pyproject.toml'
-  - 'uv.lock'
-  - 'packages/**/doc/**'

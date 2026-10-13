@@ -33,5 +33,6 @@ tasks:
     inputs:
       - "doc/**/*"
       - "pyproject.toml"
+      - "/uv.lock"
     options:
       runFromWorkspaceRoot: true

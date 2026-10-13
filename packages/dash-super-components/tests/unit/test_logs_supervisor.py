@@ -522,9 +522,7 @@ def test_initialization_row_data_not_prepopulated():
 
     assert ag_grid is not None
     assert "rowData" not in ag_grid["props"]
-    assert ag_grid["props"]["dashGridOptions"]["noRowsOverlayComponentParams"] == {
-        "message": PLAIN_NO_ROWS_MESSAGE
-    }
+    assert ag_grid["props"]["dashGridOptions"]["noRowsOverlayComponentParams"] == {"message": PLAIN_NO_ROWS_MESSAGE}
 
 
 def test_initialization_no_log_file_provided():
@@ -588,15 +586,11 @@ def test_initialization_show_error_notifications_store_default_true():
 
     component_json = as_json(supervisor)
     stores = [
-        child
-        for child in component_json["props"]["children"][0]["props"]["children"]
-        if child.get("type") == "Store"
+        child for child in component_json["props"]["children"][0]["props"]["children"] if child.get("type") == "Store"
     ]
 
     notification_store = next(
-        store
-        for store in stores
-        if store["props"]["id"]["subcomponent"] == "show-error-notifications"
+        store for store in stores if store["props"]["id"]["subcomponent"] == "show-error-notifications"
     )
     assert notification_store["props"]["data"] is True
     assert notification_store["props"]["storage_type"] == "memory"
@@ -613,15 +607,11 @@ def test_initialization_show_error_notifications_store_custom_false():
 
     component_json = as_json(supervisor)
     stores = [
-        child
-        for child in component_json["props"]["children"][0]["props"]["children"]
-        if child.get("type") == "Store"
+        child for child in component_json["props"]["children"][0]["props"]["children"] if child.get("type") == "Store"
     ]
 
     notification_store = next(
-        store
-        for store in stores
-        if store["props"]["id"]["subcomponent"] == "show-error-notifications"
+        store for store in stores if store["props"]["id"]["subcomponent"] == "show-error-notifications"
     )
     assert notification_store["props"]["data"] is False
     assert notification_store["props"]["storage_type"] == "memory"
@@ -1225,9 +1215,7 @@ def test_update_button_variants_from_show_levels(
     assert result[0] == expected_variants["info"]
     assert isinstance(result[1], html.Span)
     assert str(result[1]) == str(
-        FILTER_BUTTONS_PROPERTIES["info"]["icon"]
-        if show_info
-        else FILTER_BUTTONS_PROPERTIES["info"]["icon_disabled"]
+        FILTER_BUTTONS_PROPERTIES["info"]["icon"] if show_info else FILTER_BUTTONS_PROPERTIES["info"]["icon_disabled"]
     )
 
     assert result[2] == expected_variants["warning"]
@@ -1327,7 +1315,7 @@ def test_initialize_grid_filter_model_from_store_no_file_change_and_existing_fil
         "log_format": "%(asctime)s - %(levelname)s - %(message)s",
     }
 
-    result = LogsSupervisor.initialize_grid_filter_model_from_store_and_reset_supervision_active_on_file_change(  # noqa: E501
+    result = LogsSupervisor.initialize_grid_filter_model_from_store_and_reset_supervision_active_on_file_change(
         "dummy-grid-id",
         filter_model_store,
         filter_model,
@@ -1385,7 +1373,7 @@ def test_initialize_grid_filter_model_from_store_resets_on_file_change_and_keeps
         "log_format": "%(asctime)s - %(levelname)s - %(message)s",
     }
 
-    result = LogsSupervisor.initialize_grid_filter_model_from_store_and_reset_supervision_active_on_file_change(  # noqa: E501
+    result = LogsSupervisor.initialize_grid_filter_model_from_store_and_reset_supervision_active_on_file_change(
         "dummy-grid-id",
         filter_model_store,
         {"message": {"filterType": "text", "type": "contains", "filter": "other"}},
@@ -1417,7 +1405,7 @@ def test_initialize_grid_filter_model_from_store_resets_to_empty_on_file_change_
         "log_format": "%(asctime)s - %(levelname)s - %(message)s",
     }
 
-    result = LogsSupervisor.initialize_grid_filter_model_from_store_and_reset_supervision_active_on_file_change(  # noqa: E501
+    result = LogsSupervisor.initialize_grid_filter_model_from_store_and_reset_supervision_active_on_file_change(
         "dummy-grid-id",
         {"message": {"filterType": "text", "type": "contains", "filter": "timeout"}},
         {"message": {"filterType": "text", "type": "contains", "filter": "other"}},
@@ -1445,7 +1433,7 @@ def test_initialize_grid_filter_model_from_store_resets_to_empty_on_file_change_
         "log_format": "%(asctime)s - %(levelname)s - %(message)s",
     }
 
-    result = LogsSupervisor.initialize_grid_filter_model_from_store_and_reset_supervision_active_on_file_change(  # noqa: E501
+    result = LogsSupervisor.initialize_grid_filter_model_from_store_and_reset_supervision_active_on_file_change(
         "dummy-grid-id",
         None,  # type: ignore[arg-type] - explicitly test missing store data
         {"message": {"filterType": "text", "type": "contains", "filter": "other"}},
@@ -1469,7 +1457,7 @@ def test_initialize_grid_filter_model_from_store_no_file_change_and_empty_store(
         "log_format": "%(asctime)s - %(levelname)s - %(message)s",
     }
 
-    result = LogsSupervisor.initialize_grid_filter_model_from_store_and_reset_supervision_active_on_file_change(  # noqa: E501
+    result = LogsSupervisor.initialize_grid_filter_model_from_store_and_reset_supervision_active_on_file_change(
         "dummy-grid-id",
         {},
         {"message": {"filterType": "text", "type": "contains", "filter": "other"}},
@@ -1493,7 +1481,7 @@ def test_initialize_grid_filter_model_from_store_no_file_change_and_store_none()
         "log_format": "%(asctime)s - %(levelname)s - %(message)s",
     }
 
-    result = LogsSupervisor.initialize_grid_filter_model_from_store_and_reset_supervision_active_on_file_change(  # noqa: E501
+    result = LogsSupervisor.initialize_grid_filter_model_from_store_and_reset_supervision_active_on_file_change(
         "dummy-grid-id",
         None,  # type: ignore[arg-type] - explicitly test missing store data
         {"message": {"filterType": "text", "type": "contains", "filter": "other"}},
@@ -1518,9 +1506,7 @@ def test_store_grid_filter_model_updates_store():
         "message": {"filterType": "text", "type": "startsWith", "filter": "Failed"},
     }
     # Store has different filter model
-    filter_model_store = {
-        "levelname": {"filterType": "text", "type": "contains", "filter": "WARNING"}
-    }
+    filter_model_store = {"levelname": {"filterType": "text", "type": "contains", "filter": "WARNING"}}
 
     result = LogsSupervisor.store_grid_filter_model(
         filter_model,
@@ -1652,12 +1638,10 @@ def test_start_stop_supervision(
         aio_id="test-id",
     )
 
-    updated_interval_disabled, updated_activate_monitoring_checked = (
-        LogsSupervisor.start_stop_supervision(
-            supervision_active,
-            initial_interval_disabled,
-            initial_activate_monitoring_checked,
-        )
+    updated_interval_disabled, updated_activate_monitoring_checked = LogsSupervisor.start_stop_supervision(
+        supervision_active,
+        initial_interval_disabled,
+        initial_activate_monitoring_checked,
     )
 
     assert updated_interval_disabled == expected_interval_disabled
@@ -1791,9 +1775,7 @@ def test_update_grid_parsing_fails_with_notification_enabled():
 
     with (
         mock.patch.object(LogsSupervisor, "_parse_logs_with_status") as parse_mock,
-        mock.patch(
-            "ansys.solutions.dash_super_components.logs_supervisor.set_props"
-        ) as set_props_mock,
+        mock.patch("ansys.solutions.dash_super_components.logs_supervisor.set_props") as set_props_mock,
     ):
         parse_result = LogsParseResult(
             status=ParseStatus.FAILURE,
@@ -1816,9 +1798,7 @@ def test_update_grid_parsing_fails_with_notification_enabled():
     }
 
     expected_message = (
-        "Failed to process log file."
-        " Error details: Parsing failed"
-        " Please check the log file path and format."
+        "Failed to process log file. Error details: Parsing failed Please check the log file path and format."
     )
     expected_notification = {
         "title": "Error processing log file",
@@ -1852,9 +1832,7 @@ def test_update_grid_parsing_fails_with_notification_enabled_no_change_does_not_
 
     with (
         mock.patch.object(LogsSupervisor, "_parse_logs_with_status") as parse_mock,
-        mock.patch(
-            "ansys.solutions.dash_super_components.logs_supervisor.set_props"
-        ) as set_props_mock,
+        mock.patch("ansys.solutions.dash_super_components.logs_supervisor.set_props") as set_props_mock,
     ):
         parse_mock.return_value = LogsParseResult(
             status=ParseStatus.FAILURE,
@@ -1887,9 +1865,7 @@ def test_update_grid_parsing_fails_with_notification_disabled():
 
     with (
         mock.patch.object(LogsSupervisor, "_parse_logs_with_status") as parse_mock,
-        mock.patch(
-            "ansys.solutions.dash_super_components.logs_supervisor.set_props"
-        ) as set_props_mock,
+        mock.patch("ansys.solutions.dash_super_components.logs_supervisor.set_props") as set_props_mock,
     ):
         parse_mock.return_value = LogsParseResult(
             status=ParseStatus.FAILURE,
@@ -1986,9 +1962,7 @@ def test_update_grid_no_matching_rows_with_notification_enabled_asserts_message_
 
     with (
         mock.patch.object(LogsSupervisor, "_parse_logs_with_status") as parse_mock,
-        mock.patch(
-            "ansys.solutions.dash_super_components.logs_supervisor.set_props"
-        ) as set_props_mock,
+        mock.patch("ansys.solutions.dash_super_components.logs_supervisor.set_props") as set_props_mock,
     ):
         parse_result = LogsParseResult(
             status=ParseStatus.SUCCESS_NO_MATCHING_ROWS,
@@ -2011,9 +1985,7 @@ def test_update_grid_no_matching_rows_with_notification_enabled_asserts_message_
     }
 
     expected_message = (
-        "Failed to process log file."
-        " Error details: No matching rows found."
-        " Please check the log file path and format."
+        "Failed to process log file. Error details: No matching rows found. Please check the log file path and format."
     )
     expected_notification = {
         "title": "Error processing log file",
@@ -2058,7 +2030,7 @@ def test_update_grid_data_unchanged(
         result = LogsSupervisor.update_grid(
             1,
             data,
-            cast(list[dict[str, Any]], old_data),
+            cast("list[dict[str, Any]]", old_data),
             old_grid_options,
             True,
         )
@@ -2111,10 +2083,7 @@ def test_get_logging_formatter_representation():
         assert field_representation["tooltipField"] == field
 
         assert "headerName" in field_representation
-        assert (
-            field_representation["headerName"]
-            == SUPPORTED_LOGGING_FORMATTER_OPTIONS_AND_HEADERS[field]
-        )
+        assert field_representation["headerName"] == SUPPORTED_LOGGING_FORMATTER_OPTIONS_AND_HEADERS[field]
 
         assert "cellStyle" in field_representation
         if field in default_fields:
@@ -2235,9 +2204,7 @@ def _assert_structure_except_rows_and_columns(
 
     log_file_and_format_store = inner_div.children[3]
     assert isinstance(log_file_and_format_store, dcc.Store)
-    _assert_log_file_and_format_store(
-        current_aio_id, log_file_and_format_store, log_file, log_format
-    )
+    _assert_log_file_and_format_store(current_aio_id, log_file_and_format_store, log_file, log_format)
 
     log_file_and_format_persist_store = inner_div.children[4]
     assert isinstance(log_file_and_format_persist_store, dcc.Store)

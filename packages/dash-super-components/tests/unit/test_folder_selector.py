@@ -401,9 +401,7 @@ def test_folder_selector_initialization_mode_explicitly_set_no_valid_folder_sele
     with pytest.raises(TypeError) as exc_info:
         FolderSelector(mode="invalid_mode")  # type: ignore - testing invalid input
 
-    assert (
-        str(exc_info.value) == "mode must be an instance of FolderSelectorMode, got <class 'str'>"
-    )
+    assert str(exc_info.value) == "mode must be an instance of FolderSelectorMode, got <class 'str'>"
 
 
 def test_folder_selector_bootstrap_mode_requires_beta_opt_in(
@@ -592,9 +590,7 @@ def test_folder_selector_structure_with_browse_from_from_environment_variable_an
     )
 
 
-def test_folder_selector_structure_with_default_folder_string(
-    tmp_path: Path, mocker: MockerFixture
-):
+def test_folder_selector_structure_with_default_folder_string(tmp_path: Path, mocker: MockerFixture):
     """Default path provided in options initializes the selected default path."""
     aio_id = "test_aio_id"
     mode = FolderSelectorMode.BOOTSTRAP
@@ -1012,9 +1008,7 @@ def _assert_folder_selector(
 ):
 
     expected_folders_structure = (
-        FolderSelector.get_folders_structure(browse_from)
-        if mode == FolderSelectorMode.BOOTSTRAP
-        else None
+        FolderSelector.get_folders_structure(browse_from) if mode == FolderSelectorMode.BOOTSTRAP else None
     )
 
     assert isinstance(folder_selector, html.Div)
@@ -1419,10 +1413,7 @@ def test_open_folder_selector_tkinter_tcl_error(mocker: MockerFixture):
     mock_set_props.assert_called_once()
     notification = mock_set_props.call_args[0][1]["sendNotifications"][0]
     assert notification["title"] == "Error during folder selection"
-    assert (
-        "does not support tkinter" in notification["message"]
-        or "BOOTSTRAP mode" in notification["message"]
-    )
+    assert "does not support tkinter" in notification["message"] or "BOOTSTRAP mode" in notification["message"]
     assert not notification["autoClose"]
     assert notification["action"] == "show"
     assert notification["id"] == "folder-selector-notify-failure-1"
@@ -1583,13 +1574,11 @@ def test_dismiss_modal_and_update_selected_folder_with_selection(tmp_path: Path)
         "index": "folder1-id",
     }
 
-    is_open, modal_opened, selected_folder = (
-        FolderSelector.dismiss_modal_and_update_selected_folder(
-            1,
-            selected_item_id,
-            tree_structure,
-            _bootstrap_settings(),
-        )
+    is_open, modal_opened, selected_folder = FolderSelector.dismiss_modal_and_update_selected_folder(
+        1,
+        selected_item_id,
+        tree_structure,
+        _bootstrap_settings(),
     )
 
     assert is_open is False
@@ -1605,13 +1594,11 @@ def test_dismiss_modal_and_update_selected_folder_no_selection():
         "children": [],
     }
 
-    is_open, modal_opened, selected_folder = (
-        FolderSelector.dismiss_modal_and_update_selected_folder(
-            1,
-            None,
-            tree_structure,
-            _bootstrap_settings(),
-        )
+    is_open, modal_opened, selected_folder = FolderSelector.dismiss_modal_and_update_selected_folder(
+        1,
+        None,
+        tree_structure,
+        _bootstrap_settings(),
     )
 
     assert is_open is False
@@ -1625,13 +1612,11 @@ def test_dismiss_modal_and_update_selected_folder_empty_tree(mocker: MockerFixtu
         "ansys.solutions.dash_super_components.folder_selector.set_props",
     )
 
-    is_open, modal_opened, selected_folder = (
-        FolderSelector.dismiss_modal_and_update_selected_folder(
-            1,
-            None,
-            {},
-            _bootstrap_settings(),
-        )
+    is_open, modal_opened, selected_folder = FolderSelector.dismiss_modal_and_update_selected_folder(
+        1,
+        None,
+        {},
+        _bootstrap_settings(),
     )
 
     assert is_open is False
@@ -1682,13 +1667,11 @@ def test_dismiss_modal_and_update_selected_folder_invalid_selections(
         "ansys.solutions.dash_super_components.folder_selector.set_props",
     )
 
-    is_open, modal_opened, selected_folder = (
-        FolderSelector.dismiss_modal_and_update_selected_folder(
-            1,
-            selected_item_id,
-            tree_structure,
-            _bootstrap_settings(),
-        )
+    is_open, modal_opened, selected_folder = FolderSelector.dismiss_modal_and_update_selected_folder(
+        1,
+        selected_item_id,
+        tree_structure,
+        _bootstrap_settings(),
     )
 
     assert is_open is False
@@ -1869,9 +1852,7 @@ def test_validate_bootstrap_selected_path_accepts_valid_directory(tmp_path: Path
         ("", "No folder selected", ""),
     ],
 )
-def test_update_display_field(
-    selected_folder: str | None, expected_text: str, expected_tooltip: str
-):
+def test_update_display_field(selected_folder: str | None, expected_text: str, expected_tooltip: str):
     """Update the display field text and tooltip label based on selected folder value."""
     text, tooltip = FolderSelector.update_display_field(selected_folder)
     assert text == expected_text
@@ -2167,9 +2148,7 @@ def test_get_folder_id():
     }
 
     assert FolderSelector.get_folder_id("/root_node", tree_structure) == "root-id"
-    assert (
-        FolderSelector.get_folder_id(f"/root_node{os.sep}folder1", tree_structure) == "folder1-id"
-    )
+    assert FolderSelector.get_folder_id(f"/root_node{os.sep}folder1", tree_structure) == "folder1-id"
     assert (
         FolderSelector.get_folder_id(
             f"/root_node{os.sep}folder1{os.sep}subfolder1",

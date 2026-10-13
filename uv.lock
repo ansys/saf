@@ -25,6 +25,7 @@ members = [
     "ansys-saf-templates",
     "ansys-saf-testing",
     "ansys-saf-workspace",
+    "ansys-solutions-dash-super-components",
 ]
 overrides = [{ package = { name = "ansys-solutions-dash-super-components" }, dependencies = [{ name = "dash", specifier = ">=2.18.2,<4.0" }] }]
 
@@ -1501,6 +1502,7 @@ dependencies = [
     { name = "ansys-saf-projects-dashboard" },
     { name = "ansys-saf-templates" },
     { name = "ansys-saf-testing", extra = ["all"] },
+    { name = "ansys-solutions-dash-super-components" },
 ]
 
 [package.dev-dependencies]
@@ -1667,6 +1669,7 @@ requires-dist = [
     { name = "ansys-saf-projects-dashboard", editable = "packages/saf-projects-dashboard" },
     { name = "ansys-saf-templates", editable = "packages/saf-templates" },
     { name = "ansys-saf-testing", extras = ["all"], editable = "packages/saf-testing" },
+    { name = "ansys-solutions-dash-super-components", editable = "packages/dash-super-components" },
 ]
 
 [package.metadata.requires-dev]
@@ -1796,7 +1799,7 @@ tests-glow-engine = [
     { name = "waitress", specifier = ">=3.0.1,<4.0" },
 ]
 tests-saf-cli = [
-    { name = "ansys-solutions-dash-super-components", specifier = ">=1.0.0,<2.0" },
+    { name = "ansys-solutions-dash-super-components", editable = "packages/dash-super-components" },
     { name = "dash-bootstrap-components", specifier = ">=1.2,<2.0" },
     { name = "dash-mantine-components", specifier = ">=2.6.0,<3.0" },
     { name = "psutil", specifier = ">=7.2.2,<8.0" },
@@ -1820,8 +1823,8 @@ tests-saf-product-manager = [
 
 [[package]]
 name = "ansys-solutions-dash-super-components"
-version = "1.1.0"
-source = { registry = "https://pypi.org/simple" }
+version = "1.2.dev0"
+source = { editable = "packages/dash-super-components" }
 dependencies = [
     { name = "dash" },
     { name = "dash-ag-grid" },
@@ -1831,9 +1834,16 @@ dependencies = [
     { name = "flask" },
     { name = "pandas" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/8c/ed/a9e3c1fac17d39fdcf7eb7d701bbf162e27328623fedafb6e9100cbbc45b/ansys_solutions_dash_super_components-1.1.0.tar.gz", hash = "sha256:8f1dba9f5e129bd6ad5c9e07ac5a050e229a03c78cdc68330b25a0b63fc089fc", size = 76073, upload-time = "2026-09-09T12:01:10.666Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/65/93/b3b4ad2ffbb1d947caccfc8708c429f34930cd3bc4f0e62695fa8257f8d1/ansys_solutions_dash_super_components-1.1.0-py3-none-any.whl", hash = "sha256:45572ff64c53859ce372307b07fe3221611f5fdae490ce7ff6e61741d5836654", size = 91010, upload-time = "2026-09-09T12:01:09.279Z" },
+
+[package.metadata]
+requires-dist = [
+    { name = "dash", specifier = ">=2.18.2,<3.4.0" },
+    { name = "dash-ag-grid", specifier = ">=31.2.0,<32.0.0" },
+    { name = "dash-extensions", specifier = ">=1.0.20" },
+    { name = "dash-iconify", specifier = ">=0.1,<0.2" },
+    { name = "dash-mantine-components", specifier = ">=2.3.0,<3.0.0" },
+    { name = "flask", specifier = ">=2.2.0,<4.0.0" },
+    { name = "pandas", specifier = ">=2.2.2,<3.0.0" },
 ]
 
 [[package]]

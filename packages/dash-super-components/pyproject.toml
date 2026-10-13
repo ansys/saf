@@ -5,13 +5,16 @@ requires = [ "uv-build>=0.12.18,<0.13" ]
 [project]
 name = "ansys-solutions-dash-super-components"
 version = "1.2.dev0"
-description = "A collection of pre-assembled, high-level Dash UI components built on Dash Mantine Components for simulation web applications."
+description = """\
+  A collection of pre-assembled, high-level Dash UI components built on Dash Mantine Components for simulation web \
+  applications.\
+  """
+readme = "README.rst"
+keywords = [ "Ansys Solutions" ]
 license = "Apache-2.0"
 license-files = [ "LICENSE" ]
 maintainers = [ { name = "ANSYS, Inc.", email = "pyansys-core@synopsys.com" } ]
 authors = [ { name = "ANSYS, Inc.", email = "pyansys-core@synopsys.com" } ]
-readme = "README.rst"
-keywords = [ "Ansys Solutions" ]
 requires-python = ">=3.11,<4"
 classifiers = [
   "Development Status :: 3 - Alpha",
@@ -25,10 +28,9 @@ classifiers = [
   "Programming Language :: Python :: 3.14",
   "Topic :: Scientific/Engineering",
 ]
-
 dependencies = [
-  "dash>=2.18.2,<3.4.0",  # >= 3.4.0 incompatible with dash-extensions <2.0.5
-  "dash-ag-grid>=31.2.0,<32.0.0",  # 32.x introduces breaking changes for LogsSupervisor
+  "dash>=2.18.2,<3.4.0",                   # >= 3.4.0 incompatible with dash-extensions <2.0.5
+  "dash-ag-grid>=31.2.0,<32.0.0",          # 32.x introduces breaking changes for LogsSupervisor
   "dash-extensions>=1.0.20",
   "dash-iconify>=0.1,<0.2",
   "dash-mantine-components>=2.3.0,<3.0.0",
@@ -41,6 +43,18 @@ sources.ansys-solutions-dash-super-components = { workspace = true }
 build-backend.module-name = "ansys.solutions.dash_super_components"
 build-backend.namespace = true
 
+[tool.docformatter]
+in-place = "true"
+recursive = "true"
+black = "true"
+wrap-summaries = 100
+wrap-descriptions = 100
+pre-summary-newline = "true"
+non-cap = []
+exclude = [
+  "tests/",
+]
+
 [tool.pytest]
 addopts = [
   "--strict-config",
@@ -49,18 +63,17 @@ addopts = [
   "-nlogical",
   "--dist=loadfile",
 ]
-testpaths = ["tests"]
-pythonpath = ["."]
 log_cli = true
 markers = [
-    "smoke: import / layout smoke tests for gallery example apps",
-    "run: simple headless run tests for gallery example apps",
+  "smoke: import / layout smoke tests for gallery example apps",
+  "run: simple headless run tests for gallery example apps",
 ]
 norecursedirs = [ ".moon", ".venv", "tmp*", ".git" ]
-
+pythonpath = [ "." ]
+testpaths = [ "tests" ]
 
 [tool.coverage]
-run.source = [ "ansys.solutions.dash_super_components" ] # pyansys requirement
+run.source = [ "ansys.solutions.dash_super_components" ]  # pyansys requirement
 run.omit = [
   "*/.venv/*",
   "*/pytest-of-*/pytest-*/popen-*/*",
@@ -70,97 +83,49 @@ run.omit = [
   "/tmp/*",
   "dist/*",
 ]
-report.omit = [
-  "*/pytest-of-*/pytest-*/popen-*/*",
-  "*/Temp/*",
-  "/tmp/*",
-  "dist/*",
-  "tests*"
-]
-report.show_missing = true       # pyansys requirement
-
-
-[tool.numpydoc_validation]
-# Keep in sync with numpydoc_validation_checks in doc/source/conf.py.
-# Checks not covered by ruff's D rules: GL06, GL07, GL09, GL10, RT02.
-checks = [
-  "GL06",  # Found unknown section
-  "GL07",  # Sections are in the wrong order
-  "GL08",  # The object does not have a docstring
-  "GL09",  # Deprecation warning should precede extended summary
-  "GL10",  # reST directives must be followed by two colons
-  "SS01",  # No summary found
-  "SS02",  # Summary does not start with a capital letter
-  "SS03",  # Summary does not end with a period
-  "SS04",  # Summary contains heading whitespaces
-  "SS05",  # Summary must start with infinitive verb, not third person
-  "RT02",  # Returns section first line should contain only the type
-]
-# Exclude private and dunder methods (e.g. _helper, __init__) from GL08.
-# The pattern is matched with re.search against the full dotted object name,
-# so "\._" matches any component that starts with an underscore.
-exclude = [
-  "\\._",  # private methods (_foo) and dunder methods (__init__, __str__, …)
-]
+report.omit = [ "*/pytest-of-*/pytest-*/popen-*/*", "*/Temp/*", "/tmp/*", "dist/*", "tests*" ]
+report.show_missing = true  # pyansys requirement
 
 [tool.towncrier]
 package = "ansys.solutions.dash_super_components"
 directory = "doc/changelog.d"
 filename = "doc/source/changelog.rst"
-template = "doc/changelog.d/changelog_template.jinja"
 start_string = ".. towncrier release notes start\n"
-title_format = "`{version} <https://github.com/ansys/super-components-for-dash/releases/tag/v{version}>`_ - {project_date}"
+template = "doc/changelog.d/changelog_template.jinja"
+title_format = """\
+  `{version} <https://github.com/ansys/super-components-for-dash/releases/tag/v{version}>`_ - {project_date}\
+  """
 issue_format = "`#{issue} <https://github.com/ansys/super-components-for-dash/pull/{issue}>`_"
+type = [
+  { directory = "added", name = "Added", showcontent = true },
+  { directory = "changed", name = "Changed", showcontent = true },
+  { directory = "fixed", name = "Fixed", showcontent = true },
+  { directory = "dependencies", name = "Dependencies", showcontent = true },
+  { directory = "miscellaneous", name = "Miscellaneous", showcontent = true },
+  { directory = "documentation", name = "Documentation", showcontent = true },
+  { directory = "maintenance", name = "Maintenance", showcontent = true },
+  { directory = "test", name = "Test", showcontent = true },
+]
 
-[[tool.towncrier.type]]
-directory = "added"
-name = "Added"
-showcontent = true
-
-[[tool.towncrier.type]]
-directory = "changed"
-name = "Changed"
-showcontent = true
-
-[[tool.towncrier.type]]
-directory = "fixed"
-name = "Fixed"
-showcontent = true
-
-[[tool.towncrier.type]]
-directory = "dependencies"
-name = "Dependencies"
-showcontent = true
-
-[[tool.towncrier.type]]
-directory = "miscellaneous"
-name = "Miscellaneous"
-showcontent = true
-
-[[tool.towncrier.type]]
-directory = "documentation"
-name = "Documentation"
-showcontent = true
-
-[[tool.towncrier.type]]
-directory = "maintenance"
-name = "Maintenance"
-showcontent = true
-
-[[tool.towncrier.type]]
-directory = "test"
-name = "Test"
-showcontent = true
-
-[tool.docformatter]
-in-place = "true"
+[tool.numpydoc_validation]
+# Keep in sync with numpydoc_validation_checks in doc/source/conf.py.
+# Checks not covered by ruff's D rules: GL06, GL07, GL09, GL10, RT02.
+checks = [
+  "GL06", # Found unknown section
+  "GL07", # Sections are in the wrong order
+  "GL08", # The object does not have a docstring
+  "GL09", # Deprecation warning should precede extended summary
+  "GL10", # reST directives must be followed by two colons
+  "SS01", # No summary found
+  "SS02", # Summary does not start with a capital letter
+  "SS03", # Summary does not end with a period
+  "SS04", # Summary contains heading whitespaces
+  "SS05", # Summary must start with infinitive verb, not third person
+  "RT02", # Returns section first line should contain only the type
+]
+# Exclude private and dunder methods (e.g. _helper, __init__) from GL08.
+# The pattern is matched with re.search against the full dotted object name,
+# so "\._" matches any component that starts with an underscore.
 exclude = [
-    "tests/",
+  "\\._", # private methods (_foo) and dunder methods (__init__, __str__, …)
 ]
-black = "true"
-non-cap = [
-]
-wrap-summaries = 100
-wrap-descriptions = 100
-recursive = "true"
-pre-summary-newline = "true"

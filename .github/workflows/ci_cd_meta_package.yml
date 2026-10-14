@@ -82,6 +82,12 @@ on:
         required: false
         type: string
         default: ""
+      ansys-saf-projects-dashboard-version-override:
+        description: "Override for the Ansys SAF Projects Dashboard version. Only
+          for release branch."
+        required: false
+        type: string
+        default: ""
   workflow_call:
     secrets:
       PYANSYS_CI_BOT_TOKEN:
@@ -114,7 +120,7 @@ concurrency:
 
 env:
   LIBRARY_NAME: saf-sdk
-  MINIMUM_PIP_VERSION: '26.0' # Minimal version to have the dependency resolution to be successful
+  MINIMUM_PIP_VERSION: "26.0" # Minimal version to have the dependency resolution to be successful
 
 jobs:
   run-tests-action:
@@ -177,6 +183,9 @@ jobs:
             && inputs.ansys-saf-glow-engine-version-override || '' }}
           ansys-saf-desktop-installer-version-override: ${{ github.event_name == 'workflow_dispatch'
             && inputs.ansys-saf-desktop-installer-version-override || '' }}
+          ansys-saf-projects-dashboard-version-override: ${{ github.event_name ==
+            'workflow_dispatch' && inputs.ansys-saf-projects-dashboard-version-override
+            || '' }}
           ansys-saf-desktop-orchestrator-version-override: ${{ github.event_name ==
             'workflow_dispatch' && inputs.ansys-saf-desktop-orchestrator-version-override
             || '' }}
@@ -378,8 +387,8 @@ jobs:
       id-token: write # Required for OIDC authentication with PyPI
       contents: write # Required for OIDC authentication with PyPI
     env:
-      RELEASE_BRANCH_NAME: 'release/v${{ needs.build-meta-package.outputs.version
-        }}/saf-sdk'
+      RELEASE_BRANCH_NAME: "release/v${{ needs.build-meta-package.outputs.version
+        }}/saf-sdk"
     steps:
       - name: Checkout code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1

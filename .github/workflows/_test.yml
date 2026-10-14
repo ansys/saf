@@ -479,6 +479,7 @@ jobs:
         id: run-tests
         env:
           PYTEST_DEBUG_TEMPROOT: ${{ runner.os == 'Windows' && 'C:/' || '/tmp' }}
+          APPDATA: ${{ runner.temp }}
         if: ${{ env.USE_MOON == 'false' }}
         uses: ansys/saf-devops/run-tests@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
         with:

@@ -1,6 +1,5 @@
 .. _release_notes:
 
-:tocdepth: 2
 
 #############
 Release notes

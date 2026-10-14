@@ -113,7 +113,7 @@ tasks:
       - '/.pre-commit-config.yaml'
       - 'pyproject.toml'
       - '/uv.lock'
-      - '/doc/styles/config/vocabularies/ANSYS/accept.txt'
+      - 'doc/styles/config/vocabularies/ANSYS/accept.txt'
     options:
       shell: false
       runFromWorkspaceRoot: true

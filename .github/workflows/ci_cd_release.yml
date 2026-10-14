@@ -299,7 +299,7 @@ jobs:
         if: ${{ !inputs.dev-release }}
         uses: $/.github/actions/bump-version
         with:
-          new-version: ${{ needs.release-information.outputs.version-to-bump-in-triggering-branch
+          new-version: ${{ needs.release-information.outputs.version-to-bump-in-release-branch
             }}
           base-ref: ${{ needs.release-information.outputs.release-branch-name }}
           package: "${{ inputs.library }}"

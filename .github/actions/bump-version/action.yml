@@ -17,7 +17,7 @@
 name: Bump Version
 
 description: |
-  Bump the version of the project using Poetry and create a pull request with the changes.
+  Bump the version of the project and create a pull request with the changes.
 
 inputs:
   new-version:
@@ -28,10 +28,6 @@ inputs:
     description: "Reference to checkout. Default: github.ref"
     type: string
     required: true
-  suffix-bump-branch:
-    description: "Suffix for the bump branch name. Default: ''"
-    type: string
-    default: ''
   package:
     description: "Name of the package to bump."
     type: string
@@ -70,8 +66,7 @@ runs:
     - name: Create bump branch
       shell: bash
       env:
-        BRANCH_NAME: "bump/v${{ inputs.new-version }}/${{ inputs.suffix-bump-branch
-          }}"
+        BRANCH_NAME: "bump/v${{ inputs.new-version }}/${{ inputs.package }}"
       run: |
         git switch --create ${BRANCH_NAME}
         git push origin HEAD:${BRANCH_NAME}
@@ -82,9 +77,8 @@ runs:
       env:
         EMAIL: 'actions@github.com'
         USERNAME: 'actions'
-        BRANCH_NAME: "bump/v${{ inputs.new-version }}/${{ inputs.suffix-bump-branch
-          }}"
-        PACKAGE: ${{ inputs.suffix-bump-branch }}
+        BRANCH_NAME: "bump/v${{ inputs.new-version }}/${{ inputs.package }}"
+        PACKAGE: ${{ inputs.package }}
         BASE_REF: ${{ inputs.base-ref }}
         GH_TOKEN: ${{ inputs.pr-token }}
         GITHUB_TOKEN: ${{ inputs.pr-token }}

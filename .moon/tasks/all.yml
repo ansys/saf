@@ -27,9 +27,9 @@ tasks:
       # The value passed via args: ["ansys-saf-aspire==9.1.6"] will naturally append here
     deps:
       - target: "~:check-env-var"
-        args: ["UV_EXTRA_INDEX_URL"]
+        args: ["UV_INDEX"]
     env:
-      PIP_INDEX_URL: "https://pypi.org/simple"
+      UV_DEFAULT_INDEX: "https://pypi.org/simple"
       PIP_QUIET: "1"
     options:
       cache: false

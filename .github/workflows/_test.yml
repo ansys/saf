@@ -408,24 +408,24 @@ jobs:
         shell: bash
         run: moon run $PACKAGE:install-pim-light-server
         env:
-          UV_EXTRA_INDEX_URL: https://PAT:${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}@${{
-            secrets.PYANSYS_PYPI_PRIVATE_URL }}
+          UV_INDEX: https://PAT:${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}@${{ secrets.PYANSYS_PYPI_PRIVATE_URL
+            }}
 
       - name: Install Visor (Moon)
         if: ${{ matrix.install-visor == 'true' && env.USE_MOON == 'true' }}
         shell: bash
         run: moon run $PACKAGE:install-visor
         env:
-          UV_EXTRA_INDEX_URL: https://PAT:${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}@${{
-            secrets.PYANSYS_PYPI_PRIVATE_URL }}
+          UV_INDEX: https://PAT:${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}@${{ secrets.PYANSYS_PYPI_PRIVATE_URL
+            }}
 
       - name: Install desktop-portal (Moon)
         if: ${{ matrix.install-portal == 'true' && env.USE_MOON == 'true' }}
         shell: bash
         run: moon run $PACKAGE:install-saf-desktop-portal
         env:
-          UV_EXTRA_INDEX_URL: https://PAT:${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}@${{
-            secrets.PYANSYS_PYPI_PRIVATE_URL }}
+          UV_INDEX: https://PAT:${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}@${{ secrets.PYANSYS_PYPI_PRIVATE_URL
+            }}
 
       - name: Install aspire dashboard (Moon)
         if: ${{ matrix.install-ansys-saf-aspire == 'true' && env.USE_MOON == 'true'
@@ -433,8 +433,8 @@ jobs:
         shell: bash
         run: moon run $PACKAGE:install-ansys-saf-aspire
         env:
-          UV_EXTRA_INDEX_URL: https://PAT:${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}@${{
-            secrets.PYANSYS_PYPI_PRIVATE_URL }}
+          UV_INDEX: https://PAT:${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}@${{ secrets.PYANSYS_PYPI_PRIVATE_URL
+            }}
 
       - name: Install minerva-python-client (Moon)
         if: ${{ matrix.install-minerva-python-client == 'true' && env.USE_MOON ==
@@ -442,8 +442,8 @@ jobs:
         shell: bash
         run: moon run $PACKAGE:install-minerva-python-client
         env:
-          UV_EXTRA_INDEX_URL: https://PAT:${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}@${{
-            secrets.PYANSYS_PYPI_PRIVATE_URL }}
+          UV_INDEX: https://PAT:${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}@${{ secrets.PYANSYS_PYPI_PRIVATE_URL
+            }}
 
       - name: Download extra packages for e2e tests (Moon)
         if: matrix.download-extra-packages == 'true' && env.USE_MOON == 'true'

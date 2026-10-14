@@ -245,8 +245,9 @@ jobs:
         shell: bash
         run: moon run saf-product-manager:install-visor
         env:
-          UV_EXTRA_INDEX_URL: https://PAT:${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}@${{
-            secrets.PYANSYS_PYPI_PRIVATE_URL }}
+          UV_DEFAULT_INDEX: "https://pypi.org/simple"
+          UV_INDEX: https://PAT:${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}@${{ secrets.PYANSYS_PYPI_PRIVATE_URL
+            }}
 
       - name: Run pre-commit (Moon)
         shell: bash

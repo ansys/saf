@@ -244,13 +244,13 @@ jobs:
       - name: Install visor
         shell: bash
         run: moon run saf-product-manager:install-visor
+        env:
+          UV_EXTRA_INDEX_URL: https://PAT:${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}@${{
+            secrets.PYANSYS_PYPI_PRIVATE_URL }}
 
       - name: Run pre-commit (Moon)
         shell: bash
         run: moon run :pre-commit
-        env:
-          UV_EXTRA_INDEX_URL: https://PAT:${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}@${{
-            secrets.PYANSYS_PYPI_PRIVATE_URL }}
 
   code-style-examples:
     name: "Check code style (examples)"

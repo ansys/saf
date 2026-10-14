@@ -18,6 +18,7 @@ import time
 
 from ansys.bdm.api import NO_ENTITY, EntityHandle
 from ansys.saf.glow.solution import (
+    LiveFile,
     StepModel,
     StepSpec,
     create_instance,
@@ -34,6 +35,7 @@ from tests.mocks.instance_managers.mock_product_manager import (
     WrongServiceTypeProductManager,
 )
 from tests.mocks.solution_end_to_end.solution.transaction_verification_step import (
+    TEXT_FILE_DUMMY_STRING,
     TransactionVerificationStep,
 )
 
@@ -42,6 +44,7 @@ INSTANCE_MAX_EXECUTION_TIME = 20
 
 class CustomHttpSharedInstanceStep(StepModel):
     value: str = "white"
+    live_file: LiveFile = LiveFile("custom-http-live-file.txt")
     healthy_before_timeout: bool = False
     healthy_after_timeout: bool = True  # Set to True to avoid false positives
     my_entity_handle: EntityHandle = NO_ENTITY
@@ -52,6 +55,35 @@ class CustomHttpSharedInstanceStep(StepModel):
     @transaction(self=StepSpec(upload=["value"]))
     def reset_value(self) -> None:
         self.value = "white"
+
+    @transaction(self=StepSpec(download=["live_file"]))
+    @create_instance("custom_http_product_instance", MockHttpProductInstanceManager)
+    @long_running
+    def write_to_live_file_progressively_from_custom_http_product_instance(
+        self,
+        custom_http_product_instance: MockHttpProductInstanceManager,
+    ) -> None:
+        custom_http_product_instance.initialize(version="1")
+        live_file_path = str(self.live_file.path)
+        for content in ("0", "01", "012", "0123", "01234", "012345"):
+            custom_http_product_instance.instance.the_property = content
+            custom_http_product_instance.instance.store_given_absolute_path(live_file_path)
+            time.sleep(0.1)
+
+    @transaction(self=StepSpec(download=["live_file"], upload=["value"]))
+    @create_instance("custom_http_product_instance", MockHttpProductInstanceManager)
+    def read_live_file_written_by_custom_http_product_instance(
+        self,
+        custom_http_product_instance: MockHttpProductInstanceManager,
+    ) -> None:
+        custom_http_product_instance.initialize(version="1")
+        live_file_path = str(self.live_file.path)
+        observed_contents: list[str] = []
+        for content in (TEXT_FILE_DUMMY_STRING, TEXT_FILE_DUMMY_STRING.upper()):
+            custom_http_product_instance.instance.the_property = content
+            custom_http_product_instance.instance.store_given_absolute_path(live_file_path)
+            observed_contents.append(self.live_file.read_text())
+        self.value = ",".join(observed_contents)
 
     @transaction(self=StepSpec())
     @create_instance("custom_http_product_instance", MockHttpProductInstanceManager)

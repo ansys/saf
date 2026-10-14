@@ -305,6 +305,8 @@ def transaction(enable_termination_event: bool = False, **kwargs: StepSpec):
             result = None
             solution_type = type(solution)
             args_for_step_func: dict[str, Any] = _input_params or {}
+            project_id = project_url.rstrip("/").split("/")[-1]
+            project_files_dir = settings.computed_project_files_directory / project_id
 
             # load step params
             transaction_step_models: list[TransactionStepModel] = []
@@ -323,6 +325,7 @@ def transaction(enable_termination_event: bool = False, **kwargs: StepSpec):
                     step_type=step_type,
                     http_client=http_client,
                     settings=settings,
+                    project_files_dir=project_files_dir,
                     storage_scope=storage_scope,
                     graphql_client=graphql_client,
                     oidc_client=oidc_client,
@@ -345,8 +348,7 @@ def transaction(enable_termination_event: bool = False, **kwargs: StepSpec):
 
             # Setting transaction thread-local variable for managing unshared products
             transaction_local.settings = settings
-            project_id = project_url.rstrip("/").split("/")[-1]
-            transaction_local.project_directory = settings.computed_project_files_directory / project_id
+            transaction_local.project_directory = project_files_dir
             transaction_local.instance_system_factory = instance_system_factory
             transaction_local.multiplexor_storage_factory = _multiplexor_storage_factory
 

@@ -31,6 +31,7 @@ from pydantic import BaseModel
 from ansys.bdm.api import NO_ENTITY, EntityHandle
 from ansys.saf.glow.solution import (
     BadRequestError,
+    LiveFile,
     SolutionConfiguration,
     StepModel,
     StepSpec,
@@ -112,6 +113,7 @@ class TransactionVerificationStep(StepModel):
     field_2: float = 0
     result: float = 0
     text_content: str | None = ""
+    live_file: LiveFile = LiveFile("live-file.txt")
     text_file: EntityHandle = NO_ENTITY
     text_file_2: EntityHandle = NO_ENTITY
     # Logging
@@ -210,6 +212,27 @@ class TransactionVerificationStep(StepModel):
         f.parent.mkdir(parents=True, exist_ok=True)
         f.write_text(TEXT_FILE_DUMMY_STRING)
         self.text_file = self.storage_scope.store(f)
+
+    @transaction(self=StepSpec(download=["live_file"]))
+    def write_to_live_file(self, mode: str = "w") -> None:
+        path = self.live_file.path
+        path.parent.mkdir(parents=True, exist_ok=True)
+        with path.open(mode) as f:
+            f.write(TEXT_FILE_DUMMY_STRING)
+
+    @transaction(self=StepSpec(download=["live_file"], upload=["text_content"]))
+    def read_live_file_and_upload_content(self) -> None:
+        self.text_content = self.live_file.read_text()
+
+    @transaction(self=StepSpec(download=["live_file"]))
+    @long_running
+    def write_to_live_file_progressively(self) -> None:
+        path = self.live_file.path
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text("")
+        for content in ("0", "01", "012", "0123", "01234", "012345"):
+            path.write_text(content)
+            time.sleep(0.1)
 
     @transaction(self=StepSpec())
     def create_text_outside_storage_scope(self) -> None:

@@ -81,6 +81,8 @@ tasks:
       - '/pyproject.toml'
       - '/uv.lock'
       - '/.github/**/*'
+      - '/.gitleaks.toml'
+      - '/.moon/**/*'
       - '/doc/**/*'
     options:
       runFromWorkspaceRoot: true
@@ -98,7 +100,7 @@ tasks:
       - sync
     deps:
       - target: "~:check-env-var"
-        args: 
+        args:
           - UV_PYTHON
           - MOON_PYTHON_VERSION
     inputs:

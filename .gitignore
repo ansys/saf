@@ -260,3 +260,7 @@ report/
 
 # Documentation styles
 doc/styles/Google/
+
+# Temporary files for pre-commit (Add License Headers)
+.reuse/templates/
+LICENSES/Apache-2.0.txt

@@ -243,7 +243,9 @@ jobs:
 
       - name: Install visor
         shell: bash
-        run: moon run saf-product-manager:install-visor
+        run: |
+          moon run root:uv-sync -- --all-groups
+          moon run saf-product-manager:install-visor
         env:
           UV_DEFAULT_INDEX: "https://pypi.org/simple"
           UV_INDEX: https://PAT:${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}@${{ secrets.PYANSYS_PYPI_PRIVATE_URL

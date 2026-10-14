@@ -24,9 +24,18 @@ from typing import Any
 from ansys.saf.glow.client import DashClient, callback
 from ansys.saf.glow.solution import MethodState
 import dash
-from dash_extensions.enrich import Input, Output, State, html, no_update  # pyright: ignore[reportMissingTypeStubs]
+from dash_extensions.enrich import (  # pyright: ignore[reportMissingTypeStubs]
+    Input,
+    Output,
+    State,
+    clientside_callback,
+    dcc,
+    html,
+    no_update,
+)
 from dash_iconify import DashIconify  # pyright: ignore[reportMissingTypeStubs]
 import dash_mantine_components as dmc  # pyright: ignore[reportMissingTypeStubs]
+from visordash import Visordash
 
 from saf.solutions.examples.solution.definition import ExamplesSolution
 from saf.solutions.examples.ui.helpers import handle_method_event
@@ -42,38 +51,14 @@ dash.register_page(
 )
 
 
-def _create_visor_viewer(host: str, port: int) -> Any:
-    """Create an isolated viewer document connected to the local Visor instance."""
-    viewer_args = json.dumps(
-        {
-            "host": host,
-            "port": port,
-            "basePath": VISOR_BASE_PATH,
-        }
-    ).replace("<", "\\u003c")
-    asset_prefix = VISOR_BASE_PATH or ""
-    src_doc = f"""<!doctype html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <link rel="stylesheet" href="{asset_prefix}/visordash/css.css">
-</head>
-<body style="margin: 0; width: 100vw; height: 100vh; overflow: hidden;">
-    <div id="VisorContainer" style="width: 100%; height: 100%;"></div>
-    <script>window.__visorArgs = {viewer_args};</script>
-    <script type="module" src="{asset_prefix}/visordash/js.js"></script>
-</body>
-</html>"""
-    return html.Iframe(
+def _create_visor_viewer(host: str, port: int, dark_mode: bool) -> Any:
+    """Create the VISOR Dash component with the selected solution theme."""
+    return Visordash(
         id="visor-viewer-component",
-        srcDoc=src_doc,
-        title="VISOR viewer",
-        style={
-            "width": "100%",
-            "height": "100%",
-            "border": "0",
-            "display": "block",
-        },
+        host=host,
+        port=port,
+        #basePath=VISOR_BASE_PATH,
+        darkMode=dark_mode,
     )
 
 
@@ -84,7 +69,7 @@ def layout(project: ExamplesSolution) -> html.Div:
     if step.visor_started:
         if not step.visor_host or step.visor_port is None:
             raise RuntimeError("VISOR is marked as running without a host and port.")
-        viewer = _create_visor_viewer(step.visor_host, step.visor_port)
+        viewer = _create_visor_viewer(step.visor_host, step.visor_port, dark_mode=True)
 
     controls_card = dmc.Card(
         [
@@ -283,6 +268,9 @@ def layout(project: ExamplesSolution) -> html.Div:
             DashClient.create_event_listener(  # pyright: ignore[reportUnknownMemberType]
                 step, id="start-visor-listener", stream_name="start-visor"
             ),
+            dcc.Store(id="visor-reload-trigger"),
+            html.Div(id="visor-reload-target", style={"display": "none"}),
+            html.Div(id="visor-theme-sync-target", style={"display": "none"}),
         ],
         style={"paddingLeft": "20px"},
     )
@@ -432,26 +420,68 @@ def show_visor_elbow(n_clicks: int | None, project: ExamplesSolution) -> list[di
 @callback(
     Output("visor-viewer-container", "children"),
     Input("start-visor-listener", "message"),
+    State("color-scheme-switch", "checked"),
     State("url", "pathname"),
     prevent_initial_call=True,
 )
 def display_visor_viewer(
     message: dict[str, Any] | None,
+    dark_mode: bool,
     project: ExamplesSolution,
 ) -> Any:
-    """Display the Visor viewer after its start transaction completes."""
-    if not message:
+    """Display or remount the Visor viewer using the selected solution theme."""
+    step = project.steps.visor_step
+    if message:
+        method_state = MethodState.model_validate_json(message["data"])
+        if method_state.status.value.lower() != "completed":
+            return no_update
+    elif not step.visor_started:
         return no_update
 
-    method_state = MethodState.model_validate_json(message["data"])
-    status = method_state.status.value.lower()
-    if status == "completed":
-        step = project.steps.visor_step
-        if not step.visor_host or step.visor_port is None:
-            raise RuntimeError("Visor completed without reporting its host and port.")
-        return [_create_visor_viewer(step.visor_host, step.visor_port)]
+    if not step.visor_started:
+        return []
+    if not step.visor_host or step.visor_port is None:
+        raise RuntimeError("Visor is marked as running without a host and port.")
+    return [_create_visor_viewer(step.visor_host, step.visor_port, dark_mode=dark_mode)]
 
-    return no_update
+
+clientside_callback(
+    """
+    function(viewerChildren, switchOn, pathname) {
+        if (
+            !pathname ||
+            !pathname.endsWith("/visor-instance-management") ||
+            !viewerChildren ||
+            (Array.isArray(viewerChildren) && viewerChildren.length === 0)
+        ) {
+            return window.dash_clientside.no_update;
+        }
+
+        const applyTheme = async () => {
+            const visorState = window.__visorState;
+            if (!visorState) {
+                window.setTimeout(applyTheme, 100);
+                return;
+            }
+
+            try {
+                const appState = await visorState.getAppStateAsync();
+                appState.ui.setDarkTheme(Boolean(switchOn));
+                await visorState.setAppStateAsync(appState, true);
+            } catch (error) {
+                console.error("Failed to synchronize the VISOR theme.", error);
+            }
+        };
+
+        applyTheme();
+        return window.dash_clientside.no_update;
+    }
+    """,
+    Output("visor-theme-sync-target", "children"),
+    Input("visor-viewer-container", "children"),
+    Input("color-scheme-switch", "checked"),
+    Input("url", "pathname"),
+)
 
 
 @callback(
@@ -526,17 +556,19 @@ def shutdown_visor(
 
 @callback(
     Output("visor-console-logs", "children", allow_duplicate=True),
+    Output("visor-reload-trigger", "data", allow_duplicate=True),
     Input("output-listener", "message"),
     State("visor-console-logs", "children"),
     prevent_initial_call=True,
 )
-def display_visor_output(message: dict[str, Any], current_logs: str) -> str:
+def display_visor_output(message: dict[str, Any], current_logs: str) -> tuple[str, Any]:
     """Display Visor transaction output."""
     if message:
         new_content = message["data"].strip('"').replace("\\n", "\n")
         combined = (current_logs or "") + "\n" + new_content
-        return combined
-    return current_logs
+        reload_requested = new_content == "VISOR instance shutdown complete."
+        return combined, reload_requested or no_update
+    return current_logs, no_update
 
 
 @callback(
@@ -547,3 +579,18 @@ def display_visor_output(message: dict[str, Any], current_logs: str) -> str:
 def clear_console_logs(n_clicks: int) -> str:
     """Clear the console logs."""
     return ""
+
+
+clientside_callback(
+    """
+    function(reloadRequested) {
+        if (reloadRequested) {
+            window.location.reload();
+        }
+        return window.dash_clientside.no_update;
+    }
+    """,
+    Output("visor-reload-target", "children"),
+    Input("visor-reload-trigger", "data"),
+    prevent_initial_call=True,
+)

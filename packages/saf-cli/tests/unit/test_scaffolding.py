@@ -16,6 +16,8 @@
 
 import importlib.metadata
 from pathlib import Path
+import platform
+import subprocess
 import sys
 
 import pytest
@@ -44,7 +46,8 @@ def test_create_solution_sets_proper_cookiecutter_args(
     expected_solution_definition_class_name = "MySolutionWithoutUiSolution"
     expected_version = "0.0.0"
     expected_docker_name = "my-solution-without-ui_0-0-0"
-    expected_saf_cli_version = importlib.metadata.version("ansys-saf-cli")
+    saf_executable = Path(sys.executable).parent / ("saf.exe" if platform.system() == "Windows" else "saf")
+    expected_saf_cli_version = subprocess.check_output([saf_executable, "--version"], text=True).strip()
 
     mock_cookiecutter = mocker.patch("ansys.saf.cli._solutions.scaffolding.cookiecutter")
 
@@ -88,7 +91,8 @@ def test_create_solution(tmp_path: Path, ui_framework: str, namespace: str):
     expected_solution_definition_class_name = "MySolutionWithoutUiSolution"
     expected_version = "0.0.0"
     expected_docker_name = "my-solution-without-ui_0-0-0"
-    expected_saf_cli_version = importlib.metadata.version("ansys-saf-cli")
+    saf_executable = Path(sys.executable).parent / ("saf.exe" if platform.system() == "Windows" else "saf")
+    expected_saf_cli_version = subprocess.check_output([saf_executable, "--version"], text=True).strip()
 
     create_solution(solution_name, solution_display_name, ui_framework, namespace)
 

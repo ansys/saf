@@ -243,10 +243,13 @@ jobs:
 
       - name: Install visor
         shell: bash
-        run: moon run saf-product-manager:install-visor
+        run: |
+          moon run root:uv-sync -- --all-groups
+          moon run saf-product-manager:install-visor
         env:
-          UV_EXTRA_INDEX_URL: https://PAT:${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}@${{
-            secrets.PYANSYS_PYPI_PRIVATE_URL }}
+          UV_DEFAULT_INDEX: "https://pypi.org/simple"
+          UV_INDEX: https://PAT:${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}@${{ secrets.PYANSYS_PYPI_PRIVATE_URL
+            }}
 
       - name: Run pre-commit (Moon)
         shell: bash
@@ -267,7 +270,7 @@ jobs:
           sparse-checkout-cone-mode: false
           sparse-checkout: |
             examples
-            doc/styles/Vocab/ANSYS/accept.txt
+            doc/styles/config/vocabularies/ANSYS/accept.txt
             packages/saf-cli/
 
       - uses: ansys/saf-devops/prepare-python-environment@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0

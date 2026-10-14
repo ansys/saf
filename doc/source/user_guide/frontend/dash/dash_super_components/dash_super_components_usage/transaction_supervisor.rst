@@ -152,6 +152,8 @@ Properties
 Constructor parameters
 ----------------------
 
+.. vale Vale.Terms = NO
+
 ===============  ==============================================================  ==========  ========
 Parameter        Description                                                     Type        Required
 ===============  ==============================================================  ==========  ========
@@ -178,6 +180,7 @@ orientation      Layout orientation of the monitoring fields. Can be            
                  Default: ``"horizontal"``.
 ===============  ==============================================================  ==========  ========
 
+.. vale Vale.Terms = YES
 
 Component IDs
 -------------

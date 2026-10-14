@@ -868,7 +868,7 @@ requires-dist = [
 
 [[package]]
 name = "ansys-saf-desktop-installer"
-version = "1.18.dev0"
+version = "1.19.dev0"
 source = { editable = "packages/saf-desktop-installer" }
 dependencies = [
     { name = "click" },
@@ -1562,6 +1562,7 @@ dev = [
     { name = "sphinxemoji", marker = "python_full_version >= '3.12'" },
     { name = "tenacity" },
     { name = "toml", marker = "python_full_version >= '3.12'" },
+    { name = "vale" },
 ]
 doc = [
     { name = "ansys-sphinx-theme", extra = ["autoapi"], marker = "python_full_version >= '3.12'" },
@@ -1588,6 +1589,7 @@ doc = [
     { name = "sphinxcontrib-video", marker = "python_full_version >= '3.12'" },
     { name = "sphinxemoji", marker = "python_full_version >= '3.12'" },
     { name = "toml", marker = "python_full_version >= '3.12'" },
+    { name = "vale" },
 ]
 style-desktop-installer = [
     { name = "ansys-saf-glow-engine", extra = ["dash"] },
@@ -1733,6 +1735,7 @@ dev = [
     { name = "sphinxemoji", marker = "python_full_version >= '3.12'", specifier = ">=0.2" },
     { name = "tenacity", specifier = ">=8.0.0,<9" },
     { name = "toml", marker = "python_full_version >= '3.12'", specifier = ">=0.10.2" },
+    { name = "vale", specifier = "==3.22.0.0" },
 ]
 doc = [
     { name = "ansys-sphinx-theme", extras = ["autoapi"], marker = "python_full_version >= '3.12'", specifier = ">=1.9" },
@@ -1759,6 +1762,7 @@ doc = [
     { name = "sphinxcontrib-video", marker = "python_full_version >= '3.12'", specifier = ">=0.4.2" },
     { name = "sphinxemoji", marker = "python_full_version >= '3.12'", specifier = ">=0.2" },
     { name = "toml", marker = "python_full_version >= '3.12'", specifier = ">=0.10.2" },
+    { name = "vale", specifier = "==3.22.0.0" },
 ]
 style-desktop-installer = [
     { name = "ansys-saf-glow-engine", extras = ["dash"], editable = "packages/glow-engine" },
@@ -9797,6 +9801,15 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/5d/ad/04bbb797c84fc1f26cb171f7394716f4865ffb8d8c5e1eef42565c2dfa6b/uvicorn-0.53.0.tar.gz", hash = "sha256:a9356f0cb89b3b8621529c5d5eebd69bfe154f4c3f68b4cf2de47e45fa855c2e", size = 110881, upload-time = "2026-09-14T07:44:23.815Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/76/18/0eea75741ee812e9f598b687619ce2454f6c3a1c5cd21ea990ec6bd26f45/uvicorn-0.53.0-py3-none-any.whl", hash = "sha256:e8dca71ec86dce5f04e333f0d56cdedf942446e6643b9cea1af0d6d3a02cb03e", size = 87081, upload-time = "2026-09-14T07:44:22.179Z" },
+]
+
+[[package]]
+name = "vale"
+version = "3.22.0.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/a3/53/4ac171f2521de4985c7f097f29a7057ee35c27c61b7513e701aeda101f99/vale-3.22.0.0.tar.gz", hash = "sha256:7597e92958de6b6c951e807b050fc78366026a35dc1e593561b6fccc6f76cf12", size = 5386, upload-time = "2026-09-18T07:35:07.675Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/87/6f/23c2cd295e419e0f803e55232144357e1c696e8f7980c123ca013460effb/vale-3.22.0.0-py3-none-any.whl", hash = "sha256:db7de242dd36f5eaf0b705e5cf5a8f957a693066879434ff192c735372c51d31", size = 5942, upload-time = "2026-09-18T07:35:06.538Z" },
 ]
 
 [[package]]

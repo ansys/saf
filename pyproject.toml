@@ -64,6 +64,7 @@ doc = [
   "sphinxcontrib-video>=0.4.2; python_version>='3.12'",
   "sphinxemoji>=0.2; python_version>='3.12'",
   "toml>=0.10.2; python_version>='3.12'",
+  "vale==3.22.0.0",
 ]
 style-desktop-installer = [
   "ansys-saf-glow-engine[dash]>=2.1.0,<3.0.0",
@@ -279,6 +280,7 @@ exclude = [
   "**/.venv",
   "**/_solutions/templates/",                                                              # Ignore files containing cookiecutter syntax
   "**/{{cookiecutter.project_slug}}",
+  "**/doc/_build/html/",
   "packages/saf-cli/tests/mocks/pages/first_page_with_file_output.py",
   "packages/saf-cli/tests/mocks/pages/first_page_with_hps.py",
   "packages/saf-cli/tests/mocks/pages/first_page_with_minerva.py",

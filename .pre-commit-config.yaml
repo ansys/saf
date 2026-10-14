@@ -40,17 +40,18 @@ repos:
       - id: codespell
         exclude: |
           (?x)^(
-            doc/styles/Vocab/ANSYS/accept\.txt|
+            uv.lock|
+            .*poetry\.lock|
+            .*accept\.txt|
             .*\.aedt|
             packages/saf-projects-dashboard/tests/|
             packages/saf-projects-dashboard/doc/_build|
             packages/saf-projects-dashboard/doc/styles/|
             packages/saf-projects-dashboard/doc/source/_static|
-            packages/saf-projects-dashboard/.*poetry\.lock|
             packages/saf-projects-dashboard/.*package-lock\.json|
             packages/saf-projects-dashboard/.*\.js
           )$
-        args: [--ignore-words=doc/styles/Vocab/ANSYS/accept.txt]
+        args: [--ignore-words=doc/styles/config/vocabularies/ANSYS/accept.txt]
 
   - repo: https://github.com/google/yamlfmt
     rev: b5ca1890231d5e1e5181fef75a1be609d1e25029 # frozen: v0.21.0

@@ -37,26 +37,26 @@ Installing `ansys-saf-sdk` installs these packages by default:
 
 Optional extras pull in additional packages, or extras of the core packages, for specific scenarios:
 
-| Extra | Description |
-| --- | --- |
-| `core-dash` | GLOW engine support for Dash-based frontends. |
-| `core-pim` | GLOW engine support for Product Instance Management (PIM). |
-| `core-hps` | GLOW engine support for HPC Platform Services (HPS). |
-| `core-test` | GLOW engine testing utilities. |
-| `core-mcp` | GLOW engine support for the Model Context Protocol (MCP). |
-| `core-all` | All optional extras of the core packages. |
-| `instance-management` | Product configuration and product manager packages. |
-| `instance-management-fluent` | Instance management support for Ansys Fluent. |
-| `instance-management-aedt` | Instance management support for Ansys Electronics Desktop (AEDT). |
-| `instance-management-optislang` | Instance management support for optiSLang. |
-| `instance-management-geometry` | Instance management support for Ansys Geometry. |
-| `instance-management-mapdl` | Instance management support for Ansys MAPDL. |
-| `instance-management-mechanical` | Instance management support for Ansys Mechanical. |
-| `instance-management-visor` | Instance management support for Visor-based products. |
-| `instance-management-all` | All instance management product integrations. |
-| `desktop` | Desktop orchestrator, for running solution applications as desktop apps. |
-| `build` | Desktop installer, for building standalone desktop installers. |
-| `all` | Every optional extra combined. |
+| Extra                            | Description                                                                                    |
+| -------------------------------- | ---------------------------------------------------------------------------------------------- |
+| `core-dash`                      | GLOW engine support for Dash-based frontends.                                                  |
+| `core-pim`                       | GLOW engine support for Product Instance Management (PIM).                                     |
+| `core-hps`                       | GLOW engine support for HPC Platform Services (HPS).                                           |
+| `core-test`                      | GLOW engine testing utilities.                                                                 |
+| `core-mcp`                       | GLOW engine support for the Model Context Protocol (MCP).                                      |
+| `core-all`                       | All optional extras of the core packages.                                                      |
+| `instance-management`            | Product configuration and product manager packages.                                            |
+| `instance-management-fluent`     | Instance management support for Ansys Fluent.                                                  |
+| `instance-management-aedt`       | Instance management support for Ansys Electronics Desktop (AEDT).                              |
+| `instance-management-optislang`  | Instance management support for optiSLang.                                                     |
+| `instance-management-geometry`   | Instance management support for Ansys Geometry.                                                |
+| `instance-management-mapdl`      | Instance management support for Ansys MAPDL.                                                   |
+| `instance-management-mechanical` | Instance management support for Ansys Mechanical.                                              |
+| `instance-management-visor`      | Instance management support for Visor-based products.                                          |
+| `instance-management-all`        | All instance management product integrations.                                                  |
+| `desktop`                        | Desktop orchestrator and Projects dashboard for running solution applications as desktop apps. |
+| `build`                          | Desktop installer, for building standalone desktop installers.                                 |
+| `all`                            | Every optional extra combined.                                                                 |
 
 For example, to install the SAF SDK with Dash and PIM support:
 

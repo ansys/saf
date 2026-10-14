@@ -55,9 +55,7 @@ class PathIsTooLongError(PathError):
     def __init__(self, max_length, path: str):
         """Initialize PathIsTooLongError."""
         error_message = (
-            "The path exceeds the maximum length of "
-            + str(max_length)
-            + " characters allowed on this system. "
+            "The path exceeds the maximum length of " + str(max_length) + " characters allowed on this system. "
         )
         error_message += "Please move your assets on a shallower position"
         super().__init__(error_message)
@@ -81,8 +79,7 @@ class PathDoesNotExistError(PathError):
     def __init__(self, path: str):
         """Initialize PathDoesNotExistError."""
         error_message = (
-            "The path does not exist on this system. "
-            "Check for misspellings or verify possible race conditions"
+            "The path does not exist on this system. Check for misspellings or verify possible race conditions"
         )
         super().__init__(error_message)
         self.path = path

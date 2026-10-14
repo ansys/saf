@@ -1,0 +1,19 @@
+<VTKFile type="vtkMultiBlockDataSet" version="1.0" byte_order="LittleEndian" header_type="UInt32" compressor="vtkZLibDataCompressor">
+  <vtkMultiBlockDataSet>
+    <Block name="level_0_block_0_part_0_parent" index="0">
+      <DataSet index="0" name="level_1_block_0_part_0" file="vtk_scene_sphere_l2_b3_r32_v3_c1_z0/vtk_scene_sphere_l2_b3_r32_v3_c1_z0_0.vtp"/>
+      <DataSet index="1" name="level_1_block_0_part_1" file="vtk_scene_sphere_l2_b3_r32_v3_c1_z0/vtk_scene_sphere_l2_b3_r32_v3_c1_z0_1.vtp"/>
+      <DataSet index="2" name="level_1_block_0_part_2" file="vtk_scene_sphere_l2_b3_r32_v3_c1_z0/vtk_scene_sphere_l2_b3_r32_v3_c1_z0_2.vtp"/>
+    </Block>
+    <Block name="level_0_block_0_part_1_parent" index="1">
+      <DataSet index="0" name="level_1_block_1_part_0" file="vtk_scene_sphere_l2_b3_r32_v3_c1_z0/vtk_scene_sphere_l2_b3_r32_v3_c1_z0_3.vtp"/>
+      <DataSet index="1" name="level_1_block_1_part_1" file="vtk_scene_sphere_l2_b3_r32_v3_c1_z0/vtk_scene_sphere_l2_b3_r32_v3_c1_z0_4.vtp"/>
+      <DataSet index="2" name="level_1_block_1_part_2" file="vtk_scene_sphere_l2_b3_r32_v3_c1_z0/vtk_scene_sphere_l2_b3_r32_v3_c1_z0_5.vtp"/>
+    </Block>
+    <Block name="level_0_block_0_part_2_parent" index="2">
+      <DataSet index="0" name="level_1_block_2_part_0" file="vtk_scene_sphere_l2_b3_r32_v3_c1_z0/vtk_scene_sphere_l2_b3_r32_v3_c1_z0_6.vtp"/>
+      <DataSet index="1" name="level_1_block_2_part_1" file="vtk_scene_sphere_l2_b3_r32_v3_c1_z0/vtk_scene_sphere_l2_b3_r32_v3_c1_z0_7.vtp"/>
+      <DataSet index="2" name="level_1_block_2_part_2" file="vtk_scene_sphere_l2_b3_r32_v3_c1_z0/vtk_scene_sphere_l2_b3_r32_v3_c1_z0_8.vtp"/>
+    </Block>
+  </vtkMultiBlockDataSet>
+</VTKFile>

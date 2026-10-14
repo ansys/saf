@@ -73,7 +73,7 @@ def test_example_serves_layout(example_path: Path) -> None:
 
     # Pass port=0 so the OS assigns a free port atomically.
     flask_server = make_server("127.0.0.1", 0, module.app.server)
-    host, port = cast(tuple[str, int], flask_server.server_address)
+    host, port = cast("tuple[str, int]", flask_server.server_address)
     server_thread = threading.Thread(target=flask_server.serve_forever, daemon=True)
     server_thread.start()
 
@@ -92,15 +92,10 @@ def test_example_serves_layout(example_path: Path) -> None:
                 last_exc = exc
                 time.sleep(0.25)
         else:
-            raise TimeoutError(
-                f"{example_path.name}: server did not become ready within 15 s. "
-                f"Last error: {last_exc}"
-            )
+            raise TimeoutError(f"{example_path.name}: server did not become ready within 15 s. Last error: {last_exc}")
 
         assert resp is not None
-        assert resp.status_code == 200, (
-            f"{example_path.name}: ``/_dash-layout`` returned HTTP {resp.status_code}."
-        )
+        assert resp.status_code == 200, f"{example_path.name}: ``/_dash-layout`` returned HTTP {resp.status_code}."
 
     finally:
         flask_server.shutdown()

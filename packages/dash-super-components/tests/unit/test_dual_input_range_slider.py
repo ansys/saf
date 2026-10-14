@@ -357,9 +357,7 @@ def test_step_validation():
 
     with pytest.raises(
         ValueError,
-        match=(
-            "'step' parameter must be less than or equal to the range defined by 'min' and 'max'"
-        ),
+        match=("'step' parameter must be less than or equal to the range defined by 'min' and 'max'"),
     ):
         DualInputRangeSlider(min=0, max=100, step=150)
 
@@ -389,26 +387,19 @@ def test_value_validation():
 
     with pytest.raises(
         ValueError,
-        match=(
-            "'value' parameter elements must each be within the range defined by 'min' and 'max'."
-        ),
+        match=("'value' parameter elements must each be within the range defined by 'min' and 'max'."),
     ):
         DualInputRangeSlider(min=0, max=100, value=[-10, 50])
 
     with pytest.raises(
         ValueError,
-        match=(
-            "'value' parameter elements must each be within the range defined by 'min' and 'max'."
-        ),
+        match=("'value' parameter elements must each be within the range defined by 'min' and 'max'."),
     ):
         DualInputRangeSlider(min=0, max=100, value=[25, 150])
 
     with pytest.raises(
         ValueError,
-        match=(
-            "The first element of the 'value' parameter must be less than or equal to "
-            "the second element."
-        ),
+        match=("The first element of the 'value' parameter must be less than or equal to the second element."),
     ):
         DualInputRangeSlider(min=0, max=100, value=[75, 25])
 

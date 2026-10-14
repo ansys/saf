@@ -265,9 +265,8 @@ jobs:
     with:
       library-name: ${{ inputs.library }}
       python-version: ${{ vars.PYTHON_VERSION }}
-      use-moon: ${{ inputs.library != 'dash-super-components' }}
       artifact-name: ${{ inputs.library }}-${{ needs.release-information.outputs.release-name
-        }}${{ case(inputs.library == 'dash-super-components', '' , '-artifacts') }}
+        }}-artifacts
       ref: ${{ inputs.dev-release && 'main' || needs.release-information.outputs.release-branch-name
         }}
 

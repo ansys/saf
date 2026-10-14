@@ -133,16 +133,10 @@ def test_ids_assignment():
     )
     assert badge.ids._method_info(aio_id) == TransactionMethodStatusBadge.ids._method_info(aio_id)
     assert badge.ids._auto_mode(aio_id) == TransactionMethodStatusBadge.ids._auto_mode(aio_id)
-    assert badge.ids._method_status(aio_id) == TransactionMethodStatusBadge.ids._method_status(
-        aio_id
-    )
+    assert badge.ids._method_status(aio_id) == TransactionMethodStatusBadge.ids._method_status(aio_id)
     assert badge.ids._interval(aio_id) == TransactionMethodStatusBadge.ids._interval(aio_id)
-    assert badge.ids._monitoring_active(
-        aio_id
-    ) == TransactionMethodStatusBadge.ids._monitoring_active(aio_id)
-    assert badge.ids.activate_monitoring(
-        aio_id
-    ) == TransactionMethodStatusBadge.ids.activate_monitoring(aio_id)
+    assert badge.ids._monitoring_active(aio_id) == TransactionMethodStatusBadge.ids._monitoring_active(aio_id)
+    assert badge.ids.activate_monitoring(aio_id) == TransactionMethodStatusBadge.ids.activate_monitoring(aio_id)
     assert badge.ids.label(aio_id) == TransactionMethodStatusBadge.ids.label(aio_id)
     assert badge.ids.status_badge(aio_id) == TransactionMethodStatusBadge.ids.status_badge(aio_id)
 
@@ -431,10 +425,7 @@ def test_start_stop_monitoring(monitoring_active: bool):
 @pytest.mark.parametrize("activate", [True, False])
 def test_activate_deactivate_monitoring_from_external_trigger(activate: bool):
     """Test external activation callback."""
-    assert (
-        TransactionMethodStatusBadge.activate_deactivate_monitoring_from_external_trigger(activate)
-        == activate
-    )
+    assert TransactionMethodStatusBadge.activate_deactivate_monitoring_from_external_trigger(activate) == activate
 
 
 def test_retrieve_method_status_returns_new_value(mock_glow_api_request: mock.MagicMock):

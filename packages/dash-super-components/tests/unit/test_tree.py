@@ -841,9 +841,7 @@ def test_tree_with_label_styles_other_properties_no_color():
     inner_div = _get_tree_content_div(tree)
     nav_link = inner_div.children[0]
     assert isinstance(nav_link, dmc.NavLink)
-    assert nav_link.styles == {
-        "label": {"fontWeight": "bold", "color": "var(--mantine-color-text)"}
-    }
+    assert nav_link.styles == {"label": {"fontWeight": "bold", "color": "var(--mantine-color-text)"}}
 
     _assert_tree(items, tree, tree.aio_id, None, None)
 
@@ -924,8 +922,7 @@ def _assert_hidden_proxy_container(tree: html.Div, items_input: list[dict[str, A
         matching_buttons = [
             child
             for child in proxy_children
-            if isinstance(child, html.Button)
-            and child.id == Tree.ids._row_selector(aio_id, item_id)
+            if isinstance(child, html.Button) and child.id == Tree.ids._row_selector(aio_id, item_id)
         ]
         assert len(matching_buttons) == 1
         button = matching_buttons[0]
@@ -937,8 +934,7 @@ def _assert_hidden_proxy_container(tree: html.Div, items_input: list[dict[str, A
         matching_buttons = [
             child
             for child in proxy_children
-            if isinstance(child, html.Button)
-            and child.id == Tree.ids._expander_proxy(aio_id, item_id)
+            if isinstance(child, html.Button) and child.id == Tree.ids._expander_proxy(aio_id, item_id)
         ]
         assert len(matching_buttons) == 1
         button = matching_buttons[0]
@@ -1000,9 +996,7 @@ def _assert_tree_items(
         assert tree_item.id == Tree.ids.navlink_item(aio_id, expected_item_id)
         assert tree_item.attributes == {
             "root": {
-                "data-index": Tree.ids._generate_data_index_for_navlink_item(
-                    aio_id, expected_item_id
-                ),
+                "data-index": Tree.ids._generate_data_index_for_navlink_item(aio_id, expected_item_id),
                 "data-aio-id": aio_id,
                 "data-item-index": expected_item_id,
             }

@@ -452,5 +452,31 @@
         "pytest-additional-arguments": "-n0 tests/e2e/test_installer_entry_point.py::TestInstallerCustomNamespace::test_install_and_launch_with_synopsys_namespace[with_env_var-synopsys-custom-ns-solution]",
         "runner-name": "windows-latest",
         "download-extra-packages": "true"
+    },
+    {
+        "test-report-artifact-name-suffix": "sdi_linux_extended_test_installer_with_projects_dashboard_and_desktop_portal",
+        "install-gtk-xvfb": "true",
+        "pytest-additional-arguments": "-n0 tests/e2e/test_installer_entry_point.py::TestInstallerProjectsDashboard::test_installer_with_projects_dashboard_and_desktop_portal",
+        "runner-name": "public-ubuntu-latest-16-cores",
+        "download-extra-packages": "true"
+    },
+    {
+        "test-report-artifact-name-suffix": "sdi_windows_extended_test_installer_with_projects_dashboard_and_desktop_portal",
+        "pytest-additional-arguments": "-n0 tests/e2e/test_installer_entry_point.py::TestInstallerProjectsDashboard::test_installer_with_projects_dashboard_and_desktop_portal",
+        "runner-name": "windows-latest",
+        "download-extra-packages": "true"
+    },
+    {
+        "test-report-artifact-name-suffix": "sdi_linux_extended_test_installer_with_projects_dashboard_only",
+        "install-gtk-xvfb": "true",
+        "pytest-additional-arguments": "-n0 tests/e2e/test_installer_entry_point.py::TestInstallerProjectsDashboard::test_installer_with_projects_dashboard_only",
+        "runner-name": "public-ubuntu-latest-16-cores",
+        "download-extra-packages": "true"
+    },
+    {
+        "test-report-artifact-name-suffix": "sdi_windows_extended_test_installer_with_projects_dashboard_only",
+        "pytest-additional-arguments": "-n0 tests/e2e/test_installer_entry_point.py::TestInstallerProjectsDashboard::test_installer_with_projects_dashboard_only",
+        "runner-name": "windows-latest",
+        "download-extra-packages": "true"
     }
 ]

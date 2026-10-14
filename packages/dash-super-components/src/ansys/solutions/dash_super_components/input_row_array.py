@@ -206,9 +206,7 @@ class InputRowArray(html.Div):
             if row_index is None:
                 row_index = 0
 
-            return cls._make_id_dict_with_identifier_and_row_index(
-                "input", aio_id, item_id, row_index
-            )
+            return cls._make_id_dict_with_identifier_and_row_index("input", aio_id, item_id, row_index)
 
     ids = InputRowArrayIds
 

@@ -1,0 +1,38 @@
+$schema: "https://moonrepo.dev/schemas/project.json"
+
+language: "python"
+stack: "backend"
+layer: "library"
+
+project:
+  description: "An OpenID Connect (OIDC) implementation for Identity and Access Management
+    (IAM) solutions"
+
+tasks:
+  build-doc:
+    description: "Build API documentation"
+    deps:
+      - target: "~:check-env-var"
+        args:
+          - "UV_PYTHON"
+          - "MOON_PYTHON_VERSION"
+    command: 'uv'
+    args:
+      - "run"
+      - "sphinx-build"
+      - "-M"
+      - "html"
+      - "$projectSource/doc/source"
+      - "$projectSource/doc/_build"
+      - "-j"
+      - "auto"
+      - "--keep-going"
+      - "-v"
+    env:
+      DISABLE_INTERSPHINX: 'true'
+    inputs:
+      - "doc/**/*"
+      - "pyproject.toml"
+      - "/uv.lock"
+    options:
+      runFromWorkspaceRoot: true

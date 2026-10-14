@@ -209,9 +209,7 @@ class TransactionMethodStatusBadge(html.Div):
             dict[str, Any]
                 The unique ID dictionary for the activate monitoring subcomponent.
             """
-            return cls.make_id_dict(
-                "transaction-method-status-badge", "activate-monitoring", aio_id
-            )
+            return cls.make_id_dict("transaction-method-status-badge", "activate-monitoring", aio_id)
 
         @classmethod
         def label(cls, aio_id: str | _Wildcard) -> dict[str, Any]:

@@ -197,5 +197,7 @@ scaffolded
 (?i)Uvicorn
 synopsys
 UPTODATE
+uptodate
 THIRDPARTY
 SME
+astroid

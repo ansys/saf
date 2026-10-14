@@ -5,7 +5,8 @@ stack: "frontend"
 layer: "library"
 
 project:
-  description: "Dash component for SAF-based solution applications to view and manage project instances"
+  description: "Dash component for SAF-based solution applications to view and manage
+    project instances"
 
 tasks:
   setup-python:

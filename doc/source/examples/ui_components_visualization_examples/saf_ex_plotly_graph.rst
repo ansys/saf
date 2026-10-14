@@ -42,7 +42,7 @@ When you complete this example, you can expect the following output in the solut
 :material-outlined:`task;1.25em;sd-text-primary` Prerequisites
 =========================================================================
 
-To render any Plotly-powered data visualization, you need the ``dcc.Graph`` component from the **Dash Core Components** library. For more information, see the `Plotly Dash documentation <https://dash.plotly.com/dash-core-components/graph>`_.
+To render any Plotly powered data visualization, you need the ``dcc.Graph`` component from the **Dash Core Components** library. For more information, see the `Plotly Dash documentation <https://dash.plotly.com/dash-core-components/graph>`_.
 
 
 .. _saf-ex-plotly-graph-solution:

@@ -194,9 +194,7 @@ class Tree(html.Div):
             return cls.make_id_dict("tree", "selected-item", aio_id)
 
         @classmethod
-        def navlink_item(
-            cls, aio_id: str | _Wildcard, index: str | None | _Wildcard
-        ) -> dict[str, Any]:
+        def navlink_item(cls, aio_id: str | _Wildcard, index: str | None | _Wildcard) -> dict[str, Any]:
             """Return the ID for a navlink item.
 
             Parameters
@@ -214,9 +212,7 @@ class Tree(html.Div):
             return cls._make_id_dict_with_index("navlink-item", aio_id, index)
 
         @classmethod
-        def _expander(
-            cls, aio_id: str | _Wildcard, index: str | None | _Wildcard
-        ) -> dict[str, Any]:
+        def _expander(cls, aio_id: str | _Wildcard, index: str | None | _Wildcard) -> dict[str, Any]:
             """Return the ID for a tree expander control.
 
             Parameters
@@ -234,9 +230,7 @@ class Tree(html.Div):
             return cls._make_id_dict_with_index("expander", aio_id, index)
 
         @classmethod
-        def _row_selector(
-            cls, aio_id: str | _Wildcard, index: str | None | _Wildcard
-        ) -> dict[str, Any]:
+        def _row_selector(cls, aio_id: str | _Wildcard, index: str | None | _Wildcard) -> dict[str, Any]:
             """Return the ID for a hidden row-selector proxy control.
 
             Parameters
@@ -254,9 +248,7 @@ class Tree(html.Div):
             return cls._make_id_dict_with_index("row-selector", aio_id, index)
 
         @classmethod
-        def _expander_proxy(
-            cls, aio_id: str | _Wildcard, index: str | None | _Wildcard
-        ) -> dict[str, Any]:
+        def _expander_proxy(cls, aio_id: str | _Wildcard, index: str | None | _Wildcard) -> dict[str, Any]:
             """Return the ID for a hidden expander-proxy control.
 
             Parameters
@@ -350,13 +342,9 @@ class Tree(html.Div):
 
             # Validate key/value pairs whose values are fixed (i.e. no sentinel):
             for key, expected in reference.items():
-                if (
-                    expected not in (_sentinel_aio, _sentinel_idx)
-                    and navlink_item_id.get(key) != expected
-                ):
+                if expected not in (_sentinel_aio, _sentinel_idx) and navlink_item_id.get(key) != expected:
                     raise ValueError(
-                        f"Invalid navlink item ID: expected {key}={expected!r}, "
-                        f"got {navlink_item_id.get(key)!r}"
+                        f"Invalid navlink item ID: expected {key}={expected!r}, got {navlink_item_id.get(key)!r}"
                     )
 
         @classmethod
@@ -415,9 +403,7 @@ class Tree(html.Div):
 
         super().__init__(
             [
-                html.Link(
-                    rel="stylesheet", href=get_relative_path("/super-components/tree-styles.css")
-                ),
+                html.Link(rel="stylesheet", href=get_relative_path("/super-components/tree-styles.css")),
                 dcc.Store(
                     id=self.ids.selected_item(aio_id),
                     storage_type="memory",
@@ -486,11 +472,7 @@ class Tree(html.Div):
             html.Span(
                 "",
                 id=self.ids._expander(self.aio_id, step["id"]),
-                className=(
-                    "tree-expander-control tree-expander-open"
-                    if is_opened
-                    else "tree-expander-control"
-                ),
+                className=("tree-expander-control tree-expander-open" if is_opened else "tree-expander-control"),
                 n_clicks=0,
             )
             if has_children
@@ -501,9 +483,7 @@ class Tree(html.Div):
             id=self.ids.navlink_item(self.aio_id, step["id"]),
             attributes={
                 "root": {
-                    "data-index": self.ids._generate_data_index_for_navlink_item(
-                        self.aio_id, step["id"]
-                    ),
+                    "data-index": self.ids._generate_data_index_for_navlink_item(self.aio_id, step["id"]),
                     "data-aio-id": self.aio_id,
                     "data-item-index": step["id"],
                 }
@@ -611,9 +591,7 @@ class Tree(html.Div):
         """Check that all items have valid 'id' and 'text' properties."""
         for item in items:
             if "id" not in item or not isinstance(item["id"], str):
-                raise ValueError(
-                    f"Each tree item must have a unique string 'id'. Invalid item: {item}"
-                )
+                raise ValueError(f"Each tree item must have a unique string 'id'. Invalid item: {item}")
             if "text" not in item or not isinstance(item["text"], str):
                 raise ValueError(f"Each tree item must have a string 'text'. Invalid item: {item}")
             children = item.get("children")
@@ -630,7 +608,7 @@ class Tree(html.Div):
         parent_item_ids: list[str] = []
 
         for item in items:
-            item_id = cast(str, item.get("id"))
+            item_id = cast("str", item.get("id"))
             all_item_ids.append(item_id)
 
             if item.get("expanded"):
@@ -642,10 +620,8 @@ class Tree(html.Div):
                 parent_item_ids.append(item_id)
 
             if has_children:
-                child_items = cast(list[dict[str, Any]], children)
-                child_opened, child_all, child_parents = Tree._collect_tree_item_metadata(
-                    child_items
-                )
+                child_items = cast("list[dict[str, Any]]", children)
+                child_opened, child_all, child_parents = Tree._collect_tree_item_metadata(child_items)
                 opened_ids.update(child_opened)
                 all_item_ids.extend(child_all)
                 parent_item_ids.extend(child_parents)

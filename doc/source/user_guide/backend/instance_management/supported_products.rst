@@ -275,7 +275,7 @@ Configuration
 
       export ANSYSLMD_LICENSE_FILE="1055@my-host"`
 
-- Requires `.NET 8.0 <https://dotnet.microsoft.com/en-us/download/dotnet/8.0>`_ or greater to be installed on the system, and to be added to the ``PATH`` environment variable. Using `dotnet-install scripts <https://dotnet.microsoft.com/en-us/download/dotnet/scripts>`_ is highly recommended.
+- Requires `Microsoft .NET 8.0 <https://dotnet.microsoft.com/en-us/download/dotnet/8.0>`_ or greater to be installed on the system, and to be added to the ``PATH`` environment variable. Using `dotnet-install scripts <https://dotnet.microsoft.com/en-us/download/dotnet/scripts>`_ is highly recommended.
 
 - Requires modifying the HPS scaler configuration to add it as an available application ``scaling_config.json``:
 

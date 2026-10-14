@@ -1,0 +1,5 @@
+{
+  "saf_executable": null,
+  "uv_executable": null,
+  "target_environment": "sys_platform == 'win32' and os_name == 'nt' and platform_python_implementation == 'CPython'"
+}

@@ -70,7 +70,8 @@ runs:
     - name: Create bump branch
       shell: bash
       env:
-        BRANCH_NAME: "bump/v${{ inputs.new-version }}/${{ inputs.suffix-bump-branch }}"
+        BRANCH_NAME: "bump/v${{ inputs.new-version }}/${{ inputs.suffix-bump-branch
+          }}"
       run: |
         git switch --create ${BRANCH_NAME}
         git push origin HEAD:${BRANCH_NAME}
@@ -81,7 +82,8 @@ runs:
       env:
         EMAIL: 'actions@github.com'
         USERNAME: 'actions'
-        BRANCH_NAME: "bump/v${{ inputs.new-version }}/${{ inputs.suffix-bump-branch }}"
+        BRANCH_NAME: "bump/v${{ inputs.new-version }}/${{ inputs.suffix-bump-branch
+          }}"
         PACKAGE: ${{ inputs.suffix-bump-branch }}
         BASE_REF: ${{ inputs.base-ref }}
         GH_TOKEN: ${{ inputs.pr-token }}

@@ -51,6 +51,7 @@ logger = logging.getLogger(__name__)
 WHL_CONSTANT = "*.whl"
 REQ_FILE = "requirements.txt"
 ENCRYPTED_FILE_SUFFIX = ".encrypted"
+LOCK_PATH_DEPENDENCY_PATTERN = re.compile(r'(\bpath\s*=\s*")([^"]+)(")')
 
 
 ########################################################################################################################
@@ -666,6 +667,32 @@ def add_poetry_project(
         )
     except subprocess.CalledProcessError as e:
         raise RuntimeError(f"Failed to lock poetry project: {e.stderr}") from e
+    relativize_lock_path_dependencies(definitions_folder)
+
+
+def relativize_lock_path_dependencies(definitions_folder: Path) -> None:
+    """Make absolute path dependencies in ``poetry.lock`` relative to the lock folder.
+
+    Poetry writes path dependencies read from wheel METADATA verbatim, which leaks build-machine paths.
+    On Python < 3.14, ``Path.exists()`` raises ``PermissionError`` when such a path exists but is unreadable,
+    which breaks the installation.
+    """
+    poetry_lock_path = definitions_folder / "poetry.lock"
+    lock_dir = definitions_folder.resolve()
+
+    def _relativize(match: re.Match[str]) -> str:
+        dependency_path = Path(match.group(2))
+        if not dependency_path.is_absolute():
+            return match.group(0)
+        try:
+            relative_path = dependency_path.resolve().relative_to(lock_dir)
+        except ValueError:
+            logger.warning(f"Absolute path dependency outside {lock_dir} left unchanged: {dependency_path}")
+            return match.group(0)
+        return f"{match.group(1)}{relative_path.as_posix()}{match.group(3)}"
+
+    content = poetry_lock_path.read_text(encoding="utf-8")
+    poetry_lock_path.write_text(LOCK_PATH_DEPENDENCY_PATTERN.sub(_relativize, content), encoding="utf-8")
 
 
 def add_tools_requirements(solution_root_dir: Path, solution_module_name: str, venv_python_exec: Path) -> None:

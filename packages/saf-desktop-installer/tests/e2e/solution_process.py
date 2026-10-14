@@ -75,8 +75,9 @@ class SolutionShortcutProcess(Process):
         return not ui_started
 
     def _portal_started(self) -> bool:
-        portal_started = self.find_msg_in_output("SAF Portal: not launched")
-        return not portal_started
+        # Only a URL means the portal started: "not launched" is logged both when the portal is
+        # disabled and when the Projects Dashboard is served instead.
+        return self.find_msg_in_output(r"SAF Portal: http://127\.0\.0\.1:\d+", regex=True) is not None
 
     def _otel_started(self) -> bool:
         otel_started = self.find_msg_in_output("OTEL Dashboard: not launched")
@@ -140,6 +141,9 @@ class SolutionShortcutProcess(Process):
             except Exception:
                 pass
         return False
+
+    def projects_dashboard_started(self) -> bool:
+        return self.find_msg_in_output("Projects Dashboard: http://") is not None
 
     def otel_running(self) -> bool:
         if self._otel_started():

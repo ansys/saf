@@ -23,6 +23,7 @@ from pathlib import Path
 from typing import Any
 from unittest import mock
 
+from dash import Dash
 from dash._callback_context import CallbackContext
 import plotly
 import pytest
@@ -30,6 +31,12 @@ import pytest
 tests_directory = Path(__file__).parent.absolute()
 
 project_directory = Path(__file__).parent.parent.absolute()
+
+
+@pytest.fixture(autouse=True)
+def dash_app() -> None:
+    """Initialize Dash config for components that resolve app-relative asset paths."""
+    Dash(__name__)
 
 
 def as_json(component: Any) -> dict[str, Any]:
@@ -53,12 +60,8 @@ def dump_structures(
 ) -> str:
     """Dump the expected and actual structures to json files for easier comparison."""
     output_path = tests_directory / "outputs"
-    expected_struct_path = (
-        output_path / "expected_structures" / test_folder / f"{test_name}_expected_structure.json"
-    )
-    actual_struct_path = (
-        output_path / "actual_structures" / test_folder / f"{test_name}_actual_structure.json"
-    )
+    expected_struct_path = output_path / "expected_structures" / test_folder / f"{test_name}_expected_structure.json"
+    actual_struct_path = output_path / "actual_structures" / test_folder / f"{test_name}_actual_structure.json"
 
     expected_struct_path.parent.mkdir(parents=True, exist_ok=True)
     actual_struct_path.parent.mkdir(parents=True, exist_ok=True)
@@ -68,10 +71,7 @@ def dump_structures(
     with actual_struct_path.open("w") as f:
         json.dump(actual, f, indent=4)
 
-    return (
-        "Please check and compare the expected and actual structure files generated in"
-        " tests/outputs."
-    )
+    return "Please check and compare the expected and actual structure files generated in tests/outputs."
 
 
 # Global variable to store the callback context mock

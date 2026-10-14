@@ -182,37 +182,27 @@ FILTER_BUTTONS_PROPERTIES: dict[str, FilterButtonProps] = {
     "info": {
         "color": CommonColors.MANTINE_BLUE,
         "icon": create_icon_span(IconNames.MATERIAL_INFO, size_px=14),
-        "icon_disabled": create_icon_span(
-            IconNames.MATERIAL_INFO, size_px=14, color=CommonColors.MANTINE_BLUE
-        ),
+        "icon_disabled": create_icon_span(IconNames.MATERIAL_INFO, size_px=14, color=CommonColors.MANTINE_BLUE),
     },
     "warning": {
         "color": CommonColors.MANTINE_ORANGE,
         "icon": create_icon_span(IconNames.MATERIAL_WARNING, size_px=14),
-        "icon_disabled": create_icon_span(
-            IconNames.MATERIAL_WARNING, size_px=14, color=CommonColors.MANTINE_ORANGE
-        ),
+        "icon_disabled": create_icon_span(IconNames.MATERIAL_WARNING, size_px=14, color=CommonColors.MANTINE_ORANGE),
     },
     "error": {
         "color": CommonColors.MANTINE_RED,
         "icon": create_icon_span(IconNames.ICON_PARK_ERROR, size_px=14),
-        "icon_disabled": create_icon_span(
-            IconNames.ICON_PARK_ERROR, size_px=14, color=CommonColors.MANTINE_RED
-        ),
+        "icon_disabled": create_icon_span(IconNames.ICON_PARK_ERROR, size_px=14, color=CommonColors.MANTINE_RED),
     },
     "critical": {
         "color": CommonColors.MANTINE_PINK,
         "icon": create_icon_span(IconNames.EOS_CRITICAL_BUG, size_px=14),
-        "icon_disabled": create_icon_span(
-            IconNames.EOS_CRITICAL_BUG, size_px=14, color=CommonColors.MANTINE_PINK
-        ),
+        "icon_disabled": create_icon_span(IconNames.EOS_CRITICAL_BUG, size_px=14, color=CommonColors.MANTINE_PINK),
     },
     "debug": {
         "color": CommonColors.MANTINE_GRAPE,
         "icon": create_icon_span(IconNames.EOS_CRITICAL_BUG, size_px=14),
-        "icon_disabled": create_icon_span(
-            IconNames.EOS_CRITICAL_BUG, size_px=14, color=CommonColors.MANTINE_GRAPE
-        ),
+        "icon_disabled": create_icon_span(IconNames.EOS_CRITICAL_BUG, size_px=14, color=CommonColors.MANTINE_GRAPE),
     },
 }
 
@@ -628,16 +618,10 @@ class LogsSupervisor(html.Div):
                                         children=[
                                             dmc.HoverCardTarget(
                                                 dmc.Switch(
-                                                    id=self.ids._activate_monitoring_switch(
-                                                        self.aio_id
-                                                    ),
+                                                    id=self.ids._activate_monitoring_switch(self.aio_id),
                                                     checked=False,
-                                                    offLabel=create_icon_span(
-                                                        IconNames.HEALTH_NO, size_px=15
-                                                    ),
-                                                    onLabel=create_icon_span(
-                                                        IconNames.HEALTH_YES, size_px=15
-                                                    ),
+                                                    offLabel=create_icon_span(IconNames.HEALTH_NO, size_px=15),
+                                                    onLabel=create_icon_span(IconNames.HEALTH_YES, size_px=15),
                                                     size="sm",
                                                 ),
                                             ),
@@ -769,11 +753,7 @@ class LogsSupervisor(html.Div):
 
         # Second pass: merge controlled props into grid_props (controlled takes precedence over all)
         for key, controlled_val in controlled_grid_props.items():
-            if (
-                key not in grid_props
-                or not isinstance(controlled_val, dict)
-                or not isinstance(grid_props[key], dict)
-            ):
+            if key not in grid_props or not isinstance(controlled_val, dict) or not isinstance(grid_props[key], dict):
                 grid_props[key] = copy.deepcopy(controlled_val)
             else:
                 # Merge dicts: existing (default+user merged) first, then controlled overrides
@@ -789,15 +769,11 @@ class LogsSupervisor(html.Div):
         return result
 
     @staticmethod
-    def _error_notification_id(
-        log_file_path: str, log_format: str, parse_result: LogsParseResult
-    ) -> str:
+    def _error_notification_id(log_file_path: str, log_format: str, parse_result: LogsParseResult) -> str:
         """Build deterministic notification id for an error signature."""
         error_details = str(parse_result.error) if parse_result.error is not None else ""
         error_signature = f"{parse_result.status}|{log_file_path}|{log_format}|{error_details}"
-        signature_hash = sha1(error_signature.encode("utf-8"), usedforsecurity=False).hexdigest()[
-            :16
-        ]
+        signature_hash = sha1(error_signature.encode("utf-8"), usedforsecurity=False).hexdigest()[:16]
 
         return f"logs-supervisor-notify-failure-{signature_hash}"
 
@@ -948,8 +924,7 @@ class LogsSupervisor(html.Div):
         if disable_all_levels:
             # Add notContains conditions for all levels
             filter_model_levelname["conditions"] = [
-                {"filterType": "text", "type": "notContains", "filter": level.lower()}
-                for level in show_levels
+                {"filterType": "text", "type": "notContains", "filter": level.lower()} for level in show_levels
             ]
         else:
             # Add contains conditions for all levels that are shown
@@ -983,9 +958,7 @@ class LogsSupervisor(html.Div):
         """Update button variants based on the selected log levels to show."""
         if show_levels is None:
             raise PreventUpdate
-        button_variants = {
-            level: "filled" if show else "outline" for level, show in show_levels.items()
-        }
+        button_variants = {level: "filled" if show else "outline" for level, show in show_levels.items()}
         button_left_sections = {
             level: FILTER_BUTTONS_PROPERTIES[level]["icon"]
             if show
@@ -1022,9 +995,7 @@ class LogsSupervisor(html.Div):
             raise PreventUpdate
 
         return (
-            activate_monitoring_data
-            if activate_monitoring_data != current_stored_supervision_active
-            else no_update
+            activate_monitoring_data if activate_monitoring_data != current_stored_supervision_active else no_update
         )  # avoid unnecessary updates
 
     @staticmethod
@@ -1066,9 +1037,7 @@ class LogsSupervisor(html.Div):
         new_interval_disabled = not supervision_active
         new_activate_monitoring_checked = supervision_active
         return (
-            new_interval_disabled
-            if current_interval_disabled != new_interval_disabled
-            else no_update,
+            new_interval_disabled if current_interval_disabled != new_interval_disabled else no_update,
             new_activate_monitoring_checked
             if current_activate_monitoring_checked != new_activate_monitoring_checked
             else no_update,
@@ -1113,9 +1082,7 @@ class LogsSupervisor(html.Div):
         )
 
         if parse_result.status in (ParseStatus.FAILURE, ParseStatus.SUCCESS_NO_MATCHING_ROWS):
-            new_dash_grid_options["noRowsOverlayComponentParams"] = {
-                "message": PARSING_FAILED_NO_ROWS_MESSAGE
-            }
+            new_dash_grid_options["noRowsOverlayComponentParams"] = {"message": PARSING_FAILED_NO_ROWS_MESSAGE}
             new_row_data: list[dict[Hashable, Any]] = []
 
             if show_error_notifications and (
@@ -1149,16 +1116,12 @@ class LogsSupervisor(html.Div):
                 )
 
         elif parse_result.status == ParseStatus.SOURCE_MISSING:
-            new_dash_grid_options["noRowsOverlayComponentParams"] = {
-                "message": SOURCE_MISSING_NO_ROWS_MESSAGE
-            }
+            new_dash_grid_options["noRowsOverlayComponentParams"] = {"message": SOURCE_MISSING_NO_ROWS_MESSAGE}
             new_row_data: list[dict[Hashable, Any]] = []
 
         else:
             new_row_data = parse_result.data.to_dict("records")
-            new_dash_grid_options["noRowsOverlayComponentParams"] = {
-                "message": PLAIN_NO_ROWS_MESSAGE
-            }
+            new_dash_grid_options["noRowsOverlayComponentParams"] = {"message": PLAIN_NO_ROWS_MESSAGE}
 
         row_data_changed = new_row_data != old_row_data
         dash_grid_options_changed = new_dash_grid_options != old_dash_grid_options
@@ -1169,20 +1132,14 @@ class LogsSupervisor(html.Div):
         )
 
     @classmethod
-    def get_logging_formatter_representation(
-        cls, format_attribute: str
-    ) -> dict[str, dict[str, Any]]:
+    def get_logging_formatter_representation(cls, format_attribute: str) -> dict[str, dict[str, Any]]:
         """Get the logging formatter representation."""
         if format_attribute not in SUPPORTED_LOGGING_FORMATTER_OPTIONS_AND_HEADERS:
             raise ValueError(f"Unsupported logging formatter option: {format_attribute}")
 
-        formatter_representation: dict[str, Any] = copy.deepcopy(
-            DEFAULT_LOGGING_FORMATTER_REPRESENTATION
-        )
+        formatter_representation: dict[str, Any] = copy.deepcopy(DEFAULT_LOGGING_FORMATTER_REPRESENTATION)
 
-        formatter_representation["headerName"] = SUPPORTED_LOGGING_FORMATTER_OPTIONS_AND_HEADERS[
-            format_attribute
-        ]
+        formatter_representation["headerName"] = SUPPORTED_LOGGING_FORMATTER_OPTIONS_AND_HEADERS[format_attribute]
         formatter_representation["field"] = format_attribute
         formatter_representation["tooltipField"] = format_attribute
 

@@ -42,9 +42,11 @@ from ansys.saf.desktop.installer._common.utils import has_portal_dependency, sim
 from ansys.saf.desktop.installer._package.manage_dependencies import simplify_wheel_url_dependencies
 from ansys.saf.desktop.installer._ui_styles import install_button_style
 from ansys.saf.desktop.installer.solution_desktop_deployment import (
+    VIRTUAL_ENVIRONMENT_NAME,
     InstallationDirectoryValidator,
     _ensure_third_party_extracted,  # pyright: ignore[reportPrivateUsage]
     build_long_path_section,
+    compute_solution_commandline,
     delete_existing_solution_shortcut,
     form_layout,
     get_shortcut_path,
@@ -1595,6 +1597,40 @@ def test_solution_detect_saf_desktop_portal_dependency(tmp_path: Path) -> None:
 def test_solution_without_portal_doesnt_detect_portal_dependency(tmp_path: Path) -> None:
     _write_poetry_lock(tmp_path, ["some-other-package"])
     assert not has_portal_dependency(tmp_path)
+
+
+def test_solution_detect_saf_projects_dashboard_dependency(tmp_path: Path) -> None:
+    _write_poetry_lock(tmp_path, ["ansys-saf-projects-dashboard"])
+    assert has_portal_dependency(tmp_path)
+
+
+def test_solution_detect_projects_dashboard_and_desktop_portal_dependency(tmp_path: Path) -> None:
+    _write_poetry_lock(tmp_path, ["ansys-saf-projects-dashboard", "ansys-saf-desktop-portal"])
+    assert has_portal_dependency(tmp_path)
+
+
+@pytest.mark.parametrize("solution_use_portal", [True, False])
+def test_compute_solution_commandline_portal_flag(tmp_path: Path, solution_use_portal: bool) -> None:
+    """The --portal flag is appended to the orchestrator command line only when the solution uses a portal."""
+    if platform.system() == "Windows":
+        python_exec = tmp_path / VIRTUAL_ENVIRONMENT_NAME / "Scripts" / "pythonw.exe"
+    else:
+        python_exec = tmp_path / VIRTUAL_ENVIRONMENT_NAME / "bin" / "python"
+    python_exec.parent.mkdir(parents=True)
+    python_exec.touch()
+    (tmp_path / ".env").touch()
+
+    python, arguments = compute_solution_commandline(
+        installation_directory=tmp_path,
+        glow_entry_point_module="ansys.saf.desktop.orchestrator",
+        solution_main_module="ansys.solutions.my_solution_dash.main",
+        use_glow="True",
+        solution_entry_point="",
+        solution_use_portal=solution_use_portal,
+    )
+
+    assert python == python_exec
+    assert ("--portal" in arguments) is solution_use_portal
 
 
 @pytest.mark.parametrize(

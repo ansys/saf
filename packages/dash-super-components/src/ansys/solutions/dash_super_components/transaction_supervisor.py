@@ -529,11 +529,7 @@ class TransactionSupervisor(html.Div):
                                                     ],
                                                     style={"display": "inline-block"},
                                                 ),
-                                                span=(
-                                                    "content"
-                                                    if self._orientation == "horizontal"
-                                                    else 12
-                                                ),
+                                                span=("content" if self._orientation == "horizontal" else 12),
                                             ),
                                             dmc.GridCol(
                                                 html.Div(
@@ -560,11 +556,7 @@ class TransactionSupervisor(html.Div):
                                                     ],
                                                     style={"display": "inline-block"},
                                                 ),
-                                                span=(
-                                                    "content"
-                                                    if self._orientation == "horizontal"
-                                                    else 12
-                                                ),
+                                                span=("content" if self._orientation == "horizontal" else 12),
                                             ),
                                             dmc.GridCol(
                                                 html.Div(
@@ -591,11 +583,7 @@ class TransactionSupervisor(html.Div):
                                                     ],
                                                     style={"display": "inline-block"},
                                                 ),
-                                                span=(
-                                                    "content"
-                                                    if self._orientation == "horizontal"
-                                                    else 12
-                                                ),
+                                                span=("content" if self._orientation == "horizontal" else 12),
                                             ),
                                         ],
                                         gutter="xs",

@@ -153,8 +153,9 @@ tasks:
     env:
       DISABLE_INTERSPHINX: 'true'
     inputs:
-      - "doc/**/*"
-      - "pyproject.toml"
+      - "/doc/**/*"
+      - "/pyproject.toml"
+      - "/uv.lock"
     options:
       runFromWorkspaceRoot: true
 

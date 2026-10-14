@@ -113,6 +113,7 @@ packages/saf-product-configuration/doc/source/ansys/
 .env/
 .envrc
 .venv
+.venvspm
 .poetry
 env/
 venv/

@@ -379,7 +379,7 @@ jobs:
       - name: Install dependencies
         if: ${{ env.USE_MOON == 'false' }}
         id: prepare-env
-        uses: ansys/saf-devops/prepare-python-environment@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
+        uses: ansys/saf-devops/prepare-python-environment@4b1f5e75f1eef200a8f54be589ba0976a520301d # v1.2.1
         with:
           python-version: ${{ inputs.python-version }}
           poetry-version: ${{ vars.POETRY_VERSION }}
@@ -481,7 +481,7 @@ jobs:
           PYTEST_DEBUG_TEMPROOT: ${{ runner.os == 'Windows' && 'C:/' || '/tmp' }}
           APPDATA: ${{ runner.temp }}
         if: ${{ env.USE_MOON == 'false' }}
-        uses: ansys/saf-devops/run-tests@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
+        uses: ansys/saf-devops/run-tests@4b1f5e75f1eef200a8f54be589ba0976a520301d # v1.2.1
         with:
           python-version: ${{ inputs.python-version }}
           poetry-version: ${{ vars.POETRY_VERSION}}
@@ -515,7 +515,7 @@ jobs:
         if: always() && steps.run-tests-moon.outcome != 'skipped' && env.USE_MOON
           == 'true' && hashFiles(format('{0}/{1}_{2}/report.html', github.workspace,
           matrix.test-report-artifact-name-suffix , inputs.python-version)) != ''
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: "pytest_reports_${{ matrix.test-report-artifact-name-suffix }}_${{
             inputs.python-version }}"
@@ -526,7 +526,7 @@ jobs:
       - name: Publish pytest logs
         if: always() && (steps.run-tests.outcome != 'skipped' || steps.run-tests-moon.outcome
           != 'skipped')
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: "pytest_logs_${{ matrix.test-report-artifact-name-suffix }}_${{ inputs.python-version
             }}"
@@ -537,7 +537,7 @@ jobs:
         if: ${{ always() && (steps.run-tests.outcome != 'cancelled' || steps.run-tests-moon.outcome
           != 'cancelled') && (steps.run-tests.outcome != 'skipped' || steps.run-tests-moon.outcome
           != 'skipped') && matrix.install-hps == 'true' }}
-        uses: ansys/saf-devops/collect-hps-logs@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
+        uses: ansys/saf-devops/collect-hps-logs@4b1f5e75f1eef200a8f54be589ba0976a520301d # v1.2.1
         with:
           artifact-prefix: "hps_test_reports_${{ matrix.test-report-artifact-name-suffix
             }}_${{ inputs.python-version }}_${{ runner.os }}"

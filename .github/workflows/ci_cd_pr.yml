@@ -48,7 +48,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: check-linked-issues-in-pr-description
-        uses: ansys/saf-devops/link-issue-to-pull-request@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
+        uses: ansys/saf-devops/link-issue-to-pull-request@4b1f5e75f1eef200a8f54be589ba0976a520301d # v1.2.1
         env:
           ISSUE_GITHUB_TOKEN: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
 
@@ -161,7 +161,7 @@ jobs:
       contents: read
     needs: labels
     if: ${{ contains(fromJson(needs.labels.outputs.labels-json), 'devops') }}
-    uses: ansys/saf-devops/.github/workflows/_action-lint.yml@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
+    uses: ansys/saf-devops/.github/workflows/_action-lint.yml@4b1f5e75f1eef200a8f54be589ba0976a520301d # v1.2.1
 
   vulnerabilities:
     name: "Vulnerabilities"
@@ -275,7 +275,7 @@ jobs:
             doc/styles/config/vocabularies/ANSYS/accept.txt
             packages/saf-cli/
 
-      - uses: ansys/saf-devops/prepare-python-environment@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
+      - uses: ansys/saf-devops/prepare-python-environment@4b1f5e75f1eef200a8f54be589ba0976a520301d # v1.2.1
         id: prepare-python
         with:
           python-version: ${{ vars.PYTHON_VERSION }}
@@ -344,7 +344,7 @@ jobs:
       matrix: ${{ fromJson(needs.ci-cd-config.outputs.packages-matrix) }}
     steps:
       - name: Check if wheel can be pip installed
-        uses: ansys/saf-devops/pip-install-production-wheel@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
+        uses: ansys/saf-devops/pip-install-production-wheel@4b1f5e75f1eef200a8f54be589ba0976a520301d # v1.2.1
         with:
           python-version: ${{ vars.PYTHON_VERSION }}
           wheel-artifact: '${{ matrix.library-name }}-${{ vars.PYTHON_VERSION }}-artifacts'
@@ -361,7 +361,7 @@ jobs:
       matrix: ${{ fromJson(needs.ci-cd-config.outputs.compatibility-matrix) }}
     steps:
       - name: Checks compatibility with pyansys
-        uses: ansys/saf-devops/compatibility-scan@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
+        uses: ansys/saf-devops/compatibility-scan@4b1f5e75f1eef200a8f54be589ba0976a520301d # v1.2.1
         with:
           python-version: ${{ vars.PYTHON_VERSION }}
           compatibility-packages: 'git+https://github.com/ansys/pyansys.git'
@@ -396,7 +396,7 @@ jobs:
         run: moon run ${PACKAGE}:sbom
 
       - name: Publish SBOM
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: sbom-${{ matrix.library-name }}
           path: dist/packages/${{ matrix.library-name }}-sbom.json
@@ -467,7 +467,7 @@ jobs:
           persist-credentials: false
 
       - name: Install uv
-        uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
+        uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
         with:
           python-version: 3.12
           enable-cache: false

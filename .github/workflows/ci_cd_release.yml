@@ -154,7 +154,7 @@ jobs:
     steps:
       - name: Retrieve release information
         id: retrieve-release-info
-        uses: ansys/saf-devops/retrieve-release-information@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
+        uses: ansys/saf-devops/retrieve-release-information@4b1f5e75f1eef200a8f54be589ba0976a520301d # v1.2.1
         with:
           poetry-parent-directory: packages/${{ inputs.library }}
           release-type: ${{ inputs.dev-release && 'dev' || 'stable' }}
@@ -171,7 +171,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Generate release notes
-        uses: ansys/saf-devops/generate-release-notes@5d9e84af215372b7b125bbf12f5b0093600eb06d # v1.2.0
+        uses: ansys/saf-devops/generate-release-notes@4b1f5e75f1eef200a8f54be589ba0976a520301d # v1.2.1
         with:
           tag-name: ${{ needs.release-information.outputs.release-name }}-${{ inputs.library
             }}
@@ -204,7 +204,7 @@ jobs:
 
       - name: Edit version
         if: needs.release-information.outputs.version-type == 'dev' && !inputs.dev-release
-        uses: ansys/saf-devops/edit-version-in-pyproject@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
+        uses: ansys/saf-devops/edit-version-in-pyproject@4b1f5e75f1eef200a8f54be589ba0976a520301d # v1.2.1
         with:
           pyproject-path: packages/${{ inputs.library }}/pyproject.toml
           version: ${{ needs.release-information.outputs.version-to-release }}
@@ -220,7 +220,7 @@ jobs:
           git push origin HEAD:${RELEASE_BRANCH_NAME}
 
       - name: Download release notes artifact
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: release-notes
           path: release-notes
@@ -282,7 +282,7 @@ jobs:
       - certification
     if: ${{ always() && needs.certification.result == 'success' && github.ref == 'refs/heads/main'
       }}
-    uses: ansys/saf-devops/.github/workflows/_bump_version.yml@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
+    uses: ansys/saf-devops/.github/workflows/_bump_version.yml@4b1f5e75f1eef200a8f54be589ba0976a520301d # v1.2.1
     with:
       python-version: ${{ vars.PYTHON_VERSION }}
       poetry-version: ${{ vars.POETRY_VERSION }}
@@ -308,7 +308,7 @@ jobs:
       - certification
     if: ${{ always() && needs.certification.result == 'success' && !inputs.dev-release
       }}
-    uses: ansys/saf-devops/.github/workflows/_bump_version.yml@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
+    uses: ansys/saf-devops/.github/workflows/_bump_version.yml@4b1f5e75f1eef200a8f54be589ba0976a520301d # v1.2.1
     with:
       python-version: ${{ vars.PYTHON_VERSION }}
       poetry-version: ${{ vars.POETRY_VERSION }}
@@ -341,7 +341,7 @@ jobs:
         }}-artifacts
     steps:
       - name: "Download the library artifacts"
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: ${{ env.ARTIFACT_NAME }}
           path: ${{ env.ARTIFACT_NAME }}

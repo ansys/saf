@@ -1,6 +1,6 @@
 [project]
 name = "ansys-saf-workspace"
-version = "0.4.0"
+version = "0.0.0"  # Only required when [project] section is present, can be anything
 maintainers = [ { name = "ANSYS, Inc.", email = "pyansys-core@synopsys.com" } ]
 authors = [ { name = "ANSYS, Inc.", email = "pyansys-core@synopsys.com" } ]
 requires-python = ">=3.11,<4.0"

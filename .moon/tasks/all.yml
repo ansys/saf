@@ -414,3 +414,17 @@ tasks:
       - "dist/$projectSource-requirements.txt"
     options:
       runFromWorkspaceRoot: true
+
+  bump-version:
+    description: "Bump the project version"
+    deps:
+      - target: "~:check-env-var"
+        args: 
+          - "UV_PYTHON"
+          - "MOON_PYTHON_VERSION"
+    command: 'uv'
+    args:
+      - "version"
+    inputs:
+      - "pyproject.toml"
+      - "/uv.lock"

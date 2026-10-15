@@ -421,14 +421,6 @@ jobs:
           mv artifacts/pyproject.toml packages/saf-sdk/pyproject.toml
           mv artifacts/uv.lock packages/saf-sdk/uv.lock
 
-      - name: Edit version in the root pyproject.toml
-        if: ${{ needs.build-meta-package.outputs.update-type != 'no_update' }}
-        shell: bash
-        env:
-          VERSION: ${{ needs.build-meta-package.outputs.version }}
-        run: |
-          sed -i "s/^version = .*/version = \"${VERSION}\"/" pyproject.toml
-
       - name: Commit changes
         if: ${{ needs.build-meta-package.outputs.update-type != 'no_update' }}
         shell: bash

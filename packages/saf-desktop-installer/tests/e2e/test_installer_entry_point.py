@@ -19,6 +19,7 @@ import json
 import os
 from pathlib import Path
 import platform
+import re
 import shutil
 import subprocess
 import sys
@@ -59,6 +60,7 @@ from tests.e2e.conftest import (
     get_installed_solution_env_file,
     modify_solution_module_name,
 )
+from tests.utils import deny_directory_access
 
 
 @contextmanager
@@ -307,6 +309,47 @@ class TestInstaller:
             glow_ui_port,
             portal_ui_port,
             session_selenium_webdriver,
+        )
+
+    def test_installer_with_unreadable_build_path_dependency(
+        self,
+        tmp_path: Path,
+        solution_root_dir: Path,
+        setup_solution: SetupSolution,
+        build_solution: BuildSolution,
+        install_solution: InstallSolution,
+        cleanup_shortcut: list[Path],
+    ):
+        """
+        Test that the packaged poetry.lock has no build-machine path dependencies (issue #216).
+
+        The build folder is made unreadable before installing, as on the affected customer machine.
+        """
+        solution_venv_python_exec, _, _, _ = setup_solution(solution_root_dir)
+
+        # Pinned < 3.14: from 3.14 on, Path.exists() swallows PermissionError and the issue does not reproduce.
+        python_version = "3.12.10"
+        build_solution(["--python-version", python_version], solution_venv_python_exec, solution_root_dir)
+        check_built_solution_files(solution_root_dir, python_version=python_version)
+
+        definitions_dir = solution_root_dir / "dist" / "solution" / "definitions"
+        packaged_lock = definitions_dir / _get_solution_module_name(solution_root_dir) / "poetry.lock"
+        lock_paths = re.findall(r'\bpath\s*=\s*"([^"]+)"', packaged_lock.read_text(encoding="utf-8"))
+        assert any("custom_package_for_test_2" in path for path in lock_paths)
+        assert not any(Path(path).is_absolute() for path in lock_paths), lock_paths
+
+        with deny_directory_access(definitions_dir):
+            installation_output = install_solution(solution_root_dir, tmp_path)
+        # The installer falls back to pip when every `poetry install` attempt fails, hiding the error.
+        assert not find_msg_in_output("installing using pip", installation_output)
+        shortcut_path = check_installed_solution_files(tmp_path, solution_root_dir)
+        cleanup_shortcut.append(shortcut_path)
+        check_dependencies(
+            tmp_path,
+            solution_root_dir,
+            python_version=python_version,
+            required_dependencies=["tqdm", "pooch", "custom-package-for-test-2", "scooby"],
+            excluded_dependencies=["ansys-saf-desktop-installer", "pyinstaller"],
         )
 
     def test_installer_with_excluded_python(

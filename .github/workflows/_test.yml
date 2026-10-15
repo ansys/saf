@@ -325,6 +325,10 @@ jobs:
         if: ${{ env.USE_MOON == 'true' && runner.environment != 'self-hosted' }}
         uses: moonrepo/setup-toolchain@261c62cb5b0f580c7be7c8cd0f023a2e96756095 # v0.6.4
 
+      - name: Install workspace dependencies (Moon)
+        shell: bash
+        run: moon run root:uv-sync -- --all-groups
+
       - name: Prepare runner for tests
         if: matrix.prepare-runner == 'true' || matrix.upgrade-docker == 'true' ||
           matrix.install-hps == 'true'
@@ -348,8 +352,8 @@ jobs:
                     "private_image": "postgres:17"
                 },
                 {
-                    "image": "eqalpha/keydb:alpine_x86_64_v6.3.3",  # gitleaks:allow
-                    "private_image": "keydb:alpine_x86_64_v6.3.3"  # gitleaks:allow
+                    "image": "eqalpha/keydb:alpine_x86_64_v6.3.3",
+                    "private_image": "keydb:alpine_x86_64_v6.3.3"
                 },
                 {
                     "image": "influxdb:1.8.10",

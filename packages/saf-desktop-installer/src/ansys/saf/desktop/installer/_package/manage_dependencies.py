@@ -19,6 +19,7 @@ A Python script to download dependencies from a pyproject.toml.
 Platform      : OS independent
 """
 
+import json
 import logging
 import os
 from pathlib import Path
@@ -28,6 +29,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import tomllib
 from typing import Any
 
 from packaging.version import Version
@@ -51,7 +53,7 @@ logger = logging.getLogger(__name__)
 WHL_CONSTANT = "*.whl"
 REQ_FILE = "requirements.txt"
 ENCRYPTED_FILE_SUFFIX = ".encrypted"
-LOCK_PATH_DEPENDENCY_PATTERN = re.compile(r'(\bpath\s*=\s*")([^"]+)(")')
+LOCK_PATH_DEPENDENCY_PATTERN = re.compile(r'(\bpath\s*=\s*)("(?:[^"\\\r\n]|\\.)*")')
 
 
 ########################################################################################################################
@@ -681,7 +683,7 @@ def relativize_lock_path_dependencies(definitions_folder: Path) -> None:
     lock_dir = definitions_folder.resolve()
 
     def _relativize(match: re.Match[str]) -> str:
-        dependency_path = Path(match.group(2))
+        dependency_path = Path(tomllib.loads(f"v = {match.group(2)}")["v"])
         if not dependency_path.is_absolute():
             return match.group(0)
         try:
@@ -689,7 +691,9 @@ def relativize_lock_path_dependencies(definitions_folder: Path) -> None:
         except ValueError:
             logger.warning(f"Absolute path dependency outside {lock_dir} left unchanged: {dependency_path}")
             return match.group(0)
-        return f"{match.group(1)}{relative_path.as_posix()}{match.group(3)}"
+        # JSON string escapes are valid TOML basic string escapes, except DEL which TOML requires escaped.
+        encoded_path = json.dumps(relative_path.as_posix(), ensure_ascii=False).replace("\x7f", "\\u007F")
+        return f"{match.group(1)}{encoded_path}"
 
     content = poetry_lock_path.read_text(encoding="utf-8")
     poetry_lock_path.write_text(LOCK_PATH_DEPENDENCY_PATTERN.sub(_relativize, content), encoding="utf-8")

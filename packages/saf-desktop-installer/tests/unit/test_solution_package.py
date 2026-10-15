@@ -20,6 +20,7 @@ import platform
 import re
 import shutil
 import subprocess
+import tomllib
 from typing import Any
 from unittest.mock import patch
 
@@ -123,6 +124,32 @@ url = "my_solution-0.1.0-py3-none-any.whl"
     ]
     assert 'url = "my_solution-0.1.0-py3-none-any.whl"' in poetry_lock.read_text(encoding="utf-8")
     assert "other-1.0.0-py3-none-any.whl" in caplog.text
+
+
+@pytest.mark.parametrize(
+    "build_dir_name",
+    [
+        pytest.param(
+            'build"quoted',
+            marks=pytest.mark.skipif(platform.system() == "Windows", reason="Invalid Windows directory name."),
+        ),
+        "build\\back",
+    ],
+)
+def test_relativize_lock_path_dependencies_with_escaped_characters(tmp_path: Path, build_dir_name: str) -> None:
+    definitions_folder = tmp_path / build_dir_name / "definitions"
+    definitions_folder.mkdir(parents=True)
+    wheel_path = str(definitions_folder / "dep-1.0.0-py3-none-any.whl")
+    poetry_lock = definitions_folder / "poetry.lock"
+    poetry_lock.write_text(
+        f'[[package]]\nname = "my-solution"\n\n[package.dependencies]\ndep = {{path = {json.dumps(wheel_path)}}}\n',
+        encoding="utf-8",
+    )
+
+    manage_dependencies.relativize_lock_path_dependencies(definitions_folder)
+
+    dependencies = tomllib.loads(poetry_lock.read_text(encoding="utf-8"))["package"][0]["dependencies"]
+    assert dependencies["dep"] == {"path": "dep-1.0.0-py3-none-any.whl"}
 
 
 def test_add_poetry_project_relativizes_lock_path_dependencies(tmp_path: Path) -> None:

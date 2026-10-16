@@ -328,6 +328,18 @@ jobs:
         run: |
           WHEEL_FILE=$(ls "${GITHUB_WORKSPACE}"/aspire/*.whl)
           poetry add "ansys-saf-aspire[all] @ file://${WHEEL_FILE}"
+      
+      # - name: Add visor to poetry project
+      #   working-directory: my_project
+      #   shell: bash
+      #   run: |
+      #     poetry add "ansys-visor-viewer"
+
+      - name: Add pyansys to poetry project (@main)
+        working-directory: my_project
+        shell: bash
+        run: |
+          poetry add "git+https://github.com/ansys/pyansys.git@main"
 
   check-wheel-can-be-pip-installed:
     name: Check wheel can be pip installed

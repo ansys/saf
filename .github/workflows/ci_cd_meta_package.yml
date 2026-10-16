@@ -331,16 +331,24 @@ jobs:
           WHEEL_FILE=$(ls "${GITHUB_WORKSPACE}"/aspire/*.whl)
           poetry add "ansys-saf-aspire[all] @ file://${WHEEL_FILE}"
       
-      # - name: Add pyansys to poetry project
-      #   working-directory: my_project
-      #   shell: bash
-      #   run: |
-      #     poetry add "pyansys[all]"
+      - name: Add pyansys to poetry project (latest stable)
+        working-directory: my_project
+        shell: bash
+        run: |
+          poetry add "pyansys[all]" --python ">=3.12"
+
+      - name: Remove pyansys from poetry project
+        working-directory: my_project
+        shell: bash
+        run: |
+          poetry remove "pyansys"
 
       - name: Add pyansys to poetry project (@main)
         if: ${{ matrix.python-version != '3.11' }} # pyansys requires Python >= 3.12
         working-directory: my_project
         shell: bash
+        env:
+          PlatformToolset: "v143"
         run: |
           poetry add "git+https://github.com/ansys/pyansys.git@main" --python ">=3.12" --extras "all"
 

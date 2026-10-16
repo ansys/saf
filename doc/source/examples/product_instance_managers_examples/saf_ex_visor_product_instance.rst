@@ -6,7 +6,7 @@ VISOR Product Instance Manager
 
 .. topic:: Objective
 
-  Drive a VISOR product instance from a solution. Start VISOR in a
+  Drive a VISOR product instance from a solution. Start the product instance in a
   long-running transaction, show the VISOR viewer, display example geometry
   in the viewer, and shut the instance down.
 
@@ -37,9 +37,9 @@ In this example, you learn how to:
 - :material-outlined:`api;1.25em;saf-objective-icon` Interact with the viewer to
   display 3D scenes.
 - :material-outlined:`stream;1.25em;saf-objective-icon` Publish progress
-  on named **event stream** with ``transaction.raise_event``.
+  on named **event streams** with ``transaction.raise_event``.
 - :material-outlined:`bolt;1.25em;saf-objective-icon` Wire one **callback** per
-  button and use **event listeners** to display console logs and notifications.
+  button and use **event listeners** to refresh the console logs and the notifications.
 
 
 .. _saf-ex-visor-product-instance-prerequisites:
@@ -48,16 +48,15 @@ In this example, you learn how to:
 =========================================================================
 
 .. note::
-    To work with a VISOR product instance, be sure to install the ``core-pim``,
-    ``instance-management-all``, and ``core-hps`` extras from the
-    ``ansys-saf-sdk`` package.
+    To work with a VISOR product instance, be sure to install the ``core-pim``
+    and ``instance-management-visor`` extras from the ``ansys-saf-sdk`` package.
     You can do this by manually editing your ``pyproject.toml``.
 
-    The Dash viewer also requires the ``ansys-visor-viewer`` package:
+    The VISOR Dash viewer also requires the ``ansys-visor-viewer`` package:
 
     .. code-block:: toml
 
-        ansys-saf-sdk = {version = "^0.3.0", extras = ["core-pim", "instance-management-all", "core-hps"], allow-prereleases = true}
+        ansys-saf-sdk = {version = "^0.3.0", extras = ["core-pim", "instance-management-visor"]}
         ansys-visor-viewer = "^1.0.1"
 
     This will install everything needed to control the VISOR product instance and viewer.
@@ -110,8 +109,8 @@ Create the solution definition.
 .. dropdown:: Define the step fields
   :open:
 
-  The step stores the VISOR version, whether the instance is running, and the
-  host and port reported by the product manager.
+  The step stores the VISOR version. ``visor_started`` tracks whether an instance is running.
+  Finally, it stores the ``host`` and ``port`` reported by the product manager for the running instance.
 
   .. literalinclude:: ../../../../examples/src/saf/solutions/examples/solution/instance_management/visor_step.py
     :language: python
@@ -119,19 +118,23 @@ Create the solution definition.
     :lines: 28-31
     :dedent:
 
+  .. note::
+    To understand why the VISOR version is 0, refer to the 
+    `Supported product instance managers page <../../user_guide/backend/instance_management/supported_products.rst>`_.
+
 .. dropdown:: Define the step model
   :open:
 
-  * ``start_visor`` is a long-running transaction decorated with
-    ``@create_instance("visor_manager", VisorManager)``. It initializes VISOR,
+  * The ``start_visor`` long-running transaction is decorated with
+    ``@create_instance`` to create an instance of the VISOR product manager. It initializes VISOR,
     stores the current host and port, marks the instance as started, and
     emits progress messages.
-  * ``show_piston``, ``show_spheres``, and ``show_elbow`` reuse the running
-    manager with ``@instance("visor_manager")``. Each transaction resolves its
+  * ``show_piston``, ``show_spheres``, and ``show_elbow`` are decorated with 
+    ``@instance`` to reuse the running instance. Each transaction resolves its
     geometry asset through BDM and sends the cached path to VISOR with a
     ``Metadata`` value.
-  * ``shutdown_visor`` reuses the same manager, shuts down VISOR, and sets
-    ``visor_started`` to ``False``.
+  * ``shutdown_visor`` is decorated with ``@instance`` to reuse and shut down
+    the running instance. It also sets ``visor_started`` to ``False``.
 
   .. literalinclude:: ../../../../examples/src/saf/solutions/examples/solution/instance_management/visor_step.py
     :language: python
@@ -168,46 +171,40 @@ Create the solution definition.
   .. code-block:: text
 
       examples/src/saf/solutions/examples/solution/
-      +-- method_assets/
-          +-- visor_shapes/
-              +-- piston_rod.vtkhdf
-              +-- elbow-2-00005.vtkhdf
-              +-- vtk_scene_sphere_l2_b3_r32_v3_c1_z3.vtm
-              +-- vtk_scene_sphere_l2_b3_r32_v3_c1_z3/
-                  +-- vtk_scene_sphere_l2_b3_r32_v3_c1_z3_0.vtp
-                  +-- ...
-                  +-- vtk_scene_sphere_l2_b3_r32_v3_c1_z3_8.vtp
+      └── method_assets/
+          └── visor_shapes/
+              ├── piston_rod.vtkhdf
+              ├── elbow-2-00005.vtkhdf
+              ├── vtk_scene_sphere_l2_b3_r32_v3_c1_z3.vtm
+              └── vtk_scene_sphere_l2_b3_r32_v3_c1_z3/
+                  ├── vtk_scene_sphere_l2_b3_r32_v3_c1_z3_0.vtp
+                  ├── ...
+                  └── vtk_scene_sphere_l2_b3_r32_v3_c1_z3_8.vtp
 
-  The formats used by this example have different roles:
+  VISOR uses the ``VTK`` format for geometry input. All derivatives of VTK
+  such as VTP, VTM or VTKHDF are valid formats.
 
-  * ``.vtm`` is a VTK multiblock dataset. It describes a collection of
-    datasets and references its child files using relative paths.
-  * ``.vtp`` is a VTK XML PolyData file. The sphere ``.vtp`` files are the
-    pieces referenced by the ``.vtm`` scene, so their relative directory
-    structure must be preserved when the assets are packaged.
-  * ``.vtk`` is the legacy VTK format for datasets. It is not used by this
-    example, but a legacy VTK file belongs in the same ``method_assets``
-    hierarchy and is accessed in the same way.
-  * ``.vtkhdf`` is used here for the piston rod and elbow single-file
-    geometries.
+  You can visualize results of other tools (e.g. Fluent) with VISOR, some
+  might need to be converted to VTK as they don't use it as their output format.
 
-  A transaction method gets an asset handle using the path relative to
-  ``method_assets`` and resolves it to a local path for the product instance:
+  A transaction method gets an **asset handle** using the path relative to
+  ``method_assets`` and resolves it to a **local path** for the product instance:
 
-  .. code-block:: python
+  .. literalinclude:: ../../../../examples/src/saf/solutions/examples/solution/instance_management/visor_step.py
+    :language: python
+    :caption: solution/instance_management/visor_step.py
+    :lines: 63-65
+    :dedent:
 
-      asset_handle = self.transaction.get_asset_entity_handle(
-          "visor_shapes/piston_rod.vtkhdf"
-      )
-      asset_path = self.storage_scope.get_cached(asset_handle).as_posix()
-      visor_manager.instance.update(asset_path, metadata)
-
-  The same pattern is used for the ``.vtm`` and ``.vtkhdf`` files in the
-  example. ``get_cached`` makes the asset available at a path that can be
+  ``get_cached`` makes the asset available at a path that can be
   passed to VISOR and preserves any sidecar files required by a multiblock
-  scene. Do not create module-level path constants or build paths from the
-  source tree; resolve each method asset through BDM inside the transaction.
+  scene.
 
+  .. note::
+     The assets used in the example were chosen to demonstrate different
+     capabilities of VISOR. Moreover, different formats were used to show how
+     they are used. You can explore the different shapes in the example solution
+     to understand what is possible.
 
 .. _saf-ex-visor-product-instance-frontend:
 
@@ -220,14 +217,15 @@ Expose the solution definition in the UI.
 
     A **callback** is a Dash-decorated function that fires in response to a UI
     event. In a SAF solution, callbacks reach the backend through
-    ``project.steps.visor_step``, invoke transaction methods, and update the
-    component properties that control the page.
+    ``project.steps.<step_name>``, read or write fields, and invoke transaction methods.
+    No manual HTTP calls are needed.
 
 .. key-concept:: Event listener
 
     ``DashClient.create_event_listener`` subscribes a component to a backend
-    event stream. This page listens to ``visor-output-stream`` for console
-    messages and ``start-visor`` for the structured startup termination event.
+    event stream raised by the backend. Each message received by the listener
+    triggers a callback, so the console logs, the button states, and the notifications
+    stay in sync with the running transaction.
 
 .. dropdown:: Register the VISOR viewer endpoints
   :open:
@@ -238,6 +236,7 @@ Expose the solution definition in the UI.
   iframe so the viewer also works when the UI is mounted below a URL prefix.
 
   .. code-block:: python
+    :caption: ui/app.py
 
       import os
 
@@ -261,44 +260,47 @@ Expose the solution definition in the UI.
 
   The iframe is kept separate from the rest of the Dash page. Its document
   owns the viewer DOM and runtime, while the parent page remains responsible
-  for the controls, notifications, and logs. The iframe can therefore be
-  replaced independently if the viewer integration changes later.
+  for the controls, notifications, and logs.
+
+  .. warning::
+    Don't forget to redefine ``VISOR_BASE_PATH = os.getenv("GLOW_UI_PATH_PREFIX", "/").rstrip("/")``
+    in this file.
 
   .. literalinclude:: ../../../../examples/src/saf/solutions/examples/ui/pages/instance_management/visor_instance_page.py
     :language: python
     :caption: ui/pages/instance_management/visor_instance_page.py
     :pyobject: _create_visor_viewer
 
-.. dropdown:: Compute the initial layout
+.. dropdown:: Define the step layout
   :open:
 
-  ``layout`` reads the persisted ``visor_started``, ``visor_host``, and
-  ``visor_port`` fields. If VISOR is already running when the page is opened,
-  it recreates the isolated viewer with the current connection information.
-  This makes the page recover the viewer after navigation without starting a
-  second instance.
+  The layout is split between 3 main parts:
 
-  The controls card contains:
+  * ``controls_card`` : Where the buttons to interact with VISOR are located.
+  * ``logs_card`` : Where the VISOR output logs are displayed.
+  * ``viewer_card`` : Where the isolated viewer iframe is mounted.
 
-  * A rocket action icon to start VISOR.
-  * A shutdown action icon to stop VISOR.
+  First, the method calls ``_create_visor_viewer`` if the viewer is not already initialized.
+
+  Then, we define the 3 parts of the layout:
+
+  The **controls card** contains:
+
+  * Buttons to **start** and **shutdown** the VISOR instance.
   * **Show Piston rod**, **Show Spheres**, and **Show Elbow** buttons to load
-    geometry into VISOR.
+    example shapes into VISOR.
 
-  The logs card displays VISOR output and provides a clear-logs action. The
-  viewer card is placed below the controls and logs and fills the available
-  width. The controls and logs use responsive grid spans: they stack at
+  The **logs card** displays VISOR output and provides a clear-logs action.
+  
+  The **viewer card** is placed below the controls and logs and fills the available
+  width.
+  
+  After defining these components, we return the ``html.Div`` linking them together.
+  The controls and logs use responsive grid spans: they stack at
   smaller widths and use 3/9 columns at the ``lg`` breakpoint and above.
 
-  .. literalinclude:: ../../../../examples/src/saf/solutions/examples/ui/pages/instance_management/visor_instance_page.py
-    :language: python
-    :caption: ui/pages/instance_management/visor_instance_page.py
-    :pyobject: layout
-
-.. dropdown:: Mount the event listeners
-  :open:
-
-  The layout mounts two event listeners:
+  Finally, the event listeners are created directly in the layout instead of through
+  a separate ``mount_event_listeners`` callback:
 
   * ``output-listener`` subscribes to ``visor-output-stream`` and receives
     human-readable messages such as initialization, geometry loading, and
@@ -308,6 +310,11 @@ Expose the solution definition in the UI.
 
   The startup listener is used by both the control-state callback and the
   viewer-display callback.
+
+  .. literalinclude:: ../../../../examples/src/saf/solutions/examples/ui/pages/instance_management/visor_instance_page.py
+    :language: python
+    :caption: ui/pages/instance_management/visor_instance_page.py
+    :pyobject: layout
 
 .. dropdown:: Start VISOR from the launch action
   :open:
@@ -328,14 +335,39 @@ Expose the solution definition in the UI.
   ``sync_start_controls_on_backend_event`` parses the structured
   ``MethodState`` event from the ``start-visor`` listener.
 
-  * While startup is running, all three controls remain disabled and the start
-    action continues to show its loading state.
-  * On success, the start action stops loading, while Stop and Show Shape are
-    enabled.
-  * On failure, the start action becomes available again and Stop and Show
-    Shape remain disabled.
-  * ``handle_method_event`` replaces the loading notification with a success
-    or failure notification.
+  Here is the status of different actions based on the startup state:
+
+  .. list-table:: Startup control state by backend event
+    :header-rows: 1
+    :widths: 20 16 16 20 16 24
+
+    * - Case
+      - Start VISOR
+      - Stop VISOR
+      - Show geometry
+      - Start loading
+      - Notification
+    * - Startup running
+      - ❌
+      - ❌
+      - ❌
+      - Yes
+      - Loading
+    * - Startup success
+      - ❌
+      - ✅
+      - ✅
+      - No
+      - Success
+    * - Startup failure
+      - ✅
+      - ❌
+      - ❌
+      - No
+      - Failure
+
+  The shared ``handle_method_event`` helper replaces the loading notification with a success
+  or failure notification.
 
   .. literalinclude:: ../../../../examples/src/saf/solutions/examples/ui/pages/instance_management/visor_instance_page.py
     :language: python
@@ -391,10 +423,6 @@ Expose the solution definition in the UI.
   disables Stop and the geometry buttons. On failure, it displays an error
   notification and leaves the existing viewer and control state unchanged.
 
-  Removing the iframe clears the viewer container while the backend instance
-  is shut down. A later successful start creates a new iframe using the
-  current host and port.
-
   .. literalinclude:: ../../../../examples/src/saf/solutions/examples/ui/pages/instance_management/visor_instance_page.py
     :language: python
     :caption: ui/pages/instance_management/visor_instance_page.py
@@ -406,7 +434,7 @@ Expose the solution definition in the UI.
   ``display_visor_output`` appends each message received on
   ``visor-output-stream`` to the console log. The log panel shows messages
   received during the current page session, and ``clear_console_logs`` resets
-  the visible log content when the clear action is selected.
+  the visible log content when the clear button is clicked.
 
   .. literalinclude:: ../../../../examples/src/saf/solutions/examples/ui/pages/instance_management/visor_instance_page.py
     :language: python

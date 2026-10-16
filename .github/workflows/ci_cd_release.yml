@@ -184,7 +184,7 @@ jobs:
             }}
           manifest-file: 'uv.lock'
           package: ${{ inputs.library }}
-          release-notes: release_notes
+          release-notes: release-notes
           alerts-token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
 
   prepare-release:

@@ -245,7 +245,7 @@ jobs:
       - name: Configure Poetry and create new poetry project
         shell: bash
         env:
-          MIN_PYTHON_VERSION: ${{ matrix.python-version }}
+          MIN_PYTHON_VERSION: ${{ matrix.python-version == '3.11' && '3.11' || '3.12' }} # Set minimum Python version to test pyansys compatibility
         run: |
           poetry config virtualenvs.in-project true
           poetry new my_project
@@ -338,11 +338,11 @@ jobs:
       #     poetry add "pyansys[all]"
 
       - name: Add pyansys to poetry project (@main)
-        if: ${{ matrix.python-version != '3.11' }}
+        if: ${{ matrix.python-version != '3.11' }} # pyansys requires Python >= 3.12
         working-directory: my_project
         shell: bash
         run: |
-          poetry add "git+https://github.com/ansys/pyansys.git@main" --python ">=3.12" --all-extras
+          poetry add "git+https://github.com/ansys/pyansys.git@main" --python ">=3.12" --extras "all"
 
   check-wheel-can-be-pip-installed:
     name: Check wheel can be pip installed

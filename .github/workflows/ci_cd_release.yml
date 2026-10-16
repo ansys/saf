@@ -171,10 +171,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Generate release notes
+        id: generate-release-notes
         uses: ansys/saf-devops/generate-release-notes@5d9e84af215372b7b125bbf12f5b0093600eb06d # v1.2.0
         with:
           tag-name: ${{ needs.release-information.outputs.release-name }}-${{ inputs.library
             }}
+
+      - name: Add fixed vulnerabilities to release notes
+        uses: $/.github/actions/get-fixed-vulnerabilities
+        with:
+          last-release-date: ${{ steps.generate-release-notes.outputs.previous-release-date
+            }}
+          manifest-file: 'uv.lock'
+          package: ${{ inputs.library }}
+          release-notes: release-notes
+          alerts-token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
 
   prepare-release:
     permissions:

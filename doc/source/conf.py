@@ -254,7 +254,6 @@ html_theme_options = {
         "user_guide/best_practices/index": [],
         "user_guide/migration/index": [],
         "blog/index": [],
-        "release_notes/index": [],
         "api/index": [],
     },
 }

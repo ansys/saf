@@ -21,7 +21,7 @@ collection, and export of telemetry data. This ensures compatibility with any ob
 supports the OpenTelemetry protocol (OTLP).
 
 To visualize this data, SAF recommends the
-`.NET Aspire dashboard <https://aspire.dev/dashboard/overview/>`_, a lightweight web UI that displays
+`Microsoft .NET Aspire dashboard <https://aspire.dev/dashboard/overview/>`_, a lightweight web UI that displays
 structured logs, distributed traces, and metrics in a single place. Any other OTLP-compatible backend
 (Grafana, Jaeger, Datadog) works as well.
 

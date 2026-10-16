@@ -27,6 +27,13 @@ regexTarget = "line"
 regexes = ['''^client_secret": "6z1Y3oqKi7iyrTItRr10zGyNIkBsI0uN\s*$''']
 
 [[allowlists]]
+description = "Allow the KeyDB image tags in the test workflow"
+condition = "AND"
+paths = ['''^\.github/workflows/_test\.yml$''']
+regexTarget = "line"
+regexes = ['''^\s*"(image|private_image)": "(eqalpha/)?keydb:alpine_x86_64_v6\.3\.3",?\s*$''']
+
+[[allowlists]]
 description = "Test certificates for Minerva OAuth E2E"
 paths = [
   '''^packages/glow-engine/tests/e2e/minerva_oauth/App_Data/Certificates/.*$''',

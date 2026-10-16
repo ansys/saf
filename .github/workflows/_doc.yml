@@ -20,57 +20,19 @@ permissions: {}
 
 env:
   CNAME: ${{ vars.CNAME }}
-  DISABLE_INTERSPHINX: true
   MOON_PYTHON_VERSION: ${{ vars.PYTHON_VERSION }}
   UV_PYTHON: ${{ vars.PYTHON_VERSION }}
+  MOON_ARGS: ${{ case((github.event_name == 'workflow_dispatch' || github.ref == 'refs/heads/main'),
+    '', '--affected') }}
 
 jobs:
-  doc-get-changes:
-    name: "Documentation changes detection"
-    permissions:
-      contents: read
-      pull-requests: read # Required to read the pull-request to check if it has documentation changes
-    runs-on: ubuntu-latest
-    outputs:
-      changes: ${{ steps.detect.outputs.changes }}
-    steps:
-      - name: Checkout repository
-        if: github.event_name != 'workflow_dispatch' && !contains(github.workflow,
-          'Certify')
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          fetch-depth: 0
-          persist-credentials: false
-
-      - name: Detect docs related changes
-        if: github.event_name != 'workflow_dispatch' && !contains(github.workflow,
-          'Certify')
-        id: detect
-        uses: dorny/paths-filter@ceb8a2b8f2d89434be7ff52d3de7ec3738c5cc9d # v4.0.3
-        with:
-          base: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha
-            || github.event.before }}
-          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha
-            || github.sha }}
-          filters: .github/changes_doc_filters.yaml
-
   doc-centralized-build:
-    name: "Centralized documentation building"
-    if: (github.event_name != 'pull_request' && github.event_name != 'push') || contains(fromJSON(needs.doc-get-changes.outputs.changes),
-      'documentation') # It should also run when called from certification
-    needs: doc-get-changes
+    name: "Build centralized documentation (Moon)"
     timeout-minutes: 15
     permissions:
       contents: read # Allows this job to read the repository content for documentation build.
     runs-on: ubuntu-latest
     steps:
-      - name: Check documentation style
-        if: github.event_name == 'pull_request'
-        uses: ansys/actions/doc-style@7410037bfb276c79ae91eb3617b9f5d2876f0c94 # v11.0.8
-        with:
-          token: ${{ github.token }}
-          vale-version: '2.30.0'
-
       - name: Checkout repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -84,18 +46,19 @@ jobs:
 
       - name: Build centralized documentation
         shell: bash
-        run: moon run root:build-doc
+        run: moon run root:build-doc $MOON_ARGS
 
       - name: Upload HTML documentation artifact
+        if: ${{ hashFiles('doc/_build/html/') != '' || env.MOON_ARGS == '' }}
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: ${{ vars.DOC_ARTIFACT }}-html
           path: doc/_build/html
           retention-days: 7
+          if-no-files-found: error
 
   doc-api-build:
     name: "API documentation building (Moon)"
-    needs: doc-get-changes
     permissions:
       contents: read
     strategy:
@@ -125,9 +88,11 @@ jobs:
 
       - name: Build centralized documentation
         shell: bash
-        run: moon run $PACKAGE:build-doc
+        run: moon run $PACKAGE:build-doc $MOON_ARGS
 
       - name: Upload HTML documentation artifact
+        if: ${{ hashFiles(format('packages/{0}/doc/_build/html/', matrix.package))
+          != '' || env.MOON_ARGS == '' }}
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: ${{ vars.DOC_ARTIFACT }}-${{ matrix.package }}-html
@@ -136,6 +101,9 @@ jobs:
           if-no-files-found: error
 
       - name: Get version
+        if: |
+          github.event_name == 'workflow_dispatch' ||
+          github.ref == 'refs/heads/main'
         id: info
         uses: ansys/saf-devops/get-information-from-pyproject@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
         with:
@@ -154,7 +122,8 @@ jobs:
           branch: gh-pages-${{ matrix.package }}
 
       - name: Deploy stable doc
-        if: ${{ !contains(steps.info.outputs.patch-version, 'dev') }}
+        if: ${{ !contains(steps.info.outputs.patch-version, 'dev') && env.MOON_ARGS
+          == '' }}
         uses: ansys/saf-devops/doc-deploy-stable@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
         with:
           cname: ${{ vars.CNAME }}
@@ -176,6 +145,9 @@ jobs:
     permissions:
       contents: read
     runs-on: ubuntu-latest
+    if: |
+      github.event_name == 'workflow_dispatch' ||
+      github.ref == 'refs/heads/main'
     steps:
       - name: Checkout gh-pages-bdm-python-api
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1

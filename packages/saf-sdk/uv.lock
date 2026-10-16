@@ -1,5 +1,5 @@
 version = 1
-revision = 3
+revision = 5
 requires-python = ">=3.11, <3.15"
 resolution-markers = [
     "python_full_version >= '3.14' and sys_platform == 'win32'",
@@ -753,7 +753,7 @@ wheels = [
 
 [[package]]
 name = "ansys-saf-desktop-installer"
-version = "1.17.0"
+version = "1.18.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "click" },
@@ -763,9 +763,9 @@ dependencies = [
     { name = "requests" },
     { name = "toml" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/a2/ed/51b2e88634e9cae01f2ec7fc2e7a03a9a3dd4a4febd28e117bc7cdc34026/ansys_saf_desktop_installer-1.17.0.tar.gz", hash = "sha256:0aaea41e277bb82563e88fb525907c2394dec1b9058750073e044ea5cc29cea4", size = 133590, upload-time = "2026-09-17T06:43:04.373Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/a4/73/a7f12e250fa2fcd7838ad746a2d4e0a868e875341b3bdffe74200dc0c80a/ansys_saf_desktop_installer-1.18.0.tar.gz", hash = "sha256:1c580aefd72e2791decc94f6063f974445486f1073c6515fd10183a4ffaa89dd", size = 131123, upload-time = "2026-10-14T06:10:58.34Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/dd/b1/2c690be472daabab100a1e7ee6d1526ec3d328ec8458da560b7db2455ac4/ansys_saf_desktop_installer-1.17.0-py3-none-any.whl", hash = "sha256:50598fd98b0863706925ab82218f467cf7e807a1dbdc7cce600d330a8b106ddc", size = 141381, upload-time = "2026-09-17T06:43:02.876Z" },
+    { url = "https://files.pythonhosted.org/packages/6f/30/c34261f1fcd58cf83ade6c21bd4c079035ed8c50af10db63de24c0f92713/ansys_saf_desktop_installer-1.18.0-py3-none-any.whl", hash = "sha256:319b311f54ea6ec183df34db63d21a8788061b1b9119b264f3c26dfe19f5605a", size = 142746, upload-time = "2026-10-14T06:10:56.766Z" },
 ]
 
 [[package]]
@@ -794,7 +794,7 @@ wheels = [
 
 [[package]]
 name = "ansys-saf-glow-engine"
-version = "2.4.0"
+version = "2.5.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "aiofiles" },
@@ -834,9 +834,9 @@ dependencies = [
     { name = "uvicorn" },
     { name = "wsproto" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/e7/8b/c321278d3f9e03a827f8210c170e453c3889833f6ea5073647d40c166ae9/ansys_saf_glow_engine-2.4.0.tar.gz", hash = "sha256:dfcdaf6a6c9ada930fe797a7bfc4366f8735ab9aeb220d3d8ffa267bae24a79f", size = 259265, upload-time = "2026-09-23T14:07:51.49Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/cc/33/f2cd48c19f08fe08ba83521a935fee71d82006e2f2d5b6c80ca3ced1a879/ansys_saf_glow_engine-2.5.0.tar.gz", hash = "sha256:c9954788420e3b7a6f46efd8a9899a48de6c225cfe0b7d7a50515a3d7e706b34", size = 263216, upload-time = "2026-10-07T07:40:41.272Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/9a/20/e0dfae5b1fbc0bf01f59cb6a7535b344e2d255de07a489859b9bcd61e83e/ansys_saf_glow_engine-2.4.0-py3-none-any.whl", hash = "sha256:6d03cc248a4c8e2080791879900502e8c43ea0fdfcc0d2939d44dcef8391b9ed", size = 402225, upload-time = "2026-09-23T14:07:48.774Z" },
+    { url = "https://files.pythonhosted.org/packages/4c/07/4386a30db83cfcb4310fcff159275bb1281cd60d3ee3186db0b892b8b272/ansys_saf_glow_engine-2.5.0-py3-none-any.whl", hash = "sha256:a7c1d612fa8056a7f50eb370bb118735c32ec26ec3cdfe0f9ebe3914318fe7fa", size = 407807, upload-time = "2026-10-07T07:40:39.194Z" },
 ]
 
 [package.optional-dependencies]
@@ -1076,7 +1076,7 @@ wheels = [
 
 [[package]]
 name = "ansys-saf-sdk"
-version = "0.3.0"
+version = "0.4.0"
 source = { editable = "." }
 dependencies = [
     { name = "ansys-bdm-api" },
@@ -1160,18 +1160,18 @@ requires-dist = [
     { name = "ansys-bdm-api", specifier = "==0.5.0" },
     { name = "ansys-bdm-shared-volume", specifier = "==0.4.0" },
     { name = "ansys-iam-oidc", specifier = "==0.9.0" },
-    { name = "ansys-saf-desktop-installer", marker = "extra == 'all'", specifier = "==1.17.0" },
-    { name = "ansys-saf-desktop-installer", marker = "extra == 'build'", specifier = "==1.17.0" },
+    { name = "ansys-saf-desktop-installer", marker = "extra == 'all'", specifier = "==1.18.0" },
+    { name = "ansys-saf-desktop-installer", marker = "extra == 'build'", specifier = "==1.18.0" },
     { name = "ansys-saf-desktop-orchestrator", marker = "extra == 'all'", specifier = "==1.14.0" },
     { name = "ansys-saf-desktop-orchestrator", marker = "extra == 'desktop'", specifier = "==1.14.0" },
-    { name = "ansys-saf-glow-engine", specifier = "==2.4.0" },
-    { name = "ansys-saf-glow-engine", extras = ["all"], marker = "extra == 'all'", specifier = "==2.4.0" },
-    { name = "ansys-saf-glow-engine", extras = ["all"], marker = "extra == 'core-all'", specifier = "==2.4.0" },
-    { name = "ansys-saf-glow-engine", extras = ["dash"], marker = "extra == 'core-dash'", specifier = "==2.4.0" },
-    { name = "ansys-saf-glow-engine", extras = ["hps"], marker = "extra == 'core-hps'", specifier = "==2.4.0" },
-    { name = "ansys-saf-glow-engine", extras = ["mcp"], marker = "extra == 'core-mcp'", specifier = "==2.4.0" },
-    { name = "ansys-saf-glow-engine", extras = ["pim"], marker = "extra == 'core-pim'", specifier = "==2.4.0" },
-    { name = "ansys-saf-glow-engine", extras = ["test"], marker = "extra == 'core-test'", specifier = "==2.4.0" },
+    { name = "ansys-saf-glow-engine", specifier = "==2.5.0" },
+    { name = "ansys-saf-glow-engine", extras = ["all"], marker = "extra == 'all'", specifier = "==2.5.0" },
+    { name = "ansys-saf-glow-engine", extras = ["all"], marker = "extra == 'core-all'", specifier = "==2.5.0" },
+    { name = "ansys-saf-glow-engine", extras = ["dash"], marker = "extra == 'core-dash'", specifier = "==2.5.0" },
+    { name = "ansys-saf-glow-engine", extras = ["hps"], marker = "extra == 'core-hps'", specifier = "==2.5.0" },
+    { name = "ansys-saf-glow-engine", extras = ["mcp"], marker = "extra == 'core-mcp'", specifier = "==2.5.0" },
+    { name = "ansys-saf-glow-engine", extras = ["pim"], marker = "extra == 'core-pim'", specifier = "==2.5.0" },
+    { name = "ansys-saf-glow-engine", extras = ["test"], marker = "extra == 'core-test'", specifier = "==2.5.0" },
     { name = "ansys-saf-product-configuration", specifier = "==0.26.0" },
     { name = "ansys-saf-product-configuration", marker = "extra == 'instance-management'", specifier = "==0.26.0" },
     { name = "ansys-saf-product-configuration", extras = ["aedt"], marker = "extra == 'instance-management-aedt'", specifier = "==0.26.0" },

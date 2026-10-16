@@ -130,7 +130,10 @@ def test_create_solution(tmp_path: Path, ui_framework: str, namespace: str):
     pyproject_content = pyproject_file.read_text()
     assert f'name = "{namespace_to_pkg_name(namespace)}-{expected_solution_package_name}"' in pyproject_content
     assert f'version = "{expected_version}"' in pyproject_content
-    assert f'[saf-cli-version]\nsaf-cli-version = "{expected_saf_cli_version}"'
+    assert "[project]" in pyproject_content
+    assert "[tool.poetry]" not in pyproject_content
+    assert "[tool.uv]" in pyproject_content
+    assert f'[saf-cli-version]\nsaf-cli-version = "{expected_saf_cli_version}"' in pyproject_content
 
     # Check content of docker-compose.yaml and .env
     for configuration in [

@@ -476,9 +476,9 @@ jobs:
         shell: bash
         run: uv run ".github/actions/ci-cd-job-matrices/test_ci_cd_job_matrices.py"
 
-      - name: Run test_get-fixed-vulnerabilities.py
+      - name: Run test_get_fixed_vulnerabilities.py
         shell: bash
-        run: uv run ".github/actions/get-fixed-vulnerabilities/test_get-fixed-vulnerabilities.py"
+        run: uv run ".github/actions/get-fixed-vulnerabilities/test_get_fixed_vulnerabilities.py"
 
   meta-package:
     name: "SAF SDK Meta Package"

@@ -329,6 +329,12 @@ jobs:
           WHEEL_FILE=$(ls "${GITHUB_WORKSPACE}"/aspire/*.whl)
           poetry add "ansys-saf-aspire[all] @ file://${WHEEL_FILE}"
 
+      - name: Add visor to poetry project
+        working-directory: my_project
+        shell: bash
+        run: |
+          poetry add "ansys-visor-viewer"
+
   check-wheel-can-be-pip-installed:
     name: Check wheel can be pip installed
     needs: build-meta-package

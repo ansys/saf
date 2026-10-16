@@ -244,10 +244,12 @@ jobs:
 
       - name: Configure Poetry and create new poetry project
         shell: bash
+        env:
+          MIN_PYTHON_VERSION: ${{ matrix.python-version }}
         run: |
           poetry config virtualenvs.in-project true
           poetry new my_project
-          sed -i 's/^requires-python = .*/requires-python = ">=3.11,<3.15"/' my_project/pyproject.toml
+          sed -i 's/^requires-python = .*/requires-python = ">=${MIN_PYTHON_VERSION},<3.15"/' my_project/pyproject.toml
 
       - name: Add ansys-saf-sdk to poetry project
         working-directory: my_project

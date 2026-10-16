@@ -71,6 +71,26 @@
         "download-extra-packages": "true"
     },
     {
+        "test-report-artifact-name-suffix": "sdi_linux_extended_test_installer_with_unreadable_build_path_dependency",
+        "install-gtk-xvfb": "true",
+        "pytest-additional-arguments": "-n0 tests/e2e/test_installer_entry_point.py::TestInstaller::test_installer_with_unreadable_build_path_dependency",
+        "runner-name": "public-ubuntu-latest-16-cores",
+        "download-extra-packages": "true"
+    },
+    {
+        "test-report-artifact-name-suffix": "sdi_windows_extended_test_installer_with_unreadable_build_path_dependency",
+        "pytest-additional-arguments": "-n0 tests/e2e/test_installer_entry_point.py::TestInstaller::test_installer_with_unreadable_build_path_dependency",
+        "runner-name": "windows-latest",
+        "download-extra-packages": "true"
+    },
+    {
+        "test-report-artifact-name-suffix": "sdi_windows_extended_non_admin_test_installer_with_unreadable_build_path_dependency",
+        "pytest-additional-arguments": "-n0 tests/e2e/test_installer_entry_point.py::TestInstaller::test_installer_with_unreadable_build_path_dependency",
+        "runner-name": "windows-latest",
+        "download-extra-packages": "true",
+        "non-admin": "true"
+    },
+    {
         "test-report-artifact-name-suffix": "sdi_windows_extended_test_installer_with_force_python_from_source[3.11.15]",
         "pytest-additional-arguments": "-n0 tests/e2e/test_installer_entry_point.py::TestInstaller::test_installer_with_force_python_from_source[3.11.15]",
         "runner-name": "windows-latest",

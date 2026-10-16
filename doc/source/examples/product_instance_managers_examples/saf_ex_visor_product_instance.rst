@@ -120,7 +120,7 @@ Create the solution definition.
 
   .. note::
     To understand why the VISOR version is 0, refer to the 
-    `Supported product instance managers page <../../user_guide/backend/instance_management/supported_products.rst>`_.
+    :ref:`Supported product instance managers page <instance_management_supported_products>`.
 
 .. dropdown:: Define the step model
   :open:

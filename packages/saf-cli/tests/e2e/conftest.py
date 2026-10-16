@@ -297,7 +297,9 @@ def check_expected_messages(
     assert p.find_msg_in_output(f"Solution UI: {solution_ui_url}")
     otel_dashboard_url = p.get_otel_dashboard_url()
     assert p.find_msg_in_output(f"OTEL Dashboard: {otel_dashboard_url}")
-    portal_url = p.get_portal_url() if with_portal else "not launched"
+    # With --portal, the orchestrator uses the projects dashboard if installed, instead of starting a portal.
+    uses_projects_dashboard = with_portal and p.get_projects_dashboard_url() is not None
+    portal_url = p.get_portal_url() if with_portal and not uses_projects_dashboard else "not launched"
     assert p.find_msg_in_output(f"SAF Portal: {portal_url}")
     # TODO if PIM and additional services get tested, check URL as done for portal
     assert p.find_msg_in_output("PIM Light Server: not launched")

@@ -20,7 +20,7 @@ import sys
 
 from cookiecutter.main import cookiecutter  # pyright: ignore[reportUnknownVariableType, reportMissingTypeStubs]
 
-from ansys.saf.cli._config.const import DEFAULT_SOLUTION_NAMESPACE, SOLUTION_TEMPLATE_PATH
+from ansys.saf.cli._config.const import DEFAULT_SOLUTION_NAMESPACE, SOLUTION_TEMPLATE_PATH, SOLUTIONS_PRIVATE_PYPI_URL
 from ansys.saf.cli._utilities.conversion import (
     namespace_to_path,
     namespace_to_pkg_name,
@@ -69,5 +69,6 @@ def create_solution(
             "__appdata_directory": appdata_directory(),
             "__python_version": f"{sys.version_info.major}.{sys.version_info.minor}",
             "__saf_cli_version": saf_cli_version,
+            "__solutions_private_pypi_url": SOLUTIONS_PRIVATE_PYPI_URL,
         },
     )

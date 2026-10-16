@@ -1,0 +1,161 @@
+name: build and release
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+    types: [opened, reopened, synchronize, ready_for_review]
+  release:
+    types: [published]
+  workflow_dispatch:
+
+env:
+  MAIN_PYTHON_VERSION: "3.12"
+  POETRY_VERSION: "2.3.2"
+  DOCUMENTATION_CNAME: "" # Replace with the CNAME of the documentation
+  WHEEL: "compressor"
+  HTML_DOCUMENTATION_ARTIFACT: "compressor-documentation"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check-code-style:
+    name: Check code style
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check code style
+        uses: ansys/actions/code-style@v10
+        with:
+          python-version: ${{ env.MAIN_PYTHON_VERSION }}
+
+
+  build:
+    name: Build
+    runs-on: windows-latest
+    env:
+      # Workaround for Python toolset mismatch on windows-2025:
+      # Python's PCbuild conditionally tries to use v140 (VS 2015 toolset) when
+      # PlatformToolset is empty. However, v140 is not available on windows-2025
+      # (which has VS 2022 Enterprise), causing an MSB8020 build error.
+      # By pre-setting PlatformToolset to v143 here, the conditional check sees a
+      # non-empty value and skips the v140 assignment, using v143 instead.
+      PlatformToolset: "v143"
+    steps:
+      - name: Enable long paths
+        shell: bash
+        run: git config --global core.longpaths true
+
+      - name: Build
+        uses: ansys/saf-devops/saf-build@v1
+        with:
+          python-version: ${{ env.MAIN_PYTHON_VERSION }}
+          poetry-version: ${{ env.POETRY_VERSION }}
+          dependencies-source: "build-system"
+          artifact-name: ${{ env.WHEEL }}-${{ runner.os }}
+          build-result: executable
+
+
+  run-tests:
+    name: Run tests
+    runs-on: windows-latest
+    timeout-minutes: 20
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12", "3.13", "3.14"]
+      fail-fast: false
+    env:
+      # Workaround for Python toolset mismatch on windows-2025:
+      # Python's PCbuild conditionally tries to use v140 (VS 2015 toolset) when
+      # PlatformToolset is empty. However, v140 is not available on windows-2025
+      # (which has VS 2022 Enterprise), causing an MSB8020 build error.
+      # By pre-setting PlatformToolset to v143 here, the conditional check sees a
+      # non-empty value and skips the v140 assignment, using v143 instead.
+      PlatformToolset: "v143"
+    steps:
+      - name: Run tests
+        uses: ansys/actions/tests-pytest@v10
+        with:
+          python-version: ${{ matrix.python-version }}
+
+          optional-dependencies-name: "tests,ui"
+
+
+  check-licenses:
+    if: |
+      (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
+      github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Prepare python environment of the solution
+        id: python-setup
+        uses: ansys/saf-devops/prepare-python-environment@v1
+        with:
+          python-version: ${{ env.MAIN_PYTHON_VERSION }}
+          poetry-version: ${{ env.POETRY_VERSION }}
+          python-project-path: "."
+          poetry-install-args: "--all-extras"
+
+      - name: Check licenses
+        uses: ansys/actions/check-licenses@73fa84c704bb6691f254cfe4d4b928c338b0d4da # v10.3.0
+        with:
+          checkout: false
+          python-version: ${{ env.MAIN_PYTHON_VERSION }}
+          target: "all"
+          skip-install: true
+          activate-venv: "source ${{ steps.python-setup.outputs.venv-exe-location }}/activate"
+          use-uv: false
+
+  build-doc:
+    name: Build documentation
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Build documentation
+        uses: ansys/actions/doc-build@v10
+        with:
+          python-version: ${{ env.MAIN_PYTHON_VERSION }}
+          check-links: true
+          optional-dependencies-name: ''
+          group-dependencies-name: 'doc'
+          uploaded-artifact-name-prefix: ${{ env.HTML_DOCUMENTATION_ARTIFACT }}
+        env:
+          REPOSITORY_NAME: ${{ github.repository }}
+
+  doc-deploy-dev:
+    name: "Deploy development documentation"
+    # Deploy development only when merging or pushing to the 'main' branch
+    if: github.event_name == 'push' && !startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    needs: build-doc
+    steps:
+      - if: ${{ env.DOCUMENTATION_CNAME != '' }}
+        uses: ansys/actions/doc-deploy-dev@v5
+        with:
+          doc-artifact-name: ${{ env.HTML_DOCUMENTATION_ARTIFACT }}-html
+          cname: ${{ env.DOCUMENTATION_CNAME }}
+          token: ${{ github.token }}
+
+  doc-deploy-stable:
+    name: "Deploy stable documentation"
+    if: github.event_name == 'release'
+    runs-on: ubuntu-latest
+    needs:
+      - build-doc
+    steps:
+      - if: ${{ env.DOCUMENTATION_CNAME != '' }}
+        uses: ansys/actions/doc-deploy-stable@v5
+        with:
+          doc-artifact-name: ${{ env.HTML_DOCUMENTATION_ARTIFACT }}-html
+          cname: ${{ env.DOCUMENTATION_CNAME }}
+          token: ${{ github.token }}

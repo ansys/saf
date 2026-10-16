@@ -1,0 +1,112 @@
+name: ${APP_NAME}
+
+networks:
+  external-network:
+    external: true
+    name: ${EXT_NETWORK_NAME}
+
+services:
+  api:
+    image: ${APP_NAME}-api
+    build:
+      context: ../../
+      dockerfile: deployments/Dockerfile
+      target: solution_api
+      args:
+        EXTRAS: "hps"
+    networks:
+      external-network:
+        aliases:
+          - ${APP_NAME}-api
+    env_file:
+      - .env
+    init: true # to ensure reaping of killed child processes left by long-running transactions
+    environment:
+      - GLOW_DEPLOYMENT=DockerCompose
+      - GLOW_API_HOST=0.0.0.0
+      - GLOW_API_PORT=50000
+      - GLOW_DATABASE_TYPE=postgresql
+      - GLOW_DATABASE_LOCATION=postgresql://${PG_USER}:${PG_PASSWORD}@${PG_HOST}:${PG_PORT}/db_${APP_NAME}
+      - GLOW_PROJECT_FILES_DIRECTORY=/projects
+      - GLOW_METHOD_EXECUTION_DIRECTORY=/transactions
+      - GLOW_EXTERNAL_API_URL=https://${ACCESS_URL}:${TRAEFIK_PORT}/${APP_NAME}/api
+      - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT_HTTP}
+      - OTEL_RESOURCE_ATTRIBUTES=service.name.override=${APP_NAME}-api
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:50000/health" ]
+      interval: 5s
+      retries: 20
+    volumes:
+      - ${GLOW_PROJECTS_DIR_SOLUTION}:/projects
+      - ${GLOW_TRANSACTIONS_DIR_SOLUTION}:/transactions
+      - /etc/hosts:/etc/hosts:ro
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.${APP_NAME}-api.rule=Host(`${ACCESS_URL}`) && PathPrefix(`/${APP_NAME}/api`)"
+      - "traefik.http.routers.${APP_NAME}-api.entrypoints=web,external"
+      - "traefik.http.middlewares.${APP_NAME}-api-stripprefix.stripprefix.prefixes=/${APP_NAME}/api"
+      - "traefik.http.routers.${APP_NAME}-api.middlewares=${APP_NAME}-api-stripprefix"
+      - "traefik.http.routers.${APP_NAME}-api.service=${APP_NAME}-api"
+      - "traefik.http.services.${APP_NAME}-api.loadbalancer.server.port=50000"
+      - "traefik.http.routers.${APP_NAME}-api.tls=true"
+      - "traefik.docker.network=${EXT_NETWORK_NAME}"
+      - "traefik.http.routers.${APP_NAME}-api.middlewares=${APP_NAME}-api-stripprefix,oauth-signin,oauth-verify,secure-and-gzip@file"
+    develop:
+      watch:
+        - action: sync+restart
+          path: /src/saf/solutions/compressor/solution
+          target: /app/src/saf/solutions/compressor/solution
+
+
+
+  ui:
+    image: ${APP_NAME}-ui
+    build:
+      context: ../../
+      dockerfile: deployments/Dockerfile
+      target: solution_ui
+      args:
+        EXTRAS: "hps"
+    depends_on:
+      api:
+        condition: service_healthy
+    networks:
+      external-network:
+        aliases:
+          - ${APP_NAME}-ui
+    env_file:
+      - .env
+    environment:
+      - GLOW_DEPLOYMENT=DockerCompose
+      - GLOW_UI_HOST=0.0.0.0
+      - GLOW_UI_PORT=50001
+      - GLOW_API_URL=http://${APP_NAME}-api:50000
+      - GLOW_UI_PROJECT_FILES_DIRECTORY=/projects
+      - GLOW_WS_EVENTS_ADDR=wss://${ACCESS_URL}:${TRAEFIK_PORT}/${APP_NAME}/api
+      - GLOW_EXTERNAL_API_URL=https://${ACCESS_URL}:${TRAEFIK_PORT}/${APP_NAME}/api
+      - GLOW_PORTAL_URL=https://portal.${DOMAIN_NAME}:${TRAEFIK_PORT}
+      - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT_HTTP}
+      - OTEL_RESOURCE_ATTRIBUTES=service.name.override=${APP_NAME}-ui
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:50001/health" ]
+      interval: 5s
+      retries: 20
+    volumes:
+      - ${GLOW_PROJECTS_DIR_SOLUTION}:/projects
+      - /etc/hosts:/etc/hosts:ro
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.${APP_NAME}-ui.rule=Host(`${ACCESS_URL}`) && PathPrefix(`/${APP_NAME}`)"
+      - "traefik.http.routers.${APP_NAME}-ui.entrypoints=external"
+      - "traefik.http.routers.${APP_NAME}-ui.service=${APP_NAME}-ui"
+      - "traefik.http.services.${APP_NAME}-ui.loadbalancer.server.port=50001"
+      - "traefik.http.routers.${APP_NAME}-ui.tls=true"
+      - "traefik.docker.network=${EXT_NETWORK_NAME}"
+      - "traefik.http.routers.${APP_NAME}-ui.middlewares=oauth-signin,oauth-verify,secure-and-gzip@file"
+    develop:
+      watch:
+        - action: sync+restart
+          path: /src/saf/solutions/compressor/ui
+          target: /app/src/saf/solutions/compressor/ui
+
+

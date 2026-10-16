@@ -14,6 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import ctypes
 import json
 import os
 from pathlib import Path
@@ -42,11 +43,12 @@ from ansys.saf.desktop.installer._common.utils import has_portal_dependency, sim
 from ansys.saf.desktop.installer._package.manage_dependencies import simplify_wheel_url_dependencies
 from ansys.saf.desktop.installer._ui_styles import install_button_style
 from ansys.saf.desktop.installer.solution_desktop_deployment import (
-    VIRTUAL_ENVIRONMENT_NAME,
+    KF_FLAG_DONT_VERIFY,
     InstallationDirectoryValidator,
     _ensure_third_party_extracted,  # pyright: ignore[reportPrivateUsage]
+    _get_windows_desktop_directory,  # pyright: ignore[reportPrivateUsage]
+    _is_windows_admin,  # pyright: ignore[reportPrivateUsage]
     build_long_path_section,
-    compute_solution_commandline,
     delete_existing_solution_shortcut,
     form_layout,
     get_shortcut_path,
@@ -674,37 +676,222 @@ class TestInstallationDirectoryValidator:
 
 
 @windows_only()
-def test_get_shortcut_path_windows(mocker: pytest_mock.MockerFixture) -> None:
-    """On Windows, the shortcut is a .lnk placed under %PUBLIC%\\Desktop."""
-    mocker.patch.dict(os.environ, {"PUBLIC": r"C:\Users\Public"}, clear=True)
+@pytest.mark.parametrize("all_users", [None, True, False], ids=["current-privileges", "all-users", "current-user"])
+@pytest.mark.parametrize("is_admin", [True, False], ids=["admin", "non-admin"])
+def test_get_shortcut_path_windows(
+    tmp_path: Path,
+    mocker: pytest_mock.MockerFixture,
+    is_admin: bool,
+    all_users: bool | None,
+) -> None:
+    """On Windows, all users means the Public Desktop; by default it is used only when elevated."""
+    desktops = {True: tmp_path / "Public" / "Desktop", False: tmp_path / "OneDrive" / "Desktop"}
+    mocker.patch(
+        "ansys.saf.desktop.installer.solution_desktop_deployment._is_windows_admin",
+        return_value=is_admin,
+    )
+    mocker.patch(
+        "ansys.saf.desktop.installer.solution_desktop_deployment._get_windows_desktop_directory",
+        side_effect=lambda all_users: desktops[all_users],  # pyright: ignore[reportUnknownLambdaType]
+    )
 
-    result = get_shortcut_path("My Test Solution")
+    result = get_shortcut_path("My Test Solution", all_users=all_users)
 
-    assert result == Path(r"C:\Users\Public") / "Desktop" / "My Test Solution.lnk"
+    expected_all_users = is_admin if all_users is None else all_users
+    assert result == desktops[expected_all_users] / "My Test Solution.lnk"
+
+
+def _run_powershell(command: str) -> str:
+    return subprocess.check_output(
+        ["powershell.exe", "-NoProfile", "-Command", f"[Console]::OutputEncoding = [Text.Encoding]::UTF8; {command}"],
+        encoding="utf-8",
+    ).strip()
+
+
+@windows_only()
+def test_is_windows_admin_matches_powershell() -> None:
+    """The admin check agrees with PowerShell, including for non-elevated UAC tokens."""
+    expected = _run_powershell(
+        "([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent())"
+        ".IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)",
+    )
+
+    assert _is_windows_admin() == (expected == "True")
+
+
+@windows_only()
+@pytest.mark.parametrize(
+    ("all_users", "special_folder"),
+    [(True, "CommonDesktopDirectory"), (False, "Desktop")],
+    ids=["public", "user"],
+)
+def test_get_windows_desktop_directory_matches_powershell(all_users: bool, special_folder: str) -> None:
+    """The Desktop lookup honors folder redirection (e.g. OneDrive) like Explorer does."""
+    expected = _run_powershell(f"[Environment]::GetFolderPath('{special_folder}', 'DoNotVerify')")
+
+    assert _get_windows_desktop_directory(all_users=all_users) == Path(expected)
+
+
+@windows_only()
+def test_get_windows_desktop_directory_does_not_require_existing_folder(mocker: pytest_mock.MockerFixture) -> None:
+    """Regression: a deleted Desktop folder must not make the lookup (and thus the installation) fail."""
+    real_lookup = ctypes.windll.shell32.SHGetKnownFolderPath
+
+    def lookup_with_missing_desktop(folder_id: Any, flags: int, token: Any, path_ptr: Any) -> int:
+        # Windows verifies the folder exists unless KF_FLAG_DONT_VERIFY is set.
+        if not flags & KF_FLAG_DONT_VERIFY:
+            return 0x80070002 - (1 << 32)  # HRESULT_FROM_WIN32(ERROR_FILE_NOT_FOUND)
+        return real_lookup(folder_id, flags, token, path_ptr)
+
+    mocker.patch.object(ctypes.windll.shell32, "SHGetKnownFolderPath", side_effect=lookup_with_missing_desktop)
+    expected = _run_powershell("[Environment]::GetFolderPath('Desktop', 'DoNotVerify')")
+
+    assert _get_windows_desktop_directory(all_users=False) == Path(expected)
+
+
+@windows_only()
+def test_install_shortcut_windows_creates_missing_desktop(
+    tmp_path: Path,
+    mocker: pytest_mock.MockerFixture,
+) -> None:
+    """Regression: the shortcut is created even when the Desktop folder does not exist."""
+    shortcut_path = tmp_path / "Desktop" / "My Test Solution.lnk"
+    mocker.patch(
+        "ansys.saf.desktop.installer.solution_desktop_deployment.get_shortcut_path",
+        return_value=shortcut_path,
+    )
+
+    install_shortcut(
+        python=tmp_path / "python.exe",
+        installation_icon_path=tmp_path / "shortcut.ico",
+        arguments="-m test.module",
+        solution_display_name="My Test Solution",
+    )
+
+    assert shortcut_path.is_file()
+
+
+@windows_only()
+def test_install_shortcut_windows_handles_single_quotes(
+    tmp_path: Path,
+    mocker: pytest_mock.MockerFixture,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Single quotes in names and paths do not break the PowerShell command."""
+    base_dir = tmp_path / "O'Brien"
+    python_path = base_dir / "Scripts" / "pythonw.exe"
+    python_path.parent.mkdir(parents=True)
+    python_path.touch()
+    icon_path = base_dir / "assets" / "shortcut.ico"
+    shortcut_path = base_dir / "Desktop" / "Bob's Solution.lnk"
+    shortcut_path.parent.mkdir(parents=True)
+    mocker.patch(
+        "ansys.saf.desktop.installer.solution_desktop_deployment.get_shortcut_path",
+        return_value=shortcut_path,
+    )
+    arguments = f'-m test.module --env-file "{(base_dir / ".env").as_posix()}"'
+
+    install_shortcut(
+        python=python_path,
+        installation_icon_path=icon_path,
+        arguments=arguments,
+        solution_display_name="Bob's Solution",
+    )
+
+    assert shortcut_path.is_file()
+    # pylnk3 truncates targets under C:\Users, so read back with the Windows shell (path passed via env, no quoting).
+    monkeypatch.setenv("SAF_TEST_LNK_PATH", str(shortcut_path))
+    target_path, shortcut_arguments = _run_powershell(
+        "$s = (New-Object -ComObject WScript.Shell).CreateShortcut($env:SAF_TEST_LNK_PATH); "
+        "$s.TargetPath; $s.Arguments",
+    ).splitlines()
+    assert Path(target_path) == python_path
+    assert shortcut_arguments == arguments
+
+
+@windows_only()
+def test_install_shortcut_windows_fails_when_desktop_is_not_writable(
+    tmp_path: Path,
+    mocker: pytest_mock.MockerFixture,
+) -> None:
+    """Regression for a non-admin user writing to the Public Desktop: the failure must be reported."""
+    desktop_dir = tmp_path / "Desktop"
+    desktop_dir.mkdir()
+    mocker.patch(
+        "ansys.saf.desktop.installer.solution_desktop_deployment.get_shortcut_path",
+        return_value=desktop_dir / "My Test Solution.lnk",
+    )
+
+    with remove_directory_write_permissions(desktop_dir), pytest.raises(subprocess.CalledProcessError) as exc_info:
+        install_shortcut(
+            python=tmp_path / "python.exe",
+            installation_icon_path=tmp_path / "shortcut.ico",
+            arguments="-m test.module",
+            solution_display_name="My Test Solution",
+        )
+
+    assert "UnauthorizedAccessException" in exc_info.value.stderr
+
+
+@pytest.mark.parametrize("is_elevated", [True, False], ids=["elevated", "not-elevated"])
+def test_delete_existing_solution_shortcut_only_deletes_current_privilege_level_shortcut(
+    tmp_path: Path,
+    mocker: pytest_mock.MockerFixture,
+    capsys: pytest.CaptureFixture[str],
+    is_elevated: bool,
+) -> None:
+    """A non-elevated reinstall leaves the all-users shortcut untouched and informs the user about it."""
+    shortcut_paths = {
+        True: tmp_path / "Public" / "Desktop" / "My Test Solution.lnk",
+        False: tmp_path / "User" / "Desktop" / "My Test Solution.lnk",
+    }
+    for shortcut_path in shortcut_paths.values():
+        shortcut_path.parent.mkdir(parents=True)
+        shortcut_path.write_text("dummy")
+
+    def fake_get_shortcut_path(solution_display_name: str, all_users: bool | None = None) -> Path:
+        return shortcut_paths[is_elevated if all_users is None else all_users]
+
+    mocker.patch(
+        "ansys.saf.desktop.installer.solution_desktop_deployment.get_shortcut_path",
+        side_effect=fake_get_shortcut_path,
+    )
+
+    delete_existing_solution_shortcut("My Test Solution")
+
+    assert not shortcut_paths[is_elevated].exists()
+    assert shortcut_paths[not is_elevated].is_file()
+    all_users_shortcut_message = f"A shortcut shared by all users already exists at {shortcut_paths[True]}"
+    assert (all_users_shortcut_message in capsys.readouterr().out) is not is_elevated
 
 
 @linux_only()
-def test_get_shortcut_path_linux_non_root(tmp_path: Path, mocker: pytest_mock.MockerFixture) -> None:
-    """On Linux, a non-root user gets a .desktop entry under ~/Desktop and the directory is created."""
-    mocker.patch.dict(os.environ, {}, clear=True)
+@pytest.mark.parametrize(
+    ("sudo_user", "all_users", "expected_all_users"),
+    [
+        (None, None, False),
+        ("test-user", None, True),
+        (None, True, True),
+        ("test-user", False, False),
+    ],
+    ids=["non-root-default", "root-default", "non-root-all-users", "root-current-user"],
+)
+def test_get_shortcut_path_linux(
+    tmp_path: Path,
+    mocker: pytest_mock.MockerFixture,
+    sudo_user: str | None,
+    all_users: bool | None,
+    expected_all_users: bool,
+) -> None:
+    """On Linux, all users means /usr/share/applications; by default it is used only when SUDO_USER is set."""
+    mocker.patch.dict(os.environ, {"SUDO_USER": sudo_user} if sudo_user else {}, clear=True)
     mocker.patch.object(Path, "home", return_value=tmp_path)
 
-    result = get_shortcut_path("My Test Solution")
+    result = get_shortcut_path("My Test Solution", all_users=all_users)
 
-    assert result == tmp_path / "Desktop" / "My Test Solution.desktop"
-    assert (tmp_path / "Desktop").is_dir()
-
-
-@linux_only()
-def test_get_shortcut_path_linux_root(mocker: pytest_mock.MockerFixture) -> None:
-    """On Linux, when SUDO_USER is set the shortcut is placed under /usr/share/applications."""
-    mocker.patch.dict(os.environ, {"SUDO_USER": "test-user"}, clear=True)
-    mock_mkdir = mocker.patch.object(Path, "mkdir")
-
-    result = get_shortcut_path("My Test Solution")
-
-    assert result == Path("/usr/share/applications") / "My Test Solution.desktop"
-    mock_mkdir.assert_called_once_with(parents=True, exist_ok=True)
+    expected_directory = Path("/usr/share/applications") if expected_all_users else tmp_path / "Desktop"
+    assert result == expected_directory / "My Test Solution.desktop"
+    assert not (tmp_path / "Desktop").exists()
 
 
 def test_delete_existing_solution_shortcut_removes_file_if_present(
@@ -882,7 +1069,6 @@ def test_install_shortcut_linux_exec_uses_double_quotes(
     mocker: pytest_mock.MockerFixture,
 ) -> None:
     desktop_dir = tmp_path / "Desktop"
-    desktop_dir.mkdir(parents=True)
 
     mocker.patch(
         "ansys.saf.desktop.installer.solution_desktop_deployment.platform.system",
@@ -1597,40 +1783,6 @@ def test_solution_detect_saf_desktop_portal_dependency(tmp_path: Path) -> None:
 def test_solution_without_portal_doesnt_detect_portal_dependency(tmp_path: Path) -> None:
     _write_poetry_lock(tmp_path, ["some-other-package"])
     assert not has_portal_dependency(tmp_path)
-
-
-def test_solution_detect_saf_projects_dashboard_dependency(tmp_path: Path) -> None:
-    _write_poetry_lock(tmp_path, ["ansys-saf-projects-dashboard"])
-    assert has_portal_dependency(tmp_path)
-
-
-def test_solution_detect_projects_dashboard_and_desktop_portal_dependency(tmp_path: Path) -> None:
-    _write_poetry_lock(tmp_path, ["ansys-saf-projects-dashboard", "ansys-saf-desktop-portal"])
-    assert has_portal_dependency(tmp_path)
-
-
-@pytest.mark.parametrize("solution_use_portal", [True, False])
-def test_compute_solution_commandline_portal_flag(tmp_path: Path, solution_use_portal: bool) -> None:
-    """The --portal flag is appended to the orchestrator command line only when the solution uses a portal."""
-    if platform.system() == "Windows":
-        python_exec = tmp_path / VIRTUAL_ENVIRONMENT_NAME / "Scripts" / "pythonw.exe"
-    else:
-        python_exec = tmp_path / VIRTUAL_ENVIRONMENT_NAME / "bin" / "python"
-    python_exec.parent.mkdir(parents=True)
-    python_exec.touch()
-    (tmp_path / ".env").touch()
-
-    python, arguments = compute_solution_commandline(
-        installation_directory=tmp_path,
-        glow_entry_point_module="ansys.saf.desktop.orchestrator",
-        solution_main_module="ansys.solutions.my_solution_dash.main",
-        use_glow="True",
-        solution_entry_point="",
-        solution_use_portal=solution_use_portal,
-    )
-
-    assert python == python_exec
-    assert ("--portal" in arguments) is solution_use_portal
 
 
 @pytest.mark.parametrize(

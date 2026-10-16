@@ -17,8 +17,10 @@
 import ast
 from collections.abc import Callable, Generator
 import configparser
+import ctypes
 import getpass
 import json
+import locale
 import logging
 import os
 from pathlib import Path
@@ -28,6 +30,7 @@ import shlex
 import shutil
 import subprocess
 import sys
+import tempfile
 from typing import Any, Protocol
 import venv
 import zipfile
@@ -45,7 +48,11 @@ import toml
 from ansys.saf.desktop.installer.__main__ import _load_filtered_dotenv  # pyright: ignore[reportPrivateUsage]
 from ansys.saf.desktop.installer._package.download_python import MINIMUM_REQUIRED_VERSIONS
 from ansys.saf.desktop.installer._package.solution import get_solution_namespace_info
-from ansys.saf.desktop.installer.solution_desktop_deployment import TARGET_SOLUTIONS_DIRECTORY_NAME
+from ansys.saf.desktop.installer.solution_desktop_deployment import (
+    SECURITY_MAX_SID_SIZE,
+    TARGET_SOLUTIONS_DIRECTORY_NAME,
+    WIN_BUILTIN_ADMINISTRATORS_SID,
+)
 from ansys.saf.testing.common import YieldFixture
 from ansys.saf.testing.network import get_random_free_port
 from ansys.saf.testing.platform_specific import is_ci_run
@@ -959,20 +966,211 @@ def _shortcut_uses_portal(shortcut_path: Path, tmp_path: Path, solution_root_dir
         raise ValueError("Unsupported operating system")
 
 
-def _get_expected_windows_desktop_directory() -> Path:
+def _run_as_standard_user(cmd: list[str], env: dict[str, str] | None = None) -> subprocess.CompletedProcess[str]:
+    """Run ``cmd`` with a restricted copy of the current token: Administrators deny-only and no privileges."""
+    if sys.platform != "win32":
+        raise RuntimeError("Running as a standard user is only supported on Windows.")
+    from ctypes import wintypes
+    import msvcrt
+
+    class SidAndAttributes(ctypes.Structure):
+        _fields_ = [("Sid", ctypes.c_void_p), ("Attributes", wintypes.DWORD)]
+
+    class StartupInfo(ctypes.Structure):
+        _fields_ = [
+            ("cb", wintypes.DWORD),
+            ("lpReserved", wintypes.LPWSTR),
+            ("lpDesktop", wintypes.LPWSTR),
+            ("lpTitle", wintypes.LPWSTR),
+            ("dwX", wintypes.DWORD),
+            ("dwY", wintypes.DWORD),
+            ("dwXSize", wintypes.DWORD),
+            ("dwYSize", wintypes.DWORD),
+            ("dwXCountChars", wintypes.DWORD),
+            ("dwYCountChars", wintypes.DWORD),
+            ("dwFillAttribute", wintypes.DWORD),
+            ("dwFlags", wintypes.DWORD),
+            ("wShowWindow", wintypes.WORD),
+            ("cbReserved2", wintypes.WORD),
+            ("lpReserved2", ctypes.c_void_p),
+            ("hStdInput", wintypes.HANDLE),
+            ("hStdOutput", wintypes.HANDLE),
+            ("hStdError", wintypes.HANDLE),
+        ]
+
+    class ProcessInformation(ctypes.Structure):
+        _fields_ = [
+            ("hProcess", wintypes.HANDLE),
+            ("hThread", wintypes.HANDLE),
+            ("dwProcessId", wintypes.DWORD),
+            ("dwThreadId", wintypes.DWORD),
+        ]
+
+    advapi32 = ctypes.WinDLL("advapi32", use_last_error=True)
+    kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
+    kernel32.GetCurrentProcess.restype = wintypes.HANDLE
+    kernel32.WaitForSingleObject.argtypes = [wintypes.HANDLE, wintypes.DWORD]
+    kernel32.GetExitCodeProcess.argtypes = [wintypes.HANDLE, ctypes.POINTER(wintypes.DWORD)]
+    kernel32.CloseHandle.argtypes = [wintypes.HANDLE]
+    advapi32.OpenProcessToken.argtypes = [wintypes.HANDLE, wintypes.DWORD, ctypes.POINTER(wintypes.HANDLE)]
+    advapi32.CreateRestrictedToken.argtypes = [
+        wintypes.HANDLE,
+        wintypes.DWORD,
+        wintypes.DWORD,
+        ctypes.POINTER(SidAndAttributes),
+        wintypes.DWORD,
+        ctypes.c_void_p,
+        wintypes.DWORD,
+        ctypes.c_void_p,
+        ctypes.POINTER(wintypes.HANDLE),
+    ]
+    advapi32.GetTokenInformation.argtypes = [
+        wintypes.HANDLE,
+        ctypes.c_int,
+        ctypes.c_void_p,
+        wintypes.DWORD,
+        ctypes.POINTER(wintypes.DWORD),
+    ]
+    advapi32.SetTokenInformation.argtypes = [wintypes.HANDLE, ctypes.c_int, ctypes.c_void_p, wintypes.DWORD]
+    advapi32.InitializeAcl.argtypes = [ctypes.c_void_p, wintypes.DWORD, wintypes.DWORD]
+    advapi32.AddAccessAllowedAce.argtypes = [ctypes.c_void_p, wintypes.DWORD, wintypes.DWORD, ctypes.c_void_p]
+    advapi32.CreateProcessAsUserW.argtypes = [
+        wintypes.HANDLE,
+        wintypes.LPCWSTR,
+        ctypes.c_void_p,
+        ctypes.c_void_p,
+        ctypes.c_void_p,
+        wintypes.BOOL,
+        wintypes.DWORD,
+        ctypes.c_void_p,
+        wintypes.LPCWSTR,
+        ctypes.POINTER(StartupInfo),
+        ctypes.POINTER(ProcessInformation),
+    ]
+
+    def check(succeeded: int) -> None:
+        if not succeeded:
+            raise ctypes.WinError(ctypes.get_last_error())
+
+    token, restricted_token = wintypes.HANDLE(), wintypes.HANDLE()
+    # TOKEN_ASSIGN_PRIMARY | TOKEN_DUPLICATE | TOKEN_QUERY | TOKEN_ADJUST_DEFAULT
+    check(advapi32.OpenProcessToken(kernel32.GetCurrentProcess(), 0x8B, ctypes.byref(token)))
+    admin_sid = ctypes.create_string_buffer(SECURITY_MAX_SID_SIZE)
+    admin_sid_size = wintypes.DWORD(SECURITY_MAX_SID_SIZE)
+    check(advapi32.CreateWellKnownSid(WIN_BUILTIN_ADMINISTRATORS_SID, None, admin_sid, ctypes.byref(admin_sid_size)))
+    sid_to_disable = SidAndAttributes(ctypes.addressof(admin_sid), 0)
+    try:
+        # DISABLE_MAX_PRIVILEGE, with the Administrators SID made deny-only.
+        check(
+            advapi32.CreateRestrictedToken(
+                token, 0x1, 1, ctypes.byref(sid_to_disable), 0, None, 0, None, ctypes.byref(restricted_token)
+            )
+        )
+    finally:
+        kernel32.CloseHandle(token)
+
+    try:
+        # Otherwise new objects would be owned by the (now deny-only) Administrators group.
+        token_user = ctypes.create_string_buffer(ctypes.sizeof(SidAndAttributes) + SECURITY_MAX_SID_SIZE)
+        token_user_size = wintypes.DWORD()
+        check(
+            advapi32.GetTokenInformation(
+                restricted_token, 1, token_user, ctypes.sizeof(token_user), ctypes.byref(token_user_size)
+            )
+        )  # TokenUser
+        owner = ctypes.c_void_p(SidAndAttributes.from_buffer(token_user).Sid)
+        # TokenOwner
+        check(advapi32.SetTokenInformation(restricted_token, 4, ctypes.byref(owner), ctypes.sizeof(owner)))
+
+        # The elevated default DACL only grants Administrators/SYSTEM; grant the user like a real standard token.
+        system_sid = ctypes.create_string_buffer(SECURITY_MAX_SID_SIZE)
+        system_sid_size = wintypes.DWORD(SECURITY_MAX_SID_SIZE)
+        check(advapi32.CreateWellKnownSid(22, None, system_sid, ctypes.byref(system_sid_size)))  # WinLocalSystemSid
+        default_dacl = ctypes.create_string_buffer(1024)
+        check(advapi32.InitializeAcl(default_dacl, ctypes.sizeof(default_dacl), 2))  # ACL_REVISION
+        for sid in (owner, system_sid):
+            check(advapi32.AddAccessAllowedAce(default_dacl, 2, 0x10000000, sid))  # GENERIC_ALL
+        default_dacl_ptr = ctypes.c_void_p(ctypes.addressof(default_dacl))
+        # TokenDefaultDacl
+        check(
+            advapi32.SetTokenInformation(
+                restricted_token, 6, ctypes.byref(default_dacl_ptr), ctypes.sizeof(default_dacl_ptr)
+            )
+        )
+
+        with (
+            tempfile.TemporaryDirectory() as output_dir,
+            Path(os.devnull).open("rb") as stdin,
+            (Path(output_dir) / "stdout").open("w+b") as stdout,
+            (Path(output_dir) / "stderr").open("w+b") as stderr,
+        ):
+            std_handles = [msvcrt.get_osfhandle(stream.fileno()) for stream in (stdin, stdout, stderr)]
+            for handle in std_handles:
+                os.set_handle_inheritable(handle, True)
+            startup_info = StartupInfo(
+                cb=ctypes.sizeof(StartupInfo),
+                dwFlags=0x100,  # STARTF_USESTDHANDLES
+                hStdInput=std_handles[0],
+                hStdOutput=std_handles[1],
+                hStdError=std_handles[2],
+            )
+            process_info = ProcessInformation()
+            command_line = ctypes.create_unicode_buffer(subprocess.list2cmdline(cmd))
+            environment = ctypes.create_unicode_buffer(
+                "".join(f"{key}={value}\0" for key, value in (env or os.environ).items()) + "\0"
+            )
+            check(
+                advapi32.CreateProcessAsUserW(
+                    restricted_token,
+                    None,
+                    command_line,
+                    None,
+                    None,
+                    True,
+                    0x400,  # CREATE_UNICODE_ENVIRONMENT; CREATE_NO_WINDOW fails with STATUS_DLL_INIT_FAILED.
+                    environment,
+                    None,
+                    ctypes.byref(startup_info),
+                    ctypes.byref(process_info),
+                )
+            )
+            exit_code = wintypes.DWORD()
+            try:
+                kernel32.WaitForSingleObject(process_info.hProcess, 0xFFFFFFFF)  # INFINITE
+                check(kernel32.GetExitCodeProcess(process_info.hProcess, ctypes.byref(exit_code)))
+            finally:
+                kernel32.CloseHandle(process_info.hProcess)
+                kernel32.CloseHandle(process_info.hThread)
+            stdout.seek(0)
+            stderr.seek(0)
+            encoding = locale.getpreferredencoding(False)
+            return subprocess.CompletedProcess(
+                cmd,
+                exit_code.value,
+                stdout.read().decode(encoding, errors="replace"),
+                stderr.read().decode(encoding, errors="replace"),
+            )
+    finally:
+        kernel32.CloseHandle(restricted_token)
+
+
+def _get_expected_windows_desktop_directory(as_standard_user: bool = False) -> Path:
+    is_admin = (
+        "$false" if as_standard_user else "$principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)"
+    )
     command = (
         "[Console]::OutputEncoding = [Text.Encoding]::UTF8; "
         "$principal = [Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent(); "
-        "$isAdmin = $principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator); "
+        f"$isAdmin = {is_admin}; "
         "[Environment]::GetFolderPath($(if ($isAdmin) { 'CommonDesktopDirectory' } else { 'Desktop' }))"
     )
     output = subprocess.check_output(["powershell.exe", "-NoProfile", "-Command", command], encoding="utf-8")
     return Path(output.strip())
 
 
-def _get_shortcut_path(solution_root_dir: Path, use_sudo: bool = False) -> Path:
+def _get_shortcut_path(solution_root_dir: Path, use_sudo: bool = False, as_standard_user: bool = False) -> Path:
     if platform.system() == "Windows":
-        shortcut_dir = _get_expected_windows_desktop_directory()
+        shortcut_dir = _get_expected_windows_desktop_directory(as_standard_user)
         shortcut_path = shortcut_dir / f"{SOLUTION_DISPLAY_NAME[solution_root_dir.name]}.lnk"
     elif platform.system() == "Linux":
         shortcut_dir = Path("/usr/share/applications") if use_sudo else Path(os.environ["HOME"]) / "Desktop"
@@ -994,6 +1192,7 @@ def check_installed_solution_files(
     force_python_from_source: bool = False,
     use_portal: bool = True,
     use_sudo: bool = False,
+    as_standard_user: bool = False,
 ) -> Path:
     installation_path = tmp_path if not use_sudo else Path("/opt") / "ansys_inc" / TARGET_SOLUTIONS_DIRECTORY_NAME
     installed_solution_version_dir = _get_installed_solution_version_dir(installation_path, solution_root_dir)
@@ -1010,7 +1209,7 @@ def check_installed_solution_files(
             solution_root_dir,
             force_python_from_source,
         )
-    shortcut_path = _get_shortcut_path(solution_root_dir, use_sudo)
+    shortcut_path = _get_shortcut_path(solution_root_dir, use_sudo, as_standard_user)
     assert shortcut_path.is_file()
     if platform.system() == "Linux" and not use_sudo:
         application_path = _get_solution_linux_application_path(shortcut_path)
@@ -1029,6 +1228,7 @@ class InstallSolution(Protocol):
         expected_return_code: int = 0,
         extra_flags: list[str] | None = None,
         use_sudo: bool = False,
+        as_standard_user: bool = False,
     ) -> list[str]: ...
 
 
@@ -1041,9 +1241,10 @@ def install_solution() -> InstallSolution:
         expected_return_code: int = 0,
         extra_flags: list[str] | None = None,
         use_sudo: bool = False,
+        as_standard_user: bool = False,
     ) -> list[str]:
         installer_path = _get_solution_installer_path(solution_root_dir)
-        shortcut_path = _get_shortcut_path(solution_root_dir, use_sudo)
+        shortcut_path = _get_shortcut_path(solution_root_dir, use_sudo, as_standard_user)
         shortcut_path.parent.mkdir(parents=True, exist_ok=True)
         cmd = [installer_path.as_posix(), "--no-ui"]
         cmd += ["--installation-directory", tmp_path.as_posix()] if not use_sudo else []
@@ -1055,7 +1256,19 @@ def install_solution() -> InstallSolution:
             # itself was launched under sudo we propagate the real value; otherwise we fall back to
             # the current invoking user so the installer subprocess still takes the root branch.
             installation_env["SUDO_USER"] = os.environ.get("SUDO_USER") or getpass.getuser()
-        p = subprocess.run(cmd, capture_output=True, text=True, env=installation_env)
+        if as_standard_user:
+            is_admin_probe = "import ctypes, sys; sys.exit(ctypes.windll.shell32.IsUserAnAdmin())"
+            assert _run_as_standard_user([sys.executable, "-c", is_admin_probe]).returncode == 0, (
+                "Installer would run elevated."
+            )
+            # Elevated pytest creates tmp dirs owned by Administrators, which the restricted token cannot use.
+            user = f"{os.environ['USERDOMAIN']}\\{getpass.getuser()}"
+            subprocess.run(["icacls", tmp_path, "/grant", f"{user}:(OI)(CI)F", "/Q"], check=True)
+            # Wheels cached by elevated runs are only readable by Administrators.
+            installation_env["PIP_NO_CACHE_DIR"] = "1"
+            p = _run_as_standard_user(cmd, installation_env)
+        else:
+            p = subprocess.run(cmd, capture_output=True, text=True, env=installation_env)
         assert p.returncode == expected_return_code, p.stderr
         return p.stdout.splitlines()
 

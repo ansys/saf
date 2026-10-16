@@ -84,6 +84,10 @@ def _block_internet_access():
 @pytest.mark.usefixtures("check_gtk_launch_and_xvfb_are_installed")
 class TestInstaller:
     @pytest.mark.usefixtures("disable_global_poetry_virtualenvs_creation")
+    @pytest.mark.parametrize(
+        "as_standard_user",
+        [pytest.param(False, id="current_user"), pytest.param(True, id="standard_user", marks=windows_only())],
+    )
     def test_installer_default(
         self,
         tmp_path: Path,
@@ -95,6 +99,7 @@ class TestInstaller:
         session_selenium_webdriver: WebDriver,
         cleanup_shortcut: list[Path],
         monkeypatch: pytest.MonkeyPatch,
+        as_standard_user: bool,
     ):
         """
         Test saf-desktop-installer entry point with the default values. We check:
@@ -102,6 +107,7 @@ class TestInstaller:
         - that all the built solution files exist,
         - that the solution documentation has been built and embedded into the solution wheel,
         - that the solution installation executable finalizes correctly,
+        - that a non-elevated Windows user can install the solution, with the shortcut on their own Desktop,
         - that the right python executable is used in the installed shortcut, and
         - that the solution modules are preloaded,
         - that the solution executes correctly, logging to file by default,
@@ -128,12 +134,12 @@ class TestInstaller:
         check_built_solution_files(solution_root_dir)
         check_dependencies_can_be_upgraded(solution_root_dir, solution_venv_python_exec)
 
-        installation_output = install_solution(solution_root_dir, tmp_path)
+        installation_output = install_solution(solution_root_dir, tmp_path, as_standard_user=as_standard_user)
         assert find_msg_in_output("Preload application", installation_output)
         assert find_msg_in_output("Execution time:", installation_output)
         assert_webview2_is_checked(installation_output)
         assert_long_paths_are_checked(installation_output)
-        shortcut_path = check_installed_solution_files(tmp_path, solution_root_dir)
+        shortcut_path = check_installed_solution_files(tmp_path, solution_root_dir, as_standard_user=as_standard_user)
         cleanup_shortcut.append(shortcut_path)
         check_solution_module_preload_is_executed(tmp_path, solution_root_dir)
         check_dependencies(

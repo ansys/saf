@@ -8,16 +8,15 @@
     },
     {
         "test-report-artifact-name-suffix": "sdi_windows_extended_test_installer_default",
-        "pytest-additional-arguments": "-n0 tests/e2e/test_installer_entry_point.py::TestInstaller::test_installer_default",
+        "pytest-additional-arguments": "-n0 tests/e2e/test_installer_entry_point.py::TestInstaller::test_installer_default[current_user]",
         "runner-name": "windows-latest",
         "download-extra-packages": "true"
     },
     {
-        "test-report-artifact-name-suffix": "sdi_windows_extended_test_installer_default_non_admin",
-        "pytest-additional-arguments": "-n0 tests/e2e/test_installer_entry_point.py::TestInstaller::test_installer_default",
+        "test-report-artifact-name-suffix": "sdi_windows_extended_test_installer_default_standard_user",
+        "pytest-additional-arguments": "-n0 tests/e2e/test_installer_entry_point.py::TestInstaller::test_installer_default[standard_user]",
         "runner-name": "windows-latest",
-        "download-extra-packages": "true",
-        "non-admin": "true"
+        "download-extra-packages": "true"
     },
     {
         "test-report-artifact-name-suffix": "sdi_linux_extended_test_run_solution_without_log_to_files",

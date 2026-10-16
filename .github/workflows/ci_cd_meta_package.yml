@@ -336,10 +336,11 @@ jobs:
       #     poetry add "ansys-visor-viewer"
 
       - name: Add pyansys to poetry project (@main)
+        if: ${{ matrix.python-version != '3.11' }}
         working-directory: my_project
         shell: bash
         run: |
-          poetry add "git+https://github.com/ansys/pyansys.git@main"
+          poetry add "git+https://github.com/ansys/pyansys.git@main" --python ">=3.12"
 
   check-wheel-can-be-pip-installed:
     name: Check wheel can be pip installed

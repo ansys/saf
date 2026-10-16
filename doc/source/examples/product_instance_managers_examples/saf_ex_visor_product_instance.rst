@@ -18,11 +18,11 @@ VISOR Product Instance Manager
 :material-outlined:`emoji_objects;1.25em;sd-text-primary` Feature highlight
 ============================================================================
 
-Visual Interactive Simulation Object Renderer (VISOR) is a 3D visualization web 
+Visual Interactive Simulation Object Renderer (VISOR) is a 3D visualization web
 component for Ansys solutions and apps.
 
 This example shows how to create a **product instance manager** for VISOR
-using SAF. The product instance manager enables management of the VISOR product 
+using SAF. The product instance manager enables management of the VISOR product
 instance lifecycle, including starting, stopping, and interacting with the instance.
 
 In this example, you learn how to:
@@ -119,7 +119,7 @@ Create the solution definition.
     :dedent:
 
   .. note::
-    To understand why the VISOR version is 0, refer to the 
+    To understand why the VISOR version is 0, refer to the
     :ref:`Supported product instance managers page <instance_management_supported_products>`.
 
 .. dropdown:: Define the step model
@@ -129,7 +129,7 @@ Create the solution definition.
     ``@create_instance`` to create an instance of the VISOR product manager. It initializes VISOR,
     stores the current host and port, marks the instance as started, and
     emits progress messages.
-  * ``show_piston``, ``show_spheres``, and ``show_elbow`` are decorated with 
+  * ``show_piston``, ``show_spheres``, and ``show_elbow`` are decorated with
     ``@instance`` to reuse the running instance. Each transaction resolves its
     geometry asset through BDM and sends the cached path to VISOR with a
     ``Metadata`` value.
@@ -291,10 +291,10 @@ Expose the solution definition in the UI.
     example shapes into VISOR.
 
   The **logs card** displays VISOR output and provides a clear-logs action.
-  
+
   The **viewer card** is placed below the controls and logs and fills the available
   width.
-  
+
   After defining these components, we return the ``html.Div`` linking them together.
   The controls and logs use responsive grid spans: they stack at
   smaller widths and use 3/9 columns at the ``lg`` breakpoint and above.

@@ -36,7 +36,6 @@ from dotenv import set_key
 import httpx2
 from packaging.markers import Marker
 from packaging.version import parse as parse_version
-from pylnk3 import Lnk, parse  # pyright: ignore[reportMissingTypeStubs, reportUnknownVariableType]
 import pytest
 from selenium.webdriver.chrome.webdriver import WebDriver
 from selenium.webdriver.common.by import By
@@ -908,13 +907,29 @@ def check_dependencies(
             raise ValueError(f"Required dependency {package} not found in the installed solution.") from e
 
 
+def _read_windows_shortcut(shortcut_path: Path) -> tuple[Path, str]:
+    """Return the target path and arguments of a Windows shortcut, as read by the Windows shell."""
+    # pylnk3 truncates targets under C:\Users, so use WScript.Shell (path passed via env, no quoting).
+    command = (
+        "[Console]::OutputEncoding = [Text.Encoding]::UTF8; "
+        "$s = (New-Object -ComObject WScript.Shell).CreateShortcut($env:SAF_TEST_LNK_PATH); $s.TargetPath; $s.Arguments"
+    )
+    output = subprocess.check_output(
+        ["powershell.exe", "-NoProfile", "-Command", command],
+        encoding="utf-8",
+        env={**os.environ, "SAF_TEST_LNK_PATH": str(shortcut_path)},
+    )
+    target_path, _, arguments = output.strip().partition("\n")
+    return Path(target_path.strip()), arguments.strip()
+
+
 def _check_shortcut_uses_correct_python(shortcut_path: Path, tmp_path: Path, solution_root_dir: Path, pythonw: bool):
     installed_solution_venv_python_exec = _get_installed_solution_venv_python_executable(tmp_path, solution_root_dir)
     assert installed_solution_venv_python_exec.is_file()
     if platform.system() == "Windows":
-        lnk: Lnk = parse(str(shortcut_path))
-        assert Path(lnk.path).parent.as_posix() == installed_solution_venv_python_exec.parent.as_posix()  # type: ignore
-        python_name = Path(lnk.path).name  # pyright: ignore[reportUnknownMemberType, reportArgumentType]
+        target_path, _ = _read_windows_shortcut(shortcut_path)
+        assert target_path.parent.as_posix() == installed_solution_venv_python_exec.parent.as_posix()
+        python_name = target_path.name
         assert python_name == "pythonw.exe" if pythonw else python_name == "python.exe"
     elif platform.system() == "Linux":
         config = configparser.ConfigParser()
@@ -932,9 +947,8 @@ def _shortcut_uses_portal(shortcut_path: Path, tmp_path: Path, solution_root_dir
     installed_solution_venv_python_exec = _get_installed_solution_venv_python_executable(tmp_path, solution_root_dir)
     assert installed_solution_venv_python_exec.is_file()
     if platform.system() == "Windows":
-        lnk: Lnk = parse(str(shortcut_path))
-        arguments = getattr(lnk, "arguments", "")  # pyright: ignore[reportUnknownMemberType, reportArgumentType]
-        return "--portal" in str(arguments)
+        _, arguments = _read_windows_shortcut(shortcut_path)
+        return "--portal" in arguments
     elif platform.system() == "Linux":
         config = configparser.ConfigParser()
         config.read(shortcut_path)
@@ -945,9 +959,21 @@ def _shortcut_uses_portal(shortcut_path: Path, tmp_path: Path, solution_root_dir
         raise ValueError("Unsupported operating system")
 
 
+def _get_expected_windows_desktop_directory() -> Path:
+    command = (
+        "[Console]::OutputEncoding = [Text.Encoding]::UTF8; "
+        "$principal = [Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent(); "
+        "$isAdmin = $principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator); "
+        "[Environment]::GetFolderPath($(if ($isAdmin) { 'CommonDesktopDirectory' } else { 'Desktop' }))"
+    )
+    output = subprocess.check_output(["powershell.exe", "-NoProfile", "-Command", command], encoding="utf-8")
+    return Path(output.strip())
+
+
 def _get_shortcut_path(solution_root_dir: Path, use_sudo: bool = False) -> Path:
     if platform.system() == "Windows":
-        shortcut_path = Path(os.environ["PUBLIC"]) / "Desktop" / f"{SOLUTION_DISPLAY_NAME[solution_root_dir.name]}.lnk"
+        shortcut_dir = _get_expected_windows_desktop_directory()
+        shortcut_path = shortcut_dir / f"{SOLUTION_DISPLAY_NAME[solution_root_dir.name]}.lnk"
     elif platform.system() == "Linux":
         shortcut_dir = Path("/usr/share/applications") if use_sudo else Path(os.environ["HOME"]) / "Desktop"
         shortcut_path = shortcut_dir / f"{SOLUTION_DISPLAY_NAME[solution_root_dir.name]}.desktop"

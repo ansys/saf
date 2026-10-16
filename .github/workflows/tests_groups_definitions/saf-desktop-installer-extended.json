@@ -13,6 +13,13 @@
         "download-extra-packages": "true"
     },
     {
+        "test-report-artifact-name-suffix": "sdi_windows_extended_test_installer_default_non_admin",
+        "pytest-additional-arguments": "-n0 tests/e2e/test_installer_entry_point.py::TestInstaller::test_installer_default",
+        "runner-name": "windows-latest",
+        "download-extra-packages": "true",
+        "non-admin": "true"
+    },
+    {
         "test-report-artifact-name-suffix": "sdi_linux_extended_test_run_solution_without_log_to_files",
         "install-gtk-xvfb": "true",
         "pytest-additional-arguments": "-n0 tests/e2e/test_installer_entry_point.py::TestInstaller::test_run_solution_without_log_to_files",

@@ -28,7 +28,7 @@ repos:
       - id: codespell
         files: ^examples/
         args: ["--skip", "*doc/styles/*,*.js,*.tmp,*.vtu,*.vtp,*poetry.lock", "--ignore-words",
-          "doc/styles/Vocab/ANSYS/accept.txt,examples/.codespell.ignore"]
+          "doc/styles/config/vocabularies/ANSYS/accept.txt,examples/.codespell.ignore"]
 
   - repo: https://github.com/pycqa/pydocstyle
     rev: 07f6707e2c5612960347f7c00125620457f490a7 # 6.3.0

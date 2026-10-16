@@ -87,7 +87,7 @@ When you complete this example, you can expect the following output in the solut
 .. If none exist, delete the section.
 
 Packages
- <To render any Plotly-powered data visualization, you need the ``dcc.Graph`` component from the **Dash Core Components** library. For more information, see the `Plotly Dash documentation <https://dash.plotly.com/dash-core-components/graph>`_.>
+ <To render any Plotly powered data visualization, you need the ``dcc.Graph`` component from the **Dash Core Components** library. For more information, see the `Plotly Dash documentation <https://dash.plotly.com/dash-core-components/graph>`_.>
 
 
 Usage examples

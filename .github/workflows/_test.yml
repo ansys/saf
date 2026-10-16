@@ -325,6 +325,11 @@ jobs:
         if: ${{ env.USE_MOON == 'true' && runner.environment != 'self-hosted' }}
         uses: moonrepo/setup-toolchain@261c62cb5b0f580c7be7c8cd0f023a2e96756095 # v0.6.4
 
+      - name: Install workspace dependencies (Moon)
+        if: ${{ env.USE_MOON == 'true' }}
+        shell: bash
+        run: moon run root:uv-sync -- --all-groups
+
       - name: Prepare runner for tests
         if: matrix.prepare-runner == 'true' || matrix.upgrade-docker == 'true' ||
           matrix.install-hps == 'true'
@@ -348,8 +353,8 @@ jobs:
                     "private_image": "postgres:17"
                 },
                 {
-                    "image": "eqalpha/keydb:alpine_x86_64_v6.3.3",  # gitleaks:allow
-                    "private_image": "keydb:alpine_x86_64_v6.3.3"  # gitleaks:allow
+                    "image": "eqalpha/keydb:alpine_x86_64_v6.3.3",
+                    "private_image": "keydb:alpine_x86_64_v6.3.3"
                 },
                 {
                     "image": "influxdb:1.8.10",
@@ -408,24 +413,24 @@ jobs:
         shell: bash
         run: moon run $PACKAGE:install-pim-light-server
         env:
-          UV_EXTRA_INDEX_URL: https://PAT:${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}@${{
-            secrets.PYANSYS_PYPI_PRIVATE_URL }}
+          UV_INDEX: https://PAT:${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}@${{ secrets.PYANSYS_PYPI_PRIVATE_URL
+            }}
 
       - name: Install Visor (Moon)
         if: ${{ matrix.install-visor == 'true' && env.USE_MOON == 'true' }}
         shell: bash
         run: moon run $PACKAGE:install-visor
         env:
-          UV_EXTRA_INDEX_URL: https://PAT:${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}@${{
-            secrets.PYANSYS_PYPI_PRIVATE_URL }}
+          UV_INDEX: https://PAT:${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}@${{ secrets.PYANSYS_PYPI_PRIVATE_URL
+            }}
 
       - name: Install desktop-portal (Moon)
         if: ${{ matrix.install-portal == 'true' && env.USE_MOON == 'true' }}
         shell: bash
         run: moon run $PACKAGE:install-saf-desktop-portal
         env:
-          UV_EXTRA_INDEX_URL: https://PAT:${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}@${{
-            secrets.PYANSYS_PYPI_PRIVATE_URL }}
+          UV_INDEX: https://PAT:${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}@${{ secrets.PYANSYS_PYPI_PRIVATE_URL
+            }}
 
       - name: Install aspire dashboard (Moon)
         if: ${{ matrix.install-ansys-saf-aspire == 'true' && env.USE_MOON == 'true'
@@ -433,8 +438,8 @@ jobs:
         shell: bash
         run: moon run $PACKAGE:install-ansys-saf-aspire
         env:
-          UV_EXTRA_INDEX_URL: https://PAT:${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}@${{
-            secrets.PYANSYS_PYPI_PRIVATE_URL }}
+          UV_INDEX: https://PAT:${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}@${{ secrets.PYANSYS_PYPI_PRIVATE_URL
+            }}
 
       - name: Install minerva-python-client (Moon)
         if: ${{ matrix.install-minerva-python-client == 'true' && env.USE_MOON ==
@@ -442,8 +447,8 @@ jobs:
         shell: bash
         run: moon run $PACKAGE:install-minerva-python-client
         env:
-          UV_EXTRA_INDEX_URL: https://PAT:${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}@${{
-            secrets.PYANSYS_PYPI_PRIVATE_URL }}
+          UV_INDEX: https://PAT:${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}@${{ secrets.PYANSYS_PYPI_PRIVATE_URL
+            }}
 
       - name: Download extra packages for e2e tests (Moon)
         if: matrix.download-extra-packages == 'true' && env.USE_MOON == 'true'
@@ -525,7 +530,8 @@ jobs:
 
       - name: Publish pytest logs
         if: always() && (steps.run-tests.outcome != 'skipped' || steps.run-tests-moon.outcome
-          != 'skipped')
+          != 'skipped') && hashFiles(format('{0}/{1}/{2}', github.workspace, needs.configure-tests.outputs.working-directory
+          , 'pytest_logs')) != ''
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: "pytest_logs_${{ matrix.test-report-artifact-name-suffix }}_${{ inputs.python-version

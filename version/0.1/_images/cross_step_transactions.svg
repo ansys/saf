@@ -1,0 +1,71 @@
+<svg viewBox="0 0 760 340" xmlns="http://www.w3.org/2000/svg" role="img" font-family="ui-monospace, 'Cascadia Code', 'Fira Mono', monospace" font-size="13">
+  <title>Cross-step transactions</title>
+  <desc>Diagram showing how cross-step transactions read fields from upstream steps via StepSpec download</desc>
+
+  <defs>
+    <marker id="arr-cross" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#818cf8"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="760" height="340" fill="#0f172a" rx="12"/>
+
+  <!-- Title -->
+  <text x="380" y="32" text-anchor="middle" fill="#f1f5f9" font-size="16" font-weight="700" letter-spacing="0.5">Cross-Step Transactions</text>
+  <text x="380" y="52" text-anchor="middle" fill="#64748b" font-size="11">Read fields from upstream steps — download only, never upload</text>
+
+  <!-- SetupStep -->
+  <rect x="40" y="76" width="200" height="120" rx="10" fill="#1e293b" stroke="#3b82f6" stroke-width="1.5"/>
+  <rect x="40" y="76" width="200" height="26" rx="10" fill="#1e3a5f"/>
+  <rect x="40" y="92" width="200" height="10" fill="#1e3a5f"/>
+  <text x="140" y="94" text-anchor="middle" fill="#93c5fd" font-size="11" font-weight="700">SetupStep</text>
+  <rect x="56" y="112" width="168" height="22" rx="4" fill="#0f172a" stroke="#3b82f6" stroke-width="1"/>
+  <text x="140" y="127" text-anchor="middle" fill="#7dd3fc" font-size="10">temperature = 20.0</text>
+  <rect x="56" y="140" width="168" height="22" rx="4" fill="#0f172a" stroke="#3b82f6" stroke-width="1"/>
+  <text x="140" y="155" text-anchor="middle" fill="#7dd3fc" font-size="10">pressure = 101.3</text>
+  <rect x="56" y="168" width="168" height="22" rx="4" fill="#0f172a" stroke="#475569" stroke-width="1"/>
+  <text x="140" y="183" text-anchor="middle" fill="#94a3b8" font-size="10">geometry = ...</text>
+
+  <!-- AnalysisStep -->
+  <rect x="40" y="216" width="200" height="100" rx="10" fill="#1e293b" stroke="#3b82f6" stroke-width="1.5"/>
+  <rect x="40" y="216" width="200" height="26" rx="10" fill="#1e3a5f"/>
+  <rect x="40" y="232" width="200" height="10" fill="#1e3a5f"/>
+  <text x="140" y="234" text-anchor="middle" fill="#93c5fd" font-size="11" font-weight="700">AnalysisStep</text>
+  <rect x="56" y="252" width="168" height="22" rx="4" fill="#0f172a" stroke="#3b82f6" stroke-width="1"/>
+  <text x="140" y="267" text-anchor="middle" fill="#7dd3fc" font-size="10">solver_result = 0.0</text>
+  <rect x="56" y="280" width="168" height="22" rx="4" fill="#0f172a" stroke="#475569" stroke-width="1"/>
+  <text x="140" y="295" text-anchor="middle" fill="#94a3b8" font-size="10">convergence = []</text>
+
+  <!-- ReportStep -->
+  <rect x="520" y="130" width="210" height="130" rx="10" fill="#1e293b" stroke="#34d399" stroke-width="1.5"/>
+  <rect x="520" y="130" width="210" height="26" rx="10" fill="#064e3b"/>
+  <rect x="520" y="146" width="210" height="10" fill="#064e3b"/>
+  <text x="625" y="148" text-anchor="middle" fill="#a7f3d0" font-size="11" font-weight="700">ReportStep</text>
+
+  <!-- Transaction box inside ReportStep -->
+  <rect x="536" y="168" width="178" height="26" rx="5" fill="#312e81" stroke="#818cf8" stroke-width="1"/>
+  <text x="625" y="185" text-anchor="middle" fill="#c7d2fe" font-size="9" font-weight="600">@transaction</text>
+
+  <rect x="536" y="200" width="178" height="22" rx="4" fill="#0f172a" stroke="#34d399" stroke-width="1"/>
+  <text x="625" y="215" text-anchor="middle" fill="#6ee7b7" font-size="10">summary ← upload</text>
+
+  <rect x="536" y="228" width="178" height="22" rx="4" fill="#0f172a" stroke="#475569" stroke-width="1"/>
+  <text x="625" y="243" text-anchor="middle" fill="#94a3b8" font-size="10">report_file = NO_ENTITY</text>
+
+  <!-- Cross-step arrows -->
+  <path d="M 240 123 C 380 100, 440 160, 520 175" stroke="#818cf8" stroke-width="1.5" fill="none" marker-end="url(#arr-cross)"/>
+  <path d="M 240 151 C 380 130, 440 170, 520 185" stroke="#818cf8" stroke-width="1.5" fill="none" marker-end="url(#arr-cross)"/>
+  <path d="M 240 263 C 380 240, 440 200, 520 195" stroke="#818cf8" stroke-width="1.5" fill="none" marker-end="url(#arr-cross)"/>
+
+  <!-- Labels on arrows -->
+  <text x="350" y="98" fill="#818cf8" font-size="8" font-weight="600">download</text>
+  <text x="350" y="140" fill="#818cf8" font-size="8" font-weight="600">download</text>
+  <text x="350" y="246" fill="#818cf8" font-size="8" font-weight="600">download</text>
+
+  <!-- Rules box -->
+  <rect x="380" y="278" width="350" height="50" rx="8" fill="#1e293b" stroke="#475569" stroke-width="1"/>
+  <text x="396" y="298" fill="#f97316" font-size="10" font-weight="600">Rules:</text>
+  <text x="396" y="314" fill="#94a3b8" font-size="9">• Cross-step parameters: download only (never upload)</text>
+  <text x="396" y="328" fill="#94a3b8" font-size="9">• Parameter names must match StepsModel field names</text>
+</svg>

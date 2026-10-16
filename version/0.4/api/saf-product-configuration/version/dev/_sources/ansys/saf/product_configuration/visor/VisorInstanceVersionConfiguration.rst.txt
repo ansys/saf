@@ -1,0 +1,237 @@
+
+
+
+
+
+
+:class:`VisorInstanceVersionConfiguration`
+==========================================
+
+
+.. py:class:: ansys.saf.product_configuration.visor.VisorInstanceVersionConfiguration(version: str)
+
+   Bases: :py:obj:`ansys.saf.product_configuration.interfaces.IProductInstanceVersionConfiguration`
+
+
+   
+   Configuration class for a specific version of Visor.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: VisorInstanceVersionConfiguration
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~service_name`
+            - The name of the service associated with the Visor instance.
+          * - :py:attr:`~execution_command`
+            - The command to launch Visor.
+          * - :py:attr:`~exe_path_for_pim`
+            - Path to the Visor executable for PIM light server.
+          * - :py:attr:`~environment`
+            - Environment variables for the Visor instance.
+          * - :py:attr:`~software_requirements`
+            - Required software to run Visor in HPS.
+          * - :py:attr:`~service_type`
+            - Service type use for the health check.
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.saf.product_configuration.visor import VisorInstanceVersionConfiguration
+
+Property detail
+---------------
+
+.. py:property:: service_name
+   :type: str
+
+
+   
+   The name of the service associated with the Visor instance.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: execution_command
+   :type: str
+
+
+   
+   The command to launch Visor.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: exe_path_for_pim
+   :type: str
+
+
+   
+   Path to the Visor executable for PIM light server.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: environment
+   :type: dict[str, str]
+
+
+   
+   Environment variables for the Visor instance.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: software_requirements
+   :type: list[ansys.saf.product_configuration.interfaces.ISoftware]
+
+
+   
+   Required software to run Visor in HPS.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: service_type
+   :type: ansys.saf.product_configuration.interfaces.ServiceType
+
+
+   
+   Service type use for the health check.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+
+

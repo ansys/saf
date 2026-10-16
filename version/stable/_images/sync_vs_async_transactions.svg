@@ -1,0 +1,100 @@
+<svg viewBox="0 0 760 400" xmlns="http://www.w3.org/2000/svg" role="img" font-family="ui-monospace, 'Cascadia Code', 'Fira Mono', monospace" font-size="13">
+  <title>Synchronous vs asynchronous transactions</title>
+  <desc>Side-by-side comparison of synchronous and asynchronous transaction execution models</desc>
+
+  <defs>
+    <marker id="arr-sync" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#818cf8"/>
+    </marker>
+    <marker id="arr-async" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#34d399"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="760" height="400" fill="#0f172a" rx="12"/>
+
+  <!-- Title -->
+  <text x="380" y="32" text-anchor="middle" fill="#f1f5f9" font-size="16" font-weight="700" letter-spacing="0.5">Synchronous vs. Asynchronous Transactions</text>
+
+  <!-- LEFT: Synchronous -->
+  <rect x="30" y="56" width="340" height="330" rx="10" fill="#1e293b" stroke="#818cf8" stroke-width="1.5"/>
+  <rect x="30" y="56" width="340" height="28" rx="10" fill="#312e81"/>
+  <rect x="30" y="74" width="340" height="10" fill="#312e81"/>
+  <text x="200" y="76" text-anchor="middle" fill="#c7d2fe" font-size="12" font-weight="700">Synchronous (blocking)</text>
+
+  <!-- Timeline -->
+  <text x="50" y="106" fill="#94a3b8" font-size="9" font-weight="600">UI THREAD</text>
+  <line x1="50" y1="116" x2="50" y2="310" stroke="#475569" stroke-width="1" stroke-dasharray="3,3"/>
+
+  <!-- Request -->
+  <rect x="70" y="116" width="140" height="24" rx="5" fill="#312e81" stroke="#818cf8" stroke-width="1"/>
+  <text x="140" y="132" text-anchor="middle" fill="#c7d2fe" font-size="9">POST /transaction</text>
+
+  <!-- Blocked period -->
+  <rect x="70" y="146" width="140" height="80" rx="5" fill="#1c1917" stroke="#f97316" stroke-width="1.5" stroke-dasharray="4,2"/>
+  <text x="140" y="172" text-anchor="middle" fill="#fb923c" font-size="9" font-weight="600">UI BLOCKED</text>
+  <text x="140" y="188" text-anchor="middle" fill="#94a3b8" font-size="8">Waiting for response...</text>
+  <text x="140" y="202" text-anchor="middle" fill="#94a3b8" font-size="8">User cannot interact</text>
+  <text x="140" y="216" text-anchor="middle" fill="#94a3b8" font-size="8">Clicks are queued</text>
+
+  <!-- Response -->
+  <rect x="70" y="232" width="140" height="24" rx="5" fill="#312e81" stroke="#818cf8" stroke-width="1"/>
+  <text x="140" y="248" text-anchor="middle" fill="#c7d2fe" font-size="9">200 + result</text>
+
+  <!-- Arrow -->
+  <line x1="140" y1="140" x2="140" y2="146" stroke="#818cf8" stroke-width="1.5" marker-end="url(#arr-sync)"/>
+  <line x1="140" y1="226" x2="140" y2="232" stroke="#818cf8" stroke-width="1.5" marker-end="url(#arr-sync)"/>
+
+  <!-- When to use -->
+  <rect x="46" y="270" width="308" height="104" rx="6" fill="#0f172a"/>
+  <text x="62" y="290" fill="#a5b4fc" font-size="10" font-weight="600">Use when:</text>
+  <text x="62" y="308" fill="#94a3b8" font-size="9">• Operation completes in milliseconds</text>
+  <text x="62" y="324" fill="#94a3b8" font-size="9">• Simple field updates, quick validations</text>
+  <text x="62" y="340" fill="#94a3b8" font-size="9">• Result needed immediately before UI proceeds</text>
+  <text x="62" y="362" fill="#f97316" font-size="9" font-weight="600">⚠ Never use for operations > 2 seconds</text>
+
+  <!-- RIGHT: Asynchronous -->
+  <rect x="390" y="56" width="340" height="330" rx="10" fill="#1e293b" stroke="#34d399" stroke-width="1.5"/>
+  <rect x="390" y="56" width="340" height="28" rx="10" fill="#064e3b"/>
+  <rect x="390" y="74" width="340" height="10" fill="#064e3b"/>
+  <text x="560" y="76" text-anchor="middle" fill="#a7f3d0" font-size="12" font-weight="700">Asynchronous (long-running)</text>
+
+  <!-- Timeline -->
+  <text x="410" y="106" fill="#94a3b8" font-size="9" font-weight="600">UI THREAD</text>
+  <line x1="410" y1="116" x2="410" y2="310" stroke="#475569" stroke-width="1" stroke-dasharray="3,3"/>
+  <text x="580" y="106" fill="#94a3b8" font-size="9" font-weight="600">BACKGROUND</text>
+  <line x1="580" y1="116" x2="580" y2="310" stroke="#475569" stroke-width="1" stroke-dasharray="3,3"/>
+
+  <!-- Request -->
+  <rect x="430" y="116" width="120" height="24" rx="5" fill="#064e3b" stroke="#34d399" stroke-width="1"/>
+  <text x="490" y="132" text-anchor="middle" fill="#a7f3d0" font-size="9">POST /transaction</text>
+
+  <!-- Immediate 202 -->
+  <rect x="430" y="150" width="120" height="24" rx="5" fill="#064e3b" stroke="#34d399" stroke-width="1"/>
+  <text x="490" y="166" text-anchor="middle" fill="#a7f3d0" font-size="9">202 Accepted</text>
+  <line x1="490" y1="140" x2="490" y2="150" stroke="#34d399" stroke-width="1.5" marker-end="url(#arr-async)"/>
+
+  <!-- UI responsive -->
+  <rect x="430" y="184" width="120" height="60" rx="5" fill="#0f172a" stroke="#34d399" stroke-width="1"/>
+  <text x="490" y="204" text-anchor="middle" fill="#6ee7b7" font-size="9" font-weight="600">UI RESPONSIVE</text>
+  <text x="490" y="220" text-anchor="middle" fill="#94a3b8" font-size="8">User can interact</text>
+  <text x="490" y="234" text-anchor="middle" fill="#94a3b8" font-size="8">WebSocket events</text>
+
+  <!-- Background work -->
+  <rect x="560" y="130" width="140" height="120" rx="5" fill="#0f172a" stroke="#475569" stroke-width="1"/>
+  <text x="630" y="150" text-anchor="middle" fill="#94a3b8" font-size="9" font-weight="600">Computing...</text>
+  <text x="630" y="170" text-anchor="middle" fill="#64748b" font-size="8">upload(["progress"])</text>
+  <text x="630" y="190" text-anchor="middle" fill="#64748b" font-size="8">upload(["progress"])</text>
+  <text x="630" y="210" text-anchor="middle" fill="#64748b" font-size="8">upload(["progress"])</text>
+  <text x="630" y="236" text-anchor="middle" fill="#34d399" font-size="9" font-weight="600">Completed ✓</text>
+
+  <!-- When to use -->
+  <rect x="406" y="270" width="308" height="104" rx="6" fill="#0f172a"/>
+  <text x="422" y="290" fill="#6ee7b7" font-size="10" font-weight="600">Use when:</text>
+  <text x="422" y="308" fill="#94a3b8" font-size="9">• Operation takes seconds to minutes</text>
+  <text x="422" y="324" fill="#94a3b8" font-size="9">• Heavy computations, solver calls</text>
+  <text x="422" y="340" fill="#94a3b8" font-size="9">• Product interactions, file processing</text>
+  <text x="422" y="356" fill="#94a3b8" font-size="9">• User should keep interacting with UI</text>
+  <text x="422" y="372" fill="#34d399" font-size="9" font-weight="600">✓ Multiple methods can run concurrently</text>
+</svg>

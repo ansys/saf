@@ -1,0 +1,165 @@
+
+
+
+
+
+
+:class:`GeometryInstanceConfiguration`
+======================================
+
+
+.. py:class:: ansys.saf.product_configuration.geometry.GeometryInstanceConfiguration
+
+   Bases: :py:obj:`ansys.saf.product_configuration.interfaces.IProductInstanceConfiguration`
+
+
+   
+   Configuration class for Ansys Geometry service with secure gRPC connections.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: GeometryInstanceConfiguration
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~get_version_configuration`
+            - Get configuration class for a particular version of Geometry.
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~product_name`
+            - Name used to identify Geometry in the product instance management system.
+          * - :py:attr:`~versions`
+            - Supported Geometry versions.
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.saf.product_configuration.geometry import GeometryInstanceConfiguration
+
+Property detail
+---------------
+
+.. py:property:: product_name
+   :type: str
+
+
+   
+   Name used to identify Geometry in the product instance management system.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: versions
+   :type: list[str]
+
+
+   
+   Supported Geometry versions.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+Method detail
+-------------
+
+.. py:method:: get_version_configuration(version: str) -> ansys.saf.product_configuration.interfaces.IProductInstanceVersionConfiguration
+
+   
+   Get configuration class for a particular version of Geometry.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

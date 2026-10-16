@@ -1,0 +1,83 @@
+<svg viewBox="0 0 760 320" xmlns="http://www.w3.org/2000/svg" role="img" font-family="ui-monospace, 'Cascadia Code', 'Fira Mono', monospace" font-size="13">
+  <title>DAG depth — shallow vs deep chains</title>
+  <desc>Diagram comparing a shallow DAG with a deep chain to illustrate cascading recomputation risks</desc>
+
+  <defs>
+    <marker id="arr-shallow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#34d399"/>
+    </marker>
+    <marker id="arr-deep" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#f97316"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="760" height="320" fill="#0f172a" rx="12"/>
+
+  <!-- Title -->
+  <text x="380" y="32" text-anchor="middle" fill="#f1f5f9" font-size="16" font-weight="700" letter-spacing="0.5">Keep the DAG Shallow</text>
+  <text x="380" y="52" text-anchor="middle" fill="#64748b" font-size="11">Deep chains cause cascading recomputations on every upstream change</text>
+
+  <!-- LEFT: Shallow DAG (good) -->
+  <rect x="30" y="68" width="340" height="236" rx="10" fill="#1e293b" stroke="#34d399" stroke-width="1.5"/>
+  <rect x="30" y="68" width="340" height="28" rx="10" fill="#064e3b"/>
+  <rect x="30" y="86" width="340" height="10" fill="#064e3b"/>
+  <text x="200" y="88" text-anchor="middle" fill="#a7f3d0" font-size="12" font-weight="700">✓ Shallow — 2 levels</text>
+
+  <!-- Setup node -->
+  <rect x="140" y="110" width="120" height="32" rx="6" fill="#0f172a" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="200" y="130" text-anchor="middle" fill="#93c5fd" font-size="10" font-weight="700">SetupStep</text>
+
+  <!-- Two downstream nodes -->
+  <rect x="56" y="176" width="120" height="32" rx="6" fill="#0f172a" stroke="#34d399" stroke-width="1.5"/>
+  <text x="116" y="196" text-anchor="middle" fill="#6ee7b7" font-size="10" font-weight="700">AnalysisStep</text>
+
+  <rect x="224" y="176" width="120" height="32" rx="6" fill="#0f172a" stroke="#34d399" stroke-width="1.5"/>
+  <text x="284" y="196" text-anchor="middle" fill="#6ee7b7" font-size="10" font-weight="700">ResultsStep</text>
+
+  <!-- Arrows -->
+  <line x1="170" y1="142" x2="130" y2="176" stroke="#34d399" stroke-width="1.5" marker-end="url(#arr-shallow)"/>
+  <line x1="230" y1="142" x2="270" y2="176" stroke="#34d399" stroke-width="1.5" marker-end="url(#arr-shallow)"/>
+
+  <!-- Annotation -->
+  <text x="56" y="232" fill="#94a3b8" font-size="10">Change in Setup invalidates</text>
+  <text x="56" y="248" fill="#34d399" font-size="10" font-weight="600">only 2 downstream steps</text>
+  <text x="56" y="270" fill="#94a3b8" font-size="9">Each step reads directly from the source.</text>
+  <text x="56" y="286" fill="#94a3b8" font-size="9">No intermediate relay of data.</text>
+
+  <!-- RIGHT: Deep DAG (bad) -->
+  <rect x="390" y="68" width="340" height="236" rx="10" fill="#1e293b" stroke="#f97316" stroke-width="1.5"/>
+  <rect x="390" y="68" width="340" height="28" rx="10" fill="#431407"/>
+  <rect x="390" y="86" width="340" height="10" fill="#431407"/>
+  <text x="560" y="88" text-anchor="middle" fill="#fdba74" font-size="12" font-weight="700">✗ Deep — 4 levels</text>
+
+  <!-- Chain: A → B → C → D -->
+  <rect x="505" y="110" width="110" height="28" rx="6" fill="#0f172a" stroke="#f97316" stroke-width="1.5"/>
+  <text x="560" y="128" text-anchor="middle" fill="#fb923c" font-size="10" font-weight="700">Step A</text>
+
+  <rect x="505" y="154" width="110" height="28" rx="6" fill="#0f172a" stroke="#f97316" stroke-width="1.5"/>
+  <text x="560" y="172" text-anchor="middle" fill="#fb923c" font-size="10" font-weight="700">Step B</text>
+
+  <rect x="505" y="198" width="110" height="28" rx="6" fill="#0f172a" stroke="#f97316" stroke-width="1.5"/>
+  <text x="560" y="216" text-anchor="middle" fill="#fb923c" font-size="10" font-weight="700">Step C</text>
+
+  <rect x="505" y="242" width="110" height="28" rx="6" fill="#0f172a" stroke="#f97316" stroke-width="1.5"/>
+  <text x="560" y="260" text-anchor="middle" fill="#fb923c" font-size="10" font-weight="700">Step D</text>
+
+  <!-- Chain arrows -->
+  <line x1="560" y1="138" x2="560" y2="154" stroke="#f97316" stroke-width="1.5" marker-end="url(#arr-deep)"/>
+  <line x1="560" y1="182" x2="560" y2="198" stroke="#f97316" stroke-width="1.5" marker-end="url(#arr-deep)"/>
+  <line x1="560" y1="226" x2="560" y2="242" stroke="#f97316" stroke-width="1.5" marker-end="url(#arr-deep)"/>
+
+  <!-- Cascade labels -->
+  <text x="630" y="150" fill="#fb923c" font-size="8">OUTOFDATE</text>
+  <text x="630" y="194" fill="#fb923c" font-size="8">OUTOFDATE</text>
+  <text x="630" y="238" fill="#fb923c" font-size="8">OUTOFDATE</text>
+  <text x="630" y="260" fill="#fb923c" font-size="8">OUTOFDATE</text>
+
+  <!-- Annotation -->
+  <text x="416" y="248" fill="#94a3b8" font-size="10">Change in A</text>
+  <text x="416" y="264" fill="#94a3b8" font-size="10">cascades through</text>
+  <text x="416" y="280" fill="#f97316" font-size="10" font-weight="600">all 3 downstream</text>
+  <text x="416" y="296" fill="#f97316" font-size="10" font-weight="600">steps</text>
+</svg>

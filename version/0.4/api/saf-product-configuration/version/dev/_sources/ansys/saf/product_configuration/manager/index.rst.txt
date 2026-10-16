@@ -1,0 +1,69 @@
+
+
+
+
+
+
+The ``manager`` package
+===========================
+
+.. py:module:: ansys.saf.product_configuration.manager
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+.. py:currentmodule:: manager
+.. tab-set::
+
+
+    .. tab-item:: Submodules
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.saf.product_configuration.manager.configurations_manager`
+            - 
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-fa-file"></span> configurations_manager</ansys/saf/product_configuration/manager/configurations_manager/index>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

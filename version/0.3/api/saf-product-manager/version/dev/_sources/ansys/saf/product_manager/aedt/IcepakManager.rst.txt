@@ -1,0 +1,119 @@
+
+
+
+
+
+
+:class:`IcepakManager`
+======================
+
+
+.. py:class:: ansys.saf.product_manager.aedt.IcepakManager(**kwargs: Any)
+
+   Bases: :py:obj:`ansys.saf.glow.solution.ProductInstanceManager`\ [\ :py:obj:`ansys.aedt.core.Icepak`\ , :py:obj:`AedtStateInfo`\ ]
+
+
+   
+   A manager of a `AEDT Icepak <https://www.ansys.com/en-gb/products/electronics/ansys-icepak>`_
+   product instance.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: IcepakManager
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~initialize`
+            - Set the initial state of the AEDT product instance.
+
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.saf.product_manager.aedt import IcepakManager
+
+
+
+Method detail
+-------------
+
+.. py:method:: initialize(project_file: ansys.bdm.api.EntityHandle = NO_ENTITY, version: str | None = None, design_name: str | None = None, solution_type: str | None = None) -> None
+
+   
+   Set the initial state of the AEDT product instance.
+
+
+   :Parameters:
+
+       **project_file** : EntityHandle, optional
+           The entity handle referencing the project file that contains the initial state of the instance.
+
+       **version** : str, optional
+           The AEDT version of the instance. The format is 3 decimal digits where the first two digits indicate the
+           year of release in the 21st century and the third digit indicates the release within that year.
+           For example, "222" indicates that "2022 revision 2" is required.
+           If ``version`` is not supplied, the GLOW infrastructure will use a version of AEDT that is available in
+           the GLOW deployment.
+
+       **design_name** : str, optional
+           Name of the design that is initially selected in the instance. If no value is supplied, then an attempt is
+           made to get an active design. If no designs are present, then an empty design is created.
+
+       **solution_type** : str, optional
+           Solution type to apply to the design. The default is None, in which case the default type is applied.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

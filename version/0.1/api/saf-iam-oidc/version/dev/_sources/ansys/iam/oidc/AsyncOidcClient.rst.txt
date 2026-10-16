@@ -1,0 +1,210 @@
+
+
+
+
+
+
+:class:`AsyncOidcClient`
+========================
+
+
+.. py:class:: ansys.iam.oidc.AsyncOidcClient(issuer: str | None = None, audience: str | None = None)
+
+   Bases: :py:obj:`OidcClientBase`
+
+
+   
+   OIDC Async client.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: AsyncOidcClient
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~validate_access_token`
+            - Validate the JSON Web Token string.
+          * - :py:attr:`~validate_token_with_introspection`
+            - Not implemented yet...
+          * - :py:attr:`~get_user_info`
+            - Retrieve user information, preferring local token claims and falling back to the
+
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.iam.oidc import AsyncOidcClient
+
+
+
+Method detail
+-------------
+
+.. py:method:: validate_access_token(value: str) -> joserfc.jwt.Token
+   :async:
+
+
+   
+   Validate the JSON Web Token string.
+
+   The following validations are performed: exp, nbf, iss and aud.
+
+   :Parameters:
+
+       **value: str**
+           text of the JWT
+
+
+
+   :Returns:
+
+       :obj:`Token`
+           The validated JWT token.
+
+
+
+
+   :Raises:
+
+       :obj:`NoIssuerOrAudienceError`
+           If the issuer URL or audience is not set.
+
+       :obj:`ValueError`
+           If the token is invalid (expired, wrong issuer, wrong audience, not yet valid, etc.).
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: validate_token_with_introspection() -> None
+   :async:
+
+
+   
+   Not implemented yet...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_user_info(access_token: str, fields: list[str] | None = None, *, from_issuer: bool = False) -> ansys.iam.oidc._userinfo.UserInfo
+   :async:
+
+
+   
+   Retrieve user information, preferring local token claims and falling back to the
+   OpenID Provider ``userinfo`` endpoint only when required.
+
+   Workflow:
+
+   - Decode the access token using the provider JWKS.
+   - If ``fields`` is ``None`` or empty, immediately return a ``UserInfo`` built from all claims.
+   - If ``fields`` is provided and every requested field exists and is non-null in the decoded
+     claims, return the locally built ``UserInfo``.
+   - Otherwise perform a network request to the ``userinfo`` endpoint and build ``UserInfo`` from
+     that response.
+   - If ``from_issuer`` is True, skip local token claims and perform a network request to the
+     ``userinfo`` endpoint and build ``UserInfo`` from that response.
+
+   Field validation: any element of ``fields`` not matching a ``UserInfo`` attribute triggers a
+   ``ValueError``.
+
+   see also: https://openid.net/specs/openid-connect-core-1_0.html#UserInfoResponse
+
+   :Parameters:
+
+       **access_token** : :class:`python:str`
+           The JWT access token.
+
+       **fields** : :class:`python:list`\[:class:`python:str`] | :data:`python:None`
+           Fields that must be present in the local token claims to avoid the remote userinfo call.
+
+       **from_issuer** : :ref:`bool <python:bltin-boolean-values>`
+           If True, forces retrieval of user info from the identity provider, bypassing local token claims.
+
+
+
+   :Returns:
+
+       :obj:`UserInfo`
+           The user information object derived from local claims or the remote endpoint.
+
+
+
+
+   :Raises:
+
+       :obj:`ValueError`
+           If any provided field name is invalid.
+
+       :obj:`NoIssuerError`
+           If the requested fields are not present in the token and the issuer URL is not set,
+           preventing retrieval from the identity provider.
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

@@ -182,9 +182,7 @@ class Authenticator(html.Div):
             "placeholder": "Enter your password.",
             "required": True,
             "disabled": False,
-            "leftSection": create_icon_span(
-                IconNames.MDI_SECURE, size_px=16, color=CommonColors.MANTINE_PLACEHOLDER
-            ),
+            "leftSection": create_icon_span(IconNames.MDI_SECURE, size_px=16, color=CommonColors.MANTINE_PLACEHOLDER),
             "style": {"width": "100%"},
         }
 
@@ -256,9 +254,7 @@ class Authenticator(html.Div):
             children.append(dmc.Space(h=5))
         return children
 
-    def _create_component(
-        self, item: dict[str, Any]
-    ) -> dmc.TextInput | dmc.PasswordInput | dmc.Button:
+    def _create_component(self, item: dict[str, Any]) -> dmc.TextInput | dmc.PasswordInput | dmc.Button:
         if item["type"] == "TextInput":
             component = dmc.TextInput(
                 id=self.ids.input(self.aio_id, item["id"]),

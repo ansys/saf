@@ -6,11 +6,6 @@ run-name: >-
 on:
   workflow_dispatch:
     inputs:
-      use-moon:
-        description: 'Use Moon for the tests'
-        required: true
-        type: boolean
-        default: false
       library-name:
         description: 'Package to test'
         required: true
@@ -137,10 +132,6 @@ on:
         default: false
   workflow_call:
     inputs:
-      use-moon:
-        description: 'Use Moon for the tests'
-        required: true
-        type: boolean
       python-version:
         description: 'Python version'
         required: true
@@ -191,6 +182,7 @@ jobs:
       working-directory: ${{ inputs.working-directory || (inputs.library-name == 'examples'
         && 'examples' || format('packages/{0}', inputs.library-name)) }}
       test-groups: ${{ steps.configure-tests.outputs.test_groups }}
+      use-moon: ${{ inputs.library-name != 'examples' && 'true' || 'false' }}
     steps:
       - name: Checkout repository
         if: ${{ inputs.runner-name == '' }}
@@ -313,7 +305,7 @@ jobs:
       PIP_INDEX_URL: https://pypi.org/simple
       GITHUB_TOKEN: ${{ github.token }}
       ANSYSLMD_LICENSE_FILE: ${{ format('1055@{0}', secrets.LICENSE_SERVER) }}
-      USE_MOON: ${{ inputs.use-moon && 'true' || 'false' }}
+      USE_MOON: ${{ needs.configure-tests.outputs.use-moon }}
       MOON_PYTHON_VERSION: ${{ inputs.python-version }}
       UV_PYTHON: ${{ inputs.python-version }}
       PACKAGE: ${{ inputs.library-name }}
@@ -332,6 +324,11 @@ jobs:
       - name: Setup Moon Toolchain
         if: ${{ env.USE_MOON == 'true' && runner.environment != 'self-hosted' }}
         uses: moonrepo/setup-toolchain@261c62cb5b0f580c7be7c8cd0f023a2e96756095 # v0.6.4
+
+      - name: Install workspace dependencies (Moon)
+        if: ${{ env.USE_MOON == 'true' }}
+        shell: bash
+        run: moon run root:uv-sync -- --all-groups
 
       - name: Prepare runner for tests
         if: matrix.prepare-runner == 'true' || matrix.upgrade-docker == 'true' ||
@@ -356,8 +353,8 @@ jobs:
                     "private_image": "postgres:17"
                 },
                 {
-                    "image": "eqalpha/keydb:alpine_x86_64_v6.3.3",  # gitleaks:allow
-                    "private_image": "keydb:alpine_x86_64_v6.3.3"  # gitleaks:allow
+                    "image": "eqalpha/keydb:alpine_x86_64_v6.3.3",
+                    "private_image": "keydb:alpine_x86_64_v6.3.3"
                 },
                 {
                     "image": "influxdb:1.8.10",
@@ -377,7 +374,7 @@ jobs:
                 }
             ]
 
-      - name: Install HPS (moon)
+      - name: Install HPS (Moon)
         if: ${{ env.USE_MOON == 'true' && matrix.install-hps == 'true' }}
         uses: $/.github/actions/install-hps
         with:
@@ -416,96 +413,42 @@ jobs:
         shell: bash
         run: moon run $PACKAGE:install-pim-light-server
         env:
-          UV_EXTRA_INDEX_URL: https://PAT:${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}@${{
-            secrets.PYANSYS_PYPI_PRIVATE_URL }}
-
-      - name: Install visor
-        if: ${{ matrix.install-visor == 'true' && env.USE_MOON == 'false' }}
-        shell: bash
-        run: |
-          ${PYTHON_EXE} -m pip install ansys-visor-viewer==${VISOR_VERSION}
-        env:
-          PYTHON_EXE: ${{ needs.configure-tests.outputs.working-directory }}/${{ steps.prepare-env.outputs.python-cmd
+          UV_INDEX: https://PAT:${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}@${{ secrets.PYANSYS_PYPI_PRIVATE_URL
             }}
-          VISOR_VERSION: '1.0.5b0.dev0+20260831'
-          PIP_EXTRA_INDEX_URL: https://PAT:${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}@${{
-            secrets.PYANSYS_PYPI_PRIVATE_URL }}
-          PIP_QUIET: 1
 
-      - name: Install visor with Moon
+      - name: Install Visor (Moon)
         if: ${{ matrix.install-visor == 'true' && env.USE_MOON == 'true' }}
         shell: bash
         run: moon run $PACKAGE:install-visor
         env:
-          UV_EXTRA_INDEX_URL: https://PAT:${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}@${{
-            secrets.PYANSYS_PYPI_PRIVATE_URL }}
-
-      - name: Install desktop-portal
-        if: ${{ matrix.install-portal == 'true' && env.USE_MOON == 'false' }}
-        shell: bash
-        run: |
-          ${PYTHON_EXE} -m pip install --pre ansys-saf-desktop-portal==${PORTAL_VERSION}
-        env:
-          PYTHON_EXE: ${{ needs.configure-tests.outputs.working-directory }}/${{ steps.prepare-env.outputs.python-cmd
+          UV_INDEX: https://PAT:${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}@${{ secrets.PYANSYS_PYPI_PRIVATE_URL
             }}
-          PORTAL_VERSION: '0.4.dev2'
-          PIP_EXTRA_INDEX_URL: https://PAT:${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}@${{
-            secrets.PYANSYS_PYPI_PRIVATE_URL }}
-          PIP_QUIET: 1
 
-      - name: Install desktop-portal with Moon
+      - name: Install desktop-portal (Moon)
         if: ${{ matrix.install-portal == 'true' && env.USE_MOON == 'true' }}
         shell: bash
         run: moon run $PACKAGE:install-saf-desktop-portal
         env:
-          UV_EXTRA_INDEX_URL: https://PAT:${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}@${{
-            secrets.PYANSYS_PYPI_PRIVATE_URL }}
-
-      - name: Install aspire dashboard
-        if: ${{ matrix.install-ansys-saf-aspire == 'true' && env.USE_MOON == 'false'
-          }}
-        shell: bash
-        run: |
-          ${PYTHON_EXE} -m pip install ansys-saf-aspire==${ASPIRE_DASHBOARD_VERSION}
-        env:
-          PYTHON_EXE: ${{ needs.configure-tests.outputs.working-directory }}/${{ steps.prepare-env.outputs.python-cmd
+          UV_INDEX: https://PAT:${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}@${{ secrets.PYANSYS_PYPI_PRIVATE_URL
             }}
-          ASPIRE_DASHBOARD_VERSION: '9.1.6'
-          PIP_EXTRA_INDEX_URL: https://PAT:${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}@${{
-            secrets.PYANSYS_PYPI_PRIVATE_URL }}
-          PIP_QUIET: 1
 
-      - name: Install aspire dashboard with Moon
+      - name: Install aspire dashboard (Moon)
         if: ${{ matrix.install-ansys-saf-aspire == 'true' && env.USE_MOON == 'true'
           }}
         shell: bash
         run: moon run $PACKAGE:install-ansys-saf-aspire
         env:
-          UV_EXTRA_INDEX_URL: https://PAT:${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}@${{
-            secrets.PYANSYS_PYPI_PRIVATE_URL }}
-
-      - name: Install minerva-python-client
-        if: ${{ matrix.install-minerva-python-client == 'true' && env.USE_MOON ==
-          'false' }}
-        shell: bash
-        run: |
-          ${PYTHON_EXE} -m pip install ansys-minerva-python-client==${MINERVA_PYTHON_CLIENT_VERSION}
-        env:
-          PYTHON_EXE: ${{ needs.configure-tests.outputs.working-directory }}/${{ steps.prepare-env.outputs.python-cmd
+          UV_INDEX: https://PAT:${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}@${{ secrets.PYANSYS_PYPI_PRIVATE_URL
             }}
-          MINERVA_PYTHON_CLIENT_VERSION: '0.3.1'
-          PIP_EXTRA_INDEX_URL: https://PAT:${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}@${{
-            secrets.PYANSYS_PYPI_PRIVATE_URL }}
-          PIP_QUIET: 1
 
-      - name: Install minerva-python-client with Moon
+      - name: Install minerva-python-client (Moon)
         if: ${{ matrix.install-minerva-python-client == 'true' && env.USE_MOON ==
           'true' }}
         shell: bash
         run: moon run $PACKAGE:install-minerva-python-client
         env:
-          UV_EXTRA_INDEX_URL: https://PAT:${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}@${{
-            secrets.PYANSYS_PYPI_PRIVATE_URL }}
+          UV_INDEX: https://PAT:${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}@${{ secrets.PYANSYS_PYPI_PRIVATE_URL
+            }}
 
       - name: Download extra packages for e2e tests (Moon)
         if: matrix.download-extra-packages == 'true' && env.USE_MOON == 'true'
@@ -516,20 +459,6 @@ jobs:
         env:
           PIP_EXTRA_INDEX_URL: https://PAT:${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}@${{
             secrets.PYANSYS_PYPI_PRIVATE_URL }}
-
-      - name: Download extra packages for e2e tests
-        if: matrix.download-extra-packages == 'true' && env.USE_MOON == 'false'
-        shell: bash
-        run: |
-          ${PYTHON_EXE} -m pip download --pre --no-deps ansys-saf-aspire ansys-saf-desktop-portal -d ${GITHUB_WORKSPACE}/extra_packages
-          echo "SAF_EXTRA_PACKAGES_DIR=${GITHUB_WORKSPACE}/extra_packages" >> "$GITHUB_ENV"
-        env:
-          PYTHON_EXE: ${{ needs.configure-tests.outputs.working-directory }}/${{ steps.prepare-env.outputs.python-cmd
-            }}
-          PIP_INDEX_URL: https://pypi.org/simple
-          PIP_EXTRA_INDEX_URL: https://PAT:${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}@${{
-            secrets.PYANSYS_PYPI_PRIVATE_URL }}
-          PIP_QUIET: 1
 
       - name: Install GTK and XVFB utilities
         if: matrix.install-gtk-xvfb == 'true'
@@ -555,6 +484,7 @@ jobs:
         id: run-tests
         env:
           PYTEST_DEBUG_TEMPROOT: ${{ runner.os == 'Windows' && 'C:/' || '/tmp' }}
+          APPDATA: ${{ runner.temp }}
         if: ${{ env.USE_MOON == 'false' }}
         uses: ansys/saf-devops/run-tests@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
         with:
@@ -600,7 +530,8 @@ jobs:
 
       - name: Publish pytest logs
         if: always() && (steps.run-tests.outcome != 'skipped' || steps.run-tests-moon.outcome
-          != 'skipped')
+          != 'skipped') && hashFiles(format('{0}/{1}/{2}', github.workspace, needs.configure-tests.outputs.working-directory
+          , 'pytest_logs')) != ''
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: "pytest_logs_${{ matrix.test-report-artifact-name-suffix }}_${{ inputs.python-version

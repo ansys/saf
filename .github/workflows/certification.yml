@@ -167,8 +167,6 @@ jobs:
       commit-is-already-tagged: ${{ steps.verify-tag.outputs.commit-is-already-tagged
         }}
       library-name: ${{ steps.library-name.outputs.library-name }}
-      use-moon: ${{ steps.library-name.outputs.library-name != 'dash-super-components'
-        }}
 
   check-package-changes:
     name: "Check if package files changed since certification"
@@ -227,7 +225,6 @@ jobs:
     permissions:
       contents: read # Read the dependencies and source code of the library
     env:
-      USE_MOON: ${{ needs.pre-certification.outputs.use-moon == 'true' }}
       PACKAGE: ${{ needs.pre-certification.outputs.library-name }}
       UV_PYTHON: ${{ vars.PYTHON_VERSION }}
       MOON_PYTHON_VERSION: ${{ vars.PYTHON_VERSION }}
@@ -239,11 +236,9 @@ jobs:
           fetch-depth: 0
 
       - name: Setup Moon Toolchain
-        if: ${{ env.USE_MOON == 'true' }}
         uses: moonrepo/setup-toolchain@261c62cb5b0f580c7be7c8cd0f023a2e96756095 # v0.6.4
 
       - name: Vulnerability Check
-        if: ${{ env.USE_MOON == 'true' }}
         shell: bash
         run: moon run ${PACKAGE}:vulnerability-check
 
@@ -256,13 +251,12 @@ jobs:
           poetry-parent-directory: packages/${{ needs.pre-certification.outputs.library-name
             }}
           max-allowed-severity: medium
-          skip-install: ${{ env.USE_MOON == 'true' }}
+          skip-install: true
           checkout: false
-          requirements-file: ${{ env.USE_MOON == 'true' && format('{0}/dist/packages/{1}-requirements.txt',
-            github.workspace, needs.pre-certification.outputs.library-name) || 'dependencies.txt'
-            }}
+          requirements-file: ${{ format('{0}/dist/packages/{1}-requirements.txt',
+            github.workspace, needs.pre-certification.outputs.library-name) }}
         env:
-          UV_VENV_CLEAR: ${{ env.USE_MOON == 'true' }}
+          UV_VENV_CLEAR: true
 
   dependabot-alerts:
     permissions:
@@ -317,7 +311,6 @@ jobs:
         }}.json
       working-directory: packages/${{ needs.pre-certification.outputs.library-name
         }}
-      use-moon: ${{ needs.pre-certification.outputs.use-moon == 'true' }}
       library-name: ${{ needs.pre-certification.outputs.library-name }}
     secrets:
       ANS_MINERVA_URL: ${{ secrets.ANS_MINERVA_URL }}
@@ -355,7 +348,6 @@ jobs:
         }}-extended.json
       working-directory: packages/${{ needs.pre-certification.outputs.library-name
         }}
-      use-moon: ${{ needs.pre-certification.outputs.use-moon == 'true' }}
       library-name: ${{ needs.pre-certification.outputs.library-name }}
     secrets:
       ANS_MINERVA_URL: ${{ secrets.ANS_MINERVA_URL }}
@@ -398,7 +390,6 @@ jobs:
         }}-${{ matrix.flagship }}.json
       working-directory: packages/${{ needs.pre-certification.outputs.library-name
         }}
-      use-moon: ${{ needs.pre-certification.outputs.use-moon == 'true' }}
       library-name: ${{ needs.pre-certification.outputs.library-name }}
     secrets:
       ANS_MINERVA_URL: ${{ secrets.ANS_MINERVA_URL }}
@@ -462,10 +453,8 @@ jobs:
     with:
       library-name: ${{ needs.pre-certification.outputs.library-name }}
       python-version: ${{ matrix.python-version }}
-      use-moon: ${{ needs.pre-certification.outputs.use-moon == 'true' }}
       artifact-name: ${{ needs.pre-certification.outputs.library-name }}-${{ matrix.python-version
-        }}${{ case(needs.pre-certification.outputs.use-moon == 'false', '', '-artifacts'
-        ) }}
+        }}-artifacts
       ref: ${{ github.ref }}
 
   check-wheel-can-be-pip-installed:

@@ -23,6 +23,9 @@ See the FolderSelector page in the User Guide for the full reference documentati
 """
 
 # [imports-start]
+from pathlib import Path
+import sys
+
 from ansys.solutions.dash_super_components import FolderSelector
 from ansys.solutions.dash_super_components.folder_selector import FolderSelectorMode
 # [imports-end]
@@ -48,6 +51,9 @@ def layout():
         [
             FolderSelector(
                 aio_id="select_folder_basic",
+                options={"browse_from": str(Path.home())}
+                if sys.platform.startswith("linux")
+                else None,
             )
         ]
     )

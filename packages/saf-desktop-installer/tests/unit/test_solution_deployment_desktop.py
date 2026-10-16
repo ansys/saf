@@ -14,6 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import ctypes
 import json
 import os
 from pathlib import Path
@@ -42,6 +43,7 @@ from ansys.saf.desktop.installer._common.utils import has_portal_dependency, sim
 from ansys.saf.desktop.installer._package.manage_dependencies import simplify_wheel_url_dependencies
 from ansys.saf.desktop.installer._ui_styles import install_button_style
 from ansys.saf.desktop.installer.solution_desktop_deployment import (
+    KF_FLAG_DONT_VERIFY,
     InstallationDirectoryValidator,
     _ensure_third_party_extracted,  # pyright: ignore[reportPrivateUsage]
     _get_windows_desktop_directory,  # pyright: ignore[reportPrivateUsage]
@@ -725,9 +727,48 @@ def test_is_windows_admin_matches_powershell() -> None:
 )
 def test_get_windows_desktop_directory_matches_powershell(all_users: bool, special_folder: str) -> None:
     """The Desktop lookup honors folder redirection (e.g. OneDrive) like Explorer does."""
-    expected = _run_powershell(f"[Environment]::GetFolderPath('{special_folder}')")
+    expected = _run_powershell(f"[Environment]::GetFolderPath('{special_folder}', 'DoNotVerify')")
 
     assert _get_windows_desktop_directory(all_users=all_users) == Path(expected)
+
+
+@windows_only()
+def test_get_windows_desktop_directory_does_not_require_existing_folder(mocker: pytest_mock.MockerFixture) -> None:
+    """Regression: a deleted Desktop folder must not make the lookup (and thus the installation) fail."""
+    real_lookup = ctypes.windll.shell32.SHGetKnownFolderPath
+
+    def lookup_with_missing_desktop(folder_id: Any, flags: int, token: Any, path_ptr: Any) -> int:
+        # Windows verifies the folder exists unless KF_FLAG_DONT_VERIFY is set.
+        if not flags & KF_FLAG_DONT_VERIFY:
+            return 0x80070002 - (1 << 32)  # HRESULT_FROM_WIN32(ERROR_FILE_NOT_FOUND)
+        return real_lookup(folder_id, flags, token, path_ptr)
+
+    mocker.patch.object(ctypes.windll.shell32, "SHGetKnownFolderPath", side_effect=lookup_with_missing_desktop)
+    expected = _run_powershell("[Environment]::GetFolderPath('Desktop', 'DoNotVerify')")
+
+    assert _get_windows_desktop_directory(all_users=False) == Path(expected)
+
+
+@windows_only()
+def test_install_shortcut_windows_creates_missing_desktop(
+    tmp_path: Path,
+    mocker: pytest_mock.MockerFixture,
+) -> None:
+    """Regression: the shortcut is created even when the Desktop folder does not exist."""
+    shortcut_path = tmp_path / "Desktop" / "My Test Solution.lnk"
+    mocker.patch(
+        "ansys.saf.desktop.installer.solution_desktop_deployment.get_shortcut_path",
+        return_value=shortcut_path,
+    )
+
+    install_shortcut(
+        python=tmp_path / "python.exe",
+        installation_icon_path=tmp_path / "shortcut.ico",
+        arguments="-m test.module",
+        solution_display_name="My Test Solution",
+    )
+
+    assert shortcut_path.is_file()
 
 
 @windows_only()

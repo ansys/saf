@@ -96,6 +96,7 @@ VERSION_FILE = "version.txt"
 TARGET_SOLUTIONS_DIRECTORY_NAME = "SAF Solutions" if platform.system() == "Windows" else "saf_solutions"
 FOLDERID_DESKTOP = uuid.UUID("B4BFCC3A-DB2C-424C-B029-7FE99A87C641")
 FOLDERID_PUBLIC_DESKTOP = uuid.UUID("C4AA340D-F20F-4863-AFEF-F87EF2E6BA25")
+KF_FLAG_DONT_VERIFY = 0x00004000
 WIN_BUILTIN_ADMINISTRATORS_SID = 26
 SECURITY_MAX_SID_SIZE = 68
 
@@ -123,7 +124,8 @@ def _get_windows_desktop_directory(all_users: bool) -> Path:
         raise RuntimeError("Desktop directory lookup is only supported on Windows.")
     folder_id = ctypes.create_string_buffer((FOLDERID_PUBLIC_DESKTOP if all_users else FOLDERID_DESKTOP).bytes_le, 16)
     path_ptr = ctypes.c_wchar_p()
-    hresult = ctypes.windll.shell32.SHGetKnownFolderPath(folder_id, 0, None, ctypes.byref(path_ptr))
+    # Without this flag the lookup fails when the Desktop folder was deleted; install_shortcut recreates it.
+    hresult = ctypes.windll.shell32.SHGetKnownFolderPath(folder_id, KF_FLAG_DONT_VERIFY, None, ctypes.byref(path_ptr))
     try:
         if hresult != 0 or path_ptr.value is None:
             raise OSError(f"SHGetKnownFolderPath failed with HRESULT {hresult & 0xFFFFFFFF:#010x}")
@@ -438,6 +440,7 @@ def install_shortcut(
 ) -> None:
     """Install shortcut"""
     shortcut_path = get_shortcut_path(solution_display_name)
+    shortcut_path.parent.mkdir(parents=True, exist_ok=True)
     python_path = str(python)
 
     if platform.system() == "Windows":
@@ -451,7 +454,6 @@ def install_shortcut(
         shell_cmd += "$Shortcut.Save()"
         subprocess.check_output(["powershell.exe", "-Command", shell_cmd], stderr=subprocess.PIPE, text=True)  # noqa: S607
     else:
-        shortcut_path.parent.mkdir(parents=True, exist_ok=True)
         with shortcut_path.open("w") as file:
             file.write("[Desktop Entry]\n")
             file.write(f"Name={solution_display_name}\n")

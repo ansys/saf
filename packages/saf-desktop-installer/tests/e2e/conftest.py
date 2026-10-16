@@ -1162,7 +1162,7 @@ def _get_expected_windows_desktop_directory(as_standard_user: bool = False) -> P
         "[Console]::OutputEncoding = [Text.Encoding]::UTF8; "
         "$principal = [Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent(); "
         f"$isAdmin = {is_admin}; "
-        "[Environment]::GetFolderPath($(if ($isAdmin) { 'CommonDesktopDirectory' } else { 'Desktop' }))"
+        "[Environment]::GetFolderPath($(if ($isAdmin) { 'CommonDesktopDirectory' } else { 'Desktop' }), 'DoNotVerify')"
     )
     output = subprocess.check_output(["powershell.exe", "-NoProfile", "-Command", command], encoding="utf-8")
     return Path(output.strip())
@@ -1244,8 +1244,6 @@ def install_solution() -> InstallSolution:
         as_standard_user: bool = False,
     ) -> list[str]:
         installer_path = _get_solution_installer_path(solution_root_dir)
-        shortcut_path = _get_shortcut_path(solution_root_dir, use_sudo, as_standard_user)
-        shortcut_path.parent.mkdir(parents=True, exist_ok=True)
         cmd = [installer_path.as_posix(), "--no-ui"]
         cmd += ["--installation-directory", tmp_path.as_posix()] if not use_sudo else []
         if extra_flags:
@@ -1295,8 +1293,6 @@ def install_solution_via_gui() -> YieldFixture[InstallSolutionGUI]:
         use_sudo: bool = False,
     ) -> SolutionInstallerProcess:
         installer_path = _get_solution_installer_path(solution_root_dir)
-        shortcut_path = _get_shortcut_path(solution_root_dir, use_sudo)
-        shortcut_path.parent.mkdir(parents=True, exist_ok=True)
         cmd = [installer_path.as_posix()]
         cmd += ["--installation-directory", tmp_path.as_posix()] if not use_sudo else []
         p = SolutionInstallerProcess.run(cmd)

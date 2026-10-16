@@ -1,0 +1,160 @@
+
+
+
+
+
+
+:class:`StorageScopeBase`
+=========================
+
+
+.. py:class:: ansys.bdm.base.base_storage_scope.StorageScopeBase
+
+   Bases: :py:obj:`ansys.bdm.api.istorage_scope.IStorageScope`
+
+
+   
+   A partial implementation of ``IStorageScope`` that provides implementations
+   of some methods based on other more fundamental methods.  ``StorageScopeBase``
+   can be used as a base class for implementations of ``IStorageScope``.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: StorageScopeBase
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~get_bytes`
+            - Return the content of the referenced blob.
+          * - :py:attr:`~get_text`
+            - Return the content of the referenced blob.
+
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.bdm.base.base_storage_scope import StorageScopeBase
+
+
+
+Method detail
+-------------
+
+.. py:method:: get_bytes(entity: ansys.bdm.api.entity_handle.EntityHandle) -> bytes
+
+   
+   Return the content of the referenced blob.
+
+
+   :Parameters:
+
+       **entity: EntityHandle**
+           The handle to the data to realize
+
+
+
+   :Returns:
+
+       bytes
+           the contents of the EntityHandle.
+
+
+
+
+   :Raises:
+
+       CannotGenerateStreamForDirectoryError
+           If the entity requested is a collection
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_text(entity: ansys.bdm.api.entity_handle.EntityHandle, encoding: str | None = None) -> str
+
+   
+   Return the content of the referenced blob.
+
+
+   :Parameters:
+
+       **entity: EntityHandle**
+           The handle to the data to realize
+
+       **encoding: Optional[str]**
+           The name of an encoding.  When this argument is not None the bytes
+           of ``entity`` will be read using that encoding.
+
+
+
+   :Returns:
+
+       str
+           the contents of the EntityHandle in text form with the encoding determined
+           in order of preference:
+           - the encoding argument if not None
+           - the encoding field of the entity argument if set
+           - the BOM of the referenced entity if it contains one; or
+           - UTF-8
+
+
+
+
+   :Raises:
+
+       CannotGenerateStreamForDirectoryError
+           If the entity requested is a collection
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

@@ -1,0 +1,430 @@
+
+
+
+
+
+
+:class:`IAsyncStorageScope`
+===========================
+
+
+.. py:class:: ansys.bdm.api.iasync_storage_scope.IAsyncStorageScope
+
+   Bases: :py:obj:`IAsyncReadStorageScope`, :py:obj:`Protocol`
+
+
+   
+   Represents access to a Blob Data Management system. Allows consumers
+   to produce and consume :class:`EntityHandle` instances.
+
+   This is the asynchronous version of the :class:`IStorageScope` interface.
+
+   On dispose, files within the :func:`storage_root` that have not been passed to
+   :func:`store()` will be deleted.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:currentmodule:: IAsyncStorageScope
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~store`
+            - Create an :class:`EntityHandle` from a file on disk.
+          * - :py:attr:`~store_stream`
+            - Fully reads a passed in stream and returns a handle for the given content.
+          * - :py:attr:`~begin_store`
+            - Create an :class:`EntityWriter` by writing to a stream object.
+          * - :py:attr:`~get_storage_root`
+            - A local filesystem directory that can be used to stage files.
+          * - :py:attr:`~get_stored_entities`
+            - The set of :class:`EntityHandle` instances that have been stored via this scope.
+          * - :py:attr:`~destroy`
+            - Delete the entities referenced by the handle.
+          * - :py:attr:`~get_synchronous`
+            - Return an object with a synchronous interface to the same scope.
+          * - :py:attr:`~store_to_dictionary`
+            - Create a recursive nested dictionary of EntityHandles from a directory.
+
+
+
+
+
+   .. tab-item:: Special methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~__aenter__`
+            - Track the set of files that are stored centrally.
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.bdm.api.iasync_storage_scope import IAsyncStorageScope
+
+
+
+Method detail
+-------------
+
+.. py:method:: __aenter__() -> IAsyncStorageScope
+   :async:
+
+
+   
+   Track the set of files that are stored centrally.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: store(from_: PathLike[str], mime_type: str | None = None, encoding: str | None = None) -> ansys.bdm.api.entity_handle.EntityHandle
+   :async:
+
+
+   
+   Create an :class:`EntityHandle` from a file on disk.
+
+   Many blob handler implementations will try to optimize performance and the file contents
+   may not be immediately read from disk. To avoid class 3 type errors, the file MUST NOT be
+   externally modified after calling this method.
+
+   :Parameters:
+
+       **from_: PathLike[str]**
+           The local file on disk which contains the contents for the generated :class:`EntityHandle`
+
+       **mime_type: Optional[str]**
+           Mime type of this file, if known. If None is passed in, the IAsyncStorageScope SHOULD
+           use file extension to determine the mime type.
+
+       **encoding: Optional[str]**
+           The Internet Assigned Numbers Authority (IANA) registered encoding name used for textual data.
+           This MAY be None if not known and SHOULD NOT be set for binary mime types.
+
+
+
+   :Returns:
+
+       An :class:`EntityHandle` that rerpesents the contents of the read file at the moment
+           ..
+
+       this method is invoked
+           ..
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: store_stream(from_: anyio.abc.ByteReceiveStream | bytes, relative_location: pathlib.Path | None = None, mime_type: str | None = None, encoding: str | None = None) -> ansys.bdm.api.entity_handle.EntityHandle
+   :async:
+
+
+   
+   Fully reads a passed in stream and returns a handle for the given content.
+
+
+   :Parameters:
+
+       **from_** : Union[ByteReceiveStream, bytes]
+           The stream or in-memory bytes from which the new entity will be created
+
+       **relative_location** : Optional[Path]
+           The nominal relative path of the entity. The path is relative to the storage_root of
+           the scope.  No data is expected at this location.
+           The filename from this path will be used as the original name of the entity.
+           If this parameter is not set then the implementation will generate a unique location.
+
+       **mime_type: Optional[str]**
+           Mime type of this file, if known. If None is passed in, the IAsyncStorageScope SHOULD
+           use file extension to determine the mime type.
+
+       **encoding: Optional[str]**
+           The Internet Assigned Numbers Authority (IANA) registered encoding name used for textual data.
+           This MAY be None if not known and SHOULD NOT be set for binary mime types.
+
+
+
+   :Returns:
+
+       EntityHandle
+           The :class:`EntityHandle` that represents the passed in data.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: begin_store(relative_location: pathlib.Path | None = None, mime_type: str | None = None, encoding: str | None = None) -> ansys.bdm.api.iasync_entity_writer.IAsyncEntityWriter
+   :async:
+
+
+   
+   Create an :class:`EntityWriter` by writing to a stream object.
+
+
+   :Parameters:
+
+       **relative_location** : Optional[Path]
+           The nominal relative path of the entity. The path is relative to the storage_root of
+           the scope.  No data is expected at this location.
+           The filename from this path will be used as the original name of the entity.
+           If this parameter is not set then the implementation will generate a unique location.
+
+       **mime_type: Optional[str]**
+           Mime type of this file, if known. If None is passed in, the IAsyncStorageScope SHOULD
+           use file extension to determine the mime type.
+
+       **encoding: Optional[str]**
+           The Internet Assigned Numbers Authority (IANA) registered encoding name used for textual data.
+           This MAY be None if not known and SHOULD NOT be set for binary mime types.
+
+
+
+   :Returns:
+
+       IAsyncEntityWriter
+           An object which allows you to write to a stream and retrieve the handle.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_storage_root() -> pathlib.Path
+   :async:
+
+
+   
+   A local filesystem directory that can be used to stage files.
+
+   Since this folder is managed by the BDM implementation, there may be performance
+   benefits to storing files here.
+
+   This directory usually is lazy instantiated on the first call to this function.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_stored_entities() -> collections.abc.AsyncIterator[ansys.bdm.api.entity_handle.EntityHandle]
+   :async:
+
+
+   
+   The set of :class:`EntityHandle` instances that have been stored via this scope.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: destroy(*entities: ansys.bdm.api.entity_handle.EntityHandle) -> None
+   :async:
+
+
+   
+   Delete the entities referenced by the handle.
+
+   As :class:`EntityHandle` instances are intended to be simple immutable structures
+   that can be passed across process and service boundaries, their lifespan must be managed
+   by an external system. This call allows the resources associated with a BlobHandle
+   to be removed.
+
+   :Parameters:
+
+       **\*entities: EntityHandle**
+           The entities to delete
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_synchronous() -> ansys.bdm.api.istorage_scope.IStorageScope
+   :async:
+
+
+   
+   Return an object with a synchronous interface to the same scope.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: store_to_dictionary(root: PathLike[str], glob: str | None = None) -> ansys.bdm.api.recursive_dictionary.RecursiveDictionaryOfEntityHandles
+   :async:
+
+
+   
+   Create a recursive nested dictionary of EntityHandles from a directory.
+
+   This method creates a recursive nested dictionary containing EntityHandle objects for files and nested
+   dictionaries for directories. If glob is None, all files at or within root are included in the result.
+
+   :Parameters:
+
+       **root** : PathLike[str]
+           The root directory to store to a nested dictionary.
+
+       **glob** : str | None, optional
+           A glob pattern to filter which files and directories to include in the result. Behaves identically to
+           Path.rglob() and is interpreted as relative to root. Default is None.
+
+
+
+   :Returns:
+
+       RecursiveDictionaryOfEntityHandles
+           A recursive nested dictionary of EntityHandle objects.
+
+
+
+
+   :Raises:
+
+       FileNotFoundError
+           If root does not exist.
+
+       NotADirectoryError
+           If root is a file.
+
+       NotFoundInLocalStorageRootError
+           If root is not within the storage root of storage scope.
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

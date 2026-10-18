@@ -1,0 +1,9 @@
+<VTKFile type="vtkMultiBlockDataSet" version="1.0" byte_order="LittleEndian" header_type="UInt64">
+  <vtkMultiBlockDataSet>
+    <DataSet index="0" name="fluid" file="elbow/elbow_0_0.vtu"/>
+    <DataSet index="1" name="wall" file="elbow/elbow_1_0.vtp"/>
+    <DataSet index="2" name="outlet" file="elbow/elbow_2_0.vtp"/>
+    <DataSet index="3" name="inlet2" file="elbow/elbow_3_0.vtp"/>
+    <DataSet index="4" name="inlet1" file="elbow/elbow_4_0.vtp"/>
+  </vtkMultiBlockDataSet>
+</VTKFile>

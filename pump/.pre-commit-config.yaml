@@ -1,0 +1,41 @@
+repos:
+
+  - repo: https://github.com/psf/black
+    rev: 24.4.2
+    hooks:
+      - id: black
+
+  - repo: https://github.com/pycqa/isort
+    rev: 5.13.2
+    hooks:
+      - id: isort
+
+  - repo: https://github.com/PyCQA/flake8
+    rev: 7.0.0
+    hooks:
+      - id: flake8
+
+  - repo: https://github.com/codespell-project/codespell
+    rev: v2.3.0
+    hooks:
+      - id: codespell
+        args: [--skip, "doc/styles/*,doc/_build/*,*.js,*.tmp", --ignore-words, ".codespell.ignore",
+          --exclude, "pyproject.toml,poetry.lock"]
+
+  - repo: https://github.com/pycqa/pydocstyle
+    rev: 6.3.0
+    hooks:
+      - id: pydocstyle
+        additional_dependencies: [toml]
+        exclude: "tests/"
+
+  - repo: https://github.com/dotenv-linter/dotenv-linter
+    rev: f9076b02daed89f54ed0bd23951a4cfa5ccceac4 # v4.0.0
+    hooks:
+      - id: dotenv-linter
+        args: [check]
+
+  - repo: https://github.com/python-poetry/poetry
+    rev: a84cd0f1bedb5769ef6ef7389d8ee99b93b9ba4c # frozen: v2.3.2
+    hooks:
+      - id: poetry-check

@@ -50,7 +50,7 @@ def test_export_scene_pairs_the_files_and_converts_in_a_child_process(monkeypatc
     # The Fluent reader only finds <stem>.dat.h5 next to <stem>.cas.h5.
     assert (work_dir / DATA_FILE_NAME).read_bytes() == b"data"
     command = run.call_args.args[0]
-    assert command[:3] == [sys.executable, "-m", "saf.solutions.compressor.solution.logic.export_fluent_vtkhdf"]
+    assert command[:3] == [sys.executable, "-m", "saf.solutions.pump.solution.logic.export_fluent_vtkhdf"]
     assert command[3:] == [
         "--case",
         str(work_dir / CASE_FILE_NAME),

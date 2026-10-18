@@ -17,8 +17,9 @@
 """Solution definition module."""
 
 
-from ansys.saf.glow.solution import Solution, StepsModel
+from ansys.saf.glow.solution import Migration, MigrationContext, MigrationTransformation, Solution, StepsModel
 
+from saf.solutions.pump.solution.steps.report_step import ReportStep
 from saf.solutions.pump.solution.steps.setup_step import SetupStep
 from saf.solutions.pump.solution.steps.solve_step import SolveStep
 
@@ -28,11 +29,21 @@ class Steps(StepsModel):
 
     setup_step: SetupStep
     solve_step: SolveStep
+    report_step: ReportStep
+
+
+class AddReportStep(MigrationTransformation):
+    """Version 1 to 2: projects created before the report existed get an empty report step."""
+
+    def migrate(self, ctx: MigrationContext) -> None:
+        """Add the report step with its default values."""
+        ctx.steps.setdefault("report_step", ReportStep().model_dump(mode="json"))
 
 
 class PumpSolution(Solution):
     """Solution definition."""
 
     display_name: str = "Pump"
-    version: int = 1
+    version: int = 2
+    migrations: list[Migration] = [Migration(version=1, migration_transformation=AddReportStep())]
     steps: Steps

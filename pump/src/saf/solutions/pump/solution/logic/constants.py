@@ -146,6 +146,9 @@ RUN_SIMULATION_STREAM: Final[str] = "run-simulation"
 PREPARE_SOLVED_SCENE_STREAM: Final[str] = "prepare-solved-scene"
 """Event stream on which GLOW publishes the final state of ``SolveStep.prepare_solved_scene``."""
 
+GENERATE_REPORT_STREAM: Final[str] = "generate-report"
+"""Event stream on which GLOW publishes the final state of ``ReportStep.generate_report``."""
+
 BUILD_CASE_PROGRESS_STREAM: Final[str] = "build-case-progress"
 """Event stream carrying model-setup progress to the UI."""
 

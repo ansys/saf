@@ -35,13 +35,19 @@ import dash_mantine_components as dmc
 from dash_iconify import DashIconify
 
 from saf.solutions.pump.solution.definition import PumpSolution
-from saf.solutions.pump.solution.logic.constants import START_VISOR_STREAM
+from saf.solutions.pump.solution.logic.constants import (
+    GENERATE_REPORT_STREAM,
+    RUN_SIMULATION_STREAM,
+    START_VISOR_STREAM,
+)
+from saf.solutions.pump.solution.logic.report.settings import get_report_settings
 from saf.solutions.pump.ui.feedback import (
     NotificationCopy,
     closing_notification,
     opening_notification,
     parse_event,
 )
+from saf.solutions.pump.ui.report_status import REPORT_NOTIFICATION, request_report
 
 logger = logging.getLogger(__name__)
 
@@ -207,6 +213,9 @@ layout = dmc.MantineProvider(
         # the outcome needs a step proxy, which does not exist at import time, so the callback
         # that starts the server mounts it here.
         html.Div(id="visor-listener"),
+        # Same reason: the report is generated whenever a simulation completes, whichever
+        # page the user is on, so its listeners live in the shell.
+        html.Div(id="report-listeners"),
     ],
     id="mantine-provider",
     defaultColorScheme="dark",
@@ -281,7 +290,7 @@ def display_project_name(project: PumpSolution) -> str:
 )
 def access_solution_documentation(n_clicks: int) -> list[dbc.Toast] | None:
     """Open the Solution's Documentation home page in the web browser."""
-    solution_module = importlib.import_module("saf.solutions.compressor")
+    solution_module = importlib.import_module("saf.solutions.pump")
     doc_index_path = Path(solution_module.__path__[0]) / "html-doc" / "index.html"
     if not doc_index_path.is_file():
         doc_index_path = Path.cwd() / "doc" / "build" / "html" / "index.html"
@@ -381,6 +390,54 @@ def report_visor_backend_state(message: dict) -> Any:
         # and left at that rather than being allowed to break the page.
         logger.error("The Visor server did not start: %s", event.error or "no reason was reported.")
     return closing_notification(VISOR_NOTIFICATION, event) or no_update
+
+
+@callback(
+    Output("report-listeners", "children"),
+    Input("active-project-id", "data"),
+    State("url", "pathname"),
+    prevent_initial_call=True,
+)
+def mount_report_listeners(project_id: str | None, project: PumpSolution) -> Any:
+    """Listen for the end of a simulation and of a report generation while a project is open."""
+    if project_id is None or not get_report_settings().is_available:
+        return no_update
+    return [
+        DashClient.create_event_listener(
+            project.steps.solve_step, stream_name=RUN_SIMULATION_STREAM, id="report-trigger-ws"
+        ),
+        DashClient.create_event_listener(
+            project.steps.report_step, stream_name=GENERATE_REPORT_STREAM, id="report-generation-ws"
+        ),
+    ]
+
+
+@callback(
+    Output("notification-container", "sendNotifications", allow_duplicate=True),
+    Input("report-trigger-ws", "message"),
+    State("url", "pathname"),
+    prevent_initial_call=True,
+)
+def generate_report_after_simulation(message: dict, project: PumpSolution) -> Any:
+    """Generate the report as soon as a simulation completes successfully."""
+    if not parse_event(message).succeeded:
+        return no_update
+    if not request_report(project):
+        return no_update
+    return opening_notification(REPORT_NOTIFICATION)
+
+
+@callback(
+    Output("notification-container", "sendNotifications", allow_duplicate=True),
+    Input("report-generation-ws", "message"),
+    prevent_initial_call=True,
+)
+def report_generation_finished(message: dict) -> Any:
+    """Close the report toast with the outcome of the generation."""
+    event = parse_event(message)
+    if event.failed:
+        logger.error("The report could not be generated: %s", event.error or "no reason was reported.")
+    return closing_notification(REPORT_NOTIFICATION, event) or no_update
 
 
 @callback(

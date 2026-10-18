@@ -18,23 +18,23 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from saf.solutions.pump.solution.definition import CompressorSolution
+from saf.solutions.pump.solution.definition import PumpSolution
 from saf.solutions.pump.solution.logic.case_builder import CaseArtifacts
 
 
-def test_setup_step_exposes_its_defaults(client_project: CompressorSolution):
+def test_setup_step_exposes_its_defaults(client_project: PumpSolution):
     setup_step = client_project.steps.setup_step
     assert setup_step.processor_count == 4
     assert setup_step.zone_names == []
 
 
-def test_setup_step_accepts_a_new_processor_count(client_project: CompressorSolution):
+def test_setup_step_accepts_a_new_processor_count(client_project: PumpSolution):
     setup_step = client_project.steps.setup_step
     setup_step.processor_count = 8
     assert setup_step.processor_count == 8
 
 
-def test_build_case_stores_the_artefacts(monkeypatch, client_project: CompressorSolution):
+def test_build_case_stores_the_artefacts(monkeypatch, client_project: PumpSolution):
     def fake_build_case(work_dir, processor_count, progress, log):
         case_path = work_dir / "pump_volute_setup.cas.h5"
         case_path.write_bytes(b"case")
@@ -48,7 +48,7 @@ def test_build_case_stores_the_artefacts(monkeypatch, client_project: Compressor
         )
 
     monkeypatch.setattr(
-        "saf.solutions.compressor.solution.steps.setup_step.build_case",
+        "saf.solutions.pump.solution.steps.setup_step.build_case",
         MagicMock(side_effect=fake_build_case),
     )
 
@@ -61,7 +61,7 @@ def test_build_case_stores_the_artefacts(monkeypatch, client_project: Compressor
     assert client_project.storage_scope.get_bytes(setup_step.mesh_image) == b"png"
 
 
-def test_build_case_records_the_last_progress_stage(monkeypatch, client_project: CompressorSolution):
+def test_build_case_records_the_last_progress_stage(monkeypatch, client_project: PumpSolution):
     def fake_build_case(work_dir, processor_count, progress, log):
         case_path = work_dir / "pump_volute_setup.cas.h5"
         case_path.write_bytes(b"case")
@@ -75,7 +75,7 @@ def test_build_case_records_the_last_progress_stage(monkeypatch, client_project:
         return CaseArtifacts(case_path=case_path, data_path=data_path, mesh_image_path=image_path, zone_names=[])
 
     monkeypatch.setattr(
-        "saf.solutions.compressor.solution.steps.setup_step.build_case",
+        "saf.solutions.pump.solution.steps.setup_step.build_case",
         MagicMock(side_effect=fake_build_case),
     )
 
@@ -88,14 +88,14 @@ def test_build_case_records_the_last_progress_stage(monkeypatch, client_project:
     assert "Welcome to ANSYS Fluent" in setup_step.log_text
 
 
-def test_build_case_rejects_an_out_of_range_processor_count(client_project: CompressorSolution):
+def test_build_case_rejects_an_out_of_range_processor_count(client_project: PumpSolution):
     setup_step = client_project.steps.setup_step
     setup_step.processor_count = 99
     with pytest.raises(Exception, match="processor_count must be between 1 and 32"):
         setup_step.build_case().wait(timeout=60)
 
 
-def test_prepare_scene_stores_the_converted_case(monkeypatch, client_project: CompressorSolution):
+def test_prepare_scene_stores_the_converted_case(monkeypatch, client_project: PumpSolution):
     def fake_build_case(work_dir, processor_count, progress, log):
         case_path = work_dir / "pump_volute_setup.cas.h5"
         case_path.write_bytes(b"case")
@@ -113,11 +113,11 @@ def test_prepare_scene_stores_the_converted_case(monkeypatch, client_project: Co
         return scene_path
 
     monkeypatch.setattr(
-        "saf.solutions.compressor.solution.steps.setup_step.build_case",
+        "saf.solutions.pump.solution.steps.setup_step.build_case",
         MagicMock(side_effect=fake_build_case),
     )
     monkeypatch.setattr(
-        "saf.solutions.compressor.solution.steps.setup_step.export_scene",
+        "saf.solutions.pump.solution.steps.setup_step.export_scene",
         MagicMock(side_effect=fake_export_scene),
     )
 
@@ -128,7 +128,7 @@ def test_prepare_scene_stores_the_converted_case(monkeypatch, client_project: Co
     assert client_project.storage_scope.get_bytes(setup_step.scene_file) == b"scene"
 
 
-def test_prepare_scene_requires_a_built_case(client_project: CompressorSolution):
+def test_prepare_scene_requires_a_built_case(client_project: PumpSolution):
     setup_step = client_project.steps.setup_step
     with pytest.raises(Exception, match="Build the case before preparing the 3D view"):
         setup_step.prepare_scene().wait(timeout=60)

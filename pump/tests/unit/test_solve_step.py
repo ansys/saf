@@ -19,14 +19,14 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from saf.solutions.pump.solution.definition import CompressorSolution
+from saf.solutions.pump.solution.definition import PumpSolution
 from saf.solutions.pump.solution.logic.constants import RUN_SIMULATION_HISTORY_STREAM
 from saf.solutions.pump.solution.logic.solver import RawResults
 from saf.solutions.pump.solution.steps.solve_step import SolveStep
 
 
 @pytest.fixture
-def prepared_project(client_project: CompressorSolution) -> CompressorSolution:
+def prepared_project(client_project: PumpSolution) -> PumpSolution:
     """Give the solve step a case file to consume."""
     case_file = client_project.storage_scope.get_storage_root() / "case.cas.h5"
     case_file.write_bytes(b"case")
@@ -60,9 +60,9 @@ def _fake_run(contour_bytes: bytes = b"png", torque: float = 50.0):
     return _run
 
 
-def test_run_simulation_computes_the_headline_kpis(monkeypatch, prepared_project: CompressorSolution):
+def test_run_simulation_computes_the_headline_kpis(monkeypatch, prepared_project: PumpSolution):
     monkeypatch.setattr(
-        "saf.solutions.compressor.solution.steps.solve_step.run_operating_point",
+        "saf.solutions.pump.solution.steps.solve_step.run_operating_point",
         MagicMock(side_effect=_fake_run()),
     )
     solve_step = prepared_project.steps.solve_step
@@ -77,9 +77,9 @@ def test_run_simulation_computes_the_headline_kpis(monkeypatch, prepared_project
     assert solve_step.converged is True
 
 
-def test_run_simulation_stores_the_artefacts(monkeypatch, prepared_project: CompressorSolution):
+def test_run_simulation_stores_the_artefacts(monkeypatch, prepared_project: PumpSolution):
     monkeypatch.setattr(
-        "saf.solutions.compressor.solution.steps.solve_step.run_operating_point",
+        "saf.solutions.pump.solution.steps.solve_step.run_operating_point",
         MagicMock(side_effect=_fake_run(contour_bytes=b"contour")),
     )
     solve_step = prepared_project.steps.solve_step
@@ -90,7 +90,7 @@ def test_run_simulation_stores_the_artefacts(monkeypatch, prepared_project: Comp
     assert prepared_project.storage_scope.get_bytes(solve_step.solved_data_file) == b"solved data"
 
 
-def test_prepare_solved_scene_stores_the_converted_case(monkeypatch, prepared_project: CompressorSolution):
+def test_prepare_solved_scene_stores_the_converted_case(monkeypatch, prepared_project: PumpSolution):
     def fake_export_scene(case_path, data_path, work_dir, scene_file_name):
         assert case_path.read_bytes() == b"solved"
         assert data_path.read_bytes() == b"solved data"
@@ -99,11 +99,11 @@ def test_prepare_solved_scene_stores_the_converted_case(monkeypatch, prepared_pr
         return scene_path
 
     monkeypatch.setattr(
-        "saf.solutions.compressor.solution.steps.solve_step.run_operating_point",
+        "saf.solutions.pump.solution.steps.solve_step.run_operating_point",
         MagicMock(side_effect=_fake_run()),
     )
     monkeypatch.setattr(
-        "saf.solutions.compressor.solution.steps.solve_step.export_scene",
+        "saf.solutions.pump.solution.steps.solve_step.export_scene",
         MagicMock(side_effect=fake_export_scene),
     )
     solve_step = prepared_project.steps.solve_step
@@ -113,15 +113,15 @@ def test_prepare_solved_scene_stores_the_converted_case(monkeypatch, prepared_pr
     assert prepared_project.storage_scope.get_bytes(solve_step.solved_scene_file) == b"scene"
 
 
-def test_prepare_solved_scene_requires_a_run(prepared_project: CompressorSolution):
+def test_prepare_solved_scene_requires_a_run(prepared_project: PumpSolution):
     solve_step = prepared_project.steps.solve_step
     with pytest.raises(Exception, match="Run the simulation before preparing the 3D view"):
         solve_step.prepare_solved_scene().wait(timeout=60)
 
 
-def test_run_simulation_builds_the_convergence_history(monkeypatch, prepared_project: CompressorSolution):
+def test_run_simulation_builds_the_convergence_history(monkeypatch, prepared_project: PumpSolution):
     monkeypatch.setattr(
-        "saf.solutions.compressor.solution.steps.solve_step.run_operating_point",
+        "saf.solutions.pump.solution.steps.solve_step.run_operating_point",
         MagicMock(side_effect=_fake_run()),
     )
     solve_step = prepared_project.steps.solve_step
@@ -136,10 +136,10 @@ def test_run_simulation_builds_the_convergence_history(monkeypatch, prepared_pro
 
 
 def test_run_simulation_reports_zero_efficiency_when_there_is_no_torque(
-    monkeypatch, prepared_project: CompressorSolution
+    monkeypatch, prepared_project: PumpSolution
 ):
     monkeypatch.setattr(
-        "saf.solutions.compressor.solution.steps.solve_step.run_operating_point",
+        "saf.solutions.pump.solution.steps.solve_step.run_operating_point",
         MagicMock(side_effect=_fake_run(torque=0.0)),
     )
     solve_step = prepared_project.steps.solve_step
@@ -175,6 +175,6 @@ def test_report_history_stays_quiet_until_fluent_has_written_a_sample(monkeypatc
     transaction.raise_event.assert_not_called()
 
 
-def test_run_simulation_fails_clearly_without_a_case_file(client_project: CompressorSolution):
+def test_run_simulation_fails_clearly_without_a_case_file(client_project: PumpSolution):
     with pytest.raises(Exception, match="Build the case"):
         client_project.steps.solve_step.run_simulation().wait(timeout=60)

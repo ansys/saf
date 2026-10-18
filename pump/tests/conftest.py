@@ -38,11 +38,11 @@ def _set_default_glow_env(project_directory: Path) -> None:
 
     os.environ.setdefault(
         "GLOW_SOLUTION_DEFINITION",
-        "saf.solutions.compressor.solution.definition",
+        "saf.solutions.pump.solution.definition",
     )
     os.environ.setdefault(
         "GLOW_UI_MODULE",
-        "saf.solutions.compressor.ui.app",
+        "saf.solutions.pump.ui.app",
     )
 
 

@@ -24,7 +24,7 @@ from dash.testing import ignore_register_page
 from dash_extensions.enrich import no_update
 import pytest
 
-from saf.solutions.pump.solution.definition import CompressorSolution
+from saf.solutions.pump.solution.definition import PumpSolution
 from saf.solutions.pump.solution.logic.constants import PROCESSOR_COUNT_RANGE
 
 with ignore_register_page():
@@ -122,7 +122,7 @@ def test_go_to_model_setup_does_nothing_without_a_project():
 
 
 def test_model_setup_results_panel_is_a_placeholder_before_the_case_is_built(
-    client_project: CompressorSolution,
+    client_project: PumpSolution,
 ):
     rendered = str(model_setup_page.results_panel(client_project.steps.setup_step))
     assert "No case yet" in rendered
@@ -180,7 +180,7 @@ def test_flow_rate_hint_of_zero_is_zero():
 
 
 def test_operating_point_results_panel_is_a_placeholder_before_a_run(
-    client_project: CompressorSolution,
+    client_project: PumpSolution,
 ):
     rendered = str(operating_point_page.results_panel(client_project.steps.solve_step))
     assert "No results yet" in rendered

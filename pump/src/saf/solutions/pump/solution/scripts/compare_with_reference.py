@@ -28,15 +28,15 @@ Usage
 -----
 Full comparison run, matching the reference::
 
-    saf execute compressor "python src/saf/solutions/compressor/solution/scripts/compare_with_reference.py --work-dir runs/refactored"
+    saf execute pump "python src/saf/solutions/pump/solution/scripts/compare_with_reference.py --work-dir runs/refactored"
 
 Quick smoke run of a few iterations::
 
-    saf execute compressor "python src/saf/solutions/compressor/solution/scripts/compare_with_reference.py --work-dir runs/smoke --iterations 5"
+    saf execute pump "python src/saf/solutions/pump/solution/scripts/compare_with_reference.py --work-dir runs/smoke --iterations 5"
 
 Compare against a directory holding the reference script's own report files::
 
-    saf execute compressor "python src/saf/solutions/compressor/solution/scripts/compare_with_reference.py --work-dir runs/refactored --compare-to src/saf/solutions/compressor/solution/logic"
+    saf execute pump "python src/saf/solutions/pump/solution/scripts/compare_with_reference.py --work-dir runs/refactored --compare-to src/saf/solutions/pump/solution/logic"
 """
 
 import argparse

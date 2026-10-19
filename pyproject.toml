@@ -98,7 +98,6 @@ tests-desktop-installer = [
   "httpx2>=2.5.0,<3.0",
   "pillow>=12.1.1,<13.0",
   "poetry==2.3.2",
-  "pylnk3>=0.4.2,<0.5",
   "pywebview>=6.0,<7.0",
 ]
 tests-glow-engine = [

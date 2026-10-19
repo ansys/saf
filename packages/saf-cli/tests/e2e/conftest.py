@@ -516,7 +516,14 @@ def install_solution_executable() -> InstallSolutionExecutable:
 
 def get_shortcut_path(display_name: str) -> Path:
     if platform.system() == "Windows":
-        shortcut_path = Path(os.environ["PUBLIC"]) / "Desktop" / f"{display_name}.lnk"
+        command = (
+            "[Console]::OutputEncoding = [Text.Encoding]::UTF8; "
+            "$principal = [Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent(); "
+            "$isAdmin = $principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator); "
+            "[Environment]::GetFolderPath($(if ($isAdmin) { 'CommonDesktopDirectory' } else { 'Desktop' }))"
+        )
+        output = subprocess.check_output(["powershell.exe", "-NoProfile", "-Command", command], encoding="utf-8")
+        shortcut_path = Path(output.strip()) / f"{display_name}.lnk"
     else:
         shortcut_path = Path(os.environ["HOME"]) / "Desktop" / f"{display_name}.desktop"
     return shortcut_path

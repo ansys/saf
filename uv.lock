@@ -1623,7 +1623,6 @@ tests-desktop-installer = [
     { name = "httpx2" },
     { name = "pillow" },
     { name = "poetry" },
-    { name = "pylnk3" },
     { name = "pywebview" },
 ]
 tests-glow-engine = [
@@ -1796,7 +1795,6 @@ tests-desktop-installer = [
     { name = "httpx2", specifier = ">=2.5.0,<3.0" },
     { name = "pillow", specifier = ">=12.1.1,<13.0" },
     { name = "poetry", specifier = "==2.3.2" },
-    { name = "pylnk3", specifier = ">=0.4.2,<0.5" },
     { name = "pywebview", specifier = ">=6.0,<7.0" },
 ]
 tests-glow-engine = [
@@ -7182,15 +7180,6 @@ wheels = [
 [package.optional-dependencies]
 crypto = [
     { name = "cryptography" },
-]
-
-[[package]]
-name = "pylnk3"
-version = "0.4.3"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/b9/7c/8f824baeeb854ebb3c5f547c791cde05733a2e66ae4f249a70ff23c2b7ab/pylnk3-0.4.3.tar.gz", hash = "sha256:fbc5f512b581382c2a4c11e6df3796f9975bcfd99e3fca2afe531ea61b3c4ac2", size = 23324, upload-time = "2025-04-28T19:06:52.103Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/31/86/ed659fbdce3befc0ad059e7c8186b9fceff5b9301122a3930016747b2f9d/pylnk3-0.4.3-py3-none-any.whl", hash = "sha256:fafa9293290163fed30541fb38f7df21a0e3f6fcc8324597a898ce694c9a593d", size = 21952, upload-time = "2025-04-28T19:06:50.509Z" },
 ]
 
 [[package]]

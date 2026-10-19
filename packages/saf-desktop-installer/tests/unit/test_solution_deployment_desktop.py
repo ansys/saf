@@ -14,7 +14,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import ctypes
 import json
 import os
 from pathlib import Path
@@ -29,6 +28,9 @@ import zipfile
 
 if platform.system() == "Windows":
     import winreg
+
+if sys.platform == "win32":
+    from ctypes import windll
 
 from click.testing import CliRunner
 from plotly.utils import PlotlyJSONEncoder  # pyright: ignore[reportMissingTypeStubs]
@@ -735,7 +737,7 @@ def test_get_windows_desktop_directory_matches_powershell(all_users: bool, speci
 @windows_only()
 def test_get_windows_desktop_directory_does_not_require_existing_folder(mocker: pytest_mock.MockerFixture) -> None:
     """Regression: a deleted Desktop folder must not make the lookup (and thus the installation) fail."""
-    real_lookup = ctypes.windll.shell32.SHGetKnownFolderPath
+    real_lookup = windll.shell32.SHGetKnownFolderPath  # pyright: ignore[reportUndefinedVariable]
 
     def lookup_with_missing_desktop(folder_id: Any, flags: int, token: Any, path_ptr: Any) -> int:
         # Windows verifies the folder exists unless KF_FLAG_DONT_VERIFY is set.
@@ -743,7 +745,7 @@ def test_get_windows_desktop_directory_does_not_require_existing_folder(mocker: 
             return 0x80070002 - (1 << 32)  # HRESULT_FROM_WIN32(ERROR_FILE_NOT_FOUND)
         return real_lookup(folder_id, flags, token, path_ptr)
 
-    mocker.patch.object(ctypes.windll.shell32, "SHGetKnownFolderPath", side_effect=lookup_with_missing_desktop)
+    mocker.patch.object(windll.shell32, "SHGetKnownFolderPath", side_effect=lookup_with_missing_desktop)  # pyright: ignore[reportUndefinedVariable]
     expected = _run_powershell("[Environment]::GetFolderPath('Desktop', 'DoNotVerify')")
 
     assert _get_windows_desktop_directory(all_users=False) == Path(expected)

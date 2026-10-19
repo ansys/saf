@@ -18,6 +18,7 @@ from pathlib import Path
 import platform
 import subprocess
 import sys
+import tomllib
 
 import pytest
 import pytest_mock
@@ -134,6 +135,13 @@ def test_create_solution(tmp_path: Path, ui_framework: str, namespace: str):
     assert "[tool.poetry]" not in pyproject_content
     assert "[tool.uv]" in pyproject_content
     assert f'[saf-cli-version]\nsaf-cli-version = "{expected_saf_cli_version}"' in pyproject_content
+
+    lock = tomllib.loads((tmp_path / solution_name / "uv.lock").read_text(encoding="utf-8"))
+    solution_packages = [package for package in lock["package"] if package["source"] == {"editable": "."}]
+    assert len(solution_packages) == 1
+    assert solution_packages[0]["name"] == f"{namespace_to_pkg_name(namespace)}-{expected_solution_package_name}"
+    assert solution_packages[0]["version"] == expected_version
+    assert solution_packages[0]["dependencies"] == [{"name": "ansys-saf-sdk"}]
 
     # Check content of docker-compose.yaml and .env
     for configuration in [

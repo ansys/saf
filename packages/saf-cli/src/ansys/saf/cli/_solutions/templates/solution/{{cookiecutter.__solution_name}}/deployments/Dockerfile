@@ -34,6 +34,7 @@ ENTRYPOINT uv run --no-sync python -m uvicorn ansys.saf.glow.api:app --host $GLO
 FROM base AS solution_ui
 
 RUN uv sync --frozen --no-default-groups --group ui
+RUN uv pip install waitress
 
 COPY ../../src/{{ cookiecutter.__solution_namespace_path }}/{{ cookiecutter.__solution_module_name }}/ /app/src/{{ cookiecutter.__solution_namespace_path }}/{{ cookiecutter.__solution_module_name }}/
 

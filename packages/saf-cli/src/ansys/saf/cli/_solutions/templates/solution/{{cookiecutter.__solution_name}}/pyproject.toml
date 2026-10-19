@@ -25,8 +25,7 @@ classifiers = [
     "Topic :: Scientific/Engineering",
 ]
 dependencies = [
-    "ansys-saf-glow-engine[hps]>=2.1.dev0,<3.0.0",
-    "ansys-saf-product-manager>=0.5.0.dev0,<1.0.0",
+    "ansys-saf-sdk>=0.3.0,<1.0.0",
 ]
 
 {% set namespace_parent = cookiecutter.__solution_namespace.split(".")[0] %}
@@ -36,7 +35,7 @@ saf-cli-version = "{{cookiecutter.__saf_cli_version}}"
 
 [dependency-groups]
 desktop = [
-    "ansys-saf-desktop-orchestrator>=1.14.dev1,<2.0.0",
+    "ansys-saf-sdk[desktop]>=0.3.0,<1.0.0",
 ]
 
 {% if cookiecutter.__ui_framework == "dash" %}
@@ -46,7 +45,6 @@ ui = [
     "dash-bootstrap-components>=1.2,<2.0",
     "dash-extensions>=2.0.5,<3.0.0",
     "dash-mantine-components>=2.6.0,<3.0.0",
-    "waitress>=3.0.0,<4.0.0",
 ]
 {% endif %}
 
@@ -89,7 +87,7 @@ tests = [
 ]
 
 build = [
-    "ansys-saf-desktop-installer>=1.16.0.dev0,<2.0.0",
+    "ansys-saf-sdk[build]>=0.3.0,<1.0.0",
     "build>=0.8.0,<1.0.0",
     "pkginfo>=1.12.1.2,<2.0.0",
     "pyc-wheel>=1.2.7,<2.0.0",

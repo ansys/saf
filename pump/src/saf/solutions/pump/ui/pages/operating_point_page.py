@@ -16,10 +16,7 @@
 
 """Frontend of the operating point step."""
 
-import json
 import logging
-import os
-import time
 from typing import Any
 
 from ansys.saf.glow.client import DashClient, callback
@@ -37,13 +34,11 @@ from saf.solutions.pump.solution.logic.constants import (
     IMPELLER_SPEED_RANGE,
     ITERATION_COUNT_RANGE,
     MASS_FLOW_RATE_RANGE,
-    PREPARE_SOLVED_SCENE_STREAM,
     RUN_SIMULATION_HISTORY_STREAM,
     RUN_SIMULATION_LOG_STREAM,
     RUN_SIMULATION_PROGRESS_STREAM,
     RUN_SIMULATION_STREAM,
     SOLVED_CASE_FILE_NAME,
-    START_VISOR_STREAM,
     TIME_STEP_SCALE_FACTOR_RANGE,
 )
 from saf.solutions.pump.ui.feedback import (
@@ -75,20 +70,7 @@ NOTIFICATION = NotificationCopy(
     failure_title="Simulation failed",
 )
 
-SCENE_NOTIFICATION = NotificationCopy(
-    notification_id="prepare-solved-scene-notification",
-    running_title="Preparing the 3D view",
-    running_message="The solved case is being converted for the 3D viewer.",
-    success_title="3D view ready",
-    success_message="The solved pump is displayed in the 3D view.",
-    failure_title="3D view preparation failed",
-    failure_message="The solved case could not be converted for the 3D viewer.",
-)
-
 LOG_VIEWPORT = "run-simulation-log-viewport"
-
-# Must match the base path given to ``visordash.init_endpoints`` in ``ui/app.py``.
-VISOR_BASE_PATH = os.getenv("GLOW_UI_PATH_PREFIX", "/").rstrip("/")
 
 
 logger = logging.getLogger(__name__)
@@ -350,8 +332,7 @@ def _download_links(step: Any) -> dmc.Group:
 def results_panel(step: Any) -> html.Div:
     """Render the KPIs, or a placeholder when no run has completed yet.
 
-    The 3D viewer sits between this panel and :func:`results_details` in the layout, so the
-    rest of the results lives there.
+    The rest of the results lives in :func:`results_details`.
 
     Parameters
     ----------
@@ -474,85 +455,6 @@ def results_details(step: Any) -> html.Div:
             dmc.Space(h=20),
             _download_links(step),
         ]
-    )
-
-
-def viewer_message(icon: str, title: str, detail: str, color: str = "gray") -> dmc.Stack:
-    """Render what the viewer slot shows while it has no live stream to show.
-
-    Parameters
-    ----------
-    icon : str
-        Iconify name.
-    title : str
-        One-line headline.
-    detail : str
-        Supporting sentence.
-    color : str
-        Mantine colour of the icon.
-    """
-    return dmc.Stack(
-        [
-            dmc.ThemeIcon(DashIconify(icon=icon, width=28), size=56, radius="xl", variant="light", color=color),
-            dmc.Text(title, fw=600),
-            dmc.Text(detail, size="sm", c="dimmed", ta="center"),
-        ],
-        align="center",
-        justify="center",
-        gap="xs",
-        h="100%",
-    )
-
-
-def viewer_spinner(
-    title: str = "Preparing the 3D view", detail: str = "The solved case is being converted for the viewer."
-) -> dmc.Stack:
-    """Render what the viewer slot shows while the 3D view is on its way."""
-    return dmc.Stack(
-        [
-            dmc.Loader(size="lg"),
-            dmc.Text(title, fw=600),
-            dmc.Text(detail, size="sm", c="dimmed", ta="center"),
-        ],
-        align="center",
-        justify="center",
-        gap="xs",
-        h="100%",
-    )
-
-
-def viewer_card() -> dmc.Card:
-    """Render the shell the Visor stream is embedded into.
-
-    As on the model setup page, the shell is part of the page layout rather than of
-    ``results_panel``: the results are re-rendered wholesale when a run finishes, which would
-    tear the viewer out of the DOM and drop its websocket.
-    """
-    return dmc.Card(
-        [
-            dmc.Group(
-                [
-                    dmc.Title("3D view", order=4),
-                    dmc.Badge("Visor", variant="light", color="indigo"),
-                ],
-                justify="space-between",
-            ),
-            dmc.Space(h=12),
-            html.Div(
-                viewer_spinner("Loading the 3D view", "Connecting to the Visor service."),
-                id="operating-point-viewer-container",
-                style={
-                    "height": "520px",
-                    "overflow": "hidden",
-                    "borderRadius": "var(--mantine-radius-sm)",
-                    "border": "1px solid var(--mantine-color-default-border)",
-                },
-            ),
-        ],
-        withBorder=True,
-        shadow="sm",
-        radius="md",
-        p="lg",
     )
 
 
@@ -773,7 +675,6 @@ def layout(project: PumpSolution) -> html.Div:
                                         [
                                             html.Div(results_panel(solve_step), id="results-panel"),
                                             dmc.Space(h=20),
-                                            viewer_card(),
                                             html.Div(results_details(solve_step), id="results-details"),
                                         ]
                                     ),
@@ -794,10 +695,6 @@ def layout(project: PumpSolution) -> html.Div:
             dmc.Space(h=40),
             dcc.Store(id="run-simulation-log-store", data=log_lines),
             dcc.Store(id="run-simulation-scroll-sink"),
-            dcc.Store(id="operating-point-scene-sink"),
-            # Same mechanism as the model setup page: a fresh value on every visit makes the
-            # viewer callback fire again after navigating away and back.
-            dcc.Store(id="operating-point-visor-boot", data=time.monotonic()),
             # Four streams, four listeners. GLOW owns the termination stream, the step owns
             # the other three; keeping them apart means a log batch never has to be told apart
             # from a progress tick or a convergence update.
@@ -813,159 +710,8 @@ def layout(project: PumpSolution) -> html.Div:
             DashClient.create_event_listener(
                 solve_step, stream_name=RUN_SIMULATION_HISTORY_STREAM, id="run-simulation-history-ws"
             ),
-            # The Visor server is started and owned by the setup step; this page listens to its
-            # start under its own identifier, like the model setup page does.
-            DashClient.create_event_listener(
-                setup_step, stream_name=START_VISOR_STREAM, id="operating-point-visor-ws"
-            ),
-            DashClient.create_event_listener(
-                solve_step, stream_name=PREPARE_SOLVED_SCENE_STREAM, id="prepare-solved-scene-ws"
-            ),
         ]
     )
-
-
-def _browser_visor_host(host: str) -> str:
-    """Return a host the browser can open.
-
-    The Visor process often binds ``0.0.0.0``. That address is not a destination the
-    browser can connect to, so the widget has to use localhost on this machine.
-    """
-    if host in {"", "0.0.0.0", "::"}:
-        return "localhost"
-    return host
-
-
-def visor_frame(host: str, port: int) -> html.Iframe:
-    """Return an isolated viewer document connected to the Visor server.
-
-    Same approach as the SAF Visor instance example, and duplicated from the model setup
-    page because importing another page module would register its callbacks twice. The
-    viewer bundle served by ``visordash.init_endpoints`` runs inside its own document, so its
-    global reset CSS cannot leak into the Mantine inputs, and every render starts from a
-    clean document with a fresh websocket.
-    """
-    # Escaping ``<`` stops a value from closing the inline <script> element early.
-    viewer_args = json.dumps(
-        {"host": host, "port": port, "basePath": VISOR_BASE_PATH, "aspectRatio": 1.6, "pixelDensity": 800}
-    ).replace("<", "\\u003c")
-    src_doc = f"""<!doctype html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <link rel="stylesheet" href="{VISOR_BASE_PATH}/visordash/css.css">
-</head>
-<body style="margin: 0; width: 100vw; height: 100vh; overflow: hidden;">
-    <div id="VisorContainer" style="width: 100%; height: 100%;"></div>
-    <script>window.__visorArgs = {viewer_args};</script>
-    <script type="module" src="{VISOR_BASE_PATH}/visordash/js.js"></script>
-</body>
-</html>"""
-    return html.Iframe(
-        id="operating-point-visor-frame",
-        srcDoc=src_doc,
-        title="3D view of the solved pump",
-        style={"width": "100%", "height": "100%", "border": "0", "display": "block"},
-    )
-
-
-def scene_viewer(project: PumpSolution) -> tuple[Any, bool]:
-    """Load the solved scene into Visor and return the viewer that streams it.
-
-    The scene is loaded before the viewer document is created, so the viewer connects to a
-    server that already holds the solved pump instead of racing the update. The Visor server
-    is shared with the Model Setup page, which loads its own scene into it, so the solved
-    pump is loaded again on every visit.
-
-    Returns
-    -------
-    tuple
-        The viewer slot content, and whether the scene is now on screen. ``False`` lets
-        :func:`embed_visor_viewer` try again when the Visor server comes up.
-    """
-    setup_step = project.steps.setup_step
-    if not setup_step.visor_started or not setup_step.visor_port:
-        if setup_step.get_long_running_method_state("start_visor").status == MethodStatus.Failed:
-            return (
-                viewer_message(
-                    "carbon:warning-alt",
-                    "3D viewer unavailable",
-                    "The Visor server could not be started. Reload the project to try again.",
-                    color="red",
-                ),
-                False,
-            )
-        return viewer_spinner("Starting the 3D viewer", "Connecting to the Visor service."), False
-    try:
-        project.steps.solve_step.show_solved_scene()
-    except Exception:
-        logger.exception("Could not load the solved pump scene into Visor.")
-        return (
-            viewer_message(
-                "carbon:warning-alt", "3D view unavailable", "The scene could not be loaded into Visor.", color="red"
-            ),
-            False,
-        )
-    return visor_frame(_browser_visor_host(setup_step.visor_host), setup_step.visor_port), True
-
-
-@callback(
-    Output("operating-point-viewer-container", "children"),
-    Output("operating-point-scene-sink", "data"),
-    Input("operating-point-visor-boot", "data"),
-    Input("operating-point-visor-ws", "message"),
-    State("operating-point-scene-sink", "data"),
-    State("url", "pathname"),
-)
-def embed_visor_viewer(
-    _boot: float,
-    _message: dict | None,
-    scene_loaded: bool | None,
-    project: PumpSolution,
-) -> tuple[Any, Any]:
-    """Show the solved scene when the page opens and again when the Visor server comes up.
-
-    Once the scene is on screen the callback stops, so later stream messages do not tear the
-    widget down and drop its websocket.
-    """
-    if scene_loaded:
-        raise PreventUpdate
-    step = project.steps.solve_step
-    # The page was reopened while the conversion is still going: its end is caught by
-    # on_prepare_solved_scene_finished, which is listening on this page too.
-    if step.get_long_running_method_state("prepare_solved_scene").status == MethodStatus.Running:
-        return viewer_spinner(), no_update
-    if step.solved_scene_file == NO_ENTITY:
-        return (
-            viewer_message(
-                "carbon:3d-mpr-toggle", "No 3D results yet", "Run the simulation to display the solved pump in 3D."
-            ),
-            no_update,
-        )
-    return scene_viewer(project)
-
-
-@callback(
-    Output("notification-container", "sendNotifications", allow_duplicate=True),
-    Output("operating-point-viewer-container", "children", allow_duplicate=True),
-    Output("operating-point-scene-sink", "data", allow_duplicate=True),
-    Input("prepare-solved-scene-ws", "message"),
-    State("url", "pathname"),
-    prevent_initial_call=True,
-)
-def on_prepare_solved_scene_finished(message: dict, project: PumpSolution) -> tuple[Any, Any, Any]:
-    """Close the toast and replace the spinner with the scene, or with the reason it failed."""
-    event = parse_event(message)
-    if not event.finished:
-        raise PreventUpdate
-    notifications = closing_notification(SCENE_NOTIFICATION, event) or no_update
-    if not event.succeeded:
-        failed = viewer_message(
-            "carbon:warning-alt", "3D view unavailable", "The solved case could not be converted.", color="red"
-        )
-        return notifications, failed, False
-    viewer, loaded = scene_viewer(project)
-    return notifications, viewer, loaded
 
 
 @callback(
@@ -1082,22 +828,14 @@ def on_run_simulation_log(message: dict, buffered: list[str] | None) -> tuple[ht
     Output("solve-tabs", "value", allow_duplicate=True),
     Output("solve-status", "children", allow_duplicate=True),
     Output("live-convergence", "children", allow_duplicate=True),
-    Output("operating-point-viewer-container", "children", allow_duplicate=True),
-    Output("operating-point-scene-sink", "data", allow_duplicate=True),
     Input("run-simulation-ws", "message"),
     State("url", "pathname"),
     prevent_initial_call=True,
 )
 def on_run_simulation_finished(
     message: dict, project: PumpSolution
-) -> tuple[Any, Any, Any, Any, bool, bool, Any, Any, Any, Any, Any]:
-    """Close out the run: clear the progress bar, free the button and show the results.
-
-    A successful run also starts converting the solved case for the 3D viewer. That is done
-    here rather than in a second callback on the same stream: Dash tells duplicate outputs
-    apart by hashing the callback Inputs, so two callbacks listening to ``run-simulation-ws``
-    alone would collide on ``notification-container``.
-    """
+) -> tuple[Any, Any, Any, Any, bool, bool, Any, Any, Any]:
+    """Close out the run: clear the progress bar, free the button and show the results."""
     event = parse_event(message)
     if not event.finished:
         raise PreventUpdate
@@ -1111,13 +849,7 @@ def on_run_simulation_finished(
     # loses the "Live" badge but keeps the record of how the solve behaved, whether it ended
     # with results or with a failure.
     live = live_convergence(step, False) if event.succeeded else no_update
-    if not event.succeeded:
-        return notifications, html.Div(), results, details, False, False, tab, status, live, no_update, no_update
-    step.prepare_solved_scene()
-    notifications = (closing_notification(NOTIFICATION, event) or []) + opening_notification(SCENE_NOTIFICATION)
-    # The scene on screen belongs to the previous run; clearing the flag lets the next Visor
-    # start, if any, embed the new one.
-    return notifications, html.Div(), results, details, False, False, tab, status, live, viewer_spinner(), False
+    return notifications, html.Div(), results, details, False, False, tab, status, live
 
 
 clientside_callback(

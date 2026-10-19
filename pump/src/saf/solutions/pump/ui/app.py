@@ -16,14 +16,10 @@
 
 """Application."""
 
-import logging
 import os
 
 import dash
 from dash_extensions.enrich import DashProxy, MultiplexerTransform, TriggerTransform
-import flask
-
-from saf.solutions.pump.solution.logic.report.settings import get_report_settings
 
 dash._dash_renderer._set_react_version("18.2.0")
 
@@ -36,32 +32,6 @@ app = DashProxy(
     requests_pathname_prefix=_UI_PATH_PREFIX,
     use_pages=True,
 )
-
-# The viewer widget loads its JS/CSS from routes on this app. Without them the
-# component renders blank even when the Visor server is running.
-try:
-    import visordash
-
-    visordash.init_endpoints(app, base_path=_UI_PATH_PREFIX.rstrip("/"))
-except ImportError:
-    logging.getLogger(__name__).warning(
-        "visordash is not installed. The 3D view stays empty until the ui dependency group is installed.",
-    )
-
-
-# The rendered ADR report links its images and stylesheets to these two URL prefixes.
-# send_from_directory rejects paths that escape the folder.
-@app.server.route("/media/<path:filename>")
-def serve_report_media(filename: str) -> flask.Response:
-    """Serve an image of the ADR report."""
-    return flask.send_from_directory(get_report_settings().media_directory, filename)
-
-
-@app.server.route("/static_assets/<path:filename>")
-def serve_report_static(filename: str) -> flask.Response:
-    """Serve a stylesheet, script or font of the ADR report."""
-    return flask.send_from_directory(get_report_settings().static_directory, filename)
-
 
 # !IMPORTANT: keep this import after DashProxy initialization.
 # Page modules resolve assets at import time and require Dash config to be initialized.

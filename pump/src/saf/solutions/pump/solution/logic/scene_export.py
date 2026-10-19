@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Conversion of the Fluent case into a scene the Visor viewer can load."""
+"""Conversion of the Fluent case into a VTKHDF scene."""
 
 from pathlib import Path
 import shutil

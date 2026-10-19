@@ -22,7 +22,6 @@ Steps:
   - `iteration_count` (int, 1 to 5000, default 200)
   - `time_step_scale_factor` (float, 0.1 to 100, default 10): pseudo-time step scale factor.
     Lower it if the solve does not converge.
-- `report_step`: builds an engineering report of the last solve with Ansys Dynamic Reporting (ADR).
 
 Result fields on `solve_step` (they describe the last successful `run_simulation`, not the current inputs):
 
@@ -37,18 +36,15 @@ Result fields on `solve_step` (they describe the last successful `run_simulation
 
 Constraints:
 
-- `build_case`, `run_simulation` and `generate_report` are long-running and launch Fluent or ADR. They take
-  minutes. Never start one while the same transaction is still running on the project.
+- `build_case` and `run_simulation` are long-running and launch Fluent. They take minutes. Never start
+  one while the same transaction is still running on the project.
 - Input ranges are validated when a transaction runs, not when the field is set. Check the ranges above
   before calling `set_fields`, so an out-of-range value does not waste a run.
-- Only download the small artefacts: `setup_step.mesh_image`, `solve_step.contour_image` and, if needed,
-  `report_step.report_pdf`. Do not download the Fluent case and data files (`case_file`, `data_file`,
-  `solved_case_file`, `solved_data_file`), the 3D scenes (`scene_file`, `solved_scene_file`) or
-  `report_step.report_html_file`: they are large.
-- Ignore the 3D viewer transactions: `setup_step__start_visor`, `setup_step__update_scene`,
-  `setup_step__show_scene`, `setup_step__shutdown_visor`, `setup_step__prepare_scene`,
-  `solve_step__prepare_solved_scene` and `solve_step__show_solved_scene`. They drive the interactive
-  viewer of the web UI and are not needed to obtain results.
+- Only download the small artefacts: `setup_step.mesh_image` and `solve_step.contour_image`. Do not
+  download the Fluent case and data files (`case_file`, `data_file`, `solved_case_file`,
+  `solved_data_file`) or the 3D scenes (`scene_file`, `solved_scene_file`): they are large.
+- Ignore `setup_step__prepare_scene` and `solve_step__prepare_solved_scene`. They convert the case into
+  VTKHDF scenes and are not needed to obtain results.
 - `progress_stage`, `progress_fraction` and `log_text` report the progress and Fluent transcript of the
   running transaction. Read `log_text` to explain a failure.
 
@@ -65,12 +61,7 @@ Constraints:
 6. Read the results from `solve_step` with `get_fields`: at least `pump_head_m`, `hydraulic_efficiency`,
    `shaft_power_w` and `converged`. Present the efficiency as a percentage.
 7. Optional: download `solve_step.contour_image` to show the static pressure field.
-8. Optional: run `report_step__generate_report` (pass the project display name as `project_name`) and wait
-   for it to finish. It fails if no simulation has run, or if ADR is not installed on the server.
-   Afterwards, `report_step.report_html_content` holds the report as HTML and `report_step.report_pdf`
-   holds the PDF, when the server can export PDFs.
-9. To evaluate another operating point, repeat steps 4 to 8 in the same project. Each run replaces the
-   previous results and makes the existing report outdated. To compare operating points, record each
-   result before starting the next run, or use one project per operating point (each needs its own
-   `build_case`).
+8. To evaluate another operating point, repeat steps 4 to 7 in the same project. Each run replaces the
+   previous results. To compare operating points, record each result before starting the next run, or
+   use one project per operating point (each needs its own `build_case`).
 

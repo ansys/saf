@@ -59,9 +59,6 @@ python = ">=3.11,<3.15"
 ansys-saf-sdk = { version = "^0.3.0", extras = ["instance-management-fluent", "core-mcp"] }
 h5py = "^3.12"
 vtk = "^9.6.1"
-# Optional at run time: the report page reports itself unavailable without it. Only
-# published for Python < 3.13.
-ansys-dynamicreporting-core = { version = "^0.10.7", python = "<3.13" }
 
 [tool.poetry.group.desktop]
 optional = true

@@ -116,12 +116,9 @@ SOLVED_CASE_FILE_NAME: Final[str] = "pump_volute_setup_solved.cas.h5"
 SOLVED_DATA_FILE_NAME: Final[str] = "pump_volute_setup_solved.dat.h5"
 """Written by Fluent next to :data:`SOLVED_CASE_FILE_NAME` when the case is saved as ``case-data``."""
 SCENE_FILE_NAME: Final[str] = "pump_volute_setup.vtkhdf"
-"""VTKHDF conversion of the setup case, displayed in the Visor viewer."""
+"""VTKHDF conversion of the setup case."""
 SOLVED_SCENE_FILE_NAME: Final[str] = "pump_volute_setup_solved.vtkhdf"
-"""VTKHDF conversion of the solved case, displayed in the Visor viewer."""
-SCENE_NAME: Final[str] = "Pump"
-SOLVED_SCENE_NAME: Final[str] = "Solved pump"
-SCENE_UNIT: Final[str] = "m"
+"""VTKHDF conversion of the solved case."""
 MESH_IMAGE_NAME: Final[str] = "pump-volute-mesh.png"
 CONTOUR_IMAGE_NAME: Final[str] = "static-pressure-contour.png"
 
@@ -134,20 +131,8 @@ CONTOUR_IMAGE_NAME: Final[str] = "static-pressure-contour.png"
 BUILD_CASE_STREAM: Final[str] = "build-case"
 """Event stream on which GLOW publishes the final state of ``SetupStep.build_case``."""
 
-START_VISOR_STREAM: Final[str] = "start-visor"
-"""Event stream on which GLOW publishes the final state of ``SetupStep.start_visor``."""
-
-PREPARE_SCENE_STREAM: Final[str] = "prepare-scene"
-"""Event stream on which GLOW publishes the final state of ``SetupStep.prepare_scene``."""
-
 RUN_SIMULATION_STREAM: Final[str] = "run-simulation"
 """Event stream on which GLOW publishes the final state of ``SolveStep.run_simulation``."""
-
-PREPARE_SOLVED_SCENE_STREAM: Final[str] = "prepare-solved-scene"
-"""Event stream on which GLOW publishes the final state of ``SolveStep.prepare_solved_scene``."""
-
-GENERATE_REPORT_STREAM: Final[str] = "generate-report"
-"""Event stream on which GLOW publishes the final state of ``ReportStep.generate_report``."""
 
 BUILD_CASE_PROGRESS_STREAM: Final[str] = "build-case-progress"
 """Event stream carrying model-setup progress to the UI."""

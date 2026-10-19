@@ -25,7 +25,6 @@ from typing import Any, Literal
 import webbrowser
 
 from ansys.saf.glow.client import DashClient, Deployment, NotFoundException, callback
-from ansys.saf.glow.solution import MethodStatus
 from ansys.solutions.dash_super_components import Tree
 import dash
 import dash_bootstrap_components as dbc
@@ -35,31 +34,8 @@ import dash_mantine_components as dmc
 from dash_iconify import DashIconify
 
 from saf.solutions.pump.solution.definition import PumpSolution
-from saf.solutions.pump.solution.logic.constants import (
-    GENERATE_REPORT_STREAM,
-    RUN_SIMULATION_STREAM,
-    START_VISOR_STREAM,
-)
-from saf.solutions.pump.solution.logic.report.settings import get_report_settings
-from saf.solutions.pump.ui.feedback import (
-    NotificationCopy,
-    closing_notification,
-    opening_notification,
-    parse_event,
-)
-from saf.solutions.pump.ui.report_status import REPORT_NOTIFICATION, request_report
 
 logger = logging.getLogger(__name__)
-
-VISOR_NOTIFICATION = NotificationCopy(
-    notification_id="start-visor-notification",
-    running_title="Starting the 3D viewer",
-    running_message="The Visor server is booting. The 3D view appears on Model Setup once it is ready.",
-    success_title="3D viewer ready",
-    success_message="The Visor server is up. The 3D view is available on Model Setup.",
-    failure_title="3D viewer unavailable",
-    failure_message="The Visor server could not be started. Every other part of the solution still works.",
-)
 
 
 def get_asset(asset_name: str, relative_path: str = "", theme: str = "dark") -> str:
@@ -208,14 +184,6 @@ layout = dmc.MantineProvider(
         ),
         dcc.Store(id="active-page-index", data=None),
         dcc.Store(id="active-project-id", data=None),
-        # The Visor server takes a few seconds to boot, so it is started as soon as a project
-        # is open rather than when the 3D view is first looked at. The listener that reports
-        # the outcome needs a step proxy, which does not exist at import time, so the callback
-        # that starts the server mounts it here.
-        html.Div(id="visor-listener"),
-        # Same reason: the report is generated whenever a simulation completes, whichever
-        # page the user is on, so its listeners live in the shell.
-        html.Div(id="report-listeners"),
     ],
     id="mantine-provider",
     defaultColorScheme="dark",
@@ -329,115 +297,6 @@ def resolve_active_page_and_project_information(pathname: str) -> tuple[str | No
         if matched:
             return str(i), project_id
     return None, None
-
-
-@callback(
-    Output("visor-listener", "children"),
-    Output("notification-container", "sendNotifications", allow_duplicate=True),
-    Input("active-project-id", "data"),
-    State("url", "pathname"),
-    prevent_initial_call=True,
-)
-def start_visor_backend(project_id: str | None, project: PumpSolution) -> tuple[Any, Any]:
-    """Boot the Visor server in the background as soon as a project is open.
-
-    This lives in the shell rather than on the page that shows the 3D view so that the few
-    seconds Visor needs to come up are spent while the user is reading the first page,
-    instead of being spent in front of an empty viewer.
-
-    The method is long running, so the toast opened here is left open; GLOW publishes the
-    final state on the termination stream and :func:`report_visor_backend_state` closes it.
-
-    Parameters
-    ----------
-    project_id : str or None
-        Identifier resolved from the URL, ``None`` when the URL names no project.
-    project : PumpSolution
-        Injected by the SAF callback wrapper in place of the URL path.
-    """
-    if project_id is None:
-        return no_update, no_update
-
-    step = project.steps.setup_step
-    listener = DashClient.create_event_listener(step, stream_name=START_VISOR_STREAM, id="start-visor-ws")
-
-    # The server outlives the page, so later navigation finds it already up and must not
-    # announce a boot that is long over.
-    if step.visor_started:
-        return listener, no_update
-
-    # A boot another visit started is still in flight. Starting a second server would leave
-    # an orphan behind, so this visit only joins the toast of the one already going.
-    if step.get_long_running_method_state("start_visor").status != MethodStatus.Running:
-        logger.info("Starting the Visor server for project %s.", project_id)
-        step.start_visor()
-
-    return listener, opening_notification(VISOR_NOTIFICATION)
-
-
-@callback(
-    Output("notification-container", "sendNotifications", allow_duplicate=True),
-    Input("start-visor-ws", "message"),
-    prevent_initial_call=True,
-)
-def report_visor_backend_state(message: dict) -> Any:
-    """Close the viewer toast with the outcome of the boot."""
-    event = parse_event(message)
-    if not event.finished:
-        return no_update
-    if event.failed:
-        # A missing or unlicensed Visor costs the 3D view and nothing else, so it is reported
-        # and left at that rather than being allowed to break the page.
-        logger.error("The Visor server did not start: %s", event.error or "no reason was reported.")
-    return closing_notification(VISOR_NOTIFICATION, event) or no_update
-
-
-@callback(
-    Output("report-listeners", "children"),
-    Input("active-project-id", "data"),
-    State("url", "pathname"),
-    prevent_initial_call=True,
-)
-def mount_report_listeners(project_id: str | None, project: PumpSolution) -> Any:
-    """Listen for the end of a simulation and of a report generation while a project is open."""
-    if project_id is None or not get_report_settings().is_available:
-        return no_update
-    return [
-        DashClient.create_event_listener(
-            project.steps.solve_step, stream_name=RUN_SIMULATION_STREAM, id="report-trigger-ws"
-        ),
-        DashClient.create_event_listener(
-            project.steps.report_step, stream_name=GENERATE_REPORT_STREAM, id="report-generation-ws"
-        ),
-    ]
-
-
-@callback(
-    Output("notification-container", "sendNotifications", allow_duplicate=True),
-    Input("report-trigger-ws", "message"),
-    State("url", "pathname"),
-    prevent_initial_call=True,
-)
-def generate_report_after_simulation(message: dict, project: PumpSolution) -> Any:
-    """Generate the report as soon as a simulation completes successfully."""
-    if not parse_event(message).succeeded:
-        return no_update
-    if not request_report(project):
-        return no_update
-    return opening_notification(REPORT_NOTIFICATION)
-
-
-@callback(
-    Output("notification-container", "sendNotifications", allow_duplicate=True),
-    Input("report-generation-ws", "message"),
-    prevent_initial_call=True,
-)
-def report_generation_finished(message: dict) -> Any:
-    """Close the report toast with the outcome of the generation."""
-    event = parse_event(message)
-    if event.failed:
-        logger.error("The report could not be generated: %s", event.error or "no reason was reported.")
-    return closing_notification(REPORT_NOTIFICATION, event) or no_update
 
 
 @callback(

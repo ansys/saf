@@ -26,10 +26,7 @@ from ansys.saf.glow.solution import (
     StepSpec,
     long_running,
     transaction,
-    instance,
 )
-from ansys.saf.product_manager.visor import VisorManager
-from ansys.visor.viewer import Metadata
 
 from saf.solutions.pump.solution.logic.constants import (
     CASE_FILE_NAME,
@@ -41,9 +38,7 @@ from saf.solutions.pump.solution.logic.constants import (
     RUN_SIMULATION_HISTORY_STREAM,
     RUN_SIMULATION_LOG_STREAM,
     RUN_SIMULATION_PROGRESS_STREAM,
-    SCENE_UNIT,
     SOLVED_SCENE_FILE_NAME,
-    SOLVED_SCENE_NAME,
 )
 from saf.solutions.pump.solution.logic.results import (
     angular_velocity,
@@ -164,7 +159,7 @@ class SolveStep(StepModel):
         self=StepSpec(download=["solved_case_file", "solved_data_file"], upload=["solved_scene_file"]),
     )
     def prepare_solved_scene(self) -> None:
-        """Convert the solved case into a VTKHDF scene for the 3D viewer."""
+        """Convert the solved case into a VTKHDF scene."""
         if self.solved_case_file == NO_ENTITY or self.solved_data_file == NO_ENTITY:
             raise BadRequestError("Run the simulation before preparing the 3D view.")
         work_dir = Path(self.storage_scope.get_storage_root())
@@ -178,15 +173,6 @@ class SolveStep(StepModel):
         except RuntimeError as error:
             raise BadRequestError(str(error)) from error
         self.solved_scene_file = self.storage_scope.store(scene_path)
-
-    @transaction(self=StepSpec(download=["solved_scene_file"]))
-    @instance("setup_step.visor_manager")
-    def show_solved_scene(self, visor_manager: VisorManager) -> None:
-        """Load the converted solved case into the Visor instance started by the setup step."""
-        if self.solved_scene_file == NO_ENTITY:
-            raise BadRequestError("The 3D view has not been prepared yet.")
-        path = Path(self.storage_scope.get_cached(self.solved_scene_file))
-        visor_manager.instance.update(path.as_posix(), Metadata(name=SOLVED_SCENE_NAME, unit=SCENE_UNIT))
 
     def _store_results(self, raw: RawResults, params: OperatingPoint) -> None:
         """Derive the engineering quantities and persist everything."""

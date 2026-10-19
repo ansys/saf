@@ -19,7 +19,6 @@
 
 from ansys.saf.glow.solution import Migration, MigrationContext, MigrationTransformation, Solution, StepsModel
 
-from saf.solutions.pump.solution.steps.report_step import ReportStep
 from saf.solutions.pump.solution.steps.setup_step import SetupStep
 from saf.solutions.pump.solution.steps.solve_step import SolveStep
 
@@ -29,21 +28,29 @@ class Steps(StepsModel):
 
     setup_step: SetupStep
     solve_step: SolveStep
-    report_step: ReportStep
 
 
-class AddReportStep(MigrationTransformation):
-    """Version 1 to 2: projects created before the report existed get an empty report step."""
+class DropRemovedFields(MigrationTransformation):
+    """Drop the fields of the removed Visor viewer and ADR report, which steps now reject.
+
+    Version 1 projects hold the Visor fields; version 2 projects also hold the report step.
+    """
 
     def migrate(self, ctx: MigrationContext) -> None:
-        """Add the report step with its default values."""
-        ctx.steps.setdefault("report_step", ReportStep().model_dump(mode="json"))
+        """Remove the obsolete fields when present."""
+        ctx.steps.pop("report_step", None)
+        setup_step = ctx.steps.get("setup_step", {})
+        for field in ("visor_version", "visor_started", "visor_host", "visor_port"):
+            setup_step.pop(field, None)
 
 
 class PumpSolution(Solution):
     """Solution definition."""
 
     display_name: str = "Pump"
-    version: int = 2
-    migrations: list[Migration] = [Migration(version=1, migration_transformation=AddReportStep())]
+    version: int = 3
+    migrations: list[Migration] = [
+        Migration(version=1, migration_transformation=DropRemovedFields()),
+        Migration(version=2, migration_transformation=DropRemovedFields()),
+    ]
     steps: Steps

@@ -60,36 +60,4 @@
     border-color: #FFFFFF;
 }
 
-/*
- * The Visor viewer injects /visordash/css.css into the whole document. Its rule
- * `input[type='text']:is(textarea, input):not(:read-only)` (specificity 0,2,2) forces a white
- * background, black text and a 4px padding on every text field, which breaks Mantine inputs
- * in dark mode and lets the value overlap the left-section icon. The class is repeated to
- * reach specificity 0,3,0, and Mantine's own variables are reused so that the colour scheme,
- * focus, error and disabled states keep working.
- */
-.mantine-Input-input.mantine-Input-input[type="text"],
-textarea.mantine-Input-input.mantine-Input-input {
-    padding-top: var(--input-padding-y, 0rem);
-    padding-bottom: var(--input-padding-y, 0rem);
-    padding-inline-start: var(--input-padding-inline-start);
-    padding-inline-end: var(--input-padding-inline-end);
-    background-color: var(--input-bg);
-    background-image: none;
-    color: var(--input-color);
-    border: calc(0.0625rem * var(--mantine-scale)) solid var(--input-bd);
-    border-radius: var(--input-radius);
-    font-family: var(--input-font-family, var(--mantine-font-family));
-    font-size: var(--_input-fz, var(--input-fz, var(--mantine-font-size-md)));
-    line-height: var(--input-line-height);
-    text-align: var(--input-text-align);
-    overflow: var(--input-overflow);
-}
-
-.mantine-Input-input.mantine-Input-input[type="text"]:disabled,
-.mantine-Input-input.mantine-Input-input[type="text"][data-disabled],
-textarea.mantine-Input-input.mantine-Input-input:disabled {
-    background-color: var(--input-disabled-bg);
-    color: var(--input-disabled-color);
-}
 

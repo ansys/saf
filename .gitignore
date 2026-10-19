@@ -254,7 +254,6 @@ packages/saf-desktop-installer/report/assets/style.css
 
 # pytest reports
 report/
-!pump/src/saf/solutions/pump/solution/logic/report
 
 # Environment variables
 .env

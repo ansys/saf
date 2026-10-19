@@ -27,11 +27,7 @@ from ansys.saf.glow.solution import (
     StepSpec,
     long_running,
     transaction,
-    create_instance,
-    instance,
 )
-from ansys.saf.product_manager.visor import VisorManager
-from ansys.visor.viewer import Metadata
 
 from saf.solutions.pump.solution.logic.case_builder import build_case
 from saf.solutions.pump.solution.logic.constants import (
@@ -39,8 +35,6 @@ from saf.solutions.pump.solution.logic.constants import (
     BUILD_CASE_PROGRESS_STREAM,
     DEFAULT_PROCESSOR_COUNT,
     LOG_TAIL_LINES,
-    SCENE_NAME,
-    SCENE_UNIT,
 )
 from saf.solutions.pump.solution.logic.scene_export import export_scene
 
@@ -61,11 +55,6 @@ class SetupStep(StepModel):
     mesh_image: EntityHandle = NO_ENTITY
     zone_names: list[str] = []
     scene_file: EntityHandle = NO_ENTITY
-
-    visor_version: str = "0"
-    visor_started: bool = False
-    visor_host: str = ""
-    visor_port: int | None = None
 
     @long_running
     @transaction(
@@ -113,7 +102,7 @@ class SetupStep(StepModel):
         self=StepSpec(download=["case_file", "data_file"], upload=["scene_file"]),
     )
     def prepare_scene(self) -> None:
-        """Convert the built case into a VTKHDF scene for the 3D viewer."""
+        """Convert the built case into a VTKHDF scene."""
         if self.case_file == NO_ENTITY or self.data_file == NO_ENTITY:
             raise BadRequestError("Build the case before preparing the 3D view.")
         work_dir = Path(self.storage_scope.get_storage_root())
@@ -126,67 +115,6 @@ class SetupStep(StepModel):
         except RuntimeError as error:
             raise BadRequestError(str(error)) from error
         self.scene_file = self.storage_scope.store(scene_path)
-
-    @transaction(self=StepSpec(download=["scene_file"]))
-    @instance("visor_manager")
-    def show_scene(self, visor_manager: VisorManager) -> None:
-        """Load the converted case into the running Visor instance."""
-        if self.scene_file == NO_ENTITY:
-            raise BadRequestError("The 3D view has not been prepared yet.")
-        path = Path(self.storage_scope.get_cached(self.scene_file))
-        visor_manager.instance.update(path.as_posix(), Metadata(name=SCENE_NAME, unit=SCENE_UNIT))
-
-    @transaction(
-        self=StepSpec(download=["visor_version"], upload=["visor_started", "visor_host", "visor_port"]),
-        enable_termination_event=True,
-    )
-    @create_instance("visor_manager", VisorManager)
-    @long_running
-    def start_visor(self, visor_manager: VisorManager) -> None:
-        """Start the Visor instance."""
-        self.transaction.raise_event(message="Initializing VISOR instance.", stream_name="visor-output-stream")
-        try:
-            visor_manager.initialize()
-            self.visor_host = visor_manager.instance.host
-            self.visor_port = visor_manager.instance.port
-            self.visor_started = True
-        except Exception as e:
-            self.transaction.raise_event(
-                message=f"VISOR initialization failed: {e}",
-                stream_name="visor-output-stream",
-            )
-            raise
-        self.transaction.raise_event(message="VISOR initialized.", stream_name="visor-output-stream")
-
-    @transaction(self=StepSpec())
-    @instance("visor_manager")
-    def update_scene(self, visor_manager: VisorManager) -> None:
-        """Display the elbow in the running Visor instance."""
-        self.transaction.raise_event(message="Loading elbow in VISOR.", stream_name="visor-output-stream")
-        try:
-            path = Path(__file__).parent.parent / "method_assets" / "visor_shapes" / "elbow.vtm"
-            visor_manager.instance.update(path.as_posix(), Metadata(name="Elbow", unit="m"))
-        except Exception as e:
-            self.transaction.raise_event(message=f"VISOR elbow update failed: {e}", stream_name="visor-output-stream")
-            raise
-        self.transaction.raise_event(message="Elbow displayed in VISOR.", stream_name="visor-output-stream")
-
-    @transaction(self=StepSpec(upload=["visor_started"]))
-    @instance("visor_manager")
-    def shutdown_visor(self, visor_manager: VisorManager) -> None:
-        """Close the Visor instance."""
-
-        self.transaction.raise_event(message="Starting to shutdown the instance.", stream_name="visor-output-stream")
-        try:
-            visor_manager.shutdown()
-            self.visor_started = False
-        except Exception as e:
-            self.transaction.raise_event(message=f"VISOR shutdown failed: {e}", stream_name="visor-output-stream")
-            raise
-        self.transaction.raise_event(
-            message="VISOR instance shutdown complete.",
-            stream_name="visor-output-stream",
-        )
 
     def _report_progress(self, stage: str, fraction: float) -> None:
         """Persist the current stage and publish it to the UI event stream.

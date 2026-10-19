@@ -101,6 +101,7 @@ celerybeat.pid
 *.sage.py
 
 # Environments
+.poetry
 .venv
 env/
 venv/
@@ -131,3 +132,6 @@ dmypy.json
 
 # Cython debug symbols
 cython_debug/
+
+# Poetry
+poetry.toml

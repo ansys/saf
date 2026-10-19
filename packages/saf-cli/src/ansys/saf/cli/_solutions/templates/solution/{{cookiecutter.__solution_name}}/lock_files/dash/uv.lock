@@ -7,9 +7,6 @@ resolution-markers = [
     "python_full_version < '3.12'",
 ]
 
-[manifest]
-constraints = [{ name = "gql", specifier = "<3.6" }]
-
 [[package]]
 name = "accessible-pygments"
 version = "0.0.5"
@@ -313,7 +310,7 @@ desktop = [
 
 [[package]]
 name = "ansys-solutions-dash-super-components"
-version = "0.2.dev9"
+version = "1.1.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "dash" },
@@ -324,9 +321,9 @@ dependencies = [
     { name = "flask" },
     { name = "pandas" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/cc/df/aed1fda07c9dad5272be02c565038a4b6037daa3cb28063ad898ce7a41fb/ansys_solutions_dash_super_components-0.2.dev9.tar.gz", hash = "sha256:a84f996d3059c433100d3af9122840d761f7e6dd2c23268b2eb7203265909547", size = 76758, upload-time = "2026-07-24T06:49:13.692Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/8c/ed/a9e3c1fac17d39fdcf7eb7d701bbf162e27328623fedafb6e9100cbbc45b/ansys_solutions_dash_super_components-1.1.0.tar.gz", hash = "sha256:8f1dba9f5e129bd6ad5c9e07ac5a050e229a03c78cdc68330b25a0b63fc089fc", size = 76073, upload-time = "2026-09-09T12:01:10.666Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/d9/27/b52302b819302e911328e13fe5c375371a036629787bdf17cad19e24d5c6/ansys_solutions_dash_super_components-0.2.dev9-py3-none-any.whl", hash = "sha256:2a78a09478ccc1c90dedd48d40528408e041d722b95dec4532463b4d75b72b14", size = 91754, upload-time = "2026-07-24T06:49:12.335Z" },
+    { url = "https://files.pythonhosted.org/packages/65/93/b3b4ad2ffbb1d947caccfc8708c429f34930cd3bc4f0e62695fa8257f8d1/ansys_solutions_dash_super_components-1.1.0-py3-none-any.whl", hash = "sha256:45572ff64c53859ce372307b07fe3221611f5fdae490ce7ff6e61741d5836654", size = 91010, upload-time = "2026-09-09T12:01:09.279Z" },
 ]
 
 [[package]]
@@ -669,16 +666,16 @@ wheels = [
 
 [[package]]
 name = "build"
-version = "0.10.0"
+version = "0.8.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "colorama", marker = "os_name == 'nt'" },
     { name = "packaging" },
-    { name = "pyproject-hooks" },
+    { name = "pep517" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/de/1c/fb62f81952f0e74c3fbf411261d1adbdd2d615c89a24b42d0fe44eb4bcf3/build-0.10.0.tar.gz", hash = "sha256:d5b71264afdb5951d6704482aac78de887c80691c52b88a9ad195983ca2c9269", size = 16465, upload-time = "2023-01-11T20:32:50.632Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/52/fa/931038182be739955cf83179d9b9a6ce9832bc5f9a917a006f765cb53a1f/build-0.8.0.tar.gz", hash = "sha256:887a6d471c901b1a6e6574ebaeeebb45e5269a79d095fe9a8f88d6614ed2e5f0", size = 17067, upload-time = "2022-05-22T15:10:33.795Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/58/91/17b00d5fac63d3dca605f1b8269ba3c65e98059e1fd99d00283e42a454f0/build-0.10.0-py3-none-any.whl", hash = "sha256:af266720050a66c893a6096a2f410989eeac74ff9a68ba194b3f6473e8e26171", size = 17429, upload-time = "2023-01-11T20:32:48.786Z" },
+    { url = "https://files.pythonhosted.org/packages/7a/24/ee8271da317b692fcb9d026ff7f344ac6c4ec661a97f0e2a11fa7992544a/build-0.8.0-py3-none-any.whl", hash = "sha256:19b0ed489f92ace6947698c3ca8436cb0556a66e2aa2d34cd70e2a5d27cd0437", size = 17438, upload-time = "2022-05-22T15:10:32.309Z" },
 ]
 
 [[package]]
@@ -1315,15 +1312,6 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/88/3a/a61d9a1f319a186b05d14df17daea42fcddea63c213bcd61a929fb3a6796/editorconfig-0.17.1.tar.gz", hash = "sha256:23c08b00e8e08cc3adcddb825251c497478df1dada6aefeb01e626ad37303745", size = 14695, upload-time = "2025-06-09T08:21:37.097Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/96/fd/a40c621ff207f3ce8e484aa0fc8ba4eb6e3ecf52e15b42ba764b457a9550/editorconfig-0.17.1-py3-none-any.whl", hash = "sha256:1eda9c2c0db8c16dbd50111b710572a5e6de934e39772de1959d41f64fc17c82", size = 16360, upload-time = "2025-06-09T08:21:35.654Z" },
-]
-
-[[package]]
-name = "execnet"
-version = "2.1.2"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/bf/89/780e11f9588d9e7128a3f87788354c7946a9cbb1401ad38a48c4db9a4f07/execnet-2.1.2.tar.gz", hash = "sha256:63d83bfdd9a23e35b9c6a3261412324f964c2ec8dcd8d3c6916ee9373e0befcd", size = 166622, upload-time = "2025-11-12T09:56:37.75Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/ab/84/02fc1827e8cdded4aa65baef11296a9bbe595c474f0d6d758af082d849fd/execnet-2.1.2-py3-none-any.whl", hash = "sha256:67fba928dd5a544b783f6056f449e5e3931a5c378b128bc18501f7ea79e296ec", size = 40708, upload-time = "2025-11-12T09:56:36.333Z" },
 ]
 
 [[package]]
@@ -2223,12 +2211,7 @@ tests = [
     { name = "mock" },
     { name = "pytest" },
     { name = "pytest-cov" },
-    { name = "pytest-dependency" },
-    { name = "pytest-flakes" },
     { name = "pytest-mock" },
-    { name = "pytest-pycodestyle" },
-    { name = "pytest-pythonpath" },
-    { name = "pytest-xdist" },
     { name = "tox" },
 ]
 ui = [
@@ -2245,33 +2228,33 @@ requires-dist = [{ name = "ansys-saf-sdk", specifier = ">=0.3.0,<1.0.0" }]
 [package.metadata.requires-dev]
 build = [
     { name = "ansys-saf-sdk", extras = ["build"], specifier = ">=0.3.0,<1.0.0" },
-    { name = "build", specifier = ">=0.8.0,<1.0.0" },
+    { name = "build", specifier = ">=0.8.0,<0.9.0" },
     { name = "pkginfo", specifier = ">=1.12.1.2,<2.0.0" },
     { name = "pyc-wheel", specifier = ">=1.2.7,<2.0.0" },
     { name = "pyinstaller", marker = "python_full_version < '3.15'", specifier = ">=6.16,<7.0.0" },
-    { name = "toml", specifier = ">=0.10.2,<1.0.0" },
+    { name = "toml", specifier = ">=0.10.2,<0.11.0" },
     { name = "twine", specifier = "==6.0.1" },
 ]
 desktop = [{ name = "ansys-saf-sdk", extras = ["desktop"], specifier = ">=0.3.0,<1.0.0" }]
 doc = [
     { name = "ansys-sphinx-theme", extras = ["autoapi"], specifier = ">=1.7.0,<2.0.0" },
     { name = "autodoc-pydantic", specifier = ">=2.2.0,<3.0.0" },
-    { name = "nbsphinx", specifier = ">=0.9.8,<1.0.0" },
+    { name = "nbsphinx", specifier = ">=0.9.8,<0.10.0" },
     { name = "numpydoc", specifier = ">=1.10.0,<2.0.0" },
     { name = "sphinx", specifier = ">=8.1.3,<9.0.0" },
     { name = "sphinx-autodoc-typehints", specifier = ">=2.2.0,<3.0.0" },
-    { name = "sphinx-code-tabs", specifier = ">=0.5.5,<1.0.0" },
-    { name = "sphinx-copybutton", specifier = ">=0.5.2,<1.0.0" },
-    { name = "sphinx-design", specifier = ">=0.6.1,<1.0.0" },
-    { name = "sphinx-gallery", specifier = ">=0.20,<1.0.0" },
+    { name = "sphinx-code-tabs", specifier = ">=0.5.5,<0.6.0" },
+    { name = "sphinx-copybutton", specifier = ">=0.5.2,<0.6.0" },
+    { name = "sphinx-design", specifier = ">=0.6.1,<0.7.0" },
+    { name = "sphinx-gallery", specifier = ">=0.20,<0.21" },
     { name = "sphinx-jinja", specifier = ">=2.0.0,<3.0.0" },
-    { name = "sphinx-markdown-builder", specifier = ">=0.6.9,<1.0.0" },
+    { name = "sphinx-markdown-builder", specifier = ">=0.6.9,<0.7.0" },
     { name = "sphinx-tabs", specifier = ">=1.2.1,<3.5.0" },
     { name = "sphinx-toolbox", specifier = ">=4.1.0,<5.0.0" },
     { name = "sphinxcontrib-mermaid", specifier = ">=1.2.3,<2.0.0" },
-    { name = "sphinxcontrib-video", specifier = ">=0.4.1,<1.0.0" },
-    { name = "sphinxemoji", specifier = ">=0.3.1,<1.0.0" },
-    { name = "toml", specifier = ">=0.10.2,<1.0.0" },
+    { name = "sphinxcontrib-video", specifier = ">=0.4.1,<0.5.0" },
+    { name = "sphinxemoji", specifier = ">=0.3.1,<0.4.0" },
+    { name = "toml", specifier = ">=0.10.2,<0.11.0" },
     { name = "vale", specifier = ">=3.13.0.0,<4.0.0" },
 ]
 style = [
@@ -2289,16 +2272,11 @@ tests = [
     { name = "mock", specifier = ">=4.0.3,<5.0.0" },
     { name = "pytest", specifier = ">=9.0.3,<10.0.0" },
     { name = "pytest-cov", specifier = ">=7.0.0,<8.0.0" },
-    { name = "pytest-dependency", specifier = ">=0.5.1,<1.0.0" },
-    { name = "pytest-flakes", specifier = ">=4.0.5,<5.0.0" },
     { name = "pytest-mock", specifier = ">=3.12,<4.0.0" },
-    { name = "pytest-pycodestyle", specifier = ">=2.5.0,<3.0.0" },
-    { name = "pytest-pythonpath", specifier = ">=0.7,<1.0.0" },
-    { name = "pytest-xdist", specifier = ">=3.0.2,<4.0.0" },
     { name = "tox", specifier = ">=4.4.0,<5.0.0" },
 ]
 ui = [
-    { name = "ansys-solutions-dash-super-components", specifier = ">=0.2.dev8,<1.0.0" },
+    { name = "ansys-solutions-dash-super-components", specifier = ">=1.0.0,<2.0.0" },
     { name = "dash", specifier = ">=3.0.0,<4.0.0" },
     { name = "dash-bootstrap-components", specifier = ">=1.2,<2.0" },
     { name = "dash-extensions", specifier = ">=2.0.5,<3.0.0" },
@@ -2914,6 +2892,15 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/03/4f/2750f7f6f025a1507cd3b7218691671eecfd0bbebebe8b39aa0fe1d360b8/pefile-2024.8.26.tar.gz", hash = "sha256:3ff6c5d8b43e8c37bb6e6dd5085658d658a7a0bdcd20b6a07b1fcfc1c4e9d632", size = 76008, upload-time = "2024-08-26T20:58:38.155Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/54/16/12b82f791c7f50ddec566873d5bdd245baa1491bac11d15ffb98aecc8f8b/pefile-2024.8.26-py3-none-any.whl", hash = "sha256:76f8b485dcd3b1bb8166f1128d395fa3d87af26360c2358fb75b80019b957c6f", size = 74766, upload-time = "2024-08-26T21:01:02.632Z" },
+]
+
+[[package]]
+name = "pep517"
+version = "0.13.1"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/44/d7/8f5d2be1a5fed3b0b5ccd3e800153c0f4dd84c2a688d25bce0bb0cb1f87f/pep517-0.13.1.tar.gz", hash = "sha256:1b2fa2ffd3938bb4beffe5d6146cbcb2bda996a5a4da9f31abffd8b24e07b317", size = 26176, upload-time = "2023-11-08T11:27:34.682Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/25/6e/ca4a5434eb0e502210f591b97537d322546e4833dcb4d470a48c375c5540/pep517-0.13.1-py3-none-any.whl", hash = "sha256:31b206f67165b3536dd577c5c3f1518e8fbaf38cbc57efff8369a392feff1721", size = 19072, upload-time = "2023-11-08T11:27:33.049Z" },
 ]
 
 [[package]]
@@ -3596,15 +3583,6 @@ wheels = [
 ]
 
 [[package]]
-name = "pyproject-hooks"
-version = "1.3.0"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/18/94/21931ee768a9544afa6330a2e790e6ef8ce70568e88d79b15560c3054e91/pyproject_hooks-1.3.0.tar.gz", hash = "sha256:26dfd4229ff1820b7964be33bd3eb64367eb7c841215defe11341450c219ce20", size = 20883, upload-time = "2026-09-15T17:43:43.445Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/58/86/3276e42c9349f2349a8a0fa6abf145c867ed7719a56c907e6ef21edf1462/pyproject_hooks-1.3.0-py3-none-any.whl", hash = "sha256:733909c6ac133d222c0b8cfc11364f19d363793d8fbcd8bb7240c5220af8d35d", size = 10723, upload-time = "2026-09-15T17:43:42.11Z" },
-]
-
-[[package]]
 name = "pytest"
 version = "9.0.3"
 source = { registry = "https://pypi.org/simple" }
@@ -3635,29 +3613,6 @@ wheels = [
 ]
 
 [[package]]
-name = "pytest-dependency"
-version = "0.6.1"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "pytest" },
-    { name = "setuptools" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/c2/ea/84509533e0f6477960b8a9179d240d93c909c6543e4dd8209932026d7815/pytest_dependency-0.6.1.tar.gz", hash = "sha256:246c24d2a5fc743a942cec4408853640e56a05ba58d46e5b213a1d4b738a2464", size = 20837, upload-time = "2026-02-15T18:08:43.927Z" }
-
-[[package]]
-name = "pytest-flakes"
-version = "4.0.5"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "pyflakes" },
-    { name = "pytest" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/b5/8c/7d4bb3475c373b16ece7a94bd0e33ec045076c9189ed4022299679885179/pytest-flakes-4.0.5.tar.gz", hash = "sha256:953134e97215ae31f6879fbd7368c18d43f709dc2fab5b7777db2bb2bac3a924", size = 7313, upload-time = "2021-12-02T22:09:24.477Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/b5/f8/3e4f988403081d526c4fa5d0256f84ac03a60744e4f9d839526ab8cb7bef/pytest_flakes-4.0.5-py2.py3-none-any.whl", hash = "sha256:d0e8602d882744fc6169247b62a51203c5a3d8f160892ff3b82f5b9c1e4bb675", size = 6830, upload-time = "2021-12-02T22:09:21.809Z" },
-]
-
-[[package]]
 name = "pytest-mock"
 version = "3.15.1"
 source = { registry = "https://pypi.org/simple" }
@@ -3667,38 +3622,6 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/68/14/eb014d26be205d38ad5ad20d9a80f7d201472e08167f0bb4361e251084a9/pytest_mock-3.15.1.tar.gz", hash = "sha256:1849a238f6f396da19762269de72cb1814ab44416fa73a8686deac10b0d87a0f", size = 34036, upload-time = "2025-09-16T16:37:27.081Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/5a/cc/06253936f4a7fa2e0f48dfe6d851d9c56df896a9ab09ac019d70b760619c/pytest_mock-3.15.1-py3-none-any.whl", hash = "sha256:0a25e2eb88fe5168d535041d09a4529a188176ae608a6d249ee65abc0949630d", size = 10095, upload-time = "2025-09-16T16:37:25.734Z" },
-]
-
-[[package]]
-name = "pytest-pycodestyle"
-version = "2.5.0"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "pycodestyle" },
-    { name = "pytest" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/0f/60/634e069a52137207b988359319c7030b25195f014822724f259325fa3af5/pytest_pycodestyle-2.5.0.tar.gz", hash = "sha256:dd0060039e12a59b521da8e57e17133c965566dd8d17631e589e7545238829ac", size = 5859, upload-time = "2025-07-20T03:18:12.504Z" }
-
-[[package]]
-name = "pytest-pythonpath"
-version = "0.7.3"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "pytest" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/46/c1/4b784495bb316962962df191b3c1b2302c60236301406283a9de1470786f/pytest-pythonpath-0.7.3.tar.gz", hash = "sha256:63fc546ace7d2c845c1ee289e8f7a6362c2b6bae497d10c716e58e253e801d62", size = 4498, upload-time = "2018-08-22T18:50:23.847Z" }
-
-[[package]]
-name = "pytest-xdist"
-version = "3.8.0"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "execnet" },
-    { name = "pytest" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/78/b4/439b179d1ff526791eb921115fca8e44e596a13efeda518b9d845a619450/pytest_xdist-3.8.0.tar.gz", hash = "sha256:7e578125ec9bc6050861aa93f2d59f1d8d085595d6551c2c90b6f4fad8d3a9f1", size = 88069, upload-time = "2025-07-01T13:30:59.346Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/ca/31/d4e37e9e550c2b92a9cbc2e4d0b7420a27224968580b5a447f420847c975/pytest_xdist-3.8.0-py3-none-any.whl", hash = "sha256:202ca578cfeb7370784a8c33d6d05bc6e13b4f25b5053c30a152269fd10f0b88", size = 46396, upload-time = "2025-07-01T13:30:56.632Z" },
 ]
 
 [[package]]
@@ -4320,27 +4243,27 @@ wheels = [
 
 [[package]]
 name = "sphinx-design"
-version = "0.7.0"
+version = "0.6.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "sphinx" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/13/7b/804f311da4663a4aecc6cf7abd83443f3d4ded970826d0c958edc77d4527/sphinx_design-0.7.0.tar.gz", hash = "sha256:d2a3f5b19c24b916adb52f97c5f00efab4009ca337812001109084a740ec9b7a", size = 2203582, upload-time = "2026-01-19T13:12:53.297Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/2b/69/b34e0cb5336f09c6866d53b4a19d76c227cdec1bbc7ac4de63ca7d58c9c7/sphinx_design-0.6.1.tar.gz", hash = "sha256:b44eea3719386d04d765c1a8257caca2b3e6f8421d7b3a5e742c0fd45f84e632", size = 2193689, upload-time = "2024-08-02T13:48:44.277Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/30/cf/45dd359f6ca0c3762ce0490f681da242f0530c49c81050c035c016bfdd3a/sphinx_design-0.7.0-py3-none-any.whl", hash = "sha256:f82bf179951d58f55dca78ab3706aeafa496b741a91b1911d371441127d64282", size = 2220350, upload-time = "2026-01-19T13:12:51.077Z" },
+    { url = "https://files.pythonhosted.org/packages/c6/43/65c0acbd8cc6f50195a3a1fc195c404988b15c67090e73c7a41a9f57d6bd/sphinx_design-0.6.1-py3-none-any.whl", hash = "sha256:b11f37db1a802a183d61b159d9a202314d4d2fe29c163437001324fe2f19549c", size = 2215338, upload-time = "2024-08-02T13:48:42.106Z" },
 ]
 
 [[package]]
 name = "sphinx-gallery"
-version = "0.22.dev0"
+version = "0.20.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "pillow" },
     { name = "sphinx" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/d4/e2/598b154c6b1e381e0c551933544ed6b15c6785fce86dcee0d74d833034c9/sphinx_gallery-0.22.dev0.tar.gz", hash = "sha256:89f7c1a54a61a1ace5f89d4f1e85a3f47f355abb2d756ea1dbfb49821197407f", size = 501842, upload-time = "2026-09-15T13:59:12.33Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/5f/14/9238ac61932299b38c20c7c37dbfe60348c0348ea4d400f9ef25875b3bf7/sphinx_gallery-0.20.0.tar.gz", hash = "sha256:70281510c6183d812d3595957005ccf555c5a793f207410f6cd16a25bf08d735", size = 473502, upload-time = "2025-12-02T15:51:37.277Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/35/f7/b2eb5dd524aca57f7d0b654df8aae11895e2735a7d8a59abaff8789b9464/sphinx_gallery-0.22.dev0-py3-none-any.whl", hash = "sha256:a6b4893a4afa1617a0c96d7a8fd9ced0b52d76f353b717b4b07c92bc2e4f4341", size = 484367, upload-time = "2026-09-15T13:59:10.379Z" },
+    { url = "https://files.pythonhosted.org/packages/27/fd/818a53d4da56ef2da7b08f77bb3a825635941d1fcc6b6a490995dec1a81c/sphinx_gallery-0.20.0-py3-none-any.whl", hash = "sha256:188b7456e269649945825661b76cdbfbf0b70c2cfd5b75c9a11fe52519879e4d", size = 458655, upload-time = "2025-12-02T15:51:35.311Z" },
 ]
 
 [[package]]

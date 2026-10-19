@@ -134,7 +134,7 @@ def test_create_solution(tmp_path: Path, ui_framework: str, namespace: str):
     assert "[project]" in pyproject_content
     assert "[tool.poetry]" not in pyproject_content
     assert "[tool.uv]" in pyproject_content
-    assert f'[saf-cli-version]\nsaf-cli-version = "{expected_saf_cli_version}"' in pyproject_content
+    assert f'[saf-cli-version]\nsaf-cli-version = "{expected_saf_cli_version}"'
 
     lock = tomllib.loads((tmp_path / solution_name / "uv.lock").read_text(encoding="utf-8"))
     solution_packages = [package for package in lock["package"] if package["source"] == {"editable": "."}]

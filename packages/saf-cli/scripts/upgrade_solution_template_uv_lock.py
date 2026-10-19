@@ -15,10 +15,12 @@
 # limitations under the License.
 
 import argparse
+import os
 from pathlib import Path
 import platform
 import shutil
 import subprocess
+import sys
 import tempfile
 
 from dotenv import load_dotenv
@@ -54,8 +56,9 @@ if __name__ == "__main__":
         / "{{cookiecutter.__solution_name}}"
         / "pyproject.toml"
     )
-    if not pyproject_file.is_file():
-        raise FileNotFoundError(f"Solution template manifest not found: {pyproject_file}")
+    assert pyproject_file.is_file()
+    uv_exec = shutil.which("uv")
+    assert uv_exec is not None, "uv executable not found"
 
     if platform.system() == "Windows":
         saf_exec = Path.cwd() / ".venv" / "Scripts" / "saf.exe"
@@ -63,15 +66,13 @@ if __name__ == "__main__":
             saf_exec = Path.cwd() / ".venv" / "Scripts" / "saf.cmd"
     else:
         saf_exec = Path.cwd() / ".venv" / "bin" / "saf"
-    if not saf_exec.is_file():
-        raise FileNotFoundError(f"SAF CLI executable not found: {saf_exec}")
+    assert saf_exec.is_file()
 
-    uv_exec = shutil.which("uv")
-    if uv_exec is None:
-        raise RuntimeError("uv must be installed and available on PATH")
+    starting_working_directory = Path.cwd()
 
     uv_lock_dest_dirs: dict[str, str] = {
         "dash": "dash",
+        "awc-dash": "awc",
         "none": "no_ui",
     }
 
@@ -88,49 +89,61 @@ if __name__ == "__main__":
             / uv_lock_dest_dirs[ui_framework]
             / "uv.lock"
         )
-        if not uv_lock_dest.is_file():
-            raise FileNotFoundError(f"Template lockfile not found: {uv_lock_dest}")
+        assert uv_lock_dest.is_file()
 
         with tempfile.TemporaryDirectory() as tmp_dir:
-            solution_name = f"solution-{ui_framework}"
-            print(f"Creating new solution {solution_name} at {tmp_dir}...")
-            subprocess.run(
-                [
-                    str(saf_exec),
-                    "new",
-                    "--solution-name",
-                    solution_name,
-                    "--solution-display-name",
-                    "temp",
-                    "--ui-framework",
-                    ui_framework,
-                    "--namespace",
-                    "my_temp",
-                ],
-                cwd=tmp_dir,
-                check=True,
-            )
-            solution_root_dir = Path(tmp_dir) / solution_name
-            if not solution_root_dir.is_dir():
-                raise FileNotFoundError(f"Generated solution not found: {solution_root_dir}")
+            try:
+                os.chdir(tmp_dir)
 
-            # Load credentials used by private package indexes before resolving dependencies.
-            load_dotenv(solution_root_dir / ".env")
+                solution_name = f"solution-{ui_framework}"
+                print(f"Creating new solution {solution_name} at {tmp_dir}...")
+                subprocess.check_output(
+                    [
+                        str(saf_exec),
+                        "new",
+                        "--solution-name",
+                        solution_name,
+                        "--solution-display-name",
+                        "temp",
+                        "--ui-framework",
+                        ui_framework,
+                        "--namespace",
+                        "my_temp",
+                    ],
+                )
+                solution_root_dir = Path(tmp_dir) / solution_name
+                assert solution_root_dir.is_dir()
+                os.chdir(solution_root_dir)
 
-            uv_lock_command = [uv_exec, "lock"]
-            uv_lock_command.extend(arg for package in packages_to_update for arg in ("--upgrade-package", package))
-            print("Upgrading uv.lock...")
-            subprocess.run(uv_lock_command, cwd=solution_root_dir, check=True)
-            subprocess.run([uv_exec, "lock", "--check"], cwd=solution_root_dir, check=True)
+                # load required package index credentials for auth
+                print(f"Loading .env file from {solution_root_dir / '.env'}...")
+                load_dotenv(solution_root_dir / ".env")
 
-            print(f"Copying uv.lock to destination {uv_lock_dest}...")
-            solution_uv_lock = solution_root_dir / "uv.lock"
-            if not solution_uv_lock.is_file():
-                raise FileNotFoundError(f"Generated lockfile not found: {solution_uv_lock}")
-            lock = tomlkit.parse(solution_uv_lock.read_text(encoding="utf-8"))
-            solution_packages = [package for package in lock["package"] if package["source"] == {"editable": "."}]
-            if len(solution_packages) != 1:
-                raise ValueError("Expected exactly one editable solution package in the generated lockfile")
-            solution_packages[0]["name"] = "{{ cookiecutter.__pkg_name }}"
-            solution_packages[0]["version"] = "{{ cookiecutter.__version }}"
-            uv_lock_dest.write_text(tomlkit.dumps(lock), encoding="utf-8", newline="\n")
+                print("Upgrading uv.lock....")
+                subprocess.check_output([uv_exec, "lock"])
+
+                # Update specific packages if provided
+                if packages_to_update:
+                    print(f"Updating packages: {packages_to_update}")
+                    try:
+                        subprocess.check_output(
+                            [uv_exec, "lock"]
+                            + [arg for package in packages_to_update for arg in ("--upgrade-package", package)]
+                        )
+                    except subprocess.CalledProcessError as e:
+                        print(f"Failed to update packages {packages_to_update}:\n{e.output.decode()}")
+                        raise e
+                print(f"Copying uv.lock to destination {uv_lock_dest}...")
+                solution_uv_lock = solution_root_dir / "uv.lock"
+                assert solution_uv_lock.is_file()
+                lock = tomlkit.parse(solution_uv_lock.read_text(encoding="utf-8"))
+                solution_packages = [package for package in lock["package"] if package["source"] == {"editable": "."}]
+                assert len(solution_packages) == 1
+                solution_packages[0]["name"] = "{{ cookiecutter.__pkg_name }}"
+                solution_packages[0]["version"] = "{{ cookiecutter.__version }}"
+                uv_lock_dest.write_text(tomlkit.dumps(lock), encoding="utf-8", newline="\n")
+            except Exception as e:
+                print(e)
+                sys.exit(1)
+            finally:
+                os.chdir(starting_working_directory)

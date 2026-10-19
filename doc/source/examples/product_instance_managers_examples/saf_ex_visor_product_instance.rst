@@ -181,11 +181,11 @@ Create the solution definition.
                   ├── ...
                   └── vtk_scene_sphere_l2_b3_r32_v3_c1_z3_8.vtp
 
-  VISOR uses the ``VTK`` format for geometry input. All derivatives of VTK
-  such as VTP, VTM or VTKHDF are valid formats.
+  VISOR accepts as input geometry files ``.vtu``, ``.vtp``, ``.vtm``, and ``.vtkhdf`` formats.
 
   You can visualize results of other tools (e.g. Fluent) with VISOR, some
-  might need to be converted to VTK as they don't use it as their output format.
+  might need to be converted to a valid format as they don't use any of the formats above
+  as their output format.
 
   A transaction method gets an **asset handle** using the path relative to
   ``method_assets`` and resolves it to a **local path** for the product instance:

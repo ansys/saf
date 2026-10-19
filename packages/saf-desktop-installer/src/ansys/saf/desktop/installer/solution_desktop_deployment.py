@@ -49,6 +49,7 @@ The structure of the input json file must be as follows:
 # ==================================================== [Imports] ==================================================== #
 
 import base64
+import ctypes
 import json
 import multiprocessing as mp
 import os
@@ -93,16 +94,59 @@ PYTHON_NOT_FOUND = "Python not found"
 INSTALLER_HEADING = "Solution Installer"
 VERSION_FILE = "version.txt"
 TARGET_SOLUTIONS_DIRECTORY_NAME = "SAF Solutions" if platform.system() == "Windows" else "saf_solutions"
+FOLDERID_DESKTOP = uuid.UUID("B4BFCC3A-DB2C-424C-B029-7FE99A87C641")
+FOLDERID_PUBLIC_DESKTOP = uuid.UUID("C4AA340D-F20F-4863-AFEF-F87EF2E6BA25")
+KF_FLAG_DONT_VERIFY = 0x00004000
+WIN_BUILTIN_ADMINISTRATORS_SID = 26
+SECURITY_MAX_SID_SIZE = 68
 
 # =================================================== [Functions] =================================================== #
 
 
-def get_shortcut_path(solution_display_name: str) -> Path:
-    """Return the path to the shortcut to create."""
+def _is_windows_admin() -> bool:
+    """Return whether the current process token is elevated with Administrators group membership."""
+    if sys.platform != "win32":
+        raise RuntimeError("Administrator check is only supported on Windows.")
+    advapi32 = ctypes.WinDLL("advapi32", use_last_error=True)
+    sid = ctypes.create_string_buffer(SECURITY_MAX_SID_SIZE)
+    sid_size = ctypes.c_ulong(SECURITY_MAX_SID_SIZE)
+    if not advapi32.CreateWellKnownSid(WIN_BUILTIN_ADMINISTRATORS_SID, None, sid, ctypes.byref(sid_size)):
+        raise ctypes.WinError(ctypes.get_last_error())
+    is_member = ctypes.c_int()
+    if not advapi32.CheckTokenMembership(None, sid, ctypes.byref(is_member)):
+        raise ctypes.WinError(ctypes.get_last_error())
+    return bool(is_member.value)
+
+
+def _get_windows_desktop_directory(all_users: bool) -> Path:
+    """Return the Public (``all_users=True``) or current user Desktop directory, honoring folder redirection."""
+    if sys.platform != "win32":
+        raise RuntimeError("Desktop directory lookup is only supported on Windows.")
+    folder_id = ctypes.create_string_buffer((FOLDERID_PUBLIC_DESKTOP if all_users else FOLDERID_DESKTOP).bytes_le, 16)
+    path_ptr = ctypes.c_wchar_p()
+    # Without this flag the lookup fails when the Desktop folder was deleted; install_shortcut recreates it.
+    hresult = ctypes.windll.shell32.SHGetKnownFolderPath(folder_id, KF_FLAG_DONT_VERIFY, None, ctypes.byref(path_ptr))
+    try:
+        if hresult != 0 or path_ptr.value is None:
+            raise OSError(f"SHGetKnownFolderPath failed with HRESULT {hresult & 0xFFFFFFFF:#010x}")
+        return Path(path_ptr.value)
+    finally:
+        ctypes.windll.ole32.CoTaskMemFree(path_ptr)
+
+
+def _escape_powershell_single_quoted(value: str) -> str:
+    return value.replace("'", "''")
+
+
+def get_shortcut_path(solution_display_name: str, all_users: bool | None = None) -> Path:
+    """Return the shortcut path for all users or the current user (default: based on current privileges)."""
     if platform.system() == "Windows":
-        return Path(os.environ["PUBLIC"]) / "Desktop" / f"{solution_display_name}.lnk"
-    shortcut_directory = Path("/usr/share/applications") if os.environ.get("SUDO_USER") else Path.home() / "Desktop"
-    shortcut_directory.mkdir(parents=True, exist_ok=True)
+        if all_users is None:
+            all_users = _is_windows_admin()
+        return _get_windows_desktop_directory(all_users=all_users) / f"{solution_display_name}.lnk"
+    if all_users is None:
+        all_users = bool(os.environ.get("SUDO_USER"))
+    shortcut_directory = Path("/usr/share/applications") if all_users else Path.home() / "Desktop"
     return shortcut_directory / f"{solution_display_name}.desktop"
 
 
@@ -278,6 +322,12 @@ def delete_existing_solution_shortcut(solution_display_name: str) -> None:
     if shortcut_path.is_file():
         print(f"Remove existing shortcut: {shortcut_path}")
         shortcut_path.unlink()
+    all_users_shortcut_path = get_shortcut_path(solution_display_name, all_users=True)
+    if all_users_shortcut_path != shortcut_path and all_users_shortcut_path.is_file():
+        print(
+            f"A shortcut shared by all users already exists at {all_users_shortcut_path}. "
+            "It was left unchanged because removing it requires elevated privileges.",
+        )
 
 
 def cleanup_workspace(installation_directory: Path, solution_display_name: str) -> None:
@@ -390,15 +440,17 @@ def install_shortcut(
 ) -> None:
     """Install shortcut"""
     shortcut_path = get_shortcut_path(solution_display_name)
+    shortcut_path.parent.mkdir(parents=True, exist_ok=True)
     python_path = str(python)
 
     if platform.system() == "Windows":
+        quote = _escape_powershell_single_quoted
         shell_cmd = "$WshShell = New-Object -ComObject WScript.Shell; "
-        shell_cmd += f"$Shortcut = $WshShell.CreateShortcut('{str(shortcut_path)}'); "
-        shell_cmd += f"$Shortcut.TargetPath = '{python_path}'; "
-        shell_cmd += f"$Shortcut.Arguments = '{arguments}'; "
-        shell_cmd += f"$Shortcut.Description = '{solution_display_name} Application'; "
-        shell_cmd += f"$Shortcut.IconLocation = '{installation_icon_path}'; "
+        shell_cmd += f"$Shortcut = $WshShell.CreateShortcut('{quote(str(shortcut_path))}'); "
+        shell_cmd += f"$Shortcut.TargetPath = '{quote(python_path)}'; "
+        shell_cmd += f"$Shortcut.Arguments = '{quote(arguments)}'; "
+        shell_cmd += f"$Shortcut.Description = '{quote(solution_display_name)} Application'; "
+        shell_cmd += f"$Shortcut.IconLocation = '{quote(str(installation_icon_path))}'; "
         shell_cmd += "$Shortcut.Save()"
         subprocess.check_output(["powershell.exe", "-Command", shell_cmd], stderr=subprocess.PIPE, text=True)  # noqa: S607
     else:
@@ -415,6 +467,7 @@ def install_shortcut(
             user_apps_path = Path("~/.local/share/applications/").expanduser()
             user_apps_path.mkdir(parents=True, exist_ok=True)
             shutil.copy2(shortcut_path, user_apps_path)
+    print(f"Shortcut created at {shortcut_path}")
 
 
 def install_tool(

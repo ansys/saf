@@ -665,6 +665,10 @@ SUBSTITUTION_MAPPING = {
         "url": "https://saf.ansys.com/version/stable/examples/product_instance_managers_examples/saf_ex_optislang_product_instance.html",
         "text": "optiSLang solution example",
     },
+    "visor-example": {
+        "url": "https://saf.ansys.com/version/stable/examples/product_instance_managers_examples/saf_ex_visor_product_instance.html",
+        "text": "VISOR solution example",
+    },
     "configure SSH": {
         "url": "https://docs.github.com/en/authentication/connecting-to-github-with-ssh",
         "text": "Configure SSH with GitHub",

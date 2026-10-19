@@ -92,10 +92,14 @@ section below.
 Advanced usage
 --------------
 
+By default, the Quartz grid theme uses Mantine's body and text colors, so it follows the active
+light or dark color scheme. Set ``dashGridOptions["theme"]`` in ``grid_props`` to select another
+AG Grid 35 theme.
+
 To customize the appearance of ``LogsSupervisor``, use the ``width`` and ``grid_props``
 parameters. The update frequency can be controlled with the ``interval`` parameter.
 The following example sets an update interval of 1 second, a custom container width, a fixed grid
-height, and switches to the light AG Grid theme (``ag-theme-balham``):
+height, and selects the light Balham theme through the AG Grid 35 theming API:
 
 .. literalinclude:: ../../../examples/user_guide/example_logs_supervisor.py
    :language: python
@@ -103,7 +107,7 @@ height, and switches to the light AG Grid theme (``ag-theme-balham``):
    :end-before: # [advanced-layout-end]
 
 The expected output is an AG Grid table with a fixed height of 600px, a width of 70%, and the
-light ``ag-theme-balham`` theme:
+light Balham theme:
 
 .. image:: ../media/logs_supervisor/custom_configuration.png
     :align: center
@@ -325,8 +329,15 @@ The ``grid_props`` parameter accepts any valid Dash AG Grid properties. Default 
             "suppressMovableColumns": True,
             "tooltipShowDelay": 500,
             "suppressScrollOnNewData": True,
+            "theme": {
+                "function": (
+                    "themeQuartz.withParams({ "
+                    "backgroundColor: 'var(--mantine-color-body, #fff)', "
+                    "foregroundColor: 'var(--mantine-color-text, #1a1b1e)' "
+                    "})"
+                )
+            },
         },
-        "className": "ag-theme-balham-dark",
         "persistence": True,
         "persisted_props": ["columnState"],
         "style": {"height": "200px"},

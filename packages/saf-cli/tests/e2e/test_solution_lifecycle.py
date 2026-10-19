@@ -48,8 +48,6 @@ from tests.e2e.conftest import (
 from tests.e2e.saf_process import SAFProcess
 from tests.outcome_checks import check_built_solution_files, verify_installation
 
-HOME_ENV_VAR = "PUBLIC" if platform.system() == "Windows" else "HOME"
-
 
 # Don't use session_solution since the point of this test is to cover the whole lifecycle within it.
 @pytest.mark.usefixtures("check_gtk_launch_and_xvfb_are_installed")
@@ -64,6 +62,7 @@ def test_solution_lifecycle(
     monkeypatch: pytest.MonkeyPatch,
     run_installed_solution: RunInstalledSolution,
     get_selenium_webdriver: Callable[[], WebDriver],
+    request: pytest.FixtureRequest,
 ):
     """Test that a solution created, packaged and installed using the saf-cli can be run from the Desktop shortcut."""
     # GIVEN: Custom input parameters for a solution that does not yet exist.
@@ -143,9 +142,13 @@ def test_solution_lifecycle(
         # use tempfile instead of pytest's fixture to get a shorter path and avoid long path issues
         # on Windows.
         solution_installation_path = tempfile.mkdtemp(prefix="saf-cli-test")
-        temp_desktop_path = tmp_path / "home" / "Desktop"
-        temp_desktop_path.mkdir(parents=True, exist_ok=True)
-        mp.setenv(HOME_ENV_VAR, temp_desktop_path.parent.resolve().as_posix())
+        # On Windows the installer resolves the Desktop through the Shell API, so the real Desktop is used.
+        if platform.system() != "Windows":
+            temp_desktop_path = tmp_path / "home" / "Desktop"
+            temp_desktop_path.mkdir(parents=True, exist_ok=True)
+            mp.setenv("HOME", temp_desktop_path.parent.resolve().as_posix())
+        shortcut_path = get_shortcut_path(solution_display_name)
+        request.addfinalizer(lambda: shortcut_path.unlink(missing_ok=True))
 
         # WHEN: The packaged solution is installed by executing the installer.
         installation_output = install_solution_executable(
@@ -154,7 +157,6 @@ def test_solution_lifecycle(
             solution_display_name,
         )
         # THEN: The solution files are deployed and the Desktop shortcut is created
-        shortcut_path = get_shortcut_path(solution_display_name)
         assert shortcut_path.is_file()
         assert any("Execution time:" in line for line in installation_output)
 

@@ -120,7 +120,7 @@ tests-saf-cli = [
 ]
 tests-saf-desktop-orchestrator = [
   "ansys-saf-projects-dashboard>=0.2.0,<1.0",
-  "dash>=3.4.0",
+  "dash>=3.0.0,<4.0",
   "dash-extensions>=2.0.5,<3.0",
   "fastapi>=0.120.2,<1.0",
   "pandas>=1.1.0,<4.0",
@@ -138,9 +138,6 @@ tests-saf-product-manager = [
 py-modules = []
 
 [tool.uv]
-override-dependencies = [
-  { package = { name = "ansys-solutions-dash-super-components" }, dependencies = [ "dash>=2.18.2,<4.0" ] },
-]
 sources.ansys-bdm-api = { workspace = true }
 sources.ansys-bdm-shared-volume = { workspace = true }
 sources.ansys-iam-oidc = { workspace = true }

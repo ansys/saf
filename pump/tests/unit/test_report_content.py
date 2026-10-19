@@ -25,6 +25,7 @@ from saf.solutions.pump.solution.logic.report import builder
 from saf.solutions.pump.solution.logic.report.content import (
     PumpReportData,
     assumption_rows,
+    convergence_series,
     convergence_summary,
     html_table,
     key_result_rows,
@@ -99,6 +100,23 @@ def test_html_table_escapes_its_cells():
     assert "&lt;script&gt;" in rendered
 
 
+_HISTORY = (
+    {"iteration": 2, "head": 21.0, "outlet_total_pressure": 197000.0},
+    {"iteration": 1, "head": 25.0, "outlet_total_pressure": 230000.0},
+)
+
+
+def test_convergence_series_orders_the_samples_by_iteration():
+    series = convergence_series(_data(convergence_history=_HISTORY))
+    assert series.iterations == [1.0, 2.0]
+    assert series.head_m == [25.0, 21.0]
+    assert series.outlet_total_pressure_pa == [230000.0, 197000.0]
+
+
+def test_convergence_series_is_absent_without_a_history():
+    assert convergence_series(_data()) is None
+
+
 # ------------------------------------------------------------------------------------- settings ----
 
 
@@ -132,6 +150,24 @@ def test_create_items_tags_every_item_with_the_project_tag(tmp_path):
         "pressure-contour",
     ]
     assert all(call.kwargs["tags"].endswith(" pump-report=abc") for call in adr.create_item.call_args_list)
+
+
+def test_create_items_plots_the_convergence_history_against_the_iteration(tmp_path):
+    adr = MagicMock()
+    builder.create_items(adr, _data(convergence_history=_HISTORY), tmp_path / "contour.png", "pump-report=abc")
+
+    calls = {call.kwargs["name"]: call for call in adr.create_item.call_args_list}
+    names = list(calls)
+    assert names[names.index("convergence") + 1 : names.index("key-results")] == [
+        "convergence-head",
+        "convergence-outlet-pressure",
+    ]
+    assert calls["convergence-head"].kwargs["content"].tolist() == [[1.0, 2.0], [25.0, 21.0]]
+    assert calls["convergence-outlet-pressure"].kwargs["content"].tolist() == [[1.0, 2.0], [230000.0, 197000.0]]
+    head_plot = adr.create_item.return_value
+    assert head_plot.plot == "line"
+    assert head_plot.xaxis == "Iteration"
+    head_plot.save.assert_called()
 
 
 def test_ensure_template_reuses_an_existing_template():

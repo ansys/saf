@@ -83,6 +83,7 @@ class ReportStep(StepModel):
                 "inlet_total_pressure_pa",
                 "outlet_total_pressure_pa",
                 "blade_pressure_pa",
+                "convergence_history",
                 "contour_image",
             ]
         ),
@@ -117,6 +118,7 @@ class ReportStep(StepModel):
             inlet_total_pressure_pa=solve_step.inlet_total_pressure_pa,
             outlet_total_pressure_pa=solve_step.outlet_total_pressure_pa,
             blade_pressure_pa=solve_step.blade_pressure_pa,
+            convergence_history=tuple(solve_step.convergence_history),
         )
         work_dir = Path(self.storage_scope.get_storage_root())
         report = render_report(

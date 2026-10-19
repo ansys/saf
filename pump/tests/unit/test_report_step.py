@@ -38,6 +38,7 @@ def solved_project(client_project: PumpSolution) -> PumpSolution:
             "pump_head_m": 20.0,
             "hydraulic_efficiency": 0.8,
             "converged": True,
+            "convergence_history": [{"iteration": 1, "head": 25.0, "outlet_total_pressure": 230000.0}],
         }
     )
     return client_project
@@ -82,6 +83,7 @@ def test_generate_report_stores_the_report_in_every_format(
     assert data.project_name == "Duty point A"
     assert data.pump_head_m == 20.0
     assert data.processor_count == 4
+    assert data.convergence_history == ({"iteration": 1.0, "head": 25.0, "outlet_total_pressure": 230000.0},)
     assert contour_bytes == b"png"
     assert tag.startswith("pump-report=")
 

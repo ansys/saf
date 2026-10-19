@@ -56,7 +56,7 @@ priority = "supplemental"
 
 [tool.poetry.dependencies]
 python = ">=3.11,<3.15"
-ansys-saf-sdk = { version = "^0.3.0", extras = ["instance-management-fluent"] }
+ansys-saf-sdk = { version = "^0.3.0", extras = ["instance-management-fluent", "core-mcp"] }
 h5py = "^3.12"
 vtk = "^9.6.1"
 # Optional at run time: the report page reports itself unavailable without it. Only
@@ -78,7 +78,6 @@ ansys-solutions-dash-super-components = "^1.0.0"
 dash-extensions = "^2.0.5"
 dash-mantine-components = "^2.6.0"
 dash-iconify = "^0.1.2"
-ansys-visor-viewer = "1.0.1"
 
 [tool.poetry.group.doc]
 optional = true

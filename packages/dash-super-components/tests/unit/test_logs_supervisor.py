@@ -333,6 +333,24 @@ def test_initialization_with_string_path():
     _assert_structure_except_rows_and_columns("test-id", supervisor, log_file, log_format)
 
 
+def test_default_grid_theme_uses_mantine_color_variables():
+    """Test the default grid theme follows Mantine's light or dark color scheme."""
+    supervisor = LogsSupervisor(
+        log_file="test.log",
+        log_format="%(asctime)s - %(levelname)s - %(message)s",
+        aio_id="test-id",
+    )
+
+    grid = supervisor.children[0].children[2].children
+
+    assert grid.dashGridOptions["theme"] == {
+        "function": (
+            "themeQuartz.withParams({ backgroundColor: 'var(--mantine-color-body, #fff)', "
+            "foregroundColor: 'var(--mantine-color-text, #1a1b1e)' })"
+        ),
+    }
+
+
 def test_initialization_with_url():
     """Test initialization with URL."""
     log_file = "http://example.com/test.log"
@@ -2410,13 +2428,21 @@ def _assert_grid_except_rows_and_columns(
     expected_default_col_def["filter"] = True
     assert grid.defaultColDef == expected_default_col_def
     assert grid.filterModel == input_grid_props.get("filterModel", {})
-    assert grid.className == input_grid_props.get("className", "ag-theme-balham-dark")
+    assert getattr(grid, "className", "") == input_grid_props.get("className", "")
     assert grid.persistence == input_grid_props.get("persistence", True)
     assert grid.persisted_props == input_grid_props.get("persisted_props", ["columnState"])
     expected_dash_grid_options = {
         "suppressMovableColumns": True,
         "tooltipShowDelay": 500,
         "suppressScrollOnNewData": True,
+        "theme": {
+            "function": (
+                "themeQuartz.withParams({ "
+                "backgroundColor: 'var(--mantine-color-body, #fff)', "
+                "foregroundColor: 'var(--mantine-color-text, #1a1b1e)' "
+                "})"
+            ),
+        },
     }
     expected_dash_grid_options.update(input_grid_props.get("dashGridOptions", {}))
     expected_dash_grid_options.update(

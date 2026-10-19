@@ -566,8 +566,15 @@ class LogsSupervisor(html.Div):
                 "suppressMovableColumns": True,
                 "tooltipShowDelay": 500,  # Show tooltip after 500ms hover
                 "suppressScrollOnNewData": True,  # Don't scroll to top when new data is loaded
+                "theme": {
+                    "function": (
+                        "themeQuartz.withParams({ "
+                        "backgroundColor: 'var(--mantine-color-body, #fff)', "
+                        "foregroundColor: 'var(--mantine-color-text, #1a1b1e)' "
+                        "})"
+                    ),
+                },
             },
-            "className": "ag-theme-balham-dark",
             "persistence": True,
             "persistence_type": "session",
             "persisted_props": ["columnState"],

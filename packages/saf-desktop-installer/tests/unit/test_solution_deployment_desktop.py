@@ -45,6 +45,8 @@ from ansys.saf.desktop.installer._common.utils import has_portal_dependency, sim
 from ansys.saf.desktop.installer._package.manage_dependencies import simplify_wheel_url_dependencies
 from ansys.saf.desktop.installer._ui_styles import install_button_style
 from ansys.saf.desktop.installer.solution_desktop_deployment import (
+    FOLDERID_DESKTOP,
+    FOLDERID_PUBLIC_DESKTOP,
     KF_FLAG_DONT_VERIFY,
     InstallationDirectoryValidator,
     _ensure_third_party_extracted,  # pyright: ignore[reportPrivateUsage]
@@ -749,6 +751,34 @@ def test_get_windows_desktop_directory_does_not_require_existing_folder(mocker: 
     expected = _run_powershell("[Environment]::GetFolderPath('Desktop', 'DoNotVerify')")
 
     assert _get_windows_desktop_directory(all_users=False) == Path(expected)
+
+
+@windows_only()
+@pytest.mark.parametrize("all_users", [True, False], ids=["public", "user"])
+def test_get_windows_desktop_directory_honors_onedrive_redirection(
+    tmp_path: Path,
+    mocker: pytest_mock.MockerFixture,
+    all_users: bool,
+) -> None:
+    """A Desktop redirected outside the user profile (e.g. by OneDrive) is returned as is."""
+    known_folders = {
+        FOLDERID_DESKTOP.bytes_le: tmp_path / "OneDrive - Synopsys" / "Desktop",
+        FOLDERID_PUBLIC_DESKTOP.bytes_le: tmp_path / "Public" / "Desktop",
+    }
+
+    def redirected_lookup(folder_id: Any, flags: int, token: Any, path_ptr: Any) -> int:
+        path_ptr._obj.value = str(known_folders[folder_id.raw])
+        return 0
+
+    mocker.patch.object(windll.shell32, "SHGetKnownFolderPath", side_effect=redirected_lookup)  # pyright: ignore[reportUndefinedVariable]
+    # The fake lookup returns a Python-owned string; the real CoTaskMemFree would crash freeing it.
+    free_memory = mocker.patch.object(windll.ole32, "CoTaskMemFree")  # pyright: ignore[reportUndefinedVariable]
+
+    result = _get_windows_desktop_directory(all_users=all_users)
+
+    assert result == known_folders[(FOLDERID_PUBLIC_DESKTOP if all_users else FOLDERID_DESKTOP).bytes_le]
+    # With the real API, the returned string must be freed once, otherwise memory leaks.
+    free_memory.assert_called_once()
 
 
 @windows_only()

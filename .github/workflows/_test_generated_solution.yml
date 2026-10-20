@@ -193,7 +193,7 @@ jobs:
           rm "$tmpfile"
 
       - name: Publish solution
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: ${{ env.SOLUTION_ARTIFACT }}
           path: ${{ env.SOLUTION_NAME }}
@@ -242,7 +242,7 @@ jobs:
           git push origin HEAD:${TEST_BRANCH_NAME}
 
       - name: Download Solution
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: ${{ needs.create-solution.outputs.solution-artifact }}
           path: '.'
@@ -256,7 +256,7 @@ jobs:
           git push origin HEAD:${TEST_BRANCH_NAME}
 
       - name: Trigger build workflow
-        uses: ansys/saf-devops/trigger-workflow@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
+        uses: ansys/saf-devops/trigger-workflow@304d04d9d9249c968d7a2a9d92a12ffa88a3216d # v1.3.2
         with:
           workflow-name: ${{ env.BUILD_WORKFLOW }}
           repository: ${{ github.repository }}

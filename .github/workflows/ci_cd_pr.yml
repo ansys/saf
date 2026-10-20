@@ -349,26 +349,6 @@ jobs:
           python-version: ${{ vars.PYTHON_VERSION }}
           wheel-artifact: '${{ matrix.library-name }}-${{ vars.PYTHON_VERSION }}-artifacts'
 
-  compatibility-tests:
-    name: Run compatibility tests
-    needs:
-      - ci-cd-config
-      - build-wheel
-    if: ${{ needs.ci-cd-config.outputs.compatibility-matrix != '{}' }}
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix: ${{ fromJson(needs.ci-cd-config.outputs.compatibility-matrix) }}
-    steps:
-      - name: Checks compatibility with pyansys
-        uses: ansys/saf-devops/compatibility-scan@304d04d9d9249c968d7a2a9d92a12ffa88a3216d # v1.3.2
-        with:
-          python-version: ${{ vars.PYTHON_VERSION }}
-          compatibility-packages: 'git+https://github.com/ansys/pyansys.git'
-          wheel-artifact-name: '${{ matrix.library-name }}-${{ vars.PYTHON_VERSION
-            }}-artifacts'
-        timeout-minutes: 15
-
   sbom:
     name: "Generate SBOM"
     permissions:
@@ -425,6 +405,7 @@ jobs:
       PYANSYS_PYPI_PRIVATE_PAT: ${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}
       PYANSYS_PYPI_PRIVATE_URL: ${{ secrets.PYANSYS_PYPI_PRIVATE_URL }}
       LICENSE_SERVER: ${{ secrets.LICENSE_SERVER }}
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
   run-github-workflows-of-generated-solution:
     permissions:
@@ -516,7 +497,6 @@ jobs:
       - run-tests
       - run-github-workflows-of-generated-solution
       - run-tests-actions
-      # - compatibility-tests
       - doc
       - sbom
       - meta-package

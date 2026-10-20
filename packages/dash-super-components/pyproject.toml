@@ -4,7 +4,7 @@ requires = [ "uv-build>=0.12.18,<0.13" ]
 
 [project]
 name = "ansys-solutions-dash-super-components"
-version = "1.2.0"
+version = "1.2.1"
 description = """\
   A collection of pre-assembled, high-level Dash UI components built on Dash Mantine Components for simulation web \
   applications.\

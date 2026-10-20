@@ -1832,7 +1832,7 @@ tests-saf-product-manager = [
 
 [[package]]
 name = "ansys-solutions-dash-super-components"
-version = "1.2.dev0"
+version = "1.2.1"
 source = { editable = "packages/dash-super-components" }
 dependencies = [
     { name = "dash" },

@@ -466,7 +466,7 @@ def layout() -> html.Div:
                                         "What this application is for",
                                         dmc.Text(
                                             "This application answers one question: for a given shaft speed "
-                                            "and a given flow rate, what are the pump characteristics?",
+                                            "and a given flow rate, how does the pump perform?",
                                             size="lg",
                                         ),
                                     ),

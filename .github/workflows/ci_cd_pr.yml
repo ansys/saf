@@ -5,7 +5,7 @@ on:
     branches:
       - main
       - 'release/**'
-    types: [opened, reopened, synchronize, ready_for_review]
+    types: [opened, reopened, synchronize, ready_for_review, closed]
   push:
     branches:
       - main
@@ -26,10 +26,23 @@ concurrency:
   cancel-in-progress: ${{ github.ref != 'refs/heads/main' }} # No cancellation for main branch, to ensure that the workflow runs to completion and deploys the documentation if needed.
 
 jobs:
+  delete-pr-cache:
+    name: "Delete PR caches"
+    if: github.event_name == 'pull_request' && github.event.action == 'closed'
+    permissions:
+      contents: read
+      actions: write # To delete PR caches
+    runs-on: ubuntu-latest
+    steps:
+      - name: Delete PR caches
+        uses: $/.github/actions/moon/delete
+        with:
+          token: ${{ secrets.CACHE_TOKEN }}
+
   lint-pr-title:
     name: "Lint pull request title"
-    if: github.event_name == 'pull_request' && github.event.pull_request.draft ==
-      false
+    if: github.event_name == 'pull_request' && github.event.action != 'closed' &&
+      github.event.pull_request.draft == false
     permissions:
       pull-requests: read # Read PR title and metadata for validation
     runs-on: ubuntu-latest
@@ -40,8 +53,8 @@ jobs:
 
   check-linked-issues-in-pull-request-description:
     name: "Check linked issues in pull-request description"
-    if: github.event_name == 'pull_request' && github.event.pull_request.draft ==
-      false
+    if: github.event_name == 'pull_request' && github.event.action != 'closed' &&
+      github.event.pull_request.draft == false
     permissions:
       pull-requests: read # Read PR description to find linked issues
       issues: write # Update issue descriptions with PR links
@@ -53,8 +66,8 @@ jobs:
           ISSUE_GITHUB_TOKEN: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
 
   labels:
-    if: github.event_name == 'pull_request' && github.event.pull_request.draft ==
-      false
+    if: github.event_name == 'pull_request' && github.event.action != 'closed' &&
+      github.event.pull_request.draft == false
     name: "Labels"
     permissions:
       contents: read # Read access to modified files in pull-request
@@ -93,8 +106,8 @@ jobs:
 
   ci-cd-config:
     name: Get CI/CD configuration
-    if: github.event_name == 'pull_request' && github.event.pull_request.draft ==
-      false
+    if: github.event_name == 'pull_request' && github.event.action != 'closed' &&
+      github.event.pull_request.draft == false
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -116,8 +129,8 @@ jobs:
     permissions:
       contents: read
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request' && github.event.pull_request.draft ==
-      false
+    if: github.event_name == 'pull_request' && github.event.action != 'closed' &&
+      github.event.pull_request.draft == false
     steps:
       - name: Checkout repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -228,6 +241,7 @@ jobs:
 
   code-style-moon:
     name: "Check code style (Moon)"
+    if: github.event.action != 'closed'
     permissions:
       contents: read
     runs-on: ubuntu-latest
@@ -307,7 +321,8 @@ jobs:
       contents: write # Required to push to gh-pages branch
       pull-requests: read # Required to read the pull-request to check if it has documentation changes
     if: ${{ github.event_name == 'push' || (github.event_name == 'pull_request' &&
-      github.event.pull_request.draft == false) }}
+      github.event.action != 'closed' && github.event.pull_request.draft == false)
+      }}
     uses: ./.github/workflows/_doc.yml
     secrets:
       PYANSYS_CI_BOT_TOKEN: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
@@ -500,7 +515,7 @@ jobs:
       - doc
       - sbom
       - meta-package
-    if: always()
+    if: always() && github.event.action != 'closed'
     runs-on: ubuntu-latest
     steps:
       - name: check-ci-unit-tests

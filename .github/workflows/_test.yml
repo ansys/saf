@@ -319,14 +319,19 @@ jobs:
         run: git config --global core.longpaths true
 
       - name: Checkout repository
+        if: ${{ env.USE_MOON == 'false' }}
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-          fetch-depth: 0 # For moon to have full git history
 
-      - name: Setup Moon Toolchain
-        if: ${{ env.USE_MOON == 'true' && runner.environment != 'self-hosted' }}
-        uses: moonrepo/setup-toolchain@261c62cb5b0f580c7be7c8cd0f023a2e96756095 # v0.6.4
+      - name: Restore Moon cache
+        id: restore
+        uses: $/.github/actions/moon/restore
+        if: ${{ env.USE_MOON == 'true' }}
+        with:
+          ref: ${{ github.ref }}
+          key-suffix: ${{ inputs.python-version }}-${{ matrix.test-report-artifact-name-suffix
+            }}-${{ env.PACKAGE }}
 
       - name: Install workspace dependencies (Moon)
         if: ${{ env.USE_MOON == 'true' }}
@@ -561,3 +566,12 @@ jobs:
         if: ${{ inputs.library-name == 'saf-projects-dashboard' }}
         shell: bash
         run: moon run $PACKAGE:test-npm
+
+      - name: Save Moon cache
+        if: ${{ always() && env.USE_MOON == 'true' }}
+        uses: $/.github/actions/moon/save
+        id: save
+        with:
+          key-suffix: ${{ inputs.python-version }}-${{ matrix.test-report-artifact-name-suffix
+            }}-${{ env.PACKAGE }}
+          uv-cache-hit: ${{ steps.restore.outputs.uv-cache-hit }}

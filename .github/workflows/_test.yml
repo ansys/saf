@@ -384,7 +384,7 @@ jobs:
       - name: Install dependencies
         if: ${{ env.USE_MOON == 'false' }}
         id: prepare-env
-        uses: ansys/saf-devops/prepare-python-environment@4b1f5e75f1eef200a8f54be589ba0976a520301d # v1.2.1
+        uses: ansys/saf-devops/prepare-python-environment@304d04d9d9249c968d7a2a9d92a12ffa88a3216d # v1.3.2
         with:
           python-version: ${{ inputs.python-version }}
           poetry-version: ${{ vars.POETRY_VERSION }}
@@ -486,7 +486,7 @@ jobs:
           PYTEST_DEBUG_TEMPROOT: ${{ runner.os == 'Windows' && 'C:/' || '/tmp' }}
           APPDATA: ${{ runner.temp }}
         if: ${{ env.USE_MOON == 'false' }}
-        uses: ansys/saf-devops/run-tests@4b1f5e75f1eef200a8f54be589ba0976a520301d # v1.2.1
+        uses: ansys/saf-devops/run-tests@304d04d9d9249c968d7a2a9d92a12ffa88a3216d # v1.3.2
         with:
           python-version: ${{ inputs.python-version }}
           poetry-version: ${{ vars.POETRY_VERSION}}
@@ -543,7 +543,7 @@ jobs:
         if: ${{ always() && (steps.run-tests.outcome != 'cancelled' || steps.run-tests-moon.outcome
           != 'cancelled') && (steps.run-tests.outcome != 'skipped' || steps.run-tests-moon.outcome
           != 'skipped') && matrix.install-hps == 'true' }}
-        uses: ansys/saf-devops/collect-hps-logs@4b1f5e75f1eef200a8f54be589ba0976a520301d # v1.2.1
+        uses: ansys/saf-devops/collect-hps-logs@304d04d9d9249c968d7a2a9d92a12ffa88a3216d # v1.3.2
         with:
           artifact-prefix: "hps_test_reports_${{ matrix.test-report-artifact-name-suffix
             }}_${{ inputs.python-version }}_${{ runner.os }}"

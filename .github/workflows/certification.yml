@@ -103,7 +103,7 @@ jobs:
       - ubuntu-latest
     steps:
       - id: verify-tag
-        uses: ansys/saf-devops/verify-tag-and-commit@4b1f5e75f1eef200a8f54be589ba0976a520301d # v1.2.1
+        uses: ansys/saf-devops/verify-tag-and-commit@304d04d9d9249c968d7a2a9d92a12ffa88a3216d # v1.3.2
         with:
           tag: certified-${{ inputs.library-name }}
 
@@ -242,7 +242,7 @@ jobs:
         shell: bash
         run: moon run ${PACKAGE}:vulnerability-check
 
-      - uses: ansys/saf-devops/check-deps-vulnerabilities@4b1f5e75f1eef200a8f54be589ba0976a520301d # v1.2.1
+      - uses: ansys/saf-devops/check-deps-vulnerabilities@304d04d9d9249c968d7a2a9d92a12ffa88a3216d # v1.3.2
         with:
           python-version: ${{ vars.PYTHON_VERSION }}
           poetry-version: ${{ vars.POETRY_VERSION }}
@@ -269,7 +269,7 @@ jobs:
       - name: Get production dependencies
         if: ${{ contains(env.UV_BASED_PACKAGES, needs.pre-certification.outputs.library-name)
           }}
-        uses: ansys/saf-devops/get-production-dependencies@4b1f5e75f1eef200a8f54be589ba0976a520301d # v1.2.1
+        uses: ansys/saf-devops/get-production-dependencies@304d04d9d9249c968d7a2a9d92a12ffa88a3216d # v1.3.2
         with:
           poetry-version: ${{ vars.POETRY_VERSION }}
           poetry-parent-directory: packages/${{ needs.pre-certification.outputs.library-name
@@ -280,7 +280,7 @@ jobs:
         if: ${{ contains(env.UV_BASED_PACKAGES, needs.pre-certification.outputs.library-name)
           }}
         id: analyze-dependabot
-        uses: ansys/saf-devops/analyze-dependabot-alerts@4b1f5e75f1eef200a8f54be589ba0976a520301d # v1.2.1
+        uses: ansys/saf-devops/analyze-dependabot-alerts@304d04d9d9249c968d7a2a9d92a12ffa88a3216d # v1.3.2
         with:
           severity-level: high
           manifest-path: packages/${{ needs.pre-certification.outputs.library-name
@@ -475,7 +475,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check if wheel can be pip installed
-        uses: ansys/saf-devops/pip-install-production-wheel@4b1f5e75f1eef200a8f54be589ba0976a520301d # v1.2.1
+        uses: ansys/saf-devops/pip-install-production-wheel@304d04d9d9249c968d7a2a9d92a12ffa88a3216d # v1.3.2
         with:
           python-version: ${{ matrix.python-version }}
           wheel-artifact: '${{ needs.pre-certification.outputs.library-name }}-${{
@@ -560,6 +560,6 @@ jobs:
       - ubuntu-latest
     steps:
       - name: tagging commit
-        uses: ansys/saf-devops/apply-tag-on-commit@4b1f5e75f1eef200a8f54be589ba0976a520301d # v1.2.1
+        uses: ansys/saf-devops/apply-tag-on-commit@304d04d9d9249c968d7a2a9d92a12ffa88a3216d # v1.3.2
         with:
           tag: certified-${{ needs.pre-certification.outputs.library-name }}

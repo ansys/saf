@@ -154,7 +154,7 @@ jobs:
     steps:
       - name: Retrieve release information
         id: retrieve-release-info
-        uses: ansys/saf-devops/retrieve-release-information@4b1f5e75f1eef200a8f54be589ba0976a520301d # v1.2.1
+        uses: ansys/saf-devops/retrieve-release-information@304d04d9d9249c968d7a2a9d92a12ffa88a3216d # v1.3.2
         with:
           poetry-parent-directory: packages/${{ inputs.library }}
           release-type: ${{ inputs.dev-release && 'dev' || 'stable' }}
@@ -215,7 +215,7 @@ jobs:
 
       - name: Edit version
         if: needs.release-information.outputs.version-type == 'dev' && !inputs.dev-release
-        uses: ansys/saf-devops/edit-version-in-pyproject@4b1f5e75f1eef200a8f54be589ba0976a520301d # v1.2.1
+        uses: ansys/saf-devops/edit-version-in-pyproject@304d04d9d9249c968d7a2a9d92a12ffa88a3216d # v1.3.2
         with:
           pyproject-path: packages/${{ inputs.library }}/pyproject.toml
           version: ${{ needs.release-information.outputs.version-to-release }}

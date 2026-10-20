@@ -105,7 +105,7 @@ jobs:
           github.event_name == 'workflow_dispatch' ||
           github.ref == 'refs/heads/main'
         id: info
-        uses: ansys/saf-devops/get-information-from-pyproject@4b1f5e75f1eef200a8f54be589ba0976a520301d # v1.2.1
+        uses: ansys/saf-devops/get-information-from-pyproject@304d04d9d9249c968d7a2a9d92a12ffa88a3216d # v1.3.2
         with:
           pyproject-path: packages/${{ matrix.package }}/pyproject.toml
 
@@ -124,7 +124,7 @@ jobs:
       - name: Deploy stable doc
         if: ${{ !contains(steps.info.outputs.patch-version, 'dev') && env.MOON_ARGS
           == '' }}
-        uses: ansys/saf-devops/doc-deploy-stable@4b1f5e75f1eef200a8f54be589ba0976a520301d # v1.2.1
+        uses: ansys/saf-devops/doc-deploy-stable@304d04d9d9249c968d7a2a9d92a12ffa88a3216d # v1.3.2
         with:
           cname: ${{ vars.CNAME }}
           token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
@@ -252,12 +252,12 @@ jobs:
     steps:
       - name: Get version
         id: info
-        uses: ansys/saf-devops/get-information-from-pyproject@4b1f5e75f1eef200a8f54be589ba0976a520301d # v1.2.1
+        uses: ansys/saf-devops/get-information-from-pyproject@304d04d9d9249c968d7a2a9d92a12ffa88a3216d # v1.3.2
         with:
           pyproject-path: packages/saf-sdk/pyproject.toml
 
       - name: Deploy stable doc
-        uses: ansys/saf-devops/doc-deploy-stable@4b1f5e75f1eef200a8f54be589ba0976a520301d # v1.2.1
+        uses: ansys/saf-devops/doc-deploy-stable@304d04d9d9249c968d7a2a9d92a12ffa88a3216d # v1.3.2
         with:
           cname: ${{ vars.CNAME }}
           token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}

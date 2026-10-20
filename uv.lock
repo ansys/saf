@@ -867,7 +867,7 @@ requires-dist = [
 
 [[package]]
 name = "ansys-saf-desktop-installer"
-version = "1.19.dev0"
+version = "1.19.dev1"
 source = { editable = "packages/saf-desktop-installer" }
 dependencies = [
     { name = "click" },
@@ -1832,7 +1832,7 @@ tests-saf-product-manager = [
 
 [[package]]
 name = "ansys-solutions-dash-super-components"
-version = "1.2.dev0"
+version = "1.3.dev0"
 source = { editable = "packages/dash-super-components" }
 dependencies = [
     { name = "dash" },

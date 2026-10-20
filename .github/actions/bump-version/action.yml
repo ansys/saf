@@ -55,6 +55,9 @@ runs:
 
     - name: Setup Moon Toolchain
       uses: moonrepo/setup-toolchain@261c62cb5b0f580c7be7c8cd0f023a2e96756095 # v0.6.4
+      env:
+        UV_PYTHON: '3.12'
+        MOON_PYTHON_VERSION: '3.12'
 
     - name: Bump Version
       shell: bash

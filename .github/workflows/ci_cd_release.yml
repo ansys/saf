@@ -172,7 +172,7 @@ jobs:
     steps:
       - name: Generate release notes
         id: generate-release-notes
-        uses: ansys/saf-devops/generate-release-notes@5d9e84af215372b7b125bbf12f5b0093600eb06d # v1.2.0
+        uses: ansys/saf-devops/generate-release-notes@304d04d9d9249c968d7a2a9d92a12ffa88a3216d # v1.3.2
         with:
           tag-name: ${{ needs.release-information.outputs.release-name }}-${{ inputs.library
             }}

@@ -366,7 +366,7 @@ jobs:
           name: release-notes
           path: release-notes
 
-      - name: Update release notes
+      - name: Add PyAnsys section to the release notes
         working-directory: release-notes
         env:
           SECTION_PLACEHOLDER: '<!-- THIS LINE IS A PLACEHOLDER FOR PYANSYS COMPATIBILITY
@@ -389,7 +389,8 @@ jobs:
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: release-notes
-          path: release-notes/release_notes.md'
+          path: release-notes/release_notes.md
+          if-no-files-found: error
           overwrite: true
 
   check-wheel-can-be-pip-installed:

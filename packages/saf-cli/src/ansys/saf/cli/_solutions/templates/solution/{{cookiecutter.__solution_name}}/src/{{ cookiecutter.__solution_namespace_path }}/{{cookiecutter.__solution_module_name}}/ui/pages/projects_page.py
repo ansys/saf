@@ -20,16 +20,20 @@ The page is only registered when ansys-saf-projects-dashboard is installed. Othe
 the SAF Desktop Portal, then to the SAF Portal.
 """
 
-import importlib.util
 import os
 
 import dash
 
-PROJECTS_DASHBOARD_MODULE = "ansys_saf_projects_dashboard"
+# Import the component library when the module is loaded: Dash refuses component libraries imported in a callback.
+try:
+    from ansys_saf_projects_dashboard import ProjectsDashboard
+except ImportError:
+    ProjectsDashboard = None
+
 # Keep in sync with the desktop orchestrator, which opens this path when ``--portal`` uses the projects dashboard.
 PROJECTS_DASHBOARD_PATH = os.getenv("SAF_DESKTOP_PROJECTS_DASHBOARD_PATH", "/projects")
 
-if importlib.util.find_spec(PROJECTS_DASHBOARD_MODULE) is not None:
+if ProjectsDashboard is not None:
     dash.register_page(
         __name__,
         name="Projects",
@@ -42,8 +46,6 @@ if importlib.util.find_spec(PROJECTS_DASHBOARD_MODULE) is not None:
 
 def layout(theme: str = "light"):
     """Layout of the projects dashboard page, whose theme follows the color scheme of the app."""
-    from ansys_saf_projects_dashboard import ProjectsDashboard
-
     return ProjectsDashboard(
         id="projects-dashboard",
         apiBaseUrl=os.getenv("GLOW_EXTERNAL_API_URL") or os.getenv("GLOW_API_URL"),

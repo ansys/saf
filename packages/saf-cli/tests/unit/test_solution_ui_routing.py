@@ -18,7 +18,6 @@
 
 from collections.abc import Iterator
 import importlib
-from importlib.machinery import ModuleSpec
 import importlib.util
 from pathlib import Path
 import sys
@@ -93,21 +92,24 @@ def projects_dashboard_installed(
     solution_ui_page: ModuleType,
     monkeypatch: pytest.MonkeyPatch,
 ) -> Iterator[bool]:
-    """Register the projects page as Dash does, as if ansys-saf-projects-dashboard were installed or not."""
-    installed = bool(request.param)
-    real_find_spec = importlib.util.find_spec
+    """Register the projects page as Dash does, as if ansys-saf-projects-dashboard were installed or not.
 
-    def find_spec(name: str, package: str | None = None) -> ModuleSpec | None:
-        if name == PROJECTS_DASHBOARD_MODULE:
-            return ModuleSpec(name, None) if installed else None
-        return real_find_spec(name, package)
+    When installed, a fake component library is provided whose component returns its arguments. Otherwise, importing
+    the component library fails.
+    """
+    installed = bool(request.param)
+    fake_projects_dashboard: ModuleType | None = None
+    if installed:
+        fake_projects_dashboard = ModuleType(PROJECTS_DASHBOARD_MODULE)
+        fake_projects_dashboard.ProjectsDashboard = lambda **kwargs: kwargs  # type: ignore[attr-defined]
+    # A None entry in sys.modules makes the import raise ImportError.
+    monkeypatch.setitem(sys.modules, PROJECTS_DASHBOARD_MODULE, fake_projects_dashboard)
 
     page_registry: dict[str, dict[str, Any]] = dash.page_registry  # pyright: ignore[reportUnknownVariableType, reportUnknownMemberType]
     saved_registry = dict(page_registry)
     for module in get_projects_dashboard_modules():
         del page_registry[module]
 
-    monkeypatch.setattr(importlib.util, "find_spec", find_spec)
     page_path = Path(str(solution_ui_page.__file__)).parent / "projects_page.py"
     spec = importlib.util.spec_from_file_location(PROJECTS_PAGE_MODULE, page_path)
     assert spec is not None
@@ -122,15 +124,6 @@ def projects_dashboard_installed(
 
     page_registry.clear()
     page_registry.update(saved_registry)
-
-
-@pytest.fixture
-def fake_projects_dashboard(monkeypatch: pytest.MonkeyPatch) -> ModuleType:
-    """Provide a fake ansys_saf_projects_dashboard module whose component returns its arguments."""
-    module = ModuleType(PROJECTS_DASHBOARD_MODULE)
-    module.ProjectsDashboard = lambda **kwargs: kwargs  # type: ignore[attr-defined]
-    monkeypatch.setitem(sys.modules, PROJECTS_DASHBOARD_MODULE, module)
-    return module
 
 
 def test_projects_page_registration(projects_dashboard_installed: bool):
@@ -149,7 +142,6 @@ def test_projects_page_registration(projects_dashboard_installed: bool):
 @pytest.mark.parametrize("projects_dashboard_installed", [True], indirect=True)
 def test_projects_page_layout(
     projects_dashboard_installed: bool,
-    fake_projects_dashboard: ModuleType,
     monkeypatch: pytest.MonkeyPatch,
 ):
     """Render the dashboard with the API URL of the solution and the requested theme."""
@@ -165,7 +157,6 @@ def test_projects_page_layout(
 @pytest.mark.parametrize("projects_dashboard_installed", [True], indirect=True)
 def test_projects_page_layout_prefers_external_api_url(
     projects_dashboard_installed: bool,
-    fake_projects_dashboard: ModuleType,
     monkeypatch: pytest.MonkeyPatch,
 ):
     """Use the external API URL when the UI is served behind a reverse proxy."""
@@ -173,6 +164,21 @@ def test_projects_page_layout_prefers_external_api_url(
     monkeypatch.setenv("GLOW_API_URL", "http://127.0.0.1:8000")
     layout = dash.page_registry[PROJECTS_PAGE_MODULE]["layout"]  # pyright: ignore[reportUnknownMemberType]
     assert layout()["apiBaseUrl"] == "https://api.example.com"
+
+
+@pytest.mark.parametrize("projects_dashboard_installed", [True], indirect=True)
+def test_projects_page_layout_does_not_import_component_library(
+    projects_dashboard_installed: bool,
+    monkeypatch: pytest.MonkeyPatch,
+):
+    """Import the component library when the page is loaded, not in the layout.
+
+    The layout is rendered in a callback, where Dash raises ImportedInsideCallbackError for new component libraries.
+    """
+    # Make any import of the component library fail from now on.
+    monkeypatch.setitem(sys.modules, PROJECTS_DASHBOARD_MODULE, None)
+    layout = dash.page_registry[PROJECTS_PAGE_MODULE]["layout"]  # pyright: ignore[reportUnknownMemberType]
+    assert layout()["id"] == "projects-dashboard"
 
 
 def test_resolve_active_page_and_project_information(

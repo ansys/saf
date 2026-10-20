@@ -164,6 +164,9 @@ on:
       LICENSE_SERVER:
         description: 'License server for Ansys products'
         required: true
+      CODECOV_TOKEN:
+        description: 'Token for Codecov'
+        required: true
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}-test-${{ inputs.python-version }}-${{
@@ -515,6 +518,12 @@ jobs:
         run: |
           mkdir -p "$REPORTS_DIR"
           moon run $PACKAGE:test -- $PYTEST_ARGS --html="${REPORTS_DIR}/report.html" --md="${REPORTS_DIR}/report.md"
+
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7.1.1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          flags: ${{ env.PACKAGE }}
 
       - name: Publish pytest reports (Moon)
         if: always() && steps.run-tests-moon.outcome != 'skipped' && env.USE_MOON

@@ -3,6 +3,7 @@
 [![Python](https://img.shields.io/pypi/pyversions/ansys-saf-sdk?logo=python&logoColor=white&label=Python)](https://pypi.org/project/ansys-saf-sdk/)
 [![PyPI](https://img.shields.io/pypi/v/ansys-saf-sdk.svg?logo=pypi&logoColor=white&label=PyPI)](https://pypi.org/project/ansys-saf-sdk/)
 [![GH-CI](https://img.shields.io/github/actions/workflow/status/ansys/saf/ci_cd_pr.yml?branch=main&label=CI-CD&logo=github)](https://github.com/ansys/saf/actions/workflows/ci_cd_pr.yml?query=branch%3Amain)
+[![Certified](https://img.shields.io/github/actions/workflow/status/ansys/saf/ci_cd_meta_package.yml?branch=main&label=Certification&logo=github)](https://github.com/ansys/saf/actions/workflows/ci_cd_meta_package.yml?query=branch%3Amain)
 [![Apache](https://img.shields.io/badge/License-Apache2.0-white.svg?labelColor=black)](https://www.apache.org/licenses/)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 

@@ -105,5 +105,5 @@ def request_report(project: PumpSolution) -> bool:
     if report_step.get_long_running_method_state("generate_report").status == MethodStatus.Running:
         return False
     logger.info("Generating the report of project %s.", project.project_display_name)
-    report_step.generate_report(project_name=project.project_display_name)
+    report_step.generate_report(adr_project_name=project.project_display_name)
     return True

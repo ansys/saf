@@ -88,7 +88,7 @@ class ReportStep(StepModel):
             ]
         ),
     )
-    def generate_report(self, setup_step: SetupStep, solve_step: SolveStep, project_name: str = "") -> None:
+    def generate_report(self, setup_step: SetupStep, solve_step: SolveStep, adr_project_name: str = "") -> None:
         """Rebuild the report from the last solve and store it as HTML, ZIP and PDF."""
         if solve_step.contour_image == NO_ENTITY:
             raise BadRequestError("Run the simulation before generating the report.")
@@ -102,7 +102,7 @@ class ReportStep(StepModel):
             self.report_tag = f"pump-report={uuid.uuid4().hex}"
 
         data = PumpReportData(
-            project_name=project_name,
+            project_name=adr_project_name,
             impeller_speed_rpm=solve_step.impeller_speed_rpm,
             mass_flow_rate=solve_step.mass_flow_rate,
             iteration_count=solve_step.iteration_count,

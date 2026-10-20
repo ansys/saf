@@ -23,6 +23,16 @@ tasks:
     options:
       cache: false
 
+  uv-cache-prune:
+    command: "uv"
+    args:
+      - "cache"
+      - "prune"
+      - "--ci"
+    options:
+      cache: false
+      runFromWorkspaceRoot: true
+
   uv-sync:
     command: "uv"
     args:

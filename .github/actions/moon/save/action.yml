@@ -34,7 +34,7 @@ runs:
       shell: bash
       env:
         UV_CACHE_DIR: ${{ github.workspace }}/.uv-cache
-      run: uv cache prune --ci
+      run: moon run root:uv-cache-prune
 
     - name: Clean Moon cache
       shell: bash
@@ -45,10 +45,12 @@ runs:
       uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
       with:
         path: ${{ env.UV_CACHE_DIR }}
-        key: uv-${{ runner.os }}-${{ inputs.key-suffix }}-${{ hashFiles('uv.lock') }}
+        key: uv-${{ runner.os }}-${{ inputs.key-suffix }}-${{ hashFiles('uv.lock')
+          }}
 
     - name: Save Moon cache
       uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
       with:
         path: .moon/cache
-        key: moon-${{ runner.os }}-${{ inputs.key-suffix }}-branch-${{ github.head_ref || github.ref_name }}@${{ github.sha }}
+        key: moon-${{ runner.os }}-${{ inputs.key-suffix }}-branch-${{ github.head_ref
+          || github.ref_name }}@${{ github.sha }}

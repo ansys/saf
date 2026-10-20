@@ -38,7 +38,7 @@ runs:
 
     - name: Clean Moon cache
       shell: bash
-      run: moon cache clean --lifetime="7 days"
+      run: moon clean --lifetime="7 days"
 
     - name: Save uv cache
       if: ${{ inputs.uv-cache-hit != 'true' }}

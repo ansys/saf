@@ -405,6 +405,7 @@ jobs:
       PYANSYS_PYPI_PRIVATE_PAT: ${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}
       PYANSYS_PYPI_PRIVATE_URL: ${{ secrets.PYANSYS_PYPI_PRIVATE_URL }}
       LICENSE_SERVER: ${{ secrets.LICENSE_SERVER }}
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
   run-github-workflows-of-generated-solution:
     permissions:

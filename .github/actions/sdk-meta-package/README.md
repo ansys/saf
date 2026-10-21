@@ -30,6 +30,35 @@ on PyPI:
 
 ### Input
 
+When manually running the `ci_cd_meta_package.yml` workflow, supply all component
+overrides through its single `version-overrides` input:
+
+```json
+{"ansys-bdm-api": "1.2.3", "ansys-saf-glow-engine": "2.0.0"}
+```
+
+GitHub Actions accepts this JSON as a string input. The default contains every
+supported package with an empty string value:
+
+```json
+{
+  "ansys-bdm-api": "",
+  "ansys-bdm-shared-volume": "",
+  "ansys-saf-glow-engine": "",
+  "ansys-saf-desktop-installer": "",
+  "ansys-saf-desktop-orchestrator": "",
+  "ansys-iam-oidc": "",
+  "ansys-saf-product-configuration": "",
+  "ansys-saf-product-manager": "",
+  "ansys-saf-projects-dashboard": ""
+}
+```
+
+Empty values and omitted packages use normal PyPI resolution. The workflow rejects
+malformed JSON, unsupported package names, and non-string values, then maps the
+object to the individual action inputs below. Existing release-branch restrictions
+still apply.
+
 | Name | Required | Description |
 | --- | --- | --- |
 | `python-version` | Yes | Python version to use when running the meta-package update utility. |
@@ -50,6 +79,7 @@ The override inputs are:
 - `ansys-iam-oidc-version-override`
 - `ansys-saf-product-configuration-version-override`
 - `ansys-saf-product-manager-version-override`
+- `ansys-saf-projects-dashboard-version-override`
 
 ### Environment Variables
 

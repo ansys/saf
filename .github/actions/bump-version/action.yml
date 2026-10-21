@@ -61,6 +61,8 @@ runs:
       env:
         NEW_VERSION: ${{ inputs.new-version }}
         PACKAGE: ${{ inputs.package }}
+        UV_PYTHON: '3.12'
+        MOON_PYTHON_VERSION: '3.12'
       run: moon run $PACKAGE:bump-version -- $NEW_VERSION
 
     - name: Create bump branch

@@ -354,7 +354,7 @@ version = "0.2.0"
 description = "Dash component for SAF-based solution applications to view and manage project instances."
 optional = false
 python-versions = "<3.15,>=3.11"
-groups = ["desktop", "ui"]
+groups = ["desktop"]
 files = [
     {file = "ansys_saf_projects_dashboard-0.2.0-py3-none-any.whl", hash = "sha256:edd8b307abe04c502cca8269124a20aa51fa6ad78bb4ee286489ff87ed4c0e25"},
     {file = "ansys_saf_projects_dashboard-0.2.0.tar.gz", hash = "sha256:5243bb821da965424284f70d289cc40b8028bbd66066f7bf47a386ced820b998"},
@@ -6796,4 +6796,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.11,<3.15"
-content-hash = "2315380432bc036ff9c794c3b7fff751b0b61b7da6e671263e90abeb7dc59072"
+content-hash = "ab23ef559ff1a418b1f634abd61e857d2f15db3f2cc189d9e15dcf59e917f4b3"

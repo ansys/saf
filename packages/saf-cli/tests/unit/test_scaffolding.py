@@ -167,18 +167,15 @@ def _scaffold_pyproject(tmp_path: Path, ui_framework: str) -> dict[str, Any]:
 
 
 @pytest.mark.usefixtures("tmp_path_as_working_dir", "mock_appdata")
-def test_dash_solution_depends_on_projects_dashboard(tmp_path: Path):
-    """Install the projects dashboard with the UI of a Dash solution from public PyPI."""
-    poetry = _scaffold_pyproject(tmp_path, "dash")["tool"]["poetry"]
-    dependency = poetry["group"]["ui"]["dependencies"]["ansys-saf-projects-dashboard"]
-    sources = {source["name"]: source for source in poetry["source"]}
-    assert dependency == "^0.2.0"
-    assert "solutions-private-pypi" not in sources
+@pytest.mark.parametrize("ui_framework", ["dash", "none"])
+def test_solution_gets_projects_dashboard_from_sdk_desktop_extra(tmp_path: Path, ui_framework: str):
+    """Install the projects dashboard through the desktop extra of the SDK, from public PyPI.
 
-
-@pytest.mark.usefixtures("tmp_path_as_working_dir", "mock_appdata")
-def test_solution_without_ui_does_not_depend_on_projects_dashboard(tmp_path: Path):
-    """Do not add the projects dashboard dependency to a solution without UI."""
-    poetry = _scaffold_pyproject(tmp_path, "none")["tool"]["poetry"]
-    assert "ui" not in poetry.get("group", {})
+    The solution does not depend on the projects dashboard directly: ``ansys-saf-sdk[desktop]`` brings it.
+    """
+    poetry = _scaffold_pyproject(tmp_path, ui_framework)["tool"]["poetry"]
+    groups: dict[str, Any] = poetry.get("group", {})
+    for group in groups.values():
+        assert "ansys-saf-projects-dashboard" not in group.get("dependencies", {})
+    assert "desktop" in groups["desktop"]["dependencies"]["ansys-saf-sdk"]["extras"]
     assert "solutions-private-pypi" not in {source["name"] for source in poetry["source"]}

@@ -16,9 +16,8 @@
 
 """Frontend of the projects dashboard page.
 
-The page is only registered when ansys-saf-projects-dashboard is installed. 
-Otherwise, ``saf run --portal`` falls back to
-the SAF Desktop Portal, then to the SAF Portal.
+The page is only registered when ansys-saf-projects-dashboard is installed.
+Otherwise, ``saf run --portal`` falls back to the SAF Desktop Portal, then to the SAF Portal.
 """
 
 import os

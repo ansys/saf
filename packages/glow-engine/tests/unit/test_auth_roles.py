@@ -23,6 +23,7 @@ import pytest
 from ansys.saf.glow._utilities.auth_roles import (
     decode_token_claims,
     get_client_roles,
+    get_roles_from_claims,
     has_required_role,
     parse_required_roles,
 )
@@ -59,7 +60,7 @@ def test_decode_token_claims_invalid(token: str):
         ({"resource_access": {"portal": {"roles": ["a", "b"]}}}, "portal", {"a", "b"}),
         ({"resource_access": {"portal": {"roles": ["a", 1]}}}, "portal", {"a"}),
         ({"resource_access": {"other": {"roles": ["a"]}}}, "portal", set[str]()),
-        ({"resource_access": {"portal": {"roles": "a"}}}, "portal", set[str]()),
+        ({"resource_access": {"portal": {"roles": "a"}}}, "portal", {"a"}),
         ({"resource_access": {"portal": {"roles": ["a"]}}}, None, set[str]()),
         ({"realm_access": {"roles": ["a"]}}, "portal", set[str]()),
         ({}, "portal", set[str]()),
@@ -86,3 +87,28 @@ def test_has_required_role_bypass():
     assert has_required_role(admin, "portal", required, bypass)
     assert not has_required_role(only_user, "portal", required, bypass)
     assert not has_required_role(admin, "other", required, bypass)
+
+
+@pytest.mark.parametrize(
+    ("claims", "path", "expected"),
+    [
+        ({"resource_access": {"c": {"roles": ["a", "b"]}}}, "resource_access.{client_id}.roles", {"a", "b"}),
+        ({"roles": ["admin"]}, "roles", {"admin"}),
+        ({"groups": "g1 g2"}, "groups", {"g1", "g2"}),
+        ({"realm_access": {"roles": ["x"]}}, "realm_access.roles", {"x"}),
+        ({"roles": ["admin"]}, "missing.path", set()),
+        ({"roles": [1, "ok"]}, "roles", {"ok"}),
+    ],
+)
+def test_get_roles_from_claims(claims: dict[str, Any], path: str, expected: set[str]):
+    assert get_roles_from_claims(claims, path, "c") == expected
+
+
+def test_get_roles_from_claims_needs_client_id_only_when_templated():
+    claims = {"resource_access": {"c": {"roles": ["a"]}}, "roles": ["r"]}
+    assert get_roles_from_claims(claims, "resource_access.{client_id}.roles", None) == set()
+    assert get_roles_from_claims(claims, "roles", None) == {"r"}
+
+
+def test_has_required_role_uses_custom_claim():
+    assert has_required_role({"roles": ["r"]}, "c", frozenset({"r"}), roles_claim="roles")

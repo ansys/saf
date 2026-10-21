@@ -77,6 +77,10 @@ def create_app(settings: Settings):  # noqa: C901
             "description": "Create and manage the steps in Solution projects.",
         },
     ]
+    if settings.glow_project_access_control_enabled and settings.glow_auth_disabled:
+        raise RuntimeError(
+            "GLOW_PROJECT_ACCESS_CONTROL_ENABLED requires authentication: set GLOW_AUTH_DISABLED to False.",
+        )
     instrumentor = Instrumentor.instrumentalize_process(GLOW_API_SERVICE_NAME, settings)
 
     @asynccontextmanager

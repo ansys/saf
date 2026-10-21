@@ -26,6 +26,7 @@ from pydantic import (
     Discriminator,
     Field,
     PostgresDsn,
+    SecretStr,
     Tag,
     ValidationInfo,
     field_validator,
@@ -52,6 +53,7 @@ from ansys.saf.glow._config.const import (
     LoggingLevel,
     ProductInstanceSystemType,
 )
+from ansys.saf.glow._utilities.auth_roles import DEFAULT_ROLES_CLAIM, parse_required_roles
 from ansys.saf.glow._utilities.solution_modules import (
     find_solution,
     find_solution_name,
@@ -197,6 +199,49 @@ class Settings(BaseSettings):
     glow_auth_bypass_roles: str | None = Field(
         default=None,
         description="Comma-separated client roles (of glow_auth_client_id) that exempt the user from required roles.",
+    )
+    glow_auth_roles_claim: str = Field(
+        default=DEFAULT_ROLES_CLAIM,
+        description=(
+            "Dotted path of the access token claim holding the user roles. The placeholder {client_id} is replaced "
+            "by glow_auth_client_id. The claim can be a list of roles or a space-separated string."
+        ),
+    )
+    glow_auth_super_admin_roles: str = Field(
+        default="",
+        description="Comma-separated roles that grant super admin rights on all projects.",
+    )
+    glow_project_access_control_enabled: bool = Field(
+        default=False,
+        description="Whether to enable per-user project access control (owner, viewer and single-writer lock).",
+    )
+    glow_project_lock_idle_timeout: int = Field(
+        default=28800,
+        description="Seconds of inactivity after which a project write lock is released.",
+    )
+    glow_project_stuck_method_timeout: int = Field(
+        default=86400,
+        description="Seconds after which a running method is considered stuck and no longer blocks the project lock.",
+    )
+    glow_ui_user_directory: Literal["none", "keycloak", "scim", "msgraph"] = Field(
+        default="none",
+        description="The user directory the UI uses to search users when sharing a project.",
+    )
+    glow_ui_keycloak_url: str | None = Field(
+        default=None,
+        description="Base URL of the Keycloak server used as user directory.",
+    )
+    glow_ui_keycloak_realm: str | None = Field(
+        default=None,
+        description="Keycloak realm used as user directory.",
+    )
+    glow_ui_keycloak_client_id: str | None = Field(
+        default=None,
+        description="Client id used to query the Keycloak user directory.",
+    )
+    glow_ui_keycloak_client_secret: SecretStr | None = Field(
+        default=None,
+        description="Client secret used to query the Keycloak user directory.",
     )
     glow_api_key: str | None = Field(
         default=None,
@@ -404,6 +449,10 @@ class Settings(BaseSettings):
             raise ValueError(f"Failed to read API key file '{self.glow_api_key_file}': {exc}") from None
 
         return self
+
+    @property
+    def computed_super_admin_roles(self) -> frozenset[str]:
+        return parse_required_roles(self.glow_auth_super_admin_roles)
 
     @property
     def computed_api_key(self) -> str | None:

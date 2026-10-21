@@ -21,6 +21,8 @@ import binascii
 import json
 from typing import Any, cast
 
+DEFAULT_ROLES_CLAIM = "resource_access.{client_id}.roles"
+
 
 def parse_required_roles(value: str | None) -> frozenset[str]:
     """Parse a comma-separated list of role names, ignoring blanks."""
@@ -42,20 +44,31 @@ def decode_token_claims(access_token: str) -> dict[str, Any]:
     return cast("dict[str, Any]", claims) if isinstance(claims, dict) else {}
 
 
+def get_roles_from_claims(claims: dict[str, Any], roles_claim: str, client_id: str | None) -> set[str]:
+    """Return the roles found in ``claims`` at the dotted path ``roles_claim``.
+
+    The ``{client_id}`` placeholder in the path is replaced by ``client_id``. The value at the path can be either a list
+    of strings or a space-separated string.
+    """
+    if "{client_id}" in roles_claim:
+        if not client_id:
+            return set()
+        roles_claim = roles_claim.replace("{client_id}", client_id)
+    value: object = claims
+    for key in roles_claim.split("."):
+        if not isinstance(value, dict):
+            return set()
+        value = cast("dict[str, object]", value).get(key)
+    if isinstance(value, str):
+        return set(value.split())
+    if isinstance(value, list):
+        return {role for role in cast("list[object]", value) if isinstance(role, str)}
+    return set()
+
+
 def get_client_roles(claims: dict[str, Any], client_id: str | None) -> set[str]:
     """Return the roles granted to the user for ``client_id`` (Keycloak ``resource_access`` claim)."""
-    if not client_id:
-        return set()
-    resource_access: object = claims.get("resource_access")
-    if not isinstance(resource_access, dict):
-        return set()
-    client_access: object = cast("dict[str, object]", resource_access).get(client_id)
-    if not isinstance(client_access, dict):
-        return set()
-    roles: object = cast("dict[str, object]", client_access).get("roles")
-    if not isinstance(roles, list):
-        return set()
-    return {role for role in cast("list[object]", roles) if isinstance(role, str)}
+    return get_roles_from_claims(claims, DEFAULT_ROLES_CLAIM, client_id)
 
 
 def has_required_role(
@@ -63,12 +76,13 @@ def has_required_role(
     client_id: str | None,
     required_roles: frozenset[str],
     bypass_roles: frozenset[str] = frozenset(),
+    roles_claim: str = DEFAULT_ROLES_CLAIM,
 ) -> bool:
     """Check that the user holds all of ``required_roles``, or at least one of ``bypass_roles``.
 
-    Always true when no role is required.
+    The user roles are read from the ``roles_claim`` path of ``claims``. Always true when no role is required.
     """
     if not required_roles:
         return True
-    user_roles = get_client_roles(claims, client_id)
+    user_roles = get_roles_from_claims(claims, roles_claim, client_id)
     return required_roles <= user_roles or not bypass_roles.isdisjoint(user_roles)

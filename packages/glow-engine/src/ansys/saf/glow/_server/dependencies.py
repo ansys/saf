@@ -162,18 +162,33 @@ async def oidc_scheme_with_api_key(
     if (
         oidc_scheme.auto_error
         and token
-        and not has_required_role(decode_token_claims(token), audience, required_roles, bypass_roles)
+        and not has_required_role(
+            decode_token_claims(token),
+            audience,
+            required_roles,
+            bypass_roles,
+            settings.glow_auth_roles_claim,
+        )
     ):
         logger.error("Access token does not grant the required roles.")
         raise HTTPException(status_code=403, detail="Forbidden")
     return token
 
 
-async def oidc_scheme_ws_with_roles(token: Annotated[str | None, Depends(oidc_scheme_ws)]) -> str | None:
+async def oidc_scheme_ws_with_roles(
+    settings: Annotated[Settings, Depends(get_settings)],
+    token: Annotated[str | None, Depends(oidc_scheme_ws)],
+) -> str | None:
     if (
         oidc_scheme_ws.auto_error
         and token
-        and not has_required_role(decode_token_claims(token), audience, required_roles, bypass_roles)
+        and not has_required_role(
+            decode_token_claims(token),
+            audience,
+            required_roles,
+            bypass_roles,
+            settings.glow_auth_roles_claim,
+        )
     ):
         logger.error("Access token does not grant the required roles.")
         raise fastapi.WebSocketException(code=fastapi.status.WS_1008_POLICY_VIOLATION, reason="Forbidden")

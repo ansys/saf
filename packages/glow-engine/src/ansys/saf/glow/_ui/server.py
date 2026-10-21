@@ -224,7 +224,13 @@ def create_app(settings: Settings) -> Any:
         except ValueError as ex:
             logger.error("Invalid access token: %s", str(ex))
             raise Unauthorized(www_authenticate=WWWAuthenticate("Bearer")) from None
-        if required_roles and not has_required_role(token.claims, audience, required_roles, bypass_roles):
+        if required_roles and not has_required_role(
+            token.claims,
+            audience,
+            required_roles,
+            bypass_roles,
+            settings.glow_auth_roles_claim,
+        ):
             logger.error("Access token does not grant the required roles.")
             raise Forbidden()
 

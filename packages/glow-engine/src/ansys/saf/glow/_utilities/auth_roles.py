@@ -50,12 +50,12 @@ def get_roles_from_claims(claims: dict[str, Any], roles_claim: str, client_id: s
     The ``{client_id}`` placeholder in the path is replaced by ``client_id``. The value at the path can be either a list
     of strings or a space-separated string.
     """
-    if "{client_id}" in roles_claim:
-        if not client_id:
-            return set()
-        roles_claim = roles_claim.replace("{client_id}", client_id)
+    if "{client_id}" in roles_claim and not client_id:
+        return set()
     value: object = claims
-    for key in roles_claim.split("."):
+    # Split first, then substitute: a client id may itself contain dots.
+    for segment in roles_claim.split("."):
+        key = segment.replace("{client_id}", client_id or "")
         if not isinstance(value, dict):
             return set()
         value = cast("dict[str, object]", value).get(key)

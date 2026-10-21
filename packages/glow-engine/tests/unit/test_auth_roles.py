@@ -21,6 +21,7 @@ from typing import Any
 import pytest
 
 from ansys.saf.glow._utilities.auth_roles import (
+    DEFAULT_ROLES_CLAIM,
     decode_token_claims,
     get_client_roles,
     get_roles_from_claims,
@@ -112,3 +113,9 @@ def test_get_roles_from_claims_needs_client_id_only_when_templated():
 
 def test_has_required_role_uses_custom_claim():
     assert has_required_role({"roles": ["r"]}, "c", frozenset({"r"}), roles_claim="roles")
+
+
+def test_get_roles_from_claims_dotted_client_id():
+    claims = {"resource_access": {"com.acme.portal": {"roles": ["a"]}}}
+    assert get_roles_from_claims(claims, DEFAULT_ROLES_CLAIM, "com.acme.portal") == {"a"}
+    assert has_required_role(claims, "com.acme.portal", frozenset({"a"}))

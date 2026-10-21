@@ -67,7 +67,6 @@ dash_bootstrap_components = "^1.2"
 ansys-solutions-dash-super-components = "^1.0.0"
 dash-extensions = "^2.0.5"
 dash-mantine-components = "^2.6.0"
-ansys-saf-projects-dashboard = "^0.2.0"
 {% endif %}
 
 [tool.poetry.group.doc]

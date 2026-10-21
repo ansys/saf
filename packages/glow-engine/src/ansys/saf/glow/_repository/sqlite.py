@@ -136,6 +136,8 @@ class SqliteSession(RelationalSession):
         project_methods_statement = delete(ProjectMethodLock).where(ProjectMethodLock.project_id == project_id)
         await self._session.execute(project_methods_statement)
 
+        await self._delete_access_rows(project_id)
+
         project_statement = delete(Project).where(Project.id == project_id)
         result = await self._session.execute(project_statement)
         if result.rowcount == 0:  # pyright: ignore

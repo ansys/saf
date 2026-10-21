@@ -33,6 +33,7 @@ from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker
 from sqlalchemy.orm import InstrumentedAttribute
 
 from ansys.bdm.api import EntityHandle
+from ansys.saf.glow._access.schemas import ProjectRole
 from ansys.saf.glow._config.settings import Settings
 from ansys.saf.glow._core.field_state import FieldState
 from ansys.saf.glow._core.instance.recoverystate import RecoveryStateInfo
@@ -45,6 +46,7 @@ from ansys.saf.glow._events.ievent_manager import EventPayload, EventSourceIdent
 from ansys.saf.glow._repository.abstract_repository import AbstractRepositorySession, AbstractRepositorySessionFactory
 from ansys.saf.glow._repository.engine import create_glow_async_engine
 from ansys.saf.glow._repository.generate_project_id import generate_project_id
+from ansys.saf.glow._repository.relational_access import RelationalAccessMixin
 from ansys.saf.glow._repository.relational_mapper import (
     create_bdm_lock,
     create_instance_model,
@@ -63,6 +65,7 @@ from ansys.saf.glow._repository.relational_models import (
     Instance,
     MethodState,
     Project,
+    ProjectMember,
     ProjectMethodLock,
     Step,
     StepField,
@@ -85,7 +88,7 @@ logger = logging.getLogger(__name__)
 TTable = TypeVar("TTable", bound=Base)
 
 
-class RelationalSession(AbstractRepositorySession):
+class RelationalSession(RelationalAccessMixin, AbstractRepositorySession):
     def __init__(self, session: AsyncSession, solution_service: SolutionService, settings: Settings) -> None:
         self._session = session
         self._solution_service = solution_service
@@ -150,10 +153,29 @@ class RelationalSession(AbstractRepositorySession):
         page: int,
         order_by: str | None = None,
         filters: ParsedProjectFilter | None = None,
+        member_id: str | None = None,
+        orphans_only: bool = False,
     ) -> ListProjectResponse:
         filter_expr = filters.as_sqlalchemy_expr() if filters else None
+        access_conditions: list[Any] = []
+        if member_id is not None:
+            access_conditions.append(
+                exists(
+                    select(ProjectMember.id)
+                    .where(ProjectMember.project_id == Project.id)
+                    .where(ProjectMember.user_id == member_id),
+                ),
+            )
+        if orphans_only:
+            access_conditions.append(
+                ~exists(
+                    select(ProjectMember.id)
+                    .where(ProjectMember.project_id == Project.id)
+                    .where(ProjectMember.role == ProjectRole.owner),
+                ),
+            )
 
-        count_statement = select(func.count()).select_from(Project)
+        count_statement = select(func.count()).select_from(Project).where(*access_conditions)
         if filter_expr is not None:
             count_statement = count_statement.where(filter_expr)
 
@@ -172,7 +194,9 @@ class RelationalSession(AbstractRepositorySession):
 
         offset = (page - 1) * page_size
         order_expressions = self._parse_project_order_by(order_by)
-        statement = select(Project).order_by(*order_expressions).offset(offset).limit(page_size)
+        statement = (
+            select(Project).where(*access_conditions).order_by(*order_expressions).offset(offset).limit(page_size)
+        )
         if filter_expr is not None:
             statement = statement.where(filter_expr)
         result = await self._session.execute(statement)
@@ -448,6 +472,8 @@ class RelationalSession(AbstractRepositorySession):
         method_name: str,
         update_data: dict[str, Any],
     ) -> models.MethodState:
+        if update_data.get("status") == MethodStatus.Running:
+            update_data = {**update_data, "started_at": datetime.now(UTC)}
         updated_method_state = await self._update_or_add_row(
             MethodState,
             project_id,
@@ -1110,6 +1136,22 @@ class RelationalSessionFactory(AbstractRepositorySessionFactory):
                         raise
                 await conn.execute(text("UPDATE projects SET description = '' WHERE description IS NULL"))
 
+    async def _add_method_states_started_at_column(self, engine: AsyncEngine) -> None:
+        async with engine.begin() as conn:
+
+            def has_started_at_column(sync_conn: Any) -> bool:
+                inspector = inspect(sync_conn)
+                return any(column["name"] == "started_at" for column in inspector.get_columns("method_states"))
+
+            if not await conn.run_sync(has_started_at_column):
+                column_type = "DATETIME" if engine.dialect.name == "sqlite" else "TIMESTAMP WITH TIME ZONE"
+                try:
+                    await conn.execute(text(f"ALTER TABLE method_states ADD COLUMN started_at {column_type}"))
+                except Exception:
+                    # Another process may have added the column concurrently.
+                    if not await conn.run_sync(has_started_at_column):
+                        raise
+
     async def _populate_lock_tables(self, engine: AsyncEngine) -> None:
         factory = async_sessionmaker(engine)
         async with factory() as session:
@@ -1155,6 +1197,7 @@ class RelationalSessionFactory(AbstractRepositorySessionFactory):
                 if "already exists" not in str(exc.orig).lower():
                     raise
             await self._add_projects_description_column(engine)  # TODO: Remove once all solutions use GLOW > 2.0
+            await self._add_method_states_started_at_column(engine)
             await self._populate_lock_tables(engine)
             # set on the class, not the instance, so the value survives the per-request factory
             RelationalSessionFactory._the_url_of_the_last_database_that_was_initialized = self._database_url

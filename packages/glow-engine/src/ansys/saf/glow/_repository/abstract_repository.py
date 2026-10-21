@@ -17,10 +17,19 @@
 from abc import ABC, abstractmethod
 from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
+from datetime import datetime
 from typing import Any
 import uuid
 
 from ansys.bdm.api import EntityHandle
+from ansys.saf.glow._access.schemas import (
+    AuditEntryInfo,
+    ProjectAccessRecord,
+    ProjectAccessSummary,
+    ProjectRole,
+    WriteRequestInfo,
+    WriteRequestStatus,
+)
 from ansys.saf.glow._core.field_state import FieldState
 from ansys.saf.glow._core.instance.recoverystate import RecoveryStateInfo
 from ansys.saf.glow._core.solution import Solution
@@ -54,7 +63,77 @@ class AbstractRepositorySession(ABC):
         page: int,
         order_by: str | None = None,
         filters: ParsedProjectFilter | None = None,
+        member_id: str | None = None,
+        orphans_only: bool = False,
     ) -> ListProjectResponse:
+        """Lists projects. ``member_id`` restricts the result to projects the user is a member of;
+        ``orphans_only`` restricts it to projects without an owner."""
+        raise NotImplementedError()
+
+    @abstractmethod
+    async def get_access_record(self, project_id: str) -> ProjectAccessRecord:
+        raise NotImplementedError()
+
+    @abstractmethod
+    async def get_access_summaries(
+        self,
+        project_ids: list[str],
+        user_id: str | None,
+    ) -> dict[str, ProjectAccessSummary]:
+        raise NotImplementedError()
+
+    @abstractmethod
+    async def upsert_member(self, project_id: str, user_id: str, role: ProjectRole) -> None:
+        raise NotImplementedError()
+
+    @abstractmethod
+    async def delete_member(self, project_id: str, user_id: str) -> None:
+        raise NotImplementedError()
+
+    @abstractmethod
+    async def set_lock_holder(self, project_id: str, holder_id: str | None, now: datetime) -> None:
+        raise NotImplementedError()
+
+    @abstractmethod
+    async def touch_lock(self, project_id: str, now: datetime) -> None:
+        raise NotImplementedError()
+
+    @abstractmethod
+    async def insert_write_request(self, project_id: str, requester_id: str, now: datetime) -> WriteRequestInfo:
+        raise NotImplementedError()
+
+    @abstractmethod
+    async def set_write_request_status(
+        self,
+        request_id: str,
+        status: WriteRequestStatus,
+        decided_by: str | None,
+        now: datetime,
+    ) -> WriteRequestInfo:
+        raise NotImplementedError()
+
+    @abstractmethod
+    async def insert_audit_entry(
+        self,
+        project_id: str,
+        actor_id: str,
+        action: str,
+        details: dict[str, Any],
+        now: datetime,
+    ) -> None:
+        raise NotImplementedError()
+
+    @abstractmethod
+    async def list_audit_entries(self, project_id: str | None, page: int, page_size: int) -> list[AuditEntryInfo]:
+        raise NotImplementedError()
+
+    @abstractmethod
+    async def get_running_methods_with_start(self, project_id: str) -> list[tuple[str, str, datetime | None]]:
+        """Returns (step_name, method_name, started_at) of the running methods of the project."""
+        raise NotImplementedError()
+
+    @abstractmethod
+    async def mark_method_failed(self, project_id: str, step_name: str, method_name: str, message: str) -> None:
         raise NotImplementedError()
 
     @abstractmethod

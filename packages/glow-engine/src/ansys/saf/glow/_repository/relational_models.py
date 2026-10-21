@@ -17,10 +17,11 @@
 from datetime import datetime
 from typing import Any
 
-from sqlalchemy import JSON, BigInteger, Boolean, DateTime, Enum, ForeignKey, Integer, String
+from sqlalchemy import JSON, BigInteger, Boolean, DateTime, Enum, ForeignKey, Integer, String, UniqueConstraint
 from sqlalchemy.ext.asyncio import AsyncAttrs
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
+from ansys.saf.glow._access.schemas import ProjectRole, WriteRequestStatus
 from ansys.saf.glow._core.field_state import FieldState
 from ansys.saf.glow._core.method_status import MethodStatus
 
@@ -121,6 +122,10 @@ class MethodState(Base):
         String,
     )  # If an error occurred, the exception message for the failure
     exception_stack: Mapped[str | None] = mapped_column(String)  # If an error occurred, the stack trace for the failure
+    started_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True),
+        nullable=True,
+    )  # When the method last entered the Running state
 
     # columns in this table that have a foreign key relationship with other tables
     step_id: Mapped[int] = mapped_column(Integer, ForeignKey("steps.id"), index=True)
@@ -208,3 +213,58 @@ class EventListener(Base):
         index=True,
     )
     last_fetched_event: Mapped[Event | None] = relationship("Event", back_populates="event_listeners")
+
+
+class ProjectMember(Base):
+    """A user's role in a project. Only user ids (the ``sub`` claim) are stored."""
+
+    __tablename__ = "project_members"
+    __table_args__ = (UniqueConstraint("project_id", "user_id", name="uq_project_members_project_user"),)
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    project_id: Mapped[str] = mapped_column(String(24), ForeignKey("projects.id"), index=True)
+    user_id: Mapped[str] = mapped_column(String, index=True)
+    role: Mapped[ProjectRole] = mapped_column(Enum(ProjectRole))
+
+
+class ProjectWriteLock(Base):
+    """The single-writer lock of a project. ``version`` is bumped on every change to the project access state."""
+
+    __tablename__ = "project_write_locks"
+
+    project_id: Mapped[str] = mapped_column(String(24), ForeignKey("projects.id"), primary_key=True)
+    holder_id: Mapped[str | None] = mapped_column(String, nullable=True)
+    acquired_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    last_write_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    version: Mapped[int] = mapped_column(Integer, default=0)
+
+
+class ProjectWriteRequest(Base):
+    """A request from a project member to obtain the write lock."""
+
+    __tablename__ = "project_write_requests"
+
+    id: Mapped[str] = mapped_column(String, primary_key=True)  # uuid
+    project_id: Mapped[str] = mapped_column(String(24), ForeignKey("projects.id"), index=True)
+    requester_id: Mapped[str] = mapped_column(String)
+    status: Mapped[WriteRequestStatus] = mapped_column(Enum(WriteRequestStatus))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    decided_by: Mapped[str | None] = mapped_column(String, nullable=True)
+    decided_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+
+
+class ProjectAuditEntry(Base):
+    """Audit trail of access changes.
+
+    ``project_id`` is deliberately not a foreign key so that entries survive the deletion of the project.
+    """
+
+    __tablename__ = "project_audit_entries"
+    __table_args__ = {"sqlite_autoincrement": True}
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    project_id: Mapped[str] = mapped_column(String(24), index=True)
+    actor_id: Mapped[str] = mapped_column(String)
+    action: Mapped[str] = mapped_column(String)
+    details: Mapped[Any] = mapped_column(JSON)
+    at: Mapped[datetime] = mapped_column(DateTime(timezone=True))

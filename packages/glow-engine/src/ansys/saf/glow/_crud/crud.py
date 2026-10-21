@@ -176,6 +176,8 @@ class Crud:
         page: int,
         order_by: str | None = None,
         filters: ParsedProjectFilter | None = None,
+        member_id: str | None = None,
+        orphans_only: bool = False,
     ) -> ListProjectResponse:
         logger.info(
             "Listing projects with params: page_size=%d, page=%d, order_by=%s, filters=%s",
@@ -185,7 +187,14 @@ class Crud:
             filters,
         )
         async with self._session_factory.get_session() as session:
-            return await session.list_projects(page_size=page_size, page=page, order_by=order_by, filters=filters)
+            return await session.list_projects(
+                page_size=page_size,
+                page=page,
+                order_by=order_by,
+                filters=filters,
+                member_id=member_id,
+                orphans_only=orphans_only,
+            )
 
     async def get_project_info(self, project_id: str) -> ProjectInfo:
         logger.info(f"Getting project information of: {project_id}...")

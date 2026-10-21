@@ -156,6 +156,8 @@ class PostgresqlSession(RelationalSession):
         bdm_statement = delete(BdmLock).where(BdmLock.project_id == project_id)
         await self._session.execute(bdm_statement)
 
+        await self._delete_access_rows(project_id)
+
         project_statement = delete(Project).where(Project.id == project_id)
         result = await self._session.execute(project_statement)
 

@@ -24,6 +24,7 @@ import tomllib
 from typing import Any
 from unittest.mock import patch
 
+from packaging.version import Version
 import pytest
 import pytest_mock
 import toml
@@ -748,7 +749,7 @@ def test_package_with_readme_random_format(
         setup_solution_folder(solution_info, mock_installer_config)
 
 
-@pytest.mark.parametrize("poetry_version", ["1.8.4", "2.3.2"], ids=["poetry_below_2", "poetry_2_or_higher"])
+@pytest.mark.parametrize("poetry_version", ["1.8.4", "2.5.1"], ids=["poetry_below_2", "poetry_2_or_higher"])
 @pytest.mark.usefixtures("mock_subprocess_calls", "mock_solution_display_name")
 def test_package_with_mock_solution(
     mock_installer_config: InstallerConfig,
@@ -757,13 +758,9 @@ def test_package_with_mock_solution(
 ):
     solution_info = SolutionInfo(solution_root_dir)
     pyproject_path = solution_root_dir / "pyproject.toml"
-    pyproject_path.write_text(
-        pyproject_path.read_text().replace(
-            'build-system-version = "2.3.2"',
-            f'build-system-version = "{poetry_version}"',
-            1,
-        ),
-    )
+    pyproject = toml.load(pyproject_path)
+    pyproject["build-system-requirements"]["build-system-version"] = poetry_version
+    pyproject_path.write_text(toml.dumps(pyproject))
     with patch("ansys.saf.desktop.installer._package.manage_dependencies.modify_solution_wheel_metadata"):
         setup_solution_folder(solution_info, mock_installer_config)
     build_executable_installer(
@@ -819,10 +816,10 @@ def test_package_with_mock_solution(
     assert "pip==" in pip_requirements.read_text()
     assert poetry_requirements.is_file()
     pyproject = toml.load(solution_root_dir / "pyproject.toml")
-    poetry_version = pyproject["build-system-requirements"]["build-system-version"]
+    assert pyproject["build-system-requirements"]["build-system-version"] == poetry_version
     poetry_requirements_content = poetry_requirements.read_text()
     assert f"poetry=={poetry_version}" in poetry_requirements_content
-    if poetry_version == "2.3.2":
+    if Version(poetry_version) >= Version("2.0.0"):
         assert "poetry-plugin-export>=1.8" in poetry_requirements_content
     else:
         assert "poetry-plugin-export" not in poetry_requirements_content

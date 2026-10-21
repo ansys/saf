@@ -23,6 +23,7 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.webdriver import WebDriver
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
@@ -205,9 +206,14 @@ def wait_for_element_and_send_text(
     input_text: str,
     timeout: int = DEFAULT_TIMEOUT,
     element_type: str = By.ID,
+    *,
+    clear: bool = False,
 ) -> None:
-    # TODO: CLEAR before sending keys unless argument says otherwise
+    """Type into an element, optionally replacing its value using keyboard events."""
     element = wait_for_element(selenium_webdriver, element_id, timeout=timeout, element_type=element_type)
+    if clear:
+        # Keyboard events keep React-controlled inputs synchronized with their displayed value.
+        element.send_keys(Keys.CONTROL, "a", Keys.NULL, Keys.BACKSPACE)  # type: ignore
     element.send_keys(input_text)  # type: ignore
 
 

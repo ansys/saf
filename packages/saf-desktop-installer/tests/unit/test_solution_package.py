@@ -748,7 +748,7 @@ def test_package_with_readme_random_format(
         setup_solution_folder(solution_info, mock_installer_config)
 
 
-@pytest.mark.parametrize("poetry_version", ["1.8.4", "2.3.2"], ids=["poetry_below_2", "poetry_2_or_higher"])
+@pytest.mark.parametrize("poetry_version", ["1.8.4", "2.5.1"], ids=["poetry_below_2", "poetry_2_or_higher"])
 @pytest.mark.usefixtures("mock_subprocess_calls", "mock_solution_display_name")
 def test_package_with_mock_solution(
     mock_installer_config: InstallerConfig,
@@ -759,7 +759,7 @@ def test_package_with_mock_solution(
     pyproject_path = solution_root_dir / "pyproject.toml"
     pyproject_path.write_text(
         pyproject_path.read_text().replace(
-            'build-system-version = "2.3.2"',
+            'build-system-version = "2.5.1"',
             f'build-system-version = "{poetry_version}"',
             1,
         ),

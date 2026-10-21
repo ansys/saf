@@ -30,6 +30,7 @@ from pydantic import ValidationError
 
 from ansys.bdm.api import IAsyncStorageScope
 from ansys.iam.oidc import NoIssuerOrAudienceError, OidcClient, OidcDependency, OidcWebSocketDependency
+from ansys.saf.glow._access.principal import ON_BEHALF_OF_HEADER, Principal
 from ansys.saf.glow._bdm.datarepo import DataRepositoryType
 from ansys.saf.glow._bdm.multiplexor import SafMultiplexorStorageScopeFactory
 from ansys.saf.glow._bdm.storage_contexts import RESTAPI_CONTEXT
@@ -78,7 +79,12 @@ from ansys.saf.glow._server.project_files_manager import ProjectFilesManager
 from ansys.saf.glow._server.schemas import ProjectInfo
 from ansys.saf.glow._server.solution import SolutionService
 from ansys.saf.glow._telemetry.inject_trace_http_transport import InjectTraceTransport
-from ansys.saf.glow._utilities.auth_roles import decode_token_claims, has_required_role, parse_required_roles
+from ansys.saf.glow._utilities.auth_roles import (
+    decode_token_claims,
+    get_roles_from_claims,
+    has_required_role,
+    parse_required_roles,
+)
 from ansys.saf.glow._utilities.conversion import url_part_to_python_identifier
 from ansys.saf.glow._utilities.requests import build_api_url_for_internal_requests_from_request
 
@@ -193,6 +199,51 @@ async def oidc_scheme_ws_with_roles(
         logger.error("Access token does not grant the required roles.")
         raise fastapi.WebSocketException(code=fastapi.status.WS_1008_POLICY_VIOLATION, reason="Forbidden")
     return token
+
+
+def _is_internal_token(settings: Settings, token: str | None) -> bool:
+    """Whether ``token`` is the local API key, as opposed to a user access token."""
+    api_key = settings.computed_api_key
+    return bool(api_key and token and secrets.compare_digest(token.encode(), api_key.encode()))
+
+
+def _principal_from_token(settings: Settings, token: str | None) -> Principal:
+    """Build the principal of an access token that was already validated. Never raises."""
+    if not token:
+        return Principal(user_id=None, is_super_admin=False, is_internal=False)
+    claims = decode_token_claims(token)
+    sub = claims.get("sub")
+    user_id = sub if isinstance(sub, str) and sub else None
+    if user_id is None:
+        # Later checks deny principals without an identity, whatever their roles.
+        return Principal(user_id=None, is_super_admin=False, is_internal=False)
+    user_roles = get_roles_from_claims(claims, settings.glow_auth_roles_claim, audience)
+    is_super_admin = not settings.computed_super_admin_roles.isdisjoint(user_roles)
+    return Principal(user_id=user_id, is_super_admin=is_super_admin, is_internal=False)
+
+
+async def get_principal(
+    request: Request,
+    settings: Annotated[Settings, Depends(get_settings)],
+    token: Annotated[str | None, Depends(oidc_scheme_with_api_key)],
+) -> Principal:
+    """Resolve who is making the request.
+
+    Calls authenticated with the local API key are internal: they are made by a running method, which names the user
+    that initiated it in the ``ON_BEHALF_OF_HEADER`` header. That header is ignored for any other call.
+    """
+    if _is_internal_token(settings, token):
+        on_behalf_of = request.headers.get(ON_BEHALF_OF_HEADER, "").strip()
+        return Principal(user_id=on_behalf_of or None, is_super_admin=False, is_internal=True)
+    return _principal_from_token(settings, token)
+
+
+async def get_principal_for_websocket(
+    settings: Annotated[Settings, Depends(get_settings)],
+    token: Annotated[str | None, Depends(oidc_scheme_ws_with_roles)],
+) -> Principal:
+    """Resolve who opened the websocket. Websockets never authenticate with the API key."""
+    return _principal_from_token(settings, token)
 
 
 def _get_repository(
@@ -580,6 +631,7 @@ async def get_method_runner(
     multiplexor_storage_factory: Annotated[SafMultiplexorStorageScopeFactory, Depends(get_multiplexor_storage_factory)],
     access_token: Annotated[str | None, Depends(oidc_scheme_with_api_key)],
     oidc_client: Annotated[OidcClient, Depends(get_oidc_client)],
+    principal: Annotated[Principal, Depends(get_principal)],
 ) -> MethodRunner:
     step_types = solution_service.solution_type.get_steps_fields()
     if method_url.step_name not in step_types:
@@ -600,6 +652,7 @@ async def get_method_runner(
             running_methods=running_methods,
             access_token=access_token,
             oidc_client=oidc_client,
+            user_id=principal.user_id,
         )
     else:
         runner = ThreadMethodRunner(
@@ -614,6 +667,7 @@ async def get_method_runner(
             running_methods=running_methods,
             access_token=access_token,
             oidc_client=oidc_client,
+            user_id=principal.user_id,
         )
     return runner
 
@@ -646,6 +700,8 @@ MultiplexorStorageScopeFactoryDep = Annotated[
 ]
 AccessTokenDep = Annotated[str | None, Depends(oidc_scheme_with_api_key)]
 WSAccessTokenDep = Annotated[str | None, Depends(oidc_scheme_ws_with_roles)]
+PrincipalDep = Annotated[Principal, Depends(get_principal)]
+WSPrincipalDep = Annotated[Principal, Depends(get_principal_for_websocket)]
 FileSystemDataRepoQueryMapDep = Annotated[
     dict[str, list[tuple[str, str]]] | None,
     Depends(get_filesystem_data_repository_query_map),

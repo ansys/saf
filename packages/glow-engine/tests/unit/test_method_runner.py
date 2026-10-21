@@ -27,6 +27,7 @@ import httpx2
 import pytest
 import pytest_mock
 
+from ansys.saf.glow._access.principal import ON_BEHALF_OF_HEADER
 from ansys.saf.glow._config.settings import Settings
 from ansys.saf.glow._core.gql import GqlClientConnectionPool
 from ansys.saf.glow._executor.method_runner import MethodRunner, ProcessMethodRunner, ThreadMethodRunner
@@ -54,7 +55,11 @@ def mock_method_runner_internals(mocker: pytest_mock.MockerFixture, request: pyt
     )
 
 
-def _create_process_method_runner(settings: Settings, access_token: str | None = None) -> ProcessMethodRunner:
+def _create_process_method_runner(
+    settings: Settings,
+    access_token: str | None = None,
+    user_id: str | None = None,
+) -> ProcessMethodRunner:
     return ProcessMethodRunner(
         project_id="project_fake",
         solution=None,  # pyright: ignore[reportArgumentType]
@@ -64,10 +69,15 @@ def _create_process_method_runner(settings: Settings, access_token: str | None =
         multiplexor_storage_factory=None,  # pyright: ignore[reportArgumentType]
         oidc_client=None,  # pyright: ignore[reportArgumentType]
         access_token=access_token,
+        user_id=user_id,
     )
 
 
-def _create_thread_method_runner(settings: Settings, access_token: str | None = None) -> ThreadMethodRunner:
+def _create_thread_method_runner(
+    settings: Settings,
+    access_token: str | None = None,
+    user_id: str | None = None,
+) -> ThreadMethodRunner:
     http_client = httpx2.Client(headers={"shared-volume": "true"})
     graphql_client = GqlClientConnectionPool("fake_url")
     return ThreadMethodRunner(
@@ -81,6 +91,7 @@ def _create_thread_method_runner(settings: Settings, access_token: str | None = 
         multiplexor_storage_factory=None,  # pyright: ignore[reportArgumentType]
         oidc_client=None,  # pyright: ignore[reportArgumentType]
         access_token=access_token,
+        user_id=user_id,
     )
 
 
@@ -236,6 +247,50 @@ def test_thread_method_runner_prefers_api_key_for_internal_requests(
     else:
         assert runner.graphql_client.api_key is None
         assert runner.graphql_client.access_token is None
+
+
+@pytest.mark.parametrize(
+    ("settings", "user_id", "expected_header"),
+    [
+        ({"glow_api_key": "configured-api-key"}, "alice", "alice"),
+        ({"glow_api_key": "configured-api-key"}, None, None),
+        ({"glow_api_key": None}, "alice", None),
+    ],
+    ids=["api_key_with_user", "api_key_without_user", "no_api_key"],
+    indirect=["settings"],
+)
+@pytest.mark.parametrize("runner_cls", [ProcessMethodRunner, ThreadMethodRunner])
+def test_runner_sends_on_behalf_of_header(
+    settings: Settings,
+    runner_cls: type[MethodRunner],
+    user_id: str | None,
+    expected_header: str | None,
+    mocker: pytest_mock.MockerFixture,
+):
+    for name in (
+        "_run_method",
+        "_set_method_state",
+        "_get_transaction_step_method",
+        "_raise_method_event",
+        "_init_data_repository",
+        "_init_hps_blob_manager",
+    ):
+        mocker.patch.object(runner_cls, name)
+    mocker.patch.object(
+        runner_cls,
+        "_create_method_storage_scope",
+        new=lambda self: setattr(self, "_multiplexor_method_storage_scope", None),  # type: ignore
+    )
+    runner = (
+        _create_process_method_runner(settings, access_token="incoming-user-token", user_id=user_id)
+        if runner_cls is ProcessMethodRunner
+        else _create_thread_method_runner(settings, access_token="incoming-user-token", user_id=user_id)
+    )
+
+    assert runner.http_client.headers.get(ON_BEHALF_OF_HEADER) == expected_header
+    if expected_header:
+        assert runner.http_client.headers.get("x-api-key") == "configured-api-key"
+        assert runner.graphql_client.on_behalf_of == expected_header
 
 
 @pytest.mark.parametrize("mock_method_runner_internals", [ThreadMethodRunner], indirect=True)

@@ -36,6 +36,7 @@ from pydantic_core import PydanticSerializationError
 
 from ansys.bdm.api import IStorageScope
 from ansys.iam.oidc import OidcClient
+from ansys.saf.glow._access.principal import ON_BEHALF_OF_HEADER
 from ansys.saf.glow._bdm.datarepo import DataRepositoryType
 from ansys.saf.glow._bdm.minerva import MinervaDataRepository
 from ansys.saf.glow._bdm.multiplexor import SafMultiplexorStorageScopeFactory
@@ -76,6 +77,7 @@ class MethodRunner(ABC):
         oidc_client: OidcClient,
         running_methods: dict[str, set[str]] | None = None,
         access_token: str | None = None,
+        user_id: str | None = None,
     ) -> None:
         # Careful! the following properties need to be pickable to be run in the process pool
         self._project_id = project_id
@@ -88,6 +90,8 @@ class MethodRunner(ABC):
         self._oidc_client = oidc_client
         self._running_methods = running_methods
         self._access_token = access_token
+        # Id of the user who initiated the method. Forwarded to the API on internal (API key) requests.
+        self._user_id = user_id
 
         self._create_method_storage_scope()
         if self._multiplexor_method_storage_scope:
@@ -323,12 +327,15 @@ class MethodRunner(ABC):
     def _set_http_auth_headers(self, headers: dict[str, str] | httpx2.Headers) -> None:
         if self._settings.computed_api_key:
             headers["x-api-key"] = self._settings.computed_api_key
+            if self._user_id:
+                headers[ON_BEHALF_OF_HEADER] = self._user_id
         elif self._access_token:
             headers["Authorization"] = f"Bearer {self._access_token}"
 
     def _set_graphql_auth(self, graphql_client: GqlClientConnectionPool) -> None:
         if self._settings.computed_api_key:
             graphql_client.api_key = self._settings.computed_api_key
+            graphql_client.on_behalf_of = self._user_id
         elif self._access_token:
             graphql_client.access_token = self._access_token
 
@@ -345,6 +352,7 @@ class ProcessMethodRunner(MethodRunner):
         oidc_client: OidcClient,
         running_methods: dict[str, set[str]] | None = None,
         access_token: str | None = None,
+        user_id: str | None = None,
     ) -> None:
         super().__init__(
             project_id=project_id,
@@ -356,6 +364,7 @@ class ProcessMethodRunner(MethodRunner):
             oidc_client=oidc_client,
             running_methods=running_methods,
             access_token=access_token,
+            user_id=user_id,
         )
         self._http_client: httpx2.Client | None = None
         self._graphql_client: GqlClientConnectionPool | None = None
@@ -431,6 +440,7 @@ class ThreadMethodRunner(MethodRunner):
         oidc_client: OidcClient,
         running_methods: dict[str, set[str]] | None = None,
         access_token: str | None = None,
+        user_id: str | None = None,
     ) -> None:
         super().__init__(
             project_id=project_id,
@@ -442,6 +452,7 @@ class ThreadMethodRunner(MethodRunner):
             oidc_client=oidc_client,
             running_methods=running_methods,
             access_token=access_token,
+            user_id=user_id,
         )
         self._http_client = http_client
         self._graphql_client = graphql_client

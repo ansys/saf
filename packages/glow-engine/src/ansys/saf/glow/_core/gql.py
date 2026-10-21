@@ -27,6 +27,7 @@ from gql.transport.requests import RequestsHTTPTransport
 from graphql import DocumentNode
 from opentelemetry import propagate
 
+from ansys.saf.glow._access.principal import ON_BEHALF_OF_HEADER
 from ansys.saf.glow._config.const import GLOW_GRAPHQL_POOL_SIZE
 from ansys.saf.glow._core.client_exceptions import PermissionException, UnauthorizedException, raise_for_graphql_status
 
@@ -48,11 +49,14 @@ class GqlClientConnectionPool:
         pool_size: int = 3,
         access_token: str | None = None,
         api_key: str | None = None,
+        on_behalf_of: str | None = None,
     ):
         self._queue: queue.Queue[Client] = queue.Queue()
         self._pool_size = int(os.environ.get(GLOW_GRAPHQL_POOL_SIZE, 0)) or pool_size
         self.access_token = access_token
         self.api_key = api_key
+        # Id of the user on whose behalf requests authenticated with the API key are made.
+        self.on_behalf_of = on_behalf_of
         for _ in range(self._pool_size):
             client = Client(
                 transport=RequestsHTTPTransport(
@@ -71,12 +75,18 @@ class GqlClientConnectionPool:
             if self.api_key:
                 session.transport.headers["x-api-key"] = self.api_key  # type: ignore
                 session.transport.headers.pop("Authorization", None)  # type: ignore
+                if self.on_behalf_of:
+                    session.transport.headers[ON_BEHALF_OF_HEADER] = self.on_behalf_of  # type: ignore
+                else:
+                    session.transport.headers.pop(ON_BEHALF_OF_HEADER, None)  # type: ignore
             elif self.access_token:
                 session.transport.headers["Authorization"] = f"Bearer {self.access_token}"  # type: ignore
                 session.transport.headers.pop("x-api-key", None)  # type: ignore
+                session.transport.headers.pop(ON_BEHALF_OF_HEADER, None)  # type: ignore
             else:
                 session.transport.headers.pop("Authorization", None)  # type: ignore
                 session.transport.headers.pop("x-api-key", None)  # type: ignore
+                session.transport.headers.pop(ON_BEHALF_OF_HEADER, None)  # type: ignore
 
             propagate.inject(session.transport.headers)  # type: ignore
             response = session.execute(query, **kwargs)  # type: ignore

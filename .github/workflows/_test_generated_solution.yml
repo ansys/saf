@@ -120,7 +120,7 @@ jobs:
           actor="$(echo "${GITHUB_ACTOR}" | tr -d '[]')"
 
           short_sha=$(echo "${GITHUB_SHA}" | cut -c1-7)
-          branch_name="$actor/saf-cli/${GITHUB_EVENT_NAME}/$short_sha/${SOLUTION_NAME}/ui-${UI_FRAMEWORK}-encryption-${USE_ENCRYPTION}"
+          branch_name="chore/$actor/saf-cli/${GITHUB_EVENT_NAME}/$short_sha/${SOLUTION_NAME}/ui-${UI_FRAMEWORK}-encryption-${USE_ENCRYPTION}"
           echo "TEST_BRANCH_NAME"=$branch_name >> $GITHUB_ENV
           echo "test-branch-name"=$branch_name >> $GITHUB_OUTPUT
 
@@ -232,7 +232,7 @@ jobs:
           actor="$(echo "${GITHUB_ACTOR}" | tr -d '[]')"
 
           short_sha=$(echo "${GITHUB_SHA}" | cut -c1-7)
-          branch_name="$actor/saf-cli/${GITHUB_EVENT_NAME}/$short_sha/${SOLUTION_NAME}/ui-${UI_FRAMEWORK}-encryption${USE_ENCRYPTION}"
+          branch_name="chore/$actor/saf-cli/${GITHUB_EVENT_NAME}/$short_sha/${SOLUTION_NAME}/ui-${UI_FRAMEWORK}-encryption${USE_ENCRYPTION}"
           echo "TEST_BRANCH_NAME"=$branch_name >> $GITHUB_ENV
           echo "test-branch-name"=$branch_name >> $GITHUB_OUTPUT
 

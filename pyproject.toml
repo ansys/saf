@@ -97,7 +97,7 @@ tests-desktop-installer = [
   "dash-bootstrap-components>=1.2,<2.0",
   "httpx2>=2.5.0,<3.0",
   "pillow>=12.1.1",
-  "poetry==2.3.2",
+  "poetry==2.5.1",
   "pywebview>=6.0,<7.0",
 ]
 tests-glow-engine = [

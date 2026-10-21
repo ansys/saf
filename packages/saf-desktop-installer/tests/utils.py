@@ -21,6 +21,7 @@ import os
 from pathlib import Path
 import platform
 import subprocess
+import sys
 
 
 def get_appdata_directory() -> str:
@@ -67,6 +68,27 @@ def remove_directory_write_permissions(path: Path) -> Generator[None, None, None
         try:
             # Remove write permission for owner, group, and others
             path.chmod(original_mode & ~0o222)
+            yield
+        finally:
+            path.chmod(original_mode)
+
+
+@contextmanager
+def deny_directory_access(path: Path) -> Generator[None, None, None]:
+    """Deny the current user listing/reading a directory and its contents, then restore it."""
+    if sys.platform == "win32":
+        current_user = getpass.getuser()
+        # Full deny (F) would also deny WRITE_DAC, preventing the ACE removal below.
+        run_icacls([str(path), "/deny", f"{current_user}:(OI)(CI)(RD,RA)"])
+        try:
+            yield
+        finally:
+            run_icacls([str(path), "/remove:d", current_user])
+    else:
+        assert os.geteuid() != 0, "Root bypasses file permissions, so access cannot be denied."
+        original_mode = path.stat().st_mode
+        path.chmod(0)
+        try:
             yield
         finally:
             path.chmod(original_mode)

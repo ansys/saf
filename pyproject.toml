@@ -1,6 +1,6 @@
 [project]
 name = "ansys-saf-workspace"
-version = "0.4.0"
+version = "0.0.0"  # Only required when [project] section is present, can be anything
 maintainers = [ { name = "ANSYS, Inc.", email = "pyansys-core@synopsys.com" } ]
 authors = [ { name = "ANSYS, Inc.", email = "pyansys-core@synopsys.com" } ]
 requires-python = ">=3.11,<4.0"
@@ -96,9 +96,8 @@ tests-desktop-installer = [
   "dash>=3.0.0,<4.0",
   "dash-bootstrap-components>=1.2,<2.0",
   "httpx2>=2.5.0,<3.0",
-  "pillow>=12.1.1,<13.0",
-  "poetry==2.3.2",
-  "pylnk3>=0.4.2,<0.5",
+  "pillow>=12.1.1",
+  "poetry==2.5.1",
   "pywebview>=6.0,<7.0",
 ]
 tests-glow-engine = [
@@ -121,7 +120,7 @@ tests-saf-cli = [
 ]
 tests-saf-desktop-orchestrator = [
   "ansys-saf-projects-dashboard>=0.2.0,<1.0",
-  "dash>=3.4.0",
+  "dash>=3.0.0,<4.0",
   "dash-extensions>=2.0.5,<3.0",
   "fastapi>=0.120.2,<1.0",
   "pandas>=1.1.0,<4.0",
@@ -140,7 +139,7 @@ py-modules = []
 
 [tool.uv]
 override-dependencies = [
-  { package = { name = "ansys-solutions-dash-super-components" }, dependencies = [ "dash>=2.18.2,<4.0" ] },
+  "pillow>=13.0.0,<14.0", # To fix Dependabot alert #324
 ]
 sources.ansys-bdm-api = { workspace = true }
 sources.ansys-bdm-shared-volume = { workspace = true }

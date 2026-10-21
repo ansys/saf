@@ -20,9 +20,11 @@ import platform
 import re
 import shutil
 import subprocess
+import tomllib
 from typing import Any
 from unittest.mock import patch
 
+from packaging.version import Version
 import pytest
 import pytest_mock
 import toml
@@ -79,6 +81,96 @@ def test_merge_group_dependencies_adds_extras_to_string_main_dependency():
     manage_dependencies.merge_group_dependencies(["desktop"], poetry, dependencies)
 
     assert dependencies == {"example-package": {"version": "^1.0", "extras": ["desktop-extra"]}}
+
+
+def test_relativize_lock_path_dependencies(tmp_path: Path, caplog: pytest.LogCaptureFixture) -> None:
+    definitions_folder = tmp_path / "definitions" / "my_solution"
+    definitions_folder.mkdir(parents=True)
+    inside = (definitions_folder / "dep-1.0.0-py3-none-any.whl").as_posix()
+    nested = (definitions_folder / "sub" / "nested-1.0.0-py3-none-any.whl").as_posix()
+    outside = (tmp_path / "elsewhere" / "other-1.0.0-py3-none-any.whl").as_posix()
+    multi_a = (definitions_folder / "multi-1.0.0-cp312-cp312-win_amd64.whl").as_posix()
+    multi_b = (definitions_folder / "multi-1.0.0-cp312-cp312-manylinux_2_17_x86_64.whl").as_posix()
+    lock_content = f"""[[package]]
+name = "my-solution"
+version = "0.1.0"
+
+[package.dependencies]
+dep = {{path = "{inside}"}}
+nested = {{path = "{nested}"}}
+other = {{path = "{outside}"}}
+relative = {{path = "relative-1.0.0-py3-none-any.whl"}}
+multi = [
+    {{path = "{multi_a}", markers = "sys_platform == \\"win32\\""}},
+    {{path = "{multi_b}", markers = "sys_platform == \\"linux\\""}},
+]
+
+[package.source]
+type = "file"
+url = "my_solution-0.1.0-py3-none-any.whl"
+"""
+    poetry_lock = definitions_folder / "poetry.lock"
+    poetry_lock.write_text(lock_content, encoding="utf-8")
+
+    manage_dependencies.relativize_lock_path_dependencies(definitions_folder)
+
+    dependencies = toml.loads(poetry_lock.read_text(encoding="utf-8"))["package"][0]["dependencies"]
+    assert dependencies["dep"] == {"path": "dep-1.0.0-py3-none-any.whl"}
+    assert dependencies["nested"] == {"path": "sub/nested-1.0.0-py3-none-any.whl"}
+    assert dependencies["other"] == {"path": outside}
+    assert dependencies["relative"] == {"path": "relative-1.0.0-py3-none-any.whl"}
+    assert [constraint["path"] for constraint in dependencies["multi"]] == [
+        "multi-1.0.0-cp312-cp312-win_amd64.whl",
+        "multi-1.0.0-cp312-cp312-manylinux_2_17_x86_64.whl",
+    ]
+    assert 'url = "my_solution-0.1.0-py3-none-any.whl"' in poetry_lock.read_text(encoding="utf-8")
+    assert "other-1.0.0-py3-none-any.whl" in caplog.text
+
+
+@pytest.mark.parametrize(
+    "build_dir_name",
+    [
+        pytest.param(
+            'build"quoted',
+            marks=pytest.mark.skipif(platform.system() == "Windows", reason="Invalid Windows directory name."),
+        ),
+        "build\\back",
+    ],
+)
+def test_relativize_lock_path_dependencies_with_escaped_characters(tmp_path: Path, build_dir_name: str) -> None:
+    definitions_folder = tmp_path / build_dir_name / "definitions"
+    definitions_folder.mkdir(parents=True)
+    wheel_path = str(definitions_folder / "dep-1.0.0-py3-none-any.whl")
+    poetry_lock = definitions_folder / "poetry.lock"
+    poetry_lock.write_text(
+        f'[[package]]\nname = "my-solution"\n\n[package.dependencies]\ndep = {{path = {json.dumps(wheel_path)}}}\n',
+        encoding="utf-8",
+    )
+
+    manage_dependencies.relativize_lock_path_dependencies(definitions_folder)
+
+    dependencies = tomllib.loads(poetry_lock.read_text(encoding="utf-8"))["package"][0]["dependencies"]
+    assert dependencies["dep"] == {"path": "dep-1.0.0-py3-none-any.whl"}
+
+
+def test_add_poetry_project_relativizes_lock_path_dependencies(tmp_path: Path) -> None:
+    solution_root_dir = tmp_path / "solution"
+    solution_root_dir.mkdir()
+    pyproject = solution_root_dir / "pyproject.toml"
+    pyproject.write_text(
+        '[tool.poetry]\nname = "my-solution"\n\n[tool.poetry.dependencies]\npython = ">=3.11,<3.13"\n',
+        encoding="utf-8",
+    )
+    definitions_folder = tmp_path / "definitions"
+    definitions_folder.mkdir()
+    with (
+        patch("ansys.saf.desktop.installer._package.manage_dependencies.subprocess.check_output"),
+        patch(
+            "ansys.saf.desktop.installer._package.manage_dependencies.relativize_lock_path_dependencies",
+        ) as mock_relativize,
+    ):
+        manage_dependencies.add_poetry_project(Path("python"), pyproject, definitions_folder, "3.12")
+    mock_relativize.assert_called_once_with(definitions_folder)
 
 
 @pytest.fixture
@@ -657,7 +749,7 @@ def test_package_with_readme_random_format(
         setup_solution_folder(solution_info, mock_installer_config)
 
 
-@pytest.mark.parametrize("poetry_version", ["1.8.4", "2.3.2"], ids=["poetry_below_2", "poetry_2_or_higher"])
+@pytest.mark.parametrize("poetry_version", ["1.8.4", "2.5.1"], ids=["poetry_below_2", "poetry_2_or_higher"])
 @pytest.mark.usefixtures("mock_subprocess_calls", "mock_solution_display_name")
 def test_package_with_mock_solution(
     mock_installer_config: InstallerConfig,
@@ -666,13 +758,9 @@ def test_package_with_mock_solution(
 ):
     solution_info = SolutionInfo(solution_root_dir)
     pyproject_path = solution_root_dir / "pyproject.toml"
-    pyproject_path.write_text(
-        pyproject_path.read_text().replace(
-            'build-system-version = "2.3.2"',
-            f'build-system-version = "{poetry_version}"',
-            1,
-        ),
-    )
+    pyproject = toml.load(pyproject_path)
+    pyproject["build-system-requirements"]["build-system-version"] = poetry_version
+    pyproject_path.write_text(toml.dumps(pyproject))
     with patch("ansys.saf.desktop.installer._package.manage_dependencies.modify_solution_wheel_metadata"):
         setup_solution_folder(solution_info, mock_installer_config)
     build_executable_installer(
@@ -728,10 +816,10 @@ def test_package_with_mock_solution(
     assert "pip==" in pip_requirements.read_text()
     assert poetry_requirements.is_file()
     pyproject = toml.load(solution_root_dir / "pyproject.toml")
-    poetry_version = pyproject["build-system-requirements"]["build-system-version"]
+    assert pyproject["build-system-requirements"]["build-system-version"] == poetry_version
     poetry_requirements_content = poetry_requirements.read_text()
     assert f"poetry=={poetry_version}" in poetry_requirements_content
-    if poetry_version == "2.3.2":
+    if Version(poetry_version) >= Version("2.0.0"):
         assert "poetry-plugin-export>=1.8" in poetry_requirements_content
     else:
         assert "poetry-plugin-export" not in poetry_requirements_content

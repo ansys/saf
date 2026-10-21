@@ -23,3 +23,7 @@ paths:
     ignore:
       - 'specifying action "\$/\.github/actions/[^\"]+" in invalid format because
         ref is missing'
+  .github/workflows/ci_cd_release.yml:
+    ignore:
+      - 'specifying action "\$/\.github/actions/[^\"]+" in invalid format because
+        ref is missing'

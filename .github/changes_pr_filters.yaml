@@ -101,8 +101,9 @@ saf-testing:
   - 'packages/saf-testing/tests/**'
   - 'packages/saf-testing/pyproject.toml'
   - '.github/workflows/tests_groups_definitions/saf-testing.json'
-ci-cd-job-matrices:
+actions:
   - '.github/actions/ci-cd-job-matrices/**'
+  - '.github/actions/get-fixed-vulnerabilities/**'
 examples:
   - 'examples/**'
   - '.github/workflows/tests_groups_definitions/examples.json'

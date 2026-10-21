@@ -342,8 +342,8 @@ def check_ui_is_functional(
         wait_for_element_and_click(selenium_webdriver, "//*[contains(text(), 'First Step')]", element_type=By.XPATH)
         # Assert first page is loaded and fields can be entered
         wait_for_expected_property(selenium_webdriver, "result", "value", "0")
-        wait_for_element_and_send_text(selenium_webdriver, "first-arg", "4")
-        wait_for_element_and_send_text(selenium_webdriver, "second-arg", "3")
+        wait_for_element_and_send_text(selenium_webdriver, "first-arg", "4", clear=True)
+        wait_for_element_and_send_text(selenium_webdriver, "second-arg", "3", clear=True)
         # Assert callback works and updates the result
         wait_for_element_and_click(selenium_webdriver, "calculate")
         wait_for_expected_property(selenium_webdriver, "result", "value", "7", timeout)
@@ -516,7 +516,14 @@ def install_solution_executable() -> InstallSolutionExecutable:
 
 def get_shortcut_path(display_name: str) -> Path:
     if platform.system() == "Windows":
-        shortcut_path = Path(os.environ["PUBLIC"]) / "Desktop" / f"{display_name}.lnk"
+        command = (
+            "[Console]::OutputEncoding = [Text.Encoding]::UTF8; "
+            "$principal = [Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent(); "
+            "$isAdmin = $principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator); "
+            "[Environment]::GetFolderPath($(if ($isAdmin) { 'CommonDesktopDirectory' } else { 'Desktop' }))"
+        )
+        output = subprocess.check_output(["powershell.exe", "-NoProfile", "-Command", command], encoding="utf-8")
+        shortcut_path = Path(output.strip()) / f"{display_name}.lnk"
     else:
         shortcut_path = Path(os.environ["HOME"]) / "Desktop" / f"{display_name}.desktop"
     return shortcut_path

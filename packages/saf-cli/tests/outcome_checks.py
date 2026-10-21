@@ -44,11 +44,11 @@ def _get_expected_scaffolded_solution_files(
         if x.is_file():
             expected_scaffolded_files.append(x.relative_to(solution_template_dir).as_posix())
 
-    # replace lock_files with a single one
+    # replace lock_files with a single UV lockfile
     expected_scaffolded_files = [
         file_str for file_str in expected_scaffolded_files if not file_str.startswith("lock_files")
     ]
-    expected_scaffolded_files.append("poetry.lock")
+    expected_scaffolded_files.append("uv.lock")
 
     # filter ui files if needed
     if ui_framework == "none":
@@ -119,7 +119,7 @@ EXPECTED_SOLUTION_TEMPLATE_STRUCTURE = [
     ".pre-commit-config.yaml",
     "AGENTS.md",
     "CHANGELOG.md",
-    "poetry.lock",
+    "uv.lock",
     "pyproject.toml",
     "README.md",
     # .github

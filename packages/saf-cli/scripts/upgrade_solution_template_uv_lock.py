@@ -22,15 +22,15 @@ import shutil
 import subprocess
 import sys
 import tempfile
-import venv
 
 from dotenv import load_dotenv
+import tomlkit
 
 from ansys.saf.cli._config.const import UI_FRAMEWORKS
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="Upgrade poetry.lock files for solution templates",
+        description="Upgrade uv.lock files for solution templates",
     )
     parser.add_argument(
         "-p",
@@ -57,13 +57,8 @@ if __name__ == "__main__":
         / "pyproject.toml"
     )
     assert pyproject_file.is_file()
-    # can't use toml to load it because it contains cookiecutter variables
-    poetry_version = [
-        line.split(" = ")[-1].replace('"', "")
-        for line in pyproject_file.read_text().splitlines()
-        if line.startswith("build-system-version = ")
-    ][0]
-    assert poetry_version
+    uv_exec = shutil.which("uv")
+    assert uv_exec is not None, "uv executable not found"
 
     if platform.system() == "Windows":
         saf_exec = Path.cwd() / ".venv" / "Scripts" / "saf.exe"
@@ -75,7 +70,7 @@ if __name__ == "__main__":
 
     starting_working_directory = Path.cwd()
 
-    poetry_lock_dest_dirs: dict[str, str] = {
+    uv_lock_dest_dirs: dict[str, str] = {
         "dash": "dash",
         "awc-dash": "awc",
         "none": "no_ui",
@@ -84,17 +79,17 @@ if __name__ == "__main__":
     for ui_framework in UI_FRAMEWORKS:
         print(f"Processing UI framework: {ui_framework}")
 
-        poetry_lock_dest = (
+        uv_lock_dest = (
             saf_cli_src_dir
             / "_solutions"
             / "templates"
             / "solution"
             / "{{cookiecutter.__solution_name}}"
             / "lock_files"
-            / poetry_lock_dest_dirs[ui_framework]
-            / "poetry.lock"
+            / uv_lock_dest_dirs[ui_framework]
+            / "uv.lock"
         )
-        assert poetry_lock_dest.is_file()
+        assert uv_lock_dest.is_file()
 
         with tempfile.TemporaryDirectory() as tmp_dir:
             try:
@@ -120,46 +115,33 @@ if __name__ == "__main__":
                 assert solution_root_dir.is_dir()
                 os.chdir(solution_root_dir)
 
-                solution_venv_dir = solution_root_dir / ".venv"
-                print(f"Creating venv at {solution_venv_dir}...")
-                solution_venv_dir.mkdir(parents=True)
-                venv.EnvBuilder(with_pip=True).create(solution_venv_dir)
-                os.environ["VIRTUAL_ENV"] = str(solution_venv_dir)
-
-                pip_exec = (
-                    (solution_venv_dir / "Scripts" / "pip.exe")
-                    if platform.system() == "Windows"
-                    else (solution_venv_dir / "bin" / "pip")
-                )
-                assert pip_exec.is_file()
-                print(f"Installing poetry {poetry_version}...")
-                subprocess.check_output([str(pip_exec), "install", f"poetry=={poetry_version}"])
-
-                # load required poetry credentials for auth
+                # load required package index credentials for auth
                 print(f"Loading .env file from {solution_root_dir / '.env'}...")
                 load_dotenv(solution_root_dir / ".env")
 
-                print("Upgrading poetry.lock....")
-                poetry_exec = (
-                    (solution_venv_dir / "Scripts" / "poetry.exe")
-                    if platform.system() == "Windows"
-                    else (solution_venv_dir / "bin" / "poetry")
-                )
-                assert poetry_exec.is_file()
-                subprocess.check_output([str(poetry_exec), "lock"])
+                print("Upgrading uv.lock....")
+                subprocess.check_output([uv_exec, "lock"])
 
                 # Update specific packages if provided
                 if packages_to_update:
                     print(f"Updating packages: {packages_to_update}")
                     try:
-                        subprocess.check_output([str(poetry_exec), "update"] + packages_to_update)
+                        subprocess.check_output(
+                            [uv_exec, "lock"]
+                            + [arg for package in packages_to_update for arg in ("--upgrade-package", package)]
+                        )
                     except subprocess.CalledProcessError as e:
                         print(f"Failed to update packages {packages_to_update}:\n{e.output.decode()}")
                         raise e
-                print(f"Copying poetry.lock to destination {poetry_lock_dest}...")
-                solution_poetry_lock = solution_root_dir / "poetry.lock"
-                assert solution_poetry_lock.is_file()
-                shutil.copyfile(solution_poetry_lock, poetry_lock_dest)
+                print(f"Copying uv.lock to destination {uv_lock_dest}...")
+                solution_uv_lock = solution_root_dir / "uv.lock"
+                assert solution_uv_lock.is_file()
+                lock = tomlkit.parse(solution_uv_lock.read_text(encoding="utf-8"))
+                solution_packages = [package for package in lock["package"] if package["source"] == {"editable": "."}]
+                assert len(solution_packages) == 1
+                solution_packages[0]["name"] = "{{ cookiecutter.__pkg_name }}"
+                solution_packages[0]["version"] = "{{ cookiecutter.__version }}"
+                uv_lock_dest.write_text(tomlkit.dumps(lock), encoding="utf-8", newline="\n")
             except Exception as e:
                 print(e)
                 sys.exit(1)

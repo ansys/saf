@@ -88,10 +88,12 @@ jobs:
         uses: ansys/actions/tests-pytest@v10
         with:
           python-version: {{ "${{ matrix.python-version }}" }}
+          use-uv: true
+          optional-dependencies-name: ''
 {% if cookiecutter.__ui_framework != "none" %}
-          optional-dependencies-name: "tests,ui"
+          group-dependencies-name: "tests,ui"
 {% else %}
-          optional-dependencies-name: "tests"
+          group-dependencies-name: "tests"
 {% endif %}
 
   check-licenses:
@@ -105,14 +107,13 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Prepare python environment of the solution
-        id: python-setup
-        uses: ansys/saf-devops/prepare-python-environment@v1
+      - name: Set up UV and Python
+        uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
         with:
           python-version: {{ "${{ env.MAIN_PYTHON_VERSION }}" }}
-          poetry-version: {{ "${{ env.POETRY_VERSION }}" }}
-          python-project-path: "."
-          poetry-install-args: "--all-extras"
+
+      - name: Install solution dependencies
+        run: uv sync --locked --no-default-groups --group doc
 
       - name: Check licenses
         uses: ansys/actions/check-licenses@73fa84c704bb6691f254cfe4d4b928c338b0d4da # v10.3.0
@@ -121,8 +122,8 @@ jobs:
           python-version: {{ "${{ env.MAIN_PYTHON_VERSION }}" }}
           target: "all"
           skip-install: true
-          activate-venv: "source {{ "${{ steps.python-setup.outputs.venv-exe-location }}" }}/activate"
-          use-uv: false
+          activate-venv: "source .venv/bin/activate"
+          use-uv: true
 
   build-doc:
     name: Build documentation

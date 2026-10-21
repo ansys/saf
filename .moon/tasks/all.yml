@@ -356,6 +356,7 @@ tasks:
       - "export"
       - "--package"
       - "$projectAlias"
+      - "--all-extras"
       - "--no-emit-workspace"
       - "--no-hashes"
       - "--format"

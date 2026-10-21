@@ -318,6 +318,8 @@ tasks:
       - "--cov-report=term"
       - "--cov-report=xml"
       - "--cov-report=html"
+      - "--html=report/report.html"
+      - "--md=report/report.md"
       - "-p"
       - "no:faulthandler"
       - "-s" # Disable capturing of stdout and stderr during tests
@@ -332,6 +334,15 @@ tasks:
       - "pyproject.toml"
       - "/uv.lock"
       - "/extra_packages/**/*"
+      # Invalidate cached test results when CI/CD or test-group definition changes.
+      - "/.github/workflows/**/*"
+      - "/.github/actions/**/*"
+    outputs:
+      - ".coverage"
+      - "coverage.xml"
+      - "htmlcov/**/*"
+      - "report/**/*"
+      - "pytest_logs/**/*"
 
   export:
     description: "Export the project"
@@ -345,6 +356,7 @@ tasks:
       - "export"
       - "--package"
       - "$projectAlias"
+      - "--all-extras"
       - "--no-emit-workspace"
       - "--no-hashes"
       - "--format"

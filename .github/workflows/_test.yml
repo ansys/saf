@@ -319,14 +319,19 @@ jobs:
         run: git config --global core.longpaths true
 
       - name: Checkout repository
+        if: ${{ env.USE_MOON == 'false' }}
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-          fetch-depth: 0 # For moon to have full git history
 
-      - name: Setup Moon Toolchain
-        if: ${{ env.USE_MOON == 'true' && runner.environment != 'self-hosted' }}
-        uses: moonrepo/setup-toolchain@261c62cb5b0f580c7be7c8cd0f023a2e96756095 # v0.6.4
+      - name: Restore Moon cache
+        id: restore
+        uses: $/.github/actions/moon/restore
+        if: ${{ env.USE_MOON == 'true' }}
+        with:
+          ref: ${{ github.sha }}
+          key-suffix: ${{ inputs.python-version }}-${{ matrix.test-report-artifact-name-suffix
+            }}-${{ env.PACKAGE }}
 
       - name: Install workspace dependencies (Moon)
         if: ${{ env.USE_MOON == 'true' }}
@@ -510,14 +515,10 @@ jobs:
         env:
           PYTEST_DEBUG_TEMPROOT: ${{ runner.os == 'Windows' && 'C:/' || '/tmp' }}
           PYTEST_ARGS: ${{ steps.pytest-args.outputs.pytest-args }}
-          REPORTS_DIR: "${{ github.workspace }}/${{ matrix.test-report-artifact-name-suffix
-            }}_${{ inputs.python-version }}"
           UV_NO_EDITABLE: ${{ ((inputs.library-name == 'saf-product-manager' || inputs.library-name
             == 'glow-engine') && contains(steps.pytest-args.outputs.pytest-args, 'tests/e2e')
             && matrix.upgrade-docker == 'true') && '1' || '0' }}
-        run: |
-          mkdir -p "$REPORTS_DIR"
-          moon run $PACKAGE:test -- $PYTEST_ARGS --html="${REPORTS_DIR}/report.html" --md="${REPORTS_DIR}/report.md"
+        run: moon run $PACKAGE:test -- $PYTEST_ARGS
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7.1.1
@@ -527,20 +528,19 @@ jobs:
 
       - name: Publish pytest reports (Moon)
         if: always() && steps.run-tests-moon.outcome != 'skipped' && env.USE_MOON
-          == 'true' && hashFiles(format('{0}/{1}_{2}/report.html', github.workspace,
-          matrix.test-report-artifact-name-suffix , inputs.python-version)) != ''
+          == 'true' && hashFiles(format('{0}/report/report.html', needs.configure-tests.outputs.working-directory))
+          != ''
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: "pytest_reports_${{ matrix.test-report-artifact-name-suffix }}_${{
             inputs.python-version }}"
-          path: "${{ github.workspace }}/${{ matrix.test-report-artifact-name-suffix
-            }}_${{ inputs.python-version }}"
+          path: "${{ needs.configure-tests.outputs.working-directory }}/report"
           if-no-files-found: warn
 
       - name: Publish pytest logs
         if: always() && (steps.run-tests.outcome != 'skipped' || steps.run-tests-moon.outcome
           != 'skipped') && hashFiles(format('{0}/{1}/{2}', github.workspace, needs.configure-tests.outputs.working-directory
-          , 'pytest_logs')) != ''
+          , 'pytest_logs/**/*')) != ''
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: "pytest_logs_${{ matrix.test-report-artifact-name-suffix }}_${{ inputs.python-version
@@ -561,3 +561,12 @@ jobs:
         if: ${{ inputs.library-name == 'saf-projects-dashboard' }}
         shell: bash
         run: moon run $PACKAGE:test-npm
+
+      - name: Save Moon cache
+        if: ${{ always() && env.USE_MOON == 'true' }}
+        uses: $/.github/actions/moon/save
+        id: save
+        with:
+          key-suffix: ${{ inputs.python-version }}-${{ matrix.test-report-artifact-name-suffix
+            }}-${{ env.PACKAGE }}
+          uv-cache-hit: ${{ steps.restore.outputs.uv-cache-hit }}

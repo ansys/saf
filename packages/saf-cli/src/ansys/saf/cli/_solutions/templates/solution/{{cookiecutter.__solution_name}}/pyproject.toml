@@ -6,7 +6,7 @@ build-backend = "poetry.core.masonry.api"
 # This version will be used by saf-cli to install the solution's dependencies, and by saf-desktop-installer to
 # create the solution package and its installation executable.
 [build-system-requirements]
-build-system-version = "2.3.2"
+build-system-version = "2.5.1"
 
 [saf-cli-version]
 saf-cli-version = "{{cookiecutter.__saf_cli_version}}"

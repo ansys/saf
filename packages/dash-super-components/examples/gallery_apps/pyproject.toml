@@ -20,7 +20,7 @@ requires = ["poetry-core>=2.0.0"]
 
 
 [tool.poetry]
-requires-poetry = ">=2.3.2"
+requires-poetry = ">=2.5.1"
 # This is not a distributable package — no source is included.
 packages = []
 package-mode=false

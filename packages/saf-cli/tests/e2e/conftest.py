@@ -564,13 +564,18 @@ def check_solution_launched_correctly(
     glow_ui_port: str,
     portal_ui_port: str | None = None,
     ui_path_prefix: str = "",
+    use_projects_dashboard: bool = False,
 ) -> str:
-    if portal_ui_port:
+    if portal_ui_port and not use_projects_dashboard:
         portal_url = f"http://127.0.0.1:{portal_ui_port}"
         _check_service_health(portal_url)
 
     api_url = f"http://127.0.0.1:{glow_api_port}/docs"
     _check_service_health(api_url)
+
+    if use_projects_dashboard:
+        projects_dashboard_url = f"http://127.0.0.1:{glow_ui_port}{ui_path_prefix.rstrip('/')}/projects"
+        _check_service_health(projects_dashboard_url)
 
     project_identifier = _get_a_project_identifier(glow_api_port)
 

@@ -344,8 +344,8 @@ def check_ui_is_functional(
         wait_for_element_and_click(selenium_webdriver, "//*[contains(text(), 'First Step')]", element_type=By.XPATH)
         # Assert first page is loaded and fields can be entered
         wait_for_expected_property(selenium_webdriver, "result", "value", "0")
-        wait_for_element_and_send_text(selenium_webdriver, "first-arg", "4")
-        wait_for_element_and_send_text(selenium_webdriver, "second-arg", "3")
+        wait_for_element_and_send_text(selenium_webdriver, "first-arg", "4", clear=True)
+        wait_for_element_and_send_text(selenium_webdriver, "second-arg", "3", clear=True)
         # Assert callback works and updates the result
         wait_for_element_and_click(selenium_webdriver, "calculate")
         wait_for_expected_property(selenium_webdriver, "result", "value", "7", timeout)

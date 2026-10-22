@@ -5,7 +5,7 @@ build-backend = "poetry.core.masonry.api"
 # The following lines were added to enforce the poetry version needed for the project.
 # It will be read by the setup_environment.py script to install this version.
 [build-system-requirements]
-build-system-version = "2.3.2"
+build-system-version = "2.5.1"
 
 [tool.poetry]
 name = "saf-solutions-examples"
@@ -39,7 +39,7 @@ priority = "primary"
 python = ">=3.11,<3.13" #not <3.15 because of ansys-dynamicreporting-core
 ansys-saf-sdk = {version = "^0.3.0", extras = ["core-pim", "instance-management-all", "core-hps"], allow-prereleases = true}
 numpy = "^1.26.4"
-pillow = "^12.1"
+pillow = "^13.0.0"
 ansys-tools-visualization-interface = "^0.12.1"
 scipy = "^1.15"
 ansys-dynamicreporting-core = "^0.10.6" # Supports only Python 3.10 to 3.12, but not 3.13 or 3.14 yet.

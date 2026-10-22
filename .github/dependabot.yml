@@ -18,7 +18,7 @@ updates:
         - '*'
       default-days: 7
   - package-ecosystem: "npm"
-    directory: "/package/saf-projects-dashboard"
+    directory: "/packages/saf-projects-dashboard"
     schedule:
       interval: "daily"
     commit-message:

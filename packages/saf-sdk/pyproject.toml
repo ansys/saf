@@ -93,13 +93,13 @@ desktop = [
   "ansys-saf-projects-dashboard==0.2.0",
 ]
 build = [
-  "ansys-saf-desktop-installer==1.18.0",
+  "ansys-saf-desktop-installer==1.19.0",
 ]
 all = [
   "ansys-saf-glow-engine[all]==2.5.0",
   "ansys-saf-product-configuration[all]==0.26.0",
   "ansys-saf-product-manager[all]==0.5.0",
-  "ansys-saf-desktop-installer==1.18.0",
+  "ansys-saf-desktop-installer==1.19.0",
   "ansys-saf-desktop-orchestrator==1.14.0",
 ]
 

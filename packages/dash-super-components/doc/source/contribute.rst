@@ -24,13 +24,13 @@ Before setting up a development environment, ensure you have the following
 installed:
 
 - Python 3.11 to 3.14. Higher versions may work but are not officially supported.
-- Poetry 2.3.2 or newer
+- Poetry 2.5.1 or newer
 
 To install the minimum required Poetry version, run:
 
 .. code-block:: bash
 
-   pipx install "poetry>=2.3.2"
+   pipx install "poetry>=2.5.1"
 
 Clone the repository
 --------------------

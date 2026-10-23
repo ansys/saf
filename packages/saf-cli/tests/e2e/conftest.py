@@ -297,7 +297,9 @@ def check_expected_messages(
     assert p.find_msg_in_output(f"Solution UI: {solution_ui_url}")
     otel_dashboard_url = p.get_otel_dashboard_url()
     assert p.find_msg_in_output(f"OTEL Dashboard: {otel_dashboard_url}")
-    portal_url = p.get_portal_url() if with_portal else "not launched"
+    # With --portal, the orchestrator uses the projects dashboard if installed, instead of starting a portal.
+    uses_projects_dashboard = with_portal and p.get_projects_dashboard_url() is not None
+    portal_url = p.get_portal_url() if with_portal and not uses_projects_dashboard else "not launched"
     assert p.find_msg_in_output(f"SAF Portal: {portal_url}")
     # TODO if PIM and additional services get tested, check URL as done for portal
     assert p.find_msg_in_output("PIM Light Server: not launched")
@@ -562,13 +564,18 @@ def check_solution_launched_correctly(
     glow_ui_port: str,
     portal_ui_port: str | None = None,
     ui_path_prefix: str = "",
+    use_projects_dashboard: bool = False,
 ) -> str:
-    if portal_ui_port:
+    if portal_ui_port and not use_projects_dashboard:
         portal_url = f"http://127.0.0.1:{portal_ui_port}"
         _check_service_health(portal_url)
 
     api_url = f"http://127.0.0.1:{glow_api_port}/docs"
     _check_service_health(api_url)
+
+    if use_projects_dashboard:
+        projects_dashboard_url = f"http://127.0.0.1:{glow_ui_port}{ui_path_prefix.rstrip('/')}/projects"
+        _check_service_health(projects_dashboard_url)
 
     project_identifier = _get_a_project_identifier(glow_api_port)
 

@@ -1,0 +1,115 @@
+
+
+
+
+
+
+:class:`State`
+==============
+
+
+.. py:class:: ansys.saf.product_configuration.wrappers.aedt.State(/, **data: Any)
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   
+   Current state exposed by the AEDT wrapper service.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: State
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~service_manager_running`
+            - 
+          * - :py:attr:`~service_manager_port`
+            - 
+          * - :py:attr:`~session_running`
+            - 
+          * - :py:attr:`~session_rpyc_port`
+            - 
+          * - :py:attr:`~session_grpc_port`
+            - 
+          * - :py:attr:`~transport_mode`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.saf.product_configuration.wrappers.aedt import State
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: service_manager_running
+   :type:  bool
+   :value: False
+
+
+.. py:attribute:: service_manager_port
+   :type:  int
+   :value: -1
+
+
+.. py:attribute:: session_running
+   :type:  bool
+   :value: False
+
+
+.. py:attribute:: session_rpyc_port
+   :type:  int
+   :value: -1
+
+
+.. py:attribute:: session_grpc_port
+   :type:  int
+   :value: -1
+
+
+.. py:attribute:: transport_mode
+   :type:  ansys.saf.product_configuration.wrappers.types.TransportMode
+
+
+
+
+

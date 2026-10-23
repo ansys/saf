@@ -1,0 +1,107 @@
+
+
+
+
+
+
+The ``visor.py`` module
+=======================
+
+.. py:module:: ansys.saf.product_configuration.visor
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: visor
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.saf.product_configuration.visor.VisorInstanceVersionConfiguration`
+            - Configuration class for a specific version of Visor.
+
+
+          * - :py:obj:`~ansys.saf.product_configuration.visor.VisorInstanceConfiguration`
+            - Configuration class for Visor.
+
+
+
+
+
+
+
+    .. tab-item:: Constants
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~PRODUCT_NAME`
+            - 
+
+
+          * - :py:obj:`~SERVICE_NAME`
+            - 
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> VisorInstanceVersionConfiguration</ansys/saf/product_configuration/visor/VisorInstanceVersionConfiguration>
+    <span class="nf nf-cod-symbol_class"></span> VisorInstanceConfiguration</ansys/saf/product_configuration/visor/VisorInstanceConfiguration>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Module detail
+-------------
+
+.. py:data:: PRODUCT_NAME
+   :value: 'visor'
+
+
+.. py:data:: SERVICE_NAME
+   :value: 'http'
+
+
+
+

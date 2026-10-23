@@ -1,0 +1,202 @@
+
+
+
+
+
+
+:class:`ProductInstanceConfigurationsManager`
+=============================================
+
+
+.. py:class:: ansys.saf.product_configuration.manager.configurations_manager.ProductInstanceConfigurationsManager
+
+   
+   Manage the default and custom product instance configurations.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: ProductInstanceConfigurationsManager
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~load_configurations`
+            - Load the product instance configurations found in the specified directory.
+          * - :py:attr:`~list_versions`
+            - List all versions configured for the given product name.
+          * - :py:attr:`~list_configurations`
+            - List all available product instance configurations.
+          * - :py:attr:`~get_version_configuration`
+            - Get the product instance configuration for the specified product and version.
+          * - :py:attr:`~get_products`
+            - List all available products.
+
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.saf.product_configuration.manager.configurations_manager import ProductInstanceConfigurationsManager
+
+
+
+Method detail
+-------------
+
+.. py:method:: load_configurations(product_instance_configs_dir: pathlib.Path | None)
+
+   
+   Load the product instance configurations found in the specified directory.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: list_versions(product_name: str) -> list[str]
+
+   
+   List all versions configured for the given product name.
+
+
+   :Parameters:
+
+       **product_name** : str
+           The name of the product.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: list_configurations() -> list[ansys.saf.product_configuration.interfaces.IProductInstanceConfiguration]
+
+   
+   List all available product instance configurations.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_version_configuration(product_name: str, product_version: str | None = None) -> tuple[str, ansys.saf.product_configuration.interfaces.IProductInstanceVersionConfiguration]
+
+   
+   Get the product instance configuration for the specified product and version.
+
+   Note: if product_version is None, returns the latest version configuration.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_products() -> list[str]
+
+   
+   List all available products.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

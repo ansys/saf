@@ -1,0 +1,99 @@
+<svg viewBox="0 0 760 420" xmlns="http://www.w3.org/2000/svg" role="img" font-family="ui-monospace, 'Cascadia Code', 'Fira Mono', monospace" font-size="13">
+  <title>Step decomposition — one step per concern</title>
+  <desc>Diagram showing how a workflow is decomposed into individual steps, each owning a logical concern</desc>
+
+  <defs>
+    <marker id="arr-step" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#818cf8"/>
+    </marker>
+    <marker id="arr-page" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#34d399"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="760" height="420" fill="#0f172a" rx="12"/>
+
+  <!-- Title -->
+  <text x="380" y="32" text-anchor="middle" fill="#f1f5f9" font-size="16" font-weight="700" letter-spacing="0.5">Step Decomposition — One Step per Concern</text>
+
+  <!-- LEFT: Workflow steps -->
+  <text x="40" y="68" fill="#94a3b8" font-size="11" font-weight="600">BACKEND STEPS</text>
+
+  <!-- Step: Setup -->
+  <rect x="40" y="80" width="200" height="80" rx="10" fill="#1e293b" stroke="#818cf8" stroke-width="1.5"/>
+  <rect x="40" y="80" width="200" height="26" rx="10" fill="#312e81"/>
+  <rect x="40" y="96" width="200" height="10" fill="#312e81"/>
+  <text x="140" y="98" text-anchor="middle" fill="#c7d2fe" font-size="11" font-weight="700">SetupStep</text>
+  <text x="56" y="122" fill="#94a3b8" font-size="9">• geometry parameters</text>
+  <text x="56" y="136" fill="#94a3b8" font-size="9">• material properties</text>
+  <text x="56" y="150" fill="#94a3b8" font-size="9">• boundary conditions</text>
+
+  <!-- Step: Solving -->
+  <rect x="40" y="176" width="200" height="80" rx="10" fill="#1e293b" stroke="#818cf8" stroke-width="1.5"/>
+  <rect x="40" y="176" width="200" height="26" rx="10" fill="#312e81"/>
+  <rect x="40" y="192" width="200" height="10" fill="#312e81"/>
+  <text x="140" y="194" text-anchor="middle" fill="#c7d2fe" font-size="11" font-weight="700">SolvingStep</text>
+  <text x="56" y="218" fill="#94a3b8" font-size="9">• solver configuration</text>
+  <text x="56" y="232" fill="#94a3b8" font-size="9">• execution status</text>
+  <text x="56" y="246" fill="#94a3b8" font-size="9">• convergence data</text>
+
+  <!-- Step: Results -->
+  <rect x="40" y="272" width="200" height="80" rx="10" fill="#1e293b" stroke="#818cf8" stroke-width="1.5"/>
+  <rect x="40" y="272" width="200" height="26" rx="10" fill="#312e81"/>
+  <rect x="40" y="288" width="200" height="10" fill="#312e81"/>
+  <text x="140" y="290" text-anchor="middle" fill="#c7d2fe" font-size="11" font-weight="700">ResultsStep</text>
+  <text x="56" y="314" fill="#94a3b8" font-size="9">• displacement field</text>
+  <text x="56" y="328" fill="#94a3b8" font-size="9">• stress distribution</text>
+  <text x="56" y="342" fill="#94a3b8" font-size="9">• report generation</text>
+
+  <!-- Vertical arrows between steps -->
+  <line x1="140" y1="160" x2="140" y2="176" stroke="#818cf8" stroke-width="1.5" marker-end="url(#arr-step)"/>
+  <line x1="140" y1="256" x2="140" y2="272" stroke="#818cf8" stroke-width="1.5" marker-end="url(#arr-step)"/>
+
+  <!-- RIGHT: UI Pages -->
+  <text x="500" y="68" fill="#94a3b8" font-size="11" font-weight="600">UI PAGES</text>
+
+  <!-- Page: Configuration -->
+  <rect x="460" y="80" width="260" height="56" rx="10" fill="#1e293b" stroke="#34d399" stroke-width="1.5"/>
+  <rect x="460" y="80" width="260" height="24" rx="10" fill="#064e3b"/>
+  <rect x="460" y="94" width="260" height="10" fill="#064e3b"/>
+  <text x="590" y="96" text-anchor="middle" fill="#a7f3d0" font-size="11" font-weight="700">configuration_page.py</text>
+  <text x="476" y="120" fill="#94a3b8" font-size="9">Input forms, material selectors, mesh preview</text>
+
+  <!-- Page: Execution -->
+  <rect x="460" y="152" width="260" height="56" rx="10" fill="#1e293b" stroke="#34d399" stroke-width="1.5"/>
+  <rect x="460" y="152" width="260" height="24" rx="10" fill="#064e3b"/>
+  <rect x="460" y="166" width="260" height="10" fill="#064e3b"/>
+  <text x="590" y="168" text-anchor="middle" fill="#a7f3d0" font-size="11" font-weight="700">execution_page.py</text>
+  <text x="476" y="192" fill="#94a3b8" font-size="9">Progress bars, log streaming, cancel button</text>
+
+  <!-- Page: Results -->
+  <rect x="460" y="224" width="260" height="56" rx="10" fill="#1e293b" stroke="#34d399" stroke-width="1.5"/>
+  <rect x="460" y="224" width="260" height="24" rx="10" fill="#064e3b"/>
+  <rect x="460" y="238" width="260" height="10" fill="#064e3b"/>
+  <text x="590" y="240" text-anchor="middle" fill="#a7f3d0" font-size="11" font-weight="700">results_page.py</text>
+  <text x="476" y="264" fill="#94a3b8" font-size="9">Charts, 3D viewer, export buttons</text>
+
+  <!-- Page: Report -->
+  <rect x="460" y="296" width="260" height="56" rx="10" fill="#1e293b" stroke="#34d399" stroke-width="1.5"/>
+  <rect x="460" y="296" width="260" height="24" rx="10" fill="#064e3b"/>
+  <rect x="460" y="310" width="260" height="10" fill="#064e3b"/>
+  <text x="590" y="312" text-anchor="middle" fill="#a7f3d0" font-size="11" font-weight="700">report_page.py</text>
+  <text x="476" y="336" fill="#94a3b8" font-size="9">PDF generation, summary tables</text>
+
+  <!-- Connection lines: steps ↔ pages (flexible mapping) -->
+  <path d="M 240 110 C 340 110, 380 108, 460 108" stroke="#475569" stroke-width="1" fill="none" stroke-dasharray="4,3"/>
+  <path d="M 240 216 C 340 216, 380 180, 460 180" stroke="#475569" stroke-width="1" fill="none" stroke-dasharray="4,3"/>
+  <path d="M 240 306 C 340 306, 380 252, 460 252" stroke="#475569" stroke-width="1" fill="none" stroke-dasharray="4,3"/>
+  <path d="M 240 320 C 340 320, 380 324, 460 324" stroke="#475569" stroke-width="1" fill="none" stroke-dasharray="4,3"/>
+
+  <!-- Legend -->
+  <rect x="40" y="372" width="680" height="38" rx="8" fill="#1e293b" stroke="#475569" stroke-width="1"/>
+  <text x="60" y="394" fill="#64748b" font-size="10">Mapping is flexible:</text>
+  <text x="185" y="394" fill="#a5b4fc" font-size="10">1 step → multiple pages</text>
+  <text x="385" y="394" fill="#64748b" font-size="10">|</text>
+  <text x="405" y="394" fill="#a5b4fc" font-size="10">1 page → multiple steps</text>
+  <text x="585" y="394" fill="#64748b" font-size="10">|</text>
+  <text x="605" y="394" fill="#a5b4fc" font-size="10">1:1 (starting point)</text>
+</svg>

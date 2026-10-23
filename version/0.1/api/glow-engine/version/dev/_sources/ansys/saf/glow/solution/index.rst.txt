@@ -1,0 +1,252 @@
+
+
+
+
+
+
+The ``solution`` package
+============================
+
+.. py:module:: ansys.saf.glow.solution
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: solution
+.. tab-set::
+
+    .. tab-item:: Subpackages
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.saf.glow.solution.hps`
+            - 
+
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.saf.glow.solution.InstanceManager`
+            - Base class for all internal implementation of product instance managers.
+
+
+          * - :py:obj:`~ansys.saf.glow.solution.ProductInstanceManager`
+            - A wrapper over an InstanceManager internal implementation for use as a public API.
+
+
+          * - :py:obj:`~ansys.saf.glow.solution.RecoveryStateInfo`
+            - A base pydantic model that can be used to save and restore product instance state information.
+
+
+          * - :py:obj:`~ansys.saf.glow.solution.MethodState`
+            - The state of a transaction method in the context
+
+
+          * - :py:obj:`~ansys.saf.glow.solution.MethodIdentifier`
+            - A reference to a transaction method in a :py:class:`~ansys.saf.glow.solution.Solution` derived class.
+
+
+          * - :py:obj:`~ansys.saf.glow.solution.Solution`
+            - Classes derived from this class contain the definition of a Solution.
+
+
+          * - :py:obj:`~ansys.saf.glow.solution.StepsModel`
+            - Collection of steps for a :py:class:`~ansys.saf.glow.solution.Solution` derived class (a "Solution").
+
+
+          * - :py:obj:`~ansys.saf.glow.solution.StepModel`
+            - A derived class defines the schema and methods for a subsection of the application defined by a
+
+
+          * - :py:obj:`~ansys.saf.glow.solution.Transaction`
+            - Execution context of a transaction method. Enables access to GLOW infrastructure functionality
+
+
+          * - :py:obj:`~ansys.saf.glow.solution.StepSpec`
+            - Definition of the fields on a given step that
+
+
+          * - :py:obj:`~ansys.saf.glow.solution.SolutionConfiguration`
+            - Contains the configuration of the Solution. This configuration applies to all users and projects of the Solution.
+
+
+
+    .. tab-item:: Enums
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.saf.glow.solution.FieldState`
+            - Indicates the state of a given field in a given project.
+
+
+          * - :py:obj:`~ansys.saf.glow.solution.MethodStatus`
+            - The execution state of a transaction method
+
+
+
+    .. tab-item:: Exceptions
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.saf.glow.solution.BadRequestError`
+            - The server cannot or will not process the request due to an apparent client error
+
+
+          * - :py:obj:`~ansys.saf.glow.solution.ConflictError`
+            - Indicates that the request could not be processed because of conflict in the current state of the resource,
+
+
+          * - :py:obj:`~ansys.saf.glow.solution.ForbiddenError`
+            - The request contained valid data and was understood by the server, but the server is refusing action.
+
+
+          * - :py:obj:`~ansys.saf.glow.solution.NotFoundError`
+            - The requested resource could not be found but may be available in the future.
+
+
+
+    .. tab-item:: Functions
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~create_instance`
+            - Transaction method decorator which ensures that, in the current
+
+
+          * - :py:obj:`~instance`
+            - A decorator of transaction methods which indicates that
+
+
+          * - :py:obj:`~long_running`
+            - Decorator for transaction methods which need to be non-blocking in the client or in the REST API.
+
+
+          * - :py:obj:`~transaction`
+            - A method decorator that indicates that the decorated method is a `transaction method`. A transaction method is
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-md-package"></span> hps</ansys/saf/glow/solution/hps/index>
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> InstanceManager</ansys/saf/glow/solution/InstanceManager>
+    <span class="nf nf-cod-symbol_class"></span> ProductInstanceManager</ansys/saf/glow/solution/ProductInstanceManager>
+    <span class="nf nf-cod-symbol_class"></span> RecoveryStateInfo</ansys/saf/glow/solution/RecoveryStateInfo>
+    <span class="nf nf-cod-symbol_class"></span> MethodState</ansys/saf/glow/solution/MethodState>
+    <span class="nf nf-cod-symbol_class"></span> MethodIdentifier</ansys/saf/glow/solution/MethodIdentifier>
+    <span class="nf nf-cod-symbol_class"></span> Solution</ansys/saf/glow/solution/Solution>
+    <span class="nf nf-cod-symbol_class"></span> StepsModel</ansys/saf/glow/solution/StepsModel>
+    <span class="nf nf-cod-symbol_class"></span> StepModel</ansys/saf/glow/solution/StepModel>
+    <span class="nf nf-cod-symbol_class"></span> Transaction</ansys/saf/glow/solution/Transaction>
+    <span class="nf nf-cod-symbol_class"></span> StepSpec</ansys/saf/glow/solution/StepSpec>
+    <span class="nf nf-cod-symbol_class"></span> SolutionConfiguration</ansys/saf/glow/solution/SolutionConfiguration>
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_enum"></span> FieldState</ansys/saf/glow/solution/FieldState>
+    <span class="nf nf-cod-symbol_enum"></span> MethodStatus</ansys/saf/glow/solution/MethodStatus>
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-md-lightning_bolt"></span> BadRequestError</ansys/saf/glow/solution/BadRequestError>
+    <span class="nf nf-md-lightning_bolt"></span> ConflictError</ansys/saf/glow/solution/ConflictError>
+    <span class="nf nf-md-lightning_bolt"></span> ForbiddenError</ansys/saf/glow/solution/ForbiddenError>
+    <span class="nf nf-md-lightning_bolt"></span> NotFoundError</ansys/saf/glow/solution/NotFoundError>
+
+
+
+
+
+
+
+
+
+
+
+
+
+Module detail
+-------------
+
+
+
+
+
+
+

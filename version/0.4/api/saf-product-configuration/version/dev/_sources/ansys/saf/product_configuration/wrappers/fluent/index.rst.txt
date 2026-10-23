@@ -1,0 +1,170 @@
+
+
+
+
+
+
+The ``fluent.py`` module
+========================
+
+.. py:module:: ansys.saf.product_configuration.wrappers.fluent
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: fluent
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.saf.product_configuration.wrappers.fluent.FluentInstance`
+            - 
+
+
+
+
+
+    .. tab-item:: Functions
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~get_global_fluent_instance`
+            - 
+
+
+          * - :py:obj:`~start_instance`
+            - 
+
+
+          * - :py:obj:`~get_instance_port`
+            - 
+
+
+          * - :py:obj:`~shutdown`
+            - 
+
+
+          * - :py:obj:`~health`
+            - 
+
+
+          * - :py:obj:`~main`
+            - 
+
+
+
+    .. tab-item:: Attributes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~GlobalFluentInstanceDep`
+            - 
+
+
+          * - :py:obj:`~app`
+            - 
+
+
+
+    .. tab-item:: Constants
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~SAF_FLUENT_WRAPPER_TIMEOUT`
+            - 
+
+
+          * - :py:obj:`~DEFAULT_TIMEOUT`
+            - 
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> FluentInstance</ansys/saf/product_configuration/wrappers/fluent/FluentInstance>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Module detail
+-------------
+
+.. py:function:: get_global_fluent_instance() -> FluentInstance
+
+.. py:function:: start_instance(fluent_instance: GlobalFluentInstanceDep, working_dir: Annotated[str | None, Body(..., embed=True)] = None)
+   :async:
+
+
+.. py:function:: get_instance_port(fluent_instance: GlobalFluentInstanceDep)
+   :async:
+
+
+.. py:function:: shutdown(fluent_instance: GlobalFluentInstanceDep)
+   :async:
+
+
+.. py:function:: health()
+   :async:
+
+
+.. py:function:: main(port: int, host: str, version: str, mode: str, geometry: str, precision: str, transport_mode: ansys.saf.product_configuration.wrappers.types.TransportMode, certs_dir: str | None)
+
+.. py:data:: SAF_FLUENT_WRAPPER_TIMEOUT
+   :value: 'SAF_FLUENT_WRAPPER_TIMEOUT'
+
+
+.. py:data:: DEFAULT_TIMEOUT
+   :value: 100
+
+
+.. py:data:: GlobalFluentInstanceDep
+
+.. py:data:: app
+
+
+

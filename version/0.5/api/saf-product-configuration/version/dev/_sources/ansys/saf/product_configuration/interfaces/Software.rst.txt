@@ -1,0 +1,80 @@
+
+
+
+
+
+
+:class:`Software`
+=================
+
+
+.. py:class:: ansys.saf.product_configuration.interfaces.Software(name: str, version: str | None)
+
+   
+   Define the software requirements.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: Software
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~name`
+            - 
+          * - :py:attr:`~version`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.saf.product_configuration.interfaces import Software
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: name
+
+.. py:attribute:: version
+
+
+
+
+

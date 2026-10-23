@@ -26,6 +26,7 @@ import pytest
 import pytest_mock
 import requests
 
+from ansys.saf.cli._solutions import environment
 from ansys.saf.cli._solutions.environment import (
     InstallError,
     _check_private_sources,  # pyright: ignore[reportPrivateUsage]
@@ -108,6 +109,34 @@ PYPROJECT_CONTENT_WITH_POETRY_2X = PYPROJECT_CONTENT.replace(
 
 SOLUTION_MAIN_MODULE_NAME = "ansys.solutions.fake_solution.main"
 
+UV_PROJECT_EXAMPLE = """
+[project]
+name = "uv-solution"
+version = "0.0.0"
+requires-python = ">=3.11,<3.15"
+[tool.uv]
+default-groups = ["tests"]
+[dependency-groups]
+desktop = []
+ui = []
+doc = []
+build = []
+tests = []
+style = []
+"""
+
+
+@pytest.fixture
+def uv_solution(tmp_path: Path, mocker: pytest_mock.MockFixture) -> Path:
+    # Keep command-selection tests independent of real installs and system setup.
+    (tmp_path / "pyproject.toml").write_text(UV_PROJECT_EXAMPLE, encoding="utf-8")
+    mocker.patch("ansys.saf.cli._solutions.environment.shutil.which", return_value=str(tmp_path / "uv"))
+    mocker.patch("ansys.saf.cli._solutions.environment.subprocess.check_output", return_value="uv test-version")
+    mocker.patch.object(environment, "_install_dotnet_linux_dependencies")
+    mocker.patch.object(environment, "_preload_solution_main_module")
+    mocker.patch.object(environment, "get_exec_from_solution_venv", return_value=tmp_path / ".venv" / "python")
+    return tmp_path
+
 
 def _patch_http_get_to_return_404(monkeypatch: pytest.MonkeyPatch) -> None:
     def mock_get(*args: object, **kwargs: object) -> requests.Response:
@@ -127,8 +156,9 @@ def subprocess_mock(mocker: pytest_mock.MockFixture) -> pytest_mock.MockType:
 
 @pytest.fixture
 def mock_is_file(mocker: pytest_mock.MockFixture) -> None:
-    mock_is_file = mocker.patch("pathlib.Path.is_file")
-    mock_is_file.return_value = True
+    # Poetry fixtures must not appear to contain both backend lockfiles.
+    mock_is_file = mocker.patch("pathlib.Path.is_file", autospec=True)
+    mock_is_file.side_effect = lambda path: path.name != "uv.lock"
 
 
 @pytest.fixture
@@ -340,7 +370,9 @@ def test_setup_environment_default_params(
 
     working_dir = Path.cwd()
     setup_environment(tmp_path, SOLUTION_MAIN_MODULE_NAME)
-    printed_msgs = capsys.readouterr().out
+    captured = capsys.readouterr()
+    printed_msgs = captured.out
+    assert "Poetry-based solutions are deprecated" in captured.err
     assert "You are all set!" in printed_msgs
     expected_calls.append(
         mock.call(
@@ -1187,3 +1219,50 @@ def test_authorization_error_captured_and_set_to_stderr(
 
     with pytest.raises(Exception, match=expected_match):
         _run_poetry_install([str(fake_poetry)])
+
+
+@pytest.mark.parametrize(
+    ("requested", "expected"),
+    [
+        (None, ["desktop", "ui", "doc", "build"]),
+        (["all"], ["desktop", "ui", "doc", "build", "tests", "style"]),
+        (["tests"], ["tests"]),
+        (["tests", "style"], ["tests", "style"]),
+    ],
+)
+def test_uv_install_groups(
+    uv_solution: Path,
+    mocker: pytest_mock.MockFixture,
+    requested: list[str] | None,
+    expected: list[str],
+):
+    run = mocker.patch("ansys.saf.cli._solutions.environment.subprocess.run")
+    poetry_setup = mocker.patch.object(environment, "_install_build_system")
+    poetry_auth = mocker.patch.object(environment, "_check_private_sources")
+    environment.setup_environment(uv_solution, "solution.main", requested)
+
+    run.assert_called_once()
+    command = run.call_args.args[0]
+    assert command[:2] == [str(uv_solution / "uv"), "sync"]
+    assert command[command.index("--project") + 1] == str(uv_solution)
+    assert command[command.index("--python") + 1] == sys.executable
+    # SAF's group selection must override UV's configured default groups.
+    assert "--no-default-groups" in command
+    assert "--inexact" in command
+    assert "--no-python-downloads" in command
+    assert command[command.index("--inexact") + 1 :] == [
+        argument for group in expected for argument in ("--group", group)
+    ]
+    child_environment = run.call_args.kwargs["env"]
+    assert "VIRTUAL_ENV" not in child_environment
+    assert child_environment["UV_PROJECT_ENVIRONMENT"] == str(uv_solution / ".venv")
+    # UV solutions must bypass Poetry setup and credential handling.
+    poetry_setup.assert_not_called()
+    poetry_auth.assert_not_called()
+
+
+def test_uv_no_optional_groups(uv_solution: Path, mocker: pytest_mock.MockFixture):
+    (uv_solution / "pyproject.toml").write_text(UV_PROJECT.split("[dependency-groups]")[0], encoding="utf-8")
+    run = mocker.patch("ansys.saf.cli._solutions.environment.subprocess.run")
+    environment.setup_environment(uv_solution, "solution.main")
+    assert "--group" not in run.call_args.args[0]

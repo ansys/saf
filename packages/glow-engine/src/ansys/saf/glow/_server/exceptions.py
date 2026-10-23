@@ -14,6 +14,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from typing import Any
+
 from fastapi import HTTPException
 
 malformed_solution_error_prefix = "The solution definition is invalid"
@@ -99,9 +101,12 @@ class UnprocessableEntityError(GlowErrorBase):
 
 
 class LockedError(GlowErrorBase):
-    """The resource that is being accessed is locked."""
+    """The resource that is being accessed is locked.
 
-    def __init__(self, detail: str) -> None:
+    ``detail`` can be a dictionary, e.g. ``{"message": ..., "holder_id": ...}`` for project write locks.
+    """
+
+    def __init__(self, detail: str | dict[str, Any]) -> None:
         super().__init__(status_code=423, detail=detail)
 
 

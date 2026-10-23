@@ -30,6 +30,7 @@ from pydantic import ValidationError
 
 from ansys.bdm.api import IAsyncStorageScope
 from ansys.iam.oidc import NoIssuerOrAudienceError, OidcClient, OidcDependency, OidcWebSocketDependency
+from ansys.saf.glow._access.access_crud import AccessCrud
 from ansys.saf.glow._access.principal import ON_BEHALF_OF_HEADER, Principal
 from ansys.saf.glow._bdm.datarepo import DataRepositoryType
 from ansys.saf.glow._bdm.multiplexor import SafMultiplexorStorageScopeFactory
@@ -296,6 +297,22 @@ async def get_crud_for_websocket(
     solution_service: Annotated[SolutionService, Depends(get_solution_service_for_websocket)],
 ) -> Crud:
     return Crud(solution_service, repository)
+
+
+async def get_access_crud(
+    repository: Annotated[AbstractRepositorySessionFactory, Depends(get_repository)],
+    settings: Annotated[Settings, Depends(get_settings)],
+) -> AccessCrud:
+    # Shares the repository instance of ``get_crud`` (FastAPI caches dependencies per request), so access checks made
+    # inside a Crud session run in that same database session.
+    return AccessCrud(repository, settings)
+
+
+async def get_access_crud_for_websocket(
+    repository: Annotated[AbstractRepositorySessionFactory, Depends(get_repository_for_websocket)],
+    settings: Annotated[Settings, Depends(get_settings)],
+) -> AccessCrud:
+    return AccessCrud(repository, settings)
 
 
 async def get_hps_authenticator(
@@ -677,6 +694,8 @@ ProjectInfoDep = Annotated[ProjectInfo, Depends(get_project_info)]
 ProjectFilesManagerDep = Annotated[ProjectFilesManager, Depends(get_project_files_manager)]
 CrudDep = Annotated[Crud, Depends(get_crud)]
 WSCrudDep = Annotated[Crud, Depends(get_crud_for_websocket)]
+AccessCrudDep = Annotated[AccessCrud, Depends(get_access_crud)]
+WSAccessCrudDep = Annotated[AccessCrud, Depends(get_access_crud_for_websocket)]
 RunningMethodsDep = Annotated[dict[str, set[str]], Depends(get_running_methods)]
 SolutionServiceDep = Annotated[SolutionService, Depends(get_solution_service)]
 WSSolutionServiceDep = Annotated[SolutionService, Depends(get_solution_service_for_websocket)]

@@ -65,6 +65,22 @@ class ProjectAccessRecord(BaseModel):
     requests: list[WriteRequestInfo] = Field(default_factory=list)
 
 
+class ProjectAccess(BaseModel):
+    """Access state of a project, as seen by the calling user."""
+
+    project_id: str
+    owner_id: str | None
+    members: list[ProjectMemberInfo]
+    holder_id: str | None
+    lock_acquired_at: datetime | None
+    last_write_at: datetime | None
+    version: int
+    pending_requests: list[WriteRequestInfo]
+    my_role: ProjectRole | None
+    can_write: bool
+    is_orphan: bool
+
+
 class ProjectAccessSummary(BaseModel):
     owner_id: str | None = None
     holder_id: str | None = None

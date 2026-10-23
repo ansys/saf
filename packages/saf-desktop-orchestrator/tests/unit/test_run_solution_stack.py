@@ -48,7 +48,7 @@ from ansys.saf.desktop.orchestrator._orchestration.otel_process import OtelProce
 from ansys.saf.desktop.orchestrator._orchestration.process import ServiceProcess
 from ansys.saf.desktop.orchestrator._orchestration.python_process import PythonProcess
 from ansys.saf.desktop.orchestrator._orchestration.pywebview_events import set_custom_pywebview_icon
-from ansys.saf.desktop.orchestrator._orchestration.run_solution_stack import _create_project, run_solution_stack
+from ansys.saf.desktop.orchestrator._orchestration.run_solution_stack import run_solution_stack
 from ansys.saf.desktop.orchestrator._utilities.splash_screen import SplashScreen
 from ansys.saf.glow.cli import run_api
 from ansys.saf.glow.client import AnalysisResultModel
@@ -57,22 +57,6 @@ from tests.mocks.solutions_main import minimal_main
 
 SOLUTION_NAME = "My Solution"
 SOLUTION_MAIN_MODULE = "tests.mocks.solutions_main.minimal_main"
-
-
-def test_create_project_uses_bounded_request_timeout() -> None:
-    http_client = MagicMock()
-    response = MagicMock()
-    response.json.return_value = {"name": "projects/test-id"}
-    http_client.post.return_value = response
-
-    project_name = _create_project(http_client, "test-project")
-
-    assert project_name == "projects/test-id"
-    http_client.post.assert_called_once_with(
-        "/projects",
-        json={"display_name": "test-project"},
-        timeout=60.0,
-    )
 
 
 @pytest.fixture

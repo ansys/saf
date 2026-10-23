@@ -80,7 +80,6 @@ LOGGING_DEFAULT_CONFIG = """
     }
 }"""
 NOT_LAUNCHED = "not launched"
-PROJECT_CREATION_TIMEOUT = 60.0
 
 
 def _create_project(http_client: httpx2.Client, project_display_name: str) -> str:
@@ -88,7 +87,6 @@ def _create_project(http_client: httpx2.Client, project_display_name: str) -> st
         r = http_client.post(
             "/projects",
             json={"display_name": project_display_name},
-            timeout=PROJECT_CREATION_TIMEOUT,
         )
         r.raise_for_status()
     except Exception as ex:

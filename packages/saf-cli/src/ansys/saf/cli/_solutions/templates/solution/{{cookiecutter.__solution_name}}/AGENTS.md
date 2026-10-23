@@ -29,6 +29,22 @@ This solution is managed with **SAF CLI** (`saf`). SAF CLI automatically activat
 and sets the solution root as the working directory when it runs commands. You typically don't need to activate the
 virtual environment manually or invoke Python/Poetry directly — prefer running tasks via `saf`.
 
+## Finding and using agent skills
+
+Before starting a task, discover the available agent skills:
+
+1. Review the skills advertised by your agent environment, including user-installed or plugin-provided skills.
+2. From the solution root, look for `SKILL.md` files under `.github/skills/`, `.agents/skills/`, and
+   `.claude/skills/`. Each skill normally lives in its own subdirectory, such as
+   `.github/skills/<skill-name>/SKILL.md`. Inspect each skill's `name` and `description` to determine when it applies.
+3. Load any matching skill with your environment's skill-loading tool before acting. If no such tool is available,
+   read the matching `SKILL.md` directly. Follow its instructions and resolve referenced resources relative to the
+   directory containing that file.
+
+A newly generated minimal solution does not include bundled skills or these skill directories. Do not assume that
+a skill available in another workspace is available here. If a task requires a skill that cannot be found, report
+that it is missing and ask the user for its location or installation instructions; otherwise, follow this file.
+
 ## Folder structure
 
 - `src/{{ cookiecutter.__solution_namespace_path }}/{{ cookiecutter.__solution_module_name }}/`: Solution source code

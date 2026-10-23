@@ -290,14 +290,16 @@ def new(solution_name: str, solution_display_name: str, ui_framework: str, names
     "--force-clear-all",
     is_flag=True,
     default=False,
-    help="Clean-up the workspace. Delete .venv and the project's lockfile. For Poetry, also delete .poetry/.venv and .poetry/.cache.",
+    help="Clean-up the workspace. Delete .venv and the project's lockfile. " \
+    "For Poetry, also delete .poetry/.venv and .poetry/.cache.",
 )
 @click.option(
     "-f",
     "--force-clear",
     is_flag=True,
     default=False,
-    help="Clean-up the workspace. Delete .venv but keep the lockfile. For Poetry, also delete .poetry/.venv and .poetry/.cache.",
+    help="Clean-up the workspace. Delete .venv but keep the lockfile. " \
+    "For Poetry, also delete .poetry/.venv and .poetry/.cache.",
 )
 @click.option(
     "--env-file",

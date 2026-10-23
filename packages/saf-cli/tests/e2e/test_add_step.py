@@ -96,8 +96,8 @@ def _verify_step_added(
             element_type=By.XPATH,
         )
         wait_for_expected_property(selenium_webdriver, f"{step_name}-result", "value", "0", timeout=120)
-        wait_for_element_and_send_text(selenium_webdriver, f"{step_name}-first-arg", "1")
-        wait_for_element_and_send_text(selenium_webdriver, f"{step_name}-second-arg", "2")
+        wait_for_element_and_send_text(selenium_webdriver, f"{step_name}-first-arg", "1", clear=True)
+        wait_for_element_and_send_text(selenium_webdriver, f"{step_name}-second-arg", "2", clear=True)
         wait_for_element_and_click(selenium_webdriver, f"{step_name}-calculate")
         wait_for_expected_property(selenium_webdriver, f"{step_name}-result", "value", "3", timeout=120)
 

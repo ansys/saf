@@ -3,7 +3,7 @@
 FROM python:3.12-slim AS base
 
 RUN apt update && apt install curl libx11-6 libglu1-mesa-dev libxrender1 libgl1 libglx-mesa0 xvfb iputils-ping tk libicu-dev -y
-RUN pip install --upgrade pip && pip install poetry==2.3.2
+RUN pip install --upgrade pip && pip install poetry==2.5.1
 
 WORKDIR /app
 

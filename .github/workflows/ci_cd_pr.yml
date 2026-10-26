@@ -5,7 +5,7 @@ on:
     branches:
       - main
       - 'release/**'
-    types: [opened, reopened, synchronize, ready_for_review]
+    types: [opened, reopened, synchronize, ready_for_review, closed]
   push:
     branches:
       - main
@@ -26,10 +26,23 @@ concurrency:
   cancel-in-progress: ${{ github.ref != 'refs/heads/main' }} # No cancellation for main branch, to ensure that the workflow runs to completion and deploys the documentation if needed.
 
 jobs:
+  delete-pr-cache:
+    name: "Delete PR caches"
+    if: github.event_name == 'pull_request' && github.event.action == 'closed'
+    permissions:
+      contents: read
+      actions: write # To delete PR caches
+    runs-on: ubuntu-latest
+    steps:
+      - name: Delete PR caches
+        uses: $/.github/actions/moon/delete
+        with:
+          token: ${{ secrets.CACHE_TOKEN }}
+
   lint-pr-title:
     name: "Lint pull request title"
-    if: github.event_name == 'pull_request' && github.event.pull_request.draft ==
-      false
+    if: github.event_name == 'pull_request' && github.event.action != 'closed' &&
+      github.event.pull_request.draft == false
     permissions:
       pull-requests: read # Read PR title and metadata for validation
     runs-on: ubuntu-latest
@@ -40,21 +53,21 @@ jobs:
 
   check-linked-issues-in-pull-request-description:
     name: "Check linked issues in pull-request description"
-    if: github.event_name == 'pull_request' && github.event.pull_request.draft ==
-      false
+    if: github.event_name == 'pull_request' && github.event.action != 'closed' &&
+      github.event.pull_request.draft == false
     permissions:
       pull-requests: read # Read PR description to find linked issues
       issues: write # Update issue descriptions with PR links
     runs-on: ubuntu-latest
     steps:
       - name: check-linked-issues-in-pr-description
-        uses: ansys/saf-devops/link-issue-to-pull-request@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
+        uses: ansys/saf-devops/link-issue-to-pull-request@82c48355bb8dbdaddd0e855ed383c89824ee2c3c # v1.3.3
         env:
           ISSUE_GITHUB_TOKEN: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
 
   labels:
-    if: github.event_name == 'pull_request' && github.event.pull_request.draft ==
-      false
+    if: github.event_name == 'pull_request' && github.event.action != 'closed' &&
+      github.event.pull_request.draft == false
     name: "Labels"
     permissions:
       contents: read # Read access to modified files in pull-request
@@ -93,8 +106,8 @@ jobs:
 
   ci-cd-config:
     name: Get CI/CD configuration
-    if: github.event_name == 'pull_request' && github.event.pull_request.draft ==
-      false
+    if: github.event_name == 'pull_request' && github.event.action != 'closed' &&
+      github.event.pull_request.draft == false
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -116,8 +129,8 @@ jobs:
     permissions:
       contents: read
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request' && github.event.pull_request.draft ==
-      false
+    if: github.event_name == 'pull_request' && github.event.action != 'closed' &&
+      github.event.pull_request.draft == false
     steps:
       - name: Checkout repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -161,7 +174,7 @@ jobs:
       contents: read
     needs: labels
     if: ${{ contains(fromJson(needs.labels.outputs.labels-json), 'devops') }}
-    uses: ansys/saf-devops/.github/workflows/_action-lint.yml@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
+    uses: ansys/saf-devops/.github/workflows/_action-lint.yml@82c48355bb8dbdaddd0e855ed383c89824ee2c3c # v1.3.3
 
   vulnerabilities:
     name: "Vulnerabilities"
@@ -228,6 +241,7 @@ jobs:
 
   code-style-moon:
     name: "Check code style (Moon)"
+    if: github.event.action != 'closed'
     permissions:
       contents: read
     runs-on: ubuntu-latest
@@ -275,7 +289,7 @@ jobs:
             doc/styles/config/vocabularies/ANSYS/accept.txt
             packages/saf-cli/
 
-      - uses: ansys/saf-devops/prepare-python-environment@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
+      - uses: ansys/saf-devops/prepare-python-environment@82c48355bb8dbdaddd0e855ed383c89824ee2c3c # v1.3.3
         id: prepare-python
         with:
           python-version: ${{ vars.PYTHON_VERSION }}
@@ -307,7 +321,8 @@ jobs:
       contents: write # Required to push to gh-pages branch
       pull-requests: read # Required to read the pull-request to check if it has documentation changes
     if: ${{ github.event_name == 'push' || (github.event_name == 'pull_request' &&
-      github.event.pull_request.draft == false) }}
+      github.event.action != 'closed' && github.event.pull_request.draft == false)
+      }}
     uses: ./.github/workflows/_doc.yml
     secrets:
       PYANSYS_CI_BOT_TOKEN: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
@@ -344,30 +359,10 @@ jobs:
       matrix: ${{ fromJson(needs.ci-cd-config.outputs.packages-matrix) }}
     steps:
       - name: Check if wheel can be pip installed
-        uses: ansys/saf-devops/pip-install-production-wheel@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
+        uses: ansys/saf-devops/pip-install-production-wheel@82c48355bb8dbdaddd0e855ed383c89824ee2c3c # v1.3.3
         with:
           python-version: ${{ vars.PYTHON_VERSION }}
           wheel-artifact: '${{ matrix.library-name }}-${{ vars.PYTHON_VERSION }}-artifacts'
-
-  compatibility-tests:
-    name: Run compatibility tests
-    needs:
-      - ci-cd-config
-      - build-wheel
-    if: ${{ needs.ci-cd-config.outputs.compatibility-matrix != '{}' }}
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix: ${{ fromJson(needs.ci-cd-config.outputs.compatibility-matrix) }}
-    steps:
-      - name: Checks compatibility with pyansys
-        uses: ansys/saf-devops/compatibility-scan@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
-        with:
-          python-version: ${{ vars.PYTHON_VERSION }}
-          compatibility-packages: 'git+https://github.com/ansys/pyansys.git'
-          wheel-artifact-name: '${{ matrix.library-name }}-${{ vars.PYTHON_VERSION
-            }}-artifacts'
-        timeout-minutes: 15
 
   sbom:
     name: "Generate SBOM"
@@ -396,7 +391,7 @@ jobs:
         run: moon run ${PACKAGE}:sbom
 
       - name: Publish SBOM
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: sbom-${{ matrix.library-name }}
           path: dist/packages/${{ matrix.library-name }}-sbom.json
@@ -425,6 +420,7 @@ jobs:
       PYANSYS_PYPI_PRIVATE_PAT: ${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}
       PYANSYS_PYPI_PRIVATE_URL: ${{ secrets.PYANSYS_PYPI_PRIVATE_URL }}
       LICENSE_SERVER: ${{ secrets.LICENSE_SERVER }}
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
   run-github-workflows-of-generated-solution:
     permissions:
@@ -456,7 +452,7 @@ jobs:
     name: "Run tests of GitHub actions"
     needs: ci-cd-config
     if: ${{ needs.ci-cd-config.outputs.pr-changes != '[]' && contains(needs.ci-cd-config.outputs.pr-changes,
-      'ci-cd-job-matrices') }}
+      'actions') }}
     permissions:
       contents: read
     runs-on: ubuntu-latest
@@ -467,7 +463,7 @@ jobs:
           persist-credentials: false
 
       - name: Install uv
-        uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
+        uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
         with:
           python-version: 3.12
           enable-cache: false
@@ -475,6 +471,10 @@ jobs:
       - name: Run test_ci_cd_job_matrices.py
         shell: bash
         run: uv run ".github/actions/ci-cd-job-matrices/test_ci_cd_job_matrices.py"
+
+      - name: Run test_get_fixed_vulnerabilities.py
+        shell: bash
+        run: uv run ".github/actions/get-fixed-vulnerabilities/test_get_fixed_vulnerabilities.py"
 
   meta-package:
     name: "SAF SDK Meta Package"
@@ -512,11 +512,10 @@ jobs:
       - run-tests
       - run-github-workflows-of-generated-solution
       - run-tests-actions
-      # - compatibility-tests
       - doc
       - sbom
       - meta-package
-    if: always()
+    if: always() && github.event.action != 'closed'
     runs-on: ubuntu-latest
     steps:
       - name: check-ci-unit-tests

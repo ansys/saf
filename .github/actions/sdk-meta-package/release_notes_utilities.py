@@ -160,6 +160,8 @@ def generate_release_notes(
                 ],
             )
 
+    content += "<!-- THIS LINE IS A PLACEHOLDER FOR PYANSYS COMPATIBILITY SECTION -->"
+
     RELEASE_NOTES_FILE.write_text(content, encoding="utf-8")
     summary_path = os.environ.get("GITHUB_STEP_SUMMARY")
     if summary_path:

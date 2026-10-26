@@ -456,11 +456,10 @@ Known limitations
 Note that the executable points to the Python that has the ``ansys-visor-viewer`` package installed in its environment.
 
 
-How to use in your solution definition
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Example
+---------
 
-See :ref:`instance_management_usage`.
-
+For a complete example using VISOR product manager, see the |visor-example|_.
 
 How to extend for more products
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

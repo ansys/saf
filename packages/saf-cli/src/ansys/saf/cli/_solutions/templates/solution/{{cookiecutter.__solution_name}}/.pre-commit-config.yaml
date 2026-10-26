@@ -36,6 +36,6 @@ repos:
         args: [check]
 
   - repo: https://github.com/python-poetry/poetry
-    rev: a84cd0f1bedb5769ef6ef7389d8ee99b93b9ba4c # frozen: v2.3.2
+    rev: 94b6e35b9091991887aa54feeb3771a86d3bd692 # frozen: v2.5.1
     hooks:
       - id: poetry-check

@@ -52,7 +52,7 @@ updates:
         - '*'
       default-days: 7
   - package-ecosystem: "pip"
-    directories: 
+    directories:
       - "examples"
       - "packages/dash-super-components/examples/gallery_apps"
       - "packages/dash-super-components/examples/showcase_all"

@@ -195,19 +195,19 @@ tests = ["ansys-api-platform-instancemanagement (==1.0.0)", "grpcio-health-check
 
 [[package]]
 name = "ansys-saf-desktop-installer"
-version = "1.18.0"
+version = "1.19.0"
 description = "SAF desktop installer"
 optional = false
 python-versions = "<4,>=3.11"
 groups = ["build"]
 files = [
-    {file = "ansys_saf_desktop_installer-1.18.0-py3-none-any.whl", hash = "sha256:319b311f54ea6ec183df34db63d21a8788061b1b9119b264f3c26dfe19f5605a"},
-    {file = "ansys_saf_desktop_installer-1.18.0.tar.gz", hash = "sha256:1c580aefd72e2791decc94f6063f974445486f1073c6515fd10183a4ffaa89dd"},
+    {file = "ansys_saf_desktop_installer-1.19.0-py3-none-any.whl", hash = "sha256:d88ae692ada53e3ecc51f864b38c4bd42d0b0e751a39a8063c252bd8f34b4050"},
+    {file = "ansys_saf_desktop_installer-1.19.0.tar.gz", hash = "sha256:7e711669bb4d37d530a91f681b265d6ab43f1b1233ffcd62355f18c46d400180"},
 ]
 
 [package.dependencies]
 click = ">=8.1.7,<9"
-packaging = ">=24.0,<25"
+packaging = ">=24.0,<27"
 pyinstaller = {version = ">=6.16,<7", markers = "python_full_version < \"3.15.0\""}
 python-dotenv = ">=1.1.0,<2"
 requests = ">=2.28.2,<3"
@@ -365,21 +365,21 @@ dash = ">=3.0.0"
 
 [[package]]
 name = "ansys-saf-sdk"
-version = "0.4.0"
+version = "0.5.0"
 description = "SAF SDK Bundle"
 optional = false
 python-versions = "<3.15,>=3.11"
 groups = ["main", "build", "desktop"]
 files = [
-    {file = "ansys_saf_sdk-0.4.0-py3-none-any.whl", hash = "sha256:d358bcecf5f4cca2323fee5bf8a0fe015f8188cd9af9afe913234392ae87ec13"},
-    {file = "ansys_saf_sdk-0.4.0.tar.gz", hash = "sha256:24506a945425e209a15934d72e7495b0791fcade4212cddcae1f41f51cbcc229"},
+    {file = "ansys_saf_sdk-0.5.0-py3-none-any.whl", hash = "sha256:acce6e37a8027440c3045302fa7dbc7689bef73dd0afa7cb90dce1c3c7c5ab66"},
+    {file = "ansys_saf_sdk-0.5.0.tar.gz", hash = "sha256:1845dda7f64f8167d9d3b84a3370ddcf54b5c8cdc0f14756db24de098bdc7921"},
 ]
 
 [package.dependencies]
 ansys-bdm-api = "0.5.0"
 ansys-bdm-shared-volume = "0.4.0"
 ansys-iam-oidc = "0.9.0"
-ansys-saf-desktop-installer = {version = "1.18.0", optional = true, markers = "extra == \"build\""}
+ansys-saf-desktop-installer = {version = "1.19.0", optional = true, markers = "extra == \"build\""}
 ansys-saf-desktop-orchestrator = {version = "1.14.0", optional = true, markers = "extra == \"desktop\""}
 ansys-saf-glow-engine = "2.5.0"
 ansys-saf-product-configuration = "0.26.0"
@@ -387,8 +387,8 @@ ansys-saf-product-manager = "0.5.0"
 ansys-saf-projects-dashboard = {version = "0.2.0", optional = true, markers = "extra == \"desktop\""}
 
 [package.extras]
-all = ["ansys-saf-desktop-installer (==1.18.0)", "ansys-saf-desktop-orchestrator (==1.14.0)", "ansys-saf-glow-engine[all] (==2.5.0)", "ansys-saf-product-configuration[all] (==0.26.0)", "ansys-saf-product-manager[all] (==0.5.0)"]
-build = ["ansys-saf-desktop-installer (==1.18.0)"]
+all = ["ansys-saf-desktop-installer (==1.19.0)", "ansys-saf-desktop-orchestrator (==1.14.0)", "ansys-saf-glow-engine[all] (==2.5.0)", "ansys-saf-product-configuration[all] (==0.26.0)", "ansys-saf-product-manager[all] (==0.5.0)"]
+build = ["ansys-saf-desktop-installer (==1.19.0)"]
 core-all = ["ansys-saf-glow-engine[all] (==2.5.0)", "ansys-saf-product-configuration[all] (==0.26.0)", "ansys-saf-product-manager[all] (==0.5.0)"]
 core-dash = ["ansys-saf-glow-engine[dash] (==2.5.0)"]
 core-hps = ["ansys-saf-glow-engine[hps] (==2.5.0)"]
@@ -1662,14 +1662,14 @@ domdf-python-tools = ">=2.2.0"
 
 [[package]]
 name = "distlib"
-version = "0.3.9"
+version = "0.4.4"
 description = "Distribution utilities"
 optional = false
 python-versions = "*"
 groups = ["style", "tests"]
 files = [
-    {file = "distlib-0.3.9-py2.py3-none-any.whl", hash = "sha256:47f8c22fd27c27e25a65601af709b38e4f0a45ea4fc2e710f65755fa8caaaf87"},
-    {file = "distlib-0.3.9.tar.gz", hash = "sha256:a60f20dea646b8a33f3e7772f74dc0b2d0772d2837ee1342a00645c81edf9403"},
+    {file = "distlib-0.4.4-py2.py3-none-any.whl", hash = "sha256:cf09d55b1e85a89576b036aeb71550bfd68320f3f21761ca329eadadad918638"},
+    {file = "distlib-0.4.4.tar.gz", hash = "sha256:ca4175b4ac7f71223cc30ed7248c45d2b38c2439d8ee6e498ab67ed63cf3508d"},
 ]
 
 [[package]]
@@ -3647,14 +3647,14 @@ files = [
 
 [[package]]
 name = "packaging"
-version = "24.2"
+version = "26.3"
 description = "Core utilities for Python packages"
 optional = false
-python-versions = ">=3.8"
+python-versions = ">=3.9"
 groups = ["main", "build", "desktop", "doc", "style", "tests", "ui"]
 files = [
-    {file = "packaging-24.2-py3-none-any.whl", hash = "sha256:09abb1bccd265c01f4a3aa3f7a7db064b36514d2cba19a2f694fe6150451a759"},
-    {file = "packaging-24.2.tar.gz", hash = "sha256:c228a6dc5e932d346bc5739379109d49e8853dd8223571c7c5b55260edc0b97f"},
+    {file = "packaging-26.3-py3-none-any.whl", hash = "sha256:d7193f7c8e4e93f444fde0262bf90af30e16fa0ad0ad44cb553c87339b23cd1c"},
+    {file = "packaging-26.3.tar.gz", hash = "sha256:94edc256424af38762eb31306eed28beb9f0efc50a8837492c9d6fd6004aed79"},
 ]
 
 [[package]]
@@ -3964,20 +3964,15 @@ testing = ["pytest", "pytest-cov", "wheel"]
 
 [[package]]
 name = "platformdirs"
-version = "4.3.8"
+version = "4.13.5"
 description = "A small Python package for determining appropriate platform-specific dirs, e.g. a `user data dir`."
 optional = false
-python-versions = ">=3.9"
+python-versions = ">=3.11"
 groups = ["doc", "style", "tests"]
 files = [
-    {file = "platformdirs-4.3.8-py3-none-any.whl", hash = "sha256:ff7059bb7eb1179e2685604f4aaf157cfd9535242bd23742eadc3c13542139b4"},
-    {file = "platformdirs-4.3.8.tar.gz", hash = "sha256:3d512d96e16bcb959a814c9f348431070822a6496326a4be0911c40b5a74c2bc"},
+    {file = "platformdirs-4.13.5-py3-none-any.whl", hash = "sha256:53d3ec4280b815c1e0b02edad7f9ee8fda1ba9c0865dd9c2e6e63849ce82fc1e"},
+    {file = "platformdirs-4.13.5.tar.gz", hash = "sha256:05831adf87d392760f4b5c3a0a95579ab5a10b18b9b9bd43680dcb47544788a0"},
 ]
-
-[package.extras]
-docs = ["furo (>=2024.8.6)", "proselint (>=0.14)", "sphinx (>=8.1.3)", "sphinx-autodoc-typehints (>=3)"]
-test = ["appdirs (==1.4.4)", "covdefaults (>=2.3)", "pytest (>=8.3.4)", "pytest-cov (>=6)", "pytest-mock (>=3.14)"]
-type = ["mypy (>=1.14.1)"]
 
 [[package]]
 name = "plotly"
@@ -6484,22 +6479,22 @@ files = [
 
 [[package]]
 name = "virtualenv"
-version = "21.14.2"
+version = "21.14.12"
 description = "Virtual Python Environment builder"
 optional = false
 python-versions = ">=3.9"
 groups = ["style", "tests"]
 files = [
-    {file = "virtualenv-21.14.2-py3-none-any.whl", hash = "sha256:6a8b7fd4e4ee00ebcdc1c5ee8cffd035d1fe130e354e8c9a44f510aac8affdc1"},
-    {file = "virtualenv-21.14.2.tar.gz", hash = "sha256:571930928b11e43db690073ad8228162eca8a3f8fd3a87acdeae07df7dd57068"},
+    {file = "virtualenv-21.14.12-py3-none-any.whl", hash = "sha256:7820aeaef23f1f59a96458edfc7f9d3deac937155718de15f1c9a64471e15551"},
+    {file = "virtualenv-21.14.12.tar.gz", hash = "sha256:bbcfb78e36c22ad70c6917c4aecb5e63477d3c138e9f88c946f320e31859c76a"},
 ]
 
 [package.dependencies]
-distlib = ">=0.3.7,<1"
+distlib = ">=0.4.3,<1"
 filelock = {version = ">=3.24.2,<5", markers = "python_version >= \"3.10\""}
-packaging = ">=23.1"
-platformdirs = ">=3.9.1,<5"
-python-discovery = ">=1.6"
+packaging = ">=26.3"
+platformdirs = ">=4.4,<5"
+python-discovery = ">=1.6.1"
 
 [[package]]
 name = "webencodings"

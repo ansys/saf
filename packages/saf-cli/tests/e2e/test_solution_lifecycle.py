@@ -169,4 +169,4 @@ def test_solution_lifecycle(
         portal_ui_port,
         use_projects_dashboard=True,
     )
-    check_ui_is_functional(get_selenium_webdriver(), project_ui_url=project_ui_url)
+    check_ui_is_functional(get_selenium_webdriver(), project_ui_url=project_ui_url, with_portal=True)

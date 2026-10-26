@@ -91,7 +91,7 @@ concurrency:
 
 env:
   LIBRARY_NAME: saf-sdk
-  MINIMUM_PIP_VERSION: "26.0" # Minimal version to have the dependency resolution to be successful
+  MINIMUM_PIP_VERSION: "26.2.2" # https://github.com/pypa/pip/blob/main/NEWS.rst#2622-2026-10-20
 
 jobs:
   run-tests-action:

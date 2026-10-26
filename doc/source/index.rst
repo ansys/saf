@@ -17,6 +17,7 @@
    user_guide/index
    examples/index
    api/index
+   release_notes/index
    contribute/index
 
 

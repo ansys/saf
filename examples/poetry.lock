@@ -3038,21 +3038,21 @@ files = [
 
 [[package]]
 name = "dash-mantine-components"
-version = "2.7.0"
+version = "2.8.1"
 description = "Plotly Dash Components based on Mantine"
 optional = false
 python-versions = "*"
 groups = ["ui"]
 files = [
-    {file = "dash_mantine_components-2.7.0-py3-none-any.whl", hash = "sha256:a91e000e2e10236661bfabc06ddb43d5ac9913e2e4bf2fd5ae184a8e00a588f3"},
-    {file = "dash_mantine_components-2.7.0.tar.gz", hash = "sha256:ff397f6f6149538c916d914bae5ada554276f929beab9fccbf88a6305a378574"},
+    {file = "dash_mantine_components-2.8.1-py3-none-any.whl", hash = "sha256:c0bf417b2357a1b687ab24e73321cbfb1c6a8f1c50bb302c03268914044b0aae"},
+    {file = "dash_mantine_components-2.8.1.tar.gz", hash = "sha256:a3603e11626d3c93a795ab09da884d12c1e1426313e2e24d09b9db3b4b9ea98a"},
 ]
 
 [package.dependencies]
 dash = ">=2"
 
 [package.extras]
-dev = ["black", "build", "dash-iconify", "dash[ci,dev,testing] (>=4)", "pytest (<8.1.0)", "pyyaml (>=5.0)", "selenium (<4.3.0)", "wheel"]
+dev = ["black", "build", "dash-iconify", "dash[ci,dev,testing] (>=4.5.0rc1)", "pytest (>=6.0.2,<8.1.0)", "pyyaml (>=5.0)", "selenium (>=4.11.0,<=4.49.0)", "wheel"]
 
 [[package]]
 name = "dash-uploader"

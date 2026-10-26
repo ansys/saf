@@ -211,9 +211,7 @@ def test_start_stop_supervision_callback():
 
 def test_update_started_time_label_callback():
     """update_started_time_label displays started time or fallback."""
-    with mock.patch(
-        "ansys.solutions.dash_super_components.transaction_supervisor.datetime"
-    ) as mock_datetime:
+    with mock.patch("ansys.solutions.dash_super_components.transaction_supervisor.datetime") as mock_datetime:
         mock_datetime.fromtimestamp.return_value = datetime(2024, 1, 1, 13, 0)
         result = TransactionSupervisor.update_started_time_label(1704110400.0)
         mock_datetime.fromtimestamp.assert_called_once_with(1704110400.0)

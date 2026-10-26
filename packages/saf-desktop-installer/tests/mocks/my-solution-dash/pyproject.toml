@@ -43,7 +43,7 @@ ansys-solutions-custom-package-for-installer-test = { path = "build_assets/ansys
 [tool.poetry.group.desktop]
 optional = true
 [tool.poetry.group.desktop.dependencies]
-ansys-saf-desktop-orchestrator = { version = "^1.13", allow-prereleases = true, extras = [ "all" ] }
+ansys-saf-desktop-orchestrator = { version = "^1.14", allow-prereleases = true, extras = [ "all" ] }
 tqdm = "^4.0.0"   # example of custom desktop dependency
 
 [tool.poetry.group.ui]
@@ -65,4 +65,4 @@ optional = true
 sphinx = "^6.2.1"
 
 [build-system-requirements]
-build-system-version = "2.3.2"
+build-system-version = "2.5.1"

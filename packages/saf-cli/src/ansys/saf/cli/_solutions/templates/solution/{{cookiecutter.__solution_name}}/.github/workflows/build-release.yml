@@ -14,7 +14,7 @@ on:
 
 env:
   MAIN_PYTHON_VERSION: "3.12"
-  POETRY_VERSION: "2.3.2"
+  POETRY_VERSION: "2.5.1"
   DOCUMENTATION_CNAME: "" # Replace with the CNAME of the documentation
   WHEEL: "{{ cookiecutter.__solution_name }}"
   HTML_DOCUMENTATION_ARTIFACT: "{{ cookiecutter.__solution_name }}-documentation"

@@ -17,8 +17,10 @@
 import ast
 from collections.abc import Callable, Generator
 import configparser
+import ctypes
 import getpass
 import json
+import locale
 import logging
 import os
 from pathlib import Path
@@ -28,6 +30,7 @@ import shlex
 import shutil
 import subprocess
 import sys
+import tempfile
 from typing import Any, Protocol
 import venv
 import zipfile
@@ -36,7 +39,6 @@ from dotenv import set_key
 import httpx2
 from packaging.markers import Marker
 from packaging.version import parse as parse_version
-from pylnk3 import Lnk, parse  # pyright: ignore[reportMissingTypeStubs, reportUnknownVariableType]
 import pytest
 from selenium.webdriver.chrome.webdriver import WebDriver
 from selenium.webdriver.common.by import By
@@ -46,13 +48,18 @@ import toml
 from ansys.saf.desktop.installer.__main__ import _load_filtered_dotenv  # pyright: ignore[reportPrivateUsage]
 from ansys.saf.desktop.installer._package.download_python import MINIMUM_REQUIRED_VERSIONS
 from ansys.saf.desktop.installer._package.solution import get_solution_namespace_info
-from ansys.saf.desktop.installer.solution_desktop_deployment import TARGET_SOLUTIONS_DIRECTORY_NAME
+from ansys.saf.desktop.installer.solution_desktop_deployment import (
+    SECURITY_MAX_SID_SIZE,
+    TARGET_SOLUTIONS_DIRECTORY_NAME,
+    WIN_BUILTIN_ADMINISTRATORS_SID,
+)
 from ansys.saf.testing.common import YieldFixture
 from ansys.saf.testing.network import get_random_free_port
 from ansys.saf.testing.platform_specific import is_ci_run
 from ansys.saf.testing.selenium import (
     wait_for_element_and_click,
     wait_for_element_and_send_text,
+    wait_for_partial_text,
     wait_for_text,
 )
 from tests.e2e.installer_process import SolutionInstallerProcess
@@ -63,18 +70,25 @@ SOLUTION_DISPLAY_NAME = {
     "my-solution-dash": "My Solution Dash",
     "my-solution-dash-without-portal": "My Solution Dash",
     "my-solution-dash-old": "My Solution Dash Old",
+    "my-solution-dash-projects-dashboard": "My Solution Dash Projects Dashboard",
+    "my-solution-dash-projects-dashboard-only": "My Solution Dash Projects Dashboard",
     "synopsys-custom-ns-solution": "Custom NS Solution",
 }
 SOLUTION_CLASS_NAME = {
     "my-solution-dash": "MySolutionDashSolution",
     "my-solution-dash-without-portal": "MySolutionDashSolution",
     "my-solution-dash-old": "MySolutionDashOldSolution",
+    "my-solution-dash-projects-dashboard": "MySolutionDashProjectsDashboardSolution",
+    "my-solution-dash-projects-dashboard-only": "MySolutionDashProjectsDashboardSolution",
     "synopsys-custom-ns-solution": "MyCustomNSSolution",
 }
 SOLUTION_EXTRA_PACKAGES = {
     "my-solution-dash": {"ansys_saf_desktop_portal": "desktop", "ansys_saf_aspire": "desktop"},
     "my-solution-dash-without-portal": {"ansys_saf_aspire": "desktop"},
     "my-solution-dash-old": {"ansys_saf_desktop_portal": "desktop", "ansys_saf_aspire": "desktop"},
+    # projects-dashboard is a locked dependency of the mock; desktop-portal is injected so both are available.
+    "my-solution-dash-projects-dashboard": {"ansys_saf_desktop_portal": "desktop", "ansys_saf_aspire": "desktop"},
+    "my-solution-dash-projects-dashboard-only": {"ansys_saf_aspire": "desktop"},
     "synopsys-custom-ns-solution": {"ansys_saf_desktop_portal": "desktop", "ansys_saf_aspire": "desktop"},
 }
 logger = logging.getLogger(__name__)
@@ -900,13 +914,29 @@ def check_dependencies(
             raise ValueError(f"Required dependency {package} not found in the installed solution.") from e
 
 
+def _read_windows_shortcut(shortcut_path: Path) -> tuple[Path, str]:
+    """Return the target path and arguments of a Windows shortcut, as read by the Windows shell."""
+    # pylnk3 truncates targets under C:\Users, so use WScript.Shell (path passed via env, no quoting).
+    command = (
+        "[Console]::OutputEncoding = [Text.Encoding]::UTF8; "
+        "$s = (New-Object -ComObject WScript.Shell).CreateShortcut($env:SAF_TEST_LNK_PATH); $s.TargetPath; $s.Arguments"
+    )
+    output = subprocess.check_output(
+        ["powershell.exe", "-NoProfile", "-Command", command],
+        encoding="utf-8",
+        env={**os.environ, "SAF_TEST_LNK_PATH": str(shortcut_path)},
+    )
+    target_path, _, arguments = output.strip().partition("\n")
+    return Path(target_path.strip()), arguments.strip()
+
+
 def _check_shortcut_uses_correct_python(shortcut_path: Path, tmp_path: Path, solution_root_dir: Path, pythonw: bool):
     installed_solution_venv_python_exec = _get_installed_solution_venv_python_executable(tmp_path, solution_root_dir)
     assert installed_solution_venv_python_exec.is_file()
     if platform.system() == "Windows":
-        lnk: Lnk = parse(str(shortcut_path))
-        assert Path(lnk.path).parent.as_posix() == installed_solution_venv_python_exec.parent.as_posix()  # type: ignore
-        python_name = Path(lnk.path).name  # pyright: ignore[reportUnknownMemberType, reportArgumentType]
+        target_path, _ = _read_windows_shortcut(shortcut_path)
+        assert target_path.parent.as_posix() == installed_solution_venv_python_exec.parent.as_posix()
+        python_name = target_path.name
         assert python_name == "pythonw.exe" if pythonw else python_name == "python.exe"
     elif platform.system() == "Linux":
         config = configparser.ConfigParser()
@@ -924,9 +954,8 @@ def _shortcut_uses_portal(shortcut_path: Path, tmp_path: Path, solution_root_dir
     installed_solution_venv_python_exec = _get_installed_solution_venv_python_executable(tmp_path, solution_root_dir)
     assert installed_solution_venv_python_exec.is_file()
     if platform.system() == "Windows":
-        lnk: Lnk = parse(str(shortcut_path))
-        arguments = getattr(lnk, "arguments", "")  # pyright: ignore[reportUnknownMemberType, reportArgumentType]
-        return "--portal" in str(arguments)
+        _, arguments = _read_windows_shortcut(shortcut_path)
+        return "--portal" in arguments
     elif platform.system() == "Linux":
         config = configparser.ConfigParser()
         config.read(shortcut_path)
@@ -937,9 +966,212 @@ def _shortcut_uses_portal(shortcut_path: Path, tmp_path: Path, solution_root_dir
         raise ValueError("Unsupported operating system")
 
 
-def _get_shortcut_path(solution_root_dir: Path, use_sudo: bool = False) -> Path:
+def _run_as_standard_user(cmd: list[str], env: dict[str, str] | None = None) -> subprocess.CompletedProcess[str]:
+    """Run ``cmd`` with a restricted copy of the current token: Administrators deny-only and no privileges."""
+    if sys.platform != "win32":
+        raise RuntimeError("Running as a standard user is only supported on Windows.")
+    from ctypes import wintypes
+    import msvcrt
+
+    class SidAndAttributes(ctypes.Structure):
+        _fields_ = [("Sid", ctypes.c_void_p), ("Attributes", wintypes.DWORD)]
+
+    class StartupInfo(ctypes.Structure):
+        _fields_ = [
+            ("cb", wintypes.DWORD),
+            ("lpReserved", wintypes.LPWSTR),
+            ("lpDesktop", wintypes.LPWSTR),
+            ("lpTitle", wintypes.LPWSTR),
+            ("dwX", wintypes.DWORD),
+            ("dwY", wintypes.DWORD),
+            ("dwXSize", wintypes.DWORD),
+            ("dwYSize", wintypes.DWORD),
+            ("dwXCountChars", wintypes.DWORD),
+            ("dwYCountChars", wintypes.DWORD),
+            ("dwFillAttribute", wintypes.DWORD),
+            ("dwFlags", wintypes.DWORD),
+            ("wShowWindow", wintypes.WORD),
+            ("cbReserved2", wintypes.WORD),
+            ("lpReserved2", ctypes.c_void_p),
+            ("hStdInput", wintypes.HANDLE),
+            ("hStdOutput", wintypes.HANDLE),
+            ("hStdError", wintypes.HANDLE),
+        ]
+
+    class ProcessInformation(ctypes.Structure):
+        _fields_ = [
+            ("hProcess", wintypes.HANDLE),
+            ("hThread", wintypes.HANDLE),
+            ("dwProcessId", wintypes.DWORD),
+            ("dwThreadId", wintypes.DWORD),
+        ]
+
+    advapi32 = ctypes.WinDLL("advapi32", use_last_error=True)
+    kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
+    kernel32.GetCurrentProcess.restype = wintypes.HANDLE
+    kernel32.WaitForSingleObject.argtypes = [wintypes.HANDLE, wintypes.DWORD]
+    kernel32.GetExitCodeProcess.argtypes = [wintypes.HANDLE, ctypes.POINTER(wintypes.DWORD)]
+    kernel32.CloseHandle.argtypes = [wintypes.HANDLE]
+    advapi32.OpenProcessToken.argtypes = [wintypes.HANDLE, wintypes.DWORD, ctypes.POINTER(wintypes.HANDLE)]
+    advapi32.CreateRestrictedToken.argtypes = [
+        wintypes.HANDLE,
+        wintypes.DWORD,
+        wintypes.DWORD,
+        ctypes.POINTER(SidAndAttributes),
+        wintypes.DWORD,
+        ctypes.c_void_p,
+        wintypes.DWORD,
+        ctypes.c_void_p,
+        ctypes.POINTER(wintypes.HANDLE),
+    ]
+    advapi32.GetTokenInformation.argtypes = [
+        wintypes.HANDLE,
+        ctypes.c_int,
+        ctypes.c_void_p,
+        wintypes.DWORD,
+        ctypes.POINTER(wintypes.DWORD),
+    ]
+    advapi32.SetTokenInformation.argtypes = [wintypes.HANDLE, ctypes.c_int, ctypes.c_void_p, wintypes.DWORD]
+    advapi32.InitializeAcl.argtypes = [ctypes.c_void_p, wintypes.DWORD, wintypes.DWORD]
+    advapi32.AddAccessAllowedAce.argtypes = [ctypes.c_void_p, wintypes.DWORD, wintypes.DWORD, ctypes.c_void_p]
+    advapi32.CreateProcessAsUserW.argtypes = [
+        wintypes.HANDLE,
+        wintypes.LPCWSTR,
+        ctypes.c_void_p,
+        ctypes.c_void_p,
+        ctypes.c_void_p,
+        wintypes.BOOL,
+        wintypes.DWORD,
+        ctypes.c_void_p,
+        wintypes.LPCWSTR,
+        ctypes.POINTER(StartupInfo),
+        ctypes.POINTER(ProcessInformation),
+    ]
+
+    def check(succeeded: int) -> None:
+        if not succeeded:
+            raise ctypes.WinError(ctypes.get_last_error())
+
+    token, restricted_token = wintypes.HANDLE(), wintypes.HANDLE()
+    # TOKEN_ASSIGN_PRIMARY | TOKEN_DUPLICATE | TOKEN_QUERY | TOKEN_ADJUST_DEFAULT
+    check(advapi32.OpenProcessToken(kernel32.GetCurrentProcess(), 0x8B, ctypes.byref(token)))
+    admin_sid = ctypes.create_string_buffer(SECURITY_MAX_SID_SIZE)
+    admin_sid_size = wintypes.DWORD(SECURITY_MAX_SID_SIZE)
+    check(advapi32.CreateWellKnownSid(WIN_BUILTIN_ADMINISTRATORS_SID, None, admin_sid, ctypes.byref(admin_sid_size)))
+    sid_to_disable = SidAndAttributes(ctypes.addressof(admin_sid), 0)
+    try:
+        # DISABLE_MAX_PRIVILEGE, with the Administrators SID made deny-only.
+        check(
+            advapi32.CreateRestrictedToken(
+                token, 0x1, 1, ctypes.byref(sid_to_disable), 0, None, 0, None, ctypes.byref(restricted_token)
+            )
+        )
+    finally:
+        kernel32.CloseHandle(token)
+
+    try:
+        # Otherwise new objects would be owned by the (now deny-only) Administrators group.
+        token_user = ctypes.create_string_buffer(ctypes.sizeof(SidAndAttributes) + SECURITY_MAX_SID_SIZE)
+        token_user_size = wintypes.DWORD()
+        check(
+            advapi32.GetTokenInformation(
+                restricted_token, 1, token_user, ctypes.sizeof(token_user), ctypes.byref(token_user_size)
+            )
+        )  # TokenUser
+        owner = ctypes.c_void_p(SidAndAttributes.from_buffer(token_user).Sid)
+        # TokenOwner
+        check(advapi32.SetTokenInformation(restricted_token, 4, ctypes.byref(owner), ctypes.sizeof(owner)))
+
+        # The elevated default DACL only grants Administrators/SYSTEM; grant the user like a real standard token.
+        system_sid = ctypes.create_string_buffer(SECURITY_MAX_SID_SIZE)
+        system_sid_size = wintypes.DWORD(SECURITY_MAX_SID_SIZE)
+        check(advapi32.CreateWellKnownSid(22, None, system_sid, ctypes.byref(system_sid_size)))  # WinLocalSystemSid
+        default_dacl = ctypes.create_string_buffer(1024)
+        check(advapi32.InitializeAcl(default_dacl, ctypes.sizeof(default_dacl), 2))  # ACL_REVISION
+        for sid in (owner, system_sid):
+            check(advapi32.AddAccessAllowedAce(default_dacl, 2, 0x10000000, sid))  # GENERIC_ALL
+        default_dacl_ptr = ctypes.c_void_p(ctypes.addressof(default_dacl))
+        # TokenDefaultDacl
+        check(
+            advapi32.SetTokenInformation(
+                restricted_token, 6, ctypes.byref(default_dacl_ptr), ctypes.sizeof(default_dacl_ptr)
+            )
+        )
+
+        with (
+            tempfile.TemporaryDirectory() as output_dir,
+            Path(os.devnull).open("rb") as stdin,
+            (Path(output_dir) / "stdout").open("w+b") as stdout,
+            (Path(output_dir) / "stderr").open("w+b") as stderr,
+        ):
+            std_handles = [msvcrt.get_osfhandle(stream.fileno()) for stream in (stdin, stdout, stderr)]
+            for handle in std_handles:
+                os.set_handle_inheritable(handle, True)
+            startup_info = StartupInfo(
+                cb=ctypes.sizeof(StartupInfo),
+                dwFlags=0x100,  # STARTF_USESTDHANDLES
+                hStdInput=std_handles[0],
+                hStdOutput=std_handles[1],
+                hStdError=std_handles[2],
+            )
+            process_info = ProcessInformation()
+            command_line = ctypes.create_unicode_buffer(subprocess.list2cmdline(cmd))
+            environment = ctypes.create_unicode_buffer(
+                "".join(f"{key}={value}\0" for key, value in (env or os.environ).items()) + "\0"
+            )
+            check(
+                advapi32.CreateProcessAsUserW(
+                    restricted_token,
+                    None,
+                    command_line,
+                    None,
+                    None,
+                    True,
+                    0x400,  # CREATE_UNICODE_ENVIRONMENT; CREATE_NO_WINDOW fails with STATUS_DLL_INIT_FAILED.
+                    environment,
+                    None,
+                    ctypes.byref(startup_info),
+                    ctypes.byref(process_info),
+                )
+            )
+            exit_code = wintypes.DWORD()
+            try:
+                kernel32.WaitForSingleObject(process_info.hProcess, 0xFFFFFFFF)  # INFINITE
+                check(kernel32.GetExitCodeProcess(process_info.hProcess, ctypes.byref(exit_code)))
+            finally:
+                kernel32.CloseHandle(process_info.hProcess)
+                kernel32.CloseHandle(process_info.hThread)
+            stdout.seek(0)
+            stderr.seek(0)
+            encoding = locale.getpreferredencoding(False)
+            return subprocess.CompletedProcess(
+                cmd,
+                exit_code.value,
+                stdout.read().decode(encoding, errors="replace"),
+                stderr.read().decode(encoding, errors="replace"),
+            )
+    finally:
+        kernel32.CloseHandle(restricted_token)
+
+
+def _get_expected_windows_desktop_directory(as_standard_user: bool = False) -> Path:
+    is_admin = (
+        "$false" if as_standard_user else "$principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)"
+    )
+    command = (
+        "[Console]::OutputEncoding = [Text.Encoding]::UTF8; "
+        "$principal = [Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent(); "
+        f"$isAdmin = {is_admin}; "
+        "[Environment]::GetFolderPath($(if ($isAdmin) { 'CommonDesktopDirectory' } else { 'Desktop' }), 'DoNotVerify')"
+    )
+    output = subprocess.check_output(["powershell.exe", "-NoProfile", "-Command", command], encoding="utf-8")
+    return Path(output.strip())
+
+
+def _get_shortcut_path(solution_root_dir: Path, use_sudo: bool = False, as_standard_user: bool = False) -> Path:
     if platform.system() == "Windows":
-        shortcut_path = Path(os.environ["PUBLIC"]) / "Desktop" / f"{SOLUTION_DISPLAY_NAME[solution_root_dir.name]}.lnk"
+        shortcut_dir = _get_expected_windows_desktop_directory(as_standard_user)
+        shortcut_path = shortcut_dir / f"{SOLUTION_DISPLAY_NAME[solution_root_dir.name]}.lnk"
     elif platform.system() == "Linux":
         shortcut_dir = Path("/usr/share/applications") if use_sudo else Path(os.environ["HOME"]) / "Desktop"
         shortcut_path = shortcut_dir / f"{SOLUTION_DISPLAY_NAME[solution_root_dir.name]}.desktop"
@@ -960,6 +1192,7 @@ def check_installed_solution_files(
     force_python_from_source: bool = False,
     use_portal: bool = True,
     use_sudo: bool = False,
+    as_standard_user: bool = False,
 ) -> Path:
     installation_path = tmp_path if not use_sudo else Path("/opt") / "ansys_inc" / TARGET_SOLUTIONS_DIRECTORY_NAME
     installed_solution_version_dir = _get_installed_solution_version_dir(installation_path, solution_root_dir)
@@ -976,7 +1209,7 @@ def check_installed_solution_files(
             solution_root_dir,
             force_python_from_source,
         )
-    shortcut_path = _get_shortcut_path(solution_root_dir, use_sudo)
+    shortcut_path = _get_shortcut_path(solution_root_dir, use_sudo, as_standard_user)
     assert shortcut_path.is_file()
     if platform.system() == "Linux" and not use_sudo:
         application_path = _get_solution_linux_application_path(shortcut_path)
@@ -995,6 +1228,7 @@ class InstallSolution(Protocol):
         expected_return_code: int = 0,
         extra_flags: list[str] | None = None,
         use_sudo: bool = False,
+        as_standard_user: bool = False,
     ) -> list[str]: ...
 
 
@@ -1007,10 +1241,9 @@ def install_solution() -> InstallSolution:
         expected_return_code: int = 0,
         extra_flags: list[str] | None = None,
         use_sudo: bool = False,
+        as_standard_user: bool = False,
     ) -> list[str]:
         installer_path = _get_solution_installer_path(solution_root_dir)
-        shortcut_path = _get_shortcut_path(solution_root_dir, use_sudo)
-        shortcut_path.parent.mkdir(parents=True, exist_ok=True)
         cmd = [installer_path.as_posix(), "--no-ui"]
         cmd += ["--installation-directory", tmp_path.as_posix()] if not use_sudo else []
         if extra_flags:
@@ -1021,7 +1254,19 @@ def install_solution() -> InstallSolution:
             # itself was launched under sudo we propagate the real value; otherwise we fall back to
             # the current invoking user so the installer subprocess still takes the root branch.
             installation_env["SUDO_USER"] = os.environ.get("SUDO_USER") or getpass.getuser()
-        p = subprocess.run(cmd, capture_output=True, text=True, env=installation_env)
+        if as_standard_user:
+            is_admin_probe = "import ctypes, sys; sys.exit(ctypes.windll.shell32.IsUserAnAdmin())"
+            assert _run_as_standard_user([sys.executable, "-c", is_admin_probe]).returncode == 0, (
+                "Installer would run elevated."
+            )
+            # Elevated pytest creates tmp dirs owned by Administrators, which the restricted token cannot use.
+            user = f"{os.environ['USERDOMAIN']}\\{getpass.getuser()}"
+            subprocess.run(["icacls", tmp_path, "/grant", f"{user}:(OI)(CI)F", "/Q"], check=True)
+            # Wheels cached by elevated runs are only readable by Administrators.
+            installation_env["PIP_NO_CACHE_DIR"] = "1"
+            p = _run_as_standard_user(cmd, installation_env)
+        else:
+            p = subprocess.run(cmd, capture_output=True, text=True, env=installation_env)
         assert p.returncode == expected_return_code, p.stderr
         return p.stdout.splitlines()
 
@@ -1048,8 +1293,6 @@ def install_solution_via_gui() -> YieldFixture[InstallSolutionGUI]:
         use_sudo: bool = False,
     ) -> SolutionInstallerProcess:
         installer_path = _get_solution_installer_path(solution_root_dir)
-        shortcut_path = _get_shortcut_path(solution_root_dir, use_sudo)
-        shortcut_path.parent.mkdir(parents=True, exist_ok=True)
         cmd = [installer_path.as_posix()]
         cmd += ["--installation-directory", tmp_path.as_posix()] if not use_sudo else []
         p = SolutionInstallerProcess.run(cmd)
@@ -1157,6 +1400,7 @@ def check_solution_launched_correctly(
     portal_ui_port: str,
     selenium_webdriver: WebDriver,
     is_otlp_enabled: bool = False,
+    projects_dashboard: bool = False,
 ) -> str:
     # We need services to be healthy before checking logs or trying to use the solution
     if portal_ui_port != "":
@@ -1191,6 +1435,20 @@ def check_solution_launched_correctly(
     wait_for_element_and_send_text(selenium_webdriver, "second-arg", str(second_arg))
     wait_for_element_and_click(selenium_webdriver, "calculate")
     wait_for_text(selenium_webdriver, "result", str(first_arg + second_arg))
+
+    if projects_dashboard:
+        # The orchestrator serves the Projects Dashboard from the solution UI instead of starting SAF Portal.
+        # Read orchestrator.log, not stdout: stdout is not captured when the shortcut runs pythonw on Windows.
+        projects_dashboard_url = f"http://127.0.0.1:{glow_ui_port}/projects"
+        _check_message_in_logs(solution_proc, f"INFO - Projects Dashboard: {projects_dashboard_url}", "orchestrator")
+        _check_message_in_logs(solution_proc, "INFO - SAF Portal: not launched", "orchestrator")
+        assert not find_msg_in_output("SAF Portal: http://", solution_proc.orchestrator_logs())
+        _check_service_health(projects_dashboard_url)
+        selenium_webdriver.get(projects_dashboard_url)
+        # The dashboard lists the project created above through the GLOW API, proving it reached the API.
+        wait_for_partial_text(selenium_webdriver, "projects-dashboard-container", "test")
+    elif portal_ui_port != "":
+        assert not find_msg_in_output("Projects Dashboard: http://", solution_proc.orchestrator_logs())
 
     return project_ui_url
 

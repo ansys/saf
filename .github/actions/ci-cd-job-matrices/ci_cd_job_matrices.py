@@ -51,15 +51,7 @@ FLAGSHIP_PRODUCTS = [
     "visor",
 ]
 
-
-DEFAULT_CODE_STYLE_POETRY_ARGS = "--with tests --all-extras"
-
-CODE_STYLE_POETRY_ARGS = {
-    "dash-super-components": "--with tests,style --all-extras",
-}
-
 TESTS_DEFINITIONS_DIR = ".github/workflows/tests_groups_definitions"
-
 TESTS_DEFINITIONS_PER_TARGET = {
     "bdm-python-api": ["bdm-python-api"],
     "bdm-python-shared-volume": ["bdm-python-shared-volume"],
@@ -79,21 +71,6 @@ TESTS_DEFINITIONS_PER_TARGET = {
     "saf-testing": ["saf-testing"],
     "examples": ["examples"],
 }
-
-UV_PACKAGES = [
-    "bdm-python-api",
-    "bdm-python-shared-volume",
-    "glow-engine",
-    "saf-cli",
-    "saf-desktop-installer",
-    "saf-desktop-orchestrator",
-    "saf-iam-oidc",
-    "saf-product-configuration",
-    "saf-product-manager",
-    "saf-projects-dashboard",
-    "saf-testing",
-    "saf-templates",
-]
 
 
 def write_output(name: str, value: str) -> None:
@@ -126,44 +103,10 @@ def get_pr_changes() -> list[str]:
     return pr_changes
 
 
-def get_changed_moon_packages(pr_changes: list[str]) -> list[str]:
-    changed_packages = [pkg for pkg in pr_changes if pkg in UV_PACKAGES]
-    write_matrix_to_output("moon_packages_matrix", [{"library-name": pkg} for pkg in changed_packages])
-    return changed_packages
-
-
-def get_changed_poetry_packages(pr_changes: list[str]) -> list[str]:
-    changed_packages = [pkg for pkg in pr_changes if pkg in SAF_PACKAGES and pkg not in UV_PACKAGES]
-    write_matrix_to_output("poetry_packages_matrix", [{"library-name": pkg} for pkg in changed_packages])
-    return changed_packages
-
-
 def get_changed_packages(pr_changes: list[str]) -> list[str]:
     changed_packages = [pkg for pkg in pr_changes if pkg in SAF_PACKAGES]
     write_matrix_to_output("packages_matrix", [{"library-name": pkg} for pkg in changed_packages])
     return changed_packages
-
-
-def get_code_style_matrix_entries(changed_packages: list[str], pr_changes: list[str] | None = None) -> None:
-    package_entries = [
-        {
-            "target-directory": f"packages/{pkg}",
-            "dependency-manager": "poetry",
-            "poetry-install-args": CODE_STYLE_POETRY_ARGS.get(pkg, DEFAULT_CODE_STYLE_POETRY_ARGS),
-        }
-        for pkg in changed_packages
-        if pkg in SAF_PACKAGES and pkg not in UV_PACKAGES
-    ]
-    code_style_entries = [*package_entries]
-    if pr_changes and "examples" in pr_changes:
-        code_style_entries.append(
-            {
-                "target-directory": "examples",
-                "dependency-manager": "poetry",
-                "poetry-install-args": DEFAULT_CODE_STYLE_POETRY_ARGS,
-            },
-        )
-    write_matrix_to_output("code_style_matrix", code_style_entries)
 
 
 def get_compatibility_matrix_entries(changed_packages: list[str]) -> None:
@@ -217,9 +160,6 @@ def get_tests_generated_solution_flag(changed_packages: list[str]) -> None:
 
 pr_changes = get_pr_changes()
 changed_packages = get_changed_packages(pr_changes)
-get_changed_poetry_packages(pr_changes)
-get_changed_moon_packages(pr_changes)
-get_code_style_matrix_entries(changed_packages, pr_changes)
 get_compatibility_matrix_entries(changed_packages)
 get_tests_matrix_entries(pr_changes, changed_packages)
 get_tests_generated_solution_flag(changed_packages)

@@ -297,8 +297,16 @@ def check_expected_messages(
     assert p.find_msg_in_output(f"Solution UI: {solution_ui_url}")
     otel_dashboard_url = p.get_otel_dashboard_url()
     assert p.find_msg_in_output(f"OTEL Dashboard: {otel_dashboard_url}")
-    portal_url = p.get_portal_url() if with_portal else "not launched"
-    assert p.find_msg_in_output(f"SAF Portal: {portal_url}")
+    projects_dashboard_url = p.find_msg_in_output(
+        r"Projects Dashboard: http://127\.0\.0\.1:\d+/projects",
+        regex=True,
+    )
+    if projects_dashboard_url:
+        assert p.find_msg_in_output(f"Projects Dashboard: {p.get_portal_url()}")
+        assert p.find_msg_in_output("SAF Portal: not launched")
+    else:
+        portal_url = p.get_portal_url() if with_portal else "not launched"
+        assert p.find_msg_in_output(f"SAF Portal: {portal_url}")
     # TODO if PIM and additional services get tested, check URL as done for portal
     assert p.find_msg_in_output("PIM Light Server: not launched")
     assert p.find_msg_in_output("Additional services: not launched")
@@ -324,7 +332,10 @@ def check_ui_is_functional(
     Check UI is functional. Accepts either a running SAFProcess (p) or a direct project_ui_url.
     If p is provided, uses it to get the solution UI URL. Otherwise, uses project_ui_url directly.
     """
-    solution_ui_url = p.get_solution_ui_url(no_project=with_portal) if p is not None else project_ui_url
+    if with_portal and p is not None:
+        solution_ui_url = p.get_portal_url()
+    else:
+        solution_ui_url = p.get_solution_ui_url(no_project=with_portal) if p is not None else project_ui_url
     if not solution_ui_url:
         raise ValueError("Either p (SAFProcess) or project_ui_url must be provided.")
 
@@ -342,8 +353,8 @@ def check_ui_is_functional(
         wait_for_element_and_click(selenium_webdriver, "//*[contains(text(), 'First Step')]", element_type=By.XPATH)
         # Assert first page is loaded and fields can be entered
         wait_for_expected_property(selenium_webdriver, "result", "value", "0")
-        wait_for_element_and_send_text(selenium_webdriver, "first-arg", "4")
-        wait_for_element_and_send_text(selenium_webdriver, "second-arg", "3")
+        wait_for_element_and_send_text(selenium_webdriver, "first-arg", "4", clear=True)
+        wait_for_element_and_send_text(selenium_webdriver, "second-arg", "3", clear=True)
         # Assert callback works and updates the result
         wait_for_element_and_click(selenium_webdriver, "calculate")
         wait_for_expected_property(selenium_webdriver, "result", "value", "7", timeout)
@@ -516,7 +527,14 @@ def install_solution_executable() -> InstallSolutionExecutable:
 
 def get_shortcut_path(display_name: str) -> Path:
     if platform.system() == "Windows":
-        shortcut_path = Path(os.environ["PUBLIC"]) / "Desktop" / f"{display_name}.lnk"
+        command = (
+            "[Console]::OutputEncoding = [Text.Encoding]::UTF8; "
+            "$principal = [Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent(); "
+            "$isAdmin = $principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator); "
+            "[Environment]::GetFolderPath($(if ($isAdmin) { 'CommonDesktopDirectory' } else { 'Desktop' }))"
+        )
+        output = subprocess.check_output(["powershell.exe", "-NoProfile", "-Command", command], encoding="utf-8")
+        shortcut_path = Path(output.strip()) / f"{display_name}.lnk"
     else:
         shortcut_path = Path(os.environ["HOME"]) / "Desktop" / f"{display_name}.desktop"
     return shortcut_path
@@ -555,13 +573,19 @@ def check_solution_launched_correctly(
     glow_ui_port: str,
     portal_ui_port: str | None = None,
     ui_path_prefix: str = "",
+    use_projects_dashboard: bool = False,
 ) -> str:
-    if portal_ui_port:
+    if portal_ui_port and not use_projects_dashboard:
         portal_url = f"http://127.0.0.1:{portal_ui_port}"
         _check_service_health(portal_url)
 
     api_url = f"http://127.0.0.1:{glow_api_port}/docs"
     _check_service_health(api_url)
+
+    if use_projects_dashboard:
+        ui_url = f"http://127.0.0.1:{glow_ui_port}/projects"
+        _check_service_health(ui_url)
+        return ui_url
 
     project_identifier = _get_a_project_identifier(glow_api_port)
 

@@ -357,9 +357,7 @@ def _assert_default_structure(authenticator: Authenticator):
     _assert_generic_structure(authenticator, default_items, default_card_props)
 
 
-def _assert_custom_structure(
-    authenticator: Authenticator, items: list[dict[str, Any]], card_props: dict[str, Any]
-):
+def _assert_custom_structure(authenticator: Authenticator, items: list[dict[str, Any]], card_props: dict[str, Any]):
     _assert_generic_structure(authenticator, items, card_props)
 
 

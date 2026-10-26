@@ -1,6 +1,6 @@
 [project]
 name = "ansys-saf-workspace"
-version = "0.3.0"
+version = "0.0.0"  # Only required when [project] section is present, can be anything
 maintainers = [ { name = "ANSYS, Inc.", email = "pyansys-core@synopsys.com" } ]
 authors = [ { name = "ANSYS, Inc.", email = "pyansys-core@synopsys.com" } ]
 requires-python = ">=3.11,<4.0"
@@ -24,6 +24,7 @@ dependencies = [
   "ansys-saf-projects-dashboard",
   "ansys-saf-templates",
   "ansys-saf-testing[all]",
+  "ansys-solutions-dash-super-components",
 ]
 
 [dependency-groups]
@@ -50,6 +51,7 @@ doc = [
   "rst2html5>=2.0.1; python_version>='3.12' and python_version<'4.0'",
   "ruamel-yaml>=0.19.1; python_version>='3.12'",
   "sphinx>=9.1; python_version>='3.12'",
+  "sphinx-autobuild>=2025.8.25; python_version>='3.12'",
   "sphinx-code-tabs>=0.5.5; python_version>='3.12'",
   "sphinx-copybutton>=0.5.2; python_version>='3.12'",
   "sphinx-design>=0.7.0; python_version>='3.12'",
@@ -59,8 +61,10 @@ doc = [
   "sphinx-tabs>=3.5.0; python_version>='3.12'",
   "sphinx-toolbox>=4.2.0; python_version>='3.12'",
   "sphinxcontrib-mermaid>=0.7.1; python_version>='3.12'",
+  "sphinxcontrib-video>=0.4.2; python_version>='3.12'",
   "sphinxemoji>=0.2; python_version>='3.12'",
   "toml>=0.10.2; python_version>='3.12'",
+  "vale==3.22.0.0",
 ]
 style-desktop-installer = [
   "ansys-saf-glow-engine[dash]>=2.1.0,<3.0.0",
@@ -92,9 +96,8 @@ tests-desktop-installer = [
   "dash>=3.0.0,<4.0",
   "dash-bootstrap-components>=1.2,<2.0",
   "httpx2>=2.5.0,<3.0",
-  "pillow>=12.1.1,<13.0",
-  "poetry==2.3.2",
-  "pylnk3>=0.4.2,<0.5",
+  "pillow>=13.0.0",
+  "poetry==2.5.1",
   "pywebview>=6.0,<7.0",
 ]
 tests-glow-engine = [
@@ -117,7 +120,7 @@ tests-saf-cli = [
 ]
 tests-saf-desktop-orchestrator = [
   "ansys-saf-projects-dashboard>=0.2.0,<1.0",
-  "dash>=3.4.0",
+  "dash>=3.0.0,<4.0",
   "dash-extensions>=2.0.5,<3.0",
   "fastapi>=0.120.2,<1.0",
   "pandas>=1.1.0,<4.0",
@@ -135,9 +138,6 @@ tests-saf-product-manager = [
 py-modules = []
 
 [tool.uv]
-override-dependencies = [
-  { package = { name = "ansys-solutions-dash-super-components" }, dependencies = [ "dash>=2.18.2,<4.0" ] },
-]
 sources.ansys-bdm-api = { workspace = true }
 sources.ansys-bdm-shared-volume = { workspace = true }
 sources.ansys-iam-oidc = { workspace = true }
@@ -150,10 +150,12 @@ sources.ansys-saf-product-manager = { workspace = true }
 sources.ansys-saf-projects-dashboard = { workspace = true }
 sources.ansys-saf-templates = { workspace = true }
 sources.ansys-saf-testing = { workspace = true }
+sources.ansys-solutions-dash-super-components = { workspace = true }
 package = false
 workspace.members = [
   "packages/bdm-python-api",
   "packages/bdm-python-shared-volume",
+  "packages/dash-super-components",
   "packages/glow-engine",
   "packages/saf-cli",
   "packages/saf-desktop-installer",
@@ -274,6 +276,7 @@ exclude = [
   "**/.venv",
   "**/_solutions/templates/",                                                              # Ignore files containing cookiecutter syntax
   "**/{{cookiecutter.project_slug}}",
+  "**/doc/_build/html/",
   "packages/saf-cli/tests/mocks/pages/first_page_with_file_output.py",
   "packages/saf-cli/tests/mocks/pages/first_page_with_hps.py",
   "packages/saf-cli/tests/mocks/pages/first_page_with_minerva.py",

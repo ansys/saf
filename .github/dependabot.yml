@@ -5,7 +5,7 @@ updates:
     schedule:
       interval: "weekly"
     commit-message:
-      prefix: "ci(dependabot):"
+      prefix: "ci(dependabot-actions):"
     groups:
       all-actions:
         patterns:
@@ -13,6 +13,66 @@ updates:
         update-types:
           - "minor"
           - "patch"
+    cooldown:
+      include:
+        - '*'
+      default-days: 7
+  - package-ecosystem: "npm"
+    directory: "/packages/saf-projects-dashboard"
+    schedule:
+      interval: "daily"
+    commit-message:
+      prefix: "ci(dependabot-npm):"
+    versioning-strategy: "lockfile-only"
+    open-pull-requests-limit: 1
+    groups:
+      npm-security:
+        applies-to: "security-updates"
+        patterns:
+          - "*"
+    cooldown:
+      include:
+        - '*'
+      default-days: 7
+  - package-ecosystem: "uv"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    commit-message:
+      prefix: "ci(dependabot-uv):"
+    versioning-strategy: "lockfile-only"
+    open-pull-requests-limit: 1
+    groups:
+      uv-security:
+        applies-to: "security-updates"
+        patterns:
+          - "*"
+    cooldown:
+      include:
+        - '*'
+      default-days: 7
+  - package-ecosystem: "pip"
+    directories:
+      - "examples"
+      - "packages/dash-super-components/examples/gallery_apps"
+      - "packages/dash-super-components/examples/showcase_all"
+      - "packages/dash-super-components/examples/user_guide"
+      - "packages/dash-super-components/examples/user_guide/super_components_with_saf"
+      - "packages/saf-desktop-installer/tests/mocks/my-solution-dash"
+      - "packages/saf-desktop-installer/tests/mocks/my-solution-dash-old"
+      - "packages/saf-desktop-installer/tests/mocks/my-solution-dash-projects-dashboard"
+      - "packages/saf-desktop-installer/tests/mocks/synopsys-custom-ns-solution"
+    schedule:
+      interval: "daily"
+    commit-message:
+      prefix: "ci(dependabot-poetry):"
+    versioning-strategy: "lockfile-only"
+    open-pull-requests-limit: 1
+    groups:
+      poetry-security:
+        applies-to: "security-updates"
+        patterns:
+          - "*"
     cooldown:
       include:
         - '*'

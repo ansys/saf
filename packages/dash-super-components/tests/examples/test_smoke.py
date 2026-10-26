@@ -49,12 +49,8 @@ def test_example_has_valid_layout(example_path: Path) -> None:
     """Verify that the example module defines an ``app`` with a non-None layout."""
     module = load_example_module(example_path)
 
-    assert hasattr(module, "app"), (
-        f"{example_path.name} does not define a top-level ``app`` variable."
-    )
-    assert module.app.layout is not None, (
-        f"{example_path.name}: ``app.layout`` must not be ``None``."
-    )
+    assert hasattr(module, "app"), f"{example_path.name} does not define a top-level ``app`` variable."
+    assert module.app.layout is not None, f"{example_path.name}: ``app.layout`` must not be ``None``."
 
 
 @pytest.mark.smoke
@@ -67,9 +63,7 @@ def test_example_uses_dash_proxy(example_path: Path) -> None:
     """
     module = load_example_module(example_path)
 
-    assert hasattr(module, "app"), (
-        f"{example_path.name} does not define a top-level ``app`` variable."
-    )
+    assert hasattr(module, "app"), f"{example_path.name} does not define a top-level ``app`` variable."
     assert isinstance(module.app, DashProxy), (
         f"{example_path.name}: ``app`` must be a ``DashProxy`` instance, "
         f"got {type(module.app).__name__!r}. "

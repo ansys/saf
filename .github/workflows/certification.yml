@@ -69,6 +69,9 @@ on:
       GENERATED_SOLUTION_TOKEN:
         description: 'Token for the generated solution'
         required: true
+      CODECOV_TOKEN:
+        description: 'Token for Codecov'
+        required: true
   schedule:
     - cron: '0 0 * * 1,3,5'
     - cron: '0 1 * * 1,3,5'
@@ -103,7 +106,7 @@ jobs:
       - ubuntu-latest
     steps:
       - id: verify-tag
-        uses: ansys/saf-devops/verify-tag-and-commit@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
+        uses: ansys/saf-devops/verify-tag-and-commit@82c48355bb8dbdaddd0e855ed383c89824ee2c3c # v1.3.3
         with:
           tag: certified-${{ inputs.library-name }}
 
@@ -167,8 +170,6 @@ jobs:
       commit-is-already-tagged: ${{ steps.verify-tag.outputs.commit-is-already-tagged
         }}
       library-name: ${{ steps.library-name.outputs.library-name }}
-      use-moon: ${{ steps.library-name.outputs.library-name != 'dash-super-components'
-        }}
 
   check-package-changes:
     name: "Check if package files changed since certification"
@@ -227,7 +228,6 @@ jobs:
     permissions:
       contents: read # Read the dependencies and source code of the library
     env:
-      USE_MOON: ${{ needs.pre-certification.outputs.use-moon == 'true' }}
       PACKAGE: ${{ needs.pre-certification.outputs.library-name }}
       UV_PYTHON: ${{ vars.PYTHON_VERSION }}
       MOON_PYTHON_VERSION: ${{ vars.PYTHON_VERSION }}
@@ -239,15 +239,13 @@ jobs:
           fetch-depth: 0
 
       - name: Setup Moon Toolchain
-        if: ${{ env.USE_MOON == 'true' }}
         uses: moonrepo/setup-toolchain@261c62cb5b0f580c7be7c8cd0f023a2e96756095 # v0.6.4
 
       - name: Vulnerability Check
-        if: ${{ env.USE_MOON == 'true' }}
         shell: bash
         run: moon run ${PACKAGE}:vulnerability-check
 
-      - uses: ansys/saf-devops/check-deps-vulnerabilities@5d9e84af215372b7b125bbf12f5b0093600eb06d # v1.2.0
+      - uses: ansys/saf-devops/check-deps-vulnerabilities@82c48355bb8dbdaddd0e855ed383c89824ee2c3c # v1.3.3
         with:
           python-version: ${{ vars.PYTHON_VERSION }}
           poetry-version: ${{ vars.POETRY_VERSION }}
@@ -256,13 +254,12 @@ jobs:
           poetry-parent-directory: packages/${{ needs.pre-certification.outputs.library-name
             }}
           max-allowed-severity: medium
-          skip-install: ${{ env.USE_MOON == 'true' }}
+          skip-install: true
           checkout: false
-          requirements-file: ${{ env.USE_MOON == 'true' && format('{0}/dist/packages/{1}-requirements.txt',
-            github.workspace, needs.pre-certification.outputs.library-name) || 'dependencies.txt'
-            }}
+          requirements-file: ${{ format('{0}/dist/packages/{1}-requirements.txt',
+            github.workspace, needs.pre-certification.outputs.library-name) }}
         env:
-          UV_VENV_CLEAR: ${{ env.USE_MOON == 'true' }}
+          UV_VENV_CLEAR: true
 
   dependabot-alerts:
     permissions:
@@ -275,7 +272,7 @@ jobs:
       - name: Get production dependencies
         if: ${{ contains(env.UV_BASED_PACKAGES, needs.pre-certification.outputs.library-name)
           }}
-        uses: ansys/saf-devops/get-production-dependencies@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
+        uses: ansys/saf-devops/get-production-dependencies@82c48355bb8dbdaddd0e855ed383c89824ee2c3c # v1.3.3
         with:
           poetry-version: ${{ vars.POETRY_VERSION }}
           poetry-parent-directory: packages/${{ needs.pre-certification.outputs.library-name
@@ -286,7 +283,7 @@ jobs:
         if: ${{ contains(env.UV_BASED_PACKAGES, needs.pre-certification.outputs.library-name)
           }}
         id: analyze-dependabot
-        uses: ansys/saf-devops/analyze-dependabot-alerts@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
+        uses: ansys/saf-devops/analyze-dependabot-alerts@82c48355bb8dbdaddd0e855ed383c89824ee2c3c # v1.3.3
         with:
           severity-level: high
           manifest-path: packages/${{ needs.pre-certification.outputs.library-name
@@ -317,7 +314,6 @@ jobs:
         }}.json
       working-directory: packages/${{ needs.pre-certification.outputs.library-name
         }}
-      use-moon: ${{ needs.pre-certification.outputs.use-moon == 'true' }}
       library-name: ${{ needs.pre-certification.outputs.library-name }}
     secrets:
       ANS_MINERVA_URL: ${{ secrets.ANS_MINERVA_URL }}
@@ -325,6 +321,7 @@ jobs:
       PYANSYS_PYPI_PRIVATE_PAT: ${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}
       PYANSYS_PYPI_PRIVATE_URL: ${{ secrets.PYANSYS_PYPI_PRIVATE_URL }}
       LICENSE_SERVER: ${{ secrets.LICENSE_SERVER }}
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
   run-tests-extended:
     name: Tests (extended) ${{ matrix.python-version }}
@@ -355,7 +352,6 @@ jobs:
         }}-extended.json
       working-directory: packages/${{ needs.pre-certification.outputs.library-name
         }}
-      use-moon: ${{ needs.pre-certification.outputs.use-moon == 'true' }}
       library-name: ${{ needs.pre-certification.outputs.library-name }}
     secrets:
       ANS_MINERVA_URL: ${{ secrets.ANS_MINERVA_URL }}
@@ -363,6 +359,7 @@ jobs:
       PYANSYS_PYPI_PRIVATE_PAT: ${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}
       PYANSYS_PYPI_PRIVATE_URL: ${{ secrets.PYANSYS_PYPI_PRIVATE_URL }}
       LICENSE_SERVER: ${{ secrets.LICENSE_SERVER }}
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
   run-tests-flagships:
     name: Tests (flagships) ${{ matrix.python-version }} ${{ matrix.flagship }}
@@ -398,7 +395,6 @@ jobs:
         }}-${{ matrix.flagship }}.json
       working-directory: packages/${{ needs.pre-certification.outputs.library-name
         }}
-      use-moon: ${{ needs.pre-certification.outputs.use-moon == 'true' }}
       library-name: ${{ needs.pre-certification.outputs.library-name }}
     secrets:
       ANS_MINERVA_URL: ${{ secrets.ANS_MINERVA_URL }}
@@ -406,6 +402,7 @@ jobs:
       PYANSYS_PYPI_PRIVATE_PAT: ${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}
       PYANSYS_PYPI_PRIVATE_URL: ${{ secrets.PYANSYS_PYPI_PRIVATE_URL }}
       LICENSE_SERVER: ${{ secrets.LICENSE_SERVER }}
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
   run-github-workflows-of-generated-solution:
     name: Tests (generated solution) ${{ matrix.python-version }} ${{ matrix.ui-framework
@@ -462,10 +459,8 @@ jobs:
     with:
       library-name: ${{ needs.pre-certification.outputs.library-name }}
       python-version: ${{ matrix.python-version }}
-      use-moon: ${{ needs.pre-certification.outputs.use-moon == 'true' }}
       artifact-name: ${{ needs.pre-certification.outputs.library-name }}-${{ matrix.python-version
-        }}${{ case(needs.pre-certification.outputs.use-moon == 'false', '', '-artifacts'
-        ) }}
+        }}-artifacts
       ref: ${{ github.ref }}
 
   check-wheel-can-be-pip-installed:
@@ -486,7 +481,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check if wheel can be pip installed
-        uses: ansys/saf-devops/pip-install-production-wheel@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
+        uses: ansys/saf-devops/pip-install-production-wheel@82c48355bb8dbdaddd0e855ed383c89824ee2c3c # v1.3.3
         with:
           python-version: ${{ matrix.python-version }}
           wheel-artifact: '${{ needs.pre-certification.outputs.library-name }}-${{
@@ -571,6 +566,6 @@ jobs:
       - ubuntu-latest
     steps:
       - name: tagging commit
-        uses: ansys/saf-devops/apply-tag-on-commit@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
+        uses: ansys/saf-devops/apply-tag-on-commit@82c48355bb8dbdaddd0e855ed383c89824ee2c3c # v1.3.3
         with:
           tag: certified-${{ needs.pre-certification.outputs.library-name }}

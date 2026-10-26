@@ -47,7 +47,7 @@ Install the solution environment
 
            .. image:: /_static/images/solutions_manager_setup_solution_view.png
              :alt: Solutions Manager Setup Solution view
-             :width: 50%
+             :width: 40%
 
         #. Provide the following values:
 
@@ -224,7 +224,7 @@ Both SAF CLI and Solutions Manager manage dependencies by driving Poetry, the de
 
            .. image:: /_static/images/solutions-manager-dependencies-view.png
               :alt: Solutions Manager Dependencies view
-              :width: 45%
+              :width: 25%
 
            The dependency groups shown are populated from the solution's ``pyproject.toml`` file. Expand a group to view the packages installed in the solution environment.
 

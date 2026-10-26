@@ -79,7 +79,7 @@ Build the installer
 
        .. image:: ../../_static/images/solutions_manager_build_installer_view.png
           :alt: Solutions Manager Build Installer view
-          :width: 45%
+          :width: 35%
 
     #. At the top of the panel, select the solution to build and configure its Python environment:
 

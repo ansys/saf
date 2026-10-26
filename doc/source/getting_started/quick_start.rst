@@ -54,7 +54,7 @@ Create a solution
 
          .. image:: /_static/images/solutions_manager_create_solution_view.png
             :alt: Solutions Manager Create Solution view
-            :width: 45%
+            :width: 40%
 
       #. Provide the following values:
 
@@ -124,7 +124,7 @@ Install the solution
 
          .. image:: /_static/images/solutions_manager_setup_solution_view.png
             :alt: Solutions Manager Setup Solution view
-            :width: 45%
+            :width: 40%
 
       #. Provide the following values:
 
@@ -186,7 +186,7 @@ Run the solution in a desktop window
 
          .. image:: /_static/images/solutions_manager_run_solution_view_desktop.png
             :alt: Solutions Manager Run Solution in desktop view
-            :width: 35%
+            :width: 40%
 
       #. Provide the following values:
 
@@ -212,7 +212,7 @@ Run the solution in a desktop window
 
             .. image:: /_static/images/getting_started_quick_start_solutions_manager_saf_environ_config_page.png
                :alt: Solutions Manager SAF Environment Configuration page
-               :width: 75%
+               :width: 100%
 
          f. Modify **SAF Environment Configuration** settings as needed and click the :guilabel:`Save Configuration` button.
 
@@ -252,7 +252,7 @@ Run the solution in a web browser
 
          .. image:: /_static/images/solutions_manager_run_solution_view_browser.png
             :alt: Solutions Manager Run Solution in browser view
-            :width: 45%
+            :width: 40%
 
       #. Provide the following values:
 
@@ -278,7 +278,7 @@ Run the solution in a web browser
 
             .. image:: /_static/images/getting_started_quick_start_solutions_manager_saf_environ_config_page.png
                :alt: Solutions Manager SAF Environment Configuration page
-               :width: 85%
+               :width: 100%
 
          f. Modify **SAF Environment Configuration** settings as needed and click the :guilabel:`Save Configuration` button.
 

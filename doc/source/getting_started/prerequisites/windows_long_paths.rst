@@ -17,6 +17,6 @@ To enable Windows long paths, follow these steps:
 1. Navigate to :menuselection:`Settings > System > Advanced`.
 2. Find the **Enable long paths** option and toggle it on.
 
-.. image:: /_static/images/enable_long_paths.png
-    :width: 60%
-    :alt: Windows Long Path Settings
+   .. image:: /_static/images/enable_long_paths.png
+      :width: 55%
+      :alt: Windows Long Path settings

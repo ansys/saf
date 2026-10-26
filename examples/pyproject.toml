@@ -37,7 +37,7 @@ priority = "primary"
 
 [tool.poetry.dependencies]
 python = ">=3.11,<3.13" #not <3.15 because of ansys-dynamicreporting-core
-ansys-saf-sdk = {version = "^0.3.0", extras = ["core-pim", "instance-management-all", "core-hps"], allow-prereleases = true}
+ansys-saf-sdk = {version = "^0.5.0", extras = ["core-pim", "instance-management-all", "core-hps"], allow-prereleases = true}
 numpy = "^1.26.4"
 pillow = "^13.0.0"
 ansys-tools-visualization-interface = "^0.12.1"
@@ -48,7 +48,7 @@ ansys-visor-viewer = "^1.0.1"
 [tool.poetry.group.desktop]
 optional = true
 [tool.poetry.group.desktop.dependencies]
-ansys-saf-sdk = {version = "^0.3.0", extras = ["desktop"], allow-prereleases = true}
+ansys-saf-sdk = {version = "^0.5.0", extras = ["desktop"], allow-prereleases = true}
 
 [tool.poetry.group.ui]
 optional = true
@@ -91,7 +91,7 @@ pkginfo = "^1.12.1.2"
 pyinstaller = { version = "^6.16", python = "<3.15" }
 toml = "^0.10.2"
 pyc-wheel = "^1.2.7"
-ansys-saf-sdk = {version = "^0.3.0", extras = ["build"], allow-prereleases = true}
+ansys-saf-sdk = {version = "^0.5.0", extras = ["build"], allow-prereleases = true}
 
 [tool.poetry.group.style]
 optional = true

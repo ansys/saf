@@ -1325,10 +1325,7 @@ html.saf-redirect-page div.bd-article-container {
 
 /* ====================================== HEADER NAV ROW: BREADCRUMBS ====================================== */
 
-/* Hide the theme's in-article breadcrumbs; rendered in the header nav row instead */
-body:not(.page-index) .bd-header-article {
-    display: none !important;
-}
+/* Keep the theme-provided in-article breadcrumbs because this build has no replacement header breadcrumb row. */
 
 /* Full-width row sitting between the header bar and the page grid. Sticky so it
    stays visible while scrolling; "top" is set by JS (primary-sidebar-sticky-offset.js)

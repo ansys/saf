@@ -76,7 +76,7 @@ tests = [
   "authlib>=1.8.0,<2",
   "coverage>=7.10.6,<8",
   "docker>=7.1.0,<8.0",               # lower versions are not compatible with requests >= 2.32 https://github.com/docker/docker-py/pull/3257
-  "filelock>=3.8.0,<4",
+  "filelock>=4.2.1,<5",
   "httpx2-pytest>=1.0,<2",
   "mock>=4.0.3,<5",
   "pytest>=9.0.3,<10",
@@ -96,7 +96,7 @@ tests-desktop-installer = [
   "dash>=3.0.0,<4.0",
   "dash-bootstrap-components>=1.2,<2.0",
   "httpx2>=2.5.0,<3.0",
-  "pillow>=12.1.1",
+  "pillow>=13.0.0",
   "poetry==2.5.1",
   "pywebview>=6.0,<7.0",
 ]
@@ -138,9 +138,6 @@ tests-saf-product-manager = [
 py-modules = []
 
 [tool.uv]
-override-dependencies = [
-  "pillow>=13.0.0,<14.0", # To fix Dependabot alert #324
-]
 sources.ansys-bdm-api = { workspace = true }
 sources.ansys-bdm-shared-volume = { workspace = true }
 sources.ansys-iam-oidc = { workspace = true }

@@ -73,9 +73,16 @@ class SAFProcess(Process):
         return solution_ui_url.removeprefix("INFO - Solution UI: ")
 
     def get_portal_url(self) -> str:
-        project_ui_url = self.find_msg_in_output(r"SAF Portal: http://127\.0\.0\.1:\d+", regex=True)
-        assert project_ui_url
-        return project_ui_url.removeprefix("INFO - SAF Portal: ")
+        projects_dashboard_url = self.find_msg_in_output(
+            r"Projects Dashboard: http://127\.0\.0\.1:\d+/projects",
+            regex=True,
+        )
+        if projects_dashboard_url:
+            return projects_dashboard_url.removeprefix("INFO - Projects Dashboard: ")
+
+        portal_url = self.find_msg_in_output(r"SAF Portal: http://127\.0\.0\.1:\d+", regex=True)
+        assert portal_url
+        return portal_url.removeprefix("INFO - SAF Portal: ")
 
     def get_otel_dashboard_url(self) -> str:
         otel_url = self.find_msg_in_output(r"OTEL Dashboard: http://127\.0\.0\.1:\d+", regex=True)

@@ -58,6 +58,10 @@ updates:
       - "packages/dash-super-components/examples/showcase_all"
       - "packages/dash-super-components/examples/user_guide"
       - "packages/dash-super-components/examples/user_guide/super_components_with_saf"
+      - "packages/saf-desktop-installer/tests/mocks/my-solution-dash"
+      - "packages/saf-desktop-installer/tests/mocks/my-solution-dash-old"
+      - "packages/saf-desktop-installer/tests/mocks/my-solution-dash-projects-dashboard"
+      - "packages/saf-desktop-installer/tests/mocks/synopsys-custom-ns-solution"
     schedule:
       interval: "daily"
     commit-message:

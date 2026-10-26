@@ -132,7 +132,7 @@ if __name__ == "__main__":
                 if packages_to_update:
                     print(f"Updating packages: {packages_to_update}")
                     try:
-                        subprocess.check_output([*poetry_command, "update", *packages_to_update])
+                        subprocess.check_output([*poetry_command, "update", "--lock", *packages_to_update])
                     except subprocess.CalledProcessError as e:
                         print(f"Failed to update packages {packages_to_update}:\n{e.output.decode()}")
                         raise e

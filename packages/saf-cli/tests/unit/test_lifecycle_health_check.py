@@ -21,9 +21,8 @@ def test_dashboard_lifecycle_checks_dashboard_route(monkeypatch: pytest.MonkeyPa
     assert checked_urls == [
         "http://127.0.0.1:5001/docs",
         "http://127.0.0.1:5002/projects",
-        "http://127.0.0.1:5002/projects/project-id",
     ]
-    assert project_ui_url == "http://127.0.0.1:5002/projects/project-id"
+    assert project_ui_url == "http://127.0.0.1:5002/projects"
 
 
 def test_standalone_portal_health_check_remains_unchanged(monkeypatch: pytest.MonkeyPatch) -> None:

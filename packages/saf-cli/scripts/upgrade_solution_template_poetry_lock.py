@@ -14,15 +14,25 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# /// script
+# requires-python = ">=3.11"
+# dependencies = [
+#     "ansys-saf-cli",
+#     "poetry==2.5.1",
+#     "python-dotenv>=1.0.0,<2",
+# ]
+#
+# [tool.uv.sources]
+# ansys-saf-cli = { path = ".." }
+# ///
+
 import argparse
 import os
 from pathlib import Path
-import platform
 import shutil
 import subprocess
 import sys
 import tempfile
-import venv
 
 from dotenv import load_dotenv
 
@@ -57,21 +67,11 @@ if __name__ == "__main__":
         / "pyproject.toml"
     )
     assert pyproject_file.is_file()
-    # can't use toml to load it because it contains cookiecutter variables
-    poetry_version = [
-        line.split(" = ")[-1].replace('"', "")
-        for line in pyproject_file.read_text().splitlines()
-        if line.startswith("build-system-version = ")
-    ][0]
-    assert poetry_version
-
-    if platform.system() == "Windows":
-        saf_exec = Path.cwd() / ".venv" / "Scripts" / "saf.exe"
-        if not saf_exec.is_file():
-            saf_exec = Path.cwd() / ".venv" / "Scripts" / "saf.cmd"
-    else:
-        saf_exec = Path.cwd() / ".venv" / "bin" / "saf"
-    assert saf_exec.is_file()
+    saf_command = [
+        sys.executable,
+        "-c",
+        "from ansys.saf.cli._cli.main import entry_point; entry_point()",
+    ]
 
     starting_working_directory = Path.cwd()
 
@@ -104,7 +104,7 @@ if __name__ == "__main__":
                 print(f"Creating new solution {solution_name} at {tmp_dir}...")
                 subprocess.check_output(
                     [
-                        str(saf_exec),
+                        *saf_command,
                         "new",
                         "--solution-name",
                         solution_name,
@@ -120,39 +120,19 @@ if __name__ == "__main__":
                 assert solution_root_dir.is_dir()
                 os.chdir(solution_root_dir)
 
-                solution_venv_dir = solution_root_dir / ".venv"
-                print(f"Creating venv at {solution_venv_dir}...")
-                solution_venv_dir.mkdir(parents=True)
-                venv.EnvBuilder(with_pip=True).create(solution_venv_dir)
-                os.environ["VIRTUAL_ENV"] = str(solution_venv_dir)
-
-                pip_exec = (
-                    (solution_venv_dir / "Scripts" / "pip.exe")
-                    if platform.system() == "Windows"
-                    else (solution_venv_dir / "bin" / "pip")
-                )
-                assert pip_exec.is_file()
-                print(f"Installing poetry {poetry_version}...")
-                subprocess.check_output([str(pip_exec), "install", f"poetry=={poetry_version}"])
-
                 # load required poetry credentials for auth
                 print(f"Loading .env file from {solution_root_dir / '.env'}...")
                 load_dotenv(solution_root_dir / ".env")
 
                 print("Upgrading poetry.lock....")
-                poetry_exec = (
-                    (solution_venv_dir / "Scripts" / "poetry.exe")
-                    if platform.system() == "Windows"
-                    else (solution_venv_dir / "bin" / "poetry")
-                )
-                assert poetry_exec.is_file()
-                subprocess.check_output([str(poetry_exec), "lock"])
+                poetry_command = [sys.executable, "-m", "poetry"]
+                subprocess.check_output([*poetry_command, "lock"])
 
                 # Update specific packages if provided
                 if packages_to_update:
                     print(f"Updating packages: {packages_to_update}")
                     try:
-                        subprocess.check_output([str(poetry_exec), "update"] + packages_to_update)
+                        subprocess.check_output([*poetry_command, "update", *packages_to_update])
                     except subprocess.CalledProcessError as e:
                         print(f"Failed to update packages {packages_to_update}:\n{e.output.decode()}")
                         raise e

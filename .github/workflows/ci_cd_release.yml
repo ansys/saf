@@ -155,7 +155,7 @@ jobs:
     steps:
       - name: Retrieve release information
         id: retrieve-release-info
-        uses: ansys/saf-devops/retrieve-release-information@304d04d9d9249c968d7a2a9d92a12ffa88a3216d # v1.3.2
+        uses: ansys/saf-devops/retrieve-release-information@82c48355bb8dbdaddd0e855ed383c89824ee2c3c # v1.3.3
         with:
           poetry-parent-directory: packages/${{ inputs.library }}
           release-type: ${{ inputs.dev-release && 'dev' || 'stable' }}
@@ -173,7 +173,7 @@ jobs:
     steps:
       - name: Generate release notes
         id: generate-release-notes
-        uses: ansys/saf-devops/generate-release-notes@304d04d9d9249c968d7a2a9d92a12ffa88a3216d # v1.3.2
+        uses: ansys/saf-devops/generate-release-notes@82c48355bb8dbdaddd0e855ed383c89824ee2c3c # v1.3.3
         with:
           tag-name: ${{ needs.release-information.outputs.release-name }}-${{ inputs.library
             }}
@@ -216,7 +216,7 @@ jobs:
 
       - name: Edit version
         if: needs.release-information.outputs.version-type == 'dev' && !inputs.dev-release
-        uses: ansys/saf-devops/edit-version-in-pyproject@304d04d9d9249c968d7a2a9d92a12ffa88a3216d # v1.3.2
+        uses: ansys/saf-devops/edit-version-in-pyproject@82c48355bb8dbdaddd0e855ed383c89824ee2c3c # v1.3.3
         with:
           pyproject-path: packages/${{ inputs.library }}/pyproject.toml
           version: ${{ needs.release-information.outputs.version-to-release }}

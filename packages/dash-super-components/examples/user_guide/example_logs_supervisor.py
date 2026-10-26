@@ -81,7 +81,7 @@ def layout_advanced():
                     "style": {
                         "height": "600px",
                     },
-                    "className": "ag-theme-balham",
+                    "dashGridOptions": {"theme": "themeBalham"},
                 },
                 interval=1000,
                 show_error_notifications=False,

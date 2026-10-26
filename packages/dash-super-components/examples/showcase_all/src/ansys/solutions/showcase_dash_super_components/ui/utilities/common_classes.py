@@ -27,4 +27,3 @@ class CommonCSSClassNames(StrEnum):
     LEAD = "lead"
     HR_SPACER = "my-2"
     MANTINE_BUTTON = "mantine-button"
-    AG_THEME_BALHAM = "ag-theme-balham"

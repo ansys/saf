@@ -56,7 +56,8 @@ INFO_CARD_TEXT = [
         "Click Generate Logs to start a long-running transaction that emits random log "
         "messages for 30 seconds. Both supervisors below listen to the same log source "
         "and refresh automatically when new entries are appended. "
-        "The built-in switch enables or disables live monitoring independently."
+        "The built-in switch enables or disables live monitoring independently, and the "
+        "grid follows the Mantine light or dark color scheme."
     ),
 ]
 
@@ -126,7 +127,7 @@ def layout(step: SimpleStep) -> html.Div:
                             interval=1000,
                             grid_props={
                                 "style": {"height": "400px"},
-                                "className": CommonCSSClassNames.AG_THEME_BALHAM,
+                                "dashGridOptions": {"theme": "themeBalham"},
                             },
                             width="600px",
                             show_error_notifications=False,

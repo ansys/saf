@@ -71,4 +71,4 @@ optional = true
 ansys-saf-desktop-installer = { version = "^1.16", allow-prereleases = true, extras = [ "all" ] }
 
 [build-system-requirements]
-build-system-version = "2.3.2"
+build-system-version = "2.5.1"

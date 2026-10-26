@@ -1,0 +1,77 @@
+# Copyright (C) 2026 ANSYS, Inc. and/or its affiliates.
+# SPDX-License-Identifier: Apache-2.0
+#
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+name: Retrieve the job matrices for the CI/CD workflow
+
+description: |
+  Retrieve the job matrices for the CI/CD workflow
+
+inputs:
+  last-release-date:
+    description: 'The date of the last release to check for fixed vulnerabilities'
+    required: true
+  manifest-file:
+    description: 'The manifest file to check for fixed vulnerabilities'
+    required: true
+  package:
+    description: 'The package to check for fixed vulnerabilities'
+    required: true
+  release-notes:
+    description: 'The release notes file to update with fixed vulnerabilities'
+    required: true
+  alerts-token:
+    description: 'The GitHub token to authenticate API requests'
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout repository
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      with:
+        persist-credentials: false
+
+    - name: Download artifact
+      uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+      with:
+        name: ${{ inputs.release-notes }}
+
+    - name: Install uv
+      uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
+      with:
+        python-version: 3.12
+        enable-cache: false
+
+    - name: Run get-fixed-vulnerabilities script
+      id: script
+      shell: bash
+      env:
+        LAST_RELEASE_DATE: ${{ inputs.last-release-date }}
+        MANIFEST_FILE: ${{ inputs.manifest-file }}
+        PACKAGE: ${{ inputs.package }}
+        RELEASE_NOTES: release_notes.md
+        GITHUB_TOKEN: ${{ inputs.alerts-token }}
+        MEMBER: ${{ inputs.package }}
+      run: uv run "${GITHUB_ACTION_PATH}/get_fixed_vulnerabilities.py" --last-release-date
+        "${LAST_RELEASE_DATE}" --manifest-file "${MANIFEST_FILE}" --member "${PACKAGE}"
+        --release-notes "${RELEASE_NOTES}" --member "${MEMBER}"
+
+    - name: Upload release notes
+      uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+      with:
+        name: ${{ inputs.release-notes }}
+        path: release_notes.md
+        overwrite: true

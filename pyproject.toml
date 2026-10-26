@@ -76,7 +76,7 @@ tests = [
   "authlib>=1.8.0,<2",
   "coverage>=7.10.6,<8",
   "docker>=7.1.0,<8.0",               # lower versions are not compatible with requests >= 2.32 https://github.com/docker/docker-py/pull/3257
-  "filelock>=3.8.0,<4",
+  "filelock>=4.2.1,<5",
   "httpx2-pytest>=1.0,<2",
   "mock>=4.0.3,<5",
   "pytest>=9.0.3,<10",

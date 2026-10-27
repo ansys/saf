@@ -313,7 +313,7 @@ def stage_lockfiles(solutions: dict[str, Path], updates: dict[str, set[str]]) ->
     return staged
 
 
-def update_lockfiles(packages: list[str], dependabot: bool, repository: str, dry_run: bool) -> int:
+def update_lockfiles(packages: list[str], dependabot: bool, repository: str, dry_run: bool) -> int:  # noqa: C901
     if SOLUTION_TEMPLATE_PATH.resolve() != TEMPLATE_DIR.resolve():
         raise RuntimeError("CLI templates are not from this checkout. Run with uv and the editable local CLI.")
     alerts = fetch_alerts(repository) if dependabot else []

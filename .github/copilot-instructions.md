@@ -125,6 +125,8 @@ The following describes technologies used across SAF; individual packages and ge
 - **pytest-asyncio**, **pytest-xdist**, and **pytest-cov** are used where appropriate for async tests, parallel execution, and coverage.
 - HTTP testing uses the dependencies declared by the relevant package, including `httpx2-pytest` in the root workspace.
 - CI test groups and required runners or integrations are defined in `.github/workflows/tests_groups_definitions/`.
+- The Moon `test` task produces a terminal coverage summary, `coverage.xml`, and an HTML report under the package's `htmlcov/` directory, alongside pytest reports under `report/`. Run `moon run <package>:test` from the repository root; in CodeDev, open `packages/<package>/htmlcov/index.html` from the workspace file explorer to browse line-by-line coverage. Replace `<package>` with the package directory name, such as `glow-engine`.
+- CI uploads coverage to Codecov. View the repository dashboard at [app.codecov.io/gh/ansys/saf](https://app.codecov.io/gh/ansys/saf); CI also uploads pytest HTML reports as workflow artifacts, available from the relevant GitHub Actions run.
 
 ### Tooling and documentation
 

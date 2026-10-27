@@ -254,7 +254,9 @@ def report_alerts(
     ]
     if not alerts:
         lines.extend(["No matching open Dependabot alerts in the solution-template lockfiles.", ""])
-    if any(status.startswith("UNRESOLVED") for status in statuses.values()):
+    if any(status.startswith("FAILED:") for status in statuses.values()):
+        lines.extend(["No lockfiles copied: Poetry resolution or validation failed.", ""])
+    elif any(status.startswith("UNRESOLVED") for status in statuses.values()):
         lines.extend(["No staged lockfiles will be copied: targeted alerts remain vulnerable.", ""])
     elif staged:
         lines.extend(["Validated staged lockfiles are ready to copy; review the command result for copy errors.", ""])
@@ -287,14 +289,15 @@ def report_alerts(
 
 def verify_alerts(alerts: list[Alert], statuses: dict[int, str], staged: dict[str, Path]) -> bool:
     for alert in alerts:
-        if statuses[alert.number] == "PLANNED":
-            lockfile = staged[Path(alert.manifest).parent.name]
+        status = statuses[alert.number]
+        if status in {"PLANNED", "ALREADY SAFE"} or status.startswith("ALREADY SAFE:"):
+            variant = Path(alert.manifest).parent.name
+            lockfile = staged.get(variant, REPOSITORY_DIR / alert.manifest)
             after = locked_versions(lockfile).get(alert.package, [])
-            statuses[alert.number] = (
-                "UNRESOLVED: still affected; inspect parent constraints"
-                if is_affected(alert, after)
-                else "REMEDIATED in proposed lockfile"
-            )
+            if is_affected(alert, after):
+                statuses[alert.number] = "UNRESOLVED: staged lockfile is affected; inspect update constraints"
+            elif status == "PLANNED":
+                statuses[alert.number] = "REMEDIATED in proposed lockfile"
     return not any(status.startswith("UNRESOLVED") for status in statuses.values())
 
 
@@ -334,7 +337,16 @@ def update_lockfiles(packages: list[str], dependabot: bool, repository: str, dry
             print("\nDry run: no Poetry updates or lockfile writes performed.")
             return int(any(status.startswith("BLOCKED") for status in statuses.values()))
 
-        staged = stage_lockfiles(solutions, updates)
+        try:
+            staged = stage_lockfiles(solutions, updates)
+        except subprocess.CalledProcessError as error:
+            if dependabot:
+                failure_status = f"FAILED: Poetry command exited with code {error.returncode}"
+                statuses = {
+                    number: failure_status if status == "PLANNED" else status for number, status in statuses.items()
+                }
+                report_alerts(alerts, statuses, {})
+            raise
         verified = verify_alerts(alerts, statuses, staged)
         if dependabot:
             report_alerts(alerts, statuses, staged)

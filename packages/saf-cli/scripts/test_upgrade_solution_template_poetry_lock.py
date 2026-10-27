@@ -250,14 +250,20 @@ class TestLockfileUpdater:
         self.monkeypatch.setattr(updater, "generate_solution", unexpected_generation)
         assert updater.update_lockfiles([], True, "ansys/saf", False) == 0
 
-    def test_multiple_advisories_must_all_be_safe(self) -> None:
+    def test_planning_and_verification_catch_previously_safe_advisory(self) -> None:
         second = replace(self.alert, number=2, affected=">=2.0,<2.5", patched="2.5")
-        statuses = {1: "PLANNED", 2: "PLANNED"}
-        self.write_lock(self.solution / "poetry.lock", "2.0")
+        alerts = [self.alert, second]
+        updates, statuses = updater.plan_updates(alerts, {"dash": self.solution})
+        assert updates == {"dash": {"child"}}
+        assert statuses[1] == "PLANNED"
+        assert statuses[2].startswith("ALREADY SAFE")
+
+        staged_lockfile = self.solution / "poetry.lock"
+        self.write_lock(staged_lockfile, "2.1")
         assert not updater.verify_alerts(
-            [self.alert, second],
+            alerts,
             statuses,
-            {"dash": self.solution / "poetry.lock"},
+            {"dash": staged_lockfile},
         )
         assert statuses[1].startswith("REMEDIATED")
         assert statuses[2].startswith("UNRESOLVED")
@@ -290,7 +296,7 @@ class TestLockfileUpdater:
 
         def poetry(solution: Path, *arguments: str) -> None:
             calls.append(arguments)
-            if fail:
+            if fail and arguments[0] == "check":
                 raise subprocess.CalledProcessError(1, ["poetry", *arguments])
             if arguments[0] == "update":
                 self.write_lock(solution / "poetry.lock", patched_version)
@@ -324,11 +330,19 @@ class TestLockfileUpdater:
         assert "Dry run" in contents
         assert "PLANNED" in contents
 
-    def test_failed_poetry_does_not_modify_repository(self) -> None:
+    def test_poetry_validation_failure_refreshes_report_without_copying(self) -> None:
         original = self.source.read_bytes()
+        report = self.root / "dist" / "solution-template-dependabot-report.md"
+        report.parent.mkdir()
+        report.write_text("stale report", encoding="utf-8")
         with pytest.raises(subprocess.CalledProcessError):
             self.run_update("2.0", fail=True)
         assert self.source.read_bytes() == original
+        report_contents = report.read_text(encoding="utf-8")
+        assert "stale report" not in report_contents
+        assert self.alert.url in report_contents
+        assert "No lockfiles copied: Poetry resolution or validation failed." in report_contents
+        assert "FAILED: Poetry command exited with code 1" in report_contents
 
     def test_manual_mode_preserves_targeted_update(self) -> None:
         self.write_lock(self.solution / "poetry.lock", "2.0")

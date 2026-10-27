@@ -76,8 +76,11 @@ instead. Use native path separators on other operating systems.
   independent eligible updates can still be saved when validation succeeds.
 - Saves alert URLs, advisories, before/after versions, and outcomes to
   `dist/solution-template-dependabot-report.md` at the repository root, in UTF-8.
-  Each successful inventory run replaces the previous report, including dry
-  runs and runs with no matching alerts. The terminal shows the report path,
+  Each Dependabot inventory run that successfully fetches alerts replaces the
+  previous report, including dry runs, runs with no matching alerts, and Poetry
+  resolution or validation failures. Failed remediation statuses are recorded;
+  repository lockfiles remain unchanged on command failure. Alert retrieval
+  failures do not replace the report. The terminal shows the report path,
   progress, and errors rather than the full alert results. GitHub alerts remain
   open until the default branch is updated and rescanned.
 

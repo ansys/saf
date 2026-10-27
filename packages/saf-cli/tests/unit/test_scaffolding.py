@@ -18,6 +18,8 @@ from pathlib import Path
 import platform
 import subprocess
 import sys
+import tomllib
+from typing import Any
 
 import pytest
 import pytest_mock
@@ -156,3 +158,24 @@ def test_create_solution(tmp_path: Path, ui_framework: str, namespace: str):
             assert "  ui:" in docker_compose_content
         else:
             assert "  ui:" not in docker_compose_content
+
+
+def _scaffold_pyproject(tmp_path: Path, ui_framework: str) -> dict[str, Any]:
+    """Scaffold a solution in the working directory and return its parsed pyproject.toml."""
+    create_solution("dashboard_dependency_solution", "Dashboard Dependency Solution", ui_framework, "saf_cli_tests")
+    return tomllib.loads((tmp_path / "dashboard_dependency_solution" / "pyproject.toml").read_text(encoding="utf-8"))
+
+
+@pytest.mark.usefixtures("tmp_path_as_working_dir", "mock_appdata")
+@pytest.mark.parametrize("ui_framework", ["dash", "none"])
+def test_solution_gets_projects_dashboard_from_sdk_desktop_extra(tmp_path: Path, ui_framework: str):
+    """Install the projects dashboard through the desktop extra of the SDK, from public PyPI.
+
+    The solution does not depend on the projects dashboard directly: ``ansys-saf-sdk[desktop]`` brings it.
+    """
+    poetry = _scaffold_pyproject(tmp_path, ui_framework)["tool"]["poetry"]
+    groups: dict[str, Any] = poetry.get("group", {})
+    for group in groups.values():
+        assert "ansys-saf-projects-dashboard" not in group.get("dependencies", {})
+    assert "desktop" in groups["desktop"]["dependencies"]["ansys-saf-sdk"]["extras"]
+    assert "solutions-private-pypi" not in {source["name"] for source in poetry["source"]}

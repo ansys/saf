@@ -84,7 +84,10 @@ NOT_LAUNCHED = "not launched"
 
 def _create_project(http_client: httpx2.Client, project_display_name: str) -> str:
     try:
-        r = http_client.post("/projects", json={"display_name": project_display_name})
+        r = http_client.post(
+            "/projects",
+            json={"display_name": project_display_name},
+        )
         r.raise_for_status()
     except Exception as ex:
         raise CantCreateProjectError(f"Project `{project_display_name}` could not be created.") from ex

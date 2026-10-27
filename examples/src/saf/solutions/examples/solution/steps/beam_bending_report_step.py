@@ -30,7 +30,7 @@ from ansys.dynamicreporting.core.serverless import ADR, Dataset, Item, Session, 
 from ansys.saf.glow.solution import NO_ENTITY, EntityHandle, StepModel, StepSpec, transaction
 import numpy as np
 
-from saf.solutions.examples.solution.beam_bending_step import BeamBendingStep
+from saf.solutions.examples.solution.steps.beam_bending_step import BeamBendingStep
 from saf.solutions.examples.solution.scripts.beam_bending.report.adr_config import get_adr_config
 from saf.solutions.examples.solution.scripts.beam_bending.report.report_items import (
     create_conclusion_items,

@@ -168,8 +168,11 @@ def _get_executable_absolute_path(executable: str, solution_root_dir: Path) -> P
         return solution_venv_bin_dir / executable
     elif (solution_venv_bin_dir / f"{executable}.exe").is_file():
         return solution_venv_bin_dir / f"{executable}.exe"
-    else:
-        raise FileNotFoundError(f"Executable '{executable}' not found in solution '{solution_root_dir.name}'.")
+    elif executable == "uv":
+        uv_exec = shutil.which("uv")
+        if uv_exec is not None:
+            return Path(uv_exec)
+    raise FileNotFoundError(f"Executable '{executable}' not found in solution '{solution_root_dir.name}'.")
 
 
 def _generic_exception_handler(e: Exception):

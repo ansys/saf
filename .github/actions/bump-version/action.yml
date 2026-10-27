@@ -84,6 +84,7 @@ runs:
         BASE_REF: ${{ inputs.base-ref }}
         GH_TOKEN: ${{ inputs.pr-token }}
         GITHUB_TOKEN: ${{ inputs.pr-token }}
+        NEW_VERSION: ${{ inputs.new-version }}
       run: |
         git config --global user.email "${EMAIL}"
         git config --global user.name "${USERNAME}"

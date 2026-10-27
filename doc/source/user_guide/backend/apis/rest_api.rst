@@ -48,3 +48,6 @@ To invoke a particular route using OpenAPI:
 3. Click the :guilabel:`Try it out` button.
 
 .. figure:: /_static/images/openapi.png
+  :align: center
+  :width: 75%
+  :alt: OpenAPI UI interface

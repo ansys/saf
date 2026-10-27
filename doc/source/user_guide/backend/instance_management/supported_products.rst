@@ -172,30 +172,30 @@ Known limitations
 -------------------
 
 - Only tested with ``ansys-fluent-core`` :bdg-primary:`0.37.0`. Using other versions may lead to unexpected behaviors.
-- When the instance is re-initialized, the internal state of the fluent interpreter is not restored. Only files are restored.
+- When the instance is re-initialized, the internal state of the Fluent interpreter is not restored. Only files are restored.
 - To use Fluent with HPS it is required to install the Python package ``ansys-saf-product-configuration[fluent]`` in the HPS scaler environment, and to include in the HPS scaler configuration both Fluent and its wrapper as available applications. For example, adding this snippet to the ``scaling_config.json``:
 
-    .. code:: json
+  .. code:: json
 
-        {
-            "name": "Ansys Fluent",
-            "version": "2025 R2",
-            "install_path": "/ansys_inc/v252/",
-            "executable": "/ansys_inc/v252/fluent/bin/fluent",
-        },
-        {
-            "name": "Ansys SAF Product Wrapper [Fluent]",
-            "version": "4.0",
-            "install_path": "<path-to-parent-dir-of-python-executable>",
-            "executable": "<path-to-python-executable>",
-        }
+      {
+          "name": "Ansys Fluent",
+          "version": "2025 R2",
+          "install_path": "/ansys_inc/v252/",
+          "executable": "/ansys_inc/v252/fluent/bin/fluent",
+      },
+      {
+          "name": "Ansys SAF Product Wrapper [Fluent]",
+          "version": "4.0",
+          "install_path": "<path-to-parent-dir-of-python-executable>",
+          "executable": "<path-to-python-executable>",
+      }
 
     Note that the executable in the wrapper points to the Python that has the ``ansys-saf-product-configuration[fluent]`` package installed in its environment.
 
 - These managers support all gRPC transport modes described in :ref:`gRPC transport modes <instance_management_grpc_transport_modes>`. However, ``ansys-fluent-core`` enforces secure gRPC connections for local instances and does not permit insecure connections. This has two main implications:
 
-    - **When using HPS**: To use insecure local connections, configure :envvar:`GLOW_PRODUCT_HOST` with your local IP address instead of localhost.
-    - **When using PIM Light Server**: The only supported secure mode by PIM Light Server (``WNUA``) does not work. Because SAF GLOW Engine  cannot reliably know if ``WNUA`` or ``insecure`` mode is being used when using PIM Light Server (see :ref:`instance_management_grpc_transport_modes`), it falls back to insecure connections, which ``ansys-fluent-core`` rejects. As a workaround, configure :envvar:`GLOW_PRODUCT_HOST` with your local IP address instead of localhost to establish a connection.
+  - **When using HPS**: To use insecure local connections, configure :envvar:`GLOW_PRODUCT_HOST` with your local IP address instead of localhost.
+  - **When using PIM Light Server**: The only supported secure mode by PIM Light Server (``WNUA``) does not work. Because SAF GLOW Engine  cannot reliably know if ``WNUA`` or ``insecure`` mode is being used when using PIM Light Server (see :ref:`instance_management_grpc_transport_modes`), it falls back to insecure connections, which ``ansys-fluent-core`` rejects. As a workaround, configure :envvar:`GLOW_PRODUCT_HOST` with your local IP address instead of localhost to establish a connection.
 
 Example
 --------
@@ -223,6 +223,8 @@ Configuration
   - Download **only the first ISO image** of the Ansys official Release:
 
     .. figure:: /_static/images/install_geometry_1.png
+      :width: 45%
+      :alt: Geometry installation first ISO image
 
   - Mount it and look in its content for the ``geometryservice/WINX64.7z`` file on Windows, or ``geometryservice/LINX64.TGZ`` on Linux. This compressed file contains the ``GeometryService`` directory that we want to install. Extract the ``WINX64.7z`` or ``LINX64.TGZ`` file, for example into: ``C:\Program Files\ANSYS Inc\v252\GeometryService`` or ``/ansys_inc/v252/GeometryService/``.
 

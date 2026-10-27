@@ -4,52 +4,42 @@
 Supported software
 ##################
 
-Supported software refers to software components that are actively tested in the CI platform and verified to work with the SAF SDK packages. However, the usage of SAF SDK is not limited to these versions, being a python application it's easily portable to other environments.
+Supported software refers to software components that are actively tested in the CI platform and verified to work with the SAF SDK packages. However, the usage of SAF SDK is not limited to these versions, being a Python application it's easily portable to other environments.
 
-Python
-======
 
-- 3.11, 3.12, 3.13, 3.14
+.. list-table:: Supported software
+   :header-rows: 1
+   :stub-columns: 1
+   :widths: 20 40 40
 
-Operating system
-================
+   * - Product
+     - Supported versions
+     - Notes
+   * - Python
+     - 3.11, 3.12, 3.13, 3.14
+     -
+   * - Operating system
+     - Windows 10, 11, Server 2022; Ubuntu 22.04, 24.04
+     -
+   * - SQLite
+     - 3.37.x, 3.40.x, 3.45.x
+     -
+   * - PostgreSQL
+     - 16.0
+     -
+   * - PIM Light Server
+     - 0.3.12
+     -
+   * - HPS
+     - - ``rep-deployments``: 1.2.217
+       - ``rep-scaling-service``: 1.2.217
+       - ``rep-evaluator``: 1.2.217
+     - Used via PyHPS for remote job execution. Requires an Ansys HPS deployment.
+   * - Minerva
+     - - Minerva: 2025R1
+       -  Ansys Minerva Generic Connector (Minerva CLI): 25.2.202
+     - Used for enterprise data management (Ansys customers and Channel Partners only).
 
-- Windows: 10, 11, Server 2022
-- Ubuntu: 22.04, 24.04
-
-SQLite
-======
-
-- 3.37.x, 3.40.x, 3.45.x
-
-PostgreSQL
-==========
-
-- 16.0
-
-PIM Light Server
-================
-
-- 0.3.12
-
-.. _supported-hps-version:
-
-HPS
-===
-
-Used via PyHPS for remote job execution. Requires an Ansys HPS deployment.
-
-- rep-deployments: 1.2.217
-- rep-scaling-service: 1.2.217
-- rep-evaluator: 1.2.217
-
-Minerva
-=======
-
-Used for enterprise data management (Ansys customers and Channel Partners only).
-
-- Minerva: 2025R1
-- Ansys Minerva Generic Connector (Minerva CLI): 25.2.202
 
 Ansys flagships
 ===============

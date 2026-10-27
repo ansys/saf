@@ -42,7 +42,7 @@ import tomllib
 from typing import cast
 
 from dotenv import dotenv_values
-from poetry.core.constraints.version import Version, parse_constraint
+from poetry.core.constraints.version import Version, parse_constraint  # pyright: ignore[reportMissingImports]
 
 from ansys.saf.cli._config.const import SOLUTION_TEMPLATE_PATH, UI_FRAMEWORKS
 

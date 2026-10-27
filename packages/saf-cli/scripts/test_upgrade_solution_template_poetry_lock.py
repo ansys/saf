@@ -200,8 +200,16 @@ class TestLockfileUpdater:
         assert b"\x90" in output
         run_process = subprocess.run
 
-        def run(command: list[str], **kwargs: object) -> subprocess.CompletedProcess[str]:
-            assert kwargs.get("encoding") == "utf-8"
+        def run(
+            command: list[str],
+            *,
+            cwd: Path,
+            check: bool,
+            capture_output: bool,
+            text: bool,
+            encoding: str,
+        ) -> subprocess.CompletedProcess[str]:
+            assert encoding == "utf-8"
             return run_process(
                 [
                     sys.executable,
@@ -209,7 +217,11 @@ class TestLockfileUpdater:
                     f"import sys; sys.stdout.buffer.write({output!r}); "
                     "sys.stderr.buffer.write('Progress: \\U0001f510'.encode('utf-8'))",
                 ],
-                **kwargs,
+                cwd=cwd,
+                check=check,
+                capture_output=capture_output,
+                text=text,
+                encoding=encoding,
             )
 
         self.monkeypatch.setattr(updater.shutil, "which", lambda name: "gh")

@@ -228,6 +228,7 @@ lint.per-file-ignores."packages/dash-super-components/src/ansys/solutions/dash_s
   "E501",
 ]
 lint.per-file-ignores."packages/saf-cli/scripts/upgrade_solution_template_poetry_lock.py" = [ "S101" ]
+lint.per-file-ignores."packages/saf-cli/scripts/test_upgrade_solution_template_poetry_lock.py" = [ "S101" ]
 lint.per-file-ignores."packages/saf-testing/src/ansys/saf/testing/**.py" = [
   "S",
 ]  # FIXME: temporary for the monorepo migration

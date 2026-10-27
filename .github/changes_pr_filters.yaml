@@ -104,6 +104,8 @@ saf-testing:
 actions:
   - '.github/actions/ci-cd-job-matrices/**'
   - '.github/actions/get-fixed-vulnerabilities/**'
+scripts:
+  - 'packages/saf-cli/scripts/**'
 examples:
   - 'examples/**'
   - '.github/workflows/tests_groups_definitions/examples.json'

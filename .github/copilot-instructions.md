@@ -101,6 +101,44 @@ The JSON files in `.github/workflows/tests_groups_definitions/` define the test 
 - Use `pathlib.Path` for filesystem paths where practical.
 - The project is Apache-2.0 licensed. The root license-header hook applies to `.py`, `.bat`, `.html`, `.css`, and `.proto` files and uses `start_year=2026`; follow the applicable package and hook configuration.
 
+## Tech stack
+
+The following describes technologies used across SAF; individual packages and generated solutions use only a subset. Check the relevant package's `pyproject.toml` before relying on a dependency or tool.
+
+### Backend and integrations
+
+- **Python 3.11–3.14** — versions exercised by CI; the declared support range can vary by package.
+- **FastAPI and Pydantic** — used by API and workflow services for HTTP endpoints and data models.
+- **HTTP and identity libraries** — `httpx`/`httpx2` and OIDC/JWT tooling are used by integrations; use the package's configured client and auth library.
+- **gRPC** — used for inter-service and product-integration communication.
+- **OpenTelemetry** — used for observability in applicable runtime components.
+- **Docker** — used by selected integration and end-to-end test groups.
+
+### User interfaces
+
+- **Dash** is used by SAF UI components and supported solution templates. SAF is not restricted to Dash; applications can integrate other frontends.
+- **Selenium** is used by selected browser-based tests, not as a requirement for every package.
+
+### Testing
+
+- **pytest** is the test framework, with package-specific plugins and configuration.
+- **pytest-asyncio**, **pytest-xdist**, and **pytest-cov** are used where appropriate for async tests, parallel execution, and coverage.
+- HTTP testing uses the dependencies declared by the relevant package, including `httpx2-pytest` in the root workspace.
+- CI test groups and required runners or integrations are defined in `.github/workflows/tests_groups_definitions/`.
+
+### Tooling and documentation
+
+- **uv** manages the root Python workspace and lockfile; **Moon** orchestrates workspace and package tasks.
+- **Ruff**, **Pyright**, **Bandit**, **pre-commit**, and **Gitleaks** provide formatting/linting, type checking, security checks, and repository hooks. Exact checks can differ by package.
+- **GitHub Actions** runs CI, test, build, release, and documentation workflows.
+- **Sphinx** and **Vale** are used for documentation builds and checks.
+- **Cookiecutter templates** are used by SAF scaffolding workflows. Poetry may still appear in standalone or compatibility workflows; it is not the root workspace manager.
+
+## Keeping these instructions current
+
+- Treat package manifests, Moon task definitions, and CI workflows as the source of truth when instructions and implementation differ.
+- For package-specific questions, inspect `packages/<package>/pyproject.toml` and `packages/<package>/moon.yml`; for workspace-wide behavior, inspect the root `pyproject.toml`, `.moon/`, and `.github/workflows/`.
+
 ## Where to look
 
 - `pyproject.toml` and `uv.lock`: workspace dependencies and shared tooling.

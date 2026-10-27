@@ -190,7 +190,7 @@ Known limitations
           "executable": "<path-to-python-executable>",
       }
 
-    Note that the executable in the wrapper points to the Python that has the ``ansys-saf-product-configuration[fluent]`` package installed in its environment.
+  Note that the executable in the wrapper points to the Python that has the ``ansys-saf-product-configuration[fluent]`` package installed in its environment.
 
 - These managers support all gRPC transport modes described in :ref:`gRPC transport modes <instance_management_grpc_transport_modes>`. However, ``ansys-fluent-core`` enforces secure gRPC connections for local instances and does not permit insecure connections. This has two main implications:
 

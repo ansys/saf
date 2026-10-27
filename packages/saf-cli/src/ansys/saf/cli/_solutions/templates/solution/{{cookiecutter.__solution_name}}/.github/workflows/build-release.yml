@@ -89,9 +89,9 @@ jobs:
         with:
           python-version: {{ "${{ matrix.python-version }}" }}
 {% if cookiecutter.__ui_framework != "none" %}
-          optional-dependencies-name: "tests,ui"
+          group-dependencies-name: "tests,ui"
 {% else %}
-          optional-dependencies-name: "tests"
+          group-dependencies-name: "tests"
 {% endif %}
 
   check-licenses:

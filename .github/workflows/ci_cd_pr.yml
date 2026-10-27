@@ -269,7 +269,7 @@ jobs:
 
       - name: Run pre-commit (Moon)
         shell: bash
-        run: moon run :pre-commit
+        run: moon run :pre-commit --affected
 
   code-style-examples:
     name: "Check code style (examples)"

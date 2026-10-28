@@ -115,7 +115,7 @@ jobs:
           poetry-install-args: "--all-extras"
 
       - name: Check licenses
-        uses: ansys/actions/check-licenses@73fa84c704bb6691f254cfe4d4b928c338b0d4da # v10.3.0
+        uses: ansys/actions/check-licenses@v11
         with:
           checkout: false
           python-version: {{ "${{ env.MAIN_PYTHON_VERSION }}" }}

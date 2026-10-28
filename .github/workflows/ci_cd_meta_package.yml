@@ -133,6 +133,7 @@ jobs:
           sparse-checkout: |
             .github/actions/sdk-meta-package
             packages/${{ env.LIBRARY_NAME }}
+            doc/source/release_notes/index.rst
 
       - name: Validate version overrides
         shell: bash

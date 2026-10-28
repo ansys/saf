@@ -110,6 +110,7 @@ tests-glow-engine = [
   "pyc-wheel>=1.2.7,<2.0",
   "toml>=0.10.2,<2.0",
   "waitress>=3.0.1,<4.0",
+  "poetry==2.5.1",
 ]
 tests-saf-cli = [
   "ansys-solutions-dash-super-components>=1.0.0,<2.0",

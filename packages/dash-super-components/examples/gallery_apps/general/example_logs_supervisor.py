@@ -82,8 +82,8 @@ in the repository.
 # page for details.
 #
 # The optional ``REQUESTS_PATHNAME_PREFIX`` environment variable lets you test the app behind a
-# URL path prefix.  See the `Adding external scripts with a URL path prefix
-# <https://upgraded-carnival-wn6lkym.pages.github.io/version/stable/api/dash-super-components/getting-started.html#ref_path_prefix>`_
+# URL path prefix. See the `Adding external scripts with a URL path prefix
+# <https://saf.ansys.com/version/stable/api/dash-super-components/version/dev/user-guide/logs-supervisor.html>`_
 # section of the Getting Started page for details.
 #
 # To generate the simulated log file, additional imports are needed for logging, file handling, and

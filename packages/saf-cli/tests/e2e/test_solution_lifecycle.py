@@ -166,7 +166,6 @@ def test_solution_lifecycle(
     project_ui_url = check_solution_launched_correctly(
         glow_api_port,
         glow_ui_port,
-        portal_ui_port,
         use_projects_dashboard=True,
     )
     check_ui_is_functional(get_selenium_webdriver(), project_ui_url=project_ui_url, with_portal=True)

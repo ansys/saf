@@ -63,6 +63,7 @@ doc = [
   "sphinxcontrib-mermaid>=0.7.1; python_version>='3.12'",
   "sphinxcontrib-video>=0.4.2; python_version>='3.12'",
   "sphinxemoji>=0.2; python_version>='3.12'",
+  "sphinx-togglebutton>=0.4.0; python_version>='3.12'",
   "toml>=0.10.2; python_version>='3.12'",
   "vale==3.22.0.0",
 ]
@@ -227,7 +228,6 @@ lint.per-file-ignores."packages/*/tests/**.py" = [ "S" ]
 lint.per-file-ignores."packages/dash-super-components/src/ansys/solutions/dash_super_components/utils/svg_icons.py" = [
   "E501",
 ]
-lint.per-file-ignores."packages/saf-cli/scripts/test_upgrade_solution_template_poetry_lock.py" = [ "S101" ]
 lint.per-file-ignores."packages/saf-cli/scripts/upgrade_solution_template_poetry_lock.py" = [ "S101" ]
 lint.per-file-ignores."packages/saf-testing/src/ansys/saf/testing/**.py" = [
   "S",

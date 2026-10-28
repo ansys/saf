@@ -49,7 +49,6 @@ version = configuration["project"]["version"]
 copyright = f"©{datetime.now().year} ANSYS, Inc. All rights reserved."
 author = "ANSYS Inc."
 
-
 extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.autosummary",
@@ -64,6 +63,8 @@ extensions = [
     "sphinx.ext.graphviz",
     "sphinxcontrib.mermaid",
     "sphinx_gallery.gen_gallery",
+    "sphinx_togglebutton",
+    "sphinx_design",
 ]
 
 # ---------------------------------------------------------------------------
@@ -87,67 +88,6 @@ sphinx_gallery_conf = {
     "image_scrapers": (),
     "remove_config_comments": True,
 }
-
-# ---------------------------------------------------------------------------
-# Intersphinx: component API references
-# Each entry links the central doc to a component's published API reference.
-# URL pattern: https://<component-cname>/version/stable/objects.inv
-# ---------------------------------------------------------------------------
-intersphinx_mapping = {
-    "python": ("https://docs.python.org/dev", None),
-    "glow": (
-        f"https://{os.getenv('GLOW_DOC_CNAME', 'glow-engine.docs.solutions.ansys.com')}/version/stable",
-        None,
-    ),
-    "saf_cli": (
-        f"https://{os.getenv('SAF_CLI_DOC_CNAME', 'saf-cli.docs.solutions.ansys.com')}/version/stable",
-        None,
-    ),
-    "bdm_api": ("https://bdm-python-api.docs.solutions.ansys.com/version/stable", None),
-    "bdm_shared_volume": (
-        "https://bdm-python-shared-volume.docs.solutions.ansys.com/version/stable",
-        None,
-    ),
-    "iam_oidc": (
-        "https://ansys-iam-oidc.docs.solutions.ansys.com/version/stable",
-        None,
-    ),
-    "product_config": (
-        "https://saf-product-configuration.docs.solutions.ansys.com/version/stable",
-        None,
-    ),
-    "product_manager": (
-        "https://saf-product-manager.docs.solutions.ansys.com/version/stable",
-        None,
-    ),
-    "orchestrator": (
-        "https://saf-desktop-orchestrator.docs.solutions.ansys.com/version/stable",
-        None,
-    ),
-    "installer": (
-        "https://saf-desktop-installer.docs.solutions.ansys.com/version/stable",
-        None,
-    ),
-    "testing": (
-        "https://saf-sdk-testing.docs.solutions.ansys.com/version/stable",
-        None,
-    ),
-    "templates": (
-        "https://saf-templates.docs.solutions.ansys.com/version/stable",
-        None,
-    ),
-    # "super_components": placeholder removed — dash-super-components now lives in the saf metapackage;
-    # cross-reference it via the merged api/dash-super-components path instead of a standalone domain.
-    "translation": (
-        "https://translation-utilities.docs.solutions.ansys.com/version/stable",
-        None,
-    ),
-    # "minerva": placeholder removed — same URL as iam_oidc; update when Minerva client publishes its own docs
-}
-
-# Allow local / offline builds to skip intersphinx fetching entirely.
-if os.getenv("DISABLE_INTERSPHINX", "false").lower() == "true":
-    intersphinx_mapping = {}
 
 html_favicon = ansys_favicon
 notfound_template = "404.rst"

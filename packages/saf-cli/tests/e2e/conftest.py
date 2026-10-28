@@ -413,18 +413,9 @@ def run_solution() -> YieldFixture[RunSolution]:
         wait_for_healthy: bool = True,
     ) -> SAFProcess:
         @retry(stop=stop_after_attempt(720), wait=wait_fixed(0.5))
-        def wait_for_final_orchestrator_startup_message(p: SAFProcess):
+        def find_final_orchestrator_startup_message(p: SAFProcess):
             if not p.find_msg_in_output("Additional services: "):
                 raise TryAgain
-
-        def find_final_orchestrator_startup_message(p: SAFProcess):
-            try:
-                wait_for_final_orchestrator_startup_message(p)
-            except Exception:
-                print("===== saf run output (startup health check timed out) =====")
-                print("\n".join(p.output))
-                print("===== end of saf run output =====")
-                raise
 
         p = SAFProcess.run(
             ["run"] + (args if args is not None else []),

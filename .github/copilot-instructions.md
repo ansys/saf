@@ -4,7 +4,7 @@ The **Solution Application Framework (SAF)** is a Python-based toolkit for creat
 
 At its core, SAF provides the **Guided Low-Code Workflow (GLOW)** engine — a Python framework that abstracts complex backend operations, orchestrates Ansys product integrations, and exposes a unified API for building, running, and managing solution applications.
 
-# Key capabilities
+## Key capabilities
 
 - **Templated, production-ready apps** with batteries-included project structure, dependency management, and observability
 - **Desktop-ready** with code encryption, standalone executable installers, and fully offline installation
@@ -12,138 +12,171 @@ At its core, SAF provides the **Guided Low-Code Workflow (GLOW)** engine — a P
 - **Open architecture** — use any frontend framework (Dash, React, Angular) and connect to third-party software via REST APIs
 - **Flexible deployment** — write once, deploy anywhere (desktop, on-premises, or cloud) without changing source code
 
-# Repository model
+## Repository model
 
-- SAF is a Python monorepo. Thirteen packages under `packages/` are members of the root uv workspace; `packages/saf-sdk/` is a separate meta-package and is not a workspace member.
-- The root project is a workspace/tooling configuration, not a publishable package. Package behavior, dependencies, supported Python versions, and task definitions can differ; check the affected package's `pyproject.toml` and `moon.yml`.
-- The root workspace supports Python 3.11 and newer, below Python 4. CI exercises Python 3.11–3.14, but check an individual package's declared support before relying on a version.
+This repository is a **monorepo** containing 12 independent packages. Each package has its own `pyproject.toml`, `poetry.lock`, `.pre-commit-config.yaml`, and release lifecycle.
+
+- **Python**: >=3.11, <4.0 (CI tests on 3.11–3.14)
+- **Build system**: Poetry (per-package), uv (root-level only)
+- **License**: Apache-2.0 (all new files require a license header with `start_year=2026`)
 
 # Repository layout
 
 ```
 saf/
+├── .pre-commit-config.yaml          # Root-level hooks (gitleaks, zizmor, trailing-whitespace, yamlfmt, license headers)
+├── pyproject.toml                    # Root project — doc dependencies only, no publishable code
+├── doc/styles/Vocab/ANSYS/accept.txt # Shared spelling dictionary (Vale + codespell)
+├── architecture/                     # Monorepo design docs (architecture.md, CI docs)
+├── doc/                              # Root-level Sphinx documentation
 ├── .github/
-│   ├── actions/                      # Composite actions and helper scripts
-│   ├── ISSUE_TEMPLATE/
-│   ├── scripts/
-│   └── workflows/
-│       ├── tests_groups_definitions/ # JSON configs that split package tests into CI matrix groups
-│       ├── ci_cd_pr.yml
-│       ├── ci_cd_release.yml
-│       ├── ci_cd_meta_package.yml    # SAF SDK meta-package workflow
-│       ├── certification.yml
-│       ├── _build.yml
-│       ├── _doc.yml
-│       ├── _test.yml
-│       ├── _test_generated_solution.yml
-│       └── build-release.yml         # Placeholder required by generated-solution tests; keep the filename unchanged
-├── .moon/                            # Moon workspace and shared tasks
-├── benchmarks/
-├── doc/                              # Root Sphinx docs and Vale configuration
-│   ├── source/
-│   └── styles/config/vocabularies/ANSYS/accept.txt
-├── examples/                         # Standalone example solution project
-├── LICENSES/
-├── packages/                         # 14 package directories
-│   ├── bdm-python-api/
-│   ├── bdm-python-shared-volume/
-│   ├── dash-super-components/
-│   ├── glow-engine/
-│   ├── saf-cli/
-│   ├── saf-desktop-installer/
-│   ├── saf-desktop-orchestrator/
-│   ├── saf-iam-oidc/
-│   ├── saf-product-configuration/
-│   ├── saf-product-manager/
-│   ├── saf-projects-dashboard/
-│   ├── saf-sdk/                      # Separate meta-package, outside root uv workspace
-│   ├── saf-templates/
-│   └── saf-testing/
-├── scripts/
-├── .gitleaks.toml                    # Gitleaks custom rules and narrow test-fixture allowlists
-├── .pre-commit-config.yaml           # Repository-wide governance hooks
-├── pyproject.toml                    # Root uv workspace and shared tooling
-├── README.md
-├── SECURITY.md
-└── uv.lock
+│   ├── workflows/
+│   │   ├── ci_cd_pr.yml              # Main CI: label-gated per-package style, build, test
+│   │   ├── _test.yml                 # Reusable test workflow (matrix from JSON definitions)
+│   │   ├── ci_cd_release.yml         # Release workflow (one package at a time)
+│   │   ├── certification.yml         # Certification workflow (multi-Python)
+│   │   └── tests_groups_definitions/ # Per-package JSON test session configs
+│   ├── labeler.yml                   # Maps changed paths → PR labels
+│   └── labels.yml                    # Canonical label definitions
+└── packages/                         # All 13 Python packages
+    ├── bdm-python-api/
+    ├── bdm-python-shared-volume/
+    ├── dash-super-components/
+    ├── glow-engine/
+    ├── saf-cli/
+    ├── saf-desktop-installer/
+    ├── saf-desktop-orchestrator/
+    ├── saf-iam-oidc/
+    ├── saf-product-configuration/
+    ├── saf-product-manager/
+    ├── saf-projects-dashboard/
+    ├── saf-templates/
+    └── saf-testing/
 ```
 
-The 13 packages other than `saf-sdk` are members of the root uv workspace. Package contents vary; most have their own `src/`, `tests/`, `pyproject.toml`, and `moon.yml`, but do not assume every package has the same files or layout.
+Each package follows a uniform internal structure: `src/`, `tests/`, `pyproject.toml`, `poetry.lock`, `.pre-commit-config.yaml`.
 
-The JSON files in `.github/workflows/tests_groups_definitions/` define the test matrix for the reusable `.github/workflows/_test.yml` workflow. Each entry describes a test group, including pytest arguments and markers, runner selection, and any required runner setup or optional integrations. Package-specific variants (such as `-extended` or product-integration configs) let CI run different test subsets and environments independently. Update the appropriate configuration when changing how a package's CI tests are partitioned or provisioned.
-
-# Development and validation
+# Build, test, and validate
 
 ## Prerequisites
 
 - **Long paths** must be enabled (`git config --global core.longpaths true`; also enable in Windows registry).
-- **Moon**: [Moon Documentation](https://moonrepo.dev/docs/install#windows)
+- **uv** for root-level tasks: `pip install uv`
+- **Poetry 2.3.2** for package-level tasks.
 
-- Use uv for the workspace and Moon for the repository's CI-aligned tasks. Do not assume Poetry-based instructions apply to workspace packages. The separate `saf-sdk` meta-package has its own workflow and packaging configuration.
-- From the repository root, use the relevant Moon task rather than reproducing CI commands manually:
+## Root-level tasks (run from repo root, use uv)
 
-  ```text
-  moon run root:uv-sync -- --all-groups
-  moon run root:pre-commit
-  moon run <package>:test -- [pytest arguments]
-  moon run <package>:pre-commit
-  moon run root:build-doc
-  ```
+```bash
+# Pre-commit (root hooks: gitleaks, zizmor, trailing-whitespace, yamlfmt, license headers)
+uv venv .venv --python 3.12
+.venv\Scripts\activate        # Windows
+uv pip install pre-commit==4.6.0
+uv run pre-commit run --all-files
 
-- Run checks for the package and files you changed. Root pre-commit covers repository-level files; package pre-commit covers that package. CI definitions and shared task implementations are in `.github/workflows/` and `.moon/`.
-- Some tasks require `UV_PYTHON` and `MOON_PYTHON_VERSION`; use the Python version configured by the task or CI.
+# Documentation
+uv sync --group doc
+uv run sphinx-build doc/source doc/build/html
+```
 
-## Code conventions
+## Package-level tasks (run from packages/<name>, use Poetry)
 
-- Follow the affected package's configuration first. Root Ruff defaults to a 120-character line length and Python 3.12 syntax; package configurations may add or override rules.
-- Use the project's configured type checker, security checks, and tests rather than assuming every package shares identical strictness or dependencies.
-- Public Python APIs use numpydoc-style documentation where the package follows that convention. Preserve established package naming, exports, and test patterns.
-- Use `pathlib.Path` for filesystem paths where practical.
-- The project is Apache-2.0 licensed. The root license-header hook applies to `.py`, `.bat`, `.html`, `.css`, and `.proto` files and uses `start_year=2026`; follow the applicable package and hook configuration.
+```bash
+cd packages/<package-name>
 
-## Tech stack
+# Install all dependencies
+poetry install --all-extras
 
-The following describes technologies used across SAF; individual packages and generated solutions use only a subset. Check the relevant package's `pyproject.toml` before relying on a dependency or tool.
+# Some packages need additional groups for style checks:
+#   glow-engine:              poetry install --with tests,style --all-extras
+#   saf-desktop-installer:    poetry install --with tests,style --all-extras
+#   saf-desktop-orchestrator: poetry install --with tests,dev --all-extras
+#   dash-super-components:    poetry install --with tests,style --all-extras
+#   saf-projects-dashboard:   poetry install --with tests,style --all-extras
 
-### Backend and integrations
+# Run tests
+poetry run pytest
+```
 
-- **Python 3.11–3.14** — versions exercised by CI; the declared support range can vary by package.
-- **FastAPI and Pydantic** — used by API and workflow services for HTTP endpoints and data models.
-- **HTTP and identity libraries** — `httpx`/`httpx2` and OIDC/JWT tooling are used by integrations; use the package's configured client and auth library.
-- **gRPC** — used for inter-service and product-integration communication.
-- **OpenTelemetry** — used for observability in applicable runtime components.
-- **Docker** — used by selected integration and end-to-end test groups.
+# Run package-level pre-commit (ruff, pyright, bandit, poetry-check, etc.)
+Not all packages include `pre-commit` in their `pyproject.toml`. The dependency group varies by package:
 
-### User interfaces
+| Group | Packages |
+|-------|----------|
+| `style` | glow-engine, saf-testing, dash-super-components, saf-projects-dashboard |
+| `dev` | saf-cli, saf-desktop-orchestrator, saf-product-manager, saf-product-configuration |
+| *(not included)* | bdm-python-api, bdm-python-shared-volume, saf-iam-oidc, saf-desktop-installer, saf-templates |
 
-- **Dash** is used by SAF UI components and supported solution templates. SAF is not restricted to Dash; applications can integrate other frontends.
-- **Selenium** is used by selected browser-based tests, not as a requirement for every package.
+For packages that include `pre-commit`:
 
-### Testing
+```bash
+cd packages/<component>
 
-- **pytest** is the test framework, with package-specific plugins and configuration.
-- **pytest-asyncio**, **pytest-xdist**, and **pytest-cov** are used where appropriate for async tests, parallel execution, and coverage.
-- HTTP testing uses the dependencies declared by the relevant package, including `httpx2-pytest` in the root workspace.
-- CI test groups and required runners or integrations are defined in `.github/workflows/tests_groups_definitions/`.
-- The Moon `test` task produces a terminal coverage summary, `coverage.xml`, and an HTML report under the package's `htmlcov/` directory, alongside pytest reports under `report/`. Run `moon run <package>:test` from the repository root; in CodeDev, open `packages/<package>/htmlcov/index.html` from the workspace file explorer to browse line-by-line coverage. Replace `<package>` with the package directory name, such as `glow-engine`.
-- CI uploads coverage to Codecov. View the repository dashboard at [app.codecov.io/gh/ansys/saf](https://app.codecov.io/gh/ansys/saf); CI also uploads pytest HTML reports as workflow artifacts, available from the relevant GitHub Actions run.
+# Install the group that contains pre-commit (style or dev, see table above)
+poetry install --with <style|dev> --all-extras
+poetry run pre-commit run --all-files
+```
 
-### Tooling and documentation
+# Code style rules (enforced per-package)
 
-- **uv** manages the root Python workspace and lockfile; **Moon** orchestrates workspace and package tasks.
-- **Ruff**, **Pyright**, **Bandit**, **pre-commit**, and **Gitleaks** provide formatting/linting, type checking, security checks, and repository hooks. Exact checks can differ by package.
-- **GitHub Actions** runs CI, test, build, release, and documentation workflows.
-- **Sphinx** and **Vale** are used for documentation builds and checks.
-- **Cookiecutter templates** are used by SAF scaffolding workflows. Poetry may still appear in standalone or compatibility workflows; it is not the root workspace manager.
+- **Line length**: 120 characters
+- **Linter/formatter**: Ruff (package-specific rule sets in each `pyproject.toml`, typically rules: A, ASYNC, B, C4, C90, COM, E, F, I, LOG, N, PIE, PT, PTH, PYI, Q, RUF100, SIM, TC, UP, W)
+- **Type checking**: Pyright in strict mode (`[tool.pyright]` in `pyproject.toml`; also configured in `.pre-commit-config.yaml` with `--project` and `--venvpath` args — both must stay aligned)
+- **Security**: Bandit (high severity), gitleaks
+- **Docstrings**: numpydoc format for public APIs
+- **Import sorting**: isort via ruff with `force-sort-within-sections`
+- **Spelling**: codespell — use `doc/styles/Vocab/ANSYS/accept.txt` via `--ignore-words=doc/styles/Vocab/ANSYS/accept.txt`
+- **License headers**: Apache-2.0 with `start_year=2026` (root pre-commit hook)
+- **pathlib**: Use `pathlib.Path` over `os.path` (PTH rules enforced)
 
-## Keeping these instructions current
+# Key conventions
 
-- Treat package manifests, Moon task definitions, and CI workflows as the source of truth when instructions and implementation differ.
-- For package-specific questions, inspect `packages/<package>/pyproject.toml` and `packages/<package>/moon.yml`; for workspace-wide behavior, inspect the root `pyproject.toml`, `.moon/`, and `.github/workflows/`.
+- Internal modules are prefixed with `_` (e.g., `_client.py`). Public API is exported through `__init__.py`.
+- All packages are `py.typed` — full type coverage required.
+- Use `str | None` (not `Optional[str]`), `list[str]` (not `List[str]`).
+- Tests use pytest. Async tests use pytest-asyncio. Parallelism via pytest-xdist.
+- Package dependencies use caret (`^`) version specifiers.
+- Private PyPI sources are configured in package `pyproject.toml` files for internal Ansys dependencies.
 
-## Where to look
+# Tech stack
 
-- `pyproject.toml` and `uv.lock`: workspace dependencies and shared tooling.
-- `.moon/` and `packages/<package>/moon.yml`: shared and package-specific tasks.
-- `packages/<package>/pyproject.toml`: package metadata, dependencies, and tool settings.
-- `.github/workflows/`: CI, release, test, documentation, and SDK meta-package workflows.
+## Backend
+
+- **Python 3.11–3.14** — primary language across all packages
+- **FastAPI** — API framework for GLOW engine and portal services
+- **Pydantic** — data validation, settings management, and model definitions
+- **SQLAlchemy (async)** — ORM for portal database backends (SQLite, PostgreSQL, MySQL)
+- **httpx** — async/sync HTTP client
+- **joserfc** — JWT/OIDC token handling
+- **gRPC** — inter-service communication (product instances, PIM)
+- **Uvicorn** — ASGI server for FastAPI applications
+- **OpenTelemetry** — observability (logging, tracing, metrics)
+
+## Frontend
+
+- **Dash** — default UI framework for solution applications
+
+## Testing
+
+- **pytest** — test runner for all Python packages
+- **pytest-asyncio** — async test support
+- **pytest-xdist** — parallel test execution (`-nlogical --dist=loadfile`)
+- **pytest-httpx** — HTTP request mocking
+- **Selenium** — browser-based end-to-end testing
+- **coverage / pytest-cov** — code coverage reporting
+
+## Tooling & CI
+
+- **Poetry 2.3.2** — per-package dependency management and virtualenvs
+- **uv** — root-level dependency management and pre-commit
+- **Ruff** — linting and formatting
+- **Pyright** — static type checking (strict mode)
+- **Bandit** — security scanning
+- **codespell** — spelling checks
+- **pre-commit** — git hook management (root + per-package configs)
+- **GitHub Actions** — CI/CD (label-driven, reusable workflows)
+- **Sphinx** — documentation generation (ansys-sphinx-theme)
+- **Cookiecutter** — project and step template scaffolding
+
+# Trust these instructions
+
+These instructions reflect the validated repository structure and build process. Only search the codebase if information here is incomplete or found to be in error during command execution.

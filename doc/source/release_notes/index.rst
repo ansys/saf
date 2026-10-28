@@ -7,211 +7,235 @@ Release notes
 
 .. vale off
 
+.. raw:: html
+
+  <style>
+    details.dropdown > summary .sd-summary-text {
+      font-size: 0;
+    }
+    details.dropdown > summary .sd-summary-text::before {
+      content: "Show details";
+      font-size: 1rem;
+    }
+    details.dropdown[open] > summary .sd-summary-text::before {
+      content: "Hide details";
+    }
+  </style>
+
 This section provides release notes for the SAF metapackage (``ansys-saf-sdk``).
 
+.. NEW_RELEASES_NOTES-INSERT-HERE (auto-generated entries go here; do no edit or removed)
 
 `0.3.0 <https://github.com/ansys/saf/releases#release-v0.3.0-saf-sdk>`_ — September 24, 2026
-=====================================================================================================
+============================================================================================
 
-.. note::
- Installing ``ansys-saf-sdk`` requires pip 26.0 or higher.
+.. dropdown::
+  :class-container: dropdown
+  :open:
+  :chevron: down-up
 
+  .. note::
+     Installing ``ansys-saf-sdk`` requires pip 26.0 or higher.
 
-Dependency versions
---------------------
+  .. rubric:: Dependency versions
 
-The public package versions below were resolved for this version of ``ansys-saf-sdk``. The private-package versions were fetched separately as the latest available versions:
+  The public package versions below were resolved for this version of ``ansys-saf-sdk``. The private-package versions were fetched separately as the latest available versions:
 
-.. tab-set::
+  .. tab-set::
 
-  .. tab-item:: Packages
+    .. tab-item:: Packages
 
-    .. list-table::
-      :header-rows: 1
-      :stub-columns: 1
-      :widths: 60 20 20
-
-      * - Package
-        - Version
-        - Maintenance window
-      * - ``ansys-bdm-api``
-        - ``0.5.0``
-        - —
-      * - ``ansys-bdm-shared-volume``
-        - ``0.4.0``
-        - —
-      * - ``ansys-saf-glow-engine``
-        - ``2.4.0``
-        - —
-      * - ``ansys-saf-desktop-installer``
-        - ``1.17.0``
-        - —
-      * - ``ansys-saf-desktop-orchestrator``
-        - ``1.14.0``
-        - —
-      * - ``ansys-iam-oidc``
-        - ``0.9.0``
-        - —
-      * - ``ansys-saf-product-configuration``
-        - ``0.26.0``
-        - —
-      * - ``ansys-saf-product-manager``
-        - ``0.5.0``
-        - —
-
-  .. tab-item:: Private packages
-
-    .. list-table::
+      .. list-table::
         :header-rows: 1
         :stub-columns: 1
-        :widths: 80 20
+        :widths: 60 20 20
 
-        * - Private package
+        * - Package
           - Version
-        * - ``ansys-saf-pim-light-server``
-          - ``0.3.12``
-        * - ``ansys-translation-utilities``
-          - ``0.4.1``
-        * - ``ansys-saf-desktop-portal``
-          - ``0.3.1``
-        * - ``ansys-saf-web-portal``
-          - ``0.1.dev10``
-        * - ``ansys-minerva-python-client``
+          - Maintenance window
+        * - ``ansys-bdm-api``
           - ``0.5.0``
-        * - ``ansys-datarepository-python-client``
-          - ``0.1.dev12``
-        * - ``ansys-saf-hermes``
-          - ``0.1.dev13``
-        * - ``ansys-saf-aspire``
-          - ``9.1.6``
+          - —
+        * - ``ansys-bdm-shared-volume``
+          - ``0.4.0``
+          - —
+        * - ``ansys-saf-glow-engine``
+          - ``2.4.0``
+          - —
+        * - ``ansys-saf-desktop-installer``
+          - ``1.17.0``
+          - —
+        * - ``ansys-saf-desktop-orchestrator``
+          - ``1.14.0``
+          - —
+        * - ``ansys-iam-oidc``
+          - ``0.9.0``
+          - —
+        * - ``ansys-saf-product-configuration``
+          - ``0.26.0``
+          - —
+        * - ``ansys-saf-product-manager``
+          - ``0.5.0``
+          - —
+
+    .. tab-item:: Private packages
+
+      .. list-table::
+          :header-rows: 1
+          :stub-columns: 1
+          :widths: 80 20
+
+          * - Private package
+            - Version
+          * - ``ansys-saf-pim-light-server``
+            - ``0.3.12``
+          * - ``ansys-translation-utilities``
+            - ``0.4.1``
+          * - ``ansys-saf-desktop-portal``
+            - ``0.3.1``
+          * - ``ansys-saf-web-portal``
+            - ``0.1.dev10``
+          * - ``ansys-minerva-python-client``
+            - ``0.5.0``
+          * - ``ansys-datarepository-python-client``
+            - ``0.1.dev12``
+          * - ``ansys-saf-hermes``
+            - ``0.1.dev13``
+          * - ``ansys-saf-aspire``
+            - ``9.1.6``
 
 
 
-``ansys-saf-glow-engine`` `2.4.0 <https://github.com/ansys/saf/releases?page=1#release-v2.4.0-glow-engine>`_
----------------------------------------------------------------------------------------------------------------
+  .. rubric:: ``ansys-saf-glow-engine`` `2.4.0 <https://github.com/ansys/saf/releases?page=1#release-v2.4.0-glow-engine>`_
 
-.. tab-set::
+  .. tab-set::
 
-  .. tab-item:: Added
+    .. tab-item:: Added
 
-    .. list-table::
-        :widths: 80 20
+      .. list-table::
+          :widths: 80 20
 
-        * - Add SAF concepts as MCP resource
-          - `#6 <https://github.com/ansys/saf/pull/6>`_
+          * - Add SAF concepts as MCP resource
+            - `#6 <https://github.com/ansys/saf/pull/6>`_
 
-  .. tab-item:: Documentation
+    .. tab-item:: Documentation
 
-    .. list-table::
-        :widths: 80 20
+      .. list-table::
+          :widths: 80 20
 
-        * - Set default theme to dark
-          - `#67 <https://github.com/ansys/saf/pull/67>`_
-        * -  Fix API reference documentation page
-          - `#63 <https://github.com/ansys/saf/pull/63>`_
-        * - Update corporate logo in centralized and package API documentation
-          - `#55 <https://github.com/ansys/saf/pull/55>`_
-
-
+          * - Set default theme to dark
+            - `#67 <https://github.com/ansys/saf/pull/67>`_
+          * -  Fix API reference documentation page
+            - `#63 <https://github.com/ansys/saf/pull/63>`_
+          * - Update corporate logo in centralized and package API documentation
+            - `#55 <https://github.com/ansys/saf/pull/55>`_
 
 `0.2.0 <https://github.com/ansys/saf/releases#release-v0.2.0-saf-sdk>`_ — September 17, 2026
 =====================================================================================================
 
-.. note::
- Installing ``ansys-saf-sdk`` requires pip 26.0 or higher.
+.. dropdown::
+  :class-container: dropdown
+  :chevron: down-up
 
-Dependency versions
---------------------
+  .. note::
+  Installing ``ansys-saf-sdk`` requires pip 26.0 or higher.
 
-The following versions were resolved when this version of ``ansys-saf-sdk`` was generated.
+  Dependency versions
+  --------------------
 
-.. list-table::
-  :header-rows: 1
-  :stub-columns: 1
-  :widths: 60 20 20
+  The following versions were resolved when this version of ``ansys-saf-sdk`` was generated.
 
-  * - Package
-    - Version
-    - Maintenance window
-  * - ``ansys-bdm-api``
-    - ``0.5.0``
-    - 2026-12-30
-  * - ``ansys-bdm-shared-volume``
-    - ``0.4.0``
-    - 2026-12-30
-  * - ``ansys-saf-glow-engine``
-    - ``2.3.0``
-    - 2027-03-01
-  * - ``ansys-saf-desktop-installer``
-    - ``1.17.0``
-    - 2027-03-16
-  * - ``ansys-saf-desktop-orchestrator``
-    - ``1.14.0``
-    - 2027-03-15
-  * - ``ansys-iam-oidc``
-    - ``0.9.0``
-    - 2027-02-28
-  * - ``ansys-saf-product-configuration``
-    - ``0.26.0``
-    - 2027-03-16
-  * - ``ansys-saf-product-manager``
-    - ``0.5.0``
-    - 2027-03-01
+  .. list-table::
+    :header-rows: 1
+    :stub-columns: 1
+    :widths: 60 20 20
 
-``ansys-saf-desktop-installer`` `1.17.0 <https://github.com/ansys/saf/releases?page=1#release-v1.17.0-saf-desktop-installer>`_
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    * - Package
+      - Version
+      - Maintenance window
+    * - ``ansys-bdm-api``
+      - ``0.5.0``
+      - 2026-12-30
+    * - ``ansys-bdm-shared-volume``
+      - ``0.4.0``
+      - 2026-12-30
+    * - ``ansys-saf-glow-engine``
+      - ``2.3.0``
+      - 2027-03-01
+    * - ``ansys-saf-desktop-installer``
+      - ``1.17.0``
+      - 2027-03-16
+    * - ``ansys-saf-desktop-orchestrator``
+      - ``1.14.0``
+      - 2027-03-15
+    * - ``ansys-iam-oidc``
+      - ``0.9.0``
+      - 2027-02-28
+    * - ``ansys-saf-product-configuration``
+      - ``0.26.0``
+      - 2027-03-16
+    * - ``ansys-saf-product-manager``
+      - ``0.5.0``
+      - 2027-03-01
 
-.. tab-set::
+  ``ansys-saf-desktop-installer`` `1.17.0 <https://github.com/ansys/saf/releases?page=1#release-v1.17.0-saf-desktop-installer>`_
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-  .. tab-item:: Added
+  .. tab-set::
 
-    .. list-table::
-        :widths: 80 20
+    .. tab-item:: Added
 
-        * - Add installer support for repeated dependencies across groups
-          - `#25 <https://github.com/ansys/saf/pull/25>`_
+      .. list-table::
+          :widths: 80 20
+
+          * - Add installer support for repeated dependencies across groups
+            - `#25 <https://github.com/ansys/saf/pull/25>`_
 
 
 `0.1.0 <https://github.com/ansys/saf/releases?page=2#release-v0.1.0-saf-sdk>`_ — September 9, 2026
 ===========================================================================================================
 
-.. note::
- Installing ``ansys-saf-sdk`` requires pip 26.0 or higher.
+.. dropdown::
+  :class-container: dropdown
+  :chevron: down-up
 
-Dependency versions
---------------------
+  .. note::
+  Installing ``ansys-saf-sdk`` requires pip 26.0 or higher.
 
-The following versions were resolved when this version of ``ansys-saf-sdk`` was generated.
+  Dependency versions
+  --------------------
 
-.. list-table::
-  :header-rows: 1
-  :stub-columns: 1
-  :widths: 60 20 20
+  The following versions were resolved when this version of ``ansys-saf-sdk`` was generated.
 
-  * - Package
-    - Version
-    - Maintenance window
-  * - ``ansys-bdm-api``
-    - ``0.5.0``
-    - 2026-12-30
-  * - ``ansys-bdm-shared-volume``
-    - ``0.4.0``
-    - 2026-12-30
-  * - ``ansys-saf-glow-engine``
-    - ``2.3.0``
-    - 2027-03-01
-  * - ``ansys-saf-desktop-installer``
-    - ``1.16.0``
-    - 2027-01-19
-  * - ``ansys-saf-desktop-orchestrator``
-    - ``1.13.0``
-    - 2027-01-18
-  * - ``ansys-iam-oidc``
-    - ``0.9.0``
-    - 2027-02-28
-  * - ``ansys-saf-product-configuration``
-    - ``0.25.0``
-    - 2027-02-28
-  * - ``ansys-saf-product-manager``
-    - ``0.5.0``
-    - 2027-03-01
+  .. list-table::
+    :header-rows: 1
+    :stub-columns: 1
+    :widths: 60 20 20
+
+    * - Package
+      - Version
+      - Maintenance window
+    * - ``ansys-bdm-api``
+      - ``0.5.0``
+      - 2026-12-30
+    * - ``ansys-bdm-shared-volume``
+      - ``0.4.0``
+      - 2026-12-30
+    * - ``ansys-saf-glow-engine``
+      - ``2.3.0``
+      - 2027-03-01
+    * - ``ansys-saf-desktop-installer``
+      - ``1.16.0``
+      - 2027-01-19
+    * - ``ansys-saf-desktop-orchestrator``
+      - ``1.13.0``
+      - 2027-01-18
+    * - ``ansys-iam-oidc``
+      - ``0.9.0``
+      - 2027-02-28
+    * - ``ansys-saf-product-configuration``
+      - ``0.25.0``
+      - 2027-02-28
+    * - ``ansys-saf-product-manager``
+      - ``0.5.0``
+      - 2027-03-01

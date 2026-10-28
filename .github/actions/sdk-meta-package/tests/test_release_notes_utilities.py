@@ -47,8 +47,23 @@ def test_generate_release_notes_writes_report_and_summary() -> None:
     with tempfile.TemporaryDirectory() as directory:
         root = Path(directory)
         summary = root / "summary.md"
+        release_notes_index = root / "index.rst"
+        release_notes_index.write_text(
+            "\n".join(
+                [
+                    release_utils.RST_MARKER_FOR_INSERT,
+                    "",
+                    "`0.0.1 <https://github.com/ansys/saf/releases#release-v0.0.1-saf-sdk>`_",
+                    "",
+                    ".. dropdown::",
+                    "  :open:",
+                ],
+            ),
+            encoding="utf-8",
+        )
         with (
-            patch.object(release_utils, "RELEASE_NOTES_FILE", root / "release_notes.md"),
+            patch.object(release_utils, "MD_RELEASE_NOTES_FILE", root / "release_notes.md"),
+            patch.object(release_utils, "ORIGINAL_RELEASE_NOTES_FILE", release_notes_index),
             patch.dict(
                 os.environ,
                 {"GITHUB_STEP_SUMMARY": str(summary), "MINIMUM_PIP_VERSION": "26.0"},
@@ -75,3 +90,28 @@ def test_generate_release_notes_writes_report_and_summary() -> None:
         get.assert_any_call("ansys-bdm-shared-volume", "1.2.3")
         get_latest_versions.assert_called_once_with(release_utils.PRIVATE_PACKAGES)
         assert summary.read_text(encoding="utf-8") == report
+
+        rst_report = release_notes_index.read_text(encoding="utf-8")
+        assert release_utils.RST_MARKER_FOR_INSERT in rst_report
+        assert "`0.1.0 <https://github.com/ansys/saf/releases#release-v0.1.0-saf-sdk>`_" in rst_report
+        assert "Installing ``ansys-saf-sdk`` requires pip 26.0 or higher." in rst_report
+        assert "``ansys-bdm-api``" in rst_report
+        assert "Add" in rst_report
+        assert rst_report.count(":open:") == 1
+
+
+def test_render_rst_release_notes_formats_package_notes() -> None:
+    versions = dict.fromkeys(release_utils.PACKAGES, "1.2.3")
+    package = release_utils.PACKAGES[0]
+
+    rst_report = release_utils._render_rst_release_notes(
+        versions,
+        "0.1.0",
+        {},
+        {package: "## Added\n\n- Use [feature](https://example.com) with `code`"},
+        "26.0",
+    )
+
+    assert "    .. tab-item:: Added" in rst_report
+    assert "- Use `feature <https://example.com>`_ with ``code``" in rst_report
+    assert ".. tab-item:: Private packages" not in rst_report

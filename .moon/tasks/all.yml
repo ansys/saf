@@ -338,8 +338,8 @@ tasks:
       - "/.github/workflows/**/*"
       - "/.github/actions/**/*"
     outputs:
-      - ".coverag[e]"
-      - "coverage.xm[l]"
+      - ".coverage"
+      - "coverage.xml"
       - "htmlcov/**/*"
       - "report/**/*"
       - "pytest_logs/**/*"

@@ -23,6 +23,8 @@ tasks:
       - "--cov-report=term"
       - "--cov-report=xml"
       - "--cov-report=html"
+      - "--html=report/report.html"
+      - "--md=report/report.md"
       - "-p"
       - "no:faulthandler"
       - "-s" # Disable capturing of stdout and stderr during tests

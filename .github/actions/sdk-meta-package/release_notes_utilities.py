@@ -117,11 +117,10 @@ def _render_rst_release_notes(
         "",
         "        * - Package",
         "          - Version",
-        "          - Maintenance window",
     ]
 
     for package in PACKAGES:
-        rst_lines.extend([f"        * - ``{package}``", f"          - ``{versions[package]}``", "          - —"])
+        rst_lines.extend([f"        * - ``{package}``", f"          - ``{versions[package]}``"])
 
     if private_package_versions:
         rst_lines.extend(

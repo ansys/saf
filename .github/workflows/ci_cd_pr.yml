@@ -476,6 +476,31 @@ jobs:
         shell: bash
         run: uv run ".github/actions/get-fixed-vulnerabilities/test_get_fixed_vulnerabilities.py"
 
+  run-tests-scripts:
+    name: "Run tests of scripts"
+    needs: ci-cd-config
+    if: ${{ needs.ci-cd-config.outputs.pr-changes != '[]' && contains(needs.ci-cd-config.outputs.pr-changes,
+      'scripts') }}
+    permissions:
+      contents: read
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Setup Moon Toolchain
+        uses: moonrepo/setup-toolchain@261c62cb5b0f580c7be7c8cd0f023a2e96756095 # v0.6.4
+
+      - name: Run test_upgrade_solution_template_poetry_lock.py
+        shell: bash
+        env:
+          UV_PYTHON: ${{ vars.PYTHON_VERSION }}
+          MOON_PYTHON_VERSION: ${{ vars.PYTHON_VERSION }}
+        run: moon run root:test-upgrade-solution-templates
+
   meta-package:
     name: "SAF SDK Meta Package"
     needs: ci-cd-config
@@ -512,6 +537,7 @@ jobs:
       - run-tests
       - run-github-workflows-of-generated-solution
       - run-tests-actions
+      - run-tests-scripts
       - doc
       - sbom
       - meta-package

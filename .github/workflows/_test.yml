@@ -563,7 +563,8 @@ jobs:
         run: moon run $PACKAGE:test-npm
 
       - name: Save Moon cache
-        if: ${{ always() && env.USE_MOON == 'true' }}
+        if: ${{ always() && env.USE_MOON == 'true' && (steps.run-tests-moon.outcome
+          != 'skipped' && steps.run-tests-moon.outcome != 'cancelled')  }}
         uses: $/.github/actions/moon/save
         id: save
         with:

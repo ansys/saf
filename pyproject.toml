@@ -104,14 +104,14 @@ tests-glow-engine = [
   "aiohttp>=3.10.2,<4.0",
   "asgi-lifespan>=2.1.0,<3.0",
   "dash[diskcache]>=3.0.0,<4.0", # diskcache needed for background callbacks
+  "gunicorn>=23.0.0,<24.0",
   "numpy>=2.4.0,<3.0",
   "plotly>=6.5.0,<7.0",
+  "poetry==2.5.1",
   "prettytable>=3.17.0,<4.0",
   "pyc-wheel>=1.2.7,<2.0",
   "toml>=0.10.2,<2.0",
-  "waitress>=3.0.1,<4.0",
-  "poetry==2.5.1",
-  "gunicorn>=23.0.0,<24.0"
+  "waitress>=3.0.1,<4.0"
 ]
 tests-saf-cli = [
   "ansys-solutions-dash-super-components>=1.0.0,<2.0",

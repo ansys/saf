@@ -27,9 +27,9 @@ tasks:
       # The value passed via args: ["ansys-saf-aspire==9.1.6"] will naturally append here
     deps:
       - target: "~:check-env-var"
-        args: ["UV_EXTRA_INDEX_URL"]
+        args: ["UV_INDEX"]
     env:
-      PIP_INDEX_URL: "https://pypi.org/simple"
+      UV_DEFAULT_INDEX: "https://pypi.org/simple"
       PIP_QUIET: "1"
     options:
       cache: false
@@ -113,6 +113,7 @@ tasks:
       - '/.pre-commit-config.yaml'
       - 'pyproject.toml'
       - '/uv.lock'
+      - '/doc/styles/config/vocabularies/ANSYS/accept.txt'
     options:
       shell: false
       runFromWorkspaceRoot: true
@@ -317,6 +318,8 @@ tasks:
       - "--cov-report=term"
       - "--cov-report=xml"
       - "--cov-report=html"
+      - "--html=report/report.html"
+      - "--md=report/report.md"
       - "-p"
       - "no:faulthandler"
       - "-s" # Disable capturing of stdout and stderr during tests
@@ -331,33 +334,15 @@ tasks:
       - "pyproject.toml"
       - "/uv.lock"
       - "/extra_packages/**/*"
-
-  build-doc:
-    description: "Build API documentation"
-    deps:
-      - target: "~:check-env-var"
-        args: 
-          - "UV_PYTHON"
-          - "MOON_PYTHON_VERSION"
-    command: 'uv'
-    args:
-      - "run"
-      - "sphinx-build"
-      - "-M"
-      - "html"
-      - "$projectSource/doc/source"
-      - "$projectSource/doc/_build"
-      - "-j"
-      - "auto"
-      - "--keep-going"
-      - "-v"
-    env:
-      DISABLE_INTERSPHINX: 'true'
-    inputs:
-      - "doc/**/*"
-      - "pyproject.toml"
-    options:
-      runFromWorkspaceRoot: true
+      # Invalidate cached test results when CI/CD or test-group definition changes.
+      - "/.github/workflows/**/*"
+      - "/.github/actions/**/*"
+    outputs:
+      - ".coverage"
+      - "coverage.xml"
+      - "htmlcov/**/*"
+      - "report/**/*"
+      - "pytest_logs/**/*"
 
   export:
     description: "Export the project"
@@ -371,6 +356,7 @@ tasks:
       - "export"
       - "--package"
       - "$projectAlias"
+      - "--all-extras"
       - "--no-emit-workspace"
       - "--no-hashes"
       - "--format"
@@ -440,3 +426,17 @@ tasks:
       - "dist/$projectSource-requirements.txt"
     options:
       runFromWorkspaceRoot: true
+
+  bump-version:
+    description: "Bump the project version"
+    deps:
+      - target: "~:check-env-var"
+        args: 
+          - "UV_PYTHON"
+          - "MOON_PYTHON_VERSION"
+    command: 'uv'
+    args:
+      - "version"
+    inputs:
+      - "pyproject.toml"
+      - "/uv.lock"

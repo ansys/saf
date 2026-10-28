@@ -2,22 +2,27 @@
 name: CI-CD for SAF SDK Meta Package
 run-name: >-
   Meta-Package: ${{ inputs.release && 'Release' || 'Dry Run' }} by ${{ github.actor
-  }} Update type: ${{ inputs.meta-package-version-update-type }} ${{ inputs.ansys-bdm-api-version-override
-  != '' && format('BDM API Override: {0}', inputs.ansys-bdm-api-version-override)
-  || '' }} ${{ inputs.ansys-bdm-shared-volume-version-override != '' && format('BDM
-  Shared Volume Override: {0}', inputs.ansys-bdm-shared-volume-version-override) ||
-  '' }} ${{ inputs.ansys-saf-glow-engine-version-override != '' && format('SAF Glow
-  Engine Override: {0}', inputs.ansys-saf-glow-engine-version-override) || '' }} ${{
-  inputs.ansys-saf-desktop-installer-version-override != '' && format('SAF Desktop
-  Installer Override: {0}', inputs.ansys-saf-desktop-installer-version-override) ||
-  '' }} ${{ inputs.ansys-saf-desktop-orchestrator-version-override != '' && format('SAF
-  Desktop Orchestrator Override: {0}', inputs.ansys-saf-desktop-orchestrator-version-override)
-  || '' }} ${{ inputs.ansys-iam-oidc-version-override != '' && format('IAM OIDC Override:
-  {0}', inputs.ansys-iam-oidc-version-override) || '' }} ${{ inputs.ansys-saf-product-configuration-version-override
-  != '' && format('SAF Product Configuration Override: {0}', inputs.ansys-saf-product-configuration-version-override)
-  || '' }} ${{ inputs.ansys-saf-product-manager-version-override != '' && format('SAF
-  Product Manager Override: {0}', inputs.ansys-saf-product-manager-version-override)
-  || '' }}
+  }} Update type: ${{ inputs.meta-package-version-update-type }} ${{ fromJSON(inputs.version-overrides
+  || '{}')['ansys-bdm-api'] && format('ansys-bdm-api: {0}', fromJSON(inputs.version-overrides
+  || '{}')['ansys-bdm-api']) || '' }} ${{ fromJSON(inputs.version-overrides || '{}')['ansys-bdm-shared-volume']
+  && format('ansys-bdm-shared-volume: {0}', fromJSON(inputs.version-overrides || '{}')['ansys-bdm-shared-volume'])
+  || '' }} ${{ fromJSON(inputs.version-overrides || '{}')['ansys-saf-glow-engine']
+  && format('ansys-saf-glow-engine: {0}', fromJSON(inputs.version-overrides || '{}')['ansys-saf-glow-engine'])
+  || '' }} ${{ fromJSON(inputs.version-overrides || '{}')['ansys-saf-desktop-installer']
+  && format('ansys-saf-desktop-installer: {0}', fromJSON(inputs.version-overrides
+  || '{}')['ansys-saf-desktop-installer']) || '' }} ${{ fromJSON(inputs.version-overrides
+  || '{}')['ansys-saf-desktop-orchestrator'] && format('ansys-saf-desktop-orchestrator:
+  {0}', fromJSON(inputs.version-overrides || '{}')['ansys-saf-desktop-orchestrator'])
+  || '' }} ${{ fromJSON(inputs.version-overrides || '{}')['ansys-iam-oidc'] && format('ansys-iam-oidc:
+  {0}', fromJSON(inputs.version-overrides || '{}')['ansys-iam-oidc']) || '' }} ${{
+  fromJSON(inputs.version-overrides || '{}')['ansys-saf-product-configuration'] &&
+  format('ansys-saf-product-configuration: {0}', fromJSON(inputs.version-overrides
+  || '{}')['ansys-saf-product-configuration']) || '' }} ${{ fromJSON(inputs.version-overrides
+  || '{}')['ansys-saf-product-manager'] && format('ansys-saf-product-manager: {0}',
+  fromJSON(inputs.version-overrides || '{}')['ansys-saf-product-manager']) || '' }}
+  ${{ fromJSON(inputs.version-overrides || '{}')['ansys-saf-projects-dashboard'] &&
+  format('ansys-saf-projects-dashboard: {0}', fromJSON(inputs.version-overrides ||
+  '{}')['ansys-saf-projects-dashboard']) || '' }}
 on:
   workflow_dispatch:
     inputs:
@@ -36,52 +41,23 @@ on:
           - minor
           - patch
         default: "auto"
-      ansys-bdm-api-version-override:
-        description: "Override for the Ansys BDM API version. Only for release branch."
+      version-overrides:
+        description: 'JSON package-to-version overrides, e.g. {"ansys-bdm-api":"1.2.3"}.
+          Only for release branch.'
         required: false
         type: string
-        default: ""
-      ansys-bdm-shared-volume-version-override:
-        description: "Override for the Ansys BDM Shared Volume version. Only for release
-          branch."
-        required: false
-        type: string
-        default: ""
-      ansys-saf-glow-engine-version-override:
-        description: "Override for the Ansys SAF Glow Engine version. Only for release
-          branch."
-        required: false
-        type: string
-        default: ""
-      ansys-saf-desktop-installer-version-override:
-        description: "Override for the Ansys SAF Desktop Installer version. Only for
-          release branch."
-        required: false
-        type: string
-        default: ""
-      ansys-saf-desktop-orchestrator-version-override:
-        description: "Override for the Ansys SAF Desktop Orchestrator version. Only
-          for release branch."
-        required: false
-        type: string
-        default: ""
-      ansys-iam-oidc-version-override:
-        description: "Override for the Ansys IAM OIDC version. Only for release branch."
-        required: false
-        type: string
-        default: ""
-      ansys-saf-product-configuration-version-override:
-        description: "Override for the Ansys SAF Product Configuration version. Only
-          for release branch."
-        required: false
-        type: string
-        default: ""
-      ansys-saf-product-manager-version-override:
-        description: "Override for the Ansys SAF Product Manager version. Only for
-          release branch."
-        required: false
-        type: string
-        default: ""
+        default: |
+          {
+            "ansys-bdm-api":"",
+            "ansys-bdm-shared-volume":"",
+            "ansys-saf-glow-engine":"",
+            "ansys-saf-desktop-installer":"",
+            "ansys-saf-desktop-orchestrator":"",
+            "ansys-iam-oidc":"",
+            "ansys-saf-product-configuration":"",
+            "ansys-saf-product-manager":"",
+            "ansys-saf-projects-dashboard":""
+          }
   workflow_call:
     secrets:
       PYANSYS_CI_BOT_TOKEN:
@@ -102,7 +78,8 @@ on:
         required: true
       AZURE_DEVOPS_PAT:
         required: true
-
+  schedule:
+    - cron: '0 0 * * 1-5'
 # Apply the principle of least privilege to state at job level the right
 # permissions. More information about workflow permissions in the page
 # https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#permissions
@@ -114,7 +91,7 @@ concurrency:
 
 env:
   LIBRARY_NAME: saf-sdk
-  MINIMUM_PIP_VERSION: '26.0' # Minimal version to have the dependency resolution to be successful
+  MINIMUM_PIP_VERSION: "26.2.2" # https://github.com/pypa/pip/blob/main/NEWS.rst#2622-2026-10-20
 
 jobs:
   run-tests-action:
@@ -130,7 +107,7 @@ jobs:
           persist-credentials: false
 
       - name: Install uv
-        uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
+        uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
 
       - name: Test SDK meta-package utility
         shell: bash
@@ -157,6 +134,33 @@ jobs:
             .github/actions/sdk-meta-package
             packages/${{ env.LIBRARY_NAME }}
 
+      - name: Validate version overrides
+        shell: bash
+        env:
+          VERSION_OVERRIDES: ${{ inputs.version-overrides || '{}' }}
+        run: |
+          if ! jq -e -s '
+            [
+              "ansys-bdm-api",
+              "ansys-bdm-shared-volume",
+              "ansys-saf-glow-engine",
+              "ansys-saf-desktop-installer",
+              "ansys-saf-desktop-orchestrator",
+              "ansys-iam-oidc",
+              "ansys-saf-product-configuration",
+              "ansys-saf-product-manager",
+              "ansys-saf-projects-dashboard"
+            ] as $packages
+            | length == 1 and all(.[];
+                type == "object" and
+                (keys - $packages | length == 0) and
+                all(.[]; type == "string")
+              )
+          ' <<< "$VERSION_OVERRIDES" > /dev/null; then
+            echo "::error::version-overrides must be one JSON object mapping supported package names to version strings (empty means no override)."
+            exit 1
+          fi
+
       - name: Update pyproject.toml
         id: update-pyproject
         uses: ./.github/actions/sdk-meta-package
@@ -169,24 +173,24 @@ jobs:
           minimum-pip-version: ${{ env.MINIMUM_PIP_VERSION }}
           meta-package-version-update-type: ${{ github.event_name == 'workflow_dispatch'
             && inputs.meta-package-version-update-type || 'auto' }}
-          ansys-bdm-api-version-override: ${{ github.event_name == 'workflow_dispatch'
-            && inputs.ansys-bdm-api-version-override || '' }}
-          ansys-bdm-shared-volume-version-override: ${{ github.event_name == 'workflow_dispatch'
-            && inputs.ansys-bdm-shared-volume-version-override || '' }}
-          ansys-saf-glow-engine-version-override: ${{ github.event_name == 'workflow_dispatch'
-            && inputs.ansys-saf-glow-engine-version-override || '' }}
-          ansys-saf-desktop-installer-version-override: ${{ github.event_name == 'workflow_dispatch'
-            && inputs.ansys-saf-desktop-installer-version-override || '' }}
-          ansys-saf-desktop-orchestrator-version-override: ${{ github.event_name ==
-            'workflow_dispatch' && inputs.ansys-saf-desktop-orchestrator-version-override
-            || '' }}
-          ansys-iam-oidc-version-override: ${{ github.event_name == 'workflow_dispatch'
-            && inputs.ansys-iam-oidc-version-override || '' }}
-          ansys-saf-product-configuration-version-override: ${{ github.event_name
-            == 'workflow_dispatch' && inputs.ansys-saf-product-configuration-version-override
-            || '' }}
-          ansys-saf-product-manager-version-override: ${{ github.event_name == 'workflow_dispatch'
-            && inputs.ansys-saf-product-manager-version-override || '' }}
+          ansys-bdm-api-version-override: ${{ fromJSON(inputs.version-overrides ||
+            '{}')['ansys-bdm-api'] || '' }}
+          ansys-bdm-shared-volume-version-override: ${{ fromJSON(inputs.version-overrides
+            || '{}')['ansys-bdm-shared-volume'] || '' }}
+          ansys-saf-glow-engine-version-override: ${{ fromJSON(inputs.version-overrides
+            || '{}')['ansys-saf-glow-engine'] || '' }}
+          ansys-saf-desktop-installer-version-override: ${{ fromJSON(inputs.version-overrides
+            || '{}')['ansys-saf-desktop-installer'] || '' }}
+          ansys-saf-projects-dashboard-version-override: ${{ fromJSON(inputs.version-overrides
+            || '{}')['ansys-saf-projects-dashboard'] || '' }}
+          ansys-saf-desktop-orchestrator-version-override: ${{ fromJSON(inputs.version-overrides
+            || '{}')['ansys-saf-desktop-orchestrator'] || '' }}
+          ansys-iam-oidc-version-override: ${{ fromJSON(inputs.version-overrides ||
+            '{}')['ansys-iam-oidc'] || '' }}
+          ansys-saf-product-configuration-version-override: ${{ fromJSON(inputs.version-overrides
+            || '{}')['ansys-saf-product-configuration'] || '' }}
+          ansys-saf-product-manager-version-override: ${{ fromJSON(inputs.version-overrides
+            || '{}')['ansys-saf-product-manager'] || '' }}
 
       - name: "Build wheel"
         uses: ansys/actions/build-library@7410037bfb276c79ae91eb3617b9f5d2876f0c94 # v11.0.8
@@ -198,12 +202,30 @@ jobs:
           use-uv: true
           python-version: ${{ vars.PYTHON_VERSION }}
           attest-provenance: true
-          validate-build: true
+          validate-build: true'
+
+  resolve-pyansys-references:
+    name: "Resolve PyAnsys References"
+    runs-on: ubuntu-latest
+    outputs:
+      pyansys-commit-of-main: ${{ steps.pyansys-main.outputs.pyansys-commit-of-main
+        }}
+    steps:
+      - name: Resolve commit of PyAnsys main branch
+        shell: bash
+        id: pyansys-main
+        run: |
+          COMMIT=$(curl -s https://api.github.com/repos/ansys/pyansys/branches/main | jq -r '.commit.sha')
+          echo "Latest pyansys commit on main branch: ${COMMIT}"
+          echo "pyansys-commit-of-main=${COMMIT}" >> "$GITHUB_OUTPUT"
 
   check-wheel-can-be-poetry-installed:
     name: "Check ansys-saf-sdk can be poetry installed"
-    needs: build-meta-package
+    needs:
+      - build-meta-package
+      - resolve-pyansys-references
     runs-on: ${{ matrix.runner }}
+    timeout-minutes: 30
     strategy:
       matrix:
         python-version:
@@ -217,7 +239,7 @@ jobs:
       fail-fast: false
     steps:
       - name: Download wheel artifact
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: ${{ env.LIBRARY_NAME }}-artifacts
           path: wheels
@@ -235,10 +257,12 @@ jobs:
 
       - name: Configure Poetry and create new poetry project
         shell: bash
+        env:
+          MIN_PYTHON_VERSION: ${{ matrix.python-version == '3.11' && '3.11' || '3.12'
+            }} # Set minimum Python version to test pyansys compatibility
         run: |
           poetry config virtualenvs.in-project true
-          poetry new my_project
-          sed -i 's/^requires-python = .*/requires-python = ">=3.11,<3.15"/' my_project/pyproject.toml
+          poetry new my_project --python ">=${MIN_PYTHON_VERSION},<3.15"
 
       - name: Add ansys-saf-sdk to poetry project
         working-directory: my_project
@@ -320,6 +344,68 @@ jobs:
           WHEEL_FILE=$(ls "${GITHUB_WORKSPACE}"/aspire/*.whl)
           poetry add "ansys-saf-aspire[all] @ file://${WHEEL_FILE}"
 
+      - name: Set GRPC_PYTHON_CFLAGS for Python 3.14 on Windows
+        if: matrix.python-version == '3.14' && runner.os == 'Windows'
+        shell: bash
+        run: |
+          # grpcio-tools 1.71.2 setup.py sets both /std:c++17 and /std:c11 for MSVC.
+          # The _spawn_patch.py in grpcio-tools is supposed to split them per file
+          # type, but it doesn't work with newer setuptools used on Python 3.14.
+          # GRPC_PYTHON_CFLAGS overrides the default flags entirely, removing /std:c11
+          # to prevent the incompatible-flag error when compiling C++ files.
+          echo "GRPC_PYTHON_CFLAGS=/std:c++17 /MT" >> "$GITHUB_ENV"
+
+      - name: Add pyansys to poetry project (@latest release branch)
+        if: ${{ matrix.python-version != '3.11' }} # pyansys requires Python >= 3.12
+        working-directory: my_project
+        shell: bash
+        env:
+          PYANSYS_COMMIT: ${{ needs.resolve-pyansys-references.outputs.pyansys-commit-of-main
+            }}
+        run: poetry add "git+https://github.com/ansys/pyansys.git@${PYANSYS_COMMIT}"
+          --python ">=3.12" --extras "all"
+
+  update-release-notes:
+    name: Update release notes
+    needs:
+      - build-meta-package
+      - resolve-pyansys-references
+      - check-wheel-can-be-poetry-installed
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download release notes
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: release-notes
+          path: release-notes
+
+      - name: Add PyAnsys section to the release notes
+        working-directory: release-notes
+        env:
+          SECTION_PLACEHOLDER: '<!-- THIS LINE IS A PLACEHOLDER FOR PYANSYS COMPATIBILITY
+            SECTION -->'
+          COMMIT: ${{ needs.resolve-pyansys-references.outputs.pyansys-commit-of-main
+            }}
+        run: |
+          SHORT_COMMIT=$(echo "$COMMIT" | cut -c1-7)
+          ESCAPED_SECTION_PLACEHOLDER=$(printf '%s\n' "$SECTION_PLACEHOLDER" | sed 's/[][\.*^$/]/\\&/g')
+
+          sed -i "/$ESCAPED_SECTION_PLACEHOLDER/r /dev/stdin" release_notes.md <<EOF
+          ## PyAnsys compatibility
+
+          The compatibility of this release has been tested with PyAnsys for the commit [$SHORT_COMMIT](https://github.com/ansys/pyansys/commit/${COMMIT}), from Python 3.12 to 3.14.
+
+          Please be aware that on Windows with Python 3.14, it is required to set the \`GRPC_PYTHON_CFLAGS\` environment variable to \`/std:c++17 /MT\` before installing the packages.
+          EOF
+
+      - name: Upload release notes
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: release-notes
+          path: release-notes/release_notes.md
+          if-no-files-found: error
+          overwrite: true
+
   check-wheel-can-be-pip-installed:
     name: Check wheel can be pip installed
     needs: build-meta-package
@@ -337,7 +423,7 @@ jobs:
       fail-fast: false
     steps:
       - name: Download wheel artifact
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: ${{ env.LIBRARY_NAME }}-artifacts
           path: wheels
@@ -365,6 +451,24 @@ jobs:
           WHEEL_FILE=$(ls "${GITHUB_WORKSPACE}"/wheels/*.whl)
           python -m pip install "${WHEEL_FILE}"
 
+  tagging-commit:
+    name: "Tagging commit"
+    permissions:
+      contents: write # Required for creating/pushing tags and commits
+    needs:
+      - build-meta-package
+      - check-wheel-can-be-poetry-installed
+      - update-release-notes
+      - check-wheel-can-be-pip-installed
+    if: ${{ github.ref_name == 'main' }}
+    runs-on:
+      - ubuntu-latest
+    steps:
+      - name: tagging commit
+        uses: ansys/saf-devops/apply-tag-on-commit@82c48355bb8dbdaddd0e855ed383c89824ee2c3c # v1.3.3
+        with:
+          tag: certified-saf-sdk
+
   release-to-pypi:
     name: Release to PyPI
     runs-on: ubuntu-latest
@@ -372,14 +476,15 @@ jobs:
       - build-meta-package
       - check-wheel-can-be-poetry-installed
       - check-wheel-can-be-pip-installed
+      - update-release-notes
     if: ${{ inputs.release }}
     environment: saf-release
     permissions:
       id-token: write # Required for OIDC authentication with PyPI
       contents: write # Required for OIDC authentication with PyPI
     env:
-      RELEASE_BRANCH_NAME: 'release/v${{ needs.build-meta-package.outputs.version
-        }}/saf-sdk'
+      RELEASE_BRANCH_NAME: "release/v${{ needs.build-meta-package.outputs.version
+        }}/saf-sdk"
     steps:
       - name: Checkout code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -393,14 +498,14 @@ jobs:
 
       - name: Download pyproject.toml artifact
         if: ${{ needs.build-meta-package.outputs.update-type != 'no_update' }}
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: pyproject
           path: artifacts
 
       - name: Download uv lock file artifact
         if: ${{ needs.build-meta-package.outputs.update-type != 'no_update' }}
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: uv-lock
           path: artifacts
@@ -411,14 +516,6 @@ jobs:
         run: |
           mv artifacts/pyproject.toml packages/saf-sdk/pyproject.toml
           mv artifacts/uv.lock packages/saf-sdk/uv.lock
-
-      - name: Edit version in the root pyproject.toml
-        if: ${{ needs.build-meta-package.outputs.update-type != 'no_update' }}
-        shell: bash
-        env:
-          VERSION: ${{ needs.build-meta-package.outputs.version }}
-        run: |
-          sed -i "s/^version = .*/version = \"${VERSION}\"/" pyproject.toml
 
       - name: Commit changes
         if: ${{ needs.build-meta-package.outputs.update-type != 'no_update' }}
@@ -434,13 +531,13 @@ jobs:
         run: git push origin HEAD:${RELEASE_BRANCH_NAME}
 
       - name: Download release notes artifact
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: release-notes
           path: release-notes
 
       - name: "Download the library artifacts"
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: ${{ env.LIBRARY_NAME }}-artifacts
           path: ${{ env.LIBRARY_NAME }}-artifacts
@@ -459,7 +556,7 @@ jobs:
             }}
 
       - name: "Upload artifacts to PyPI using trusted publisher"
-        uses: pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33 # v1.14.2
+        uses: pypa/gh-action-pypi-publish@7245906fb61fa33a13554f9d5fb856fe61758086 # v1.14.3
         with:
           repository-url: https://upload.pypi.org/legacy/
           print-hash: true

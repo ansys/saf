@@ -128,6 +128,7 @@ jobs:
       PYANSYS_PYPI_PRIVATE_URL: ${{ secrets.PYANSYS_PYPI_PRIVATE_URL }}
       LICENSE_SERVER: ${{ secrets.LICENSE_SERVER }}
       GENERATED_SOLUTION_TOKEN: ${{ secrets.GENERATED_SOLUTION_TOKEN }}
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
   release-information:
     name: Release Information
@@ -154,7 +155,7 @@ jobs:
     steps:
       - name: Retrieve release information
         id: retrieve-release-info
-        uses: ansys/saf-devops/retrieve-release-information@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
+        uses: ansys/saf-devops/retrieve-release-information@82c48355bb8dbdaddd0e855ed383c89824ee2c3c # v1.3.3
         with:
           poetry-parent-directory: packages/${{ inputs.library }}
           release-type: ${{ inputs.dev-release && 'dev' || 'stable' }}
@@ -171,10 +172,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Generate release notes
-        uses: ansys/saf-devops/generate-release-notes@5d9e84af215372b7b125bbf12f5b0093600eb06d # v1.2.0
+        id: generate-release-notes
+        uses: ansys/saf-devops/generate-release-notes@82c48355bb8dbdaddd0e855ed383c89824ee2c3c # v1.3.3
         with:
           tag-name: ${{ needs.release-information.outputs.release-name }}-${{ inputs.library
             }}
+
+      - name: Add fixed vulnerabilities to release notes
+        uses: $/.github/actions/get-fixed-vulnerabilities
+        with:
+          last-release-date: ${{ steps.generate-release-notes.outputs.previous-release-date
+            }}
+          manifest-file: 'uv.lock'
+          package: ${{ inputs.library }}
+          release-notes: release-notes
+          alerts-token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
 
   prepare-release:
     permissions:
@@ -204,7 +216,7 @@ jobs:
 
       - name: Edit version
         if: needs.release-information.outputs.version-type == 'dev' && !inputs.dev-release
-        uses: ansys/saf-devops/edit-version-in-pyproject@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
+        uses: ansys/saf-devops/edit-version-in-pyproject@82c48355bb8dbdaddd0e855ed383c89824ee2c3c # v1.3.3
         with:
           pyproject-path: packages/${{ inputs.library }}/pyproject.toml
           version: ${{ needs.release-information.outputs.version-to-release }}
@@ -220,7 +232,7 @@ jobs:
           git push origin HEAD:${RELEASE_BRANCH_NAME}
 
       - name: Download release notes artifact
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: release-notes
           path: release-notes
@@ -265,9 +277,8 @@ jobs:
     with:
       library-name: ${{ inputs.library }}
       python-version: ${{ vars.PYTHON_VERSION }}
-      use-moon: ${{ inputs.library != 'dash-super-components' }}
       artifact-name: ${{ inputs.library }}-${{ needs.release-information.outputs.release-name
-        }}${{ case(inputs.library == 'dash-super-components', '' , '-artifacts') }}
+        }}-artifacts
       ref: ${{ inputs.dev-release && 'main' || needs.release-information.outputs.release-branch-name
         }}
 
@@ -276,53 +287,36 @@ jobs:
     permissions:
       contents: write # Create commits to bump version
       pull-requests: write # Create pull requests to bump version
+    runs-on: ubuntu-latest
     needs:
       - release-information
       - prepare-release
       - build-wheel
       - certification
-    if: ${{ always() && needs.certification.result == 'success' && github.ref == 'refs/heads/main'
-      }}
-    uses: ansys/saf-devops/.github/workflows/_bump_version.yml@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
-    with:
-      python-version: ${{ vars.PYTHON_VERSION }}
-      poetry-version: ${{ vars.POETRY_VERSION }}
-      new-version: ${{ needs.release-information.outputs.version-to-bump-in-triggering-branch
-        }}
-      base-ref: 'main'
-      poetry-parent-directory: packages/${{ inputs.library }}
-      suffix-bump-branch: "/${{ inputs.library }}"
-    secrets:
-      BUMP_VERSION_TOKEN: ${{ secrets.BUMP_VERSION_TOKEN }}
-      PYANSYS_CI_BOT_EMAIL: ${{ secrets.PYANSYS_CI_BOT_EMAIL }}
-      PYANSYS_CI_BOT_USERNAME: ${{ secrets.PYANSYS_CI_BOT_USERNAME }}
-      PYANSYS_CI_BOT_TOKEN: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
+    if: ${{ always() && needs.certification.result == 'success' }}
+    environment: saf-release
+    steps:
+      - name: Bump Main Branch
+        if: ${{ github.ref == 'refs/heads/main' }}
+        uses: $/.github/actions/bump-version
+        with:
+          new-version: ${{ needs.release-information.outputs.version-to-bump-in-triggering-branch
+            }}
+          base-ref: 'main'
+          package: "${{ inputs.library }}"
+          pr-token: ${{ secrets.BUMP_VERSION_TOKEN }}
+          approve-and-merge-token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
 
-  bump-release-branch-version:
-    permissions:
-      pull-requests: write # To create a PR to bump the version
-      contents: write # To commit changes
-    needs:
-      - release-information
-      - prepare-release
-      - build-wheel
-      - certification
-    if: ${{ always() && needs.certification.result == 'success' && !inputs.dev-release
-      }}
-    uses: ansys/saf-devops/.github/workflows/_bump_version.yml@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
-    with:
-      python-version: ${{ vars.PYTHON_VERSION }}
-      poetry-version: ${{ vars.POETRY_VERSION }}
-      new-version: ${{ needs.release-information.outputs.version-to-bump-in-release-branch
-        }}
-      base-ref: ${{ needs.release-information.outputs.release-branch-name }}
-      poetry-parent-directory: packages/${{ inputs.library }}
-      suffix-bump-branch: "/${{ inputs.library }}"
-    secrets:
-      BUMP_VERSION_TOKEN: ${{ secrets.BUMP_VERSION_TOKEN }}
-      PYANSYS_CI_BOT_EMAIL: ${{ secrets.PYANSYS_CI_BOT_EMAIL }}
-      PYANSYS_CI_BOT_USERNAME: ${{ secrets.PYANSYS_CI_BOT_USERNAME }}
-      PYANSYS_CI_BOT_TOKEN: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
+      - name: Bump Release Branch
+        if: ${{ !inputs.dev-release }}
+        uses: $/.github/actions/bump-version
+        with:
+          new-version: ${{ needs.release-information.outputs.version-to-bump-in-release-branch
+            }}
+          base-ref: ${{ needs.release-information.outputs.release-branch-name }}
+          package: "${{ inputs.library }}"
+          pr-token: ${{ secrets.BUMP_VERSION_TOKEN }}
+          approve-and-merge-token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
 
   release-to-pypi:
     name: Release to PyPI
@@ -342,13 +336,13 @@ jobs:
         }}-artifacts
     steps:
       - name: "Download the library artifacts"
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: ${{ env.ARTIFACT_NAME }}
           path: ${{ env.ARTIFACT_NAME }}
 
       - name: "Upload artifacts to PyPI using trusted publisher"
-        uses: pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33 # v1.14.2
+        uses: pypa/gh-action-pypi-publish@7245906fb61fa33a13554f9d5fb856fe61758086 # v1.14.3
         with:
           repository-url: https://upload.pypi.org/legacy/
           print-hash: true

@@ -5,7 +5,7 @@ on:
     branches:
       - main
       - 'release/**'
-    types: [opened, reopened, synchronize, ready_for_review]
+    types: [opened, reopened, synchronize, ready_for_review, closed]
   push:
     branches:
       - main
@@ -26,10 +26,23 @@ concurrency:
   cancel-in-progress: ${{ github.ref != 'refs/heads/main' }} # No cancellation for main branch, to ensure that the workflow runs to completion and deploys the documentation if needed.
 
 jobs:
+  delete-pr-cache:
+    name: "Delete PR caches"
+    if: github.event_name == 'pull_request' && github.event.action == 'closed'
+    permissions:
+      contents: read
+      actions: write # To delete PR caches
+    runs-on: ubuntu-latest
+    steps:
+      - name: Delete PR caches
+        uses: $/.github/actions/moon/delete
+        with:
+          token: ${{ secrets.CACHE_TOKEN }}
+
   lint-pr-title:
     name: "Lint pull request title"
-    if: github.event_name == 'pull_request' && github.event.pull_request.draft ==
-      false
+    if: github.event_name == 'pull_request' && github.event.action != 'closed' &&
+      github.event.pull_request.draft == false
     permissions:
       pull-requests: read # Read PR title and metadata for validation
     runs-on: ubuntu-latest
@@ -40,21 +53,21 @@ jobs:
 
   check-linked-issues-in-pull-request-description:
     name: "Check linked issues in pull-request description"
-    if: github.event_name == 'pull_request' && github.event.pull_request.draft ==
-      false
+    if: github.event_name == 'pull_request' && github.event.action != 'closed' &&
+      github.event.pull_request.draft == false
     permissions:
       pull-requests: read # Read PR description to find linked issues
       issues: write # Update issue descriptions with PR links
     runs-on: ubuntu-latest
     steps:
       - name: check-linked-issues-in-pr-description
-        uses: ansys/saf-devops/link-issue-to-pull-request@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
+        uses: ansys/saf-devops/link-issue-to-pull-request@82c48355bb8dbdaddd0e855ed383c89824ee2c3c # v1.3.3
         env:
           ISSUE_GITHUB_TOKEN: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
 
   labels:
-    if: github.event_name == 'pull_request' && github.event.pull_request.draft ==
-      false
+    if: github.event_name == 'pull_request' && github.event.action != 'closed' &&
+      github.event.pull_request.draft == false
     name: "Labels"
     permissions:
       contents: read # Read access to modified files in pull-request
@@ -93,8 +106,8 @@ jobs:
 
   ci-cd-config:
     name: Get CI/CD configuration
-    if: github.event_name == 'pull_request' && github.event.pull_request.draft ==
-      false
+    if: github.event_name == 'pull_request' && github.event.action != 'closed' &&
+      github.event.pull_request.draft == false
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -102,9 +115,6 @@ jobs:
     outputs:
       pr-changes: ${{ steps.info.outputs.pr-changes }}
       packages-matrix: ${{ steps.info.outputs.packages-matrix }}
-      poetry-packages-matrix: ${{ steps.info.outputs.poetry-packages-matrix }}
-      moon-packages-matrix: ${{ steps.info.outputs.moon-packages-matrix }}
-      code-style-matrix: ${{ steps.info.outputs.code-style-matrix }}
       compatibility-matrix: ${{ steps.info.outputs.compatibility-matrix }}
       tests-matrix: ${{ steps.info.outputs.tests-matrix }}
       tests-generated-solution-flag: ${{ steps.info.outputs.tests-generated-solution-flag
@@ -119,8 +129,8 @@ jobs:
     permissions:
       contents: read
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request' && github.event.pull_request.draft ==
-      false
+    if: github.event_name == 'pull_request' && github.event.action != 'closed' &&
+      github.event.pull_request.draft == false
     steps:
       - name: Checkout repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -164,7 +174,7 @@ jobs:
       contents: read
     needs: labels
     if: ${{ contains(fromJson(needs.labels.outputs.labels-json), 'devops') }}
-    uses: ansys/saf-devops/.github/workflows/_action-lint.yml@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
+    uses: ansys/saf-devops/.github/workflows/_action-lint.yml@82c48355bb8dbdaddd0e855ed383c89824ee2c3c # v1.3.3
 
   vulnerabilities:
     name: "Vulnerabilities"
@@ -177,8 +187,6 @@ jobs:
       fail-fast: false
       matrix: ${{ fromJson(needs.ci-cd-config.outputs.packages-matrix) }}
     env:
-      USE_MOON: ${{ contains(needs.ci-cd-config.outputs.moon-packages-matrix, matrix.library-name)
-        }}
       PACKAGE: ${{ matrix.library-name }}
       UV_PYTHON: ${{ vars.PYTHON_VERSION }}
       MOON_PYTHON_VERSION: ${{ vars.PYTHON_VERSION }}
@@ -190,28 +198,11 @@ jobs:
           fetch-depth: 0
 
       - name: Setup Moon Toolchain
-        if: ${{ env.USE_MOON == 'true' }}
         uses: moonrepo/setup-toolchain@261c62cb5b0f580c7be7c8cd0f023a2e96756095 # v0.6.4
 
       - name: Vulnerability Check
-        if: ${{ env.USE_MOON == 'true' }}
         shell: bash
         run: moon run ${PACKAGE}:vulnerability-check
-
-      - uses: ansys/saf-devops/check-deps-vulnerabilities@5d9e84af215372b7b125bbf12f5b0093600eb06d # v1.2.0
-        with:
-          python-version: ${{ vars.PYTHON_VERSION }}
-          poetry-version: ${{ vars.POETRY_VERSION }}
-          poetry-install-args: '--all-extras'
-          upgrade-pip: true
-          poetry-parent-directory: packages/${{ matrix.library-name }}
-          max-allowed-severity: medium
-          skip-install: ${{ env.USE_MOON == 'true' }}
-          checkout: false
-          requirements-file: ${{ env.USE_MOON == 'true' && format('{0}/dist/packages/{1}-requirements.txt',
-            github.workspace, matrix.library-name) || 'dependencies.txt' }}
-        env:
-          UV_VENV_CLEAR: ${{ env.USE_MOON == 'true' }}
 
   check-dependencies-licenses:
     name: "Check dependencies licenses"
@@ -223,34 +214,17 @@ jobs:
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.ci-cd-config.outputs.packages-matrix) }}
-    env:
-      USE_MOON: ${{ contains( needs.ci-cd-config.outputs.moon-packages-matrix, matrix.library-name)
-        }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-          sparse-checkout: ${{ case(env.USE_MOON == 'true', '', format('packages/{0}/',
-            matrix.library-name)) }}
           fetch-depth: 0
 
       - name: Setup Moon Toolchain
-        if: ${{ env.USE_MOON == 'true' }}
         uses: moonrepo/setup-toolchain@261c62cb5b0f580c7be7c8cd0f023a2e96756095 # v0.6.4
 
-      - name: Prepare python environment of the solution
-        id: python-setup
-        if: ${{ env.USE_MOON != 'true' }}
-        uses: ansys/saf-devops/prepare-python-environment@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
-        with:
-          python-version: ${{ vars.PYTHON_VERSION }}
-          poetry-version: ${{ vars.POETRY_VERSION }}
-          python-project-path: "packages/${{ matrix.library-name }}"
-          poetry-install-args: "--all-extras"
-
       - name: Install dependencies (Moon)
-        if: ${{ env.USE_MOON == 'true' }}
         shell: bash
         run: moon run :uv-sync -- --no-dev
 
@@ -262,12 +236,12 @@ jobs:
           whitelist-license-check: ${{ vars.WHITELIST_LICENSE_CHECK }}
           skip-install: true
           use-uv: false
-          activate-venv: "source ${{ case(env.USE_MOON == 'true', '', format('packages/{0}/',
-            matrix.library-name)) }}.venv/bin/activate"
+          activate-venv: "source .venv/bin/activate"
           checkout: false
 
   code-style-moon:
-    name: "Check code style (moon)"
+    name: "Check code style (Moon)"
+    if: github.event.action != 'closed'
     permissions:
       contents: read
     runs-on: ubuntu-latest
@@ -281,53 +255,50 @@ jobs:
       - name: Setup Moon Toolchain
         uses: moonrepo/setup-toolchain@261c62cb5b0f580c7be7c8cd0f023a2e96756095 # v0.6.4
 
+      - name: Install workspace dependencies (Moon)
+        shell: bash
+        run: moon run root:uv-sync -- --all-groups
+
       - name: Install visor
         shell: bash
         run: moon run saf-product-manager:install-visor
         env:
-          UV_EXTRA_INDEX_URL: https://PAT:${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}@${{
-            secrets.PYANSYS_PYPI_PRIVATE_URL }}
+          UV_DEFAULT_INDEX: "https://pypi.org/simple"
+          UV_INDEX: https://PAT:${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}@${{ secrets.PYANSYS_PYPI_PRIVATE_URL
+            }}
 
       - name: Run pre-commit (Moon)
         shell: bash
-        run: moon run :pre-commit
+        run: moon run :pre-commit --affected
 
-  code-style:
-    name: "Check code style"
+  code-style-examples:
+    name: "Check code style (examples)"
     needs: ci-cd-config
     permissions:
       contents: read
     runs-on: ubuntu-latest
-    if: ${{ needs.ci-cd-config.outputs.code-style-matrix != '{}' }}
-    strategy:
-      matrix: ${{ fromJson(needs.ci-cd-config.outputs.code-style-matrix) }}
-      fail-fast: false
-    env:
-      LIBRARY_NAME: ${{ matrix.target-directory }}
+    if: ${{ contains(needs.ci-cd-config.outputs.pr-changes, 'examples') }}
     steps:
       - name: "Checkout repository"
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-          sparse-checkout-cone-mode: ${{ contains(matrix.target-directory, '.github')
-            }}
+          sparse-checkout-cone-mode: false
           sparse-checkout: |
-            ${{ matrix.target-directory }}
-            doc/styles/Vocab/ANSYS/accept.txt
-            ${{ matrix.target-directory == 'examples' && 'packages/saf-cli/' || '' }}
-            ${{ matrix.target-directory == 'packages/glow-engine' && '.github/scripts/' || '' }}
+            examples
+            doc/styles/config/vocabularies/ANSYS/accept.txt
+            packages/saf-cli/
 
-      - uses: ansys/saf-devops/prepare-python-environment@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
+      - uses: ansys/saf-devops/prepare-python-environment@82c48355bb8dbdaddd0e855ed383c89824ee2c3c # v1.3.3
         id: prepare-python
         with:
           python-version: ${{ vars.PYTHON_VERSION }}
           poetry-version: ${{ vars.POETRY_VERSION }}
-          poetry-install-args: ${{ matrix.poetry-install-args }}
-          python-project-path: ${{ matrix.target-directory }}
+          poetry-install-args: "--with tests --all-extras"
+          python-project-path: examples
 
       - name: Install pre-commit
-        working-directory: ${{ matrix.target-directory }}
-        if: ${{ matrix.dependency-manager == 'poetry' }}
+        working-directory: examples
         env:
           PYTHON_CMD: ${{ steps.prepare-python.outputs.python-cmd }}
         shell: bash
@@ -336,7 +307,7 @@ jobs:
           ${PYTHON_CMD} -m pip install pre-commit
 
       - name: Run pre-commit
-        working-directory: ${{ matrix.target-directory }}
+        working-directory: examples
         env:
           ACTIVATE_CMD: '.venv/bin/activate'
         shell: bash
@@ -350,7 +321,8 @@ jobs:
       contents: write # Required to push to gh-pages branch
       pull-requests: read # Required to read the pull-request to check if it has documentation changes
     if: ${{ github.event_name == 'push' || (github.event_name == 'pull_request' &&
-      github.event.pull_request.draft == false) }}
+      github.event.action != 'closed' && github.event.pull_request.draft == false)
+      }}
     uses: ./.github/workflows/_doc.yml
     secrets:
       PYANSYS_CI_BOT_TOKEN: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
@@ -370,10 +342,7 @@ jobs:
     with:
       library-name: ${{ matrix.library-name }}
       python-version: ${{ vars.PYTHON_VERSION }}
-      use-moon: ${{ contains(needs.ci-cd-config.outputs.moon-packages-matrix, matrix.library-name)
-        }}
-      artifact-name: ${{ matrix.library-name }}-${{ vars.PYTHON_VERSION }}${{ contains(needs.ci-cd-config.outputs.moon-packages-matrix,
-        matrix.library-name) && '-artifacts' || '' }}
+      artifact-name: ${{ matrix.library-name }}-${{ vars.PYTHON_VERSION }}-artifacts
       ref: ${{ github.ref }}
 
   check-wheel-can-be-pip-installed:
@@ -390,30 +359,10 @@ jobs:
       matrix: ${{ fromJson(needs.ci-cd-config.outputs.packages-matrix) }}
     steps:
       - name: Check if wheel can be pip installed
-        uses: ansys/saf-devops/pip-install-production-wheel@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
+        uses: ansys/saf-devops/pip-install-production-wheel@82c48355bb8dbdaddd0e855ed383c89824ee2c3c # v1.3.3
         with:
           python-version: ${{ vars.PYTHON_VERSION }}
           wheel-artifact: '${{ matrix.library-name }}-${{ vars.PYTHON_VERSION }}-artifacts'
-
-  compatibility-tests:
-    name: Run compatibility tests
-    needs:
-      - ci-cd-config
-      - build-wheel
-    if: ${{ needs.ci-cd-config.outputs.compatibility-matrix != '{}' }}
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix: ${{ fromJson(needs.ci-cd-config.outputs.compatibility-matrix) }}
-    steps:
-      - name: Checks compatibility with pyansys
-        uses: ansys/saf-devops/compatibility-scan@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
-        with:
-          python-version: ${{ vars.PYTHON_VERSION }}
-          compatibility-packages: 'git+https://github.com/ansys/pyansys.git'
-          wheel-artifact-name: '${{ matrix.library-name }}-${{ vars.PYTHON_VERSION
-            }}-artifacts'
-        timeout-minutes: 15
 
   sbom:
     name: "Generate SBOM"
@@ -426,36 +375,23 @@ jobs:
       fail-fast: false
       matrix: ${{ fromJson(needs.ci-cd-config.outputs.packages-matrix) }}
     env:
-      USE_MOON: ${{ contains(needs.ci-cd-config.outputs.moon-packages-matrix, matrix.library-name)
-        }}
       PACKAGE: ${{ matrix.library-name }}
     steps:
       - name: Checkout repository
-        if: ${{ env.USE_MOON == 'true' }}
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
           fetch-depth: 0
 
-      - name: generate sbom
-        if: ${{ env.USE_MOON == 'false' }}
-        uses: ansys/saf-devops/generate-sbom@baa22e0dcc7e6598c662b4c003b2aac5b860f466 # v1.0.0
-        with:
-          poetry-version: ${{ vars.POETRY_VERSION }}
-          poetry-parent-directory: packages/${{ matrix.library-name }}
-
       - name: Setup Moon Toolchain
-        if: ${{ env.USE_MOON == 'true' }}
         uses: moonrepo/setup-toolchain@261c62cb5b0f580c7be7c8cd0f023a2e96756095 # v0.6.4
 
       - name: generate sbom with Moon
-        if: ${{ env.USE_MOON == 'true' }}
         shell: bash
         run: moon run ${PACKAGE}:sbom
 
       - name: Publish SBOM
-        if: ${{ env.USE_MOON == 'true' }}
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: sbom-${{ matrix.library-name }}
           path: dist/packages/${{ matrix.library-name }}-sbom.json
@@ -477,8 +413,6 @@ jobs:
       python-version: ${{ vars.PYTHON_VERSION }}
       tests-groups-file-path: ${{ matrix.tests-groups-file-path }}
       working-directory: ${{ matrix.working-directory }}
-      use-moon: ${{ contains(needs.ci-cd-config.outputs.moon-packages-matrix, matrix.library-name)
-        }}
       library-name: ${{ matrix.library-name }}
     secrets:
       ANS_MINERVA_URL: ${{ secrets.ANS_MINERVA_URL }}
@@ -486,6 +420,7 @@ jobs:
       PYANSYS_PYPI_PRIVATE_PAT: ${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}
       PYANSYS_PYPI_PRIVATE_URL: ${{ secrets.PYANSYS_PYPI_PRIVATE_URL }}
       LICENSE_SERVER: ${{ secrets.LICENSE_SERVER }}
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
   run-github-workflows-of-generated-solution:
     permissions:
@@ -517,7 +452,7 @@ jobs:
     name: "Run tests of GitHub actions"
     needs: ci-cd-config
     if: ${{ needs.ci-cd-config.outputs.pr-changes != '[]' && contains(needs.ci-cd-config.outputs.pr-changes,
-      'ci-cd-job-matrices') }}
+      'actions') }}
     permissions:
       contents: read
     runs-on: ubuntu-latest
@@ -528,7 +463,7 @@ jobs:
           persist-credentials: false
 
       - name: Install uv
-        uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
+        uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
         with:
           python-version: 3.12
           enable-cache: false
@@ -536,6 +471,35 @@ jobs:
       - name: Run test_ci_cd_job_matrices.py
         shell: bash
         run: uv run ".github/actions/ci-cd-job-matrices/test_ci_cd_job_matrices.py"
+
+      - name: Run test_get_fixed_vulnerabilities.py
+        shell: bash
+        run: uv run ".github/actions/get-fixed-vulnerabilities/test_get_fixed_vulnerabilities.py"
+
+  run-tests-scripts:
+    name: "Run tests of scripts"
+    needs: ci-cd-config
+    if: ${{ needs.ci-cd-config.outputs.pr-changes != '[]' && contains(needs.ci-cd-config.outputs.pr-changes,
+      'scripts') }}
+    permissions:
+      contents: read
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Setup Moon Toolchain
+        uses: moonrepo/setup-toolchain@261c62cb5b0f580c7be7c8cd0f023a2e96756095 # v0.6.4
+
+      - name: Run test_upgrade_solution_template_poetry_lock.py
+        shell: bash
+        env:
+          UV_PYTHON: ${{ vars.PYTHON_VERSION }}
+          MOON_PYTHON_VERSION: ${{ vars.PYTHON_VERSION }}
+        run: moon run root:test-upgrade-solution-templates
 
   meta-package:
     name: "SAF SDK Meta Package"
@@ -566,18 +530,18 @@ jobs:
       - github-workflows-lint
       - vulnerabilities
       - code-style-moon
-      - code-style
+      - code-style-examples
       - check-dependencies-licenses
       - build-wheel
       - check-wheel-can-be-pip-installed
       - run-tests
       - run-github-workflows-of-generated-solution
       - run-tests-actions
-      # - compatibility-tests
+      - run-tests-scripts
       - doc
       - sbom
       - meta-package
-    if: always()
+    if: always() && github.event.action != 'closed'
     runs-on: ubuntu-latest
     steps:
       - name: check-ci-unit-tests

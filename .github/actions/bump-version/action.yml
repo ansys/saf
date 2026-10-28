@@ -1,0 +1,116 @@
+# Copyright (C) 2026 ANSYS, Inc. and/or its affiliates.
+# SPDX-License-Identifier: Apache-2.0
+#
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+name: Bump Version
+
+description: |
+  Bump the version of the project and create a pull request with the changes.
+
+inputs:
+  new-version:
+    description: "New version; version to set in the manifest file."
+    type: string
+    required: true
+  base-ref:
+    description: "Reference to checkout. Default: github.ref"
+    type: string
+    required: true
+  package:
+    description: "Name of the package to bump."
+    type: string
+    required: true
+  pr-token:
+    description: "GitHub token for creating the pull request."
+    type: string
+    required: true
+  approve-and-merge-token:
+    description: "GitHub token for approving and merging the pull request."
+    type: string
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout repository
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      with:
+        repository: ${{ github.repository }}
+        ref: ${{ inputs.base-ref }}
+        token: ${{ github.token }}
+        fetch-depth: 0
+        persist-credentials: true
+
+    - name: Setup Moon Toolchain
+      uses: moonrepo/setup-toolchain@261c62cb5b0f580c7be7c8cd0f023a2e96756095 # v0.6.4
+
+    - name: Bump Version
+      shell: bash
+      env:
+        NEW_VERSION: ${{ inputs.new-version }}
+        PACKAGE: ${{ inputs.package }}
+        UV_PYTHON: '3.12'
+        MOON_PYTHON_VERSION: '3.12'
+      run: moon run $PACKAGE:bump-version -- $NEW_VERSION
+
+    - name: Create bump branch
+      shell: bash
+      env:
+        BRANCH_NAME: "bump/v${{ inputs.new-version }}/${{ inputs.package }}"
+      run: |
+        git switch --create ${BRANCH_NAME}
+        git push origin HEAD:${BRANCH_NAME}
+
+    - name: Publish bump branch and create PR
+      id: pr-info
+      shell: bash
+      env:
+        EMAIL: 'actions@github.com'
+        USERNAME: 'actions'
+        BRANCH_NAME: "bump/v${{ inputs.new-version }}/${{ inputs.package }}"
+        PACKAGE: ${{ inputs.package }}
+        BASE_REF: ${{ inputs.base-ref }}
+        GH_TOKEN: ${{ inputs.pr-token }}
+        GITHUB_TOKEN: ${{ inputs.pr-token }}
+        NEW_VERSION: ${{ inputs.new-version }}
+      run: |
+        git config --global user.email "${EMAIL}"
+        git config --global user.name "${USERNAME}"
+        git add .
+        git commit -m "Auto commit changes"
+        git push origin HEAD:${BRANCH_NAME}
+
+        pr_url=$(gh pr create \
+          --title "chore(bump): v${NEW_VERSION} ${PACKAGE}" \
+          --body "Bump to v${NEW_VERSION}" \
+          --head "${BRANCH_NAME}" \
+          --base "${BASE_REF}")
+        echo "[pr-info] ℹ️ PR created: $pr_url"
+        echo "pr-url=$pr_url" >> $GITHUB_OUTPUT
+
+        # Extract PR number from URL
+        pr_number=$(echo "$pr_url" | sed 's|.*/pull/||')
+        echo "pr-number=$pr_number" >> $GITHUB_OUTPUT
+
+    - name: Approve and Merge
+      shell: bash
+      run: |
+        gh pr edit "${PR_URL}" --add-label "auto-approve"
+        gh pr review --approve "${PR_URL}"
+        gh pr merge --auto --squash --delete-branch "${PR_URL}"
+      env:
+        GH_TOKEN: ${{ inputs.approve-and-merge-token }}
+        PR_URL: ${{ steps.pr-info.outputs.pr-url }}
+      continue-on-error: true

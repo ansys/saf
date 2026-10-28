@@ -1,0 +1,8 @@
+$schema: "https://moonrepo.dev/schemas/project.json"
+
+language: "python"
+stack: "backend"
+layer: "library"
+
+project:
+  description: "Collection of test utilities for the Solution Application Framework"

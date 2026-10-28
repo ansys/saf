@@ -32,7 +32,7 @@ Prerequisites
 * Ansys Minerva Generic Connector (Minerva CLI)
 
 The Ansys Minerva Generic Connector can be downloaded from the Minerva instance URL by clicking on the top-right "AA" menu > "Tools" > "Ansys Minerva Generic Connector" or
-"Ansys Minerva Generic Connector (Linux)". For more information, you can refer to the `specific Minerva documentation <https://ansyshelp.ansys.com/account/secured?returnurl=/Views/Secured/corp/v252/en/min_cli_ug/min_ug_cli_install.html>`_.
+"Ansys Minerva Generic Connector (Linux)." For more information, you can refer to the `specific Minerva documentation <https://ansyshelp.ansys.com/account/secured?returnurl=/Views/Secured/corp/v252/en/min_cli_ug/min_ug_cli_install.html>`_.
 
 It requires to manually add ``ansys-minerva-python-client`` as a dependency in your solution's ``pyproject.toml`` file.
 

@@ -1,0 +1,4 @@
+config.local.json
+config.json
+results/
+__pycache__/

@@ -27,8 +27,8 @@ repos:
     hooks:
       - id: codespell
         files: ^examples/
-        args: ["--skip", "*doc/styles/*,*.js,*.tmp,*.vtu,*poetry.lock", "--ignore-words",
-          "doc/styles/Vocab/ANSYS/accept.txt,examples/.codespell.ignore"]
+        args: ["--skip", "*doc/styles/*,*.js,*.tmp,*.vtu,*.vtp,*poetry.lock", "--ignore-words",
+          "doc/styles/config/vocabularies/ANSYS/accept.txt,examples/.codespell.ignore"]
 
   - repo: https://github.com/pycqa/pydocstyle
     rev: 07f6707e2c5612960347f7c00125620457f490a7 # 6.3.0
@@ -40,7 +40,7 @@ repos:
         args: ["--config=examples/pyproject.toml"]
 
   - repo: https://github.com/python-poetry/poetry
-    rev: a84cd0f1bedb5769ef6ef7389d8ee99b93b9ba4c # frozen: v2.3.2
+    rev: 94b6e35b9091991887aa54feeb3771a86d3bd692 # frozen: v2.5.1
     hooks:
       - id: poetry-check
         name: poetry-check (examples)

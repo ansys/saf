@@ -2,7 +2,7 @@ unstable_python:
   packageManager: "uv"
 
 unstable_uv:
-  version: "0.12.18"
+  version: "0.13.5"
 
 node:
   packageManager: "npm"

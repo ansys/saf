@@ -23,7 +23,7 @@ import ansys.solutions.dash_super_components as dsc
 from dash_extensions.enrich import (
     DashProxy,
     MultiplexerTransform,
-    NoOutputTransform,
+    NoOutputTransform,  # pyright: ignore[reportAttributeAccessIssue]
     TriggerTransform,
 )
 

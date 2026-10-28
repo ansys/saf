@@ -139,8 +139,8 @@ def _print_inputs_summary(
 # Checks ------------------------------------------------------------------------------------------------------------
 
 
-def _check_python_version(configuration: dict[str, Any]) -> None:  # noqa: C901
-    """Check if current Python is consistent with the python specifications from the build system."""
+def _check_poetry_python_version(configuration: dict[str, Any]) -> None:  # noqa: C901
+    """Check the current Python version against the solution's Poetry Python requirement."""
     # Initialize lower/upper versions
     lower_version, upper_version, lower_bound_symbol, upper_bound_symbol = None, None, None, None
     lower_specification, upper_specification, single_specification = None, None, None
@@ -449,8 +449,8 @@ def _can_use_credentials_from_environment_variables_or_netrc(
     return False
 
 
-def _check_private_sources(configuration: dict[str, Any]) -> None:
-    """Check and interactively manage private PyPI credentials."""
+def _check_poetry_private_sources(configuration: dict[str, Any]) -> None:
+    """Check and interactively manage credentials and certificates for Poetry's private PyPI sources."""
     private_sources = configuration["tool"]["poetry"].get("source", [])
     credentials_updated, certificate_updated = False, False
 
@@ -817,12 +817,12 @@ def _check_poetry_plugin_export_is_required(build_system_version: str, python_in
     return result.returncode != 0
 
 
-def _install_build_system(
+def _install_poetry(
     virtual_environment_exists: bool,
     workspace_clear: str | None,
     build_system_version: str,
 ) -> None:
-    """Install build system."""
+    """Install Poetry and its plugins in a dedicated virtual environment if needed."""
     print("Install dependency management system.")
     if virtual_environment_exists and not workspace_clear:
         print("Skipped\n")
@@ -894,22 +894,16 @@ def _install_build_system(
     print()
 
 
-def _configure_build_system(
+def _configure_poetry(
     virtual_environment_exists: bool,
     workspace_clear: str | None,
 ) -> None:
-    """Configure the build system to enable connection to private sources."""
+    """Configure Poetry's local cache unless reusing an existing solution environment."""
     print("Configure dependency management system.")
     if virtual_environment_exists and not workspace_clear:
         print("Skipped\n")
         return
 
-    _configure_poetry()
-    print()
-
-
-def _configure_poetry() -> None:
-    """Configure Poetry."""
     subprocess.run(
         [
             POETRY_EXEC.absolute().as_posix(),
@@ -920,6 +914,7 @@ def _configure_poetry() -> None:
         ],
         check=True,
     )
+    print()
 
 
 # Specifics ---------------------------------------------------------------------------------------------------------
@@ -1002,16 +997,8 @@ def _run_poetry_install(args: list[str]) -> None:
                 ) from e
 
 
-def _get_optional_dependency_groups(configuration: dict[str, Any]) -> list[str]:
-    optional_dependency_groups = []
-    if "group" in configuration["tool"]["poetry"]:
-        optional_dependency_groups = list(configuration["tool"]["poetry"]["group"])
-    return optional_dependency_groups
-
-
-def _install_dependencies(dependency_groups: list[str]) -> None:
-    """Install optional requirements (doc, tests, build or style)."""
-    # Install standard optional dependency groups
+def _install_poetry_dependencies(dependency_groups: list[str]) -> None:
+    """Install the solution and its main dependencies plus selected dependency groups using Poetry."""
     print(f"Install the following dependency groups: {', '.join(dependency_groups)}")
     dependency_groups_str = ",".join(dependency_groups)
     poetry_cmd = ["install"] + (["--with", dependency_groups_str] if dependency_groups_str else [])
@@ -1031,9 +1018,10 @@ def _check_uv_python_version(backend_info: SolutionBackendInfo) -> None:
 
 
 def _install_uv_dependencies(uv_exec: str, dependency_groups: list[str]) -> None:
-    """Install into the solution environment using UV's native index/authentication configuration."""
+    """Install the solution and its main dependencies plus selected dependency groups using UV."""
     environment = os.environ.copy()
     environment.pop("VIRTUAL_ENV", None)
+    # UV sync creates the solution's .venv if needed; no separate creation step is required.
     environment["UV_PROJECT_ENVIRONMENT"] = str(VENV_DIR.resolve())
     command = [
         uv_exec,
@@ -1043,7 +1031,7 @@ def _install_uv_dependencies(uv_exec: str, dependency_groups: list[str]) -> None
         "--python",
         sys.executable,
         "--no-python-downloads",
-        "--no-default-groups",
+        "--no-default-groups", # groups are specified later
         "--inexact",
     ]
     for group in dependency_groups:
@@ -1137,18 +1125,17 @@ def setup_environment(
         except SolutionBackendError as error:
             raise InstallError(str(error)) from error
 
+        optional_dependency_groups = list(backend_info.dependency_groups)
         uv_exec: str | None = None
         if backend_info.backend is SolutionBackend.UV:
             _check_uv_python_version(backend_info)
             uv_exec = shutil.which("uv")
             if uv_exec is None:
                 raise InstallError("UV executable not found. Install UV and ensure it is available on PATH.")
-            optional_dependency_groups = list(backend_info.dependency_groups)
             build_system_version = subprocess.check_output([uv_exec, "--version"], text=True).strip()
         else:
-            _check_private_sources(configuration)
-            _check_python_version(configuration)
-            optional_dependency_groups = _get_optional_dependency_groups(configuration)
+            _check_poetry_private_sources(configuration)
+            _check_poetry_python_version(configuration)
             build_system_version = configuration.get("build-system-requirements", {}).get("build-system-version", None)
             if not build_system_version:
                 raise RuntimeError("No build system version found in the configuration file.")
@@ -1189,13 +1176,13 @@ def setup_environment(
 
             _print_section_header("Setup dependency management system", max_length=100)
 
-            _install_build_system(
+            _install_poetry(
                 virtual_environment_exists,
                 workspace_clear,
                 build_system_version,
             )
 
-            _configure_build_system(
+            _configure_poetry(
                 virtual_environment_exists,
                 workspace_clear,
             )
@@ -1207,7 +1194,7 @@ def setup_environment(
         if uv_exec is not None:
             _install_uv_dependencies(uv_exec, selected_dependency_groups)
         else:
-            _install_dependencies(selected_dependency_groups)
+            _install_poetry_dependencies(selected_dependency_groups)
 
         _install_dotnet_linux_dependencies()
 

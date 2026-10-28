@@ -169,6 +169,7 @@ def _get_executable_absolute_path(executable: str, solution_root_dir: Path) -> P
     elif (solution_venv_bin_dir / f"{executable}.exe").is_file():
         return solution_venv_bin_dir / f"{executable}.exe"
     elif executable == "uv":
+        # fallback to user/system-level UV, which is the common installation method for UV, and not per-project.
         uv_exec = shutil.which("uv")
         if uv_exec is not None:
             return Path(uv_exec)

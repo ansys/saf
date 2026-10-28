@@ -338,11 +338,13 @@ tasks:
       - "/.github/workflows/**/*"
       - "/.github/actions/**/*"
     outputs:
-      - ".coverag[e]"
-      - "coverage.xm[l]"
       - "htmlcov/**/*"
       - "report/**/*"
       - "pytest_logs/**/*"
+      # Using [] to avoid to fails tests is no data are collected
+      - ".coverag[e]"
+      - "coverage.xm[l]"
+
 
   export:
     description: "Export the project"

@@ -46,6 +46,8 @@ tasks:
       - "tests"
       - "--group"
       - "tests-glow-engine"
+      - "python"
+      - "-m"
       - "pytest"
       - "--cov=."
       - "--cov-report=term"

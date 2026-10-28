@@ -313,6 +313,8 @@ tasks:
       - "--package"
       - "$projectAlias"
       - "--all-extras"
+      - "python"
+      - "-m"
       - "pytest"
       - "--cov=."
       - "--cov-report=term"

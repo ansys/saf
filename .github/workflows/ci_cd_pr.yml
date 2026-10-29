@@ -179,15 +179,10 @@ jobs:
   vulnerabilities:
     name: "Vulnerabilities"
     needs: ci-cd-config
-    if: ${{ needs.ci-cd-config.outputs.packages-matrix != '{}' }}
     runs-on: ubuntu-latest
     permissions:
       contents: read # Read the dependencies and source code of the library
-    strategy:
-      fail-fast: false
-      matrix: ${{ fromJson(needs.ci-cd-config.outputs.packages-matrix) }}
     env:
-      PACKAGE: ${{ matrix.library-name }}
       UV_PYTHON: ${{ vars.PYTHON_VERSION }}
       MOON_PYTHON_VERSION: ${{ vars.PYTHON_VERSION }}
     steps:
@@ -202,7 +197,7 @@ jobs:
 
       - name: Vulnerability Check
         shell: bash
-        run: moon run ${PACKAGE}:vulnerability-check
+        run: moon run :vulnerability-check --affected
 
   check-dependencies-licenses:
     name: "Check dependencies licenses"
@@ -226,7 +221,7 @@ jobs:
 
       - name: Install dependencies (Moon)
         shell: bash
-        run: moon run :uv-sync -- --no-dev
+        run: moon run :uv-sync -- --no-dev --all-extras
 
       - name: Check licenses
         uses: ansys/actions/check-licenses@7410037bfb276c79ae91eb3617b9f5d2876f0c94 # v11.0.8
@@ -257,7 +252,7 @@ jobs:
 
       - name: Install workspace dependencies (Moon)
         shell: bash
-        run: moon run root:uv-sync -- --all-groups
+        run: moon run root:uv-sync -- --all-groups --all-extras
 
       - name: Install visor
         shell: bash

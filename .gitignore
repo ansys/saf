@@ -118,6 +118,7 @@ env/
 venv/
 ENV/
 env.bak/
+poetry.toml
 venv.bak/
 
 # pdm

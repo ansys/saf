@@ -14,7 +14,7 @@ on:
 
 env:
   MAIN_PYTHON_VERSION: "3.12"
-  POETRY_VERSION: "2.3.2"
+  POETRY_VERSION: "2.5.1"
   DOCUMENTATION_CNAME: "" # Replace with the CNAME of the documentation
   WHEEL: "{{ cookiecutter.__solution_name }}"
   HTML_DOCUMENTATION_ARTIFACT: "{{ cookiecutter.__solution_name }}-documentation"
@@ -30,7 +30,7 @@ jobs:
     timeout-minutes: 10
     steps:
       - name: Check code style
-        uses: ansys/actions/code-style@v10
+        uses: ansys/actions/code-style@v11
         with:
           python-version: {{ "${{ env.MAIN_PYTHON_VERSION }}" }}
 
@@ -85,7 +85,7 @@ jobs:
       PlatformToolset: "v143"
     steps:
       - name: Run tests
-        uses: ansys/actions/tests-pytest@v10
+        uses: ansys/actions/tests-pytest@v11
         with:
           python-version: {{ "${{ matrix.python-version }}" }}
           use-uv: true
@@ -116,7 +116,7 @@ jobs:
         run: uv sync --locked --no-default-groups --group doc
 
       - name: Check licenses
-        uses: ansys/actions/check-licenses@73fa84c704bb6691f254cfe4d4b928c338b0d4da # v10.3.0
+        uses: ansys/actions/check-licenses@v11
         with:
           checkout: false
           python-version: {{ "${{ env.MAIN_PYTHON_VERSION }}" }}
@@ -131,13 +131,14 @@ jobs:
     timeout-minutes: 10
     steps:
       - name: Build documentation
-        uses: ansys/actions/doc-build@v10
+        uses: ansys/actions/doc-build@v11
         with:
           python-version: {{ "${{ env.MAIN_PYTHON_VERSION }}" }}
           check-links: true
           optional-dependencies-name: ''
           group-dependencies-name: 'doc'
           uploaded-artifact-name-prefix: {{ "${{ env.HTML_DOCUMENTATION_ARTIFACT }}" }}
+          skip-latex-install: true
         env:
           REPOSITORY_NAME: {{ "${{ github.repository }}" }}
 

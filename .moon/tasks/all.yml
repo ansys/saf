@@ -313,6 +313,8 @@ tasks:
       - "--package"
       - "$projectAlias"
       - "--all-extras"
+      - "python"
+      - "-m"
       - "pytest"
       - "--cov=."
       - "--cov-report=term"
@@ -338,11 +340,13 @@ tasks:
       - "/.github/workflows/**/*"
       - "/.github/actions/**/*"
     outputs:
-      - ".coverage"
-      - "coverage.xml"
       - "htmlcov/**/*"
       - "report/**/*"
       - "pytest_logs/**/*"
+      # Using [] to avoid to fails tests is no data are collected
+      - ".coverag[e]"
+      - "coverage.xm[l]"
+
 
   export:
     description: "Export the project"
@@ -356,6 +360,7 @@ tasks:
       - "export"
       - "--package"
       - "$projectAlias"
+      - "--all-extras"
       - "--no-emit-workspace"
       - "--no-hashes"
       - "--format"

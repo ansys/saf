@@ -61,7 +61,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: check-linked-issues-in-pr-description
-        uses: ansys/saf-devops/link-issue-to-pull-request@304d04d9d9249c968d7a2a9d92a12ffa88a3216d # v1.3.2
+        uses: ansys/saf-devops/link-issue-to-pull-request@82c48355bb8dbdaddd0e855ed383c89824ee2c3c # v1.3.3
         env:
           ISSUE_GITHUB_TOKEN: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
 
@@ -174,7 +174,7 @@ jobs:
       contents: read
     needs: labels
     if: ${{ contains(fromJson(needs.labels.outputs.labels-json), 'devops') }}
-    uses: ansys/saf-devops/.github/workflows/_action-lint.yml@304d04d9d9249c968d7a2a9d92a12ffa88a3216d # v1.3.2
+    uses: ansys/saf-devops/.github/workflows/_action-lint.yml@82c48355bb8dbdaddd0e855ed383c89824ee2c3c # v1.3.3
 
   vulnerabilities:
     name: "Vulnerabilities"
@@ -269,7 +269,7 @@ jobs:
 
       - name: Run pre-commit (Moon)
         shell: bash
-        run: moon run :pre-commit
+        run: moon run :pre-commit --affected
 
   code-style-examples:
     name: "Check code style (examples)"
@@ -289,7 +289,7 @@ jobs:
             doc/styles/config/vocabularies/ANSYS/accept.txt
             packages/saf-cli/
 
-      - uses: ansys/saf-devops/prepare-python-environment@304d04d9d9249c968d7a2a9d92a12ffa88a3216d # v1.3.2
+      - uses: ansys/saf-devops/prepare-python-environment@82c48355bb8dbdaddd0e855ed383c89824ee2c3c # v1.3.3
         id: prepare-python
         with:
           python-version: ${{ vars.PYTHON_VERSION }}
@@ -359,7 +359,7 @@ jobs:
       matrix: ${{ fromJson(needs.ci-cd-config.outputs.packages-matrix) }}
     steps:
       - name: Check if wheel can be pip installed
-        uses: ansys/saf-devops/pip-install-production-wheel@304d04d9d9249c968d7a2a9d92a12ffa88a3216d # v1.3.2
+        uses: ansys/saf-devops/pip-install-production-wheel@82c48355bb8dbdaddd0e855ed383c89824ee2c3c # v1.3.3
         with:
           python-version: ${{ vars.PYTHON_VERSION }}
           wheel-artifact: '${{ matrix.library-name }}-${{ vars.PYTHON_VERSION }}-artifacts'
@@ -476,6 +476,31 @@ jobs:
         shell: bash
         run: uv run ".github/actions/get-fixed-vulnerabilities/test_get_fixed_vulnerabilities.py"
 
+  run-tests-scripts:
+    name: "Run tests of scripts"
+    needs: ci-cd-config
+    if: ${{ needs.ci-cd-config.outputs.pr-changes != '[]' && contains(needs.ci-cd-config.outputs.pr-changes,
+      'scripts') }}
+    permissions:
+      contents: read
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Setup Moon Toolchain
+        uses: moonrepo/setup-toolchain@261c62cb5b0f580c7be7c8cd0f023a2e96756095 # v0.6.4
+
+      - name: Run test_upgrade_solution_template_poetry_lock.py
+        shell: bash
+        env:
+          UV_PYTHON: ${{ vars.PYTHON_VERSION }}
+          MOON_PYTHON_VERSION: ${{ vars.PYTHON_VERSION }}
+        run: moon run root:test-upgrade-solution-templates
+
   meta-package:
     name: "SAF SDK Meta Package"
     needs: ci-cd-config
@@ -512,6 +537,7 @@ jobs:
       - run-tests
       - run-github-workflows-of-generated-solution
       - run-tests-actions
+      - run-tests-scripts
       - doc
       - sbom
       - meta-package

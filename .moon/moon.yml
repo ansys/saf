@@ -206,3 +206,15 @@ tasks:
       allowFailure: true 
     toolchains:
       - 'system'
+
+  test-upgrade-solution-templates:
+    description: "Test upgrading solution templates"
+    command: 'uv'
+    args:
+      - "run"
+      - "--script"
+      - "packages/saf-cli/scripts/test_upgrade_solution_template_uv_lock.py"
+    inputs:
+      - "packages/saf-cli/tests/upgrade_solution_templates/**/*"
+    options:
+      runFromWorkspaceRoot: true

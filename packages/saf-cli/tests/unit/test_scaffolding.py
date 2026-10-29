@@ -19,7 +19,9 @@ import platform
 import subprocess
 import sys
 import tomllib
+from typing import Any
 
+from packaging.requirements import Requirement
 import pytest
 import pytest_mock
 
@@ -167,3 +169,27 @@ def test_create_solution(tmp_path: Path, ui_framework: str, namespace: str):
             assert "  ui:" in docker_compose_content
         else:
             assert "  ui:" not in docker_compose_content
+
+
+def _scaffold_pyproject(tmp_path: Path, ui_framework: str) -> dict[str, Any]:
+    """Scaffold a solution in the working directory and return its parsed pyproject.toml."""
+    create_solution("dashboard_dependency_solution", "Dashboard Dependency Solution", ui_framework, "saf_cli_tests")
+    return tomllib.loads((tmp_path / "dashboard_dependency_solution" / "pyproject.toml").read_text(encoding="utf-8"))
+
+
+@pytest.mark.usefixtures("tmp_path_as_working_dir", "mock_appdata")
+@pytest.mark.parametrize("ui_framework", ["dash", "none"])
+def test_solution_gets_projects_dashboard_from_sdk_desktop_extra(tmp_path: Path, ui_framework: str):
+    """Install the projects dashboard through the desktop extra of the SDK, from public PyPI.
+
+    The solution does not depend on the projects dashboard directly: ``ansys-saf-sdk[desktop]`` brings it.
+    """
+    pyproject = _scaffold_pyproject(tmp_path, ui_framework)
+    groups: dict[str, list[str]] = pyproject["dependency-groups"]
+    requirements = [Requirement(entry) for group in groups.values() for entry in group if isinstance(entry, str)]
+    requirements.extend(Requirement(entry) for entry in pyproject["project"]["dependencies"])
+    assert "ansys-saf-projects-dashboard" not in {requirement.name for requirement in requirements}
+    desktop = [Requirement(entry) for entry in groups["desktop"]]
+    assert [requirement.extras for requirement in desktop if requirement.name == "ansys-saf-sdk"] == [{"desktop"}]
+    indexes: list[dict[str, Any]] = pyproject.get("tool", {}).get("uv", {}).get("index", [])
+    assert "solutions-private-pypi" not in {index.get("name") for index in indexes}

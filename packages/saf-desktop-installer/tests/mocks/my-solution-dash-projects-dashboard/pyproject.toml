@@ -67,4 +67,4 @@ optional = true
 sphinx = "^6.2.1"
 
 [build-system-requirements]
-build-system-version = "2.3.2"
+build-system-version = "2.5.1"

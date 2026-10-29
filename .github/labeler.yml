@@ -18,6 +18,7 @@
   - any:
       - changed-files:
           - any-glob-to-any-file: ['**/poetry.lock']
+          - any-glob-to-any-file: ['**/uv.lock']
 
 'devops':
   - any:

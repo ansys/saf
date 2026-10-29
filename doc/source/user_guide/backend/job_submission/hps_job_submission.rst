@@ -1079,7 +1079,7 @@ The following examples of fetching design point data are based on the study crea
 
 The script simply computes the sum of two input parameters.
 
-*Fetch all the evaluated design points*
+Fetch all the evaluated design points
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code-block:: python
@@ -1092,7 +1092,7 @@ The script simply computes the sum of two input parameters.
 The value of ``"result"`` will be a list of computed sums and the value of ``"index"`` will be a
 corresponding list of indexes into the list of input design points.
 
-*Fetch the computed sums for design points where the sum is greater than 10*
+Fetch the computed sums for design points where the sum is greater than 10
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code-block:: python
@@ -1102,7 +1102,7 @@ corresponding list of indexes into the list of input design points.
         HpsDesignPointSelection(parameter_filter={"result.ge": 10.0}, eval_status=HpsJobEvaluationStatus.EVALUATED),
     )
 
-*Fetch the top 2 computed sums*
+Fetch the top 2 computed sums
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code-block:: python
@@ -1111,7 +1111,7 @@ corresponding list of indexes into the list of input design points.
         ["result", "index"], HpsDesignPointSelection(sort="result", limit=2, eval_status=HpsJobEvaluationStatus.EVALUATED)
     )
 
-*Fetch the computed sums for design points based on specific input values*
+Fetch the computed sums for design points based on specific input values
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code-block:: python

@@ -83,7 +83,7 @@ Create a solution
 
        .. image:: /_static/images/solutions_manager_create_solution_view.png
         :alt: Solutions Manager Create Solution view
-        :width: 50%
+        :width: 40%
 
     #. Provide the following values:
 
@@ -117,7 +117,7 @@ Create a solution
 
        .. image:: /_static/images/solutions_manager_create_solution_confirm.png
         :alt: Solutions Manager Create Solution success dialog
-        :width: 85%
+        :width: 90%
 
 
 .. _ug-scaffold-naming-conventions:

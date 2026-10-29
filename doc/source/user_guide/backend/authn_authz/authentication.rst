@@ -11,16 +11,23 @@ Overview
 
 GLOW's authentication system is built around **OpenID Connect (OIDC)** and **OAuth 2.0** standards, ensuring secure access to:
 
-- Solution API server (FastAPI)
-    - HTTP requests: REST and GraphQL
-    - WebSockets
-- Solution UI server (Dash)
-    - HTTP requests
-- Interactions with HPS
-    - Product instance management
-    - Remote job execution
-- Interactions with Minerva
-    - Data repository
+- **Solution API server (FastAPI)**
+
+  - HTTP requests: REST and GraphQL
+  - WebSockets
+
+- **Solution UI server (Dash)**
+
+  - HTTP requests
+
+- **Interactions with HPS**
+
+  - Product instance management
+  - Remote job execution
+
+- **Interactions with Minerva**
+
+  - Data repository
 
 The system relies on the presence of ``bearer`` access tokens in the incoming requests, either to the Solution UI server or the Solution API server.
 
@@ -189,7 +196,8 @@ Hybrid scenarios
 
 In reality, the possible combinations between access token presence in the request, deployment type (:envvar:`GLOW_DEPLOYMENT`), configuration of identity provider (:envvar:`GLOW_AUTH_ISSUER_URL` and :envvar:`GLOW_AUTH_CLIENT_ID`) and token validation (:envvar:`GLOW_AUTH_DISABLED`) allow for many more scenarios. You can expect the following behaviour depending on the configuration of these variables:
 
-1. Deployment and token validation: Both deployment types (:envvar:`GLOW_DEPLOYMENT`) actually support enabling or disabling token validation (:envvar:`GLOW_AUTH_DISABLED`) and therefore can be configured to not enforce the presence of valid access tokens in the requests. However, if the access token is present (even if it's not validated), some mechanisms are still activated.
+1. Deployment and token validation:
+   Both deployment types (:envvar:`GLOW_DEPLOYMENT`) actually support enabling or disabling token validation (:envvar:`GLOW_AUTH_DISABLED`) and therefore can be configured to not enforce the presence of valid access tokens in the requests. However, if the access token is present (even if it's not validated), some mechanisms are still activated.
 2. User information: If an access token is available, user information is extracted from it. This does not require configuring the identity provider (:envvar:`GLOW_AUTH_ISSUER_URL` and :envvar:`GLOW_AUTH_CLIENT_ID`), as the information is decoded directly from the JWT token payload.
 3. HPS:
     - If ``GLOW_DEPLOYMENT=DockerCompose``, HPS authentication can only be done by either passing the access token extracted from the initial request or using a username and password with :envvar:`GLOW_HPS_USERNAME` and :envvar:`GLOW_HPS_PASSWORD`. The access token has precedence.

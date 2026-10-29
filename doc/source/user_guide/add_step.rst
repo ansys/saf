@@ -60,7 +60,7 @@ You can add a step to your solution using either SAF CLI or Solutions Manager.
 
        .. image:: /_static/images/solutions_manager_customize_solution_view.png
          :alt: Solutions Manager Customize Solution view
-         :width: 45%
+         :width: 30%
 
     #. Under **Add step**, provide the following values:
 

@@ -25,29 +25,29 @@ Visual Studio Code
       * Search for "Python" and install the official Python extension by Microsoft:
 
         .. image:: /_static/images/vscode_python_extension.png
-            :width: 85%
+            :width: 60%
             :alt: Python Extension for VS Code
 
       * Search for "Python Debugger" and install the official extension by Microsoft:
 
         .. image:: /_static/images/vscode_python_debugger_extension.png
-            :width: 85%
+            :width: 60%
             :alt: Python Debugger Extension for VS Code
 
       * Search for "Pylance" and install the official extension by Microsoft:
 
         .. image:: /_static/images/vscode_pylance_extension.png
-           :width: 85%
+           :width: 60%
            :alt: Pylance Extension for VS Code
 
       * Search for "Python Poetry" and install the official extension:
 
         .. image:: /_static/images/vscode_python_poetry_extension.png
-           :width: 85%
+           :width: 60%
            :alt: Python Poetry Extension for VS Code
 
       * Search for "TOML Language Support" and install the official extension:
 
         .. image:: /_static/images/vscode_toml_language_support_extension.png
-           :width: 85%
+           :width: 60%
            :alt: TOML Language Support Extension for VS Code

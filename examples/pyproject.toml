@@ -98,7 +98,7 @@ ansys-saf-sdk = {version = "^0.5.0", extras = ["build"], allow-prereleases = tru
 [tool.poetry.group.style]
 optional = true
 [tool.poetry.group.style.dependencies]
-black = "24.1.1"
+black = ">24"
 isort = "5.13.2"
 flake8 = {version="7.0.0", python=">=3.8.1,<3.11"}
 codespell = "2.2.6"

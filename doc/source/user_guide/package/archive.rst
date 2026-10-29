@@ -40,7 +40,7 @@ You can create a solution archive with the ``saf archive`` command in either SAF
 
        .. image:: /_static/images/solutions_manager_archive_view.png
         :alt: Solutions Manager Archive Solution view
-        :width: 45%
+        :width: 35%
 
     #. Fill out the following values:
 
@@ -54,11 +54,11 @@ You can create a solution archive with the ``saf archive`` command in either SAF
 
           .. important::
 
-             If you leave the default output directory unchanged, Solutions Manager displays a warning. We recommend changing the path. Saving the archive in the solution's root folder can cause each new archive to include the previous archive file, which can make the solution difficult to extract.
+            If you leave the default output directory unchanged, Solutions Manager displays a warning. We recommend changing the path. Saving the archive in the solution's root folder can cause each new archive to include the previous archive file, which can make the solution difficult to extract.
 
             .. image:: /_static/images/solutions_manager_archive_confirm_path.png
               :alt: Solutions Manager Archive Solution output directory confirmation
-              :width: 55%
+              :width: 60%
 
        c. The **Archive file name** field is populated with the name of the open solution. Optionally, you can enter a different value.
 

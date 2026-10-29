@@ -154,6 +154,9 @@ def test_server_fails_without_env_vars_and_no_ansys_solutions(
     """
     src_dir = tmp_path / "src"
     src_dir.mkdir()
+    # PYTHONPATH alone cannot hide ansys.solutions provided by installed workspace packages.
+    # Block the namespace during subprocess startup without affecting other ansys packages.
+    (src_dir / "sitecustomize.py").write_text('import sys\nsys.modules["ansys.solutions"] = None\n', encoding="utf-8")
 
     with mock.patch.dict(os.environ, {"PYTHONPATH": str(src_dir)}):
         # Ensure autodiscovery env vars are absent within this block.

@@ -78,9 +78,9 @@ optional-dependencies.dash = [
   "ansys-platform-instancemanagement>=1.0.2,<2.0",
   "dash>=3.0.0,<4.0",
   "dash-extensions>=2.0.5,<3.0",
-  "fastmcp==3.3.1",
+  "fastmcp==3.4.10",
   "isoduration==20.11.0",
-  "mcp==1.28.1",
+  "mcp==1.30.0",
   "pytest~=9.0.3",
   "pytest-mock>=3.15.0,<4.0.0",
 ]
@@ -88,9 +88,9 @@ optional-dependencies.hps = [
   "ansys-hps-client>=0.13,<1.0",
 ]
 optional-dependencies.mcp = [
-  "fastmcp==3.3.1",
+  "fastmcp==3.4.10",
   "isoduration==20.11.0",
-  "mcp==1.28.1",
+  "mcp==1.30.0",
 ]
 optional-dependencies.pim = [
   "ansys-platform-instancemanagement>=1.0.2,<2.0",

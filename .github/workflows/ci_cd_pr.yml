@@ -115,10 +115,7 @@ jobs:
     outputs:
       pr-changes: ${{ steps.info.outputs.pr-changes }}
       packages-matrix: ${{ steps.info.outputs.packages-matrix }}
-      compatibility-matrix: ${{ steps.info.outputs.compatibility-matrix }}
       tests-matrix: ${{ steps.info.outputs.tests-matrix }}
-      tests-generated-solution-flag: ${{ steps.info.outputs.tests-generated-solution-flag
-        }}
     steps:
       - name: Get CI/CD configuration
         uses: $/.github/actions/ci-cd-job-matrices
@@ -423,7 +420,7 @@ jobs:
       actions: write # Required to trigger the workflow
     needs:
       - ci-cd-config
-    if: ${{ needs.ci-cd-config.outputs.tests-generated-solution-flag == 'true' }}
+    if: ${{ contains(needs.ci-cd-config.outputs.pr-changes, 'saf-cli') }}
     strategy:
       fail-fast: false
       matrix:
@@ -446,8 +443,7 @@ jobs:
   run-tests-actions:
     name: "Run tests of GitHub actions"
     needs: ci-cd-config
-    if: ${{ needs.ci-cd-config.outputs.pr-changes != '[]' && contains(needs.ci-cd-config.outputs.pr-changes,
-      'actions') }}
+    if: ${{ contains(needs.ci-cd-config.outputs.pr-changes, 'actions') }}
     permissions:
       contents: read
     runs-on: ubuntu-latest
@@ -474,8 +470,7 @@ jobs:
   run-tests-scripts:
     name: "Run tests of scripts"
     needs: ci-cd-config
-    if: ${{ needs.ci-cd-config.outputs.pr-changes != '[]' && contains(needs.ci-cd-config.outputs.pr-changes,
-      'scripts') }}
+    if: ${{ contains(needs.ci-cd-config.outputs.pr-changes, 'scripts') }}
     permissions:
       contents: read
     runs-on: ubuntu-latest

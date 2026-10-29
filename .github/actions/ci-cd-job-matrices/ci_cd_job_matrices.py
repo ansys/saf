@@ -109,13 +109,6 @@ def get_changed_packages(pr_changes: list[str]) -> list[str]:
     return changed_packages
 
 
-def get_compatibility_matrix_entries(changed_packages: list[str]) -> None:
-    write_matrix_to_output(
-        "compatibility_matrix",
-        [{"library-name": pkg} for pkg in changed_packages if pkg != "saf-cli"],
-    )
-
-
 def get_tests_matrix_entries(pr_changes: list[str], changed_packages: list[str]) -> None:
     tests_matrix = [
         {
@@ -153,13 +146,6 @@ def get_tests_matrix_entries(pr_changes: list[str], changed_packages: list[str])
     )
 
 
-def get_tests_generated_solution_flag(changed_packages: list[str]) -> None:
-    flag = "true" if "saf-cli" in changed_packages else "false"
-    write_output("tests_generated_solution_flag", flag)
-
-
 pr_changes = get_pr_changes()
 changed_packages = get_changed_packages(pr_changes)
-get_compatibility_matrix_entries(changed_packages)
 get_tests_matrix_entries(pr_changes, changed_packages)
-get_tests_generated_solution_flag(changed_packages)

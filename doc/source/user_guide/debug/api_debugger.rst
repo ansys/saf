@@ -55,7 +55,7 @@ Step 1: Run in debug mode
 
          .. image:: /_static/images/solutions_manager_run_solution_view_debug_mode.png
            :alt: Solutions Manager Run Solution view with Debugging mode enabled
-           :width: 45%
+           :width: 40%
 
       #. Provide the following values:
 
@@ -128,7 +128,7 @@ Step 2: Attach the debugger
 
    .. image:: /_static/images/solutions_manager_run_solution_view_debug_remote_attach.png
      :alt: Python: Remote Attach debug configuration
-     :width: 45%
+     :width: 40%
 
 #. Press :kbd:`F5` or click the green **Start Debugging** button to attach the debugger.
 
@@ -156,7 +156,7 @@ Step 3: Set a breakpoint
 
    .. image:: /_static/images/debugging_set_breakpoint_transaction_method.png
          :alt: Set a breakpoint in a transaction method
-         :width: 85%
+         :width: 75%
 
 #. Invoke the transaction method using the :ref:`solution UI <solution_servers_ui_server>` or the :ref:`API swagger interface <solution_servers_api_server>`.
 

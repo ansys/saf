@@ -4389,6 +4389,7 @@ files = [
     {file = "importlib_metadata-9.0.0-py3-none-any.whl", hash = "sha256:2d21d1cc5a017bd0559e36150c21c830ab1dc304dedd1b7ea85d20f45ef3edd7"},
     {file = "importlib_metadata-9.0.0.tar.gz", hash = "sha256:a4f57ab599e6a2e3016d7595cfd72eb4661a5106e787a95bcc90c7105b831efc"},
 ]
+markers = {build = "platform_machine != \"ppc64le\" and platform_machine != \"s390x\" and python_version == \"3.11\""}
 
 [package.dependencies]
 zipp = ">=3.20"
@@ -7143,25 +7144,23 @@ xarray = ["xarray"]
 
 [[package]]
 name = "pkg-about"
-version = "1.2.11"
+version = "1.5.0"
 description = "Shares Python package metadata at runtime."
 optional = false
-python-versions = "<4.0.0,>=3.9.0"
+python-versions = "<4.0.0,>=3.10.0"
 groups = ["build"]
 files = [
-    {file = "pkg_about-1.2.11-py3-none-any.whl", hash = "sha256:68781d1091442a06aaec510293555f34ef3a1e8b03a2cde03fd79c1d6fcf6b2e"},
-    {file = "pkg_about-1.2.11.tar.gz", hash = "sha256:7e6fdbe159bb6064eaf815d596dc11cf8daa5d850b5cbf4a04220d07c98cb962"},
+    {file = "pkg_about-1.5.0-py3-none-any.whl", hash = "sha256:bcce530ad173f79e4d38bf0805795f84720ffb3ad2aed544b2f7cd8d7e12d855"},
+    {file = "pkg_about-1.5.0.tar.gz", hash = "sha256:f88fdae0114628f8ae44f43046befe4b3d39611c38660c3182f0d4f0e5a99c97"},
 ]
 
 [package.dependencies]
-docutils = ">=0.21.2"
-importlib-metadata = ">=8.6.1"
-packaging = ">=24.2.0"
-setuptools = ">=77.0.3"
+packaging = ">=25.0.0"
+setuptools = ">=80.9.0"
 
 [package.extras]
-doc = ["Sphinx (>=7.4.7)", "nbsphinx (>=0.9.7)", "restructuredtext-lint (>=1.4.0)", "sphinx-autodoc-typehints (>=2.3.0)", "sphinx-copybutton (>=0.5.2)", "sphinx-lint (>=1.0.0)", "sphinx-tabs (>=3.4.5)", "sphinx-toolbox (>=3.9.0)", "sphinxcontrib-spelling (>=8.0.0)"]
-test = ["deepdiff (>=8.4.2)", "rich (>=13.9.4)"]
+doc = ["Sphinx (>=8.1.3)", "nbsphinx (>=0.9.7)", "restructuredtext-lint (>=1.4.0)", "sphinx-autodoc-typehints (>=3.0.1)", "sphinx-copybutton (>=0.5.2)", "sphinx-lint (>=1.0.0)", "sphinx-tabs (>=3.4.5)", "sphinx-toolbox (>=4.0.0)", "sphinxcontrib-spelling (>=8.0.1)"]
+test = ["deepdiff (>=8.6.0)", "rich (>=14.1.0)"]
 
 [[package]]
 name = "pkginfo"
@@ -7714,23 +7713,23 @@ tests = ["pytest (==8.4.2)", "pytest-cov (==7.0.0)", "scooby (==0.10.2)"]
 
 [[package]]
 name = "pyc-wheel"
-version = "1.3.0"
+version = "1.5.0"
 description = "Compile all py files in a wheel to pyc files."
 optional = false
-python-versions = "<4.0.0,>=3.9.0"
+python-versions = "<4.0.0,>=3.10.0"
 groups = ["build"]
 files = [
-    {file = "pyc_wheel-1.3.0-py3-none-any.whl", hash = "sha256:ed5b6cc298966d5192eb905cdf0a5c2be8dc2979bfe991830b25cffab8f93da2"},
-    {file = "pyc_wheel-1.3.0.tar.gz", hash = "sha256:b6a3db74c5da80aa811f69d7541b09d83582ed8fcea2d1e94ac46ca19adda4d3"},
+    {file = "pyc_wheel-1.5.0-py3-none-any.whl", hash = "sha256:d7d41c00ae6df9d78fefe684da7362cf338c90be439587de8e1c285c4afd9542"},
+    {file = "pyc_wheel-1.5.0.tar.gz", hash = "sha256:1c7d0225e693c0dc6bfd3785f1879f868697bdefeb7539a59272d10e02420949"},
 ]
 
 [package.dependencies]
-pkg-about = ">=1.2.8"
-setuptools = ">=75.8.0"
+pkg-about = ">=1.5.0"
+setuptools = ">=80.9.0"
 
 [package.extras]
-doc = ["Sphinx (>=7.4.7)", "nbsphinx (>=0.9.6)", "restructuredtext-lint (>=1.4.0)", "sphinx-autodoc-typehints (>=2.3.0)", "sphinx-copybutton (>=0.5.2)", "sphinx-lint (>=1.0.0)", "sphinx-tabs (>=3.4.5)", "sphinx-toolbox (>=3.8.1)", "sphinxcontrib-spelling (>=8.0.0)"]
-test = ["deepdiff (>=8.1.1)", "rich (>=13.9.4)"]
+doc = ["Sphinx (>=8.1.3)", "nbsphinx (>=0.9.7)", "restructuredtext-lint (>=1.4.0)", "sphinx-autodoc-typehints (>=3.0.1)", "sphinx-copybutton (>=0.5.2)", "sphinx-lint (>=1.0.0)", "sphinx-tabs (>=3.4.5)", "sphinx-toolbox (>=4.0.0)", "sphinxcontrib-spelling (>=8.0.1)"]
+test = ["deepdiff (>=8.6.0)", "rich (>=14.1.0)"]
 
 [[package]]
 name = "pycodestyle"
@@ -11340,6 +11339,7 @@ files = [
     {file = "zipp-4.1.0-py3-none-any.whl", hash = "sha256:25ad4e16390cd314347dd8f1de67a2ac538ae658ed4ab9db16029c07c188e97f"},
     {file = "zipp-4.1.0.tar.gz", hash = "sha256:4cb57381f544315db7688e976e922a2b18cdb513d21cc194eb42232ba2a3e602"},
 ]
+markers = {build = "platform_machine != \"ppc64le\" and platform_machine != \"s390x\" and python_version == \"3.11\""}
 
 [package.extras]
 check = ["pytest-checkdocs (>=2.14)", "pytest-ruff (>=0.2.1) ; sys_platform != \"cygwin\""]

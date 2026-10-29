@@ -44,9 +44,7 @@ with tempfile.TemporaryDirectory() as temp_dir:
         TESTS_DEFINITIONS_DIR,
         TESTS_DEFINITIONS_PER_TARGET,
         get_changed_packages,
-        get_compatibility_matrix_entries,
         get_pr_changes,
-        get_tests_generated_solution_flag,
         get_tests_matrix_entries,
         write_matrix_to_output,
         write_output,
@@ -343,69 +341,6 @@ class TestGetChangedPackages:
         }
 
 
-class TestGetCompatibilityMatrixEntries:
-    """Test the get_compatibility_matrix_entries function."""
-
-    def test_get_compatibility_matrix_empty_packages(self, github_env: tuple[Path, Path]):
-        """Empty packages returns empty matrix."""
-        output_file, _ = github_env
-        get_compatibility_matrix_entries([])
-
-        outputs = parse_outputs(output_file)
-        assert outputs["compatibility_matrix"] == "{}"
-
-    def test_get_compatibility_matrix_single_package(self, github_env: tuple[Path, Path]):
-        """Single package is included in matrix."""
-        output_file, _ = github_env
-        get_compatibility_matrix_entries(["glow-engine"])
-
-        outputs = parse_outputs(output_file)
-        matrix = json.loads(outputs["compatibility_matrix"])
-        assert len(matrix["include"]) == 1
-        assert matrix["include"][0]["library-name"] == "glow-engine"
-
-    def test_get_compatibility_matrix_multiple_packages(self, github_env: tuple[Path, Path]):
-        """Multiple packages are included in matrix."""
-        output_file, _ = github_env
-        packages = ["glow-engine", "saf-testing", "saf-product-manager"]
-        get_compatibility_matrix_entries(packages)
-
-        outputs = parse_outputs(output_file)
-        matrix = json.loads(outputs["compatibility_matrix"])
-        assert len(matrix["include"]) == 3
-        names = [e["library-name"] for e in matrix["include"]]
-        assert names == packages
-
-    def test_get_compatibility_matrix_excludes_saf_cli(self, github_env: tuple[Path, Path]):
-        """saf-cli is excluded from compatibility matrix."""
-        output_file, _ = github_env
-        packages = ["glow-engine", "saf-cli", "saf-testing"]
-        get_compatibility_matrix_entries(packages)
-
-        outputs = parse_outputs(output_file)
-        matrix = json.loads(outputs["compatibility_matrix"])
-        names = [e["library-name"] for e in matrix["include"]]
-        assert "saf-cli" not in names
-        assert "glow-engine" in names
-        assert "saf-testing" in names
-
-    def test_get_compatibility_matrix_only_saf_cli(self, github_env: tuple[Path, Path]):
-        """Only saf-cli returns empty matrix."""
-        output_file, _ = github_env
-        get_compatibility_matrix_entries(["saf-cli"])
-
-        outputs = parse_outputs(output_file)
-        assert outputs["compatibility_matrix"] == "{}"
-
-    def test_get_compatibility_matrix_outputs_to_summary(self, github_env: tuple[Path, Path]):
-        """Compatibility matrix is written to summary."""
-        _, summary_file = github_env
-        get_compatibility_matrix_entries(["glow-engine"])
-
-        summary = read_summary(summary_file)
-        assert "### compatibility_matrix:" in summary
-
-
 class TestGetTestsMatrixEntries:
     """Test the get_tests_matrix_entries function."""
 
@@ -538,42 +473,6 @@ class TestGetTestsMatrixEntries:
         assert outputs["tests_matrix"] == "{}"
 
 
-class TestGetTestGeneratedSolutionFlag:
-    """Test the get_tests_generated_solution_flag function."""
-
-    def test_get_tests_generated_solution_flag_empty_packages(self, github_env: tuple[Path, Path]):
-        """Empty packages outputs false flag."""
-        output_file, _ = github_env
-        get_tests_generated_solution_flag([])
-
-        outputs = parse_outputs(output_file)
-        assert outputs["tests_generated_solution_flag"] == "false"
-
-    def test_get_tests_generated_solution_flag_without_saf_cli(self, github_env: tuple[Path, Path]):
-        """Packages without saf-cli output false flag."""
-        output_file, _ = github_env
-        get_tests_generated_solution_flag(["glow-engine", "saf-testing"])
-
-        outputs = parse_outputs(output_file)
-        assert outputs["tests_generated_solution_flag"] == "false"
-
-    def test_get_tests_generated_solution_flag_with_saf_cli(self, github_env: tuple[Path, Path]):
-        """saf-cli in packages outputs true flag."""
-        output_file, _ = github_env
-        get_tests_generated_solution_flag(["saf-cli"])
-
-        outputs = parse_outputs(output_file)
-        assert outputs["tests_generated_solution_flag"] == "true"
-
-    def test_get_tests_generated_solution_flag_saf_cli_with_others(self, github_env: tuple[Path, Path]):
-        """saf-cli with other packages outputs true flag."""
-        output_file, _ = github_env
-        get_tests_generated_solution_flag(["glow-engine", "saf-cli", "saf-testing"])
-
-        outputs = parse_outputs(output_file)
-        assert outputs["tests_generated_solution_flag"] == "true"
-
-
 class TestIntegration:
     """Integration tests for the full workflow."""
 
@@ -584,14 +483,10 @@ class TestIntegration:
 
         pr_changes = get_pr_changes()
         changed_packages = get_changed_packages(pr_changes)
-        get_compatibility_matrix_entries(changed_packages)
         get_tests_matrix_entries(pr_changes, changed_packages)
-        get_tests_generated_solution_flag(changed_packages)
 
         outputs = parse_outputs(output_file)
-        assert outputs["compatibility_matrix"] == "{}"
         assert outputs["tests_matrix"] == "{}"
-        assert outputs["tests_generated_solution_flag"] == "false"
 
     def test_full_workflow_with_changes(self, github_env: tuple[Path, Path], monkeypatch: pytest.MonkeyPatch):
         """Full workflow with multiple packages."""
@@ -603,16 +498,12 @@ class TestIntegration:
 
         pr_changes = get_pr_changes()
         changed_packages = get_changed_packages(pr_changes)
-        get_compatibility_matrix_entries(changed_packages)
         get_tests_matrix_entries(pr_changes, changed_packages)
-        get_tests_generated_solution_flag(changed_packages)
 
         outputs = parse_outputs(output_file)
 
         # Check all matrices are present
-        assert "compatibility_matrix" in outputs
         assert "tests_matrix" in outputs
-        assert "tests_generated_solution_flag" in outputs
 
         # Verify that the working directory for examples is correctly set
         tests = json.loads(outputs["tests_matrix"])
@@ -625,14 +516,6 @@ class TestIntegration:
             },
         ]
 
-        # Verify saf-cli is excluded from compatibility matrix
-        compatibility = json.loads(outputs["compatibility_matrix"])
-        names = [e["library-name"] for e in compatibility["include"]]
-        assert "saf-cli" not in names
-
-        # Verify test flag is set to true
-        assert outputs["tests_generated_solution_flag"] == "true"
-
     def test_full_workflow_summary_content(self, github_env: tuple[Path, Path], monkeypatch: pytest.MonkeyPatch):
         """All matrices appear in the step summary."""
         _, summary_file = github_env
@@ -640,15 +523,13 @@ class TestIntegration:
 
         pr_changes = get_pr_changes()
         changed_packages = get_changed_packages(pr_changes)
-        get_compatibility_matrix_entries(changed_packages)
         get_tests_matrix_entries(pr_changes, changed_packages)
 
         summary = read_summary(summary_file)
         assert "### pr_changes:" in summary
         assert "### packages_matrix:" in summary
-        assert "### compatibility_matrix:" in summary
         assert "### tests_matrix:" in summary
-        assert summary.count("```json") == 4
+        assert summary.count("```json") == 3
 
 
 class TestDataValidation:

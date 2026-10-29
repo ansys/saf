@@ -192,7 +192,11 @@ def python_in_saf_product_environment(tmp_path_factory: pytest.TempPathFactory) 
     saf_product_environment_version_dir = saf_product_environment / "0.1.0"
     saf_product_environment_version_dir.mkdir(parents=True, exist_ok=True)
 
-    subprocess.check_output([sys.executable, "-m", "venv", ".venv"], cwd=saf_product_environment_version_dir)
+    # Seed pip with uv so this also works when the base Python does not provide ensurepip.
+    subprocess.check_output(
+        ["uv", "venv", "--seed", "--python", sys.executable, ".venv"],
+        cwd=saf_product_environment_version_dir,
+    )
     python_in_saf_product_environment = find_exec_in_venv(saf_product_environment_version_dir, "python")
     subprocess.check_output([python_in_saf_product_environment, "-m", "pip", "install", "--upgrade", "pip"])
 

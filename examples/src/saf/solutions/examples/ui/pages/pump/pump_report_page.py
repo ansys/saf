@@ -1,5 +1,6 @@
 # Copyright (C) 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: Apache-2.0
+
 #
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,8 +25,8 @@ from ansys.saf.glow.solution import NO_ENTITY
 import dash
 from dash.exceptions import PreventUpdate
 from dash_extensions.enrich import Input, Output, State, dcc, html
-import dash_mantine_components as dmc
 from dash_iconify import DashIconify
+import dash_mantine_components as dmc
 
 from saf.solutions.examples.solution.definition import ExamplesSolution
 from saf.solutions.examples.solution.logic.pump.constants import GENERATE_REPORT_STREAM

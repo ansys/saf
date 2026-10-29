@@ -1,5 +1,6 @@
 # Copyright (C) 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: Apache-2.0
+
 #
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -33,8 +34,8 @@ from typing import Any
 from ansys.saf.glow.solution import MethodState, MethodStatus
 from dash.exceptions import PreventUpdate
 from dash_extensions.enrich import html
-import dash_mantine_components as dmc
 from dash_iconify import DashIconify
+import dash_mantine_components as dmc
 
 from saf.solutions.examples.solution.logic.pump.constants import LOG_TAIL_LINES
 

@@ -1,5 +1,6 @@
 # Copyright (C) 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: Apache-2.0
+
 #
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,14 +19,11 @@
 
 from collections import deque
 from collections.abc import Callable
-from types import TracebackType
 import threading
+from types import TracebackType
 from typing import Any
 
-from saf.solutions.examples.solution.logic.pump.constants import (
-    LOG_FLUSH_INTERVAL_SECONDS,
-    LOG_TAIL_LINES,
-)
+from saf.solutions.examples.solution.logic.pump.constants import LOG_FLUSH_INTERVAL_SECONDS, LOG_TAIL_LINES
 
 LogCallback = Callable[[list[str]], None]
 """Called with the transcript lines produced since the previous call."""

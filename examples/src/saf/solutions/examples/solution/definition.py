@@ -36,8 +36,8 @@ from saf.solutions.examples.solution.steps.instance_management.optislang_step im
 from saf.solutions.examples.solution.steps.instance_management.visor_step import VisorStep
 from saf.solutions.examples.solution.steps.long_transaction_step import LongTransactionStep
 from saf.solutions.examples.solution.steps.pump.pump_model_setup_step import PumpModelSetupStep
-from saf.solutions.examples.solution.steps.pump.pump_solve_step import PumpSolveStep
 from saf.solutions.examples.solution.steps.pump.pump_report_step import PumpReportStep
+from saf.solutions.examples.solution.steps.pump.pump_solve_step import PumpSolveStep
 
 
 class Steps(StepsModel):

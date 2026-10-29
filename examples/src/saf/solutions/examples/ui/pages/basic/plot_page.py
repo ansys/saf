@@ -35,8 +35,8 @@ from dash_extensions.enrich import Input, Output, State, ctx, dcc, html
 from dash_iconify import DashIconify
 import dash_mantine_components as dmc
 
-from saf.solutions.examples.solution.steps.basic_step import BasicStep
 from saf.solutions.examples.solution.definition import ExamplesSolution
+from saf.solutions.examples.solution.steps.basic_step import BasicStep
 
 dash.register_page(
     __name__,

@@ -1,5 +1,6 @@
 # Copyright (C) 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: Apache-2.0
+
 #
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,9 +25,9 @@ from ansys.saf.glow.solution import (
     EntityHandle,
     StepModel,
     StepSpec,
+    instance,
     long_running,
     transaction,
-    instance,
 )
 from ansys.saf.product_manager.visor import VisorManager
 from ansys.visor.viewer import Metadata
@@ -55,8 +56,8 @@ from saf.solutions.examples.solution.logic.pump.results import (
     shaft_power,
     volumetric_flow_rate,
 )
-from saf.solutions.examples.solution.logic.pump.solver import OperatingPoint, RawResults, run_operating_point
 from saf.solutions.examples.solution.logic.pump.scene_export import export_scene
+from saf.solutions.examples.solution.logic.pump.solver import OperatingPoint, RawResults, run_operating_point
 
 _SECONDS_PER_HOUR: float = 3600.0
 
@@ -226,9 +227,7 @@ class PumpSolveStep(StepModel):
         # number of writes bounded while still letting a reload show what has happened so far.
         self.log_text = "\n".join(self._log_lines)
         self.transaction.upload(["progress_stage", "progress_fraction", "log_text"])
-        self.transaction.raise_event(
-            {"stage": stage, "fraction": fraction}, stream_name=RUN_SIMULATION_PROGRESS_STREAM
-        )
+        self.transaction.raise_event({"stage": stage, "fraction": fraction}, stream_name=RUN_SIMULATION_PROGRESS_STREAM)
 
     def _report_log(self, lines: list[str]) -> None:
         """Publish a batch of Fluent console lines to the UI event stream."""

@@ -1,5 +1,6 @@
 # Copyright (C) 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: Apache-2.0
+
 #
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -29,8 +30,8 @@ layout free of asset and project lookups is what makes it renderable in a unit t
 from ansys.saf.glow.client import callback
 import dash
 from dash_extensions.enrich import Input, Output, State, dcc, html, no_update
-import dash_mantine_components as dmc
 from dash_iconify import DashIconify
+import dash_mantine_components as dmc
 
 from saf.solutions.examples.solution.logic.pump.constants import (
     DEFAULT_IMPELLER_SPEED_RPM,
@@ -434,8 +435,7 @@ def layout() -> html.Div:
                 [
                     dmc.Title("Pump", order=1),
                     dmc.Text(
-                        "Predict the head, efficiency and power of a centrifugal pump at one "
-                        "operating point.",
+                        "Predict the head, efficiency and power of a centrifugal pump at one " "operating point.",
                         size="lg",
                         c="dimmed",
                     ),

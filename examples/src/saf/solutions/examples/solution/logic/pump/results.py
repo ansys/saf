@@ -1,5 +1,6 @@
 # Copyright (C) 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: Apache-2.0
+
 #
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -257,4 +258,3 @@ def is_converged(head_samples: list[tuple[int, float]]) -> bool:
         return False
 
     return (max(values) - min(values)) / abs(final_value) < CONVERGENCE_TOLERANCE
-

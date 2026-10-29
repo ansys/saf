@@ -1,5 +1,6 @@
 # Copyright (C) 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: Apache-2.0
+
 #
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -27,8 +28,8 @@ from ansys.saf.glow.solution import NO_ENTITY, MethodStatus
 import dash
 from dash.exceptions import PreventUpdate
 from dash_extensions.enrich import Input, Output, State, clientside_callback, dcc, html, no_update
-import dash_mantine_components as dmc
 from dash_iconify import DashIconify
+import dash_mantine_components as dmc
 
 from saf.solutions.examples.solution.definition import ExamplesSolution
 from saf.solutions.examples.solution.logic.pump.constants import (
@@ -240,14 +241,16 @@ def convergence_card(history: list[dict[str, float]], live: bool = False) -> dmc
             dmc.Group(
                 [
                     dmc.Title("Convergence", order=4),
-                    dmc.Badge(
-                        "Live",
-                        color="blue",
-                        variant="light",
-                        leftSection=DashIconify(icon="carbon:circle-filled", width=8),
-                    )
-                    if live
-                    else html.Div(),
+                    (
+                        dmc.Badge(
+                            "Live",
+                            color="blue",
+                            variant="light",
+                            leftSection=DashIconify(icon="carbon:circle-filled", width=8),
+                        )
+                        if live
+                        else html.Div()
+                    ),
                 ],
                 justify="space-between",
             ),
@@ -358,8 +361,7 @@ def results_panel(step: Any) -> html.Div:
                         ),
                         dmc.Text("No results yet", fw=600),
                         dmc.Text(
-                            "Choose an operating point and run the simulation to see the pump "
-                            "performance here.",
+                            "Choose an operating point and run the simulation to see the pump " "performance here.",
                             size="sm",
                             c="dimmed",
                             ta="center",
@@ -782,9 +784,7 @@ def layout(project: ExamplesSolution) -> html.Div:
             # Four streams, four listeners. GLOW owns the termination stream, the step owns
             # the other three; keeping them apart means a log batch never has to be told apart
             # from a progress tick or a convergence update.
-            DashClient.create_event_listener(
-                solve_step, stream_name=RUN_SIMULATION_STREAM, id="run-simulation-ws"
-            ),
+            DashClient.create_event_listener(solve_step, stream_name=RUN_SIMULATION_STREAM, id="run-simulation-ws"),
             DashClient.create_event_listener(
                 solve_step, stream_name=RUN_SIMULATION_PROGRESS_STREAM, id="run-simulation-progress-ws"
             ),
@@ -796,9 +796,7 @@ def layout(project: ExamplesSolution) -> html.Div:
             ),
             # The Visor server is started and owned by the setup step; this page listens to its
             # start under its own identifier, like the model setup page does.
-            DashClient.create_event_listener(
-                setup_step, stream_name=START_VISOR_STREAM, id="operating-point-visor-ws"
-            ),
+            DashClient.create_event_listener(setup_step, stream_name=START_VISOR_STREAM, id="operating-point-visor-ws"),
             DashClient.create_event_listener(
                 solve_step, stream_name=PREPARE_SOLVED_SCENE_STREAM, id="prepare-solved-scene-ws"
             ),

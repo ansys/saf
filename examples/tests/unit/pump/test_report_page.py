@@ -1,5 +1,6 @@
 # Copyright (C) 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: Apache-2.0
+
 #
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,12 +25,7 @@ import pytest
 
 from saf.solutions.examples.solution.steps.pump.pump_report_step import results_fingerprint
 from saf.solutions.examples.ui.pages.pump import report_status as status_module
-from saf.solutions.examples.ui.pages.pump.report_status import (
-    ReportState,
-    ReportStatus,
-    report_status,
-    request_report,
-)
+from saf.solutions.examples.ui.pages.pump.report_status import ReportState, ReportStatus, report_status, request_report
 
 with ignore_register_page():
     from saf.solutions.examples.ui.pages.pump import pump_report_page as report_page

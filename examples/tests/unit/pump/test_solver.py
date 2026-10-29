@@ -1,5 +1,6 @@
 # Copyright (C) 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: Apache-2.0
+
 #
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -125,9 +126,7 @@ def test_run_operating_point_reports_the_convergence_samples_after_every_chunk(f
 
 
 def test_run_operating_point_returns_the_computed_reports(fake_fluent, tmp_path):
-    results = run_operating_point(
-        tmp_path / "case.cas.h5", tmp_path, _operating_point(), lambda stage, fraction: None
-    )
+    results = run_operating_point(tmp_path / "case.cas.h5", tmp_path, _operating_point(), lambda stage, fraction: None)
     assert results.inlet_total_pressure_pa == -100.0
     assert results.outlet_total_pressure_pa == 200000.0
     assert results.blade_pressure_pa == 150000.0
@@ -137,9 +136,7 @@ def test_run_operating_point_returns_the_computed_reports(fake_fluent, tmp_path)
 
 
 def test_run_operating_point_writes_the_solved_case(fake_fluent, tmp_path):
-    results = run_operating_point(
-        tmp_path / "case.cas.h5", tmp_path, _operating_point(), lambda stage, fraction: None
-    )
+    results = run_operating_point(tmp_path / "case.cas.h5", tmp_path, _operating_point(), lambda stage, fraction: None)
     assert results.solved_case_path == tmp_path / SOLVED_CASE_FILE_NAME
     assert results.solved_data_path == tmp_path / SOLVED_DATA_FILE_NAME
     fake_fluent.settings.file.write.assert_called_once_with(
@@ -165,6 +162,4 @@ def test_run_operating_point_rejects_an_out_of_range_speed(fake_fluent, tmp_path
 
 def test_run_operating_point_rejects_an_out_of_range_mass_flow(fake_fluent, tmp_path):
     with pytest.raises(ValueError, match="mass_flow_rate must be between"):
-        run_operating_point(
-            tmp_path / "case.cas.h5", tmp_path, _operating_point(mass_flow_rate=0.0), lambda s, f: None
-        )
+        run_operating_point(tmp_path / "case.cas.h5", tmp_path, _operating_point(mass_flow_rate=0.0), lambda s, f: None)

@@ -1,5 +1,6 @@
 # Copyright (C) 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: Apache-2.0
+
 #
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -171,7 +172,9 @@ def _build(solver: Any, work_dir: Path, progress: ProgressCallback) -> CaseArtif
     progress("Writing case", 0.90)
     case_path = work_dir / CASE_FILE_NAME
     solver.settings.solution.initialization.reference_frame = "absolute"
-    solver.settings.solution.initialization.hybrid_init_options.general_settings.initialization_options.initial_pressure = True
+    solver.settings.solution.initialization.hybrid_init_options.general_settings.initialization_options.initial_pressure = (
+        True
+    )
     solver.settings.solution.initialization.hybrid_initialize()
     solver.settings.file.write(file_type="case-data", file_name=str(case_path))
     # Fluent derives the data file name from the case file name; it is not returned by the API.

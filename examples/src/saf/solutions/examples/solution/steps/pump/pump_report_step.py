@@ -1,5 +1,6 @@
 # Copyright (C) 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: Apache-2.0
+
 #
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -88,7 +89,9 @@ class PumpReportStep(StepModel):
             ]
         ),
     )
-    def generate_report(self, pump_model_setup_step: PumpModelSetupStep, pump_solve_step: PumpSolveStep, adr_project_name: str = "") -> None:
+    def generate_report(
+        self, pump_model_setup_step: PumpModelSetupStep, pump_solve_step: PumpSolveStep, adr_project_name: str = ""
+    ) -> None:
         """Rebuild the report from the last solve and store it as HTML, ZIP and PDF."""
         if pump_solve_step.contour_image == NO_ENTITY:
             raise BadRequestError("Run the simulation before generating the report.")

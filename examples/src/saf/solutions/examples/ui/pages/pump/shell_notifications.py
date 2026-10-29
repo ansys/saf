@@ -1,5 +1,6 @@
 # Copyright (C) 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: Apache-2.0
+
 #
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -135,12 +136,8 @@ def mount_termination_listeners(
     solve_step = project.steps.pump_solve_step
     return [
         DashClient.create_event_listener(setup_step, stream_name=BUILD_CASE_STREAM, id=BUILD_CASE_LISTENER_ID),
-        DashClient.create_event_listener(
-            setup_step, stream_name=PREPARE_SCENE_STREAM, id=PREPARE_SCENE_LISTENER_ID
-        ),
-        DashClient.create_event_listener(
-            solve_step, stream_name=RUN_SIMULATION_STREAM, id=RUN_SIMULATION_LISTENER_ID
-        ),
+        DashClient.create_event_listener(setup_step, stream_name=PREPARE_SCENE_STREAM, id=PREPARE_SCENE_LISTENER_ID),
+        DashClient.create_event_listener(solve_step, stream_name=RUN_SIMULATION_STREAM, id=RUN_SIMULATION_LISTENER_ID),
         DashClient.create_event_listener(
             solve_step, stream_name=PREPARE_SOLVED_SCENE_STREAM, id=PREPARE_SOLVED_SCENE_LISTENER_ID
         ),

@@ -1,6 +1,6 @@
-# Copyright (C) 2021 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
+# Copyright (C) 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
+# Copyright (C) 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
-#
 #
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -183,9 +183,7 @@ graphics.picture.save_picture(
 # Set the unit for angular velocity, rad/s to rev/min
 # ==============================================================================================================
 
-solver_session.settings.setup.general.units.set_units(
-    quantity="angular-velocity", units_name="rev/min"
-)
+solver_session.settings.setup.general.units.set_units(quantity="angular-velocity", units_name="rev/min")
 
 ################################################################################################################
 # Define the Viscous Model
@@ -200,17 +198,13 @@ viscous.k_omega_model = "sst"
 ################################################################################################################
 # Define Materials
 # ==============================================================================================================
-solver_session.settings.setup.materials.database.copy_by_name(
-    type="fluid", name="water-liquid"
-)
+solver_session.settings.setup.materials.database.copy_by_name(type="fluid", name="water-liquid")
 
 ################################################################################################################
 # Define Cell Zone Conditions
 # ==============================================================================================================
 
-impeller_cell_zone = solver_session.settings.setup.cell_zone_conditions.fluid[
-    "impeller"
-]
+impeller_cell_zone = solver_session.settings.setup.cell_zone_conditions.fluid["impeller"]
 impeller_cell_zone.general.material = "water-liquid"
 
 impeller_cell_zone.reference_frame.reference_frame_axis_origin = [0, 0, 0]
@@ -228,18 +222,14 @@ volute_cell_zone.general.material = "water-liquid"
 
 # Boundary Conditions
 # impeller hub
-impeller_hub = solver_session.settings.setup.boundary_conditions.wall[
-    "impeller-hub"
-].momentum
+impeller_hub = solver_session.settings.setup.boundary_conditions.wall["impeller-hub"].momentum
 impeller_hub.wall_motion = "Moving Wall"
 impeller_hub.relative = "Relative to Adjacent Cell Zone"
 impeller_hub.velocity_spec = "Rotational"
 
 #  inblock-shroud
 
-inblock_shroud = solver_session.settings.setup.boundary_conditions.wall[
-    "inblock-shroud"
-].momentum
+inblock_shroud = solver_session.settings.setup.boundary_conditions.wall["inblock-shroud"].momentum
 inblock_shroud.wall_motion = "Moving Wall"
 inblock_shroud.relative = "Absolute"
 inblock_shroud.velocity_spec = "Rotational"
@@ -249,9 +239,7 @@ inblock_shroud.velocity_spec = "Rotational"
 # ==============================================================================================================
 
 # Inlet Boundary Condition
-pressure_inlet = solver_session.settings.setup.boundary_conditions.pressure_inlet[
-    "inlet"
-]
+pressure_inlet = solver_session.settings.setup.boundary_conditions.pressure_inlet["inlet"]
 pressure_inlet.momentum.supersonic_or_initial_gauge_pressure.value = -100
 
 # It seems, need to change the boundary condition to mass flow outlet
@@ -260,9 +248,7 @@ solver_session.settings.setup.boundary_conditions.set_zone_type(
 )
 # Outlet Boundary Condition
 
-mass_flow_outlet = solver_session.settings.setup.boundary_conditions.mass_flow_outlet[
-    "mass-flow-inlet-11"
-]
+mass_flow_outlet = solver_session.settings.setup.boundary_conditions.mass_flow_outlet["mass-flow-inlet-11"]
 mass_flow_outlet.momentum.mass_flow_rate.value = 90  # kg/s
 
 
@@ -270,15 +256,13 @@ mass_flow_outlet.momentum.mass_flow_rate.value = 90  # kg/s
 # enable the turbo models
 solver_session.settings.setup.turbo_models.enabled = True
 
-impeller_volute_interface = (
-    solver_session.settings.setup.mesh_interfaces.turbo_create.create(
-        adjacent_cell_zone_1="impeller",
-        adjacent_cell_zone_2="volute",
-        mesh_interface_name="imp-volute-interface",
-        turbo_choice="No-Pitch-Scale",
-        zone1="interface-impeller-outlet",
-        zone2="interface-volute-inlet",
-    )
+impeller_volute_interface = solver_session.settings.setup.mesh_interfaces.turbo_create.create(
+    adjacent_cell_zone_1="impeller",
+    adjacent_cell_zone_2="volute",
+    mesh_interface_name="imp-volute-interface",
+    turbo_choice="No-Pitch-Scale",
+    zone1="interface-impeller-outlet",
+    zone2="interface-volute-inlet",
 )
 
 ################################################################################################################
@@ -303,28 +287,20 @@ pump_head.output_parameter = True
 
 # Create a report definition
 # p-out
-outlet_pressure_report_def = (
-    solver_session.settings.solution.report_definitions.surface.create("p-out")
-)
+outlet_pressure_report_def = solver_session.settings.solution.report_definitions.surface.create("p-out")
 outlet_pressure_report_def.report_type = "surface-massavg"
 outlet_pressure_report_def.surface_names = ["mass-flow-inlet-11"]
 outlet_pressure_report_def.field = "total-pressure"
 outlet_pressure_report_def.per_surface = False
 
-outlet_pressure_report_plot = (
-    solver_session.settings.solution.monitor.report_plots.create("p-out-rplot")
-)
+outlet_pressure_report_plot = solver_session.settings.solution.monitor.report_plots.create("p-out-rplot")
 outlet_pressure_report_plot.report_defs = "p-out"
 
-outlet_pressure_report_file = (
-    solver_session.settings.solution.monitor.report_files.create("p-out-rfile")
-)
+outlet_pressure_report_file = solver_session.settings.solution.monitor.report_files.create("p-out-rfile")
 outlet_pressure_report_file.report_defs = "p-out"
 
 # p-in
-inlet_pressure_report_def = (
-    solver_session.settings.solution.report_definitions.surface.create("p-in")
-)
+inlet_pressure_report_def = solver_session.settings.solution.report_definitions.surface.create("p-in")
 inlet_pressure_report_def.report_type = "surface-massavg"
 inlet_pressure_report_def.surface_names = ["inlet"]
 inlet_pressure_report_def.field = "total-pressure"
@@ -332,30 +308,20 @@ inlet_pressure_report_def.per_surface = False
 
 
 # Pump Head
-pump_head_report_def = (
-    solver_session.settings.solution.report_definitions.single_valued_expression.create(
-        "pump-head"
-    )
-)
+pump_head_report_def = solver_session.settings.solution.report_definitions.single_valued_expression.create("pump-head")
 
 pump_head_report_def.definition = "head"
 
 # report plot
-pump_head_report_plot = solver_session.settings.solution.monitor.report_plots.create(
-    "pump-head-rplot"
-)
+pump_head_report_plot = solver_session.settings.solution.monitor.report_plots.create("pump-head-rplot")
 pump_head_report_plot.report_defs = "pump-head"
 
 # report file
-pump_head_report_file = solver_session.settings.solution.monitor.report_files.create(
-    "pump-head-rfile"
-)
+pump_head_report_file = solver_session.settings.solution.monitor.report_files.create("pump-head-rfile")
 pump_head_report_file.report_defs = "pump-head"
 
 # p-blade
-blade_pressure_report_def = (
-    solver_session.settings.solution.report_definitions.surface.create("p-blade")
-)
+blade_pressure_report_def = solver_session.settings.solution.report_definitions.surface.create("p-blade")
 blade_pressure_report_def.report_type = "surface-massavg"
 blade_pressure_report_def.surface_names = ["blade"]
 blade_pressure_report_def.field = "pressure"
@@ -367,9 +333,7 @@ blade_pressure_report_def.per_surface = False
 # ==============================================================================================================
 initialization = solver_session.settings.solution.initialization
 initialization.reference_frame = "absolute"
-initialization.hybrid_init_options.general_settings.initialization_options.initial_pressure = (
-    True
-)
+initialization.hybrid_init_options.general_settings.initialization_options.initial_pressure = True
 initialization.hybrid_initialize()
 
 # Run calculation settings
@@ -378,9 +342,7 @@ run_calculation.pseudo_time_settings.time_step_method.time_step_size_scale_facto
 run_calculation.iter_count = 200
 
 # Write the case file
-solver_session.settings.file.write(
-    file_type="case", file_name="pump_voulte_setup.cas.h5"
-)
+solver_session.settings.file.write(file_type="case", file_name="pump_voulte_setup.cas.h5")
 # Run the calculation
 run_calculation.calculate()
 
@@ -389,17 +351,13 @@ run_calculation.calculate()
 # ==============================================================================================================
 
 # Create a mid-plane surface at z = -0.015 m
-z_mid_plane = solver_session.settings.results.surfaces.plane_surface.create(
-    name="z_mid_plane"
-)
+z_mid_plane = solver_session.settings.results.surfaces.plane_surface.create(name="z_mid_plane")
 z_mid_plane.method = "xy-plane"
 z_mid_plane.z = -0.015
 z_mid_plane.display()
 
 # Define the contour for static pressure
-pressure_contour = solver_session.settings.results.graphics.contour.create(
-    name="static-pressure-contour"
-)
+pressure_contour = solver_session.settings.results.graphics.contour.create(name="static-pressure-contour")
 pressure_contour.field = "pressure"
 pressure_contour.surfaces_list = ["z_mid_plane"]
 
@@ -419,9 +377,7 @@ graphics.picture.save_picture(file_name="static-pressure-contour.png")
 ################################################################################################################
 # Save the case file
 # ==============================================================================================================
-solver_session.settings.file.write(
-    file_type="case-data", file_name="pump_volute_setup_solved.cas.h5"
-)
+solver_session.settings.file.write(file_type="case-data", file_name="pump_volute_setup_solved.cas.h5")
 
 ################################################################################################################
 # Close the session

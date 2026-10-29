@@ -1,5 +1,6 @@
 # Copyright (C) 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: Apache-2.0
+
 #
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -27,8 +28,8 @@ from ansys.saf.glow.solution import NO_ENTITY, MethodStatus
 import dash
 from dash.exceptions import PreventUpdate
 from dash_extensions.enrich import Input, Output, State, clientside_callback, dcc, html, no_update
-import dash_mantine_components as dmc
 from dash_iconify import DashIconify
+import dash_mantine_components as dmc
 
 from saf.solutions.examples.solution.definition import ExamplesSolution
 from saf.solutions.examples.solution.logic.pump.constants import (
@@ -166,10 +167,7 @@ def results_panel(step: Any) -> html.Div:
                             dmc.AccordionControl("Detected zones"),
                             dmc.AccordionPanel(
                                 dmc.Group(
-                                    [
-                                        dmc.Badge(name, variant="outline", color="gray")
-                                        for name in step.zone_names
-                                    ],
+                                    [dmc.Badge(name, variant="outline", color="gray") for name in step.zone_names],
                                     gap="xs",
                                 )
                             ),
@@ -434,9 +432,7 @@ def layout(project: ExamplesSolution) -> html.Div:
             # the other two; keeping them apart means a log batch never has to be told apart
             # from a progress tick.
             DashClient.create_event_listener(step, stream_name=BUILD_CASE_STREAM, id="build-case-ws"),
-            DashClient.create_event_listener(
-                step, stream_name=BUILD_CASE_PROGRESS_STREAM, id="build-case-progress-ws"
-            ),
+            DashClient.create_event_listener(step, stream_name=BUILD_CASE_PROGRESS_STREAM, id="build-case-progress-ws"),
             DashClient.create_event_listener(step, stream_name=BUILD_CASE_LOG_STREAM, id="build-case-log-ws"),
             # The Build Case button starts the Visor server. This page listens to its start so
             # that the viewer is embedded as soon as the server comes up, without reloading.
@@ -568,9 +564,7 @@ def embed_visor_viewer(
         return viewer_spinner(), no_update
     if step.scene_file == NO_ENTITY:
         return (
-            viewer_message(
-                "carbon:3d-mpr-toggle", "No 3D model yet", "Build the case to display the pump in 3D."
-            ),
+            viewer_message("carbon:3d-mpr-toggle", "No 3D model yet", "Build the case to display the pump in 3D."),
             no_update,
         )
     return scene_viewer(step)

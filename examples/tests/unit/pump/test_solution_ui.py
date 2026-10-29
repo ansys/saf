@@ -1,5 +1,6 @@
 # Copyright (C) 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: Apache-2.0
+
 #
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,10 +19,10 @@ import inspect
 import json
 from types import SimpleNamespace
 
-import dash_mantine_components as dmc
 from dash.exceptions import PreventUpdate
 from dash.testing import ignore_register_page
 from dash_extensions.enrich import no_update
+import dash_mantine_components as dmc
 import pytest
 
 from saf.solutions.examples.solution.definition import ExamplesSolution
@@ -69,9 +70,7 @@ def test_about_layout_lists_the_headline_outputs():
 def test_about_layout_groups_the_overview_in_an_accordion_open_by_default():
     # The overview is long enough to want folding away, but a first-time visitor must see
     # it without having to discover the control.
-    accordion = next(
-        child for child in about_page.layout().children if isinstance(child, dmc.Accordion)
-    )
+    accordion = next(child for child in about_page.layout().children if isinstance(child, dmc.Accordion))
     assert accordion.value == "about"
     assert "About this app" in str(accordion)
     for heading in ("What this application is for", "What you give it", "What you get back", "How to use it"):
@@ -220,11 +219,7 @@ def test_live_convergence_keeps_the_curve_after_the_run_without_the_live_badge()
 
 
 def test_on_run_simulation_history_draws_the_curve_carried_by_the_event():
-    message = {
-        "data": json.dumps(
-            {"history": [{"iteration": 1, "head": 10.0, "outlet_total_pressure": 1000.0}]}
-        )
-    }
+    message = {"data": json.dumps({"history": [{"iteration": 1, "head": 10.0, "outlet_total_pressure": 1000.0}]})}
     assert "Live" in str(operating_point_page.on_run_simulation_history(message))
 
 

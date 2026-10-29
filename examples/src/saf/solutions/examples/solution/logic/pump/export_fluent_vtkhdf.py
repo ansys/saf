@@ -1,3 +1,6 @@
+# Copyright (C) 2026 ANSYS, Inc. and/or its affiliates.
+# SPDX-License-Identifier: Apache-2.0
+
 """Read ANSYS Fluent CFF case/data files and write VTKHDF.
 
 ``*.cas.h5`` holds the mesh. ``*.dat.h5`` holds the solution. VTK's
@@ -15,9 +18,9 @@ are written as one temporal VTKHDF file containing only the fluid volume
 from __future__ import annotations
 
 import argparse
-import re
 from dataclasses import dataclass
 from pathlib import Path
+import re
 
 import h5py
 import numpy as np
@@ -279,9 +282,7 @@ def read_sections(group: h5py.Group) -> list[tuple[int, int, np.ndarray]]:
         values = np.asarray(dataset[()])
         expected = max_id - min_id + 1
         if values.shape[0] != expected:
-            raise RuntimeError(
-                f"{dataset.name} length {values.shape[0]} does not span ids {min_id}..{max_id}"
-            )
+            raise RuntimeError(f"{dataset.name} length {values.shape[0]} does not span ids {min_id}..{max_id}")
         pieces.append((min_id, max_id, values))
     if "nSections" in group.attrs and scalar_attr(group, "nSections") != len(pieces):
         raise RuntimeError(f"{group.name} nSections does not match the datasets present")
@@ -513,14 +514,10 @@ def load_solution(path: Path) -> FluentSolution:
             raise RuntimeError(f"expected a single phase-1 group, found {phases}")
         phase = handle["results/1/phase-1"]
         cell_fields = {
-            name: read_indexed_field(group)
-            for name, group in phase["cells"].items()
-            if isinstance(group, h5py.Group)
+            name: read_indexed_field(group) for name, group in phase["cells"].items() if isinstance(group, h5py.Group)
         }
         face_fields = {
-            name: read_indexed_field(group)
-            for name, group in phase["faces"].items()
-            if isinstance(group, h5py.Group)
+            name: read_indexed_field(group) for name, group in phase["faces"].items() if isinstance(group, h5py.Group)
         }
         residuals = []
         # A data file written right after initialisation has no iterations, hence no residual group.
@@ -712,9 +709,7 @@ class TemporalVolumeSource(VTKPythonAlgorithmBase):
         info = outInfo.GetInformationObject(0)
         executive = self.GetExecutive()
         requested_time = (
-            info.Get(executive.UPDATE_TIME_STEP())
-            if info.Has(executive.UPDATE_TIME_STEP())
-            else self._times[0]
+            info.Get(executive.UPDATE_TIME_STEP()) if info.Has(executive.UPDATE_TIME_STEP()) else self._times[0]
         )
         step_index = min(
             range(len(self._times)),
@@ -781,6 +776,7 @@ def verify_temporal_vtkhdf(path: Path, times: list[float], cell_count: int, node
 def format_tree(path: Path) -> list[str]:
     lines = [f"  {path.name}"]
     with h5py.File(path, "r") as handle:
+
         def visit(name: str, obj: h5py.Group | h5py.Dataset) -> None:
             indent = "    " + "  " * name.count("/")
             if isinstance(obj, h5py.Dataset):
@@ -849,10 +845,7 @@ def print_mesh_summary(mesh: FluentMesh, volumes: np.ndarray, flipped: int) -> N
         f"cell zone {mesh.cell_zone.name} id {mesh.cell_zone.zone_id} "
         f"type {mesh.cell_zone.zone_type}  ids {mesh.cell_zone.min_id}..{mesh.cell_zone.max_id}  tetrahedra"
     )
-    print(
-        f"volume  min {volumes.min():.6g}  max {volumes.max():.6g}  "
-        f"sum {volumes.sum():.6g}  flipped {flipped}"
-    )
+    print(f"volume  min {volumes.min():.6g}  max {volumes.max():.6g}  " f"sum {volumes.sum():.6g}  flipped {flipped}")
     print("face zones")
     for zone in mesh.face_zones:
         role = "boundary" if zone.zone_type != INTERIOR else "interior, used to build tets"
@@ -878,7 +871,10 @@ def print_report(
     print(f"{solution.solver} {solution.version}  ({solution.origin})")
     print(f"case {mesh.path.name}    data {solution.path.name}")
     if case_match or data_match:
-        print(f"recorded paths: case {case_match.group(1) if case_match else '-'}    data {data_match.group(1) if data_match else '-'}")
+        print(
+            f"recorded paths: case {case_match.group(1) if case_match else '-'}    data {data_match.group(1) if data_match else '-'}"
+        )
+
     def show(value: float | None, spec: str) -> str:
         return "n/a" if value is None else format(value, spec)
 
@@ -968,11 +964,14 @@ def append_mixed_surfaces(
         if not np.any(valid):
             print(f"Skipping auxiliary face zone {zone.name}: no polygon faces")
             continue
-        face_nodes = nodes[offsets[start]:offsets[end]][np.repeat(valid, zone_widths)]
+        face_nodes = nodes[offsets[start] : offsets[end]][np.repeat(valid, zone_widths)]
         used, local = np.unique(face_nodes, return_inverse=True)
         local_offsets = np.concatenate(([0], np.cumsum(zone_widths[valid])))
         polygons = vtk.vtkCellArray()
-        polygons.SetData(numpy_to_vtkIdTypeArray(local_offsets, deep=True), numpy_to_vtkIdTypeArray(local.astype(np.int64), deep=True))
+        polygons.SetData(
+            numpy_to_vtkIdTypeArray(local_offsets, deep=True),
+            numpy_to_vtkIdTypeArray(local.astype(np.int64), deep=True),
+        )
         surface = vtk.vtkPolyData()
         points = vtk.vtkPoints()
         points.SetData(numpy_to_vtk(np.ascontiguousarray(coords[used]), deep=True))
@@ -1039,7 +1038,11 @@ def export_mixed_single(
         attach_solution(grid.GetCellData(), solution.cell_fields, min_id, max_id)
         if not grid.GetCellData().HasArray("Pressure") or not grid.GetCellData().HasArray("Velocity"):
             raise RuntimeError(f"cell zone {name} is missing complete Pressure or Velocity fields")
-        for label, key in (("OperatingPressure", "operating-pressure"), ("FlowTime", "flow-time"), ("SolverTime", "solvertime")):
+        for label, key in (
+            ("OperatingPressure", "operating-pressure"),
+            ("FlowTime", "flow-time"),
+            ("SolverTime", "solvertime"),
+        ):
             value = scheme_number(solution.data_variables, key)
             if value is not None:
                 add_scalar_field(grid.GetFieldData(), label, value)
@@ -1071,7 +1074,10 @@ def export_mixed_single(
                 raise RuntimeError(f"written cell zone {name} is missing {field}")
     for index, (name, count) in enumerate(expected_surfaces, start=len(expected)):
         surface = written.GetBlock(index)
-        if written.GetMetaData(index).Get(vtk.vtkCompositeDataSet.NAME()) != name or surface.GetNumberOfCells() != count:
+        if (
+            written.GetMetaData(index).Get(vtk.vtkCompositeDataSet.NAME()) != name
+            or surface.GetNumberOfCells() != count
+        ):
             raise RuntimeError(f"written VTKHDF does not match face zone {name}")
         for field in ("FluentFaceId", "OwnerCellId"):
             array = surface.GetCellData().GetArray(field)
@@ -1161,9 +1167,7 @@ def export_time_series(
         f"wrote {output_path} ({mesh.node_count} points, {mesh.cell_count} cells, "
         f"{len(times)} time steps from {times[0]:g} to {times[-1]:g})"
     )
-    print(
-        f"arrays {', '.join(array_names(fluid_blocks[0].GetCellData()))}"
-    )
+    print(f"arrays {', '.join(array_names(fluid_blocks[0].GetCellData()))}")
     print("ParaView: color by Pressure or Velocity and use the time controls.")
     return output_path
 

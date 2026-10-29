@@ -1,5 +1,6 @@
 # Copyright (C) 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: Apache-2.0
+
 #
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,10 +26,10 @@ from ansys.saf.glow.solution import (
     EntityHandle,
     StepModel,
     StepSpec,
-    long_running,
-    transaction,
     create_instance,
     instance,
+    long_running,
+    transaction,
 )
 from ansys.saf.product_manager.visor import VisorManager
 from ansys.visor.viewer import Metadata
@@ -188,9 +189,7 @@ class PumpModelSetupStep(StepModel):
         # number of writes bounded while still letting a reload show what has happened so far.
         self.log_text = "\n".join(self._log_lines)
         self.transaction.upload(["progress_stage", "progress_fraction", "log_text"])
-        self.transaction.raise_event(
-            {"stage": stage, "fraction": fraction}, stream_name=BUILD_CASE_PROGRESS_STREAM
-        )
+        self.transaction.raise_event({"stage": stage, "fraction": fraction}, stream_name=BUILD_CASE_PROGRESS_STREAM)
 
     def _report_log(self, lines: list[str]) -> None:
         """Publish a batch of Fluent console lines to the UI event stream."""

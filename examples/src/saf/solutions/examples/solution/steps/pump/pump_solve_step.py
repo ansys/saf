@@ -61,7 +61,7 @@ from saf.solutions.examples.solution.logic.pump.scene_export import export_scene
 _SECONDS_PER_HOUR: float = 3600.0
 
 
-class SolveStep(StepModel):
+class PumpSolveStep(StepModel):
     """Solves the case at one operating point and exposes the pump KPIs."""
 
     impeller_speed_rpm: float = DEFAULT_IMPELLER_SPEED_RPM
@@ -124,11 +124,11 @@ class SolveStep(StepModel):
                 "time_step_scale_factor",
             ],
         ),
-        setup_step=StepSpec(download=["case_file", "processor_count"]),
+        pump_model_setup_step=StepSpec(download=["case_file", "processor_count"]),
     )
-    def run_simulation(self, setup_step) -> None:
+    def run_simulation(self, pump_model_setup_step) -> None:
         """Solve at the configured operating point and store the KPIs and artefacts."""
-        if setup_step.case_file == NO_ENTITY:
+        if pump_model_setup_step.case_file == NO_ENTITY:
             raise BadRequestError("Build the case on the Model Setup page before running a simulation.")
 
         params = OperatingPoint(
@@ -136,14 +136,14 @@ class SolveStep(StepModel):
             mass_flow_rate=self.mass_flow_rate,
             iteration_count=self.iteration_count,
             time_step_scale_factor=self.time_step_scale_factor,
-            processor_count=setup_step.processor_count,
+            processor_count=pump_model_setup_step.processor_count,
         )
 
         # Fluent must work inside the method storage root: storage_scope.store rejects any path
         # outside it. The root is already private to this method execution.
         work_dir = Path(self.storage_scope.get_storage_root())
         case_path = work_dir / CASE_FILE_NAME
-        case_path.write_bytes(self.storage_scope.get_bytes(setup_step.case_file))
+        case_path.write_bytes(self.storage_scope.get_bytes(pump_model_setup_step.case_file))
 
         self.log_text = ""
         self._log_lines: list[str] = []
@@ -180,7 +180,7 @@ class SolveStep(StepModel):
         self.solved_scene_file = self.storage_scope.store(scene_path)
 
     @transaction(self=StepSpec(download=["solved_scene_file"]))
-    @instance("setup_step.visor_manager")
+    @instance("pump_model_setup_step.visor_manager")
     def show_solved_scene(self, visor_manager: VisorManager) -> None:
         """Load the converted solved case into the Visor instance started by the setup step."""
         if self.solved_scene_file == NO_ENTITY:

@@ -132,22 +132,22 @@ CONTOUR_IMAGE_NAME: Final[str] = "static-pressure-contour.png"
 # constants must therefore stay equal to the URL form of the method names.
 
 BUILD_CASE_STREAM: Final[str] = "build-case"
-"""Event stream on which GLOW publishes the final state of ``SetupStep.build_case``."""
+"""Event stream on which GLOW publishes the final state of ``PumpModelSetupStep.build_case``."""
 
 START_VISOR_STREAM: Final[str] = "start-visor"
-"""Event stream on which GLOW publishes the final state of ``SetupStep.start_visor``."""
+"""Event stream on which GLOW publishes the final state of ``PumpModelSetupStep.start_visor``."""
 
 PREPARE_SCENE_STREAM: Final[str] = "prepare-scene"
-"""Event stream on which GLOW publishes the final state of ``SetupStep.prepare_scene``."""
+"""Event stream on which GLOW publishes the final state of ``PumpModelSetupStep.prepare_scene``."""
 
 RUN_SIMULATION_STREAM: Final[str] = "run-simulation"
-"""Event stream on which GLOW publishes the final state of ``SolveStep.run_simulation``."""
+"""Event stream on which GLOW publishes the final state of ``PumpSolveStep.run_simulation``."""
 
 PREPARE_SOLVED_SCENE_STREAM: Final[str] = "prepare-solved-scene"
-"""Event stream on which GLOW publishes the final state of ``SolveStep.prepare_solved_scene``."""
+"""Event stream on which GLOW publishes the final state of ``PumpSolveStep.prepare_solved_scene``."""
 
 GENERATE_REPORT_STREAM: Final[str] = "generate-report"
-"""Event stream on which GLOW publishes the final state of ``ReportStep.generate_report``."""
+"""Event stream on which GLOW publishes the final state of ``PumpReportStep.generate_report``."""
 
 BUILD_CASE_PROGRESS_STREAM: Final[str] = "build-case-progress"
 """Event stream carrying model-setup progress to the UI."""

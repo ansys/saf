@@ -44,6 +44,7 @@ STEP_BY_PAGE_MODULE: dict[str, str] = {
     "saf.solutions.examples.ui.pages.basic.process_logs_page": "basic_step",
     "saf.solutions.examples.ui.pages.basic.table_page": "basic_step",
     "saf.solutions.examples.ui.pages.game_of_life_page": "game_of_life_step",
+    "saf.solutions.examples.ui.pages.pump.about_page": "pump_step",
 }
 
 
@@ -113,6 +114,13 @@ def get_page_list(theme: str, active_index: str | None = None) -> list[dict[str,
         leaf("report_page", "Report", "mdi:file-chart-outline"),
     ]
 
+    pump_children = [
+        leaf("pump_about_page", "About", "material-symbols:home"),
+        leaf("pump_model_setup_page", "Model Setup", "boxicons:mesh-filled"),
+        leaf("pump_operating_point_page", "Operating Point", "at-icons:wind"),
+        leaf("pump_report_page", "Report", "carbon:report"),
+    ]
+
     items: list[dict[str, Any]] = [
         {
             "id": "basic_examples",
@@ -161,6 +169,18 @@ def get_page_list(theme: str, active_index: str | None = None) -> list[dict[str,
                 "prefixIcon": "hugeicons:bend-tool",
                 "expanded": is_group_active(beam_nodes),
                 "children": beam_nodes,
+            }
+        )
+
+    pump_nodes = [child for child in pump_children if child is not None]
+    if pump_nodes:
+        items.append(
+            {
+                "id": "pump_example",
+                "text": "Pump (PyFluent)",
+                "prefixIcon": "bi:fan",
+                "expanded": is_group_active(pump_nodes),
+                "children": pump_nodes,
             }
         )
 

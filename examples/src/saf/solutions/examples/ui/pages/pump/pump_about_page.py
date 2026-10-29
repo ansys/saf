@@ -46,7 +46,7 @@ from saf.solutions.examples.solution.logic.pump.constants import (
 dash.register_page(
     __name__,
     name="About",
-    path_template="/projects/<project_id>",
+    path_template="/projects/<project_id>/pump-about",
     icon_asset_name="material-symbols:home",
     order=0,
 )
@@ -432,7 +432,7 @@ def layout() -> html.Div:
         [
             html.Div(
                 [
-                    dmc.Title("About", order=1),
+                    dmc.Title("Pump", order=1),
                     dmc.Text(
                         "Predict the head, efficiency and power of a centrifugal pump at one "
                         "operating point.",
@@ -541,4 +541,4 @@ def go_to_model_setup(n_clicks: int | None, project_id: str | None) -> str:
     """
     if not n_clicks or not project_id:
         return no_update
-    return dash.get_relative_path(f"/projects/{project_id}/model-setup")
+    return dash.get_relative_path(f"/projects/{project_id}/pump-model-setup")

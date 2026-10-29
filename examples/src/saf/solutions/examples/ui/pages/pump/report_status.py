@@ -27,10 +27,10 @@ import logging
 
 from ansys.saf.glow.solution import MethodStatus
 
-from saf.solutions.pump.solution.definition import PumpSolution
-from saf.solutions.pump.solution.logic.report.settings import get_report_settings
-from saf.solutions.pump.solution.steps.report_step import results_fingerprint
-from saf.solutions.pump.ui.feedback import NotificationCopy
+from saf.solutions.examples.solution.definition import ExamplesSolution
+from saf.solutions.examples.solution.logic.pump.report.settings import get_report_settings
+from saf.solutions.examples.solution.steps.pump.pump_report_step import results_fingerprint
+from saf.solutions.examples.ui.pages.pump.feedback import NotificationCopy
 
 logger = logging.getLogger(__name__)
 
@@ -69,14 +69,14 @@ class ReportStatus:
     error: str | None = None
 
 
-def report_status(project: PumpSolution) -> ReportStatus:
+def report_status(project: ExamplesSolution) -> ReportStatus:
     """Return where the report of ``project`` stands."""
     if not get_report_settings().is_available:
         return ReportStatus(ReportState.UNAVAILABLE)
-    current = results_fingerprint(project.steps.solve_step.contour_image)
+    current = results_fingerprint(project.steps.pump_solve_step.contour_image)
     if not current:
         return ReportStatus(ReportState.NO_RESULTS)
-    report_step = project.steps.report_step
+    report_step = project.steps.pump_report_step
     method_state = report_step.get_long_running_method_state("generate_report")
     if method_state.status == MethodStatus.Running:
         return ReportStatus(ReportState.RUNNING)
@@ -87,7 +87,7 @@ def report_status(project: PumpSolution) -> ReportStatus:
     return ReportStatus(ReportState.OUTDATED)
 
 
-def request_report(project: PumpSolution) -> bool:
+def request_report(project: ExamplesSolution) -> bool:
     """Start the report generation if the report is behind the latest results.
 
     Safe to call repeatedly: it does nothing while a generation is running, or when the
@@ -98,8 +98,8 @@ def request_report(project: PumpSolution) -> bool:
     bool
         Whether a generation was started.
     """
-    report_step = project.steps.report_step
-    current = results_fingerprint(project.steps.solve_step.contour_image)
+    report_step = project.steps.pump_report_step
+    current = results_fingerprint(project.steps.pump_solve_step.contour_image)
     if not current or report_step.source_results == current:
         return False
     if report_step.get_long_running_method_state("generate_report").status == MethodStatus.Running:

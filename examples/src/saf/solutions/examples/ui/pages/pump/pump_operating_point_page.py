@@ -30,7 +30,7 @@ from dash_extensions.enrich import Input, Output, State, clientside_callback, dc
 import dash_mantine_components as dmc
 from dash_iconify import DashIconify
 
-from saf.solutions.examples.solution.definition import PumpSolution
+from saf.solutions.examples.solution.definition import ExamplesSolution
 from saf.solutions.examples.solution.logic.pump.constants import (
     CONTOUR_IMAGE_NAME,
     DENSITY_WATER,
@@ -671,10 +671,10 @@ def _inputs_card(step: Any, case_is_ready: bool, is_running: bool) -> dmc.Card:
     )
 
 
-def layout(project: PumpSolution) -> html.Div:
+def layout(project: ExamplesSolution) -> html.Div:
     """Layout of the operating point page."""
-    setup_step = project.steps.setup_step
-    solve_step = project.steps.solve_step
+    setup_step = project.steps.pump_model_setup_step
+    solve_step = project.steps.pump_solve_step
     case_is_ready = setup_step.case_file != NO_ENTITY
     # A run started on an earlier visit is still going: the page must come back busy rather
     # than offering a button that would queue a second Fluent session.
@@ -869,7 +869,7 @@ def visor_frame(host: str, port: int) -> html.Iframe:
     )
 
 
-def scene_viewer(project: PumpSolution) -> tuple[Any, bool]:
+def scene_viewer(project: ExamplesSolution) -> tuple[Any, bool]:
     """Load the solved scene into Visor and return the viewer that streams it.
 
     The scene is loaded before the viewer document is created, so the viewer connects to a
@@ -883,21 +883,31 @@ def scene_viewer(project: PumpSolution) -> tuple[Any, bool]:
         The viewer slot content, and whether the scene is now on screen. ``False`` lets
         :func:`embed_visor_viewer` try again when the Visor server comes up.
     """
-    setup_step = project.steps.setup_step
+    setup_step = project.steps.pump_model_setup_step
     if not setup_step.visor_started or not setup_step.visor_port:
-        if setup_step.get_long_running_method_state("start_visor").status == MethodStatus.Failed:
+        visor_status = setup_step.get_long_running_method_state("start_visor").status
+        if visor_status == MethodStatus.Failed:
             return (
                 viewer_message(
                     "carbon:warning-alt",
                     "3D viewer unavailable",
-                    "The Visor server could not be started. Reload the project to try again.",
+                    "The Visor server could not be started. Build the case again on Model Setup to retry.",
                     color="red",
+                ),
+                False,
+            )
+        if visor_status != MethodStatus.Running:
+            return (
+                viewer_message(
+                    "carbon:3d-mpr-toggle",
+                    "3D viewer not started",
+                    "Build the case on Model Setup to start the Visor service.",
                 ),
                 False,
             )
         return viewer_spinner("Starting the 3D viewer", "Connecting to the Visor service."), False
     try:
-        project.steps.solve_step.show_solved_scene()
+        project.steps.pump_solve_step.show_solved_scene()
     except Exception:
         logger.exception("Could not load the solved pump scene into Visor.")
         return (
@@ -921,7 +931,7 @@ def embed_visor_viewer(
     _boot: float,
     _message: dict | None,
     scene_loaded: bool | None,
-    project: PumpSolution,
+    project: ExamplesSolution,
 ) -> tuple[Any, Any]:
     """Show the solved scene when the page opens and again when the Visor server comes up.
 
@@ -930,7 +940,7 @@ def embed_visor_viewer(
     """
     if scene_loaded:
         raise PreventUpdate
-    step = project.steps.solve_step
+    step = project.steps.pump_solve_step
     # The page was reopened while the conversion is still going: its end is caught by
     # on_prepare_solved_scene_finished, which is listening on this page too.
     if step.get_long_running_method_state("prepare_solved_scene").status == MethodStatus.Running:
@@ -953,7 +963,7 @@ def embed_visor_viewer(
     State("url", "pathname"),
     prevent_initial_call=True,
 )
-def on_prepare_solved_scene_finished(message: dict, project: PumpSolution) -> tuple[Any, Any, Any]:
+def on_prepare_solved_scene_finished(message: dict, project: ExamplesSolution) -> tuple[Any, Any, Any]:
     """Close the toast and replace the spinner with the scene, or with the reason it failed."""
     event = parse_event(message)
     if not event.finished:
@@ -1002,11 +1012,11 @@ def start_run_simulation(
     mass_flow_rate: float,
     iteration_count: int,
     time_step_scale_factor: float,
-    project: PumpSolution,
+    project: ExamplesSolution,
 ) -> tuple[list[dict], html.Div, bool, bool, str, html.Div, html.Div]:
     """Start the long-running solve, open the toast and reveal the console."""
     require_click(n_clicks)
-    step = project.steps.solve_step
+    step = project.steps.pump_solve_step
     step.set_fields(
         {
             "impeller_speed_rpm": float(impeller_speed),
@@ -1089,7 +1099,7 @@ def on_run_simulation_log(message: dict, buffered: list[str] | None) -> tuple[ht
     prevent_initial_call=True,
 )
 def on_run_simulation_finished(
-    message: dict, project: PumpSolution
+    message: dict, project: ExamplesSolution
 ) -> tuple[Any, Any, Any, Any, bool, bool, Any, Any, Any, Any, Any]:
     """Close out the run: clear the progress bar, free the button and show the results.
 
@@ -1101,7 +1111,7 @@ def on_run_simulation_finished(
     event = parse_event(message)
     if not event.finished:
         raise PreventUpdate
-    step = project.steps.solve_step
+    step = project.steps.pump_solve_step
     notifications = closing_notification(NOTIFICATION, event) or no_update
     results = results_panel(step) if event.succeeded else no_update
     details = results_details(step) if event.succeeded else no_update

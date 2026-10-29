@@ -30,7 +30,7 @@ from dash_extensions.enrich import Input, Output, State, clientside_callback, dc
 import dash_mantine_components as dmc
 from dash_iconify import DashIconify
 
-from saf.solutions.examples.solution.definition import PumpSolution
+from saf.solutions.examples.solution.definition import ExamplesSolution
 from saf.solutions.examples.solution.logic.pump.constants import (
     BUILD_CASE_LOG_STREAM,
     BUILD_CASE_PROGRESS_STREAM,
@@ -55,7 +55,7 @@ from saf.solutions.examples.ui.pages.pump.feedback import (
 dash.register_page(
     __name__,
     name="Model Setup",
-    path_template="/projects/<project_id>/model-setup",
+    path_template="/projects/<project_id>/pump-model-setup",
     icon_asset_name="boxicons:mesh-filled",
     order=1,
 )
@@ -365,9 +365,9 @@ def _settings_card(step: Any, is_running: bool) -> dmc.Card:
     )
 
 
-def layout(project: PumpSolution) -> html.Div:
+def layout(project: ExamplesSolution) -> html.Div:
     """Layout of the model setup page."""
-    step = project.steps.setup_step
+    step = project.steps.pump_model_setup_step
     # A run started on an earlier visit is still going: the page must come back busy rather
     # than offering a button that would queue a second Fluent session.
     is_running = step.get_long_running_method_state("build_case").status == MethodStatus.Running
@@ -457,11 +457,8 @@ def layout(project: PumpSolution) -> html.Div:
                 step, stream_name=BUILD_CASE_PROGRESS_STREAM, id="build-case-progress-ws"
             ),
             DashClient.create_event_listener(step, stream_name=BUILD_CASE_LOG_STREAM, id="build-case-log-ws"),
-            # The shell starts the Visor server and owns the toast that reports on it. This
-            # page listens to the same stream under its own identifier, so that a user already
-            # sitting here when the server comes up gets the viewer without reloading. A shared
-            # listener would mean a callback whose input is in the shell and whose output is on
-            # this page alone, which Dash cannot dispatch from anywhere else in the application.
+            # The Build Case button starts the Visor server. This page listens to its start so
+            # that the viewer is embedded as soon as the server comes up, without reloading.
             DashClient.create_event_listener(step, stream_name=START_VISOR_STREAM, id="model-setup-visor-ws"),
             DashClient.create_event_listener(step, stream_name=PREPARE_SCENE_STREAM, id="prepare-scene-ws"),
         ]
@@ -528,13 +525,21 @@ def scene_viewer(step: Any) -> tuple[Any, bool]:
         :func:`embed_visor_viewer` try again when the Visor server comes up.
     """
     if not step.visor_started or not step.visor_port:
-        if step.get_long_running_method_state("start_visor").status == MethodStatus.Failed:
+        visor_status = step.get_long_running_method_state("start_visor").status
+        if visor_status == MethodStatus.Failed:
             return (
                 viewer_message(
                     "carbon:warning-alt",
                     "3D viewer unavailable",
-                    "The Visor server could not be started. Reload the project to try again.",
+                    "The Visor server could not be started. Build the case again to retry.",
                     color="red",
+                ),
+                False,
+            )
+        if visor_status != MethodStatus.Running:
+            return (
+                viewer_message(
+                    "carbon:3d-mpr-toggle", "3D viewer not started", "Build the case to start the Visor service."
                 ),
                 False,
             )
@@ -565,7 +570,7 @@ def embed_visor_viewer(
     _boot: float,
     _message: dict | None,
     scene_loaded: bool | None,
-    project: PumpSolution,
+    project: ExamplesSolution,
 ) -> tuple[Any, Any]:
     """Show the prepared scene when the page opens and again when the Visor server comes up.
 
@@ -575,7 +580,7 @@ def embed_visor_viewer(
     print("embed_visor_viewer called")
     if scene_loaded:
         raise PreventUpdate
-    step = project.steps.setup_step
+    step = project.steps.pump_model_setup_step
     # The page was reopened while the conversion is still going: its end is caught by
     # on_prepare_scene_finished, which is listening on this page too.
     if step.get_long_running_method_state("prepare_scene").status == MethodStatus.Running:
@@ -598,7 +603,7 @@ def embed_visor_viewer(
     State("url", "pathname"),
     prevent_initial_call=True,
 )
-def on_prepare_scene_finished(message: dict, project: PumpSolution) -> tuple[Any, Any, Any]:
+def on_prepare_scene_finished(message: dict, project: ExamplesSolution) -> tuple[Any, Any, Any]:
     """Close the toast and replace the spinner with the scene, or with the reason it failed."""
     event = parse_event(message)
     if not event.finished:
@@ -609,8 +614,24 @@ def on_prepare_scene_finished(message: dict, project: PumpSolution) -> tuple[Any
             "carbon:warning-alt", "3D view unavailable", "The case could not be converted.", color="red"
         )
         return notifications, failed, False
-    viewer, loaded = scene_viewer(project.steps.setup_step)
+    viewer, loaded = scene_viewer(project.steps.pump_model_setup_step)
     return notifications, viewer, loaded
+
+
+def _ensure_visor_started(step: Any) -> None:
+    """Provision the Visor instance through the instance management transaction.
+
+    The server is booted alongside the case build so that it is up by the time the scene is
+    prepared. A server already running, or still booting, is left alone: starting a second
+    one would leave an orphan behind. A Visor that cannot be started costs the 3D view and
+    nothing else, so it must not prevent the build.
+    """
+    if step.visor_started or step.get_long_running_method_state("start_visor").status == MethodStatus.Running:
+        return
+    try:
+        step.start_visor()
+    except Exception:
+        logger.exception("Could not start the Visor server.")
 
 
 @callback(
@@ -628,11 +649,12 @@ def on_prepare_scene_finished(message: dict, project: PumpSolution) -> tuple[Any
 def start_build_case(
     n_clicks: int | None,
     processor_count: int,
-    project: PumpSolution,
+    project: ExamplesSolution,
 ) -> tuple[list[dict], html.Div, bool, bool, str, html.Div]:
     """Start the long-running case build, open the toast and reveal the console."""
     require_click(n_clicks)
-    step = project.steps.setup_step
+    step = project.steps.pump_model_setup_step
+    _ensure_visor_started(step)
     step.processor_count = int(processor_count)
     step.build_case()
     # The verdict of the previous build is about to be out of date, so it goes now rather
@@ -684,7 +706,7 @@ def on_build_case_log(message: dict, buffered: list[str] | None) -> tuple[html.D
     prevent_initial_call=True,
 )
 def on_build_case_finished(
-    message: dict, project: PumpSolution
+    message: dict, project: ExamplesSolution
 ) -> tuple[Any, Any, Any, bool, bool, Any, Any, Any, Any]:
     """Close out the run: clear the progress bar, free the button and show the results.
 
@@ -696,7 +718,7 @@ def on_build_case_finished(
     event = parse_event(message)
     if not event.finished:
         raise PreventUpdate
-    step = project.steps.setup_step
+    step = project.steps.pump_model_setup_step
     notifications = closing_notification(NOTIFICATION, event) or no_update
     results = results_panel(step) if event.succeeded else no_update
     status = status_alert(step) if event.succeeded else no_update

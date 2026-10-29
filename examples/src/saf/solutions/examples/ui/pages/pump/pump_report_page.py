@@ -27,9 +27,9 @@ from dash_extensions.enrich import Input, Output, State, dcc, html
 import dash_mantine_components as dmc
 from dash_iconify import DashIconify
 
-from saf.solutions.examples.solution.definition import PumpSolution
+from saf.solutions.examples.solution.definition import ExamplesSolution
 from saf.solutions.examples.solution.logic.pump.constants import GENERATE_REPORT_STREAM
-from saf.solutions.examples.solution.steps.pump.report_step import REPORT_ZIP_FILE_NAME
+from saf.solutions.examples.solution.steps.pump.pump_report_step import REPORT_ZIP_FILE_NAME
 from saf.solutions.examples.ui.pages.pump.feedback import parse_event, require_click
 from saf.solutions.examples.ui.pages.pump.report_status import ReportState, ReportStatus, report_status, request_report
 
@@ -48,7 +48,7 @@ def _alert(title: str, message: Any, color: str, icon: str) -> dmc.Alert:
     return dmc.Alert(message, title=title, color=color, variant="light", icon=DashIconify(icon=icon, width=20))
 
 
-def report_body(status: ReportStatus, project: PumpSolution) -> Any:
+def report_body(status: ReportStatus, project: ExamplesSolution) -> Any:
     """Return what the page shows for a given report state."""
     if status.state == ReportState.UNAVAILABLE:
         return _alert(
@@ -81,7 +81,7 @@ def report_body(status: ReportStatus, project: PumpSolution) -> Any:
     if status.state == ReportState.READY:
         return html.Iframe(
             id="report-frame",
-            srcDoc=project.steps.report_step.report_html_content,
+            srcDoc=project.steps.pump_report_step.report_html_content,
             title="Pump performance report",
             style={"width": "100%", "height": "80vh", "border": "none", "backgroundColor": "white"},
         )
@@ -94,15 +94,15 @@ def report_body(status: ReportStatus, project: PumpSolution) -> Any:
     )
 
 
-def downloads_disabled(status: ReportStatus, project: PumpSolution) -> tuple[bool, bool]:
+def downloads_disabled(status: ReportStatus, project: ExamplesSolution) -> tuple[bool, bool]:
     """Return whether the PDF and the ZIP download buttons are disabled."""
     if status.state != ReportState.READY:
         return True, True
-    report_step = project.steps.report_step
+    report_step = project.steps.pump_report_step
     return report_step.report_pdf == NO_ENTITY, report_step.report_html_file == NO_ENTITY
 
 
-def layout(project: PumpSolution) -> html.Div:
+def layout(project: ExamplesSolution) -> html.Div:
     """Layout of the report page."""
     status = report_status(project)
     pdf_disabled, zip_disabled = downloads_disabled(status, project)
@@ -110,7 +110,7 @@ def layout(project: PumpSolution) -> html.Div:
         html.Div()
         if status.state == ReportState.UNAVAILABLE
         else DashClient.create_event_listener(
-            project.steps.report_step, stream_name=GENERATE_REPORT_STREAM, id="report-page-ws"
+            project.steps.pump_report_step, stream_name=GENERATE_REPORT_STREAM, id="report-page-ws"
         )
     )
     return html.Div(
@@ -166,7 +166,7 @@ def layout(project: PumpSolution) -> html.Div:
     Input("report-page-boot", "data"),
     State("url", "pathname"),
 )
-def catch_up_report(_boot: float, project: PumpSolution) -> Any:
+def catch_up_report(_boot: float, project: ExamplesSolution) -> Any:
     """Generate the report on arrival when it is behind the latest results.
 
     The shell generates it when a simulation completes, but not if the UI was closed at
@@ -183,7 +183,7 @@ def catch_up_report(_boot: float, project: PumpSolution) -> Any:
     State("url", "pathname"),
     prevent_initial_call=True,
 )
-def retry_report(n_clicks: int | None, project: PumpSolution) -> Any:
+def retry_report(n_clicks: int | None, project: ExamplesSolution) -> Any:
     """Generate the report again after a failure."""
     require_click(n_clicks)
     request_report(project)
@@ -198,7 +198,7 @@ def retry_report(n_clicks: int | None, project: PumpSolution) -> Any:
     State("url", "pathname"),
     prevent_initial_call=True,
 )
-def on_report_generated(message: dict, project: PumpSolution) -> tuple[Any, bool, bool]:
+def on_report_generated(message: dict, project: ExamplesSolution) -> tuple[Any, bool, bool]:
     """Show the new report, or why it failed, when a generation ends."""
     if not parse_event(message).finished:
         raise PreventUpdate
@@ -212,10 +212,10 @@ def on_report_generated(message: dict, project: PumpSolution) -> tuple[Any, bool
     State("url", "pathname"),
     prevent_initial_call=True,
 )
-def download_pdf(n_clicks: int | None, project: PumpSolution) -> dict:
+def download_pdf(n_clicks: int | None, project: ExamplesSolution) -> dict:
     """Send the PDF report to the browser."""
     require_click(n_clicks)
-    handle = project.steps.report_step.report_pdf
+    handle = project.steps.pump_report_step.report_pdf
     if handle == NO_ENTITY:
         raise PreventUpdate
     return dcc.send_bytes(project.storage_scope.get_bytes(handle), REPORT_PDF_FILE_NAME)
@@ -227,10 +227,10 @@ def download_pdf(n_clicks: int | None, project: PumpSolution) -> dict:
     State("url", "pathname"),
     prevent_initial_call=True,
 )
-def download_zip(n_clicks: int | None, project: PumpSolution) -> dict:
+def download_zip(n_clicks: int | None, project: ExamplesSolution) -> dict:
     """Send the standalone HTML report, zipped with its assets, to the browser."""
     require_click(n_clicks)
-    handle = project.steps.report_step.report_html_file
+    handle = project.steps.pump_report_step.report_html_file
     if handle == NO_ENTITY:
         raise PreventUpdate
     return dcc.send_bytes(project.storage_scope.get_bytes(handle), REPORT_ZIP_FILE_NAME)

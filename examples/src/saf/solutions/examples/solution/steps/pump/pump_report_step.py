@@ -32,8 +32,8 @@ from ansys.saf.glow.solution import (
 from saf.solutions.examples.solution.logic.pump.report.builder import render_report
 from saf.solutions.examples.solution.logic.pump.report.content import PumpReportData
 from saf.solutions.examples.solution.logic.pump.report.settings import get_report_settings
-from saf.solutions.examples.solution.steps.pump.setup_step import SetupStep
-from saf.solutions.examples.solution.steps.pump.solve_step import SolveStep
+from saf.solutions.examples.solution.steps.pump.pump_model_setup_step import PumpModelSetupStep
+from saf.solutions.examples.solution.steps.pump.pump_solve_step import PumpSolveStep
 
 REPORT_ZIP_FILE_NAME = "pump_report.zip"
 
@@ -42,13 +42,13 @@ def results_fingerprint(contour_image: EntityHandle) -> str:
     """Identify the solve a report was built from.
 
     Every successful solve stores a new contour image, so its handle tells one set of results
-    from the next. Comparing it with :attr:`ReportStep.source_results` tells whether the
+    from the next. Comparing it with :attr:`PumpReportStep.source_results` tells whether the
     report is still up to date.
     """
     return "" if contour_image == NO_ENTITY else contour_image.opaque_identifier
 
 
-class ReportStep(StepModel):
+class PumpReportStep(StepModel):
     """Builds the engineering report of the last solve with Ansys Dynamic Reporting."""
 
     report_tag: str = ""
@@ -66,8 +66,8 @@ class ReportStep(StepModel):
             download=["report_tag"],
             upload=["report_tag", "source_results", "report_html_content", "report_html_file", "report_pdf"],
         ),
-        setup_step=StepSpec(download=["processor_count"]),
-        solve_step=StepSpec(
+        pump_model_setup_step=StepSpec(download=["processor_count"]),
+        pump_solve_step=StepSpec(
             download=[
                 "impeller_speed_rpm",
                 "mass_flow_rate",
@@ -88,9 +88,9 @@ class ReportStep(StepModel):
             ]
         ),
     )
-    def generate_report(self, setup_step: SetupStep, solve_step: SolveStep, adr_project_name: str = "") -> None:
+    def generate_report(self, pump_model_setup_step: PumpModelSetupStep, pump_solve_step: PumpSolveStep, adr_project_name: str = "") -> None:
         """Rebuild the report from the last solve and store it as HTML, ZIP and PDF."""
-        if solve_step.contour_image == NO_ENTITY:
+        if pump_solve_step.contour_image == NO_ENTITY:
             raise BadRequestError("Run the simulation before generating the report.")
         settings = get_report_settings()
         if not settings.is_available:
@@ -103,28 +103,28 @@ class ReportStep(StepModel):
 
         data = PumpReportData(
             project_name=adr_project_name,
-            impeller_speed_rpm=solve_step.impeller_speed_rpm,
-            mass_flow_rate=solve_step.mass_flow_rate,
-            iteration_count=solve_step.iteration_count,
-            time_step_scale_factor=solve_step.time_step_scale_factor,
-            processor_count=setup_step.processor_count,
-            converged=solve_step.converged,
-            pump_head_m=solve_step.pump_head_m,
-            hydraulic_efficiency=solve_step.hydraulic_efficiency,
-            shaft_power_w=solve_step.shaft_power_w,
-            pressure_rise_pa=solve_step.pressure_rise_pa,
-            blade_torque_nm=solve_step.blade_torque_nm,
-            volumetric_flow_m3h=solve_step.volumetric_flow_m3h,
-            inlet_total_pressure_pa=solve_step.inlet_total_pressure_pa,
-            outlet_total_pressure_pa=solve_step.outlet_total_pressure_pa,
-            blade_pressure_pa=solve_step.blade_pressure_pa,
-            convergence_history=tuple(solve_step.convergence_history),
+            impeller_speed_rpm=pump_solve_step.impeller_speed_rpm,
+            mass_flow_rate=pump_solve_step.mass_flow_rate,
+            iteration_count=pump_solve_step.iteration_count,
+            time_step_scale_factor=pump_solve_step.time_step_scale_factor,
+            processor_count=pump_model_setup_step.processor_count,
+            converged=pump_solve_step.converged,
+            pump_head_m=pump_solve_step.pump_head_m,
+            hydraulic_efficiency=pump_solve_step.hydraulic_efficiency,
+            shaft_power_w=pump_solve_step.shaft_power_w,
+            pressure_rise_pa=pump_solve_step.pressure_rise_pa,
+            blade_torque_nm=pump_solve_step.blade_torque_nm,
+            volumetric_flow_m3h=pump_solve_step.volumetric_flow_m3h,
+            inlet_total_pressure_pa=pump_solve_step.inlet_total_pressure_pa,
+            outlet_total_pressure_pa=pump_solve_step.outlet_total_pressure_pa,
+            blade_pressure_pa=pump_solve_step.blade_pressure_pa,
+            convergence_history=tuple(pump_solve_step.convergence_history),
         )
         work_dir = Path(self.storage_scope.get_storage_root())
         report = render_report(
             settings,
             data,
-            Path(self.storage_scope.get_cached(solve_step.contour_image)),
+            Path(self.storage_scope.get_cached(pump_solve_step.contour_image)),
             self.report_tag,
             work_dir,
         )
@@ -134,4 +134,4 @@ class ReportStep(StepModel):
             report.html_zip, relative_location=Path(REPORT_ZIP_FILE_NAME)
         )
         self.report_pdf = self.storage_scope.store(report.pdf_path) if report.pdf_path else NO_ENTITY
-        self.source_results = results_fingerprint(solve_step.contour_image)
+        self.source_results = results_fingerprint(pump_solve_step.contour_image)

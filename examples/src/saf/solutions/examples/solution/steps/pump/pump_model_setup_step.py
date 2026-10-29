@@ -47,7 +47,7 @@ from saf.solutions.examples.solution.logic.pump.scene_export import export_scene
 logger = logging.getLogger(__name__)
 
 
-class SetupStep(StepModel):
+class PumpModelSetupStep(StepModel):
     """Builds the operating-point-independent Fluent case."""
 
     processor_count: int = DEFAULT_PROCESSOR_COUNT

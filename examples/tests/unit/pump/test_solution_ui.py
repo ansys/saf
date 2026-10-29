@@ -26,6 +26,7 @@ import pytest
 
 from saf.solutions.examples.solution.definition import ExamplesSolution
 from saf.solutions.examples.solution.logic.pump.constants import PROCESSOR_COUNT_RANGE
+from saf.solutions.examples.ui.pages.pump import shell_notifications
 
 with ignore_register_page():
     from saf.solutions.examples.ui.pages.pump import pump_about_page as about_page
@@ -128,7 +129,7 @@ def test_model_setup_results_panel_is_a_placeholder_before_the_case_is_built(
 
 
 def test_model_setup_notification_copy_targets_its_own_toast():
-    assert model_setup_page.NOTIFICATION.notification_id == "build-case-notification"
+    assert shell_notifications.BUILD_CASE_NOTIFICATION.notification_id == "build-case-notification"
 
 
 def test_processor_count_limit_follows_the_machine_on_the_desktop_deployment(monkeypatch):
@@ -186,7 +187,7 @@ def test_operating_point_results_panel_is_a_placeholder_before_a_run(
 
 
 def test_operating_point_notification_copy_targets_its_own_toast():
-    assert operating_point_page.NOTIFICATION.notification_id == "run-simulation-notification"
+    assert shell_notifications.RUN_SIMULATION_NOTIFICATION.notification_id == "run-simulation-notification"
 
 
 def test_update_flow_rate_hint_blanks_an_empty_input():

@@ -40,9 +40,7 @@ from saf.solutions.examples.solution.logic.pump.constants import (
     START_VISOR_STREAM,
 )
 from saf.solutions.examples.ui.pages.pump.feedback import (
-    NotificationCopy,
     append_lines,
-    closing_notification,
     log_viewer,
     opening_notification,
     parse_event,
@@ -51,6 +49,7 @@ from saf.solutions.examples.ui.pages.pump.feedback import (
     scroll_to_bottom,
     split_log,
 )
+from saf.solutions.examples.ui.pages.pump.shell_notifications import BUILD_CASE_NOTIFICATION
 
 dash.register_page(
     __name__,
@@ -58,24 +57,6 @@ dash.register_page(
     path_template="/projects/<project_id>/pump-model-setup",
     icon_asset_name="boxicons:mesh-filled",
     order=1,
-)
-
-NOTIFICATION = NotificationCopy(
-    notification_id="build-case-notification",
-    running_title="Building case",
-    success_title="Case ready",
-    success_message="The Fluent case has been built. Continue to Operating Point.",
-    failure_title="Case build failed",
-)
-
-SCENE_NOTIFICATION = NotificationCopy(
-    notification_id="prepare-scene-notification",
-    running_title="Preparing the 3D view",
-    running_message="The case is being converted for the 3D viewer.",
-    success_title="3D view ready",
-    success_message="The pump is displayed in the 3D view.",
-    failure_title="3D view preparation failed",
-    failure_message="The case could not be converted for the 3D viewer.",
 )
 
 LOG_VIEWPORT = "build-case-log-viewport"
@@ -596,26 +577,26 @@ def embed_visor_viewer(
 
 
 @callback(
-    Output("notification-container", "sendNotifications", allow_duplicate=True),
     Output("model-setup-viewer-container", "children", allow_duplicate=True),
     Output("visor-scene-sink", "data", allow_duplicate=True),
     Input("prepare-scene-ws", "message"),
     State("url", "pathname"),
     prevent_initial_call=True,
 )
-def on_prepare_scene_finished(message: dict, project: ExamplesSolution) -> tuple[Any, Any, Any]:
-    """Close the toast and replace the spinner with the scene, or with the reason it failed."""
+def on_prepare_scene_finished(message: dict, project: ExamplesSolution) -> tuple[Any, Any]:
+    """Replace the spinner with the scene, or with the reason it failed.
+
+    The toast is closed by the shell, which keeps listening once the user leaves this page.
+    """
     event = parse_event(message)
     if not event.finished:
         raise PreventUpdate
-    notifications = closing_notification(SCENE_NOTIFICATION, event) or no_update
     if not event.succeeded:
         failed = viewer_message(
             "carbon:warning-alt", "3D view unavailable", "The case could not be converted.", color="red"
         )
-        return notifications, failed, False
-    viewer, loaded = scene_viewer(project.steps.pump_model_setup_step)
-    return notifications, viewer, loaded
+        return failed, False
+    return scene_viewer(project.steps.pump_model_setup_step)
 
 
 def _ensure_visor_started(step: Any) -> None:
@@ -659,7 +640,8 @@ def start_build_case(
     step.build_case()
     # The verdict of the previous build is about to be out of date, so it goes now rather
     # than sitting there green while a new case is being written.
-    return opening_notification(NOTIFICATION), progress_panel(None, 0.0), True, True, "logs", html.Div()
+    # The toast is closed by the shell, so it is not left spinning if the user moves on.
+    return opening_notification(BUILD_CASE_NOTIFICATION), progress_panel(None, 0.0), True, True, "logs", html.Div()
 
 
 @callback(
@@ -692,7 +674,6 @@ def on_build_case_log(message: dict, buffered: list[str] | None) -> tuple[html.D
 
 
 @callback(
-    Output("notification-container", "sendNotifications", allow_duplicate=True),
     Output("build-case-progress", "children", allow_duplicate=True),
     Output("setup-results", "children", allow_duplicate=True),
     Output("build-case", "disabled", allow_duplicate=True),
@@ -705,31 +686,21 @@ def on_build_case_log(message: dict, buffered: list[str] | None) -> tuple[html.D
     State("url", "pathname"),
     prevent_initial_call=True,
 )
-def on_build_case_finished(
-    message: dict, project: ExamplesSolution
-) -> tuple[Any, Any, Any, bool, bool, Any, Any, Any, Any]:
+def on_build_case_finished(message: dict, project: ExamplesSolution) -> tuple[Any, Any, bool, bool, Any, Any, Any, Any]:
     """Close out the run: clear the progress bar, free the button and show the results.
 
-    A successful build also starts converting the case for the 3D viewer. That is done here
-    rather than in a second callback on the same stream: Dash tells duplicate outputs apart
-    by hashing the callback Inputs, so two callbacks listening to ``build-case-ws`` alone
-    would collide on ``notification-container``.
+    The toast, and the scene conversion a successful build starts, are handled by the shell,
+    which keeps listening once the user leaves this page.
     """
     event = parse_event(message)
     if not event.finished:
         raise PreventUpdate
     step = project.steps.pump_model_setup_step
-    notifications = closing_notification(NOTIFICATION, event) or no_update
-    results = results_panel(step) if event.succeeded else no_update
-    status = status_alert(step) if event.succeeded else no_update
-    tab = "output" if event.succeeded else no_update
     if not event.succeeded:
-        return notifications, html.Div(), results, False, False, tab, status, no_update, no_update
-    step.prepare_scene()
-    notifications = (closing_notification(NOTIFICATION, event) or []) + opening_notification(SCENE_NOTIFICATION)
+        return html.Div(), no_update, False, False, no_update, no_update, no_update, no_update
     # The scene on screen belongs to the previous case; clearing the flag lets the next Visor
     # start, if any, embed the new one.
-    return notifications, html.Div(), results, False, False, tab, status, viewer_spinner(), False
+    return html.Div(), results_panel(step), False, False, "output", status_alert(step), viewer_spinner(), False
 
 
 clientside_callback(

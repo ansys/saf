@@ -158,19 +158,6 @@ class PumpModelSetupStep(StepModel):
             raise
         self.transaction.raise_event(message="VISOR initialized.", stream_name="visor-output-stream")
 
-    @transaction(self=StepSpec())
-    @instance("visor_manager")
-    def update_scene(self, visor_manager: VisorManager) -> None:
-        """Display the elbow in the running Visor instance."""
-        self.transaction.raise_event(message="Loading elbow in VISOR.", stream_name="visor-output-stream")
-        try:
-            path = Path(__file__).parent.parent / "method_assets" / "visor_shapes" / "elbow.vtm"
-            visor_manager.instance.update(path.as_posix(), Metadata(name="Elbow", unit="m"))
-        except Exception as e:
-            self.transaction.raise_event(message=f"VISOR elbow update failed: {e}", stream_name="visor-output-stream")
-            raise
-        self.transaction.raise_event(message="Elbow displayed in VISOR.", stream_name="visor-output-stream")
-
     @transaction(self=StepSpec(upload=["visor_started"]))
     @instance("visor_manager")
     def shutdown_visor(self, visor_manager: VisorManager) -> None:

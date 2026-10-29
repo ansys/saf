@@ -34,6 +34,7 @@ from dash_iconify import DashIconify  # type: ignore
 import dash_mantine_components as dmc  # type: ignore
 
 from saf.solutions.examples.solution.definition import ExamplesSolution
+from saf.solutions.examples.ui.pages.pump.shell_notifications import listeners_slot as pump_listeners_slot
 
 logger = logging.getLogger(__name__)
 ASSETS_DIR = Path(__file__).resolve().parents[1] / "assets"
@@ -337,6 +338,9 @@ layout = dmc.MantineProvider(
         html.Div(id="mechanical-instance-event-listeners-container"),
         html.Div(id="optislang-instance-event-listeners-container"),
         html.Div(id="process-logs-event-listeners-container"),
+        # The pump's build and solve toasts outlive the page that opened them, so the
+        # listeners that close them do too.
+        pump_listeners_slot(),
         dcc.Store(id="aedt-logs-store", storage_type="memory"),
         dcc.Store(id="fluent-logs-store", storage_type="memory"),
         dcc.Store(id="mapdl-logs-store", storage_type="memory"),

@@ -47,9 +47,7 @@ from saf.solutions.examples.solution.logic.pump.constants import (
     TIME_STEP_SCALE_FACTOR_RANGE,
 )
 from saf.solutions.examples.ui.pages.pump.feedback import (
-    NotificationCopy,
     append_lines,
-    closing_notification,
     log_viewer,
     opening_notification,
     parse_event,
@@ -58,6 +56,7 @@ from saf.solutions.examples.ui.pages.pump.feedback import (
     scroll_to_bottom,
     split_log,
 )
+from saf.solutions.examples.ui.pages.pump.shell_notifications import RUN_SIMULATION_NOTIFICATION
 
 dash.register_page(
     __name__,
@@ -65,24 +64,6 @@ dash.register_page(
     path_template="/projects/<project_id>/operating-point",
     icon_asset_name="at-icons:wind",
     order=2,
-)
-
-NOTIFICATION = NotificationCopy(
-    notification_id="run-simulation-notification",
-    running_title="Running simulation",
-    success_title="Simulation complete",
-    success_message="The results are ready.",
-    failure_title="Simulation failed",
-)
-
-SCENE_NOTIFICATION = NotificationCopy(
-    notification_id="prepare-solved-scene-notification",
-    running_title="Preparing the 3D view",
-    running_message="The solved case is being converted for the 3D viewer.",
-    success_title="3D view ready",
-    success_message="The solved pump is displayed in the 3D view.",
-    failure_title="3D view preparation failed",
-    failure_message="The solved case could not be converted for the 3D viewer.",
 )
 
 LOG_VIEWPORT = "run-simulation-log-viewport"
@@ -956,26 +937,26 @@ def embed_visor_viewer(
 
 
 @callback(
-    Output("notification-container", "sendNotifications", allow_duplicate=True),
     Output("operating-point-viewer-container", "children", allow_duplicate=True),
     Output("operating-point-scene-sink", "data", allow_duplicate=True),
     Input("prepare-solved-scene-ws", "message"),
     State("url", "pathname"),
     prevent_initial_call=True,
 )
-def on_prepare_solved_scene_finished(message: dict, project: ExamplesSolution) -> tuple[Any, Any, Any]:
-    """Close the toast and replace the spinner with the scene, or with the reason it failed."""
+def on_prepare_solved_scene_finished(message: dict, project: ExamplesSolution) -> tuple[Any, Any]:
+    """Replace the spinner with the scene, or with the reason it failed.
+
+    The toast is closed by the shell, which keeps listening once the user leaves this page.
+    """
     event = parse_event(message)
     if not event.finished:
         raise PreventUpdate
-    notifications = closing_notification(SCENE_NOTIFICATION, event) or no_update
     if not event.succeeded:
         failed = viewer_message(
             "carbon:warning-alt", "3D view unavailable", "The solved case could not be converted.", color="red"
         )
-        return notifications, failed, False
-    viewer, loaded = scene_viewer(project)
-    return notifications, viewer, loaded
+        return failed, False
+    return scene_viewer(project)
 
 
 @callback(
@@ -1029,8 +1010,9 @@ def start_run_simulation(
     # The verdict of the previous run is about to be out of date, so it goes now rather than
     # sitting there green while a new operating point is being solved. The convergence curve
     # starts empty again and is refilled from the history stream.
+    # The toast is closed by the shell, so it is not left spinning if the user moves on.
     return (
-        opening_notification(NOTIFICATION),
+        opening_notification(RUN_SIMULATION_NOTIFICATION),
         progress_panel(None, 0.0),
         True,
         True,
@@ -1083,7 +1065,6 @@ def on_run_simulation_log(message: dict, buffered: list[str] | None) -> tuple[ht
 
 
 @callback(
-    Output("notification-container", "sendNotifications", allow_duplicate=True),
     Output("run-simulation-progress", "children", allow_duplicate=True),
     Output("results-panel", "children"),
     Output("results-details", "children"),
@@ -1100,34 +1081,45 @@ def on_run_simulation_log(message: dict, buffered: list[str] | None) -> tuple[ht
 )
 def on_run_simulation_finished(
     message: dict, project: ExamplesSolution
-) -> tuple[Any, Any, Any, Any, bool, bool, Any, Any, Any, Any, Any]:
+) -> tuple[Any, Any, Any, bool, bool, Any, Any, Any, Any, Any]:
     """Close out the run: clear the progress bar, free the button and show the results.
 
-    A successful run also starts converting the solved case for the 3D viewer. That is done
-    here rather than in a second callback on the same stream: Dash tells duplicate outputs
-    apart by hashing the callback Inputs, so two callbacks listening to ``run-simulation-ws``
-    alone would collide on ``notification-container``.
+    The toast, and the scene conversion a successful run starts, are handled by the shell,
+    which keeps listening once the user leaves this page.
     """
     event = parse_event(message)
     if not event.finished:
         raise PreventUpdate
     step = project.steps.pump_solve_step
-    notifications = closing_notification(NOTIFICATION, event) or no_update
-    results = results_panel(step) if event.succeeded else no_update
-    details = results_details(step) if event.succeeded else no_update
-    status = status_alert(step) if event.succeeded else no_update
-    tab = "output" if event.succeeded else no_update
-    # The curve stays on the Monitoring tab after the run: redrawn from the stored history it
-    # loses the "Live" badge but keeps the record of how the solve behaved, whether it ended
-    # with results or with a failure.
-    live = live_convergence(step, False) if event.succeeded else no_update
     if not event.succeeded:
-        return notifications, html.Div(), results, details, False, False, tab, status, live, no_update, no_update
-    step.prepare_solved_scene()
-    notifications = (closing_notification(NOTIFICATION, event) or []) + opening_notification(SCENE_NOTIFICATION)
-    # The scene on screen belongs to the previous run; clearing the flag lets the next Visor
-    # start, if any, embed the new one.
-    return notifications, html.Div(), results, details, False, False, tab, status, live, viewer_spinner(), False
+        return (
+            html.Div(),
+            no_update,
+            no_update,
+            False,
+            False,
+            no_update,
+            no_update,
+            no_update,
+            no_update,
+            no_update,
+        )
+    # The curve stays on the Monitoring tab after the run: redrawn from the stored history it
+    # loses the "Live" badge but keeps the record of how the solve behaved. The scene on
+    # screen belongs to the previous run; clearing the flag lets the next Visor start, if
+    # any, embed the new one.
+    return (
+        html.Div(),
+        results_panel(step),
+        results_details(step),
+        False,
+        False,
+        "output",
+        status_alert(step),
+        live_convergence(step, False),
+        viewer_spinner(),
+        False,
+    )
 
 
 clientside_callback(

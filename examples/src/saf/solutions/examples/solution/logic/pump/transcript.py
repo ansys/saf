@@ -62,6 +62,7 @@ class TranscriptForwarder:
         interval: float = LOG_FLUSH_INTERVAL_SECONDS,
         tail_lines: int = LOG_TAIL_LINES,
     ) -> None:
+        """Initialize the forwarder; see the class docstring for the parameters."""
         self._emit = emit
         self._interval = interval
         self._lock = threading.Lock()

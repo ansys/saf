@@ -1,4 +1,3 @@
-# Copyright (C) 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # Copyright (C) 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #

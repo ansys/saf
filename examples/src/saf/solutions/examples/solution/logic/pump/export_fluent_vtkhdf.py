@@ -692,6 +692,7 @@ def write_vtkhdf(data: vtk.vtkDataObject, path: Path) -> None:
 
 class TemporalVolumeSource(VTKPythonAlgorithmBase):
     def __init__(self, volumes: list[vtk.vtkUnstructuredGrid], times: list[float]) -> None:
+        """Serve ``volumes[i]`` as the time step ``times[i]``."""
         super().__init__(nInputPorts=0, nOutputPorts=1, outputType="vtkPartitionedDataSet")
         self._volumes = volumes
         self._times = [float(value) for value in times]
@@ -871,9 +872,9 @@ def print_report(
     print(f"{solution.solver} {solution.version}  ({solution.origin})")
     print(f"case {mesh.path.name}    data {solution.path.name}")
     if case_match or data_match:
-        print(
-            f"recorded paths: case {case_match.group(1) if case_match else '-'}    data {data_match.group(1) if data_match else '-'}"
-        )
+        recorded_case = case_match.group(1) if case_match else "-"
+        recorded_data = data_match.group(1) if data_match else "-"
+        print(f"recorded paths: case {recorded_case}    data {recorded_data}")
 
     def show(value: float | None, spec: str) -> str:
         return "n/a" if value is None else format(value, spec)

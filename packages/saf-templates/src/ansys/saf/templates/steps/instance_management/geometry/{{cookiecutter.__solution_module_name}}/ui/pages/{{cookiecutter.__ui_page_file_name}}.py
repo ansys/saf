@@ -278,11 +278,13 @@ def sync_controls_on_clicks(
     Output("{{ cookiecutter.__step_name }}-shutdown-geometry-button", "loading", allow_duplicate=True),
     Input("{{ cookiecutter.__step_name }}-launch-geometry-listener", "message"),
     Input("{{ cookiecutter.__step_name }}-shutdown-geometry-listener", "message"),
+    State("url", "pathname"),
     prevent_initial_call=True,
 )
 def sync_controls_on_backend_events(
     launch_message: dict[str, Any],
     shutdown_message: dict[str, Any],
+    project: {{ cookiecutter.__solution_definition_class_name }},
 ):
     """Sync the state of the control buttons based on websocket messages from the backend."""
     triggered_id = ctx.triggered_id
@@ -309,6 +311,10 @@ def sync_controls_on_backend_events(
         else:
             controls["shutdown_geometry"]["disabled"] = False
             controls["shutdown_geometry"]["loading"] = False
+
+    # A user without the write lock must not get the Launch button back when Geometry shuts down.
+    if not controls["launch_geometry"]["disabled"] and not _can_write(project.project_id):
+        controls["launch_geometry"]["disabled"] = True
 
     return (
         controls["launch_geometry"]["disabled"],

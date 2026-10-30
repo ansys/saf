@@ -180,9 +180,11 @@ def sync_{{ cookiecutter.__step_module_name }}_controls(n_clicks: int, message, 
         return True, True, True, True, "", True, "", ""
 
     controls_disabled = step.job_running
+    # A user without the write lock must not get the Calculate button back when a job ends.
+    calculate_disabled = controls_disabled or not _can_write(project.project_id)
     fetch_disabled = step.job_running or not step.has_result
     result_value = str(step.result) if step.has_result else ""
-    return controls_disabled, controls_disabled, controls_disabled, controls_disabled, result_value, fetch_disabled, dash.no_update, dash.no_update
+    return calculate_disabled, controls_disabled, controls_disabled, controls_disabled, result_value, fetch_disabled, dash.no_update, dash.no_update
 
 
 @callback(

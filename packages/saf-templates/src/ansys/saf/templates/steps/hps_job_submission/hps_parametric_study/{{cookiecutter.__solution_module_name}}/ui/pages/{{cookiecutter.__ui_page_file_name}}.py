@@ -227,8 +227,9 @@ def mount_{{ cookiecutter.__step_module_name }}_event_listeners(project: {{ cook
     Output("{{ cookiecutter.__step_name }}-file-result-selector", "value", allow_duplicate=True),
     Input("{{ cookiecutter.__step_name }}-parametric-study-calculate", "n_clicks"),
     Input("{{ cookiecutter.__step_name }}-parametric-study-status_ws", "message"),
+    State("url", "pathname"),
 )
-def sync_input_controls(n_clicks: int, status_message):
+def sync_input_controls(n_clicks: int, status_message, project: {{ cookiecutter.__solution_definition_class_name }}):
     """Disable all input controls while the study is running; re-enable on termination."""
     trigger_id = callback_context.triggered[0]["prop_id"].split(".")[0] if callback_context.triggered else None
     if trigger_id == "{{ cookiecutter.__step_name }}-parametric-study-calculate" and n_clicks and n_clicks > 0:
@@ -239,7 +240,9 @@ def sync_input_controls(n_clicks: int, status_message):
         return (dash.no_update,) * 12
     if all(status in TERMINAL_STATUSES for status in statuses):
         has_evaluated = any(status == "evaluated" for status in statuses)
-        return (False,) * 10 + (not has_evaluated, "0")
+        # A user without the write lock must not get the Run button back when the study ends.
+        run_disabled = not _can_write(project.project_id)
+        return (run_disabled,) + (False,) * 9 + (not has_evaluated, "0")
     return (True,) * 10 + (True, dash.no_update)
 
 

@@ -27,14 +27,17 @@ from fastapi import BackgroundTasks, Body, Request
 from fastapi.exceptions import FastAPIError
 from pydantic import BaseModel, ValidationError
 
+from ansys.saf.glow._access.dependencies import require_project_read, require_project_write
 from ansys.saf.glow._core.exceptions import SolutionLoadException
 from ansys.saf.glow._core.method_status import MethodState
 from ansys.saf.glow._core.solution import Solution
 from ansys.saf.glow._core.step_model import StepModel
 from ansys.saf.glow._core.transaction import SolutionConfigParam, build_pydantic_model_from_transaction_parameters
 from ansys.saf.glow._server.dependencies import (
+    AccessCrudDep,
     CrudDep,
     MethodRunnerDep,
+    PrincipalDep,
     RunningMethodsDep,
     SettingsDep,
     validate_project,
@@ -59,7 +62,7 @@ def make_routes(solution_type: type[Solution]):
         prefix="/projects/{project_id}/steps",
         tags=["steps"],
         responses={404: {"description": "Unable to find the method."}},
-        dependencies=[fastapi.Depends(validate_project)],
+        dependencies=[fastapi.Depends(require_project_read), fastapi.Depends(validate_project)],
     )
 
     for step_id, step_type in solution_type.get_steps_fields().items():
@@ -109,6 +112,8 @@ def _make_routes(
         request: Request,
         crud: CrudDep,
         settings: SettingsDep,
+        principal: PrincipalDep,
+        access: AccessCrudDep,
         body_params: Annotated[DynamicTransactionBodyModel, Body(embed=False)] = None,  # type: ignore
     ):
         body = await request.body()
@@ -124,6 +129,9 @@ def _make_routes(
 
         # separate stand-alone transaction to setup method state before invoking method
         async with crud.get_modifying_project_lock(project_id):
+            # The write lock may have moved since the caller's access was first checked. Checking again with the
+            # project locked guarantees that nobody changes it until the method is marked as running below.
+            await access.check_write(project_id, principal)
             typed_params: dict[str, Any] = {}
             if body_params:
                 # recreate parameter values and types out of the model
@@ -167,6 +175,7 @@ def _make_routes(
         response_model=MethodState,
         description=f"Update status of '{method_name}' method on '{step_type.__name__}'",
         include_in_schema=is_long_running,
+        dependencies=[fastapi.Depends(require_project_write)],
     )
     async def patch_method_state(
         project_id: str,

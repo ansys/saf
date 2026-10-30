@@ -23,17 +23,25 @@ from fastapi.responses import FileResponse, StreamingResponse
 from pydantic import BaseModel, ValidationError
 from stream_zip import async_stream_zip
 
+from ansys.saf.glow._access.dependencies import (
+    require_project_metadata,
+    require_project_owner,
+    require_project_read,
+    require_project_write,
+)
 from ansys.saf.glow._bdm.multiplexor import SafMultiplexorStorageScopeFactory
 from ansys.saf.glow._core.gc import BdmLocksNoOp, bdm_garbage_collector, create_bdm_db_locks
 from ansys.saf.glow._core.solution import Solution
 from ansys.saf.glow._repository.generate_project_id import generate_project_id
 from ansys.saf.glow._server.dependencies import (
+    AccessCrudDep,
     AccessTokenDep,
     CrudDep,
     FileSystemDataRepoQueryMapDep,
     HpsAuthenticatorDep,
     InstanceSystemDep,
     MultiplexorStorageScopeFactoryDep,
+    PrincipalDep,
     ProductInstancesTrackerDep,
     ProjectFilesManagerDep,
     ProjectInfoDep,
@@ -79,10 +87,15 @@ async def create_project(
     crud: CrudDep,
     file_manager: ProjectFilesManagerDep,
     solution_service: SolutionServiceDep,
+    principal: PrincipalDep,
+    access: AccessCrudDep,
 ):
     """Create a project with the given display_name and optional description and return a record
     of the project."""
-    return await crud.create_project(file_manager, solution_service, request)
+    project_info = await crud.create_project(file_manager, solution_service, request)
+    await access.on_project_created(project_info.project_id, principal)
+    await access.fill_access_summaries([project_info], principal)
+    return project_info
 
 
 @router.post(
@@ -105,6 +118,8 @@ async def import_project(
     background_tasks: BackgroundTasks,
     access_token: AccessTokenDep,
     filesystem_data_repository_query_map: FileSystemDataRepoQueryMapDep,
+    principal: PrincipalDep,
+    access: AccessCrudDep,
     display_name: Annotated[
         str,
         Form(
@@ -147,6 +162,8 @@ async def import_project(
         storage_scope_factory=multiplexor_scope_factory,
         settings=settings,
     )
+    await access.on_project_created(project_info.project_id, principal)
+    await access.fill_access_summaries([project_info], principal)
     locker = create_bdm_db_locks(
         project_info.project_id,
         settings,
@@ -162,12 +179,19 @@ async def import_project(
 async def list_projects(
     crud: CrudDep,
     list_project_request: Annotated[ListProjectRequest, Query()],
+    principal: PrincipalDep,
+    access: AccessCrudDep,
 ) -> ListProjectResponse:
     """Return a paginated list of projects, optionally filtered.
 
     By default, returns the first page of results with a maximum of 100 projects per page.
     An optional filter expression can be provided to narrow down results.
+
+    When project access control is enabled, only the projects the caller is a member of are listed. Super admins
+    list every project.
     """
+    if list_project_request.orphans_only:
+        access.check_orphans_listing(principal)
     filters = None
     if list_project_request.filter:
         try:
@@ -175,12 +199,16 @@ async def list_projects(
         except (ValueError, ValidationError) as ex:
             raise UnprocessableEntityError(str(ex)) from None
 
-    return await crud.list_projects(
+    response = await crud.list_projects(
         page_size=list_project_request.page_size,
         page=list_project_request.page,
         order_by=list_project_request.order_by,
         filters=filters,
+        member_id=access.list_scope(principal),
+        orphans_only=list_project_request.orphans_only,
     )
+    await access.fill_access_summaries(response.projects, principal)
+    return response
 
 
 @router.get(
@@ -196,7 +224,7 @@ async def list_projects(
     },
     # using FileResponse instead of StreamingResponse to be able to download the file from the Swagger UI.
     response_class=FileResponse,
-    dependencies=[Depends(verify_project_no_running_methods)],
+    dependencies=[Depends(require_project_read), Depends(verify_project_no_running_methods)],
 )
 async def export_project(
     project_id: str,
@@ -223,9 +251,11 @@ async def export_project(
         404: {"description": "Unable to find the project'."},
         422: {"description": "Invalid project."},
     },
+    dependencies=[Depends(require_project_metadata)],
 )
-async def get_project(project_info: ProjectInfoDep) -> ProjectInfo:
+async def get_project(project_info: ProjectInfoDep, principal: PrincipalDep, access: AccessCrudDep) -> ProjectInfo:
     """Return details for a specific project."""
+    await access.fill_access_summaries([project_info], principal)
     return project_info
 
 
@@ -236,7 +266,7 @@ async def get_project(project_info: ProjectInfoDep) -> ProjectInfo:
         404: {"description": "Unable to find the project."},
         422: {"description": "Invalid project."},
     },
-    dependencies=[Depends(verify_project_no_running_methods)],
+    dependencies=[Depends(require_project_write), Depends(verify_project_no_running_methods)],
 )
 async def modify_project(
     project_id: str,
@@ -253,7 +283,7 @@ async def modify_project(
         400: {"description": "Unable to upgrade the stored solution of the project."},
         404: {"description": "Unable to find the project."},
     },
-    dependencies=[Depends(verify_project_no_running_methods)],
+    dependencies=[Depends(require_project_write), Depends(verify_project_no_running_methods)],
 )
 async def upgrade_project(
     project_id: str,
@@ -288,7 +318,14 @@ async def upgrade_project(
         return project_info
 
 
-@router.delete("/{project_id}", responses={404: {"description": "Unable to find the project'."}})
+@router.delete(
+    "/{project_id}",
+    responses={
+        403: {"description": "Only the owner of the project or a super admin can delete it."},
+        404: {"description": "Unable to find the project'."},
+    },
+    dependencies=[Depends(require_project_owner)],
+)
 async def delete_project(
     project_id: str,
     crud: CrudDep,
@@ -316,7 +353,7 @@ async def raise_error_if_gc_disabled(settings: SettingsDep):
 
 @router.post(
     "/{project_id}/bdm-locks",
-    dependencies=[Depends(raise_error_if_gc_disabled), Depends(validate_project)],
+    dependencies=[Depends(require_project_write), Depends(raise_error_if_gc_disabled), Depends(validate_project)],
     responses={
         403: {"description": "Permission denied."},
         404: {"description": "Project not found."},
@@ -335,7 +372,7 @@ async def create_bdm_lock(
 
 @router.get(
     "/{project_id}/bdm-locks/{lock_id}",
-    dependencies=[Depends(raise_error_if_gc_disabled), Depends(validate_project)],
+    dependencies=[Depends(require_project_write), Depends(raise_error_if_gc_disabled), Depends(validate_project)],
     responses={
         403: {"description": "Permission denied."},
         404: {"description": "Project or bdm lock not found."},
@@ -355,7 +392,7 @@ async def get_bdm_lock(
 
 @router.delete(
     "/{project_id}/bdm-locks/{lock_id}",
-    dependencies=[Depends(raise_error_if_gc_disabled), Depends(validate_project)],
+    dependencies=[Depends(require_project_write), Depends(raise_error_if_gc_disabled), Depends(validate_project)],
     responses={
         403: {"description": "Permission denied."},
         404: {"description": "Project or bdm lock not found."},

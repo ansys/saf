@@ -22,6 +22,7 @@ from typing import Annotated, TypeVar
 import fastapi
 from pydantic import BaseModel
 
+from ansys.saf.glow._access.dependencies import require_project_read, require_project_write
 from ansys.saf.glow._core.gc import bdm_garbage_collector
 from ansys.saf.glow._core.solution import Solution
 from ansys.saf.glow._core.step_model import StepModel
@@ -49,7 +50,7 @@ def make_routes(solution_type: type[Solution]):
     router = fastapi.APIRouter(
         prefix="/projects/{project_id}/steps",
         tags=["steps"],
-        dependencies=[fastapi.Depends(validate_project)],
+        dependencies=[fastapi.Depends(require_project_read), fastapi.Depends(validate_project)],
     )
 
     for step_id, step_type in solution_type.get_steps_fields().items():
@@ -82,6 +83,7 @@ def _make_routes(router: fastapi.APIRouter, step_id: str, step_type: type[StepMo
         response_model=step_type,
         responses={404: {"description": "Unable to find the step."}},
         description=f"Update '{step_type.__name__}' for the specified project. <br><br> {doc}",
+        dependencies=[fastapi.Depends(require_project_write)],
     )
     async def update_step(
         project_id: str,

@@ -16,7 +16,7 @@
 
 """The rules of project access control: ownership, sharing, the single-writer lock and write requests."""
 
-from collections.abc import AsyncGenerator, Callable
+from collections.abc import AsyncGenerator, Callable, Sequence
 from contextlib import asynccontextmanager
 from datetime import UTC, datetime, timedelta
 
@@ -36,6 +36,7 @@ from ansys.saf.glow._repository.abstract_repository import (
     ProjectLockSpecification,
 )
 from ansys.saf.glow._server.exceptions import ConflictError, ForbiddenError, LockedError, NotFoundError
+from ansys.saf.glow._server.schemas import ProjectInfo
 
 RUNNING_TRANSACTION_MESSAGE = "A transaction is running on this project; try again when it finishes."
 SYSTEM_ACTOR = "system"
@@ -111,7 +112,7 @@ class AccessCrud:
     @asynccontextmanager
     async def _modifying_session(self, project_id: str) -> AsyncGenerator[AbstractRepositorySession]:
         # Access changes must not bump the project modification date, but an outer session decides for itself.
-        nested = self._session_factory._session is not None  # pyright: ignore[reportPrivateUsage]
+        nested = self._session_factory.current_session is not None
         async with self._session_factory.get_session(
             modification=True,
             update_modification_date=None if nested else False,
@@ -271,6 +272,30 @@ class AccessCrud:
         async with self._modifying_session(project_id) as session:
             await session.upsert_member(project_id, principal.user_id, ProjectRole.owner)
             await session.set_lock_holder(project_id, principal.user_id, self._now())
+
+    def list_scope(self, principal: Principal) -> str | None:
+        """The id of the member whose projects the principal may list, or ``None`` to list every project.
+
+        Super admins, framework internals and deployments without access control list everything. A caller that
+        cannot be identified is scoped to the empty id, which is nobody's: it lists nothing.
+        """
+        if not self._enabled or principal.is_super_admin or principal.is_internal:
+            return None
+        return principal.user_id or ""
+
+    def check_orphans_listing(self, principal: Principal) -> None:
+        """Only super admins (and framework internals) may restrict a project list to the projects without owner."""
+        if not (principal.is_super_admin or principal.is_internal):
+            raise ForbiddenError("Only a super admin can list the projects without an owner.")
+
+    async def fill_access_summaries(self, projects: Sequence[ProjectInfo], principal: Principal) -> None:
+        """Set ``ProjectInfo.access`` of ``projects``. Leaves it ``None`` when access control is disabled."""
+        if not self._enabled or not projects:
+            return
+        async with self._session_factory.get_session() as session:
+            summaries = await session.get_access_summaries([p.project_id for p in projects], principal.user_id)
+        for project in projects:
+            project.access = summaries.get(project.project_id)
 
     async def get_access(self, project_id: str, principal: Principal) -> ProjectAccess:
         """Access state of the project, for members and super admins."""

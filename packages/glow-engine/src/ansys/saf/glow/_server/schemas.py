@@ -21,6 +21,7 @@ from typing import Generic, Self
 from fastapi.responses import Response
 from pydantic import BaseModel, ConfigDict, Field, ValidationInfo, field_validator, model_validator
 
+from ansys.saf.glow._access.schemas import ProjectAccessSummary
 from ansys.saf.glow._config.const import JOB_DEFAULT_MAX_RUNNING_TIME
 from ansys.saf.glow._core.instance.recoverystate import TRecoveryStateInfo
 from ansys.saf.glow._storage.os import (
@@ -73,6 +74,13 @@ class ProjectInfo(ProjectBase):
         description="The URI path identifying the project resource.",
         pattern="^projects/.+",
         examples=["projects/1a34b678"],
+    )
+    access: ProjectAccessSummary | None = Field(
+        default=None,
+        description=(
+            "Who owns, holds the write lock of and has access to the project. "
+            "Null when project access control is disabled, and in responses that do not carry it."
+        ),
     )
     model_config = ConfigDict(
         json_schema_extra={
@@ -155,6 +163,10 @@ class ListProjectRequest(BaseModel):
             "date_created >= 2024-01-01T00:00:00",
             'display_name = "My Project" AND date_created >= 2024-01-01T00:00:00',
         ],
+    )
+    orphans_only: bool = Field(
+        False,
+        description="""Only list the projects that have no owner (super admins only).""",
     )
 
     @field_validator("page_size", mode="after")

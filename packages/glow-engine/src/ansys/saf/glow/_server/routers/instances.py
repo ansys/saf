@@ -21,6 +21,7 @@ from typing import TypeVar
 
 import fastapi
 
+from ansys.saf.glow._access.dependencies import require_project_read, require_project_write
 from ansys.saf.glow._core.instance.attribute import CreateInstance
 from ansys.saf.glow._core.solution import Solution
 from ansys.saf.glow._core.step_model import StepModel
@@ -54,7 +55,7 @@ def make_routes(solution_type: type[Solution]):
         prefix="/projects/{project_id}/steps",
         tags=["steps"],
         responses={404: {"description": "Unable to find the instance."}},
-        dependencies=[fastapi.Depends(validate_project)],
+        dependencies=[fastapi.Depends(require_project_read), fastapi.Depends(validate_project)],
     )
     for step_id, step_type in solution_type.get_steps_fields().items():
         step_url_part = python_identifier_to_url_part(step_id)
@@ -86,6 +87,7 @@ def _make_routes(
         instance_url,
         response_model=InstanceResponse[recovery_state_type],
         description=f"Create '{instance_id}' instance on '{step_type.__name__}'",
+        dependencies=[fastapi.Depends(require_project_write)],
     )
     async def post_instance(  # pyright: ignore
         project_id: str,
@@ -127,6 +129,7 @@ def _make_routes(
         instance_url,
         response_model=InstanceResponse[recovery_state_type],
         description=f"Update status of '{instance_id}' instance on '{step_type.__name__}'",
+        dependencies=[fastapi.Depends(require_project_write)],
     )
     async def patch_instance_state(
         project_id: str,
@@ -145,7 +148,11 @@ def _make_routes(
             instance_state,  # type: ignore
         )
 
-    @router.delete(instance_url, description=f"Delete instance '{instance_id}' on '{step_type.__name__}'")
+    @router.delete(
+        instance_url,
+        description=f"Delete instance '{instance_id}' on '{step_type.__name__}'",
+        dependencies=[fastapi.Depends(require_project_write)],
+    )
     async def delete_instance(
         project_id: str,
         crud: CrudDep,

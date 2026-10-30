@@ -22,6 +22,7 @@ from fastapi import APIRouter, Depends, HTTPException, Request, WebSocket, WebSo
 from wsproto.utilities import LocalProtocolError
 
 from ansys.iam.oidc import get_websocket_subprotocol
+from ansys.saf.glow._access.dependencies import require_project_read_for_websocket, require_project_write
 from ansys.saf.glow._events.ievent_manager import EventPayload, EventSourceIdentifier
 from ansys.saf.glow._server.dependencies import (
     EventManagerDep,
@@ -74,7 +75,12 @@ def _message_summary(message: EventPayload) -> str:
 @router.post(
     "/projects/{project_id}/steps/{step_id}/streams/{stream_name}",
     # auth must be validated before project and step existence to avoid information leak.
-    dependencies=[Depends(oidc_scheme_with_api_key), Depends(validate_project), Depends(validate_step)],
+    dependencies=[
+        Depends(oidc_scheme_with_api_key),
+        Depends(require_project_write),
+        Depends(validate_project),
+        Depends(validate_step),
+    ],
 )
 async def store_event(
     project_id: str,
@@ -100,6 +106,7 @@ async def store_event(
     # auth must be validated before project and step existence to avoid information leak.
     dependencies=[
         Depends(oidc_scheme_ws_with_roles),
+        Depends(require_project_read_for_websocket),
         Depends(validate_project_for_websocket),
         Depends(validate_step_for_websocket),
     ],

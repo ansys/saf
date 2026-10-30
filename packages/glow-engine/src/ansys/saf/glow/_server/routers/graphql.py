@@ -38,8 +38,8 @@ from ansys.saf.glow._config.settings import Settings
 from ansys.saf.glow._core.gc import bdm_garbage_collector
 from ansys.saf.glow._core.solution import Solution
 from ansys.saf.glow._crud.bdm_helper import steps_contain_entity_handles
-from ansys.saf.glow._server.dependencies import CrudDep, GetBdmLocksDbDep
-from ansys.saf.glow._server.exceptions import NotFoundError
+from ansys.saf.glow._server.dependencies import AccessCrudDep, CrudDep, GetBdmLocksDbDep, PrincipalDep
+from ansys.saf.glow._server.exceptions import ForbiddenError, LockedError, NotFoundError
 
 if TYPE_CHECKING:
     from ansys.saf.glow._crud.crud import Crud
@@ -62,6 +62,8 @@ async def _process_result(info: GraphQLResolveInfo, crud_method_call: Callable[[
         return _process_exception(settings, e, "BAD_REQUEST", str(e))
     except NotFoundError as e:
         return _process_exception(settings, e, "NOT_FOUND")
+    except (LockedError, ForbiddenError) as e:
+        return _process_exception(settings, e, "PERMISSION_DENIED")
     except Exception as e:
         # TODO - add more specific error handling
         return _process_exception(settings, e, "INTERNAL_SERVER_ERROR", "The returned data is invalid.")
@@ -87,6 +89,7 @@ async def resolve_update_project_steps_with_json(
 
         async def set_fields_in_project():
             crud: Crud = info.context["db"]
+            await info.context["access"].check_write(project_id, info.context["principal"])
             solution_type = info.context["solution_type"]
 
             # TODO - move all this business logic into crud ??
@@ -150,6 +153,8 @@ def _get_context_value(request: Request, _data: Any):
     return {
         "request": request,
         "db": request.scope["db"],
+        "principal": request.scope["principal"],
+        "access": request.scope["access"],
         "settings": request.scope["settings"],
         "get_bdm_locks_db": request.scope["get_bdm_locks_db"],
         "solution_type": request.scope["solution_type"],
@@ -220,9 +225,13 @@ def make_routes(settings: Settings, solution_type: type[Solution]) -> fastapi.AP
         request: Request,
         crud: CrudDep,
         get_bdm_locks_db: GetBdmLocksDbDep,
+        principal: PrincipalDep,
+        access: AccessCrudDep,
     ):
-        # Expose database connection and settings to the GraphQL through request's scope
+        # Expose database connection, settings and the caller's identity to the GraphQL through request's scope
         request.scope["db"] = crud
+        request.scope["principal"] = principal
+        request.scope["access"] = access
         request.scope["settings"] = settings
         request.scope["get_bdm_locks_db"] = get_bdm_locks_db
         request.scope["solution_type"] = solution_type

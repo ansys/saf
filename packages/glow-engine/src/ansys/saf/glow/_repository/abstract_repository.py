@@ -152,7 +152,12 @@ class AbstractRepositorySession(ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    async def remove_project_from_database(self, project_id: str) -> list[str]:
+    async def remove_project_from_database(self, project_id: str, keep_access: bool = False) -> list[str]:
+        """Removes the project and returns the PIM names of its instances.
+
+        The access control rows of the project (members, write lock, write requests) are removed as well, unless
+        ``keep_access`` is set, which is for rebuilding the project under the same id.
+        """
         raise NotImplementedError()
 
     @abstractmethod
@@ -331,6 +336,12 @@ class AbstractRepositorySession(ABC):
     async def indicate_modification(self) -> None:
         raise NotImplementedError()
 
+    @property
+    @abstractmethod
+    def is_modification(self) -> bool:
+        """Whether the session commits its changes when it ends (as opposed to rolling them back)."""
+        raise NotImplementedError()
+
     @abstractmethod
     async def set_update_modification_date(self, update: bool) -> None:
         raise NotImplementedError()
@@ -372,6 +383,11 @@ class MethodLockSpecification(AbstractLockSpecification):
 class AbstractRepositorySessionFactory(ABC):
     def __init__(self):
         self._session: AbstractRepositorySession | None = None
+
+    @property
+    def current_session(self) -> AbstractRepositorySession | None:
+        """The session opened by an enclosing ``get_session``, which nested calls join, or ``None``."""
+        return self._session
 
     @asynccontextmanager
     @abstractmethod

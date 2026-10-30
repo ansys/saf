@@ -25,6 +25,7 @@ from pydantic import BaseModel
 
 from ansys.bdm.api import NO_ENTITY, InvalidContextError
 from ansys.bdm.api.entity_handle import EntityHandle
+from ansys.saf.glow._access.dependencies import require_project_read, require_project_write
 from ansys.saf.glow._core.gc import bdm_garbage_collector
 from ansys.saf.glow._core.solution import Solution
 from ansys.saf.glow._core.step_model import StepModel
@@ -53,7 +54,7 @@ def make_routes(solution_type: type[Solution]):
         prefix="/projects/{project_id}/steps",
         tags=["steps"],
         responses={404: {"description": "Unable to find the field."}},
-        dependencies=[fastapi.Depends(validate_project)],
+        dependencies=[fastapi.Depends(require_project_read), fastapi.Depends(validate_project)],
     )
 
     for step_id, step_type in solution_type.get_steps_fields().items():
@@ -136,6 +137,7 @@ def _make_routes(
             "so that it refers to the content of the supplied entity. "
             "This is part of the incomplete blob data management alpha feature."
         ),
+        dependencies=[fastapi.Depends(require_project_write)],
     )
     async def update_blob(
         project_id: str,

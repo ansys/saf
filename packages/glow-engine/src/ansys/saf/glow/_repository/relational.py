@@ -111,6 +111,10 @@ class RelationalSession(RelationalAccessMixin, AbstractRepositorySession):
     async def indicate_modification(self) -> None:
         self._modification = True
 
+    @property
+    def is_modification(self) -> bool:
+        return self._modification
+
     async def set_update_modification_date(self, update: bool):
         self._set_update_modification_date = update
 

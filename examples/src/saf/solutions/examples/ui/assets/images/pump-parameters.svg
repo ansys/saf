@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="460" viewBox="0 0 760 460" role="img"
+     aria-label="Front view of the centrifugal pump showing the suction eye, the rotating impeller, the turbo interface, the stationary volute and the discharge nozzle, each labelled with the input parameter that controls it.">
+  <title>Pump model and its input parameters</title>
+
+  <defs>
+    <marker id="arrow-flow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 Z" fill="#12b886"/>
+    </marker>
+    <marker id="arrow-spin" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 Z" fill="#e8590c"/>
+    </marker>
+    <style>
+      .lbl  { font-family: Segoe UI, Helvetica, Arial, sans-serif; font-size: 15px; font-weight: 600; fill: #212529; }
+      .prm  { font-family: Consolas, Menlo, monospace; font-size: 12.5px; fill: #1971c2; }
+      .note { font-family: Segoe UI, Helvetica, Arial, sans-serif; font-size: 12px; fill: #868e96; }
+      .lead { stroke: #adb5bd; stroke-width: 1.2; stroke-dasharray: 4 3; fill: none; }
+    </style>
+  </defs>
+
+  <rect x="0.5" y="0.5" width="759" height="459" rx="12" fill="#f8f9fa" stroke="#dee2e6"/>
+
+  <!-- Volute casing. The wall spirals outward from the tongue and opens into the nozzle. -->
+  <path d="M 470 79
+           L 230 79
+           A 144 144 0 0 0 93 230
+           A 130 130 0 0 0 230 353
+           A 116 116 0 0 0 339 230
+           A 102 102 0 0 0 230 135
+           L 470 135 Z"
+        fill="#e7f5ff" stroke="#1971c2" stroke-width="2.5" stroke-linejoin="round"/>
+
+  <!-- Flow swirling around the volute towards the discharge. -->
+  <path d="M 230 333 A 103 103 0 0 1 127 230 A 103 103 0 0 1 133 195"
+        fill="none" stroke="#12b886" stroke-width="2.5" marker-end="url(#arrow-flow)"/>
+  <path d="M 390 107 L 450 107" stroke="#12b886" stroke-width="2.5" marker-end="url(#arrow-flow)"/>
+
+  <!-- Impeller disc with six backward curved blades. -->
+  <circle cx="230" cy="230" r="82" fill="#fff4e6" stroke="#e8590c" stroke-width="2.5"/>
+  <g fill="none" stroke="#e8590c" stroke-width="3" stroke-linecap="round">
+    <path d="M 264 230 Q 287 220 296 184"/>
+    <path d="M 247 259 Q 267 274 303 264"/>
+    <path d="M 213 259 Q 210 285 237 310"/>
+    <path d="M 196 230 Q 173 240 165 276"/>
+    <path d="M 213 201 Q 193 186 158 196"/>
+    <path d="M 247 201 Q 250 176 223 150"/>
+  </g>
+
+  <!-- Suction eye, with the rotation direction drawn inside it. -->
+  <circle cx="230" cy="230" r="32" fill="#ffd8a8" stroke="#e8590c" stroke-width="2"/>
+  <path d="M 212 224 A 19 19 0 0 1 248 224" fill="none" stroke="#e8590c" stroke-width="2"
+        marker-end="url(#arrow-spin)"/>
+
+  <!-- Turbo interface, drawn just outside the impeller it bounds. -->
+  <circle cx="230" cy="230" r="86" fill="none" stroke="#7048e8" stroke-width="2" stroke-dasharray="7 5"/>
+
+  <!-- Inlet callout -->
+  <path class="lead" d="M 212 212 L 120 120 L 120 72"/>
+  <text class="lbl" x="36" y="38">Inlet (suction eye)</text>
+  <text class="note" x="36" y="58">Pressure datum only. It does not</text>
+  <text class="note" x="36" y="72">change the pump performance.</text>
+
+  <!-- Outlet callout -->
+  <path class="lead" d="M 450 79 L 450 66 L 494 66"/>
+  <text class="lbl" x="500" y="38">Outlet (discharge nozzle)</text>
+  <text class="prm" x="500" y="58">mass_flow_rate (kg/s)</text>
+
+  <!-- Impeller callout -->
+  <path class="lead" d="M 301 189 L 492 195"/>
+  <text class="lbl"  x="500" y="200">Impeller (rotating)</text>
+  <text class="prm"  x="500" y="219">impeller_speed_rpm</text>
+  <text class="note" x="500" y="235">Frozen rotor: the mesh is held still</text>
+  <text class="note" x="500" y="251">while the flow sees the rotation.</text>
+
+  <!-- Volute callout -->
+  <path class="lead" d="M 288 330 L 492 300"/>
+  <text class="lbl"  x="500" y="290">Volute (stationary)</text>
+  <text class="note" x="500" y="308">Collects the flow and converts</text>
+  <text class="note" x="500" y="324">velocity into static pressure.</text>
+
+  <!-- Turbo interface callout -->
+  <path class="lead" d="M 200 311 L 150 372"/>
+  <text class="lbl"  x="36" y="408">Turbo interface</text>
+  <text class="note" x="36" y="426">Couples the rotating impeller mesh</text>
+  <text class="note" x="36" y="442">to the stationary volute mesh.</text>
+
+  <text class="note" x="500" y="426">Green arrows show the flow path.</text>
+  <text class="note" x="500" y="442">Processor count only affects speed.</text>
+</svg>

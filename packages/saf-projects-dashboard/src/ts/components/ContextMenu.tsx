@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { icons } from "../utils/icons";
 import "../styles/ContextMenu.css";
 
-type MenuItem = {
+export type MenuItem = {
   label: string;
   icon: string;
   onClick: () => void;

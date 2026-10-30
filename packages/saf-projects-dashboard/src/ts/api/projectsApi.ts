@@ -36,7 +36,7 @@ export class ApiError extends Error {
  * Helper function to handle API responses.
  * Throws an ApiError with status code and details if the response is not OK.
  */
-async function handleResponse<T>(response: Response): Promise<T> {
+export async function handleResponse<T>(response: Response): Promise<T> {
   if (!response.ok) {
     let errorMessage = `HTTP ${response.status}: ${response.statusText}`;
     try {
@@ -69,7 +69,7 @@ async function handleResponse<T>(response: Response): Promise<T> {
  * @param baseUrl - Optional base URL (e.g., "http://127.0.0.1:5678")
  * @returns The full URL to use for the API call
  */
-function buildUrl(path: string, baseUrl?: string): string {
+export function buildUrl(path: string, baseUrl?: string): string {
   if (baseUrl) {
     // Remove trailing slash from baseUrl if present
     const normalizedBase = baseUrl.endsWith("/")
@@ -169,6 +169,7 @@ export const projectsApi: ProjectsApiClient = {
     if (pageSize !== undefined) params.set("page_size", String(pageSize));
     const filterExpression = appendFilterParams(filters);
     if (filterExpression) params.set("filter", filterExpression);
+    if (filters?.orphansOnly) params.set("orphans_only", "true");
     const query = params.toString();
     const path = query ? `/projects?${query}` : "/projects";
     const response = await fetch(buildUrl(path, baseUrl), {

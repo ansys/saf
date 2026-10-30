@@ -408,3 +408,86 @@ body {
     opacity: 1;
   }
 }
+
+/* ------------------------------------------------------------------ */
+/* Project access control: owner, editor, lock, requests and sharing   */
+/* ------------------------------------------------------------------ */
+
+.pending-badge {
+  display: inline-block;
+  min-width: var(--awc-common-size-5x);
+  margin-left: var(--awc-common-size-2x);
+  padding: 0 var(--awc-common-size-2x);
+  border-radius: var(--awc-common-size-4x);
+  background-color: var(--awc-theme-background-primary-default);
+  color: var(--awc-theme-foreground-neutral-inverse, #fff);
+  font-size: var(--awc-common-typography-small-caption-regular-size);
+  text-align: center;
+  vertical-align: middle;
+}
+
+.access-lock-icon {
+  display: inline-flex;
+  width: var(--awc-common-size-5x);
+  height: var(--awc-common-size-5x);
+  margin-left: var(--awc-common-size-2x);
+  vertical-align: middle;
+}
+
+.project-card-access {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--awc-common-size-2x);
+  font-size: var(--awc-common-typography-small-body-regular-size);
+}
+
+.orphans-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--awc-common-size-2x);
+  color: var(--awc-theme-foreground-neutral-default);
+}
+
+.modal-content.share-dialog {
+  max-width: 520px;
+  text-align: left;
+}
+
+.share-dialog-input-row {
+  display: flex;
+  gap: var(--awc-common-size-3x);
+  margin: var(--awc-common-size-2x) 0 var(--awc-common-size-4x);
+}
+
+.share-dialog-input-row input {
+  flex: 1;
+}
+
+.share-dialog-members {
+  list-style: none;
+  margin: 0 0 var(--awc-common-size-4x);
+  padding: 0;
+}
+
+.share-dialog-member {
+  display: flex;
+  align-items: center;
+  gap: var(--awc-common-size-3x);
+  padding: var(--awc-common-size-2x) 0;
+}
+
+.share-dialog-member-name {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.share-dialog-member-role {
+  color: var(--awc-theme-foreground-neutral-subtle);
+}
+
+.share-dialog-member-actions {
+  display: inline-flex;
+  gap: var(--awc-common-size-2x);
+}

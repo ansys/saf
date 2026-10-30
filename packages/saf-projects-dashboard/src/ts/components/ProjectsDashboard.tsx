@@ -1,6 +1,13 @@
-import React, { useEffect, useCallback, useMemo, useState } from "react";
+import React, {
+  useEffect,
+  useCallback,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { DashComponentProps } from "../props";
 import {
+  AccessMe,
   Project,
   Notification,
   ActionResult,
@@ -11,6 +18,8 @@ import {
   ProjectsApiClient,
   ApiError,
 } from "../api/projectsApi";
+import { createAccessApi } from "../api/accessApi";
+import { usersApi } from "../api/usersApi";
 import { icons } from "../utils/icons";
 import { useTheme } from "../hooks/useTheme";
 import ProjectsList from "./ProjectsList";
@@ -21,6 +30,15 @@ import ImportExport from "./ImportExport";
 import SolutionMetadata from "./SolutionMetadata";
 import Pagination, { DEFAULT_PAGE_SIZE } from "./Pagination";
 import ProjectsFilter from "./ProjectsFilter";
+import ShareDialog from "./ShareDialog";
+import { AccessAction } from "./AccessCells";
+
+/** How often the list is refreshed while the page is visible and access control is on. */
+const ACCESS_REFRESH_INTERVAL_MS = 30_000;
+
+/** Message shown instead of the upgrade offer to a user who cannot write to the project. */
+const UPGRADE_BY_EDITOR_MESSAGE =
+  "This project must be upgraded by the person editing it (or start editing it first).";
 
 // AWC Design System: tokens and fonts (must be imported before component styles)
 import "../assets/default.css";
@@ -42,6 +60,14 @@ type Props = {
    * If not provided, uses relative URLs which require a Flask proxy to forward requests.
    */
   apiBaseUrl?: string;
+
+  /**
+   * Base URL of the Dash server that serves the user directory routes
+   * (`/_saf/users/resolve` and `/_saf/users/names`), used to share projects and to
+   * show the names of owners and editors. Relative to the Dash server: the default
+   * (an empty string) uses the origin of the page.
+   */
+  usersApiBaseUrl?: string;
 
   /**
    * URL for the default project icon displayed on project cards.
@@ -196,6 +222,7 @@ const ProjectsDashboard: React.FC<Props> = (props) => {
     id,
     setProps,
     apiBaseUrl,
+    usersApiBaseUrl = "",
     projectIconUrl,
     solutionImageUrl,
     solutionDescription,
@@ -222,6 +249,7 @@ const ProjectsDashboard: React.FC<Props> = (props) => {
     () => createProjectsApi(apiBaseUrl),
     [apiBaseUrl],
   );
+  const accessApi = useMemo(() => createAccessApi(apiBaseUrl), [apiBaseUrl]);
 
   // Use prop values or defaults for controlled state
   const projects = propProjects ?? [];
@@ -248,6 +276,23 @@ const ProjectsDashboard: React.FC<Props> = (props) => {
   // Local state for the project info modal
   const [infoProject, setInfoProject] = useState<Project | null>(null);
 
+  // Project access control (ownership, sharing, write lock). All of this stays
+  // dormant, and nothing is fetched, until the server sends access summaries.
+  const [accessMe, setAccessMe] = useState<AccessMe | null>(null);
+  const [userNames, setUserNames] = useState<Record<string, string>>({});
+  const [myPendingRequests, setMyPendingRequests] = useState<
+    Record<string, string>
+  >({});
+  const [shareTarget, setShareTarget] = useState<{
+    project: Project;
+    mode: "share" | "assignOwner";
+  } | null>(null);
+  // The upgrade offer is replaced by an explanation when the user cannot write.
+  const [upgradeBlocked, setUpgradeBlocked] = useState(false);
+  const requestedNamesRef = useRef<Set<string>>(new Set());
+  const probedAccessRef = useRef(false);
+  const accessEnabled = projects.some((p) => !!p.access);
+
   // Theme management: use external prop if provided, otherwise system preference → localStorage → "light"
   const { themeMode, toggleTheme } = useTheme(propTheme);
 
@@ -256,6 +301,94 @@ const ProjectsDashboard: React.FC<Props> = (props) => {
     loadProjects();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [apiBaseUrl, currentPage, pageSize, filters]);
+
+  // Who am I? Asked once the server has shown that access control is on.
+  useEffect(() => {
+    if (!accessEnabled || accessMe) return;
+    let cancelled = false;
+    accessApi
+      .getMe()
+      .then((me) => {
+        if (!cancelled) setAccessMe(me);
+      })
+      .catch(() => undefined);
+    return () => {
+      cancelled = true;
+    };
+  }, [accessEnabled, accessMe, accessApi]);
+
+  // Resolve the names of the owners and editors shown in the list.
+  useEffect(() => {
+    if (!accessEnabled) return;
+    const wanted = new Set<string>();
+    for (const project of projects) {
+      const { owner_id, holder_id } = project.access ?? {};
+      for (const id of [owner_id, holder_id]) {
+        if (id && !requestedNamesRef.current.has(id)) wanted.add(id);
+      }
+    }
+    if (wanted.size === 0) return;
+    const ids = Array.from(wanted);
+    ids.forEach((id) => requestedNamesRef.current.add(id));
+    usersApi
+      .names(ids, usersApiBaseUrl)
+      .then((names) => setUserNames((prev) => ({ ...prev, ...names })))
+      .catch(() => ids.forEach((id) => requestedNamesRef.current.delete(id)));
+  }, [accessEnabled, projects, usersApiBaseUrl]);
+
+  // Find out which of the projects I have asked write access to, to offer
+  // "Withdraw request" instead of "Request write access".
+  useEffect(() => {
+    const myId = accessMe?.user_id;
+    if (!myId) return;
+    const candidates = projects.filter(
+      (p) =>
+        p.access?.my_role === "viewer" &&
+        p.access.holder_id !== myId &&
+        p.access.pending_request_count > 0,
+    );
+    let cancelled = false;
+    Promise.all(
+      candidates.map((p) =>
+        accessApi
+          .getAccess(p.name)
+          .then((state) => {
+            const mine = state.pending_requests.find(
+              (r) => r.status === "pending" && r.requester_id === myId,
+            );
+            return mine ? ([p.name, mine.id] as const) : null;
+          })
+          .catch(() => null),
+      ),
+    ).then((found) => {
+      if (cancelled) return;
+      const next: Record<string, string> = {};
+      for (const entry of found) if (entry) next[entry[0]] = entry[1];
+      setMyPendingRequests((prev) => {
+        const sameKeys =
+          Object.keys(prev).length === Object.keys(next).length &&
+          Object.keys(next).every((k) => prev[k] === next[k]);
+        return sameKeys ? prev : next;
+      });
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [projects, accessMe, accessApi]);
+
+  // Other people change the owner, the editor and the requests: refresh the list while visible.
+  const loadProjectsRef = useRef<
+    ((silent?: boolean) => Promise<void>) | undefined
+  >(undefined);
+  useEffect(() => {
+    if (!accessEnabled) return;
+    const timer = setInterval(() => {
+      if (document.visibilityState !== "hidden") {
+        void loadProjectsRef.current?.(true);
+      }
+    }, ACCESS_REFRESH_INTERVAL_MS);
+    return () => clearInterval(timer);
+  }, [accessEnabled]);
 
   // Auto-clear notification after 5 seconds
   useEffect(() => {
@@ -301,24 +434,38 @@ const ProjectsDashboard: React.FC<Props> = (props) => {
 
   /**
    * Load projects from the API for the current page.
+   *
+   * A silent load (the periodic refresh) keeps the list on screen while it runs,
+   * does not report its result, and ignores failures.
    */
-  const loadProjects = async () => {
+  const loadProjects = async (silent = false) => {
     try {
-      setProps({ loading: true, error: null });
+      if (!silent) setProps({ loading: true, error: null });
       const data = await api.listProjects(currentPage, pageSize, filters);
       setProps({
         projects: data.projects,
         totalProjects: data.total_projects,
         totalPages: data.total_pages,
-        loading: false,
+        ...(silent ? {} : { loading: false }),
       });
+      if (silent) return;
       emitActionResult(
         "list",
         true,
         undefined,
         `Loaded ${data.projects.length} of ${data.total_projects} projects`,
       );
+      if (data.projects.length === 0 && !probedAccessRef.current) {
+        // An empty list cannot tell whether access control is on, yet the user
+        // still needs to be able to hand their user id to whoever shares with them.
+        probedAccessRef.current = true;
+        accessApi
+          .getMe()
+          .then(setAccessMe)
+          .catch(() => undefined);
+      }
     } catch (err) {
+      if (silent) return;
       const message = err instanceof Error ? err.message : "Unknown error";
       setProps({
         error: `Failed to load projects: ${message}`,
@@ -330,6 +477,8 @@ const ProjectsDashboard: React.FC<Props> = (props) => {
       emitActionResult("list", false, undefined, message);
     }
   };
+
+  loadProjectsRef.current = loadProjects;
 
   const handlePageChange = useCallback(
     (page: number) => {
@@ -347,14 +496,149 @@ const ProjectsDashboard: React.FC<Props> = (props) => {
 
   const handleFilterApply = useCallback(
     (nextFilters: ProjectsFilters) => {
-      setProps({ filters: nextFilters, currentPage: 1 });
+      // The orphans toggle lives outside the filter bar: keep it.
+      setProps({
+        filters: filters.orphansOnly
+          ? { ...nextFilters, orphansOnly: true }
+          : nextFilters,
+        currentPage: 1,
+      });
     },
-    [setProps],
+    [setProps, filters.orphansOnly],
   );
 
   const handleFilterClear = useCallback(() => {
     setProps({ filters: {}, currentPage: 1 });
   }, [setProps]);
+
+  const handleOrphansToggle = (checked: boolean) => {
+    const { orphansOnly: _previous, ...rest } = filters;
+    setProps({
+      filters: checked ? { ...rest, orphansOnly: true } : rest,
+      currentPage: 1,
+    });
+  };
+
+  /**
+   * Copy the user id of the caller, for people to exchange when no user directory is configured.
+   */
+  const handleCopyUserId = async () => {
+    const userId = accessMe?.user_id;
+    if (!userId) return;
+    try {
+      await navigator.clipboard.writeText(userId);
+      showNotification("Your user id was copied to the clipboard", "success");
+    } catch {
+      showNotification(`Your user id is ${userId}`, "info");
+    }
+  };
+
+  /**
+   * Handle an ownership, sharing or write-lock action chosen in a project menu.
+   */
+  const handleAccessAction = async (action: AccessAction, project: Project) => {
+    const projectId = project.name;
+    if (action === "share" || action === "assignOwner") {
+      setShareTarget({
+        project,
+        mode: action === "share" ? "share" : "assignOwner",
+      });
+      return;
+    }
+
+    const pendingRequestOf = async (
+      pick: (r: {
+        id: string;
+        requester_id: string;
+        status: string;
+      }) => boolean,
+    ) => {
+      const state = await accessApi.getAccess(projectId);
+      return state.pending_requests
+        .filter((r) => r.status === "pending" && pick(r))
+        .sort((a, b) => a.created_at.localeCompare(b.created_at))[0];
+    };
+
+    try {
+      let done: string;
+      switch (action) {
+        case "acquire":
+          await accessApi.acquire(projectId);
+          done = "You are now editing the project";
+          break;
+        case "release":
+          await accessApi.release(projectId);
+          done = "Write lock released";
+          break;
+        case "takeOver":
+          await accessApi.takeOver(projectId);
+          done = "You took over the write lock";
+          break;
+        case "forceRelease":
+          await accessApi.forceRelease(projectId);
+          done = "Write lock released";
+          break;
+        case "requestWrite": {
+          const request = await accessApi.requestWrite(projectId);
+          setMyPendingRequests((prev) => ({
+            ...prev,
+            [projectId]: request.id,
+          }));
+          done = "Write access requested";
+          break;
+        }
+        case "withdraw": {
+          const requestId =
+            myPendingRequests[projectId] ??
+            (
+              await pendingRequestOf(
+                (r) => r.requester_id === accessMe?.user_id,
+              )
+            )?.id;
+          if (!requestId) {
+            showNotification("You have no pending write request", "info");
+            await loadProjects(true);
+            return;
+          }
+          await accessApi.withdraw(projectId, requestId);
+          setMyPendingRequests((prev) => {
+            const { [projectId]: _gone, ...rest } = prev;
+            return rest;
+          });
+          done = "Write request withdrawn";
+          break;
+        }
+        case "approve":
+        case "deny": {
+          const request = await pendingRequestOf(() => true);
+          if (!request) {
+            showNotification("There is no pending write request", "info");
+            await loadProjects(true);
+            return;
+          }
+          if (action === "approve") {
+            await accessApi.approve(projectId, request.id);
+            done = `Write access granted to ${
+              userNames[request.requester_id] ?? "the requester"
+            }`;
+          } else {
+            await accessApi.deny(projectId, request.id);
+            done = "Write request denied";
+          }
+          break;
+        }
+      }
+      showNotification(done, "success");
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Unknown error";
+      showNotification(message, "error");
+    }
+    await loadProjects(true);
+  };
+
+  const handleShareChanged = () => {
+    void loadProjects(true);
+  };
 
   /**
    * Handle creating a new project.
@@ -484,6 +768,15 @@ const ProjectsDashboard: React.FC<Props> = (props) => {
     } catch (err) {
       // Check if it's a 422 error (requires upgrade)
       if (err.status === 422) {
+        // With access control on, only the person editing the project can upgrade it.
+        let canUpgrade = true;
+        if (projects.find((p) => p.name === projectId)?.access) {
+          canUpgrade = await accessApi
+            .getAccess(projectId)
+            .then((state) => state.can_write)
+            .catch(() => false);
+        }
+        setUpgradeBlocked(!canUpgrade);
         setProps({
           showUpgradeSnackbar: true,
           upgradeProjectId: projectId,
@@ -516,7 +809,12 @@ const ProjectsDashboard: React.FC<Props> = (props) => {
       );
       navigateToProject(project.name);
     } catch (err) {
-      const message = err instanceof Error ? err.message : "Unknown error";
+      const message =
+        err?.status === 423
+          ? UPGRADE_BY_EDITOR_MESSAGE
+          : err instanceof Error
+            ? err.message
+            : "Unknown error";
       showNotification(`Failed to upgrade project: ${message}`, "error");
       emitActionResult("upgrade", false, upgradeProjectId, message);
       setProps({
@@ -530,6 +828,7 @@ const ProjectsDashboard: React.FC<Props> = (props) => {
    * Handle dismiss upgrade snackbar.
    */
   const handleDismissUpgrade = () => {
+    setUpgradeBlocked(false);
     setProps({
       showUpgradeSnackbar: false,
       upgradeProjectId: null,
@@ -638,7 +937,7 @@ const ProjectsDashboard: React.FC<Props> = (props) => {
       <div className="dashboard-topbar">
         <button
           className="awc-btn-tertiary main-btn"
-          onClick={loadProjects}
+          onClick={() => loadProjects()}
           disabled={loading}
         >
           <span
@@ -684,6 +983,16 @@ const ProjectsDashboard: React.FC<Props> = (props) => {
       />
       <div className="dashboard-header">
         <h4>Projects Dashboard</h4>
+        {accessMe && (
+          <button
+            className="awc-btn-tertiary main-btn"
+            onClick={handleCopyUserId}
+            disabled={!accessMe.user_id}
+            title="Copy your user id to share it with the owner of a project"
+          >
+            Copy my user id
+          </button>
+        )}
         {!propTheme && (
           <button
             className="btn-icon theme-toggle-btn"
@@ -735,6 +1044,16 @@ const ProjectsDashboard: React.FC<Props> = (props) => {
           onClear={handleFilterClear}
         />
         <div className="align-right">
+          {accessMe?.is_super_admin && (
+            <label className="orphans-toggle">
+              <input
+                type="checkbox"
+                checked={!!filters.orphansOnly}
+                onChange={(e) => handleOrphansToggle(e.target.checked)}
+              />
+              Only projects without owner
+            </label>
+          )}
           <div className="view-toggle">
             <button
               className={`btn-icon ${viewMode === "grid" ? "btn-icon-active" : ""}`}
@@ -779,6 +1098,10 @@ const ProjectsDashboard: React.FC<Props> = (props) => {
           onFavoriteToggle={handleFavoriteToggle}
           onInfo={handleInfo}
           favoriteIds={favoriteIds}
+          accessMe={accessMe}
+          userNames={userNames}
+          myPendingRequests={myPendingRequests}
+          onAccessAction={handleAccessAction}
         />
       ) : (
         <ProjectsTable
@@ -791,6 +1114,10 @@ const ProjectsDashboard: React.FC<Props> = (props) => {
           onFavoriteToggle={handleFavoriteToggle}
           onInfo={handleInfo}
           favoriteIds={favoriteIds}
+          accessMe={accessMe}
+          userNames={userNames}
+          myPendingRequests={myPendingRequests}
+          onAccessAction={handleAccessAction}
         />
       )}
 
@@ -874,26 +1201,55 @@ const ProjectsDashboard: React.FC<Props> = (props) => {
         <div className="modal-overlay" onClick={handleDismissUpgrade}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <h3>Upgrade Required</h3>
-            <p>
-              By accepting an auto-upgrade you consent that some previous data
-              might be lost.
-            </p>
-            <div className="modal-actions">
-              <button
-                className="awc-btn awc-btn-primary"
-                onClick={handleUpgrade}
-              >
-                Upgrade
-              </button>
-              <button
-                className="awc-btn awc-btn-secondary"
-                onClick={handleDismissUpgrade}
-              >
-                Cancel
-              </button>
-            </div>
+            {upgradeBlocked ? (
+              <>
+                <p>{UPGRADE_BY_EDITOR_MESSAGE}</p>
+                <div className="modal-actions">
+                  <button
+                    className="awc-btn awc-btn-secondary"
+                    onClick={handleDismissUpgrade}
+                  >
+                    Close
+                  </button>
+                </div>
+              </>
+            ) : (
+              <>
+                <p>
+                  By accepting an auto-upgrade you consent that some previous
+                  data might be lost.
+                </p>
+                <div className="modal-actions">
+                  <button
+                    className="awc-btn awc-btn-primary"
+                    onClick={handleUpgrade}
+                  >
+                    Upgrade
+                  </button>
+                  <button
+                    className="awc-btn awc-btn-secondary"
+                    onClick={handleDismissUpgrade}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </>
+            )}
           </div>
         </div>
+      )}
+
+      {/* Share / assign owner dialog */}
+      {shareTarget && (
+        <ShareDialog
+          projectId={shareTarget.project.name}
+          projectName={shareTarget.project.display_name}
+          mode={shareTarget.mode}
+          apiBaseUrl={apiBaseUrl}
+          usersApiBaseUrl={usersApiBaseUrl}
+          onClose={() => setShareTarget(null)}
+          onChanged={handleShareChanged}
+        />
       )}
 
       {/* Project info modal */}

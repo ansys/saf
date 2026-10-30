@@ -61,6 +61,10 @@ import applicationSvg from "../assets/application.svg";
 import filterSvg from "../assets/oss-icons/filter.svg";
 import helpSvg from "../assets/oss-icons/help.svg";
 
+// Access control icons
+import lockSvg from "../assets/oss-icons/lock.svg";
+import shareSvg from "../assets/oss-icons/share.svg";
+
 export const icons = {
   // Actions
   edit: editSvg,
@@ -104,6 +108,10 @@ export const icons = {
 
   // Help and documentation
   help: helpSvg,
+
+  // Access control
+  lock: lockSvg,
+  share: shareSvg,
 } as const;
 
 export type IconName = keyof typeof icons;

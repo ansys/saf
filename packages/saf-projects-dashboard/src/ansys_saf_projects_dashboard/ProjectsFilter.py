@@ -55,7 +55,10 @@ Keyword arguments:
         Inclusive lower bound on `date_modified`.
 
     - dateModifiedTo (string; optional):
-        Inclusive upper bound on `date_modified`."""
+        Inclusive upper bound on `date_modified`.
+
+    - orphansOnly (boolean; optional):
+        Only list the projects without owner (super admins only)."""
     _children_props: typing.List[str] = []
     _base_nodes = ['children']
     _namespace = 'ansys_saf_projects_dashboard'
@@ -67,7 +70,8 @@ Keyword arguments:
             "dateCreatedFrom": NotRequired[str],
             "dateCreatedTo": NotRequired[str],
             "dateModifiedFrom": NotRequired[str],
-            "dateModifiedTo": NotRequired[str]
+            "dateModifiedTo": NotRequired[str],
+            "orphansOnly": NotRequired[bool]
         }
     )
 

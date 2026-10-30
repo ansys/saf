@@ -1,8 +1,16 @@
 import React from "react";
-import { Project } from "../types/project";
+import { AccessMe, Project } from "../types/project";
 import { icons } from "../utils/icons";
 import { ProjectIcon, formatDate } from "./ProjectUtils";
 import ContextMenu from "./ContextMenu";
+import {
+  AccessAction,
+  EditingCell,
+  LockIcon,
+  OwnerCell,
+  PendingBadge,
+  buildProjectMenuItems,
+} from "./AccessCells";
 import "../styles/ProjectsList.css";
 
 export type ProjectsViewProps = {
@@ -24,11 +32,20 @@ export type ProjectsViewProps = {
   onInfo: (projectId: string) => void;
   /** Array of project IDs that are favorited */
   favoriteIds: string[];
+  /** Who the calling user is. Only provided when project access control is on. */
+  accessMe?: AccessMe | null;
+  /** Display names of the users shown as owner or editor, by user id. */
+  userNames?: Record<string, string>;
+  /** Ids of my pending write requests, by project name. */
+  myPendingRequests?: Record<string, string>;
+  /** Callback when an ownership, sharing or write-lock menu item is chosen */
+  onAccessAction?: (action: AccessAction, project: Project) => void;
 };
 
 /**
  * ProjectsList component displays a grid of project cards.
  * Each card shows project information and action buttons for Edit, Export, and Delete.
+ * With project access control on, the menu depends on the role of the user instead.
  */
 const ProjectsList: React.FC<ProjectsViewProps> = ({
   projects,
@@ -40,6 +57,10 @@ const ProjectsList: React.FC<ProjectsViewProps> = ({
   onFavoriteToggle,
   onInfo,
   favoriteIds,
+  accessMe,
+  userNames,
+  myPendingRequests,
+  onAccessAction,
 }) => {
   if (projects.length === 0) {
     return (
@@ -52,82 +73,86 @@ const ProjectsList: React.FC<ProjectsViewProps> = ({
   return (
     <div className="projects-list">
       <div className="projects-grid">
-        {projects.map((project) => (
-          // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions, jsx-a11y/no-noninteractive-tabindex
-          <article
-            key={project.name}
-            className="project-card project-card-clickable"
-            onClick={() => onCardClick(project.name)}
-            tabIndex={0}
-            aria-label={`Open project ${project.display_name}`}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" || e.key === " ") {
-                onCardClick(project.name);
-              }
-            }}
-          >
-            <div className="project-card-header">
-              <ProjectIcon src={project.icon ?? projectIconUrl} />
-              <div className="project-name-text">
-                <h6>{project.display_name}</h6>
-                <span className="projectid-label">
-                  Id: {project.name.replace(/^projects\//, "")}
-                </span>
-              </div>
+        {projects.map((project) => {
+          const menuItems = buildProjectMenuItems({
+            project,
+            me: accessMe,
+            myRequestId: myPendingRequests?.[project.name],
+            onEdit,
+            onExport,
+            onDelete,
+            onAccessAction,
+          });
+          return (
+            // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions, jsx-a11y/no-noninteractive-tabindex
+            <article
+              key={project.name}
+              className="project-card project-card-clickable"
+              onClick={() => onCardClick(project.name)}
+              tabIndex={0}
+              aria-label={`Open project ${project.display_name}`}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  onCardClick(project.name);
+                }
+              }}
+            >
+              <div className="project-card-header">
+                <ProjectIcon src={project.icon ?? projectIconUrl} />
+                <div className="project-name-text">
+                  <h6>
+                    {project.display_name}
+                    <PendingBadge project={project} me={accessMe} />
+                  </h6>
+                  <span className="projectid-label">
+                    Id: {project.name.replace(/^projects\//, "")}
+                  </span>
+                </div>
 
-              <ContextMenu
-                items={[
-                  {
-                    label: "Edit",
-                    icon: icons.edit,
-                    onClick: () => onEdit(project),
-                  },
-                  {
-                    label: "Export",
-                    icon: icons.download,
-                    onClick: () => onExport(project.name),
-                  },
-                  {
-                    label: "Delete",
-                    icon: icons.delete,
-                    onClick: () => onDelete(project.name),
-                    className: "menu-item-danger",
-                  },
-                ]}
-              />
-            </div>
-            <div className="project-card-body">
-              <div className="project-info">
-                <span className="info-label">Created:</span>
-                <span className="info-label">Last Saved:</span>
+                {menuItems.length > 0 && <ContextMenu items={menuItems} />}
               </div>
-              <div className="project-info">
-                <span className="info-value">
-                  {formatDate(project.date_created)}
-                </span>
-                <span className="info-value">
-                  {formatDate(project.date_modified)}
-                </span>
+              <div className="project-card-body">
+                <div className="project-info">
+                  <span className="info-label">Created:</span>
+                  <span className="info-label">Last Saved:</span>
+                </div>
+                <div className="project-info">
+                  <span className="info-value">
+                    {formatDate(project.date_created)}
+                  </span>
+                  <span className="info-value">
+                    {formatDate(project.date_modified)}
+                  </span>
+                </div>
               </div>
-            </div>
-            <div className="project-card-footer">
-              <button
-                className="btn-icon"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onInfo(project.name);
-                }}
-                title="Project info"
-                aria-label="Project info"
-              >
-                <span
-                  className="awc-icon"
-                  dangerouslySetInnerHTML={{ __html: icons.infoOutline }}
-                />
-              </button>
-            </div>
-          </article>
-        ))}
+              {project.access && (
+                <div className="project-card-access">
+                  <span className="info-label">Owner:</span>
+                  <OwnerCell project={project} names={userNames} />
+                  <span className="info-label">Editing now:</span>
+                  <EditingCell project={project} names={userNames} />
+                  <LockIcon project={project} />
+                </div>
+              )}
+              <div className="project-card-footer">
+                <button
+                  className="btn-icon"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onInfo(project.name);
+                  }}
+                  title="Project info"
+                  aria-label="Project info"
+                >
+                  <span
+                    className="awc-icon"
+                    dangerouslySetInnerHTML={{ __html: icons.infoOutline }}
+                  />
+                </button>
+              </div>
+            </article>
+          );
+        })}
       </div>
     </div>
   );

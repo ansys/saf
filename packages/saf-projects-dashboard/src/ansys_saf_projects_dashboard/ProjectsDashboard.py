@@ -94,6 +94,9 @@ Keyword arguments:
     - dateModifiedTo (string; optional):
         Inclusive upper bound on `date_modified`.
 
+    - orphansOnly (boolean; optional):
+        Only list the projects without owner (super admins only).
+
 - loading (boolean; optional):
     Whether the component is currently loading data.
 
@@ -147,6 +150,21 @@ Keyword arguments:
         URL for the project icon (per-project custom icon from the
         API).
 
+    - access (dict; optional):
+        Who owns, holds the write lock of and has access to the
+        project. `None` or absent when project access control is
+        disabled.
+
+        `access` is a dict with keys:
+
+        - owner_id (string; required)
+
+        - holder_id (string; required)
+
+        - my_role (a value equal to: 'owner', 'viewer'; required)
+
+        - pending_request_count (number; required)
+
 - selectedProject (dict; optional):
     Currently selected project for editing. Set when user clicks Edit
     on a project card.
@@ -172,6 +190,21 @@ Keyword arguments:
     - icon (string; optional):
         URL for the project icon (per-project custom icon from the
         API).
+
+    - access (dict; optional):
+        Who owns, holds the write lock of and has access to the
+        project. `None` or absent when project access control is
+        disabled.
+
+        `access` is a dict with keys:
+
+        - owner_id (string; required)
+
+        - holder_id (string; required)
+
+        - my_role (a value equal to: 'owner', 'viewer'; required)
+
+        - pending_request_count (number; required)
 
 - showCreateForm (boolean; optional):
     Whether the create project form is currently shown.
@@ -206,11 +239,28 @@ Keyword arguments:
     it.
 
 - upgradeProjectId (string; optional):
-    ID of project pending upgrade."""
+    ID of project pending upgrade.
+
+- usersApiBaseUrl (string; optional):
+    Base URL of the Dash server that serves the user directory routes
+    (`/_saf/users/resolve` and `/_saf/users/names`), used to share
+    projects and to show the names of owners and editors. Relative to
+    the Dash server: the default (an empty string) uses the origin of
+    the page."""
     _children_props: typing.List[str] = []
     _base_nodes = ['children']
     _namespace = 'ansys_saf_projects_dashboard'
     _type = 'ProjectsDashboard'
+    ProjectsAccess = TypedDict(
+        "ProjectsAccess",
+            {
+            "owner_id": str,
+            "holder_id": str,
+            "my_role": Literal["owner", "viewer"],
+            "pending_request_count": NumberType
+        }
+    )
+
     Projects = TypedDict(
         "Projects",
             {
@@ -219,7 +269,18 @@ Keyword arguments:
             "description": NotRequired[str],
             "date_created": NotRequired[str],
             "date_modified": NotRequired[str],
-            "icon": NotRequired[str]
+            "icon": NotRequired[str],
+            "access": NotRequired["ProjectsAccess"]
+        }
+    )
+
+    SelectedProjectAccess = TypedDict(
+        "SelectedProjectAccess",
+            {
+            "owner_id": str,
+            "holder_id": str,
+            "my_role": Literal["owner", "viewer"],
+            "pending_request_count": NumberType
         }
     )
 
@@ -231,7 +292,8 @@ Keyword arguments:
             "description": NotRequired[str],
             "date_created": NotRequired[str],
             "date_modified": NotRequired[str],
-            "icon": NotRequired[str]
+            "icon": NotRequired[str],
+            "access": NotRequired["SelectedProjectAccess"]
         }
     )
 
@@ -261,7 +323,8 @@ Keyword arguments:
             "dateCreatedFrom": NotRequired[str],
             "dateCreatedTo": NotRequired[str],
             "dateModifiedFrom": NotRequired[str],
-            "dateModifiedTo": NotRequired[str]
+            "dateModifiedTo": NotRequired[str],
+            "orphansOnly": NotRequired[bool]
         }
     )
 
@@ -269,6 +332,7 @@ Keyword arguments:
     def __init__(
         self,
         apiBaseUrl: typing.Optional[str] = None,
+        usersApiBaseUrl: typing.Optional[str] = None,
         projectIconUrl: typing.Optional[str] = None,
         solutionImageUrl: typing.Optional[str] = None,
         solutionDescription: typing.Optional[str] = None,
@@ -291,9 +355,9 @@ Keyword arguments:
         id: typing.Optional[typing.Union[str, dict]] = None,
         **kwargs
     ):
-        self._prop_names = ['id', 'actionResult', 'apiBaseUrl', 'currentPage', 'error', 'filters', 'loading', 'notification', 'pageSize', 'pendingDeleteId', 'projectIconUrl', 'projects', 'selectedProject', 'showCreateForm', 'showUpgradeSnackbar', 'solutionDescription', 'solutionImageUrl', 'themeMode', 'totalPages', 'totalProjects', 'upgradeProjectId']
+        self._prop_names = ['id', 'actionResult', 'apiBaseUrl', 'currentPage', 'error', 'filters', 'loading', 'notification', 'pageSize', 'pendingDeleteId', 'projectIconUrl', 'projects', 'selectedProject', 'showCreateForm', 'showUpgradeSnackbar', 'solutionDescription', 'solutionImageUrl', 'themeMode', 'totalPages', 'totalProjects', 'upgradeProjectId', 'usersApiBaseUrl']
         self._valid_wildcard_attributes =            []
-        self.available_properties = ['id', 'actionResult', 'apiBaseUrl', 'currentPage', 'error', 'filters', 'loading', 'notification', 'pageSize', 'pendingDeleteId', 'projectIconUrl', 'projects', 'selectedProject', 'showCreateForm', 'showUpgradeSnackbar', 'solutionDescription', 'solutionImageUrl', 'themeMode', 'totalPages', 'totalProjects', 'upgradeProjectId']
+        self.available_properties = ['id', 'actionResult', 'apiBaseUrl', 'currentPage', 'error', 'filters', 'loading', 'notification', 'pageSize', 'pendingDeleteId', 'projectIconUrl', 'projects', 'selectedProject', 'showCreateForm', 'showUpgradeSnackbar', 'solutionDescription', 'solutionImageUrl', 'themeMode', 'totalPages', 'totalProjects', 'upgradeProjectId', 'usersApiBaseUrl']
         self.available_wildcard_properties =            []
         _explicit_args = kwargs.pop('_explicit_args')
         _locals = locals()

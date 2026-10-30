@@ -104,6 +104,29 @@ class TestProjectsDashboardComponent:
         component = dashboard_component(id="test", pendingDeleteId="projects/123")
         assert component.pendingDeleteId == "projects/123"
 
+    def test_component_with_users_api_base_url(self, dashboard_component):
+        """Test that the component accepts the usersApiBaseUrl prop (user directory, relative to the Dash server)."""
+        component = dashboard_component(id="test", usersApiBaseUrl="http://127.0.0.1:8050")
+        assert component.usersApiBaseUrl == "http://127.0.0.1:8050"
+        assert "usersApiBaseUrl" in component.available_properties
+
+    def test_component_with_project_access_summary(self, dashboard_component):
+        """Test that projects can carry the access summary sent when access control is on."""
+        projects = [
+            {
+                "name": "projects/1",
+                "display_name": "Project 1",
+                "access": {
+                    "owner_id": "u1",
+                    "holder_id": None,
+                    "my_role": "owner",
+                    "pending_request_count": 0,
+                },
+            },
+        ]
+        component = dashboard_component(id="test", projects=projects)
+        assert component.projects == projects
+
     def test_component_namespace(self, dashboard_component):
         """Test that the component has correct namespace."""
         component = dashboard_component(id="test")

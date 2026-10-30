@@ -38,8 +38,21 @@ class ProjectsTable(Component):
 
 Keyword arguments:
 
+- accessMe (dict; optional):
+    Who the calling user is. Only provided when project access control
+    is on.
+
+    `accessMe` is a dict with keys:
+
+    - user_id (string; required)
+
+    - is_super_admin (boolean; required)
+
 - favoriteIds (list of strings; required):
     Array of project IDs that are favorited.
+
+- myPendingRequests (dict with strings as keys and values of type string; optional):
+    Ids of my pending write requests, by project name.
 
 - projectIconUrl (string; optional):
     Optional URL for the default project icon (solution-level
@@ -68,11 +81,39 @@ Keyword arguments:
 
     - icon (string; optional):
         URL for the project icon (per-project custom icon from the
-        API)."""
+        API).
+
+    - access (dict; optional):
+        Who owns, holds the write lock of and has access to the
+        project. `None` or absent when project access control is
+        disabled.
+
+        `access` is a dict with keys:
+
+        - owner_id (string; required)
+
+        - holder_id (string; required)
+
+        - my_role (a value equal to: 'owner', 'viewer'; required)
+
+        - pending_request_count (number; required)
+
+- userNames (dict with strings as keys and values of type string; optional):
+    Display names of the users shown as owner or editor, by user id."""
     _children_props: typing.List[str] = []
     _base_nodes = ['children']
     _namespace = 'ansys_saf_projects_dashboard'
     _type = 'ProjectsTable'
+    ProjectsAccess = TypedDict(
+        "ProjectsAccess",
+            {
+            "owner_id": str,
+            "holder_id": str,
+            "my_role": Literal["owner", "viewer"],
+            "pending_request_count": NumberType
+        }
+    )
+
     Projects = TypedDict(
         "Projects",
             {
@@ -81,7 +122,16 @@ Keyword arguments:
             "description": NotRequired[str],
             "date_created": NotRequired[str],
             "date_modified": NotRequired[str],
-            "icon": NotRequired[str]
+            "icon": NotRequired[str],
+            "access": NotRequired["ProjectsAccess"]
+        }
+    )
+
+    AccessMe = TypedDict(
+        "AccessMe",
+            {
+            "user_id": str,
+            "is_super_admin": bool
         }
     )
 
@@ -97,11 +147,15 @@ Keyword arguments:
         onFavoriteToggle: typing.Optional[typing.Any] = None,
         onInfo: typing.Optional[typing.Any] = None,
         favoriteIds: typing.Optional[typing.Sequence[str]] = None,
+        accessMe: typing.Optional["AccessMe"] = None,
+        userNames: typing.Optional[typing.Dict[typing.Union[str, float, int], str]] = None,
+        myPendingRequests: typing.Optional[typing.Dict[typing.Union[str, float, int], str]] = None,
+        onAccessAction: typing.Optional[typing.Any] = None,
         **kwargs
     ):
-        self._prop_names = ['favoriteIds', 'projectIconUrl', 'projects']
+        self._prop_names = ['accessMe', 'favoriteIds', 'myPendingRequests', 'projectIconUrl', 'projects', 'userNames']
         self._valid_wildcard_attributes =            []
-        self.available_properties = ['favoriteIds', 'projectIconUrl', 'projects']
+        self.available_properties = ['accessMe', 'favoriteIds', 'myPendingRequests', 'projectIconUrl', 'projects', 'userNames']
         self.available_wildcard_properties =            []
         _explicit_args = kwargs.pop('_explicit_args')
         _locals = locals()

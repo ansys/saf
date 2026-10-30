@@ -61,11 +61,36 @@ Keyword arguments:
 
     - icon (string; optional):
         URL for the project icon (per-project custom icon from the
-        API)."""
+        API).
+
+    - access (dict; optional):
+        Who owns, holds the write lock of and has access to the
+        project. `None` or absent when project access control is
+        disabled.
+
+        `access` is a dict with keys:
+
+        - owner_id (string; required)
+
+        - holder_id (string; required)
+
+        - my_role (a value equal to: 'owner', 'viewer'; required)
+
+        - pending_request_count (number; required)"""
     _children_props: typing.List[str] = []
     _base_nodes = ['children']
     _namespace = 'ansys_saf_projects_dashboard'
     _type = 'ProjectInfo'
+    ProjectAccess = TypedDict(
+        "ProjectAccess",
+            {
+            "owner_id": str,
+            "holder_id": str,
+            "my_role": Literal["owner", "viewer"],
+            "pending_request_count": NumberType
+        }
+    )
+
     Project = TypedDict(
         "Project",
             {
@@ -74,7 +99,8 @@ Keyword arguments:
             "description": NotRequired[str],
             "date_created": NotRequired[str],
             "date_modified": NotRequired[str],
-            "icon": NotRequired[str]
+            "icon": NotRequired[str],
+            "access": NotRequired["ProjectAccess"]
         }
     )
 

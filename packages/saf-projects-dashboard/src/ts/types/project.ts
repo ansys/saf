@@ -20,6 +20,57 @@ export interface Project {
   date_modified?: string;
   /** URL for the project icon (per-project custom icon from the API) */
   icon?: string;
+  /**
+   * Who owns, holds the write lock of and has access to the project.
+   * `null` or absent when project access control is disabled.
+   */
+  access?: ProjectAccessSummary | null;
+}
+
+/** Role of a user in a project. */
+export type ProjectRole = "owner" | "viewer";
+
+/** Access summary carried by each project of the list when access control is on. */
+export interface ProjectAccessSummary {
+  owner_id: string | null;
+  holder_id: string | null;
+  my_role: ProjectRole | null;
+  pending_request_count: number;
+}
+
+/** Who the calling user is, as far as project access control is concerned. */
+export interface AccessMe {
+  user_id: string | null;
+  is_super_admin: boolean;
+}
+
+export interface ProjectMember {
+  user_id: string;
+  role: ProjectRole;
+}
+
+export interface WriteRequest {
+  id: string;
+  requester_id: string;
+  status: "pending" | "approved" | "denied" | "withdrawn";
+  created_at: string;
+  decided_by?: string | null;
+  decided_at?: string | null;
+}
+
+/** Full access state of a project, as seen by the calling user. */
+export interface ProjectAccess {
+  project_id: string;
+  owner_id: string | null;
+  members: ProjectMember[];
+  holder_id: string | null;
+  lock_acquired_at: string | null;
+  last_write_at: string | null;
+  version: number;
+  pending_requests: WriteRequest[];
+  my_role: ProjectRole | null;
+  can_write: boolean;
+  is_orphan: boolean;
 }
 
 /**
@@ -113,6 +164,8 @@ export interface ProjectsFilters {
   dateModifiedFrom?: string;
   /** Inclusive upper bound on `date_modified`. */
   dateModifiedTo?: string;
+  /** Only list the projects without owner (super admins only). */
+  orphansOnly?: boolean;
 }
 
 /**

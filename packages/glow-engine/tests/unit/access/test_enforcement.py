@@ -30,6 +30,8 @@ from fastapi.testclient import TestClient
 from httpx2 import Response
 import pytest
 from pytest_mock import MockerFixture
+from sqlalchemy import event
+from sqlalchemy.engine import Engine
 from starlette.status import WS_1008_POLICY_VIOLATION
 
 from ansys.iam.oidc import DEFAULT_SUBPROTOCOL_PREFIX, encode_base64_token
@@ -37,6 +39,7 @@ from ansys.saf.glow._access.access_crud import AccessCrud
 from ansys.saf.glow._access.principal import ON_BEHALF_OF_HEADER, Principal
 from ansys.saf.glow._config.const import DatabaseType
 from ansys.saf.glow._config.settings import Settings
+from ansys.saf.glow._core.method_status import MethodStatus
 from ansys.saf.glow._crud.crud import Crud
 from ansys.saf.glow._crud.project_builder import ProjectBuilder
 from ansys.saf.glow._repository.sqlite_factory import SqliteSessionFactory
@@ -103,7 +106,25 @@ class World:
 
 
 @pytest.fixture
+def enforce_foreign_keys() -> Iterator[None]:
+    """Make SQLite enforce foreign keys like PostgreSQL does (it ignores them unless asked).
+
+    Applies to engines created while the fixture is active, so fixtures creating the app must depend on it.
+    """
+
+    def _enable(dbapi_connection: Any, _record: Any) -> None:
+        cursor = dbapi_connection.cursor()
+        cursor.execute("PRAGMA foreign_keys=ON")
+        cursor.close()
+
+    event.listen(Engine, "connect", _enable)
+    yield
+    event.remove(Engine, "connect", _enable)
+
+
+@pytest.fixture
 async def world(
+    enforce_foreign_keys: None,
     access_settings: Settings,
     as_user: Callable[..., dict[str, str]],
 ) -> AsyncGenerator[World]:
@@ -203,11 +224,13 @@ async def test_viewer_reads_succeed(world: World):
     ):
         response = world.client.get(url, headers=world.bob)
         assert response.status_code == 200, f"{url}: {response.status_code} {response.text}"
-    blob_url = f"{world.base}/steps/{STEP_URL}/blobs/transfer_entity_handle"
-    as_alice = world.client.get(blob_url, headers=world.alice)
-    as_bob = world.client.get(blob_url, headers=world.bob)
-    assert as_bob.status_code == as_alice.status_code
-    assert as_bob.status_code != 404 or "entity" in as_bob.json()["detail"]
+    # the holder stores a blob, the viewer downloads it
+    blob_url = f"{world.base}/steps/{BLOB}"
+    uploaded = world.client.put(blob_url, files={"upload_file": ("hello.txt", b"hello")}, headers=world.alice)
+    assert uploaded.status_code == 200, uploaded.text
+    downloaded = world.client.get(blob_url, headers=world.bob)
+    assert downloaded.status_code == 200, downloaded.text
+    assert downloaded.content == b"hello"
 
 
 async def test_viewer_writes_get_423(world: World):
@@ -339,7 +362,8 @@ async def test_transaction_rejected_if_lock_moved_before_prepare(world: World, m
     response = world.client.post(f"{world.base}/steps/{METHOD}", headers=world.alice)
     _assert_locked(response, "bob")
     state = world.client.get(f"{world.base}/steps/{METHOD}", headers=world.bob).json()
-    assert state["status"] != "Running"
+    # the method was never prepared: it did not start, run or complete
+    assert state["status"] == MethodStatus.RunRequired
 
 
 async def test_holder_transaction_runs_and_keeps_the_lock(world: World):
@@ -358,13 +382,22 @@ async def test_holder_transaction_runs_and_keeps_the_lock(world: World):
     _assert_locked(viewer, "alice")
 
 
-async def test_upgrade_keeps_owner_members_and_lock(world: World):
+async def test_upgrade_keeps_owner_members_lock_and_requests(world: World, enforce_foreign_keys: None):
+    # ``enforce_foreign_keys`` makes SQLite reject deleting the project row while access rows still reference it, as
+    # PostgreSQL does. (SQLite alone accepts that, so without it this test could not catch such a regression.)
+    request = await world.access.create_request(world.project_id, Principal("bob", False, False))
+    before = await world.access.get_access(world.project_id, ALICE)
+
     response = world.client.post(f"{world.base}:upgrade", headers=world.alice)
     assert response.status_code == 200, response.text
-    access = await world.access.get_access(world.project_id, ALICE)
-    assert access.owner_id == "alice"
-    assert access.holder_id == "alice"
-    assert {m.user_id for m in access.members} == {"alice", "bob"}
+
+    after = await world.access.get_access(world.project_id, ALICE)
+    assert after.owner_id == "alice"
+    assert after.holder_id == "alice"
+    assert after.members == before.members
+    assert [r.id for r in after.pending_requests] == [request.id]
+    assert after.lock_acquired_at == before.lock_acquired_at
+    assert world.client.get(f"{world.base}/steps/{STEP_URL}", headers=world.bob).status_code == 200
 
 
 async def test_late_callback_from_previous_holder_is_rejected(world: World):

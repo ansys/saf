@@ -307,12 +307,16 @@ class Crud:
             # which will be complex but involve updating the existing database rows rather
             # destroying then and starting again
             # having said that doing it this way makes the JSON to Relational upgrade conceptually simpler
-            # the project is rebuilt under the same id: it must keep its owner, members and write lock
-            await session.remove_project_from_database(project_id, keep_access=True)
+            # The project is rebuilt under the same id and must keep its owner, members, write lock and requests.
+            # Removing the project removes those rows (they reference the project row, which databases enforcing
+            # foreign keys require), so they are set aside and written back once the project exists again.
+            access_record = await session.get_access_record(project_id)
+            await session.remove_project_from_database(project_id)
             project_info = await session.build_project_in_database(
                 project_model,
                 project_id,
             )
+            await session.restore_access_record(access_record)
 
             return project_info
 

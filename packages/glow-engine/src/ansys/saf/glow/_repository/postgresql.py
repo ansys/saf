@@ -106,7 +106,7 @@ class PostgresqlSession(RelationalSession):
         )
         return bool(result.all())
 
-    async def remove_project_from_database(self, project_id: str, keep_access: bool = False) -> list[str]:
+    async def remove_project_from_database(self, project_id: str) -> list[str]:
         await self._log_event_listeners_for_project_delete_on_debug(project_id)
 
         event_listener_statement = (
@@ -156,8 +156,7 @@ class PostgresqlSession(RelationalSession):
         bdm_statement = delete(BdmLock).where(BdmLock.project_id == project_id)
         await self._session.execute(bdm_statement)
 
-        if not keep_access:
-            await self._delete_access_rows(project_id)
+        await self._delete_access_rows(project_id)
 
         project_statement = delete(Project).where(Project.id == project_id)
         result = await self._session.execute(project_statement)

@@ -133,6 +133,38 @@ class RelationalAccessMixin:
             requests=requests,
         )
 
+    async def restore_access_record(self, record: ProjectAccessRecord) -> None:
+        for member in record.members:
+            await self._session.execute(
+                insert(ProjectMember).values(
+                    project_id=record.project_id,
+                    user_id=member.user_id,
+                    role=member.role,
+                ),
+            )
+        if record.version:  # the lock row of a project with access rows always has a version of at least 1
+            await self._session.execute(
+                insert(ProjectWriteLock).values(
+                    project_id=record.project_id,
+                    holder_id=record.holder_id,
+                    acquired_at=record.acquired_at,
+                    last_write_at=record.last_write_at,
+                    version=record.version,
+                ),
+            )
+        for request in record.requests:
+            await self._session.execute(
+                insert(ProjectWriteRequest).values(
+                    id=request.id,
+                    project_id=record.project_id,
+                    requester_id=request.requester_id,
+                    status=request.status,
+                    created_at=request.created_at,
+                    decided_by=request.decided_by,
+                    decided_at=request.decided_at,
+                ),
+            )
+
     async def get_access_summaries(
         self,
         project_ids: list[str],

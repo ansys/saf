@@ -75,6 +75,14 @@ class AbstractRepositorySession(ABC):
         raise NotImplementedError()
 
     @abstractmethod
+    async def restore_access_record(self, record: ProjectAccessRecord) -> None:
+        """Writes back, verbatim, the access rows of a project that was removed and rebuilt under the same id.
+
+        The project row must exist, and no access row of the project may.
+        """
+        raise NotImplementedError()
+
+    @abstractmethod
     async def get_access_summaries(
         self,
         project_ids: list[str],
@@ -152,12 +160,8 @@ class AbstractRepositorySession(ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    async def remove_project_from_database(self, project_id: str, keep_access: bool = False) -> list[str]:
-        """Removes the project and returns the PIM names of its instances.
-
-        The access control rows of the project (members, write lock, write requests) are removed as well, unless
-        ``keep_access`` is set, which is for rebuilding the project under the same id.
-        """
+    async def remove_project_from_database(self, project_id: str) -> list[str]:
+        """Removes the project, including its access control rows, and returns the PIM names of its instances."""
         raise NotImplementedError()
 
     @abstractmethod

@@ -32,6 +32,7 @@ class State(BaseModel):
 class TokenRequest(BaseModel):
     issuer_name: str
     token_expiration_seconds: int | None = None
+    username: str | None = None
 
 
 app = FastAPI()
@@ -52,6 +53,8 @@ def get_claims(token_request: TokenRequest) -> dict[str, Any]:
     expiration_seconds = token_request.token_expiration_seconds or 3600
     claims: dict[str, Any] = {
         "iss": token_request.issuer_name,
+        # The requested username is the user id (``sub``), so tests can act as several users.
+        "sub": token_request.username or "glow_tests",
         "sid": "fake_session_id",
         "exp": datetime.datetime.now(tz=datetime.UTC) + datetime.timedelta(seconds=expiration_seconds),
         "iat": datetime.datetime.now(tz=datetime.UTC) - datetime.timedelta(hours=5),

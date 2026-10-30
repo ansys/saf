@@ -299,6 +299,7 @@ def _get_access_token(
     session_idp_mock_server: str,
     deployment_type: TestDeployment,
     expiration_seconds: int | None = None,
+    username: str | None = None,
 ) -> str:
     # Issuer is part of the token and it is part of its validation. The issuer is typically extracted from the
     # request URL, either when contacting the IDP mock server or when configuring the auth dependency in GLOW.
@@ -312,9 +313,24 @@ def _get_access_token(
     return str(
         httpx2.post(
             f"{session_idp_mock_server}/protocol/openid-connect/token",
-            json={"issuer_name": issuer_name, "token_expiration_seconds": expiration_seconds},
+            json={
+                "issuer_name": issuer_name,
+                "token_expiration_seconds": expiration_seconds,
+                # the mock IdP uses the username as the ``sub`` claim (``glow_tests`` when omitted)
+                "username": username,
+            },
         ).json()["access_token"],
     )
+
+
+@pytest.fixture
+def get_user_access_token(session_idp_mock_server: str, deployment_type: TestDeployment) -> Callable[[str], str]:
+    """Return a function creating an access token whose ``sub`` claim is the given username."""
+
+    def _internal_get_user_access_token(username: str) -> str:
+        return _get_access_token(session_idp_mock_server, deployment_type, username=username)
+
+    return _internal_get_user_access_token
 
 
 @pytest.fixture
@@ -371,6 +387,21 @@ def existing_project(
     # project is created making sure there are no auth errors. Tests will then check that proper authentication rules
     # are in place and valid tokens are passed when accessing it.
     return authenticated_client.create_project(random_project_display_name)
+
+
+class ProjectAccessControlConfiguration(BaseGlowConfiguration):
+    config_type = "project_access_control"
+
+
+class EnableProjectAccessControlConfiguration(ProjectAccessControlConfiguration):
+    """Turn per-project access control on. It requires authentication validation to be enabled as well."""
+
+    @property
+    def env_vars_to_configure(self) -> EnvVars:
+        return EnvVars(
+            env_vars={"GLOW_PROJECT_ACCESS_CONTROL_ENABLED": "True"},
+            only_api=["GLOW_PROJECT_ACCESS_CONTROL_ENABLED"],
+        )
 
 
 class GlowApiKeyConfiguration(BaseGlowConfiguration):

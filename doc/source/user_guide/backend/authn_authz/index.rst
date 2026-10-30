@@ -31,6 +31,14 @@ Authentication and authorization
 
       Documentation for authenticating with Minerva systems, covering impersonation, interactive flows, and username/password authentication methods.
 
+   .. grid-item-card:: :material-outlined:`group;1.75em` :ref:`project_access_control`
+      :class-card: highlight-card
+      :link-type: doc
+      :link: project_access_control
+      :shadow: lg
+
+      Guide to per-project ownership, sharing, and the single-writer write lock, including roles, status codes, settings, DashClient helpers, and the user directory.
+
 
 .. toctree::
    :maxdepth: 2
@@ -39,3 +47,4 @@ Authentication and authorization
    authentication
    hps_authentication
    minerva_authentication
+   project_access_control

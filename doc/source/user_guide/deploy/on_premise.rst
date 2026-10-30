@@ -216,3 +216,39 @@ Choose the right deployment
 
 - **Choose K3s (Linux)** if you need Kubernetes-native management, GitOps-compatible
   deployments, and built-in rollback capabilities for enterprise-scale environments.
+
+
+.. _on-premise-project-access-control:
+
+Project access control
+======================
+
+An on-premise deployment is shared by several users. By default, any user who can open a solution can open and modify all its projects. To make projects private by default, share them on purpose, and allow only one person at a time to modify a project, enable project access control. For a complete description, see :ref:`project_access_control`.
+
+Set the following environment variables on the Solution API server. Authentication must be enabled (``GLOW_AUTH_DISABLED=False``), otherwise the server refuses to start.
+
+.. code-block:: bash
+
+    GLOW_PROJECT_ACCESS_CONTROL_ENABLED=True
+
+    # Optional: seconds of inactivity after which a write lock is released (default: 28800)
+    GLOW_PROJECT_LOCK_IDLE_TIMEOUT=28800
+    # Optional: seconds after which a running method is considered stuck (default: 86400)
+    GLOW_PROJECT_STUCK_METHOD_TIMEOUT=86400
+
+    # Optional: where the roles are in the access token (default: resource_access.{client_id}.roles)
+    GLOW_AUTH_ROLES_CLAIM=resource_access.{client_id}.roles
+    # Optional: roles that can manage the projects of all users (default: none)
+    GLOW_AUTH_SUPER_ADMIN_ROLES=portal_admin
+
+To let users share a project by typing an e-mail or a user name, configure the user directory on the Solution UI server. With Keycloak, this requires a client with a service account that has only the ``view-users`` role of the ``realm-management`` client:
+
+.. code-block:: bash
+
+    GLOW_UI_USER_DIRECTORY=keycloak
+    GLOW_UI_KEYCLOAK_URL=https://your-keycloak-server/auth
+    GLOW_UI_KEYCLOAK_REALM=your-realm
+    GLOW_UI_KEYCLOAK_CLIENT_ID=your-directory-client
+    GLOW_UI_KEYCLOAK_CLIENT_SECRET=the-client-secret
+
+Without a user directory, projects can still be shared by user id.

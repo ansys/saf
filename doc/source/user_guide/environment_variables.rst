@@ -499,6 +499,63 @@ Authentication
        **Example:** ``portal_admin``
      - ``None``
 
+   * - :envvar:`GLOW_AUTH_ROLES_CLAIM`
+     - Dotted path of the access token claim that holds the roles of the user. The placeholder ``{client_id}``
+       is replaced with :envvar:`GLOW_AUTH_CLIENT_ID`. Used by the role checks and by project access control.
+
+       **Example:** ``roles``
+     - ``resource_access.{client_id}.roles``
+
+   * - :envvar:`GLOW_AUTH_SUPER_ADMIN_ROLES`
+     - Comma-separated list of roles that grant super admin rights over the projects of all users when
+       :ref:`project access control <project_access_control>` is enabled.
+
+       **Example:** ``portal_admin``
+     - Empty (no super admin)
+
+   * - :envvar:`GLOW_PROJECT_ACCESS_CONTROL_ENABLED`
+     - Enables per-user project access control (owner, viewer, and single-writer lock). Requires authentication
+       to be enabled. See :ref:`project_access_control`.
+     - ``False``
+
+   * - :envvar:`GLOW_PROJECT_LOCK_IDLE_TIMEOUT`
+     - Seconds without a write by the holder after which a project write lock is released.
+     - ``28800``
+
+   * - :envvar:`GLOW_PROJECT_STUCK_METHOD_TIMEOUT`
+     - Seconds after which a running method is considered stuck and the owner or a super admin can mark it
+       as failed.
+     - ``86400``
+
+   * - :envvar:`GLOW_PROJECT_ACCESS_POLL_INTERVAL`
+     - Seconds between two checks for changes of the access state of a project, on the live access stream.
+     - ``1.0``
+
+   * - :envvar:`GLOW_UI_USER_DIRECTORY`
+     - User directory that the Solution UI server uses to find users when sharing a project: ``none``,
+       ``keycloak``, ``scim``, or ``msgraph`` (the last two are not implemented yet).
+       See :ref:`project_access_user_directory`.
+     - ``none``
+
+   * - :envvar:`GLOW_UI_KEYCLOAK_URL`
+     - Base URL of the Keycloak server used as user directory.
+
+       **Example:** ``https://my-keycloak/auth``
+     - ``None``
+
+   * - :envvar:`GLOW_UI_KEYCLOAK_REALM`
+     - Keycloak realm used as user directory.
+     - ``None``
+
+   * - :envvar:`GLOW_UI_KEYCLOAK_CLIENT_ID`
+     - Client ID used to query the Keycloak user directory. Its service account needs only the ``view-users``
+       role of the ``realm-management`` client.
+     - ``None``
+
+   * - :envvar:`GLOW_UI_KEYCLOAK_CLIENT_SECRET`
+     - Client secret used to query the Keycloak user directory.
+     - ``None``
+
    * - :envvar:`GLOW_API_KEY`
      - Provides the API key for authenticating local requests to the API server.
 

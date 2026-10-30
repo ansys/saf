@@ -24,6 +24,12 @@ class MockFlaskServer:
     def before_request(self, func: Callable[[], Any]) -> Callable[[], Any]:
         return func
 
+    def get(self, rule: str, **options: Any) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
+        return lambda func: func
+
+    def post(self, rule: str, **options: Any) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
+        return lambda func: func
+
 
 class MockUI:
     def __init__(self) -> None:

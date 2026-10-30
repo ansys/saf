@@ -14,6 +14,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from ansys.saf.glow._access.schemas import (
+    ProjectAccess,
+    ProjectMemberInfo,
+    ProjectRole,
+    WriteRequestInfo,
+    WriteRequestStatus,
+)
 from ansys.saf.glow._client.client import Client
 from ansys.saf.glow._client.dashclient import DashClient, callback
 from ansys.saf.glow._config.const import Deployment
@@ -48,4 +55,9 @@ __all__ = [
     "OperatingSystemPath",
     "OperatingSystemStorage",
     "AnalysisResultModel",
+    "ProjectAccess",
+    "ProjectMemberInfo",
+    "ProjectRole",
+    "WriteRequestInfo",
+    "WriteRequestStatus",
 ]

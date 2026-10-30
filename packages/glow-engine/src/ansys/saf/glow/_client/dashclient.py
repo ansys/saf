@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from collections.abc import Callable
+from collections.abc import Callable, Sequence
 from functools import wraps
 import importlib
 import inspect
@@ -23,9 +23,11 @@ import os
 from typing import Any, Generic, TypeVar
 
 from fastapi.security.utils import get_authorization_scheme_param
+import httpx2
 from opentelemetry import trace
 
 from ansys.iam.oidc import DEFAULT_SUBPROTOCOL_PREFIX, encode_base64_token
+from ansys.saf.glow._access.schemas import ProjectAccess, WriteRequestInfo
 from ansys.saf.glow._client.client import Client
 from ansys.saf.glow._config.const import (
     GLOW_API_URL,
@@ -38,11 +40,13 @@ from ansys.saf.glow._config.const import (
 )
 from ansys.saf.glow._core.solution import Solution
 from ansys.saf.glow._core.step_model import StepModel
+from ansys.saf.glow._telemetry.inject_trace_http_transport import InjectTraceTransport
 from ansys.saf.glow._utilities.conversion import python_identifier_to_url_part
 from ansys.saf.glow._utilities.solution_modules import find_solution
 
 T = TypeVar("T", bound=Solution)
 logger = logging.getLogger(__name__)
+_ACCESS_TIMEOUT_SECONDS = 60
 
 
 class DashClient(Generic[T]):
@@ -156,13 +160,18 @@ class DashClient(Generic[T]):
          >>>     else:
          >>>         return "No message received yet."
         """
+        step_id = python_identifier_to_url_part(step._step_name)  # type: ignore
+        project_id = step._project_url.rstrip("/").split("/")[-1]  # type: ignore
+        return DashClient._create_websocket(  # pyright: ignore[reportPrivateUsage]
+            f"/events/projects/{project_id}/steps/{step_id}/streams/{stream_name}",
+            id,
+        )
+
+    @staticmethod
+    def _create_websocket(path: str, id: str) -> "WebSocket":  # noqa: A002, F821  # pyright: ignore[reportUndefinedVariable, reportUnknownParameterType]
         # keep flask and dash_extensions an optional dependency
         from dash_extensions import WebSocket  # pyright: ignore[reportMissingTypeStubs]
         import flask
-
-        step_id = python_identifier_to_url_part(step._step_name)  # type: ignore
-        project_id = step._project_url.rstrip("/").split("/")[-1]  # type: ignore
-        project_name = f"projects/{project_id}"
 
         api_url = os.environ.get(GLOW_WS_EVENTS_ADDR)
         if not api_url:
@@ -174,10 +183,7 @@ class DashClient(Generic[T]):
             api_url_with_ws = f"ws://{api_url_with_ws}"
         logger.info(f"Creating websocket with url={api_url_with_ws} and id={id}")
 
-        websocket_args: Any = {
-            "id": id,
-            "url": f"{api_url_with_ws}/events/{project_name}/steps/{step_id}/streams/{stream_name}",
-        }
+        websocket_args: Any = {"id": id, "url": f"{api_url_with_ws}{path}"}
 
         if flask.has_request_context():
             scheme, token = get_authorization_scheme_param(flask.request.headers.get("Authorization"))
@@ -187,6 +193,142 @@ class DashClient(Generic[T]):
                 websocket_args["protocols"] = [f"{DEFAULT_SUBPROTOCOL_PREFIX}{encoded_token}"]
 
         return WebSocket(**websocket_args)
+
+    @staticmethod
+    def create_access_listener(project_id: str, id: str) -> "WebSocket":  # noqa: A002, F821  # pyright: ignore[reportUndefinedVariable, reportUnknownParameterType]
+        """Return a WebSocket that receives the access state of a project (as a
+        :py:class:`~ansys.saf.glow.client.ProjectAccess` JSON document) on connection and each time it changes.
+
+        Parameters
+        ----------
+        project_id : str
+            The identifier of the project.
+        id : str
+            The identifier used on the HTML element that contains the WebSocket.
+
+        Returns
+        -------
+        WebSocket
+            A WebSocket configured to receive the access state of the project.
+        """
+        return DashClient._create_websocket(  # pyright: ignore[reportPrivateUsage]
+            f"/events/projects/{project_id}/access",
+            id,
+        )
+
+    # ----------------------------------------------------------------------------------------------------------------
+    # Project access control. These helpers must be called inside a Dash callback, as they forward the credentials of
+    # the user of the current request to the GLOW API.
+
+    @staticmethod
+    def _access_request(method: str, path: str, body: dict[str, Any] | None = None) -> httpx2.Response:
+        """Send a request to the GLOW API on behalf of the current user. Raises ``httpx2.HTTPStatusError`` on errors."""
+        headers: dict[str, str] = {}
+        auth_header = DashClient._auth_header_from_ctx()  # pyright: ignore[reportPrivateUsage]
+        if auth_header:
+            headers["Authorization"] = auth_header
+        url = f"{os.environ[GLOW_API_URL].rstrip('/')}{path}"
+        with httpx2.Client(
+            timeout=_ACCESS_TIMEOUT_SECONDS, transport=InjectTraceTransport(), headers=headers
+        ) as client:
+            response = client.request(method, url, json=body)
+            response.raise_for_status()
+            return response
+
+    @staticmethod
+    def _access_action(method: str, path: str, body: dict[str, Any] | None = None) -> ProjectAccess:
+        return ProjectAccess.model_validate(DashClient._access_request(method, path, body).json())  # pyright: ignore[reportPrivateUsage]
+
+    @staticmethod
+    def get_project_access(project_id: str) -> ProjectAccess | None:
+        """Return the access state of a project as seen by the current user, or ``None`` if project access
+        control is not enabled.
+
+        Raises
+        ------
+        httpx2.HTTPStatusError
+            If the project does not exist or the user may not access it.
+        """
+        try:
+            DashClient._access_request("GET", "/access/me")  # pyright: ignore[reportPrivateUsage]
+        except httpx2.HTTPStatusError as ex:
+            if ex.response.status_code == 404:
+                return None  # the access routes are not registered: the feature is disabled
+            raise
+        return DashClient._access_action("GET", f"/projects/{project_id}/access")  # pyright: ignore[reportPrivateUsage]
+
+    @staticmethod
+    def acquire_lock(project_id: str) -> ProjectAccess:
+        """Acquire the write lock of the project."""
+        return DashClient._access_action("POST", f"/projects/{project_id}/lock:acquire")  # pyright: ignore[reportPrivateUsage]
+
+    @staticmethod
+    def release_lock(project_id: str) -> ProjectAccess:
+        """Release the write lock of the project."""
+        return DashClient._access_action("POST", f"/projects/{project_id}/lock:release")  # pyright: ignore[reportPrivateUsage]
+
+    @staticmethod
+    def take_over_lock(project_id: str) -> ProjectAccess:
+        """Take the write lock from its current holder. Owner only."""
+        return DashClient._access_action("POST", f"/projects/{project_id}/lock:take-over")  # pyright: ignore[reportPrivateUsage]
+
+    @staticmethod
+    def request_write_access(project_id: str) -> WriteRequestInfo:
+        """Ask the holder of the write lock to hand it over."""
+        response = DashClient._access_request("POST", f"/projects/{project_id}/write-requests")  # pyright: ignore[reportPrivateUsage]
+        return WriteRequestInfo.model_validate(response.json())
+
+    @staticmethod
+    def withdraw_request(project_id: str, request_id: str) -> ProjectAccess:
+        """Withdraw a write request made by the current user."""
+        return DashClient._access_action(  # pyright: ignore[reportPrivateUsage]
+            "POST",
+            f"/projects/{project_id}/write-requests/{request_id}:withdraw",
+        )
+
+    @staticmethod
+    def approve_request(project_id: str, request_id: str) -> ProjectAccess:
+        """Approve a write request, handing the write lock over to the requester."""
+        return DashClient._access_action(  # pyright: ignore[reportPrivateUsage]
+            "POST",
+            f"/projects/{project_id}/write-requests/{request_id}:approve",
+        )
+
+    @staticmethod
+    def deny_request(project_id: str, request_id: str) -> ProjectAccess:
+        """Deny a write request."""
+        return DashClient._access_action(  # pyright: ignore[reportPrivateUsage]
+            "POST",
+            f"/projects/{project_id}/write-requests/{request_id}:deny",
+        )
+
+    @staticmethod
+    def share_project(project_id: str, user_id: str) -> ProjectAccess:
+        """Share the project with a user, as a viewer. Owner only."""
+        return DashClient._access_action(  # pyright: ignore[reportPrivateUsage]
+            "POST",
+            f"/projects/{project_id}/access/members",
+            {"user_id": user_id},
+        )
+
+    @staticmethod
+    def unshare_project(project_id: str, user_id: str) -> ProjectAccess:
+        """Stop sharing the project with a user. Owner only."""
+        return DashClient._access_action("DELETE", f"/projects/{project_id}/access/members/{user_id}")  # pyright: ignore[reportPrivateUsage]
+
+    @staticmethod
+    def resolve_user(identifier: str) -> str | None:
+        """Resolve what a user typed (email, username...) into a user id, or ``None`` if there is no such user."""
+        from ansys.saf.glow._ui.user_directory import get_user_directory
+
+        return get_user_directory().resolve(identifier)
+
+    @staticmethod
+    def display_names(user_ids: Sequence[str]) -> dict[str, str]:
+        """Return the display name of each user id that can be resolved."""
+        from ansys.saf.glow._ui.user_directory import get_user_directory
+
+        return get_user_directory().display_names(user_ids)
 
 
 class callback:  # noqa: N801

@@ -213,7 +213,7 @@ tasks:
     args:
       - "run"
       - "--script"
-      - "packages/saf-cli/scripts/test_upgrade_solution_template_poetry_lock.py"
+      - "packages/saf-cli/scripts/test_upgrade_solution_template_uv_lock.py"
     inputs:
       - "packages/saf-cli/tests/upgrade_solution_templates/**/*"
     options:

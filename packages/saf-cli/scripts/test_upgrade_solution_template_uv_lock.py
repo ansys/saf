@@ -17,9 +17,10 @@
 # requires-python = ">=3.11"
 # dependencies = [
 #     "ansys-saf-cli",
-#     "poetry==2.5.1",
+#     "packaging>=24.2",
 #     "pytest>=9.0.3,<10",
 #     "python-dotenv>=1.0.0,<2",
+#     "tomlkit>=0.14.0,<1.0.0",
 # ]
 #
 # [tool.uv.sources]
@@ -35,8 +36,8 @@ import sys
 
 import pytest
 
-script = Path(__file__).resolve().with_name("upgrade_solution_template_poetry_lock.py")
-spec = importlib.util.spec_from_file_location("upgrade_solution_template_poetry_lock", script)
+script = Path(__file__).resolve().with_name("upgrade_solution_template_uv_lock.py")
+spec = importlib.util.spec_from_file_location("upgrade_solution_template_uv_lock", script)
 assert spec is not None
 assert spec.loader is not None
 updater = importlib.util.module_from_spec(spec)
@@ -50,19 +51,21 @@ class TestLockfileUpdater:
         self.monkeypatch = monkeypatch
         self.root = tmp_path
         self.lock_dir = self.root / "templates" / "lock_files"
-        self.source = self.lock_dir / "dash" / "poetry.lock"
+        self.source = self.lock_dir / "dash" / "uv.lock"
         self.source.parent.mkdir(parents=True)
         self.write_lock(self.source, "1.0", "1.5")
         self.solution = self.root / "solution"
         self.solution.mkdir()
         (self.solution / "pyproject.toml").write_text(
-            '[tool.poetry.dependencies]\npython = ">=3.11"\nparent = "^1"\n'
-            '[tool.poetry.group.tests.dependencies]\ndirect_test = "^1"\n',
+            '[project]\nname = "solution"\nversion = "0.1.0"\ndependencies = ["parent>=1"]\n'
+            '[project.optional-dependencies]\nextra = ["direct_extra>=1"]\n'
+            '[dependency-groups]\ntests = ["direct_test>=1", { include-group = "other" }]\n'
+            'other = ["direct_other>=1"]\n',
         )
         self.alert = updater.Alert(
             1,
             "https://github.com/ansys/saf/security/dependabot/1",
-            "templates/lock_files/dash/poetry.lock",
+            "templates/lock_files/dash/uv.lock",
             "child",
             "GHSA-test",
             "high",
@@ -77,7 +80,11 @@ class TestLockfileUpdater:
 
     @staticmethod
     def write_lock(path: Path, *versions: str) -> None:
-        path.write_text("".join(f'[[package]]\nname = "child"\nversion = "{version}"\n' for version in versions))
+        path.write_text(
+            '[[package]]\nname = "solution"\nversion = "0.1.0"\nsource = { editable = "." }\n\n'
+            + "".join(f'[[package]]\nname = "child"\nversion = "{version}"\n\n' for version in versions),
+            encoding="utf-8",
+        )
 
     def test_all_locked_versions_and_disjoint_ranges(self) -> None:
         alert = replace(self.alert, affected=">=1.0, <2.0 || >=3.0, <3.2")
@@ -85,16 +92,43 @@ class TestLockfileUpdater:
         assert not updater.is_affected(alert, ["2.1", "3.2"])
         assert not updater.is_affected(alert, [])
 
+    def test_range_syntax_and_prereleases(self) -> None:
+        assert updater.is_affected(replace(self.alert, affected="= 1.0"), ["1.0"])
+        assert not updater.is_affected(replace(self.alert, affected="= 1.0"), ["1.1"])
+        assert updater.is_affected(replace(self.alert, affected="< 2.0"), ["2.0rc1"])
+        assert not updater.is_affected(replace(self.alert, affected=">= 2.0"), ["2.0rc1"])
+        with pytest.raises(ValueError, match="Unsupported vulnerable version range"):
+            updater.is_affected(replace(self.alert, affected="~> 1.0"), ["1.0"])
+
+    def test_direct_dependencies_cover_all_pyproject_tables(self) -> None:
+        assert updater.direct_dependencies(self.solution / "pyproject.toml") == {
+            "parent",
+            "direct-extra",
+            "direct-test",
+            "direct-other",
+        }
+
+    def test_template_lock_templates_solution_package(self) -> None:
+        self.write_lock(self.solution / "uv.lock", "2.0")
+        content = updater.to_template_lock(self.solution / "uv.lock")
+        assert 'name = "{{ cookiecutter.__pkg_name }}"' in content
+        assert 'version = "{{ cookiecutter.__version }}"' in content
+        assert 'name = "solution"' not in content
+        assert "\r" not in content
+        self.source.write_text('[[package]]\nname = "child"\nversion = "1.0"\n', encoding="utf-8")
+        with pytest.raises(RuntimeError, match="exactly one editable solution package"):
+            updater.to_template_lock(self.source)
+
     def test_markdown_report_saved_under_repository_root(
         self,
         capsys: pytest.CaptureFixture[str],
     ) -> None:
-        self.write_lock(self.solution / "poetry.lock", "2.0")
+        self.write_lock(self.solution / "uv.lock", "2.0")
         alert = replace(self.alert, advisory="GHSA-test-\u00e9")
         updater.report_alerts(
             [alert],
             {1: "REMEDIATED in proposed lockfile"},
-            {"dash": self.solution / "poetry.lock"},
+            {"dash": self.solution / "uv.lock"},
         )
         report = self.root / "dist" / "solution-template-dependabot-report.md"
         contents = report.read_text(encoding="utf-8")
@@ -123,7 +157,7 @@ class TestLockfileUpdater:
         direct = replace(self.alert, number=2, package="direct-test")
         unpatched = replace(self.alert, number=3, patched=None)
         safe = replace(self.alert, number=4, affected="<1.0")
-        unsupported = replace(self.alert, number=5, manifest="templates/lock_files/other/poetry.lock")
+        unsupported = replace(self.alert, number=5, manifest="templates/lock_files/other/uv.lock")
         with self.source.open("a") as stream:
             stream.write('[[package]]\nname = "direct_test"\nversion = "1.0"\n')
         updates, statuses = updater.plan_updates(
@@ -154,8 +188,8 @@ class TestLockfileUpdater:
             [item(1, self.alert.manifest)],
             [
                 item(2, self.alert.manifest),
-                item(3, "packages/other/poetry.lock"),
-                item(4, "templates/lock_files-extra/dash/poetry.lock"),
+                item(3, "packages/other/uv.lock"),
+                item(4, "templates/lock_files-extra/dash/uv.lock"),
             ],
         ]
         result = subprocess.CompletedProcess([], 0, json.dumps(payload), "")
@@ -258,7 +292,7 @@ class TestLockfileUpdater:
         assert statuses[1] == "PLANNED"
         assert statuses[2].startswith("ALREADY SAFE")
 
-        staged_lockfile = self.solution / "poetry.lock"
+        staged_lockfile = self.solution / "uv.lock"
         self.write_lock(staged_lockfile, "2.1")
         assert not updater.verify_alerts(
             alerts,
@@ -271,12 +305,12 @@ class TestLockfileUpdater:
     def test_failure_in_second_variant_preserves_first(self) -> None:
         second = self.root / "second-solution"
         second.mkdir()
-        self.write_lock(self.solution / "poetry.lock", "2.0")
+        self.write_lock(self.solution / "uv.lock", "2.0")
         original = self.source.read_bytes()
 
-        def poetry(solution: Path, *arguments: str) -> None:
+        def uv(solution: Path, *arguments: str) -> None:
             if solution == second:
-                raise subprocess.CalledProcessError(1, ["poetry", *arguments])
+                raise subprocess.CalledProcessError(1, ["uv", *arguments])
 
         self.monkeypatch.setattr(updater, "UI_FRAMEWORKS", ["dash", "none"])
         self.monkeypatch.setattr(
@@ -284,7 +318,7 @@ class TestLockfileUpdater:
             "generate_solution",
             lambda directory, framework: self.solution if framework == "dash" else second,
         )
-        self.monkeypatch.setattr(updater, "run_poetry", poetry)
+        self.monkeypatch.setattr(updater, "run_uv", uv)
         with pytest.raises(subprocess.CalledProcessError):
             updater.update_lockfiles(["child"], False, "ansys/saf", False)
         assert self.source.read_bytes() == original
@@ -294,17 +328,17 @@ class TestLockfileUpdater:
     ) -> tuple[int, list[tuple[str, ...]]]:
         calls: list[tuple[str, ...]] = []
 
-        def poetry(solution: Path, *arguments: str) -> None:
+        def uv(solution: Path, *arguments: str) -> None:
             calls.append(arguments)
-            if fail and arguments[0] == "check":
-                raise subprocess.CalledProcessError(1, ["poetry", *arguments])
-            if arguments[0] == "update":
-                self.write_lock(solution / "poetry.lock", patched_version)
+            if fail and "--check" in arguments:
+                raise subprocess.CalledProcessError(1, ["uv", *arguments])
+            if "--upgrade-package" in arguments:
+                self.write_lock(solution / "uv.lock", patched_version)
 
-        self.write_lock(self.solution / "poetry.lock", "1.0", "1.5")
+        self.write_lock(self.solution / "uv.lock", "1.0", "1.5")
         self.monkeypatch.setattr(updater, "fetch_alerts", lambda repository: [self.alert])
         self.monkeypatch.setattr(updater, "generate_solution", lambda directory, framework: self.solution)
-        self.monkeypatch.setattr(updater, "run_poetry", poetry)
+        self.monkeypatch.setattr(updater, "run_uv", uv)
         result = updater.update_lockfiles([], True, "ansys/saf", dry_run)
         return result, calls
 
@@ -312,7 +346,10 @@ class TestLockfileUpdater:
         result, calls = self.run_update("2.0")
         assert result == 0
         assert updater.locked_versions(self.source)["child"] == ["2.0"]
-        assert calls == [("lock",), ("update", "--lock", "child"), ("check", "--lock")]
+        assert calls == [("lock",), ("lock", "--upgrade-package", "child"), ("lock", "--check")]
+        content = self.source.read_text(encoding="utf-8")
+        assert 'name = "{{ cookiecutter.__pkg_name }}"' in content
+        assert 'version = "{{ cookiecutter.__version }}"' in content
 
     def test_unresolved_alert_does_not_modify_repository(self) -> None:
         original = self.source.read_bytes()
@@ -330,7 +367,7 @@ class TestLockfileUpdater:
         assert "Dry run" in contents
         assert "PLANNED" in contents
 
-    def test_poetry_validation_failure_refreshes_report_without_copying(self) -> None:
+    def test_uv_validation_failure_refreshes_report_without_copying(self) -> None:
         original = self.source.read_bytes()
         report = self.root / "dist" / "solution-template-dependabot-report.md"
         report.parent.mkdir()
@@ -341,20 +378,20 @@ class TestLockfileUpdater:
         report_contents = report.read_text(encoding="utf-8")
         assert "stale report" not in report_contents
         assert self.alert.url in report_contents
-        assert "No lockfiles copied: Poetry resolution or validation failed." in report_contents
-        assert "FAILED: Poetry command exited with code 1" in report_contents
+        assert "No lockfiles copied: uv resolution or validation failed." in report_contents
+        assert "FAILED: uv command exited with code 1" in report_contents
 
     def test_manual_mode_preserves_targeted_update(self) -> None:
-        self.write_lock(self.solution / "poetry.lock", "2.0")
+        self.write_lock(self.solution / "uv.lock", "2.0")
         calls: list[tuple[Path, tuple[str, ...]]] = []
 
-        def poetry(solution: Path, *arguments: str) -> None:
+        def uv(solution: Path, *arguments: str) -> None:
             calls.append((solution, arguments))
 
         self.monkeypatch.setattr(updater, "generate_solution", lambda directory, framework: self.solution)
-        self.monkeypatch.setattr(updater, "run_poetry", poetry)
+        self.monkeypatch.setattr(updater, "run_uv", uv)
         assert updater.update_lockfiles(["child"], False, "ansys/saf", False) == 0
-        assert calls[1] == (self.solution, ("update", "--lock", "child"))
+        assert calls[1] == (self.solution, ("lock", "--upgrade-package", "child"))
 
 
 if __name__ == "__main__":

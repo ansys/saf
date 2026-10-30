@@ -15,21 +15,25 @@
 # limitations under the License.
 
 from collections.abc import Callable
+import contextlib
 import os
 from pathlib import Path
 import platform
 import re
+import time
 
 import httpx2
 import pytest
 from tenacity import TryAgain, retry, stop_after_attempt, wait_fixed
 
 from ansys.saf.glow.client import Client, InternalSolutionException
+from ansys.saf.glow.solution import MethodStatus
 from ansys.saf.testing.hps import GetHpsJobIdsType
 from ansys.saf.testing.network import get_docker_gateway_ip
 from ansys.saf.testing.pim.process import PimProcess
 from ansys.saf.testing.solution.const import TestDeployment, TestProductInstanceSystemType
 from ansys.saf.testing.solution.end_to_end import GlowBaseProcess, ProjectFixture
+from tests.e2e.client_server.conftest import wait_for_method
 from tests.e2e.conftest import PACKAGE_ROOT
 from tests.mocks.solution_end_to_end.solution.definition import EndToEndSolution
 
@@ -60,6 +64,68 @@ class TestCustomProductInstances:
         if len(project_files) != 1:
             raise TryAgain
         return project_files[0]
+
+    def test_client_can_read_live_file_while_custom_http_product_writes(
+        self,
+        function_project: ProjectFixture[EndToEndSolution],
+    ):
+        step = function_project.project.steps.custom_http_shared_instance_step
+
+        assert not step.live_file.exists()
+
+        method = step.write_to_live_file_progressively_from_custom_http_product_instance()
+        observed_contents: set[str] = set()
+
+        wait_for_method(
+            "write_to_live_file_progressively_from_custom_http_product_instance",
+            step.get_method_state,
+            MethodStatus.RunRequired,
+        )
+
+        deadline = time.time() + 20
+
+        while step.get_method_state("write_to_live_file_progressively_from_custom_http_product_instance").status == (
+            MethodStatus.Running
+        ):
+            with contextlib.suppress(FileNotFoundError):
+                observed_contents.add(step.live_file.read_text())
+            time.sleep(0.02)
+            if time.time() >= deadline:
+                pytest.fail("Timed out while waiting to observe LiveFile updates from the custom product.")
+
+        method.wait()
+
+        assert step.live_file.exists()
+        assert step.live_file.read_text() == "012345"
+        assert any(content in {"0", "01", "012", "0123", "01234"} for content in observed_contents)
+
+    def test_transaction_can_read_live_file_written_by_custom_http_product(
+        self,
+        function_project: ProjectFixture[EndToEndSolution],
+    ):
+        step = function_project.project.steps.custom_http_shared_instance_step
+
+        assert not step.live_file.exists()
+
+        step.read_live_file_written_by_custom_http_product_instance()
+
+        assert step.live_file.exists()
+        assert step.live_file.read_text() == "HELLO WORLD"
+        assert step.value == "Hello World,HELLO WORLD"
+
+    def test_live_file_path_not_exposed_to_client_after_custom_http_product_writes(
+        self,
+        function_project: ProjectFixture[EndToEndSolution],
+    ):
+        step = function_project.project.steps.custom_http_shared_instance_step
+
+        assert not step.live_file.exists()
+
+        step.read_live_file_written_by_custom_http_product_instance()
+
+        assert step.live_file.exists()
+        assert step.live_file.read_text() == "HELLO WORLD"
+        assert not hasattr(step.live_file, "path")
 
     @pytest.mark.parametrize(
         "instance_name",

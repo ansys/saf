@@ -2051,16 +2051,16 @@ wheels = [
 
 [[package]]
 name = "ariadne"
-version = "1.1.0"
+version = "1.1.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "graphql-core" },
     { name = "starlette" },
     { name = "typing-extensions" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/c8/e6/731c5ae5546893a2220f4a5fa635124033b2f5123d3720b978b85fdbd054/ariadne-1.1.0.tar.gz", hash = "sha256:847b5b399e56e4781f851b4ee3f3fd443d6c379e64a4828a792e8264b597c9e4", size = 90720, upload-time = "2026-06-15T11:07:36.795Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/f1/81/0dd688084f4dcf1a65ab7d77f2ed51d60b9ab753238a83039056008ce421/ariadne-1.1.1.tar.gz", hash = "sha256:72fd197925408520f3b22c718396bb3bdaf6ab5deca1cbd2ebb64be7e5b35358", size = 92476, upload-time = "2026-10-07T11:59:51.497Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/f6/48/e0bd1918ef56b1a570dfc1882a036286bf4b3f13e5a659a8d9e16d888c69/ariadne-1.1.0-py3-none-any.whl", hash = "sha256:1f5ee6fa0a2fe855b7587cccb8a5d24ff8c982789b15d860aed58c509aad9b48", size = 127587, upload-time = "2026-06-15T11:07:35.561Z" },
+    { url = "https://files.pythonhosted.org/packages/46/f3/26840f06bd2e31810a478cfda1b72ae8481ec7413ca285cf779cf8a482cf/ariadne-1.1.1-py3-none-any.whl", hash = "sha256:af71765ac085b333545bbf7a08217308e2f9c5db62737fea03b2de958b1b446c", size = 129598, upload-time = "2026-10-07T11:59:49.847Z" },
 ]
 
 [[package]]

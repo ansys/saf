@@ -30,7 +30,7 @@ import dash_mantine_components as dmc
 
 from saf.solutions.examples.solution.adr_step import AdrStep
 from saf.solutions.examples.solution.definition import ExamplesSolution
-from saf.solutions.examples.solution.logic.adr_reference.adr_settings import check_adr_availability
+from saf.solutions.examples.solution.logic.adr_reference.adr_settings import MEDIA_URL, check_adr_availability
 from saf.solutions.examples.solution.logic.adr_reference.report_definition import build_project_tag
 
 logger = logging.getLogger(__name__)
@@ -47,6 +47,29 @@ PDF_FILE_NAME = "adr_reference_report.pdf"
 PPTX_FILE_NAME = "adr_reference_report.pptx"
 HTML_ARCHIVE_FILE_NAME = "adr_reference_report.zip"
 
+# Script added to the report displayed in the iframe. Without it, clicking the link of a File item
+# replaces the report with the file. Links to ADR media files are downloaded instead, and other
+# links (except the table of contents anchors) open in a new tab, so the report stays displayed.
+_REPORT_LINK_HANDLER_SCRIPT = f"""
+<script>
+document.addEventListener("click", function (event) {{
+    const link = event.composedPath().find((element) => element.tagName === "A" && element.hasAttribute("href"));
+    if (!link) {{
+        return;
+    }}
+    const href = link.getAttribute("href");
+    if (href.startsWith("#")) {{
+        return;
+    }}
+    if (href.startsWith("{MEDIA_URL}")) {{
+        link.setAttribute("download", href.split("/").pop());
+    }} else {{
+        link.setAttribute("target", "_blank");
+    }}
+}}, true);
+</script>
+"""
+
 
 # ------------------------------------------------------------------------------------------------ #
 # Layout
@@ -56,7 +79,8 @@ HTML_ARCHIVE_FILE_NAME = "adr_reference_report.zip"
 def layout() -> html.Div:
     """Layout of the ADR reference page.
 
-    All buttons are disabled until the ``initialize_adr_page`` callback has checked that ADR is available.
+    A "starting ADR" alert is shown and all buttons are disabled until the ``initialize_adr_page``
+    callback has checked that ADR is available and started it.
     """
     return html.Div(
         [
@@ -91,7 +115,7 @@ def layout() -> html.Div:
                 color="yellow",
             ),
             dmc.Space(h=20),
-            html.Div(id="adr-page-availability-alert"),
+            html.Div(id="adr-page-availability-alert", children=_adr_starting_alert()),
             dmc.Group(
                 [
                     dmc.Button(
@@ -137,10 +161,14 @@ def _export_button(label: str, button_id: str, icon: str) -> dmc.Button:
 
 
 def _report_iframe(report_html_content: str) -> html.Iframe:
-    """Display the rendered report in an iframe."""
+    """Display the rendered report in an iframe, with links that keep the report displayed."""
+    if "</body>" in report_html_content:
+        content = report_html_content.replace("</body>", f"{_REPORT_LINK_HANDLER_SCRIPT}</body>", 1)
+    else:
+        content = report_html_content + _REPORT_LINK_HANDLER_SCRIPT
     return html.Iframe(
         id="adr-page-report-iframe",
-        srcDoc=report_html_content,
+        srcDoc=content,
         style={"width": "100%", "height": "calc(100vh - 250px)", "minHeight": "800px", "border": "none"},
     )
 
@@ -170,6 +198,18 @@ def _report_failed_state(error_details: str) -> dmc.Alert:
         ],
         title="Report generation failed",
         color="red",
+    )
+
+
+def _adr_starting_alert() -> dmc.Alert:
+    """Alert shown while the page checks that ADR is available and starts it."""
+    return dmc.Alert(
+        "Checking the ADR installation and starting serverless ADR. The first start can take several seconds. "
+        "The Generate Report button is enabled once ADR is ready.",
+        title="Starting Ansys Dynamic Reporting...",
+        icon=dmc.Loader(size="sm", color="blue"),
+        color="blue",
+        mb="md",
     )
 
 

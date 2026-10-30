@@ -205,6 +205,20 @@ def test_layout_disables_buttons_until_adr_is_checked() -> None:
         assert _component_props(layout, button_id)["disabled"] is True
     for component_id in ("adr-page-availability-alert", "adr-page-report-content", "adr-page-download-pdf"):
         _component_props(layout, component_id)
+    starting_alert = _component_props(layout, "adr-page-availability-alert")["children"]
+    assert starting_alert.title == "Starting Ansys Dynamic Reporting..."
+
+
+def test_report_iframe_keeps_the_report_displayed_when_clicking_links() -> None:
+    """Verify the link handler script is added to the report, before the end of its body if any."""
+    with_body = adr_page._report_iframe("<html><body><p>Report</p></body></html>").srcDoc
+    without_body = adr_page._report_iframe("<p>Report</p>").srcDoc
+
+    assert with_body.startswith("<html><body><p>Report</p>\n<script>")
+    assert with_body.endswith("</script>\n</body></html>")
+    assert without_body.startswith("<p>Report</p>\n<script>")
+    assert 'href.startsWith("/media/")' in without_body
+    assert 'link.setAttribute("download"' in without_body
 
 
 def test_layout_shows_title_information_and_warning() -> None:
@@ -275,7 +289,8 @@ def test_generate_report_displays_report_and_enables_successful_exports(
 
     iframe = result["adr-page-report-content"]["children"]
     assert iframe["type"] == "Iframe"
-    assert iframe["props"]["srcDoc"] == "<html>ADR reference report</html>"
+    assert iframe["props"]["srcDoc"].startswith("<html>ADR reference report</html>")
+    assert "addEventListener" in iframe["props"]["srcDoc"]
     assert result["adr-page-export-pdf-button"]["disabled"] is True
     assert result["adr-page-export-pptx-button"]["disabled"] is False
     assert result["adr-page-export-html-button"]["disabled"] is False

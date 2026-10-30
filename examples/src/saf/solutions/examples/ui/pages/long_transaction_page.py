@@ -38,7 +38,7 @@ from dash_iconify import DashIconify
 import dash_mantine_components as dmc
 
 from saf.solutions.examples.solution.definition import ExamplesSolution
-from saf.solutions.examples.solution.long_transaction_step import PROGRESS_STREAM_NAME, TERMINATION_STREAM_NAME
+from saf.solutions.examples.solution.steps.long_transaction_step import PROGRESS_STREAM_NAME, TERMINATION_STREAM_NAME
 from saf.solutions.examples.ui.helpers import handle_method_event
 
 logger = logging.getLogger(__name__)

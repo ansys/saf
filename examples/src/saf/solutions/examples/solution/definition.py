@@ -21,20 +21,23 @@
 
 from ansys.saf.glow.solution import Solution, StepsModel
 
-from saf.solutions.examples.solution.basic_step import BasicStep
-from saf.solutions.examples.solution.beam_bending_report_step import BeamBendingReportStep
-from saf.solutions.examples.solution.beam_bending_step import BeamBendingStep
-from saf.solutions.examples.solution.file_handling_step import FileHandlingStep
-from saf.solutions.examples.solution.game_of_life_step import GameOfLifeStep
-from saf.solutions.examples.solution.hps_job_submission_step import HpsJobSubmissionStep
-from saf.solutions.examples.solution.instance_management.aedt_step import Maxwell2DSetupVerificationStep
-from saf.solutions.examples.solution.instance_management.fluent_step import FluentStep
-from saf.solutions.examples.solution.instance_management.geometry_step import GeometryStep
-from saf.solutions.examples.solution.instance_management.mapdl_step import MapdlStep
-from saf.solutions.examples.solution.instance_management.mechanical_step import MechanicalStep
-from saf.solutions.examples.solution.instance_management.optislang_step import OptislangStep
-from saf.solutions.examples.solution.instance_management.visor_step import VisorStep
-from saf.solutions.examples.solution.long_transaction_step import LongTransactionStep
+from saf.solutions.examples.solution.steps.basic_step import BasicStep
+from saf.solutions.examples.solution.steps.beam_bending_report_step import BeamBendingReportStep
+from saf.solutions.examples.solution.steps.beam_bending_step import BeamBendingStep
+from saf.solutions.examples.solution.steps.file_handling_step import FileHandlingStep
+from saf.solutions.examples.solution.steps.game_of_life_step import GameOfLifeStep
+from saf.solutions.examples.solution.steps.hps_job_submission_step import HpsJobSubmissionStep
+from saf.solutions.examples.solution.steps.instance_management.aedt_step import Maxwell2DSetupVerificationStep
+from saf.solutions.examples.solution.steps.instance_management.fluent_step import FluentStep
+from saf.solutions.examples.solution.steps.instance_management.geometry_step import GeometryStep
+from saf.solutions.examples.solution.steps.instance_management.mapdl_step import MapdlStep
+from saf.solutions.examples.solution.steps.instance_management.mechanical_step import MechanicalStep
+from saf.solutions.examples.solution.steps.instance_management.optislang_step import OptislangStep
+from saf.solutions.examples.solution.steps.instance_management.visor_step import VisorStep
+from saf.solutions.examples.solution.steps.long_transaction_step import LongTransactionStep
+from saf.solutions.examples.solution.steps.pump.pump_model_setup_step import PumpModelSetupStep
+from saf.solutions.examples.solution.steps.pump.pump_report_step import PumpReportStep
+from saf.solutions.examples.solution.steps.pump.pump_solve_step import PumpSolveStep
 
 
 class Steps(StepsModel):
@@ -54,6 +57,9 @@ class Steps(StepsModel):
     beam_bending_step: BeamBendingStep
     beam_bending_report_step: BeamBendingReportStep
     game_of_life_step: GameOfLifeStep
+    pump_model_setup_step: PumpModelSetupStep
+    pump_solve_step: PumpSolveStep
+    pump_report_step: PumpReportStep
 
 
 class ExamplesSolution(Solution):

@@ -23,6 +23,7 @@ from typing import Any
 
 from ansys.saf.glow.client import DashClient, callback
 from ansys.saf.glow.solution import MethodState
+from ansys.solutions.dash_super_components import ProjectAccessBanner
 import dash
 from dash_extensions.enrich import Input, Output, State, ctx, html, no_update  # pyright: ignore[reportMissingTypeStubs]
 from dash_iconify import DashIconify  # pyright: ignore[reportMissingTypeStubs]
@@ -41,6 +42,15 @@ def _get_geometry_controls_with_default() -> dict[str, dict[str, bool]]:
         "launch_geometry": {"disabled": True, "loading": False},
         "shutdown_geometry": {"disabled": True, "loading": False},
     }
+
+
+ACCESS_BANNER_ID = "{{ cookiecutter.__step_name }}-access-banner"
+
+
+def _can_write(project_id: str) -> bool:
+    """Return whether the current user may modify the project (always ``True`` without project access control)."""
+    access = DashClient.get_project_access(project_id)
+    return access is None or access.can_write
 
 
 def layout(project: {{cookiecutter.__solution_definition_class_name}}) -> html.Div:
@@ -160,6 +170,9 @@ def layout(project: {{cookiecutter.__solution_definition_class_name}}) -> html.D
 
     return html.Div(
         [
+            # Shows who may edit the project and lets the user request or release write access (renders nothing
+            # when project access control is not enabled).
+            ProjectAccessBanner(project_id=project.project_id, aio_id=ACCESS_BANNER_ID),
             html.H1(
                 "{{ cookiecutter.__step_display_name }}",
                 className="display-3",
@@ -303,6 +316,22 @@ def sync_controls_on_backend_events(
         controls["shutdown_geometry"]["disabled"],
         controls["shutdown_geometry"]["loading"],
     )
+
+
+@callback(
+    Output("{{ cookiecutter.__step_name }}-launch-geometry-button", "disabled", allow_duplicate=True),
+    Input(ProjectAccessBanner.ids.listener(ACCESS_BANNER_ID), "message"),
+    State("url", "pathname"),
+    prevent_initial_call=True,
+)
+def toggle_launch_on_write_access(message: dict[str, Any] | None, project: {{ cookiecutter.__solution_definition_class_name }}):
+    """Disable the Launch button while the current user does not hold the write lock of the project."""
+    step = project.steps.{{ cookiecutter.__step_module_name }}
+    is_running = any(
+        step.get_long_running_method_state(method).status.value == "running"
+        for method in ("launch_geometry", "shutdown_geometry")
+    )
+    return not _can_write(project.project_id) or step.geometry_available or is_running
 
 
 @callback(

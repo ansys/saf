@@ -34,7 +34,7 @@ from ansys.saf.glow._config.settings import Settings
 from ansys.saf.glow._core.blob_managers import AssetManager, HpsBlobManager
 from ansys.saf.glow._core.gql import GqlClientConnectionPool
 from ansys.saf.glow._core.gql_helper import perform_update_via_graphql
-from ansys.saf.glow._core.live_files import LiveFile, TransactionLiveFile
+from ansys.saf.glow._core.live_files import LiveFile, LiveFileOwnership, TransactionLiveFile
 from ansys.saf.glow._core.step_model import StepModel
 from ansys.saf.glow._core.step_spec import StepSpec
 from ansys.saf.glow._executor.hps_project_field import (
@@ -136,6 +136,7 @@ class TransactionStepModel:
         http_client: httpx2.Client,
         settings: Settings,
         project_files_dir: Path,
+        live_file_ownership: LiveFileOwnership,
         storage_scope: IStorageScope,
         graphql_client: GqlClientConnectionPool,
         oidc_client: OidcClient,
@@ -176,6 +177,9 @@ class TransactionStepModel:
         project_files_dir: Path
             The project files directory used to resolve LiveFile fields.
 
+        live_file_ownership: LiveFileOwnership
+            The LiveFiles owned by the transaction. It is shared by all the step models of the transaction.
+
         storage_scope: IStorageScope
             The storage scope of the step.
 
@@ -198,6 +202,7 @@ class TransactionStepModel:
         self._http_client = http_client
         self._settings = settings
         self._project_files_dir = Path(project_files_dir)
+        self._live_file_ownership = live_file_ownership
         self._storage_scope = storage_scope
         self._data_repository = data_repository
         self._graphql_client = graphql_client
@@ -239,7 +244,7 @@ class TransactionStepModel:
         field_value = getattr(step_model, field_name)
         transformer = self._get_hps_project_field_transformer(field_name)
         if isinstance(field_value, LiveFile):
-            field_value = TransactionLiveFile(str(field_value), self._project_files_dir)
+            field_value = TransactionLiveFile(str(field_value), self._project_files_dir, self._live_file_ownership)
         elif transformer is not None:
             if self._hps_authenticator is None:
                 self._hps_authenticator = create_hps_authenticator(self._settings, self._access_token)

@@ -29,6 +29,7 @@ import zipfile
 import aiofiles
 from stream_zip import ZIP_64, AsyncMemberFile
 
+from ansys.saf.glow._core.live_files import LIVE_FILE_LOCKS_DIR_NAME
 from ansys.saf.glow._core.project_files_locator import ProjectFilesLocator
 from ansys.saf.glow._server.exceptions import BadRequestError, ForbiddenError, NotFoundError
 
@@ -97,7 +98,10 @@ class ProjectFilesManager:
         files_path = [
             item
             for item in project_files_dir.rglob("*")
-            if ".method_logs" not in str(item) and ".asset_cache" not in str(item) and item.is_file()
+            if ".method_logs" not in str(item)
+            and ".asset_cache" not in str(item)
+            and LIVE_FILE_LOCKS_DIR_NAME not in item.parts
+            and item.is_file()
         ]
 
         async def _async_project_file_generator():

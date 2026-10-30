@@ -14,6 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import concurrent.futures
 from pathlib import Path
 import sys
 from unittest import mock
@@ -26,7 +27,13 @@ from ansys.saf.glow._client.project_proxy import ProjectProxy
 from ansys.saf.glow._client.step_proxy import StepProxy
 from ansys.saf.glow._config.settings import Settings
 from ansys.saf.glow._core.gql import GqlClientConnectionPool
-from ansys.saf.glow._core.live_files import LiveFile, LiveFileProxy, TransactionLiveFile
+from ansys.saf.glow._core.live_files import (
+    LiveFile,
+    LiveFileOwnership,
+    LiveFileOwnershipError,
+    LiveFileProxy,
+    TransactionLiveFile,
+)
 from tests.mocks.solution_end_to_end.solution.transaction_verification_step import TransactionVerificationStep
 from tests.mocks.solutions.minimal_solution import MinimalSolution
 
@@ -95,7 +102,7 @@ def test_live_file_validation_rejects_wildcards_with_dedicated_error():
 
 
 def test_transaction_live_file_path_and_read(tmp_path: Path):
-    live_file = TransactionLiveFile("nested/runtime.log", tmp_path / "project-id")
+    live_file = TransactionLiveFile("nested/runtime.log", tmp_path / "project-id", LiveFileOwnership())
 
     assert live_file.path == tmp_path / "project-id" / "nested" / "runtime.log"
     assert not live_file.exists()
@@ -109,7 +116,7 @@ def test_transaction_live_file_path_and_read(tmp_path: Path):
 
 
 def test_transaction_live_file_read_text_honors_encoding(tmp_path: Path):
-    live_file = TransactionLiveFile("logs/runtime.log", tmp_path / "project-id")
+    live_file = TransactionLiveFile("logs/runtime.log", tmp_path / "project-id", LiveFileOwnership())
     text = "caf\u00e9"
     live_file.path.parent.mkdir(parents=True)
     live_file.path.write_bytes(text.encode("latin-1"))
@@ -120,13 +127,80 @@ def test_transaction_live_file_read_text_honors_encoding(tmp_path: Path):
 
 
 def test_live_file_read_missing_raises_file_not_found(tmp_path: Path):
-    live_file = TransactionLiveFile("logs/missing.log", tmp_path / "project-id")
+    live_file = TransactionLiveFile("logs/missing.log", tmp_path / "project-id", LiveFileOwnership())
 
     with pytest.raises(FileNotFoundError):
         live_file.read_text()
 
     with pytest.raises(FileNotFoundError):
         live_file.read_bytes()
+
+
+def test_transaction_live_file_path_is_owned_by_first_transaction_accessing_it(tmp_path: Path):
+    project_dir = tmp_path / "project-id"
+    with LiveFileOwnership() as first_ownership, LiveFileOwnership() as second_ownership:
+        first = TransactionLiveFile("logs/runtime.log", project_dir, first_ownership)
+        second = TransactionLiveFile("logs/runtime.log", project_dir, second_ownership)
+
+        first_path = first.path
+        assert first.path == first_path
+
+        with pytest.raises(LiveFileOwnershipError, match=r"'logs/runtime.log' is owned by another running transaction"):
+            _ = second.path
+
+        first_path.parent.mkdir(parents=True)
+        first_path.write_text("alpha")
+        assert second.read_text() == "alpha"
+        assert second.exists()
+
+
+def test_transaction_live_file_ownership_is_released_when_context_exits(tmp_path: Path):
+    project_dir = tmp_path / "project-id"
+    with LiveFileOwnership() as first_ownership:
+        _ = TransactionLiveFile("logs/runtime.log", project_dir, first_ownership).path
+
+    with LiveFileOwnership() as second_ownership:
+        assert TransactionLiveFile("logs/runtime.log", project_dir, second_ownership).path.name == "runtime.log"
+
+
+def _fail_while_owning_live_file(project_dir: Path) -> None:
+    with LiveFileOwnership() as ownership:
+        _ = TransactionLiveFile("logs/runtime.log", project_dir, ownership).path
+        raise ValueError("transaction failed")
+
+
+def test_transaction_live_file_ownership_is_released_when_transaction_fails(tmp_path: Path):
+    project_dir = tmp_path / "project-id"
+    with pytest.raises(ValueError, match="transaction failed"):
+        _fail_while_owning_live_file(project_dir)
+
+    with LiveFileOwnership() as second_ownership:
+        assert TransactionLiveFile("logs/runtime.log", project_dir, second_ownership).path.name == "runtime.log"
+
+
+def test_transaction_live_file_ownership_is_per_file_and_per_project(tmp_path: Path):
+    with LiveFileOwnership() as first_ownership, LiveFileOwnership() as second_ownership:
+        _ = TransactionLiveFile("logs/runtime.log", tmp_path / "project-a", first_ownership).path
+        _ = TransactionLiveFile("logs/other.log", tmp_path / "project-a", second_ownership).path
+        _ = TransactionLiveFile("logs/runtime.log", tmp_path / "project-b", second_ownership).path
+
+
+def _try_to_own_live_file(project_dir: str) -> bool:
+    with LiveFileOwnership() as ownership:
+        try:
+            _ = TransactionLiveFile("logs/runtime.log", Path(project_dir), ownership).path
+        except LiveFileOwnershipError:
+            return False
+        return True
+
+
+def test_transaction_live_file_ownership_is_enforced_across_processes(tmp_path: Path):
+    project_dir = tmp_path / "project-id"
+    with concurrent.futures.ProcessPoolExecutor(max_workers=1) as pool:
+        with LiveFileOwnership() as ownership:
+            _ = TransactionLiveFile("logs/runtime.log", project_dir, ownership).path
+            assert pool.submit(_try_to_own_live_file, str(project_dir)).result() is False
+        assert pool.submit(_try_to_own_live_file, str(project_dir)).result() is True
 
 
 def test_live_file_proxy_is_read_only(tmp_path: Path):

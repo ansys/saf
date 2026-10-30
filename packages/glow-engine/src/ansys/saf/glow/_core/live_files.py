@@ -16,16 +16,114 @@
 
 from __future__ import annotations
 
+import hashlib
+import os
 from pathlib import Path
-from typing import TYPE_CHECKING, Any
+import sys
+import threading
+from typing import TYPE_CHECKING, Any, Self
 
 from pydantic_core import core_schema
 
 from ansys.saf.glow._storage.os import INVALID_CHARACTERS, is_filepath_invalid
 
 if TYPE_CHECKING:
+    from types import TracebackType
+
     from pydantic import GetCoreSchemaHandler, GetJsonSchemaHandler
     from pydantic.json_schema import JsonSchemaValue
+
+if sys.platform == "win32":
+    import msvcrt
+
+    def _try_lock(fd: int) -> None:
+        os.lseek(fd, 0, os.SEEK_SET)
+        msvcrt.locking(fd, msvcrt.LK_NBLCK, 1)
+
+    def _unlock(fd: int) -> None:
+        os.lseek(fd, 0, os.SEEK_SET)
+        msvcrt.locking(fd, msvcrt.LK_UNLCK, 1)
+
+else:
+    import fcntl
+
+    def _try_lock(fd: int) -> None:
+        fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+
+    def _unlock(fd: int) -> None:
+        fcntl.flock(fd, fcntl.LOCK_UN)
+
+
+LIVE_FILE_LOCKS_DIR_NAME = ".live_file_locks"
+
+
+class LiveFileOwnershipError(RuntimeError):
+    """Raised when a transaction accesses the path of a LiveFile owned by another running transaction."""
+
+
+class LiveFileOwnership:
+    """Set of LiveFiles owned by a single running transaction.
+
+    A LiveFile becomes owned by the first transaction accessing its ``path`` and stays
+    owned until that transaction ends. Use this class as a context manager spanning the
+    transaction so that ownership is relinquished when it exits, whether it succeeds or fails.
+    Ownership is backed by an OS-level
+    lock on a sidecar file in the project files directory so that it is enforced across the
+    threads and processes executing transactions, and is released automatically if the owning
+    process dies.
+    """
+
+    def __init__(self) -> None:
+        self._locks: dict[Path, int] = {}
+        self._mutex = threading.Lock()
+
+    def __enter__(self) -> Self:
+        return self
+
+    def __exit__(
+        self,
+        exc_type: type[BaseException] | None,
+        exc_value: BaseException | None,
+        traceback: TracebackType | None,
+    ) -> None:
+        self._release_all()
+
+    def acquire(self, project_files_dir: Path, relative_path: Path) -> None:
+        """Take ownership of a LiveFile, or do nothing if this transaction already owns it.
+
+        Raises
+        ------
+        LiveFileOwnershipError
+            If the LiveFile is owned by another running transaction.
+        """
+        key = os.path.normcase(relative_path.as_posix()).encode("utf-8")
+        lock_path = project_files_dir / LIVE_FILE_LOCKS_DIR_NAME / f"{hashlib.sha256(key).hexdigest()}.lock"
+        with self._mutex:
+            if lock_path in self._locks:
+                return
+            lock_path.parent.mkdir(parents=True, exist_ok=True)
+            fd = os.open(lock_path, os.O_RDWR | os.O_CREAT, 0o644)
+            try:
+                _try_lock(fd)
+            except OSError:
+                os.close(fd)
+                raise LiveFileOwnershipError(
+                    f"LiveFile '{relative_path.as_posix()}' is owned by another running transaction "
+                    "and its path cannot be accessed until that transaction ends.",
+                ) from None
+            self._locks[lock_path] = fd
+
+    def _release_all(self) -> None:
+        """Relinquish ownership of all LiveFiles owned by this transaction."""
+        with self._mutex:
+            for fd in self._locks.values():
+                try:
+                    _unlock(fd)
+                except OSError:
+                    pass
+                finally:
+                    os.close(fd)
+            self._locks.clear()
 
 
 class LiveFile(str):
@@ -106,13 +204,18 @@ class TransactionLiveFile(LiveFile):
 
     The relative path is resolved from ``project_files_dir / project_id``. This class
     provides read access and exposes the resolved filesystem path through ``path``.
+
+    Only one transaction can write to a LiveFile at a time. The first transaction accessing
+    ``path`` becomes the owner of the LiveFile until it ends. Reading through ``read_text``,
+    ``read_bytes`` or ``exists`` does not require ownership.
     """
 
-    def __new__(cls, value: str, project_files_dir: Path):
+    def __new__(cls, value: str, project_files_dir: Path, ownership: LiveFileOwnership):
         return super().__new__(cls, value)
 
-    def __init__(self, value: str, project_files_dir: Path):
+    def __init__(self, value: str, project_files_dir: Path, ownership: LiveFileOwnership):
         self._project_files_dir = project_files_dir
+        self._ownership = ownership
 
     @property
     def _absolute_path(self) -> Path:
@@ -120,6 +223,14 @@ class TransactionLiveFile(LiveFile):
 
     @property
     def path(self) -> Path:
+        """Resolved filesystem path. Accessing it takes ownership of the LiveFile.
+
+        Raises
+        ------
+        LiveFileOwnershipError
+            If the LiveFile is owned by another running transaction.
+        """
+        self._ownership.acquire(self._project_files_dir, self._relative_path)
         return self._absolute_path
 
 

@@ -1,0 +1,1740 @@
+<!--
+Copyright (C) 2026 ANSYS, Inc. and/or its affiliates.
+SPDX-License-Identifier: Apache-2.0
+
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+ <!-- ©2026, ANSYS Inc. Unauthorized use, distribution or duplication is prohibited. -->
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" data-theme="dark">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Run a solution on desktop &#8212; SAF Doc</title>
+  
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "dark";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "dark";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/ansys-sphinx-theme.css?v=5ffe81b6" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=fd6457a4" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/ansys-sphinx-theme.css?v=5ffe81b6" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://www.nerdfonts.com/assets/css/webfont.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/code-tabs.css?v=1bc26e2f" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=c999ad29" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/carousel.css?v=272b576a" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/landing_page_banner.css?v=57c45261" />
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../_static/scripts/fontawesome.js?digest=0790524f97105ba85085"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085" />
+
+
+  <!-- Include desired assets -->
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  
+
+  
+    <link href="../../_static/css/breadcrumbs.css" rel="stylesheet" />
+  
+    <script src="../../_static/documentation_options.js?v=8a448e45"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=49e1bf35"></script>
+    <script src="../../_static/sg-tags.js?v=d80f6fa4"></script>
+    <script src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
+    <script src="../../_static/code-tabs.js?v=c983d12e"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'user_guide/run_locally/run_desktop';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.18.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://saf.ansys.com/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.2';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <script src="../../_static/js/sidebar-always-expanded.js?v=6b23dfe7"></script>
+    <script src="../../_static/js/sdI_button_ref_tooltips.js?v=091f9e4c"></script>
+    <script src="../../_static/js/primary-sidebar-sticky-offset.js?v=7ecdf44c"></script>
+    <link rel="icon" href="../../_static/ansys-favicon.png"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Run a solution with Docker Compose" href="docker_compose.html" />
+    <link rel="prev" title="Run locally" href="index.html" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.2.0" />
+  
+    
+    <script src="../../_static/searchtools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <script src="../../searchindex.js"></script>
+  
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+
+  <link rel="canonical" href="https://saf.ansys.com/version/stable/user_guide/run_locally/run_desktop.html" />
+  </head>
+  <body data-default-mode="dark">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+  
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+    
+    <img src="../../_static/endorsed-ansys-logos-gold-white-rgb.svg" class="logo__image only-dark" alt="SAF Doc - Home"/>
+    <img src="../../_static/endorsed-ansys-logos-gold-black-rgb.svg" class="logo__image only-light pst-js-only" alt="SAF Doc - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../index.html" title="SAF Doc home">Home</a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../overview/index.html">
+    Overview
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started/index.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api/index.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../contribute/index.html">
+    Contribute
+  </a>
+</li>
+
+  </ul>
+</nav>
+</div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+      
+        <div class="navbar-item">
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+  
+</div></div>
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/saf" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+  
+    
+<!--
+  Announcement Version Loader
+  Dynamically loads the announcement.html content into the announcement_msg div.
+-->
+<div id="announcement_msg" aria-live="polite"></div>
+<script>
+  // Fetch and inject the announcement HTML content
+  fetch("announcement.html")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error: ${response.status} Announcement.html file not found, Please ignore this, if you are in dev/stable documentation`);
+      }
+      return response.text();
+    })
+    .then((text) => {
+      var msgDiv = document.getElementById("announcement_msg");
+      if (msgDiv) {
+        msgDiv.innerHTML = text;
+      }
+    })
+    .catch((error) => {
+      // Log only unexpected fetch errors
+      if (!(error.message && error.message.startsWith("HTTP error: 404"))) {
+        console.error(`Fetch problem: ${error.message} Announcement.html could not be loaded.`);
+      }
+    });
+</script>
+  
+
+  <div class="header-nav-banner d-print-none">
+    <div class="header-nav-banner__inner">
+      <div class="header-nav-banner__crumbs">
+        
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+     
+    <li class="breadcrumb-item breadcrumb-home">
+      <a
+        href="../../index.html"
+        class="nav-link"
+        aria-label="Home"
+      >
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="../index.html" class="nav-link">User guide</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="index.html" class="nav-link">Run locally</a>
+    </li>
+      
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Run a solution on desktop</span></li>
+    
+  </ul>
+</nav>
+
+      </div>
+    </div>
+  </div>
+
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../index.html" title="SAF Doc home">Home</a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../overview/index.html">
+    Overview
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started/index.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api/index.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../contribute/index.html">
+    Contribute
+  </a>
+</li>
+
+  </ul>
+</nav>
+</div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+  
+</div></div>
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/saf" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item pst-sidebar-collapse"><button id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar"><svg class="pst-icon svg-inline--fa" role="img" aria-hidden="true" focusable="false" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="M3 15.5C2.36232 15.5 1.74874 15.2564 1.28478 14.8189C0.820828 14.3815 0.541576 13.7832 0.504167 13.1467L0.5 13L0.5 3C0.499965 2.36232 0.743605 1.74874 1.18107 1.28478C1.61854 0.820828 2.21676 0.541576 2.85333 0.504167L3 0.5L13 0.5C13.6377 0.499965 14.2513 0.743605 14.7152 1.18107C15.1792 1.61854 15.4584 2.21676 15.4958 2.85333L15.5 3L15.5 13C15.5 13.6377 15.2564 14.2513 14.8189 14.7152C14.3815 15.1792 13.7832 15.4584 13.1467 15.4958L13 15.5L3 15.5ZM3 13.8333L10.5 13.8333L10.5 2.16667L3 2.16667C2.79589 2.16669 2.59889 2.24163 2.44636 2.37726C2.29383 2.5129 2.19638 2.69979 2.1725 2.9025L2.16667 3L2.16667 13C2.16669 13.2041 2.24163 13.4011 2.37726 13.5536C2.5129 13.7062 2.69979 13.8036 2.9025 13.8275L3 13.8333ZM6.65583 10.325L6.5775 10.2558L4.91083 8.58917C4.76735 8.44567 4.68116 8.25476 4.66843 8.05223C4.65569 7.84971 4.71729 7.6495 4.84167 7.48917L4.91083 7.41083L6.5775 5.74417C6.72747 5.59471 6.9287 5.50794 7.14032 5.50148C7.35194 5.49502 7.55809 5.56935 7.7169 5.70937C7.8757 5.8494 7.97525 6.04463 7.99533 6.25539C8.01541 6.46616 7.95451 6.67667 7.825 6.84417L7.75583 6.9225L6.67917 8L7.75583 9.0775C7.89931 9.22099 7.98551 9.41191 7.99824 9.61443C8.01097 9.81695 7.94938 10.0172 7.825 10.1775L7.75583 10.2558C7.61234 10.3993 7.42142 10.4855 7.2189 10.4982C7.01638 10.511 6.81617 10.4494 6.65583 10.325Z"/>
+  </svg>
+  <span class="pst-collapse-sidebar-label">Collapse Sidebar</span>
+  <span class="pst-expand-sidebar-label">Expand Sidebar</span>
+</button></div>
+        <div class="sidebar-primary-item">
+
+
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../scaffold.html">Scaffold</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../install.html">Install</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">Run locally</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Run a solution on desktop</a></li>
+<li class="toctree-l2"><a class="reference internal" href="docker_compose.html">Run a solution with Docker Compose</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../projects.html">Manage projects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../debug/index.html">Debug</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../test/index.html">Test</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../add_step.html">Add steps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../package/index.html">Package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../deploy/index.html">Deploy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../backend/index.html">Backend development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../frontend/index.html">Frontend development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../environment_variables.html">Environment variables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../solution_servers.html">Solution servers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../script.html">Script a solution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supported_software.html">Supported software</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../components.html">SAF components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../best_practices/index.html">Best practices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../migration/index.html">Migration guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../troubleshooting/index.html">Troubleshooting guide</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+     
+    <li class="breadcrumb-item breadcrumb-home">
+      <a
+        href="../../index.html"
+        class="nav-link"
+        aria-label="Home"
+      >
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="../index.html" class="nav-link">User guide</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="index.html" class="nav-link">Run locally</a>
+    </li>
+      
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Run a solution on desktop</span></li>
+    
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="run-a-solution-on-desktop">
+<span id="user-guide-run-on-desktop"></span><h1>Run a solution on desktop<a class="headerlink" href="#run-a-solution-on-desktop" title="Link to this heading">#</a></h1>
+<p>You can run a solution locally on your desktop using any of the following methods:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 75.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head stub"><p>Run method</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><th class="stub"><p><a class="reference internal" href="#user-guide-run-using-saf-cli"><span class="std std-ref">SAF CLI</span></a></p></th>
+<td><ul>
+<li><p>Runs a solution with the <code class="docutils literal notranslate"><span class="pre">saf</span> <span class="pre">run</span></code> command by preparing the solution
+environment and invoking SAF Desktop Orchestrator.</p></li>
+<li><p>Provides a convenient way to run solutions with configurable options.</p></li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><th class="stub"><p><a class="reference internal" href="#user-guide-run-using-saf-cli"><span class="std std-ref">Solutions Manager</span></a></p></th>
+<td><ul>
+<li><p>Provides a Visual Studio Code extension that wraps SAF CLI’s <code class="docutils literal notranslate"><span class="pre">saf</span> <span class="pre">run</span></code> command and provides a graphical interface
+for running solutions.</p></li>
+<li><p>Supports users who prefer to manage and run solutions without the command line.</p></li>
+</ul>
+</td>
+</tr>
+<tr class="row-even"><th class="stub"><p><a class="reference internal" href="#user-guide-run-using-saf-desktop-orchestrator"><span class="std std-ref">SAF Desktop Orchestrator</span></a></p></th>
+<td><ul>
+<li><p>Provides a direct orchestration entry point that coordinates the API, UI, and supporting services with configurable
+orchestration options.</p></li>
+<li><p>Supports advanced users and CI/CD pipelines that require more control than SAF CLI provides.</p></li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><th class="stub"><p><a class="reference internal" href="#user-guide-run-using-the-glow-cli"><span class="std std-ref">GLOW CLI</span></a></p></th>
+<td><ul>
+<li><p>Runs the solution API and UI independently, allowing developers to configure and manage each component separately.</p></li>
+<li><p>Supports developers who need to debug or customize individual solution components.</p></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>Start with SAF CLI or Solutions Manager for standard development workflows. Use SAF Desktop Orchestrator or GLOW CLI if you need specific customization.</p>
+</div>
+<section id="run-using-saf-cli">
+<span id="user-guide-run-using-saf-cli"></span><h2>Run using SAF CLI<a class="headerlink" href="#run-using-saf-cli" title="Link to this heading">#</a></h2>
+<p>You can run a solution with the <code class="docutils literal notranslate"><span class="pre">saf</span> <span class="pre">run</span></code> command using either SAF CLI or Solutions Manager. This command starts the full solution stack (API, UI, OTel Dashboard, and optional services) by invoking SAF Desktop Orchestrator.</p>
+<section id="solution-execution-modes">
+<span id="user-guide-run-using-saf-cli-solution-ui-modes"></span><h3>Solution execution modes<a class="headerlink" href="#solution-execution-modes" title="Link to this heading">#</a></h3>
+<p>When running a solution using SAF CLI (or Solutions Manager) you can open the solution in a <a class="reference internal" href="#user-guide-run-desktop-window"><span class="std std-ref">desktop window</span></a>, a <a class="reference internal" href="#user-guide-run-web-browser"><span class="std std-ref">web browser</span></a>, or the <a class="reference internal" href="#user-guide-run-saf-portal"><span class="std std-ref">SAF Portal</span></a>.</p>
+<section id="run-in-a-desktop-window">
+<span id="user-guide-run-desktop-window"></span><h4>Run in a desktop window<a class="headerlink" href="#run-in-a-desktop-window" title="Link to this heading">#</a></h4>
+<div class="sd-tab-set docutils">
+<input checked="checked" id="sd-tab-item-0" name="sd-tab-set-0" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-0">
+SAF CLI</label><div class="sd-tab-content docutils">
+<p>Run a solution in a desktop window using SAF CLI:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>saf<span class="w"> </span>run<span class="w"> </span>&lt;solution-name&gt;
+</pre></div>
+</div>
+<p>For example:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>saf<span class="w"> </span>run<span class="w"> </span>minimal-solution
+</pre></div>
+</div>
+</div>
+<input id="sd-tab-item-1" name="sd-tab-set-0" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-1">
+Solutions Manager</label><div class="sd-tab-content docutils">
+<p>Run a solution in a desktop window using Solutions Manager:</p>
+<ol class="arabic">
+<li><p>Open Visual Studio Code.</p></li>
+<li><p>In the Activity Bar, click the <strong>Solutions Manager</strong> icon.</p></li>
+<li><p>In the <strong>Solutions Manager</strong>  pane, expand the <strong>Create Solution</strong> view.</p></li>
+<li><p>In the <strong>Solutions Manager</strong>  pane, expand the <strong>Run Solution</strong> view.</p>
+<a class="reference internal image-reference" href="../../_images/solutions_manager_run_solution_view_desktop.png"><img alt="Solutions Manager Run Solution in desktop view" src="../../_images/solutions_manager_run_solution_view_desktop.png" style="width: 50%;" />
+</a>
+</li>
+<li><p>Provide the following values:</p>
+<ol class="loweralpha">
+<li><p>Select the solution you want to run.</p>
+<p>You can either select an option from the list of available solutions or browse the solution folder of a different one.</p>
+</li>
+<li><p>Select your run options:</p>
+<p>Ensure that <strong>Portal mode</strong> and <strong>Browser mode</strong> are not selected.</p>
+</li>
+<li><p>Select a log level:</p>
+<p>The default log level is <strong>INFO</strong>. You can select a different log level if needed.</p>
+</li>
+<li><p>Enter a project name.</p>
+<p>Enter the name of the project you want to run.</p>
+</li>
+<li><p>If needed, configure the solution environment.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p>The <strong>Run Solution</strong> pane provides options for specifying the solution environment. For more information, see <a class="reference internal" href="../environment_variables.html#envar-config-system-envvar"><span class="std std-ref">Environment variables</span></a> and <a class="reference internal" href="../environment_variables.html#envar-config-environment-file"><span class="std std-ref">Environment file</span></a> in the <a class="reference internal" href="../environment_variables.html#environment-variables"><span class="std std-ref">Environment variables</span></a> page.</p>
+</div>
+</li>
+</ol>
+</li>
+<li><p>Run the solution.</p>
+<p>Click the <span class="guilabel">Run solution</span> button. Alternatively, you can copy the command under <strong>Solution run command</strong> and run it in the terminal.</p>
+</li>
+</ol>
+</div>
+</div>
+<p>The solution UI opens in a desktop window.</p>
+<img alt="Solution opened in a desktop window" src="../../_images/getting_started_quick_start_minimal_solution_intro_page.png" />
+</section>
+<section id="run-in-a-web-browser">
+<span id="user-guide-run-web-browser"></span><h4>Run in a web browser<a class="headerlink" href="#run-in-a-web-browser" title="Link to this heading">#</a></h4>
+<div class="sd-tab-set docutils">
+<input checked="checked" id="sd-tab-item-2" name="sd-tab-set-1" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-2">
+SAF CLI</label><div class="sd-tab-content docutils">
+<p>Run the solution in a web browser using SAF CLI:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>saf<span class="w"> </span>run<span class="w"> </span>--browser
+</pre></div>
+</div>
+</div>
+<input id="sd-tab-item-3" name="sd-tab-set-1" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-3">
+Solutions Manager</label><div class="sd-tab-content docutils">
+<p>Run the solution in a web browser using Solutions Manager:</p>
+<ol class="arabic">
+<li><p>Open Visual Studio Code.</p></li>
+<li><p>In the Activity Bar, click the <strong>Solutions Manager</strong> icon.</p></li>
+<li><p>In the <strong>Solutions Manager</strong>  pane, expand the <strong>Run Solution</strong> view.</p>
+<a class="reference internal image-reference" href="../../_images/solutions_manager_run_solution_view_browser.png"><img alt="Solutions Manager Run Solution in browser view" src="../../_images/solutions_manager_run_solution_view_browser.png" style="width: 50%;" />
+</a>
+</li>
+<li><p>Provide the following values:</p>
+<ol class="loweralpha">
+<li><p>Select the solution you want to install.</p>
+<p>You can either select an option from the list of available solutions or browse the solution folder of a different one.</p>
+</li>
+<li><p>Select your run options:</p>
+<p>Ensure that <strong>Browser mode</strong> is selected.</p>
+</li>
+<li><p>Select a log level:</p>
+<p>The default log level is <strong>INFO</strong>. You can select a different log level if needed.</p>
+</li>
+<li><p>Enter a project name.</p>
+<p>Enter the name of the project you want to run.</p>
+</li>
+</ol>
+<blockquote>
+<div><ol class="loweralpha" start="5">
+<li><p>If needed, configure the solution environment.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p>The <strong>Run Solution</strong> pane provides options for specifying the solution environment. For more information, see <a class="reference internal" href="../environment_variables.html#envar-config-system-envvar"><span class="std std-ref">Environment variables</span></a> and <a class="reference internal" href="../environment_variables.html#envar-config-environment-file"><span class="std std-ref">Environment file</span></a> in the <a class="reference internal" href="../environment_variables.html#environment-variables"><span class="std std-ref">Environment variables</span></a> page.</p>
+</div>
+</li>
+</ol>
+</div></blockquote>
+</li>
+<li><p>Run the solution.</p>
+<p>Click the <span class="guilabel">Run solution</span> button. Alternatively, you can copy the command under <strong>Solution run command</strong> and run it in the terminal.</p>
+</li>
+</ol>
+</div>
+</div>
+<p>The solution UI opens in a web browser window.</p>
+<img alt="Solution opened in a browser window" src="../../_images/minimal_solution_intro_page_browser.png" />
+</section>
+<section id="run-from-saf-portal">
+<span id="user-guide-run-saf-portal"></span><h4>Run from SAF Portal<a class="headerlink" href="#run-from-saf-portal" title="Link to this heading">#</a></h4>
+<div class="sd-tab-set docutils">
+<input checked="checked" id="sd-tab-item-4" name="sd-tab-set-2" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-4">
+SAF CLI</label><div class="sd-tab-content docutils">
+<p>Run the solution from SAF Portal using SAF CLI:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>saf<span class="w"> </span>run<span class="w"> </span>--portal
+</pre></div>
+</div>
+</div>
+<input id="sd-tab-item-5" name="sd-tab-set-2" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-5">
+Solutions Manager</label><div class="sd-tab-content docutils">
+<p>Run the solution from SAF Portal using Solutions Manager:</p>
+<ol class="arabic">
+<li><p>Open Visual Studio Code.</p></li>
+<li><p>In the Activity Bar, click the <strong>Solutions Manager</strong> icon.</p></li>
+<li><p>In the <strong>Solutions Manager</strong>  pane, expand the <strong>Run Solution</strong> view.</p>
+<a class="reference internal image-reference" href="../../_images/solutions_manager_run_solution_view_portal.png"><img alt="Solutions Manager Run Solution in Portal view" src="../../_images/solutions_manager_run_solution_view_portal.png" style="width: 45%;" />
+</a>
+</li>
+<li><p>Provide the following values:</p>
+<ol class="loweralpha">
+<li><p>Select the solution you want to install.</p>
+<p>You can either select an option from the list of available solutions or browse the solution folder of a different one.</p>
+</li>
+<li><p>Select your run options:</p>
+<p>Ensure that <strong>Portal mode</strong> is selected.</p>
+</li>
+<li><p>Select a log level:</p>
+<p>The default log level is <strong>INFO</strong>. You can select a different log level if needed.</p>
+</li>
+<li><p>Enter a project name.</p>
+<p>Ener the name of the project you want to run.</p>
+</li>
+<li><p>If needed, configure the solution environment.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p>The <strong>Run Solution</strong> pane provides options for specifying the solution environment. For more information, see <a class="reference internal" href="../environment_variables.html#envar-config-system-envvar"><span class="std std-ref">Environment variables</span></a> and <a class="reference internal" href="../environment_variables.html#envar-config-environment-file"><span class="std std-ref">Environment file</span></a> in the <a class="reference internal" href="../environment_variables.html#environment-variables"><span class="std std-ref">Environment variables</span></a> page.</p>
+</div>
+</li>
+</ol>
+</li>
+<li><p>Run the solution.</p>
+<p>Click the <span class="guilabel">Run solution</span> button. Alternatively, you can copy the command under <strong>Solution run command</strong> and run it in the terminal.</p>
+</li>
+</ol>
+</div>
+</div>
+<p>The solution opens in the SAF Portal user interface. SAF Portal provides a project management interface for the solution, allowing you to create new projects, view existing projects, and manage project settings.</p>
+<img alt="Solution opened in SAF Portal" src="../../_images/minimal_solution_portal_ui_empty.png" />
+</section>
+</section>
+<section id="the-saf-run-command">
+<h3>The <code class="docutils literal notranslate"><span class="pre">saf</span> <span class="pre">run</span></code> command<a class="headerlink" href="#the-saf-run-command" title="Link to this heading">#</a></h3>
+<p>When you run a solution with a UI using <code class="docutils literal notranslate"><span class="pre">saf</span> <span class="pre">run</span></code>, the following happens:</p>
+<ol class="arabic">
+<li><p>A project with a random name is automatically created (for example, <code class="docutils literal notranslate"><span class="pre">my-project-2569</span></code>).</p></li>
+<li><p>A PyWebView window opens with the solution UI for that project.</p></li>
+<li><p>SAF Portal is <strong>not</strong> launched by default.</p></li>
+</ol>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>On Linux, the UI opens in a browser tab instead of PyWebView. To get the same behavior on Windows, use the
+<code class="docutils literal notranslate"><span class="pre">--browser</span></code> option as described in <a class="reference internal" href="#user-guide-run-web-browser"><span class="std std-ref">Run in a web browser</span></a>.</p>
+</div>
+</section>
+<section id="saf-run-options">
+<h3><code class="docutils literal notranslate"><span class="pre">saf</span> <span class="pre">run</span></code> options<a class="headerlink" href="#saf-run-options" title="Link to this heading">#</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">saf</span> <span class="pre">run</span></code> command has multiple command-line options. To see them all, run the following command:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>saf<span class="w"> </span>run<span class="w"> </span>--help
+</pre></div>
+</div>
+<p>Options are divided into <a class="reference internal" href="#user-guide-saf-run-options-ui-and-display"><span class="std std-ref">UI and display options</span></a>, <a class="reference internal" href="#user-guide-saf-run-options-debugging"><span class="std std-ref">Debugging options</span></a>, and <a class="reference internal" href="#user-guide-saf-run-options-port-configuration"><span class="std std-ref">Port configuration</span></a> categories, as detailed in the following sections.</p>
+<section id="ui-and-display-options">
+<span id="user-guide-saf-run-options-ui-and-display"></span><h4>UI and display options<a class="headerlink" href="#ui-and-display-options" title="Link to this heading">#</a></h4>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 75.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head stub"><p>Option</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><th class="stub"><p><code class="docutils literal notranslate"><span class="pre">--portal</span></code></p></th>
+<td><p>Opens the Portal UI instead of the solution UI, so you can manage multiple projects.</p></td>
+</tr>
+<tr class="row-odd"><th class="stub"><p><code class="docutils literal notranslate"><span class="pre">--no-ui</span></code></p></th>
+<td><p>Runs the solution without starting the UI server.</p></td>
+</tr>
+<tr class="row-even"><th class="stub"><p><code class="docutils literal notranslate"><span class="pre">--browser</span></code></p></th>
+<td><p>Opens the UI in your default web browser instead of in a PyWebView window.</p></td>
+</tr>
+<tr class="row-odd"><th class="stub"><p><code class="docutils literal notranslate"><span class="pre">--streamlit-ui</span></code></p></th>
+<td><p>Runs the solution UI using the Streamlit framework instead of Dash.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="debugging-options">
+<span id="user-guide-saf-run-options-debugging"></span><h4>Debugging options<a class="headerlink" href="#debugging-options" title="Link to this heading">#</a></h4>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 55.0%" />
+<col style="width: 20.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head stub"><p>Option</p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>Default value</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><th class="stub"><p><code class="docutils literal notranslate"><span class="pre">--debug</span></code></p></th>
+<td><p>Runs the solution in debug mode. Enables hot-reloading of code changes.</p></td>
+<td><p>Disabled</p></td>
+</tr>
+<tr class="row-odd"><th class="stub"><p><code class="docutils literal notranslate"><span class="pre">--ui-debugger</span></code></p></th>
+<td><p>Enables <code class="docutils literal notranslate"><span class="pre">debugpy</span></code> in the UI process and disables the Dash/Flask debugger. Use this to attach an
+external debugger to the UI.</p></td>
+<td><p>Disabled</p></td>
+</tr>
+<tr class="row-even"><th class="stub"><p><code class="docutils literal notranslate"><span class="pre">--loglevel</span> <span class="pre">&lt;LEVEL&gt;</span></code></p></th>
+<td><p>Sets the logging level. One of <code class="docutils literal notranslate"><span class="pre">DEBUG</span></code>, <code class="docutils literal notranslate"><span class="pre">INFO</span></code>, <code class="docutils literal notranslate"><span class="pre">WARNING</span></code>, <code class="docutils literal notranslate"><span class="pre">ERROR</span></code>, or <code class="docutils literal notranslate"><span class="pre">CRITICAL</span></code>.</p></td>
+<td><p>Not set</p></td>
+</tr>
+<tr class="row-odd"><th class="stub"><p><code class="docutils literal notranslate"><span class="pre">--log-to-files</span></code></p></th>
+<td><p>Logs to files under <code class="docutils literal notranslate"><span class="pre">$APPDATA/ansys/glow/&lt;MySolution&gt;/logs/</span></code> instead of showing the OTel Dashboard.
+Overrides any existing GLOW environment variables that configure logging.</p></td>
+<td><p>Disabled</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="port-configuration">
+<span id="user-guide-saf-run-options-port-configuration"></span><h4>Port configuration<a class="headerlink" href="#port-configuration" title="Link to this heading">#</a></h4>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 55.0%" />
+<col style="width: 20.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head stub"><p>Option</p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>Default value</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><th class="stub"><p><code class="docutils literal notranslate"><span class="pre">--portal-ui-port</span> <span class="pre">&lt;PORT&gt;</span></code></p></th>
+<td><p>Sets the port on which the Portal UI runs.</p></td>
+<td><p>Random available port</p></td>
+</tr>
+<tr class="row-odd"><th class="stub"><p><code class="docutils literal notranslate"><span class="pre">--solution-api-port</span> <span class="pre">&lt;PORT&gt;</span></code></p></th>
+<td><p>Sets the port on which the Solution API runs.</p></td>
+<td><p>Random available port</p></td>
+</tr>
+<tr class="row-even"><th class="stub"><p><code class="docutils literal notranslate"><span class="pre">--solution-ui-port</span> <span class="pre">&lt;PORT&gt;</span></code></p></th>
+<td><p>Sets the port on which the Solution UI runs.</p></td>
+<td><p>Random available port</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="project-and-environment-options">
+<h4>Project and environment options<a class="headerlink" href="#project-and-environment-options" title="Link to this heading">#</a></h4>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 55.0%" />
+<col style="width: 20.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head stub"><p>Option</p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>Default value</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><th class="stub"><p><code class="docutils literal notranslate"><span class="pre">--project</span> <span class="pre">&lt;NAME&gt;</span></code></p></th>
+<td><p>Specifies the display name of the project to open or create. You cannot use this option when
+SAF Portal is
+running. If omitted, a project with a randomly generated name (for example, <code class="docutils literal notranslate"><span class="pre">my-project-2569</span></code>) is created.</p></td>
+<td><p>Not set</p></td>
+</tr>
+<tr class="row-odd"><th class="stub"><p><code class="docutils literal notranslate"><span class="pre">--env-file</span> <span class="pre">&lt;PATH&gt;</span></code></p></th>
+<td><p>Loads environment variables from this file.</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.env</span></code> in the solution root directory, if present</p></td>
+</tr>
+<tr class="row-even"><th class="stub"><p><code class="docutils literal notranslate"><span class="pre">--no-automatic-project-migration</span></code></p></th>
+<td><p>Disables automatic schema migration for projects created with an older solution version.</p></td>
+<td><p>Disabled</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</section>
+<section id="saf-run-console-output">
+<h3><code class="docutils literal notranslate"><span class="pre">saf</span> <span class="pre">run</span></code> console output<a class="headerlink" href="#saf-run-console-output" title="Link to this heading">#</a></h3>
+<p>The console output for <code class="docutils literal notranslate"><span class="pre">saf</span> <span class="pre">run</span></code> provides all the information you need to interact with the running solution. It includes:</p>
+<ul>
+<li><p>Solution name and debug status</p></li>
+<li><p>Project name and display name</p></li>
+<li><p>Solution API URL (with Swagger docs at <code class="docutils literal notranslate"><span class="pre">/docs</span></code>)</p></li>
+<li><p>Solution UI URL</p></li>
+<li><p>OTel Dashboard URL (logs and traces from each service)</p></li>
+<li><p>Status of optional services (SAF Portal, PIM Light Server, additional services)</p></li>
+</ul>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">[...=GLOW API]- Telemetry enabled, using OTLP logging configuration for GLOW API</span>
+<span class="go">[...=GLOW UI]- Telemetry enabled, using OTLP logging configuration for GLOW UI</span>
+<span class="go">* Serving Flask app &#39;ansys.solutions.my_solution.ui.app&#39;</span>
+<span class="go">* Debug mode: off</span>
+<span class="go">INFO - Solution: My Solution</span>
+<span class="go">INFO - Project:</span>
+<span class="go">- display name: my-project-2569</span>
+<span class="go">- name: projects/6800b09f77e87f3a18a39f0a</span>
+<span class="go">INFO - Solution API: http://127.0.0.1:49929/docs</span>
+<span class="go">INFO - Solution UI: http://127.0.0.1:49933/projects/6800b09f77e87f3a18a39f0a</span>
+<span class="go">INFO - OTel Dashboard: http://127.0.0.1:49930</span>
+<span class="go">INFO - SAF Portal: not launched</span>
+<span class="go">INFO - PIM Light Server: not launched</span>
+<span class="go">INFO - Additional services: not launched</span>
+<span class="go">INFO - Starting webview...</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="run-using-saf-desktop-orchestrator">
+<span id="user-guide-run-using-saf-desktop-orchestrator"></span><h2>Run using SAF Desktop Orchestrator<a class="headerlink" href="#run-using-saf-desktop-orchestrator" title="Link to this heading">#</a></h2>
+<p>Alternatively, you can run a solution using SAF Desktop Orchestrator directly. This is useful for advanced users who want to customize the orchestration process.</p>
+<p>The orchestrator is installed as a Python package in the virtual environment of the solution. To install it, run:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>ansys.saf.desktop.orchestrator<span class="w"> </span><span class="se">\</span>
+--solution-main-module-name<span class="w"> </span>&lt;package&gt;.&lt;submodule&gt;.&lt;main_module&gt;
+</pre></div>
+</div>
+<p>Replace <code class="docutils literal notranslate"><span class="pre">&lt;package&gt;.&lt;submodule&gt;.&lt;main_module&gt;</span></code> with the full Python module name of the module containing the <code class="docutils literal notranslate"><span class="pre">glow_main</span></code> call for your solution.
+For example, to start the orchestrator for the solution whose main module is located at <code class="docutils literal notranslate"><span class="pre">src/ansys/solutions/my_solution/main.py</span></code>, run:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>ansys.saf.desktop.orchestrator<span class="w"> </span><span class="se">\</span>
+--solution-main-module-name<span class="w"> </span>ansys.solutions.my_solution.main
+</pre></div>
+</div>
+<section id="the-desktop-orchestrator-command">
+<h3>The <code class="docutils literal notranslate"><span class="pre">desktop.orchestrator</span></code> command<a class="headerlink" href="#the-desktop-orchestrator-command" title="Link to this heading">#</a></h3>
+<p>When you run a solution using SAF Desktop Orchestrator (without flags), the following happens:</p>
+<ol class="arabic">
+<li><p>A project with a random name is automatically created (for example, <code class="docutils literal notranslate"><span class="pre">my-project-2569</span></code>).</p></li>
+<li><p>A PyWebView window opens with the solution UI for that project (on Windows). On other platforms, a browser tab opens instead.</p></li>
+<li><p>SAF Portal is <strong>not</strong> launched by default.</p></li>
+<li><p>On Windows, a splash screen displays while services start up.</p></li>
+</ol>
+</section>
+<section id="desktop-orchestrator-options">
+<h3><code class="docutils literal notranslate"><span class="pre">desktop.orchestrator</span></code> options<a class="headerlink" href="#desktop-orchestrator-options" title="Link to this heading">#</a></h3>
+<p>SAF Desktop Orchestrator has multiple command-line options. To see them all without starting the orchestrator, run:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>ansys.saf.desktop.orchestrator<span class="w"> </span>--help
+</pre></div>
+</div>
+<p>Options are divided into <a class="reference internal" href="#orchestrator-command-options-required"><span class="std std-ref">Required</span></a> and <a class="reference internal" href="#orchestrator-command-options-optional"><span class="std std-ref">Optional</span></a> categories, as detailed in the
+following sections.</p>
+<section id="required">
+<span id="orchestrator-command-options-required"></span><h4>Required<a class="headerlink" href="#required" title="Link to this heading">#</a></h4>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 50.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head stub"><p>Option</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><th class="stub"><p><code class="docutils literal notranslate"><span class="pre">--solution-main-module-name</span> <span class="pre">SOLUTION_MAIN_MODULE_NAME</span></code></p></th>
+<td><p>Specifies the full name of the Python module that contains the <code class="docutils literal notranslate"><span class="pre">glow_main</span></code> call.</p>
+<p>For example, the <code class="docutils literal notranslate"><span class="pre">ansys.solutions.my_solution.main</span></code> module refers to the <code class="docutils literal notranslate"><span class="pre">src/ansys/solutions/my_solution/main.py</span></code> file.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="optional">
+<span id="orchestrator-command-options-optional"></span><h4>Optional<a class="headerlink" href="#optional" title="Link to this heading">#</a></h4>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 40.0%" />
+<col style="width: 40.0%" />
+<col style="width: 20.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head stub"><p>Option</p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>Default value</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><th class="stub"><p><code class="docutils literal notranslate"><span class="pre">--portal</span></code></p></th>
+<td><p>Opens the project selection UI instead of the solution UI.</p>
+<p>If the <code class="docutils literal notranslate"><span class="pre">ansys-projects-dashboard</span></code> package is installed, the orchestrator opens the
+Projects Dashboard page in the solution UI instead of starting SAF Portal.
+Otherwise, it starts SAF Portal and opens the Portal UI.</p>
+<p>The Projects Dashboard path defaults to <code class="docutils literal notranslate"><span class="pre">/projects</span></code>. To use a different path, set the
+<span class="target" id="index-0"></span><code class="xref std std-envvar docutils literal notranslate"><span class="pre">SAF_DESKTOP_PROJECTS_DASHBOARD_PATH</span></code> environment variable.</p>
+</td>
+<td><p>Disabled</p></td>
+</tr>
+<tr class="row-odd"><th class="stub"><p><code class="docutils literal notranslate"><span class="pre">--no-ui</span></code></p></th>
+<td><p>Runs the solution without starting the UI server.</p></td>
+<td><p>Disabled</p></td>
+</tr>
+<tr class="row-even"><th class="stub"><p><code class="docutils literal notranslate"><span class="pre">--browser</span></code></p></th>
+<td><p>Opens the solution UI in the default web browser instead of a dedicated window.</p></td>
+<td><p>Disabled</p></td>
+</tr>
+<tr class="row-odd"><th class="stub"><p><code class="docutils literal notranslate"><span class="pre">--streamlit-ui</span></code></p></th>
+<td><p>Runs the solution with Streamlit as the UI server.</p></td>
+<td><p>Disabled</p></td>
+</tr>
+<tr class="row-even"><th class="stub"><p><code class="docutils literal notranslate"><span class="pre">--project-display-name</span> <span class="pre">PROJECT_DISPLAY_NAME</span></code></p></th>
+<td><p>Specifies the display name of the project to open or create.</p>
+<p>You cannot use this option when SAF Portal is running.</p>
+<p>If you do not specify a display name, the orchestrator generates one in the format <code class="docutils literal notranslate"><span class="pre">my-project-XXXXX</span></code>.</p>
+</td>
+<td><p>Not set</p></td>
+</tr>
+<tr class="row-odd"><th class="stub"><p><code class="docutils literal notranslate"><span class="pre">--env-file</span> <span class="pre">ENV_FILE</span></code></p></th>
+<td><p>Loads environment variables from this file.</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.env</span></code> in current directory</p></td>
+</tr>
+<tr class="row-even"><th class="stub"><p><code class="docutils literal notranslate"><span class="pre">--no-automatic-project-migration</span></code></p></th>
+<td><p>Disables automatic schema migration upgrades for old projects.</p></td>
+<td><p>Disabled</p></td>
+</tr>
+<tr class="row-odd"><th class="stub"><p><code class="docutils literal notranslate"><span class="pre">--log-to-files</span></code></p></th>
+<td><p>Logs to files instead of showing the OTel Dashboard.</p>
+<p>You can also enable this option by setting the environment variable
+<span class="target" id="index-1"></span><code class="xref std std-envvar docutils literal notranslate"><span class="pre">SAF_DESKTOP_LOG_TO_FILES=True</span></code>, which overrides any existing GLOW
+environment variables that configure logging.</p>
+</td>
+<td><p>Disabled</p></td>
+</tr>
+<tr class="row-even"><th class="stub"><p><code class="docutils literal notranslate"><span class="pre">--pre-load</span></code></p></th>
+<td><p>Runs the full solution stack without opening the solution UI window, then shuts down immediately.</p>
+<p>Use this option to warm up or validate a solution without displaying it, for example during
+installer builds.</p>
+</td>
+<td><p>Disabled</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>When SAF Portal is not started, the orchestrator always initializes a project,
+regardless of whether a project display name is provided. If no display name
+is provided, the project is named <code class="docutils literal notranslate"><span class="pre">my-project-XXXXX</span></code>, where <code class="docutils literal notranslate"><span class="pre">XXXXX</span></code> is a
+random number.</p>
+</div>
+</section>
+</section>
+<section id="desktop-orchestrator-console-output">
+<h3><code class="docutils literal notranslate"><span class="pre">desktop.orchestrator</span></code> console output<a class="headerlink" href="#desktop-orchestrator-console-output" title="Link to this heading">#</a></h3>
+<p>The console output displays the following information:</p>
+<ul>
+<li><p>Debug status</p></li>
+<li><p>Solution name</p></li>
+<li><p>Project name and display name</p></li>
+<li><p>Solution API/UI and OTel Dashboard URLs</p></li>
+<li><p>Status of services: <code class="docutils literal notranslate"><span class="pre">Portal</span></code>, <code class="docutils literal notranslate"><span class="pre">PIM</span> <span class="pre">Light</span> <span class="pre">Server</span></code>, and additional services</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Orchestrator output</span>
+<span class="p">[</span><span class="o">...=</span><span class="n">GLOW</span> <span class="n">API</span><span class="p">]</span><span class="o">-</span> <span class="n">Telemetry</span> <span class="n">enabled</span><span class="p">,</span> <span class="n">using</span> <span class="n">OTLP</span> <span class="n">logging</span> <span class="n">configuration</span> <span class="k">for</span> <span class="n">GLOW</span> <span class="n">API</span>
+<span class="p">[</span><span class="o">...=</span><span class="n">GLOW</span> <span class="n">UI</span><span class="p">]</span><span class="o">-</span> <span class="n">Telemetry</span> <span class="n">enabled</span><span class="p">,</span> <span class="n">using</span> <span class="n">OTLP</span> <span class="n">logging</span> <span class="n">configuration</span> <span class="k">for</span> <span class="n">GLOW</span> <span class="n">UI</span>
+<span class="o">*</span> <span class="n">Serving</span> <span class="n">Flask</span> <span class="n">app</span> <span class="s1">&#39;ansys.solutions.my_solution.ui.app&#39;</span>
+<span class="o">*</span> <span class="n">Debug</span> <span class="n">mode</span><span class="p">:</span> <span class="n">off</span>
+<span class="n">INFO</span> <span class="o">-</span> <span class="n">Solution</span><span class="p">:</span> <span class="n">My</span> <span class="n">Solution</span>
+<span class="n">INFO</span> <span class="o">-</span> <span class="n">Project</span><span class="p">:</span>
+<span class="o">-</span> <span class="n">display</span> <span class="n">name</span><span class="p">:</span> <span class="n">my</span><span class="o">-</span><span class="n">project</span><span class="o">-</span><span class="mi">2569</span>
+<span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">projects</span><span class="o">/</span><span class="mi">6800</span><span class="n">b09f77e87f3a18a39f0a</span>
+<span class="n">INFO</span> <span class="o">-</span> <span class="n">Solution</span> <span class="n">API</span><span class="p">:</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="mf">127.0.0.1</span><span class="p">:</span><span class="mi">49929</span><span class="o">/</span><span class="n">docs</span>
+<span class="n">INFO</span> <span class="o">-</span> <span class="n">Solution</span> <span class="n">UI</span><span class="p">:</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="mf">127.0.0.1</span><span class="p">:</span><span class="mi">49933</span><span class="o">/</span><span class="n">projects</span><span class="o">/</span><span class="mi">6800</span><span class="n">b09f77e87f3a18a39f0a</span>
+<span class="n">INFO</span> <span class="o">-</span> <span class="n">OTel</span> <span class="n">Dashboard</span><span class="p">:</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="mf">127.0.0.1</span><span class="p">:</span><span class="mi">49930</span>
+<span class="n">INFO</span> <span class="o">-</span> <span class="n">SAF</span> <span class="n">Portal</span><span class="p">:</span> <span class="ow">not</span> <span class="n">launched</span>
+<span class="n">INFO</span> <span class="o">-</span> <span class="n">PIM</span> <span class="n">Light</span> <span class="n">Server</span><span class="p">:</span> <span class="ow">not</span> <span class="n">launched</span>
+<span class="n">INFO</span> <span class="o">-</span> <span class="n">Additional</span> <span class="n">services</span><span class="p">:</span> <span class="ow">not</span> <span class="n">launched</span>
+<span class="n">INFO</span> <span class="o">-</span> <span class="n">Starting</span> <span class="n">webview</span><span class="o">...</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="run-using-the-glow-cli">
+<span id="user-guide-run-using-the-glow-cli"></span><h2>Run using the GLOW CLI<a class="headerlink" href="#run-using-the-glow-cli" title="Link to this heading">#</a></h2>
+<p>The GLOW CLI lets you run the solution API (backend) and the solution UI (frontend) independently. This is useful for advanced scenarios where you need fine-grained control over individual servers.</p>
+<section id="when-to-use-the-glow-cli">
+<h3>When to use the GLOW CLI<a class="headerlink" href="#when-to-use-the-glow-cli" title="Link to this heading">#</a></h3>
+<p>Use the GLOW CLI when you need to:</p>
+<ul>
+<li><p>Debug the API and UI independently</p></li>
+<li><p>Start only one part of the solution</p></li>
+<li><p>Control API and UI startup from separate terminals</p></li>
+<li><p>Switch from the built-in CLI wrappers to lower-level production server commands</p></li>
+</ul>
+<p>For most local development workflows, use <a class="reference internal" href="#user-guide-run-using-saf-cli"><span class="std std-ref">SAF CLI</span></a> or <a class="reference internal" href="#user-guide-run-using-saf-desktop-orchestrator"><span class="std std-ref">SAF Desktop Orchestrator</span></a> instead.</p>
+</section>
+<section id="how-the-glow-cli-works">
+<h3>How the GLOW CLI works<a class="headerlink" href="#how-the-glow-cli-works" title="Link to this heading">#</a></h3>
+<p>A SAF solution has two web applications:</p>
+<ul>
+<li><p><strong>Solution API</strong>: The backend service that handles solution logic and data</p></li>
+<li><p><strong>Solution UI</strong>: The frontend web application that users open in the browser</p></li>
+</ul>
+<p>You can start each application in one of two ways:</p>
+<ul>
+<li><p><strong>Standard</strong>: Use the GLOW CLI wrapper commands.</p></li>
+<li><p><strong>Advanced</strong>: Call the production server directly.</p></li>
+</ul>
+<p>In practice, a common workflow is:</p>
+<ol class="arabic">
+<li><p>Start the solution API in one terminal.</p></li>
+<li><p>Start the solution UI in a second terminal.</p></li>
+<li><p>Open the solution UI URL reported in the terminal output.</p></li>
+</ol>
+</section>
+<section id="solution-api-execution">
+<h3>Solution API execution<a class="headerlink" href="#solution-api-execution" title="Link to this heading">#</a></h3>
+<p>To run the solution API, you can use the GLOW CLI or directly launch the app using a production server such as <code class="docutils literal notranslate"><span class="pre">uvicorn</span></code>.</p>
+<section id="run-using-the-glow-api">
+<h4>Run using the GLOW API<a class="headerlink" href="#run-using-the-glow-api" title="Link to this heading">#</a></h4>
+<p>The <code class="docutils literal notranslate"><span class="pre">glow_engine</span> <span class="pre">api</span></code> command launches a simple uvicorn server with only a few parameters exposed.</p>
+<p>Run the following command to start the solution that is inside the <code class="docutils literal notranslate"><span class="pre">ansys.solutions.&lt;solution_name&gt;</span></code> environment:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>glow_engine<span class="w"> </span>api
+</pre></div>
+</div>
+<p>This script automatically runs the following Python module: <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">-m</span> <span class="pre">ansys.saf.glow.cli</span> <span class="pre">api</span></code>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This command automatically detects the entry point of the solution, which is expected to be <code class="docutils literal notranslate"><span class="pre">ansys/solutions/&lt;solution_name&gt;/solution/definition.py</span></code>.</p>
+<p>If your solution has a different structure, use the <code class="docutils literal notranslate"><span class="pre">--definition</span></code> argument to specify the correct module using dot notation:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>glow_engine<span class="w"> </span>api<span class="w"> </span>--definition<span class="w"> </span>tests.mocks.solutions.minimal_solution
+</pre></div>
+</div>
+</div>
+<section id="the-glow-engine-api-command">
+<h5>The <code class="docutils literal notranslate"><span class="pre">glow_engine</span> <span class="pre">api</span></code> command<a class="headerlink" href="#the-glow-engine-api-command" title="Link to this heading">#</a></h5>
+<p>When you run the solution API using <code class="docutils literal notranslate"><span class="pre">glow_engine</span> <span class="pre">api</span></code>, the following happens:</p>
+<ol class="arabic">
+<li><p>The REST API server starts and binds to the localhost and port specified (default: <code class="docutils literal notranslate"><span class="pre">127.0.0.1:5432</span></code>).</p></li>
+<li><p>The API is available at <code class="docutils literal notranslate"><span class="pre">http://127.0.0.1:5432</span></code> with interactive Swagger documentation at <code class="docutils literal notranslate"><span class="pre">/docs</span></code>.</p></li>
+<li><p>No project is automatically created. You must create projects using the API endpoints or other tools.</p></li>
+<li><p>The UI server is <strong>not</strong> started. You must start it separately in another terminal using <code class="docutils literal notranslate"><span class="pre">glow_engine</span> <span class="pre">ui</span></code>.</p></li>
+</ol>
+</section>
+<section id="glow-engine-api-command-options">
+<h5><code class="docutils literal notranslate"><span class="pre">glow_engine</span> <span class="pre">api</span></code> command options<a class="headerlink" href="#glow-engine-api-command-options" title="Link to this heading">#</a></h5>
+<p>The <code class="docutils literal notranslate"><span class="pre">glow_engine</span> <span class="pre">api</span></code> command has multiple options. To see them all, run the following command:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>glow_engine<span class="w"> </span>api<span class="w"> </span>--help
+</pre></div>
+</div>
+<p>The following <code class="docutils literal notranslate"><span class="pre">glow_engine</span> <span class="pre">api</span></code> options are available:</p>
+<div class="pst-scrollable-table-container"><table class="table" id="id3">
+<caption><span class="caption-text">GLOW API options</span><a class="headerlink" href="#id3" title="Link to this table">#</a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 60.0%" />
+<col style="width: 15.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head stub"><p>Option</p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>Default value</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><th class="stub"><p><code class="docutils literal notranslate"><span class="pre">--host</span> <span class="pre">TEXT</span></code></p></th>
+<td><p>Binds the server socket to this host.</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">127.0.0.1</span></code></p></td>
+</tr>
+<tr class="row-odd"><th class="stub"><p><code class="docutils literal notranslate"><span class="pre">--port</span> <span class="pre">INTEGER</span></code></p></th>
+<td><p>Binds the server socket to this port.</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">5432</span></code></p></td>
+</tr>
+<tr class="row-even"><th class="stub"><p><code class="docutils literal notranslate"><span class="pre">--pim-host</span> <span class="pre">TEXT</span></code></p></th>
+<td><p>Specifies the host on which the product instance management system is running.</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">127.0.0.1</span></code></p></td>
+</tr>
+<tr class="row-odd"><th class="stub"><p><code class="docutils literal notranslate"><span class="pre">--pim-port</span> <span class="pre">INTEGER</span></code></p></th>
+<td><p>Specifies the port on which the product instance management system is running.</p></td>
+<td><p>Not set</p></td>
+</tr>
+<tr class="row-even"><th class="stub"><p><code class="docutils literal notranslate"><span class="pre">--cors-origin</span> <span class="pre">TEXT</span></code></p></th>
+<td><p>Specifies the origins that are permitted to make cross-origin requests.</p></td>
+<td><p>Not set</p></td>
+</tr>
+<tr class="row-odd"><th class="stub"><p><code class="docutils literal notranslate"><span class="pre">--definition</span> <span class="pre">TEXT</span></code></p></th>
+<td><p>Specifies the solution definition module.</p></td>
+<td><p>Not set</p></td>
+</tr>
+<tr class="row-even"><th class="stub"><p><code class="docutils literal notranslate"><span class="pre">--solution</span> <span class="pre">TEXT</span></code></p></th>
+<td><p>Specifies the solution module.</p></td>
+<td><p>Not set</p></td>
+</tr>
+<tr class="row-odd"><th class="stub"><p><code class="docutils literal notranslate"><span class="pre">--env-file</span> <span class="pre">PATH</span></code></p></th>
+<td><p>Loads environment variables from this file. If you do not specify a file, the command searches for <code class="docutils literal notranslate"><span class="pre">.env</span></code> in the current directory.</p></td>
+<td><p>Not set</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</section>
+<section id="run-using-a-production-server">
+<h4>Run using a production server<a class="headerlink" href="#run-using-a-production-server" title="Link to this heading">#</a></h4>
+<p>To get full control over the parameters used by the server, you can directly call a production server such as <code class="docutils literal notranslate"><span class="pre">uvicorn</span></code>
+to start the solution API:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>uvicorn<span class="w"> </span>ansys.saf.glow.api:app<span class="w"> </span>--host<span class="w"> </span>&lt;host&gt;<span class="w"> </span>--port<span class="w"> </span>&lt;port&gt;
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This command automatically detects the definition of the solution, which is expected to be <code class="docutils literal notranslate"><span class="pre">ansys/solutions/&lt;solution_name&gt;/solution/definition.py</span></code>.</p>
+<p>If your solution has a different structure, set the environment variable <span class="target" id="index-2"></span><code class="xref std std-envvar docutils literal notranslate"><span class="pre">GLOW_SOLUTION_DEFINITION</span></code> to specify the correct module using dot notation.</p>
+</div>
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p>You cannot use <span class="target" id="index-3"></span><code class="xref std std-envvar docutils literal notranslate"><span class="pre">GLOW_API_HOST</span></code> and <span class="target" id="index-4"></span><code class="xref std std-envvar docutils literal notranslate"><span class="pre">GLOW_API_PORT</span></code> to configure the host and port of the uvicorn server.
+However, GLOW needs to know in which host and port it is running for its proper functioning and this information is not
+retrieved automatically from <code class="docutils literal notranslate"><span class="pre">uvicorn</span></code> either. Therefore, you must configure both the <code class="docutils literal notranslate"><span class="pre">uvicorn</span></code> port and host, and
+GLOW’s environment variables <span class="target" id="index-5"></span><code class="xref std std-envvar docutils literal notranslate"><span class="pre">GLOW_API_PORT</span></code> and <span class="target" id="index-6"></span><code class="xref std std-envvar docutils literal notranslate"><span class="pre">GLOW_API_HOST</span></code> to the same values.</p>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p>For more information on the options available to configure the server, see <a class="reference external" href="https://uvicorn.dev/settings/?h=settings/" rel="noopener noreferrer" target="_blank">Settings</a> in the official Uvicorn documentation.</p>
+</div>
+</section>
+</section>
+<section id="solution-ui-execution">
+<h3>Solution UI execution<a class="headerlink" href="#solution-ui-execution" title="Link to this heading">#</a></h3>
+<p>To run only the solution UI, you can use the GLOW CLI or directly launch the app using production servers such as <code class="docutils literal notranslate"><span class="pre">gunicorn</span></code>
+(Linux) or <code class="docutils literal notranslate"><span class="pre">waitress</span></code> (Windows and Linux).</p>
+<section id="run-using-the-glow-ui">
+<h4>Run using the GLOW UI<a class="headerlink" href="#run-using-the-glow-ui" title="Link to this heading">#</a></h4>
+<p>Run the following command to start the solution UI that is inside the <code class="docutils literal notranslate"><span class="pre">ansys.solutions.&lt;solution_name&gt;</span></code> environment:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>glow_engine<span class="w"> </span>ui
+</pre></div>
+</div>
+<p>This script automatically runs the following Python module: <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">-m</span> <span class="pre">ansys.saf.glow.cli</span> <span class="pre">ui</span></code>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This command automatically detects the entry point of the solution, which is expected to be <code class="docutils literal notranslate"><span class="pre">ansys/solutions/&lt;solution_name&gt;/main.py</span></code>.</p>
+<p>If your solution has a different structure, use the <code class="docutils literal notranslate"><span class="pre">--solution</span></code> argument to specify the correct module using dot notation:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>glow_engine<span class="w"> </span>ui<span class="w"> </span>--solution<span class="w"> </span>tests.mocks.solutions.minimal_solution
+</pre></div>
+</div>
+</div>
+<section id="the-glow-engine-ui-command">
+<h5>The <code class="docutils literal notranslate"><span class="pre">glow_engine</span> <span class="pre">ui</span></code> command<a class="headerlink" href="#the-glow-engine-ui-command" title="Link to this heading">#</a></h5>
+<p>When you run the solution UI using <code class="docutils literal notranslate"><span class="pre">glow_engine</span> <span class="pre">ui</span></code>, the following happens:</p>
+<ol class="arabic">
+<li><p>The Dash UI server starts and binds to the localhost and port specified (default: <code class="docutils literal notranslate"><span class="pre">127.0.0.1:5433</span></code>).</p></li>
+<li><p>The UI is available at <code class="docutils literal notranslate"><span class="pre">http://127.0.0.1:5433</span></code> and is ready for browser access.</p></li>
+<li><p>The UI connects to a solution API server. If no API URL is specified, the UI starts but will display connection errors until the API is running.</p></li>
+<li><p>No project is automatically created. Projects must be managed by creating them first via the API or another method.</p></li>
+</ol>
+</section>
+<section id="glow-engine-ui-options">
+<h5><code class="docutils literal notranslate"><span class="pre">glow_engine</span> <span class="pre">ui</span></code> options<a class="headerlink" href="#glow-engine-ui-options" title="Link to this heading">#</a></h5>
+<p>The <code class="docutils literal notranslate"><span class="pre">glow_engine</span> <span class="pre">ui</span></code> command has multiple options. To see them all, run the following command:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>glow_engine<span class="w"> </span>ui<span class="w"> </span>--help
+</pre></div>
+</div>
+<p>The following <code class="docutils literal notranslate"><span class="pre">glow_engine</span> <span class="pre">ui</span></code> options are available:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 60.0%" />
+<col style="width: 15.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head stub"><p>Option</p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>Default value</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><th class="stub"><p><code class="docutils literal notranslate"><span class="pre">--host</span> <span class="pre">TEXT</span></code></p></th>
+<td><p>Binds the server socket to this host.</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">127.0.0.1</span></code></p></td>
+</tr>
+<tr class="row-odd"><th class="stub"><p><code class="docutils literal notranslate"><span class="pre">--port</span> <span class="pre">INTEGER</span></code></p></th>
+<td><p>Binds the server socket to this port.</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">5433</span></code></p></td>
+</tr>
+<tr class="row-even"><th class="stub"><p><code class="docutils literal notranslate"><span class="pre">--api-server-url</span> <span class="pre">TEXT</span></code></p></th>
+<td><p>Specifies the URL of the solution API server.</p></td>
+<td><p>Not set</p></td>
+</tr>
+<tr class="row-odd"><th class="stub"><p><code class="docutils literal notranslate"><span class="pre">--portal-ui-url</span> <span class="pre">TEXT</span></code></p></th>
+<td><p>Specifies the URL of the Portal UI.</p></td>
+<td><p>Not set</p></td>
+</tr>
+<tr class="row-even"><th class="stub"><p><code class="docutils literal notranslate"><span class="pre">--solution</span> <span class="pre">TEXT</span></code></p></th>
+<td><p>Specifies the solution module.</p></td>
+<td><p>Not set</p></td>
+</tr>
+<tr class="row-odd"><th class="stub"><p><code class="docutils literal notranslate"><span class="pre">--env-file</span> <span class="pre">PATH</span></code></p></th>
+<td><p>Loads environment variables from this file. If you do not specify a file, the command searches for <code class="docutils literal notranslate"><span class="pre">.env</span></code> in the current directory.</p></td>
+<td><p>Not set</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</section>
+<section id="id1">
+<h4>Run using a production server<a class="headerlink" href="#id1" title="Link to this heading">#</a></h4>
+<p>To get full control over the parameters used by the server, you can directly call it using a production server such as <code class="docutils literal notranslate"><span class="pre">gunicorn</span></code> (Linux)
+or <code class="docutils literal notranslate"><span class="pre">waitress</span></code> (Windows and Linux) to start the solution UI:</p>
+<div class="sd-tab-set docutils">
+<input checked="checked" id="sd-tab-item-6" name="sd-tab-set-3" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-6">
+Gunicorn</label><div class="sd-tab-content docutils">
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>gunicorn<span class="w"> </span>-b<span class="w"> </span>&lt;host&gt;:&lt;port&gt;<span class="w"> </span>ansys.saf.glow.ui:app
+</pre></div>
+</div>
+</div>
+<input id="sd-tab-item-7" name="sd-tab-set-3" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-7">
+Waitress</label><div class="sd-tab-content docutils">
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>waitress-serve<span class="w"> </span>ansys.saf.glow.ui:app<span class="w"> </span>--port<span class="w"> </span>&lt;port&gt;<span class="w"> </span>--host<span class="w"> </span>&lt;host&gt;
+</pre></div>
+</div>
+</div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This command automatically detects the definition of the solution, which is expected to be <code class="docutils literal notranslate"><span class="pre">ansys/solutions/&lt;solution_name&gt;/solution/definition.py</span></code>,
+and the solution UI application, which is expected to be <code class="docutils literal notranslate"><span class="pre">ansys/solutions/&lt;solution_name&gt;/ui/app.py</span></code>.</p>
+<p>If your solution has a different structure, set the environment variables <span class="target" id="index-7"></span><code class="xref std std-envvar docutils literal notranslate"><span class="pre">GLOW_SOLUTION_DEFINITION</span></code> and <span class="target" id="index-8"></span><code class="xref std std-envvar docutils literal notranslate"><span class="pre">GLOW_UI_MODULE</span></code> to specify
+the correct modules using dot notation:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">GLOW_SOLUTION_DEFINITION</span><span class="o">=</span>tests.mocks.solutions.minimal_solution.solution.definition
+<span class="nb">export</span><span class="w"> </span><span class="nv">GLOW_UI_MODULE</span><span class="o">=</span>tests.mocks.solutions.minimal_solution.ui.app
+</pre></div>
+</div>
+</div>
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p>You cannot use <span class="target" id="index-9"></span><code class="xref std std-envvar docutils literal notranslate"><span class="pre">GLOW_UI_HOST</span></code> and <span class="target" id="index-10"></span><code class="xref std std-envvar docutils literal notranslate"><span class="pre">GLOW_UI_PORT</span></code> to configure the host and port of the <code class="docutils literal notranslate"><span class="pre">gunicorn/waitress</span></code>
+server. However, GLOW needs to know in which host and port it is running for its proper functioning and this information is
+not retrieved automatically from <code class="docutils literal notranslate"><span class="pre">gunicorn/waitress</span></code> either. Therefore, you must configure both the <code class="docutils literal notranslate"><span class="pre">gunicorn/waitress</span></code>
+port and host, and GLOW’s environment variables <span class="target" id="index-11"></span><code class="xref std std-envvar docutils literal notranslate"><span class="pre">GLOW_UI_PORT</span></code> and <span class="target" id="index-12"></span><code class="xref std std-envvar docutils literal notranslate"><span class="pre">GLOW_UI_HOST</span></code> to the same values.</p>
+<p>If you have used non-default values to configure the host and port of the API, you must also configure the environment
+variable <span class="target" id="index-13"></span><code class="xref std std-envvar docutils literal notranslate"><span class="pre">GLOW_API_URL</span></code>. Check <a class="reference internal" href="../environment_variables.html#environment-variables"><span class="std std-ref">Environment variables</span></a> for more details about this environment variable.</p>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p>For more information on the options available to configure the server, see <a class="reference external" href="https://gunicorn.org/reference/settings/" rel="noopener noreferrer" target="_blank">Settings</a> in the official Gunicorn documentation and <a class="reference external" href="https://docs.pylonsproject.org/projects/waitress/en/stable/arguments.html#arguments" rel="noopener noreferrer" target="_blank">Arguments</a> in the official Waitress documentation.</p>
+</div>
+</section>
+</section>
+</section>
+<section id="run-an-archived-solution">
+<span id="user-guide-run-archived-solution"></span><h2>Run an archived solution<a class="headerlink" href="#run-an-archived-solution" title="Link to this heading">#</a></h2>
+<p>You can run an archived solution using the Solution App Starter utility (<code class="docutils literal notranslate"><span class="pre">solution-app-starter</span></code> script). It provides a convenient, one-click method for launching archived solutions, making it easier to share, test, and validate solution packages.</p>
+<p>To run an archived solution using the Solution App Starter:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>saf<span class="w"> </span>execute<span class="w"> </span>&lt;solution_name&gt;<span class="w"> </span><span class="s2">&quot;solution-app-starter &lt;archived_solution&gt;&quot;</span>
+</pre></div>
+</div>
+<p>The solution UI opens in a desktop window.</p>
+<section id="the-solution-app-starter-script">
+<h3>The <code class="docutils literal notranslate"><span class="pre">solution-app-starter</span></code> script<a class="headerlink" href="#the-solution-app-starter-script" title="Link to this heading">#</a></h3>
+<p>When you run the <code class="docutils literal notranslate"><span class="pre">solution-app-starter</span></code> script, it performs the following actions:</p>
+<ol class="arabic">
+<li><p><strong>Launches the solution</strong>: Starts the solution using GLOW without launching SAF Portal or other optional services.</p></li>
+<li><p><strong>Creates a new project</strong>: Generates a new project with a unique, randomly assigned name.</p></li>
+<li><p><strong>Opens the solution UI</strong>: Opens the solution user interface for the newly created project.</p></li>
+</ol>
+<p>Each execution uses a temporary directory for data storage and creates a new project instance. This ensures that every run starts in a clean, isolated environment.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">solution-app-starter</span></code> script cleans the temporary directory when execution completes.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>To ensure the extracted solution can be correctly imported and executed, the temporary directory is added to the beginning (position 0) of Python’s module search path (<code class="docutils literal notranslate"><span class="pre">sys.path</span></code>), and the <span class="target" id="index-14"></span><code class="xref std std-envvar docutils literal notranslate"><span class="pre">PYTHONPATH</span></code> environment variable is set to contain the whole <code class="docutils literal notranslate"><span class="pre">sys.path</span></code>.</p>
+</div>
+</section>
+<section id="solution-app-starter-console-output">
+<h3><code class="docutils literal notranslate"><span class="pre">solution-app-starter</span></code> console output<a class="headerlink" href="#solution-app-starter-console-output" title="Link to this heading">#</a></h3>
+<p>The console displays the same information as when calling the <code class="docutils literal notranslate"><span class="pre">ansys.saf.desktop.orchestrator</span></code> module. The temporary data storage directory is logged with the format <code class="docutils literal notranslate"><span class="pre">APPDATA</span> <span class="pre">set</span> <span class="pre">to</span></code>. For example:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>solution_app_starter:Extracting<span class="w"> </span>solution<span class="w"> </span>to<span class="w"> </span>temp<span class="w"> </span>directory<span class="w"> </span>C:<span class="se">\U</span>sers<span class="se">\t</span>est<span class="se">\A</span>ppData<span class="se">\L</span>ocal<span class="se">\T</span>emp<span class="se">\t</span>mpfg0yp17z...
+solution_app_starter:Added<span class="w"> </span>solution<span class="w"> </span>directory<span class="w"> </span>C:<span class="se">\U</span>sers<span class="se">\t</span>est<span class="se">\A</span>ppData<span class="se">\L</span>ocal<span class="se">\T</span>emp<span class="se">\t</span>mpfg0yp17z<span class="se">\s</span>rc<span class="w"> </span>to<span class="w"> </span>PYTHONPATH.
+solution_app_starter:Loading<span class="w"> </span>solution<span class="w"> </span><span class="k">in</span><span class="w"> </span>file<span class="w"> </span>C:<span class="se">\U</span>sers<span class="se">\t</span>est<span class="se">\A</span>ppData<span class="se">\L</span>ocal<span class="se">\T</span>emp<span class="se">\t</span>mpfg0yp17z<span class="se">\s</span>rc<span class="se">\a</span>nsys<span class="se">\s</span>olutions<span class="se">\m</span>y_archived_solution<span class="se">\m</span>ain.py
+solution_app_starter:APPDATA<span class="w"> </span><span class="nb">set</span><span class="w"> </span>to<span class="w"> </span>C:<span class="se">\U</span>sers<span class="se">\t</span>est<span class="se">\A</span>ppData<span class="se">\L</span>ocal<span class="se">\T</span>emp<span class="se">\t</span>mp6ltewxeg.
+solution_app_starter:Starting<span class="w"> </span>project<span class="w"> </span>with<span class="w"> </span>display_name<span class="w"> </span>673b7cec-da45-48ef-a03a-34deb21cc7b4...
+_telemetry.instrumentor<span class="o">]</span>-<span class="w"> </span>Orchestrator<span class="w"> </span>logging<span class="w"> </span>to<span class="w"> </span>C:/.../logs/orchestration/log_zkdrn748.log
+<span class="o">=</span>GLOW<span class="w"> </span>UI<span class="o">]</span>-<span class="w"> </span>GLOW<span class="w"> </span>UI<span class="w"> </span>logging<span class="w"> </span>to<span class="w"> </span>C:/.../logs/ui_server/log_m86ikn60.log
+<span class="o">=</span>GLOW<span class="w"> </span>API<span class="o">]</span>-<span class="w"> </span>GLOW<span class="w"> </span>API<span class="w"> </span>logging<span class="w"> </span>to<span class="w"> </span>C:/.../logs/api_server/log_0fc8b2sr.log
+*<span class="w"> </span>Serving<span class="w"> </span>Flask<span class="w"> </span>app<span class="w"> </span><span class="s1">&#39;ansys.solutions.my_archived_solution.ui.app&#39;</span>
+*<span class="w"> </span>Debug<span class="w"> </span>mode:<span class="w"> </span>on
+Solution:<span class="w"> </span>My<span class="w"> </span>Solution
+Project:
+-<span class="w"> </span>display<span class="w"> </span>name:<span class="w"> </span>my-project-8915
+-<span class="w"> </span>name:<span class="w"> </span>projects/67d2e4ae13ae5d580c08b1e4
+Solution<span class="w"> </span>API:<span class="w"> </span>http://127.0.0.1:61925/docs
+Solution<span class="w"> </span>UI:<span class="w"> </span>http://127.0.0.1:61926/projects/67d2e4ae13ae5d580c08b1e4
+SAF<span class="w"> </span>Portal:<span class="w"> </span>not<span class="w"> </span>launched
+PIM<span class="w"> </span>Light<span class="w"> </span>Server:<span class="w"> </span>not<span class="w"> </span>launched
+Additional<span class="w"> </span>services:<span class="w"> </span>not<span class="w"> </span>launched
+</pre></div>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p>For instructions on solution archiving, see <a class="reference internal" href="../package/archive.html#user-guide-archive-a-solution"><span class="std std-ref">Archive a solution</span></a>.</p>
+</div>
+</section>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#run-using-saf-cli">Run using SAF CLI</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#solution-execution-modes">Solution execution modes</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#run-in-a-desktop-window">Run in a desktop window</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#run-in-a-web-browser">Run in a web browser</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#run-from-saf-portal">Run from SAF Portal</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-saf-run-command">The <code class="docutils literal notranslate"><span class="pre">saf</span> <span class="pre">run</span></code> command</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#saf-run-options"><code class="docutils literal notranslate"><span class="pre">saf</span> <span class="pre">run</span></code> options</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ui-and-display-options">UI and display options</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#debugging-options">Debugging options</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#port-configuration">Port configuration</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#project-and-environment-options">Project and environment options</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#saf-run-console-output"><code class="docutils literal notranslate"><span class="pre">saf</span> <span class="pre">run</span></code> console output</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#run-using-saf-desktop-orchestrator">Run using SAF Desktop Orchestrator</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-desktop-orchestrator-command">The <code class="docutils literal notranslate"><span class="pre">desktop.orchestrator</span></code> command</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#desktop-orchestrator-options"><code class="docutils literal notranslate"><span class="pre">desktop.orchestrator</span></code> options</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#required">Required</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#optional">Optional</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#desktop-orchestrator-console-output"><code class="docutils literal notranslate"><span class="pre">desktop.orchestrator</span></code> console output</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#run-using-the-glow-cli">Run using the GLOW CLI</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#when-to-use-the-glow-cli">When to use the GLOW CLI</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#how-the-glow-cli-works">How the GLOW CLI works</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#solution-api-execution">Solution API execution</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#run-using-the-glow-api">Run using the GLOW API</a><ul class="nav section-nav flex-column">
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#the-glow-engine-api-command">The <code class="docutils literal notranslate"><span class="pre">glow_engine</span> <span class="pre">api</span></code> command</a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#glow-engine-api-command-options"><code class="docutils literal notranslate"><span class="pre">glow_engine</span> <span class="pre">api</span></code> command options</a></li>
+</ul>
+</li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#run-using-a-production-server">Run using a production server</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#solution-ui-execution">Solution UI execution</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#run-using-the-glow-ui">Run using the GLOW UI</a><ul class="nav section-nav flex-column">
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#the-glow-engine-ui-command">The <code class="docutils literal notranslate"><span class="pre">glow_engine</span> <span class="pre">ui</span></code> command</a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#glow-engine-ui-options"><code class="docutils literal notranslate"><span class="pre">glow_engine</span> <span class="pre">ui</span></code> options</a></li>
+</ul>
+</li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Run using a production server</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#run-an-archived-solution">Run an archived solution</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-solution-app-starter-script">The <code class="docutils literal notranslate"><span class="pre">solution-app-starter</span></code> script</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#solution-app-starter-console-output"><code class="docutils literal notranslate"><span class="pre">solution-app-starter</span></code> console output</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085"></script>
+
+
+  <!-- Include desired assets -->
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.7/require.min.js"></script>
+
+<script>
+// Passing the search options to the search.js file
+const SEARCH_OPTIONS = JSON.parse('{"keys": ["title", "text", "objectID"], "limit": 10, "threshold": 0.2}');
+const SEARCH_FILE = "../../_static/search.json";
+const ADVANCE_SEARCH_PATH = "../../search.html";
+const EXTRA_SOURCES = JSON.parse('""');
+</script>
+
+
+<script src="../../_static/js/search.js"></script>
+
+  
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<footer class="bd-footer">
+  <div class="bd-footer__inner bd-page-width">
+    <div class="footer-items__start">
+      <div class="footer-item">
+        <div class="footer-items__start">
+          <div class="footer-item">
+            <img src="https://docs.pyansys.com/version/dev/_static/ansys_logo_transparent_white.png" alt="Ansys Logo" class="footer-ansys-logo">
+          </div>
+          <div class="footer-item"><br>
+            <p>2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-items__center">
+      <div class="footer-item">
+        <div class="footer-items__start">
+          <div class="connect-with-ansys">
+            <p>Latest documentation</p> <br>
+            <a href="https://www.ansys.com/" class="external-link" target="_blank" rel="noopener noreferrer">
+              <span class="link-text">Ansys.com</span>
+              <i class="fas fa-up-right-from-square"></i>
+            </a><br>
+            <a href="https://www.ansys.com/services/ansys-learning-hub" class="external-link" target="_blank" rel="noopener noreferrer">
+              <span class="link-text">Ansys Learning</span>
+              <i class="fas fa-up-right-from-square"></i>
+            </a><br>
+            <a href="https://www.ansys.com/support" class="external-link" target="_blank" rel="noopener noreferrer">
+              <span class="link-text">Ansys Support</span>
+              <i class="fas fa-up-right-from-square"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-items__end">
+      <div class="footer-item">
+        <div class="footer-right">
+          <span>Connect with Ansys</span>
+          <div class="social-icons">
+            <a href="https://www.youtube.com/user/ansysinc" target="_blank" rel="noopener" class="icon icon-youtube" aria-label="Youtube"><span class="sr-only">Youtube</span></a>
+            <a href="https://www.facebook.com/ansys" target="_blank" rel="noopener" class="icon icon-facebook" aria-label="Facebook"><span class="sr-only">Facebook</span></a>
+            <a href="https://www.linkedin.com/company/ansys-inc" target="_blank" rel="noopener" class="icon icon-linkedin" aria-label="Linkedin"><span class="sr-only">Linkedin</span></a>
+            <a href="https://github.com/ansys" target="_blank" rel="noopener" class="icon icon-github" aria-label="GitHub"><i class="fab fa-github"></i><span class="sr-only">GitHub</span></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+  </body>
+</html>

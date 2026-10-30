@@ -1,0 +1,98 @@
+<svg viewBox="0 0 760 380" xmlns="http://www.w3.org/2000/svg" role="img" font-family="ui-monospace, 'Cascadia Code', 'Fira Mono', monospace" font-size="13">
+  <title>PIM Light versus direct PyAnsys calls</title>
+  <desc>Comparison of PIM Light managed instances versus direct PyAnsys connections</desc>
+
+  <defs>
+    <marker id="arr-pim" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#818cf8"/>
+    </marker>
+    <marker id="arr-direct" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#f97316"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="760" height="380" fill="#0f172a" rx="12"/>
+
+  <!-- Title -->
+  <text x="380" y="32" text-anchor="middle" fill="#f1f5f9" font-size="16" font-weight="700" letter-spacing="0.5">PIM Light vs. Direct PyAnsys Calls</text>
+
+  <!-- LEFT: PIM Light -->
+  <rect x="20" y="56" width="350" height="310" rx="10" fill="#1e293b" stroke="#818cf8" stroke-width="1.5"/>
+  <rect x="20" y="56" width="350" height="28" rx="10" fill="#312e81"/>
+  <rect x="20" y="74" width="350" height="10" fill="#312e81"/>
+  <text x="195" y="76" text-anchor="middle" fill="#c7d2fe" font-size="12" font-weight="700">PIM Light (recommended)</text>
+
+  <!-- GLOW box -->
+  <rect x="40" y="100" width="120" height="36" rx="6" fill="#312e81" stroke="#818cf8" stroke-width="1"/>
+  <text x="100" y="115" text-anchor="middle" fill="#c7d2fe" font-size="9" font-weight="600">GLOW Engine</text>
+  <text x="100" y="128" text-anchor="middle" fill="#94a3b8" font-size="8">@create_instance</text>
+
+  <!-- Arrow to PIM -->
+  <line x1="160" y1="118" x2="208" y2="118" stroke="#818cf8" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arr-pim)"/>
+
+  <!-- PIM box -->
+  <rect x="215" y="100" width="136" height="36" rx="6" fill="#312e81" stroke="#818cf8" stroke-width="1"/>
+  <text x="283" y="115" text-anchor="middle" fill="#c7d2fe" font-size="9" font-weight="600">PIM Light Server</text>
+  <text x="283" y="128" text-anchor="middle" fill="#94a3b8" font-size="8">Process manager</text>
+
+  <!-- Arrow to Product -->
+  <line x1="283" y1="136" x2="283" y2="154" stroke="#818cf8" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arr-pim)"/>
+
+  <!-- Product box -->
+  <rect x="215" y="156" width="136" height="30" rx="6" fill="#064e3b" stroke="#34d399" stroke-width="1"/>
+  <text x="283" y="175" text-anchor="middle" fill="#6ee7b7" font-size="9" font-weight="600">Mechanical / Fluent / ...</text>
+
+  <!-- Benefits list -->
+  <rect x="35" y="200" width="320" height="154" rx="6" fill="#0f172a"/>
+  <text x="50" y="220" fill="#34d399" font-size="10" font-weight="600">✓ Benefits</text>
+  <text x="50" y="238" fill="#94a3b8" font-size="9">• Survives across transactions</text>
+  <text x="50" y="254" fill="#94a3b8" font-size="9">• Automatic health monitoring</text>
+  <text x="50" y="270" fill="#94a3b8" font-size="9">• Port allocation and cleanup</text>
+  <text x="50" y="286" fill="#94a3b8" font-size="9">• GUI access for interactive debugging</text>
+  <text x="50" y="302" fill="#94a3b8" font-size="9">• Cross-step instance sharing</text>
+  <text x="50" y="318" fill="#94a3b8" font-size="9">• Desktop only</text>
+
+  <!-- Use case -->
+  <rect x="35" y="288" width="320" height="0" rx="4" fill="none"/>
+
+  <!-- RIGHT: Direct calls -->
+  <rect x="390" y="56" width="350" height="310" rx="10" fill="#1e293b" stroke="#f97316" stroke-width="1.5"/>
+  <rect x="390" y="56" width="350" height="28" rx="10" fill="#7c2d12"/>
+  <rect x="390" y="74" width="350" height="10" fill="#7c2d12"/>
+  <text x="565" y="76" text-anchor="middle" fill="#fed7aa" font-size="12" font-weight="700">Direct PyAnsys (limited)</text>
+
+  <!-- GLOW box -->
+  <rect x="410" y="100" width="120" height="36" rx="6" fill="#7c2d12" stroke="#f97316" stroke-width="1"/>
+  <text x="470" y="115" text-anchor="middle" fill="#fed7aa" font-size="9" font-weight="600">GLOW Engine</text>
+  <text x="470" y="128" text-anchor="middle" fill="#94a3b8" font-size="8">@transaction</text>
+
+  <!-- Arrow direct to Product -->
+  <line x1="530" y1="118" x2="578" y2="118" stroke="#f97316" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arr-direct)"/>
+
+  <!-- Product box -->
+  <rect x="585" y="100" width="136" height="36" rx="6" fill="#064e3b" stroke="#34d399" stroke-width="1"/>
+  <text x="653" y="115" text-anchor="middle" fill="#6ee7b7" font-size="9" font-weight="600">Mechanical / Fluent / ...</text>
+  <text x="653" y="128" text-anchor="middle" fill="#94a3b8" font-size="8">Launched inline</text>
+
+  <!-- Warning - No PIM -->
+  <rect x="455" y="156" width="220" height="30" rx="6" fill="#1c1917" stroke="#f97316" stroke-width="1.5" stroke-dasharray="4,2"/>
+  <text x="565" y="175" text-anchor="middle" fill="#fb923c" font-size="9" font-weight="600">No PIM — process dies after tx</text>
+
+  <!-- Drawbacks list -->
+  <rect x="405" y="200" width="320" height="154" rx="6" fill="#0f172a"/>
+  <text x="420" y="220" fill="#fb923c" font-size="10" font-weight="600">✗ Limitations</text>
+  <text x="420" y="238" fill="#94a3b8" font-size="9">• Instance lost after transaction ends</text>
+  <text x="420" y="254" fill="#94a3b8" font-size="9">• Must restart product every time</text>
+  <text x="420" y="270" fill="#94a3b8" font-size="9">• No health monitoring</text>
+  <text x="420" y="286" fill="#94a3b8" font-size="9">• GUI access possible (product-dependent)</text>
+  <text x="420" y="302" fill="#94a3b8" font-size="9">• Desktop only</text>
+  <text x="420" y="318" fill="#94a3b8" font-size="9">• OK for fire-and-forget workflows</text>
+
+  <!-- Use case labels -->
+  <rect x="35" y="340" width="320" height="18" rx="4" fill="#064e3b"/>
+  <text x="195" y="353" text-anchor="middle" fill="#6ee7b7" font-size="9" font-weight="600">Use for: iterative workflows, multi-transaction, GUI</text>
+
+  <rect x="405" y="340" width="320" height="18" rx="4" fill="#7c2d12"/>
+  <text x="565" y="353" text-anchor="middle" fill="#fed7aa" font-size="9" font-weight="600">Use for: single-shot batch jobs on desktop</text>
+</svg>

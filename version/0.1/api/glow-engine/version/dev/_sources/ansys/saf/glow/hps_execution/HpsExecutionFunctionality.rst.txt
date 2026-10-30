@@ -1,0 +1,101 @@
+
+
+
+
+
+
+:class:`HpsExecutionFunctionality`
+==================================
+
+
+.. py:class:: ansys.saf.glow.hps_execution.HpsExecutionFunctionality
+
+   Bases: :py:obj:`abc.ABC`
+
+
+   
+   The internal implementation of functionality to support execution of a HPS job or design point.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:currentmodule:: HpsExecutionFunctionality
+
+Overview
+--------
+
+.. tab-set::
+
+   .. tab-item:: Abstract methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~run_and_capture_output`
+            - 
+
+
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~context`
+            - 
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.saf.glow.hps_execution import HpsExecutionFunctionality
+
+Property detail
+---------------
+
+.. py:property:: context
+   :type: HpsExecutionContext
+
+   :abstractmethod:
+
+
+
+
+
+Method detail
+-------------
+
+.. py:method:: run_and_capture_output(args: List[Any], **kwargs: Any)
+   :abstractmethod:
+
+
+
+
+

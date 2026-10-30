@@ -1,0 +1,134 @@
+
+
+
+
+
+
+The ``fluent.py`` module
+========================
+
+.. py:module:: ansys.saf.product_configuration.fluent
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: fluent
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.saf.product_configuration.fluent.AbstractFluentInstanceVersionConfiguration`
+            - Configuration class for a specific version of Ansys Fluent.
+
+
+          * - :py:obj:`~ansys.saf.product_configuration.fluent.Fluent3DDPSolverInstanceVersionConfiguration`
+            - Configuration class for a specific version of Ansys Fluent
+
+
+          * - :py:obj:`~ansys.saf.product_configuration.fluent.Fluent3DDPSolverInstanceConfiguration`
+            - Configuration class for Ansys Fluent in solver mode with 3D geometry in double precision and
+
+
+          * - :py:obj:`~ansys.saf.product_configuration.fluent.Fluent2DDPSolverInstanceVersionConfiguration`
+            - Configuration class for a specific version of Ansys Fluent
+
+
+          * - :py:obj:`~ansys.saf.product_configuration.fluent.Fluent2DDPSolverInstanceConfiguration`
+            - Configuration class for Ansys Fluent in solver mode with 2D geometry in double precision and
+
+
+          * - :py:obj:`~ansys.saf.product_configuration.fluent.Fluent3DDPMeshingInstanceVersionConfiguration`
+            - Configuration class for a specific version of Ansys Fluent
+
+
+          * - :py:obj:`~ansys.saf.product_configuration.fluent.Fluent3DDPMeshingInstanceConfiguration`
+            - Configuration class for Ansys Fluent in meshing mode with 3D geometry in double precision and
+
+
+
+
+
+
+
+    .. tab-item:: Constants
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~SERVICE_NAME`
+            - 
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> AbstractFluentInstanceVersionConfiguration</ansys/saf/product_configuration/fluent/AbstractFluentInstanceVersionConfiguration>
+    <span class="nf nf-cod-symbol_class"></span> Fluent3DDPSolverInstanceVersionConfiguration</ansys/saf/product_configuration/fluent/Fluent3DDPSolverInstanceVersionConfiguration>
+    <span class="nf nf-cod-symbol_class"></span> Fluent3DDPSolverInstanceConfiguration</ansys/saf/product_configuration/fluent/Fluent3DDPSolverInstanceConfiguration>
+    <span class="nf nf-cod-symbol_class"></span> Fluent2DDPSolverInstanceVersionConfiguration</ansys/saf/product_configuration/fluent/Fluent2DDPSolverInstanceVersionConfiguration>
+    <span class="nf nf-cod-symbol_class"></span> Fluent2DDPSolverInstanceConfiguration</ansys/saf/product_configuration/fluent/Fluent2DDPSolverInstanceConfiguration>
+    <span class="nf nf-cod-symbol_class"></span> Fluent3DDPMeshingInstanceVersionConfiguration</ansys/saf/product_configuration/fluent/Fluent3DDPMeshingInstanceVersionConfiguration>
+    <span class="nf nf-cod-symbol_class"></span> Fluent3DDPMeshingInstanceConfiguration</ansys/saf/product_configuration/fluent/Fluent3DDPMeshingInstanceConfiguration>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Module detail
+-------------
+
+.. py:data:: SERVICE_NAME
+   :value: 'http'
+
+
+
+

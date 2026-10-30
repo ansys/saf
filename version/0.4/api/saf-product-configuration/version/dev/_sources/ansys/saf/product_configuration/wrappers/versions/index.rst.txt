@@ -1,0 +1,88 @@
+
+
+
+
+
+
+The ``versions.py`` module
+==========================
+
+.. py:module:: ansys.saf.product_configuration.wrappers.versions
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+.. py:currentmodule:: versions
+.. tab-set::
+
+
+
+
+
+
+
+
+
+    .. tab-item:: Constants
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~AEDT_WRAPPER_VERSION`
+            - 
+
+
+          * - :py:obj:`~FLUENT_WRAPPER_VERSION`
+            - 
+
+
+          * - :py:obj:`~OPTISLANG_WRAPPER_VERSION`
+            - 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Module detail
+-------------
+
+.. py:data:: AEDT_WRAPPER_VERSION
+   :value: '5.0'
+
+
+.. py:data:: FLUENT_WRAPPER_VERSION
+   :value: '4.0'
+
+
+.. py:data:: OPTISLANG_WRAPPER_VERSION
+   :value: '2.0'
+
+
+
+

@@ -1,0 +1,273 @@
+
+
+
+
+
+
+:class:`InternalOptislangManagerImpl`
+=====================================
+
+
+.. py:class:: ansys.saf.product_manager.optislang_wrapper.InternalOptislangManagerImpl(**kwargs: Any)
+
+   Bases: :py:obj:`ansys.saf.glow.solution.InstanceManager`\ [\ :py:obj:`OslClient`\ , :py:obj:`OptislangStateInfo`\ ]
+
+
+   
+   A manager of a secure `optiSLang <https://www.ansys.com/en-gb/products/connect/ansys-optislang>`_
+   product instance, accessed through the optiSLang wrapper service.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+.. py:currentmodule:: InternalOptislangManagerImpl
+
+Overview
+--------
+
+.. tab-set::
+
+
+   .. tab-item:: Constructors
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~get_product_name_implement`
+            - Return the name of the product in the PIM environment.
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~initialize`
+            - Initialize secure optiSLang wrapper service without deprecation warning.
+          * - :py:attr:`~get_client_object_implement`
+            - Return an instance of the custom product's client given the host and port of the shared product instance.
+          * - :py:attr:`~save_state_implement`
+            - Save the state of the product instance to the given directory.
+          * - :py:attr:`~load_state_implement`
+            - Loads the state of the product instance from the given directory.
+          * - :py:attr:`~shutdown_implement`
+            - Gracefully terminates the product instance process.
+
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~PRODUCT_NAME`
+            - 
+          * - :py:attr:`~SERVICE_NAME`
+            - 
+
+
+   .. tab-item:: Static methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~get_connection_mode_for_secure_flags`
+            - 
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.saf.product_manager.optislang_wrapper import InternalOptislangManagerImpl
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: PRODUCT_NAME
+   :value: 'optislang-wrapper-secure'
+
+
+.. py:attribute:: SERVICE_NAME
+   :value: 'http'
+
+
+
+
+Method detail
+-------------
+
+.. py:method:: initialize(version: str | None = None)
+
+   
+   Initialize secure optiSLang wrapper service without deprecation warning.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_connection_mode_for_secure_flags(secure_flags: str | None, hostname: str | None = None) -> str
+   :staticmethod:
+
+
+.. py:method:: get_client_object_implement(hostname: str, port: int) -> OslClient
+
+   
+   Return an instance of the custom product's client given the host and port of the shared product instance.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_product_name_implement() -> str
+   :classmethod:
+
+
+   
+   Return the name of the product in the PIM environment.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: save_state_implement() -> None
+
+   
+   Save the state of the product instance to the given directory.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: load_state_implement() -> None
+
+   
+   Loads the state of the product instance from the given directory.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: shutdown_implement() -> None
+
+   
+   Gracefully terminates the product instance process.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

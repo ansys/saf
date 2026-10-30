@@ -1,0 +1,49 @@
+
+
+
+
+
+
+:class:`CannotGenerateStreamForDirectoryError`
+==============================================
+
+
+.. py:exception:: ansys.bdm.api.storage_exceptions.CannotGenerateStreamForDirectoryError
+
+   Bases: :py:obj:`Exception`
+
+
+   
+   Exception raised when attempting to generate a stream for a directory entity.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.bdm.api.storage_exceptions import CannotGenerateStreamForDirectoryError
+
+
+
+
+

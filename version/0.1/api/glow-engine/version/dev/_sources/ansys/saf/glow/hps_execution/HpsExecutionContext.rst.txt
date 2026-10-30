@@ -1,0 +1,227 @@
+
+
+
+
+
+
+:class:`HpsExecutionContext`
+============================
+
+
+.. py:class:: ansys.saf.glow.hps_execution.HpsExecutionContext
+
+   Bases: :py:obj:`abc.ABC`
+
+
+   
+   The context of an execution of a HPS job or design point evaluation
+   providing information about the job or design point evaluation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: HpsExecutionContext
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~input_parameters`
+            - The input parameters and files of the job or design point evaluation.
+          * - :py:attr:`~required_output_parameters`
+            - The key names of the output parameters passed to the project creation method.
+          * - :py:attr:`~required_output_files`
+            - A dictionary where the keys are the key names of the output files that the project
+          * - :py:attr:`~required_output_directories`
+            - A dictionary where the keys are the key names of the output directories that the project
+          * - :py:attr:`~products`
+            - The products that were required for the job or design point evaluation includes
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.saf.glow.hps_execution import HpsExecutionContext
+
+Property detail
+---------------
+
+.. py:property:: input_parameters
+   :type: Dict[str, Any]
+
+   :abstractmethod:
+
+
+   
+   The input parameters and files of the job or design point evaluation.
+   The keys are the names of the parameters or files.
+   For parameters the values in the dictionary are the values of the parameters.
+   For files the values in the dictionary are the absolute paths to the file.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: required_output_parameters
+   :type: List[str]
+
+   :abstractmethod:
+
+
+   
+   The key names of the output parameters passed to the project creation method.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: required_output_files
+   :type: Dict[str, str]
+
+   :abstractmethod:
+
+
+   
+   A dictionary where the keys are the key names of the output files that the project
+   definition expects from the job or design point evaluation.
+   The values of the dictionary are the relative paths where the files are expected.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: required_output_directories
+   :type: Dict[str, str]
+
+
+   
+   A dictionary where the keys are the key names of the output directories that the project
+   definition expects from the job or design point evaluation.
+   The values of the dictionary are the relative paths where the directories are expected.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: products
+   :type: List[HpsProduct]
+
+   :abstractmethod:
+
+
+   
+   The products that were required for the job or design point evaluation includes
+   the products passed to the project creation method.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+
+

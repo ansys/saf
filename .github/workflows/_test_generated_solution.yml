@@ -256,7 +256,7 @@ jobs:
           git push origin HEAD:${TEST_BRANCH_NAME}
 
       - name: Trigger build workflow
-        uses: ansys/saf-devops/trigger-workflow@304d04d9d9249c968d7a2a9d92a12ffa88a3216d # v1.3.2
+        uses: ansys/saf-devops/trigger-workflow@82c48355bb8dbdaddd0e855ed383c89824ee2c3c # v1.3.3
         with:
           workflow-name: ${{ env.BUILD_WORKFLOW }}
           repository: ${{ github.repository }}

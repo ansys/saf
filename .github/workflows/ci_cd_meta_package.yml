@@ -91,7 +91,7 @@ concurrency:
 
 env:
   LIBRARY_NAME: saf-sdk
-  MINIMUM_PIP_VERSION: "26.0" # Minimal version to have the dependency resolution to be successful
+  MINIMUM_PIP_VERSION: "26.2.2" # https://github.com/pypa/pip/blob/main/NEWS.rst#2622-2026-10-20
 
 jobs:
   run-tests-action:
@@ -465,7 +465,7 @@ jobs:
       - ubuntu-latest
     steps:
       - name: tagging commit
-        uses: ansys/saf-devops/apply-tag-on-commit@304d04d9d9249c968d7a2a9d92a12ffa88a3216d # v1.3.2
+        uses: ansys/saf-devops/apply-tag-on-commit@82c48355bb8dbdaddd0e855ed383c89824ee2c3c # v1.3.3
         with:
           tag: certified-saf-sdk
 
@@ -556,7 +556,7 @@ jobs:
             }}
 
       - name: "Upload artifacts to PyPI using trusted publisher"
-        uses: pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33 # v1.14.2
+        uses: pypa/gh-action-pypi-publish@7245906fb61fa33a13554f9d5fb856fe61758086 # v1.14.3
         with:
           repository-url: https://upload.pypi.org/legacy/
           print-hash: true

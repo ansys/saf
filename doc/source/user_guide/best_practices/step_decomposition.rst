@@ -16,7 +16,7 @@ cohesive set of fields that belong to the same phase of the workflow.
 
 .. image:: /_static/images/step_decomposition.svg
    :align: center
-   :width: 80%
+   :width: 100%
    :alt: Diagram showing how a workflow is decomposed into individual steps, each owning a logical concern
 
 Start with a one-to-one mapping between steps and UI pages, but keep the relationship
@@ -59,9 +59,8 @@ When to merge versus split steps
 =================================
 
 .. image:: /_static/images/step_merge_vs_split.svg
-   :align: center
-   :width: 80%
-   :alt: Side-by-side comparison showing when to merge steps into one versus splitting into multiple
+    :width: 100%
+    :alt: Side-by-side comparison showing when to merge steps into one versus splitting into multiple
 
 Merge when:
 

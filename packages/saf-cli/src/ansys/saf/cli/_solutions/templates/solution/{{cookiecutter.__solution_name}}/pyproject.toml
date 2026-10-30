@@ -51,12 +51,12 @@ priority = "primary"
 
 [tool.poetry.dependencies]
 python = ">=3.11,<3.15"
-ansys-saf-sdk = ">=0.3.0,<1.0.0"
+ansys-saf-sdk = ">=0.4.0,<1.0.0"
 
 [tool.poetry.group.desktop]
 optional = true
 [tool.poetry.group.desktop.dependencies]
-ansys-saf-sdk = { version = ">=0.3.0,<1.0.0", extras = ["desktop"] }
+ansys-saf-sdk = { version = ">=0.4.0,<1.0.0", extras = ["desktop"] }
 
 {% if cookiecutter.__ui_framework == "dash" %}
 [tool.poetry.group.ui]
@@ -96,7 +96,7 @@ vale = { version = "^3.13.0.0" }
 optional = true
 [tool.poetry.group.tests.dependencies]
 coverage = "^7.0.0"
-filelock = "^3.8.0"
+filelock = "^4.2.1"
 httpx2 = "^2.5.0"
 mock = "^4.0.3"
 pytest = "^9.0.3"
@@ -113,12 +113,12 @@ pkginfo = "^1.12.1.2"
 pyinstaller = { version = "^6.16", python = "<3.15" }
 toml = "^0.10.2"
 pyc-wheel = "^1.2.7"
-ansys-saf-sdk = { version = ">=0.3.0,<1.0.0", extras = ["build"] }
+ansys-saf-sdk = { version = ">=0.4.0,<1.0.0", extras = ["build"] }
 
 [tool.poetry.group.style]
 optional = true
 [tool.poetry.group.style.dependencies]
-black = "^26.3.1"
+black = "^26.10.1"
 isort = "^7.0.0"
 flake8 = {version="^7.3.0", python=">=3.8.1,<4"}
 codespell = "^2.4.1"

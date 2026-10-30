@@ -160,7 +160,7 @@ Step 3: Set a breakpoint
 
    .. image:: /_static/images/debugging_set_breakpoint_dash_callback.png
      :alt: Set a breakpoint in a Dash callback
-     :width: 85%
+     :width: 75%
 
 #. Invoke the Dash callback using the :ref:`solution UI <solution_servers_ui_server>`.
 

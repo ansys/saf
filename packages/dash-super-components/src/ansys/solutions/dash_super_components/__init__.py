@@ -23,6 +23,7 @@ from .folder_selector import FolderSelector
 from .input_form import InputForm
 from .input_row_array import InputRowArray
 from .logs_supervisor import LogsSupervisor
+from .project_access_banner import ProjectAccessBanner
 from .transaction_method_status_badge import TransactionMethodStatusBadge
 from .transaction_supervisor import TransactionSupervisor
 from .tree import Tree
@@ -38,6 +39,7 @@ __all__ = [
     "InputForm",
     "InputRowArray",
     "LogsSupervisor",
+    "ProjectAccessBanner",
     "TransactionMethodStatusBadge",
     "TransactionSupervisor",
     "Tree",

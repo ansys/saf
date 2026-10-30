@@ -192,12 +192,17 @@ html_theme_options = {
         ("SAF", f"https://{cname}/version/stable/api/index.html"),
     ],
     "check_switcher": False,
+    "header_links_before_dropdown": 8,
 }
 
 html_theme_options["switcher"] = {
     "json_url": f"https://{cname}/version/stable/api/glow-engine/versions.json",
     "version_match": get_version_match(version),
 }
+
+html_css_files = [
+    "css/custom.css",
+]
 
 # ============================================================================
 # Jinja configuration

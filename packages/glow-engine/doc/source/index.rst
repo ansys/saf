@@ -6,69 +6,57 @@ API reference
 
 GLOW provides Pythonic APIs that you can use to develop solutions. This documentation provides details on the core classes, functions, and methods in the GLOW API.
 
-
-.. grid:: 2
+.. grid:: 3
     :gutter: 4
+    :class-container: onboarding-cards
 
-    .. grid-item-card:: :material-outlined:`api;2em`
+    .. grid-item-card:: :material-outlined:`api;2em` Solution API
+        :class-card: highlight-card
         :link-type: doc
         :link: solution
+        :shadow: lg
 
-        .. raw:: html
+        Provides the core functionality for managing and running solutions using GLOW.
 
-            <span style="font-size: 1.5em; color:#FFB71B;">Solution API</span>
-
-        Provides the core functionality for managing and running solutions with the GLOW.
-
-    .. grid-item-card:: :material-outlined:`api;2em`
+    .. grid-item-card:: :material-outlined:`api;2em` Runtime API
+        :class-card: highlight-card
         :link-type: doc
         :link: runtime
+        :shadow: lg
 
-        .. raw:: html
+        Enables the integration of a GLOW solution (a guided workflow application) with the GLOW infrastructure.
 
-            <span style="font-size: 1.5em; color:#FFB71B;">Runtime API</span>
-
-        Enables the integration of a GLOW Solution (a Guided Workflow Application) with the GLOW infrastructure.
-
-    .. grid-item-card:: :material-outlined:`api;2em`
+    .. grid-item-card:: :material-outlined:`api;2em` Client API
+        :class-card: highlight-card
         :link-type: doc
         :link: client
+        :shadow: lg
 
-        .. raw:: html
+        Enables programs, including a Dash UI server, to access a remote GLOW server that provides the guided workflow service for a solution.
 
-            <span style="font-size: 1.5em; color:#FFB71B;">Client API</span>
-
-        Enables programs, including a Dash UI server, to access a remote GLOW server that provides the guided workflow service for a given GLOW solution.
-
-    .. grid-item-card:: :material-outlined:`api;2em`
+    .. grid-item-card:: :material-outlined:`api;2em` Product instance API
+        :class-card: highlight-card
         :link-type: doc
         :link: product_instance
+        :shadow: lg
 
-        .. raw:: html
+        Enables launching, connecting to, and managing instances of Ansys products.
 
-            <span style="font-size: 1.5em; color:#FFB71B;">Product instance API</span>
-
-        Enables to run, access, and manage Ansy products.
-
-    .. grid-item-card:: :material-outlined:`api;2em`
+    .. grid-item-card:: :material-outlined:`api;2em` HPS API
+        :class-card: highlight-card
         :link-type: doc
         :link: hps
+        :shadow: lg
 
-        .. raw:: html
+        Enables transaction methods to start HPS jobs and parametric studies, and then to request data from those jobs and studies.
 
-            <span style="font-size: 1.5em; color:#FFB71B;">HPS API</span>
-
-        Enables transaction methods to start HPS jobs and parametric studies and request data from those jobs and studies.
-
-    .. grid-item-card:: :material-outlined:`api;2em`
+    .. grid-item-card:: :material-outlined:`api;2em` CLI API
+        :class-card: highlight-card
         :link-type: doc
         :link: cli
+        :shadow: lg
 
-        .. raw:: html
-
-            <span style="font-size: 1.5em; color:#FFB71B;">CLI API</span>
-
-        Enables programs to access CLI commands.
+        Provides the command-line interface for running GLOW API and UI servers and analysis commands.
 
 
 .. toctree::

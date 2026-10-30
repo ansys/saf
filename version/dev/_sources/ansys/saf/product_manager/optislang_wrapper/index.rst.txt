@@ -1,0 +1,80 @@
+
+
+
+
+
+
+The ``optislang_wrapper`` package
+=====================================
+
+.. py:module:: ansys.saf.product_manager.optislang_wrapper
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: optislang_wrapper
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.saf.product_manager.optislang_wrapper.InternalOptislangManagerImpl`
+            - A manager of a secure `optiSLang <https://www.ansys.com/en-gb/products/connect/ansys-optislang>`_
+
+
+          * - :py:obj:`~ansys.saf.product_manager.optislang_wrapper.OslManager`
+            - A manager of an `OptiSLang <https://www.ansys.com/en-gb/products/connect/ansys-optislang>`_ product instance.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> InternalOptislangManagerImpl</ansys/saf/product_manager/optislang_wrapper/InternalOptislangManagerImpl>
+    <span class="nf nf-cod-symbol_class"></span> OslManager</ansys/saf/product_manager/optislang_wrapper/OslManager>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -256,6 +256,8 @@ async def _verify_http_routes(
                     response = await request_client(endpoint, headers=headers)
                     assert_response(endpoint, response)
     assert tested_routes == EXPECTED_ROUTES
+    # project access control is off: its routes are not mounted at all.
+    assert not any("/access" in route or "write-requests" in route or "fail-stuck" in route for route in tested_routes)
 
 
 def _assert_authenticated_response(endpoint: str, response: Response) -> None:

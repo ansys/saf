@@ -42,6 +42,7 @@ from ansys.saf.glow._core.exceptions import SolutionLoadException
 from ansys.saf.glow._core.gc import cleanup_expired_bdm_locks_on_startup
 from ansys.saf.glow._server.dependencies import SettingsDep, SolutionServiceDep, oidc_scheme_with_api_key
 from ansys.saf.glow._server.routers import (
+    access,
     blobs,
     desktop,
     events,
@@ -156,6 +157,10 @@ Solution.
     # voluntarily omitting oidc_scheme on events since the events router contains a mix of websocket and http routes.
     # Each one explicitly defines the auth dependency that it needs.
     app.include_router(events.router)
+    if settings.glow_project_access_control_enabled:
+        # mounted only when enabled, so that these routes answer 404 otherwise.
+        app.include_router(access.router, dependencies=global_dependencies)
+        app.include_router(access.events_router)
 
     FastAPIInstrumentor.instrument_app(app)  # type: ignore
 

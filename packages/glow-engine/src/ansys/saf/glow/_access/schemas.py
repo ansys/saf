@@ -39,6 +39,12 @@ class WriteRequestStatus(StrEnum):
     withdrawn = "withdrawn"
 
 
+class UserRef(BaseModel):
+    """Body of the requests acting on a user."""
+
+    user_id: str
+
+
 class ProjectMemberInfo(BaseModel):
     user_id: str
     role: ProjectRole

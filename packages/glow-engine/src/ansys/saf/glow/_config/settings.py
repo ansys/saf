@@ -223,6 +223,13 @@ class Settings(BaseSettings):
         default=86400,
         description="Seconds after which a running method is considered stuck and no longer blocks the project lock.",
     )
+    glow_project_access_poll_interval: float = Field(
+        default=1.0,
+        description=(
+            "The interval in seconds between two checks for changes of the access state of a project, "
+            "on the live access stream (websocket)."
+        ),
+    )
     glow_ui_user_directory: Literal["none", "keycloak", "scim", "msgraph"] = Field(
         default="none",
         description="The user directory the UI uses to search users when sharing a project.",

@@ -85,6 +85,7 @@ def test_default_settings(monkeypatch: pytest.MonkeyPatch):
         "glow_project_access_control_enabled": False,
         "glow_project_lock_idle_timeout": 28800,
         "glow_project_stuck_method_timeout": 86400,
+        "glow_project_access_poll_interval": 1.0,
         "glow_ui_user_directory": "none",
         "glow_ui_keycloak_url": None,
         "glow_ui_keycloak_realm": None,

@@ -442,6 +442,25 @@ def layout() -> html.Div:
                 ]
             ),
             dmc.Space(h=20),
+            dmc.Blockquote(
+                [
+                    "This application is based on the PyFluent ",
+                    dmc.Anchor(
+                        "frozen rotor workflow example",
+                        href=(
+                            "https://fluent.docs.pyansys.com/version/stable/examples/00-fluent/"
+                            "frozen_rotor_workflow.html"
+                        ),
+                        target="_blank",
+                        underline="always",
+                    ),
+                    ". It demonstrates how to wrap a PyFluent simulation into a SAF application "
+                    "from backend transactions to frontend visualization.",
+                ],
+                icon=DashIconify(icon="material-symbols:info", width=30),
+                style={"font-size": "18px", "fontStyle": "italic"},
+            ),
+            dmc.Space(h=20),
             dmc.Accordion(
                 value="about",
                 variant="contained",

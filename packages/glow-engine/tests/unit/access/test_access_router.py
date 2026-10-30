@@ -187,6 +187,22 @@ def test_transfer_ownership(api: Api):
     assert response.json()["my_role"] == "viewer"
 
 
+@pytest.mark.parametrize("user_id", ["", "   ", "\t\n"])
+def test_empty_user_ids_are_rejected(api: Api, user_id: str):
+    pid = api.create_project(api.alice)
+    api.share(pid, "bob", api.alice)
+    for headers, suffix in (
+        (api.alice, "access/members"),
+        (api.alice, "access:transfer-ownership"),
+        (api.admin, "access:assign-owner"),
+    ):
+        response = api.client.post(f"/projects/{pid}/{suffix}", json={"user_id": user_id}, headers=headers)
+        assert response.status_code == 422, f"{suffix}: {response.status_code} {response.text}"
+    access = api.access(pid, api.alice)
+    assert {m["user_id"] for m in access["members"]} == {"alice", "bob"}
+    assert access["owner_id"] == "alice"
+
+
 def test_assign_owner(api: Api):
     pid = api.create_project(api.alice)
     url = f"/projects/{pid}/access:assign-owner"

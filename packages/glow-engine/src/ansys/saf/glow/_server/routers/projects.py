@@ -23,6 +23,7 @@ from fastapi.responses import FileResponse, StreamingResponse
 from pydantic import BaseModel, ValidationError
 from stream_zip import async_stream_zip
 
+from ansys.saf.glow._access.access_crud import NoProjects
 from ansys.saf.glow._access.dependencies import (
     require_project_metadata,
     require_project_owner,
@@ -199,12 +200,22 @@ async def list_projects(
         except (ValueError, ValidationError) as ex:
             raise UnprocessableEntityError(str(ex)) from None
 
+    scope = access.list_scope(principal)
+    if isinstance(scope, NoProjects):
+        return ListProjectResponse(
+            projects=[],
+            current_page=1,
+            total_pages=1,
+            page_size=list_project_request.page_size,
+            total_projects=0,
+        )
+
     response = await crud.list_projects(
         page_size=list_project_request.page_size,
         page=list_project_request.page,
         order_by=list_project_request.order_by,
         filters=filters,
-        member_id=access.list_scope(principal),
+        member_id=scope,
         orphans_only=list_project_request.orphans_only,
     )
     await access.fill_access_summaries(response.projects, principal)

@@ -37,6 +37,7 @@ from starlette.status import WS_1008_POLICY_VIOLATION
 from ansys.iam.oidc import DEFAULT_SUBPROTOCOL_PREFIX, encode_base64_token
 from ansys.saf.glow._access.access_crud import AccessCrud
 from ansys.saf.glow._access.principal import ON_BEHALF_OF_HEADER, Principal
+from ansys.saf.glow._access.schemas import ProjectRole
 from ansys.saf.glow._config.const import DatabaseType
 from ansys.saf.glow._config.settings import Settings
 from ansys.saf.glow._core.method_status import MethodStatus
@@ -331,6 +332,16 @@ async def test_list_without_user_id_lists_nothing(world: World):
     response = world.client.get("/projects", headers=world.headers_of(None))
     assert response.status_code == 200
     assert response.json()["projects"] == []
+
+
+async def test_list_without_user_id_ignores_a_member_with_an_empty_id(world: World):
+    # Defence in depth: the API refuses empty ids, but even if such a row existed, a caller without id lists nothing.
+    async with world.factory.get_session(project_id=world.project_id, modification=True) as session:
+        await session.upsert_member(world.project_id, "", ProjectRole.viewer)
+    response = world.client.get("/projects", headers=world.headers_of(None))
+    assert response.status_code == 200
+    assert response.json()["projects"] == []
+    assert response.json()["total_projects"] == 0
 
 
 async def test_super_admin_cannot_read_steps_or_export(world: World):

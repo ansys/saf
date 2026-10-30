@@ -49,6 +49,17 @@ AUDIT_LOCK_EXPIRED = "lock_expired"
 AUDIT_METHODS_FAILED = "methods_failed"
 
 
+class NoProjects:
+    """Type of ``NO_PROJECTS``."""
+
+    def __repr__(self) -> str:
+        return "NO_PROJECTS"
+
+
+NO_PROJECTS = NoProjects()
+"""Result of ``AccessCrud.list_scope`` for a caller without user id: no project may be listed."""
+
+
 def _utc_now() -> datetime:
     return datetime.now(UTC)
 
@@ -273,15 +284,17 @@ class AccessCrud:
             await session.upsert_member(project_id, principal.user_id, ProjectRole.owner)
             await session.set_lock_holder(project_id, principal.user_id, self._now())
 
-    def list_scope(self, principal: Principal) -> str | None:
+    def list_scope(self, principal: Principal) -> str | None | NoProjects:
         """The id of the member whose projects the principal may list, or ``None`` to list every project.
 
         Super admins, framework internals and deployments without access control list everything. A caller that
-        cannot be identified is scoped to the empty id, which is nobody's: it lists nothing.
+        cannot be identified gets ``NO_PROJECTS``: it lists nothing, and is never matched against a member id.
         """
         if not self._enabled or principal.is_super_admin or principal.is_internal:
             return None
-        return principal.user_id or ""
+        if not principal.user_id:
+            return NO_PROJECTS
+        return principal.user_id
 
     def check_orphans_listing(self, principal: Principal) -> None:
         """Only super admins (and framework internals) may restrict a project list to the projects without owner."""

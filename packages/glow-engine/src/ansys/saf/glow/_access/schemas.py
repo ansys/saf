@@ -20,7 +20,7 @@ from datetime import datetime
 from enum import StrEnum
 from typing import Any
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 
 class ProjectRole(StrEnum):
@@ -43,6 +43,13 @@ class UserRef(BaseModel):
     """Body of the requests acting on a user."""
 
     user_id: str
+
+    @field_validator("user_id")
+    @classmethod
+    def _user_id_not_blank(cls, value: str) -> str:
+        if not value.strip():
+            raise ValueError("user_id must not be empty or blank")
+        return value
 
 
 class ProjectMemberInfo(BaseModel):

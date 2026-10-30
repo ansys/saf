@@ -23,7 +23,7 @@ from typing import Any, cast
 import pytest
 from sqlalchemy import update
 
-from ansys.saf.glow._access.access_crud import AccessCrud
+from ansys.saf.glow._access.access_crud import NO_PROJECTS, AccessCrud
 from ansys.saf.glow._access.principal import Principal
 from ansys.saf.glow._access.schemas import ProjectMemberInfo, ProjectRole, WriteRequestStatus
 from ansys.saf.glow._config.const import Deployment
@@ -111,6 +111,15 @@ async def test_creator_is_owner_and_holder(env: Env):
     assert access.is_orphan is False
     assert access.lock_acquired_at == env.clock[0]
     assert access.last_write_at == env.clock[0]
+
+
+async def test_list_scope(env: Env):
+    nobody = Principal(user_id=None, is_super_admin=False, is_internal=False)
+    assert env.access.list_scope(ALICE) == "alice"
+    assert env.access.list_scope(ADMIN) is None
+    assert env.access.list_scope(INTERNAL) is None
+    # A caller that cannot be identified is not scoped to any member id, in particular not to the empty one.
+    assert env.access.list_scope(nobody) is NO_PROJECTS
 
 
 async def test_non_member_read_is_404(env: Env):

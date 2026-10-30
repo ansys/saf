@@ -41,6 +41,11 @@ from ansys.saf.glow._config.const import (
 )
 from ansys.saf.glow._config.settings import Settings
 from ansys.saf.glow._telemetry.instrumentor import Instrumentor
+from ansys.saf.glow._ui.user_directory import (
+    create_user_directory,
+    register_user_directory_routes,
+    set_user_directory,
+)
 from ansys.saf.glow._utilities.auth_roles import has_required_role, parse_required_roles
 
 logger = logging.getLogger(__name__)
@@ -233,6 +238,10 @@ def create_app(settings: Settings) -> Any:
         ):
             logger.error("Access token does not grant the required roles.")
             raise Forbidden()
+
+    # The GLOW API only stores user ids: resolving users and their display names is done here, in the UI server.
+    set_user_directory(create_user_directory(settings))
+    register_user_directory_routes(ui_app.server)
 
     # The following environment variables are necessary to for DashClient methods and callbacks.
     # Setting GLOW_SOLUTION_DEFINITION is only necessary in the case of solution definition autodiscovery:

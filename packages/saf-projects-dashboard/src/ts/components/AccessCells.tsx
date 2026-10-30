@@ -144,8 +144,10 @@ export function buildProjectMenuItems(ctx: MenuContext): MenuItem[] {
   const isHolder = !!myId && access.holder_id === myId;
   const heldByOther = !!access.holder_id && !isHolder;
 
+  // Editing the project (name, description) needs the write lock: offer it to the holder only.
   if (access.my_role === "owner") {
     return [
+      ...(isHolder ? [edit] : []),
       act("share", "Share…", icons.share),
       ...(heldByOther ? [act("takeOver", "Take over lock", icons.lock)] : []),
       ...(isHolder ? [act("release", "Release lock", icons.lock)] : []),
@@ -157,7 +159,11 @@ export function buildProjectMenuItems(ctx: MenuContext): MenuItem[] {
 
   if (access.my_role === "viewer") {
     if (isHolder) {
-      return [act("release", "Release lock", icons.lock), ...approveDeny()];
+      return [
+        edit,
+        act("release", "Release lock", icons.lock),
+        ...approveDeny(),
+      ];
     }
     if (!access.holder_id) {
       return [act("acquire", "Start editing", icons.edit)];

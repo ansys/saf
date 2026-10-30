@@ -136,10 +136,11 @@ describe.each(views)("access menu (%s view)", (_name, View) => {
     ]);
   });
 
-  it("owner holding the lock can release it", () => {
+  it("owner holding the lock can edit and release it", () => {
     renderView(makeProject({ owner_id: ME, my_role: "owner", holder_id: ME }));
     openMenu();
     expect(menuLabels()).toEqual([
+      "Edit",
       "Share…",
       "Release lock",
       "Export",
@@ -147,15 +148,15 @@ describe.each(views)("access menu (%s view)", (_name, View) => {
     ]);
   });
 
-  it("holder: Release lock", () => {
+  it("holder: Edit, Release lock", () => {
     renderView(
       makeProject({ owner_id: OTHER, my_role: "viewer", holder_id: ME }),
     );
     openMenu();
-    expect(menuLabels()).toEqual(["Release lock"]);
+    expect(menuLabels()).toEqual(["Edit", "Release lock"]);
   });
 
-  it("holder: Release lock, Approve, Deny when a request is pending", () => {
+  it("holder: Edit, Release lock, Approve, Deny when a request is pending", () => {
     renderView(
       makeProject({
         owner_id: OTHER,
@@ -165,7 +166,19 @@ describe.each(views)("access menu (%s view)", (_name, View) => {
       }),
     );
     openMenu();
-    expect(menuLabels()).toEqual(["Release lock", "Approve", "Deny"]);
+    expect(menuLabels()).toEqual(["Edit", "Release lock", "Approve", "Deny"]);
+  });
+
+  it("holder: Edit opens the project editor", () => {
+    const project = makeProject({
+      owner_id: OTHER,
+      my_role: "viewer",
+      holder_id: ME,
+    });
+    const props = renderView(project);
+    openMenu();
+    fireEvent.click(screen.getByRole("menuitem", { name: "Edit" }));
+    expect(props.onEdit).toHaveBeenCalledWith(project);
   });
 
   it("viewer, lock free: Start editing", () => {

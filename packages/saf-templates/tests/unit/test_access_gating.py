@@ -71,6 +71,70 @@ def _calls_can_write(function: ast.FunctionDef) -> bool:
     )
 
 
+def _mentions(node: ast.AST, name: str) -> bool:
+    return any(isinstance(child, ast.Name) and child.id == name for child in ast.walk(node))
+
+
+@pytest.mark.parametrize("step", PRIMARY_BUTTONS)
+def test_project_access_banner_is_an_optional_import(step: str):
+    """Pages must still import with a dash-super-components or GLOW release that has no access banner."""
+    tree = ast.parse(_page_source(step))
+
+    # no unconditional import of the banner at module level
+    for node in tree.body:
+        assert not (isinstance(node, ast.ImportFrom) and node.module == "ansys.solutions.dash_super_components"), (
+            "ProjectAccessBanner must be imported in a try/except ImportError"
+        )
+    guarded = [
+        node
+        for node in tree.body
+        if isinstance(node, ast.Try)
+        and any(
+            isinstance(child, ast.ImportFrom) and child.module == "ansys.solutions.dash_super_components"
+            for child in ast.walk(node)
+        )
+    ]
+    assert len(guarded) == 1
+    assert any(
+        isinstance(handler.type, ast.Name) and handler.type.id == "ImportError" for handler in guarded[0].handlers
+    ), "the import must fall back when it raises ImportError"
+
+    # module-level code may use the banner only through the availability flag
+    for node in tree.body:
+        if node is guarded[0] or not _mentions(node, "ProjectAccessBanner"):
+            continue
+        is_flag = isinstance(node, ast.Assign) and _mentions(node, "ACCESS_CONTROL_AVAILABLE")
+        is_banner_helper = isinstance(node, ast.FunctionDef) and node.name == "_access_banner"
+        is_guarded_block = (
+            isinstance(node, ast.If) and isinstance(node.test, ast.Name) and node.test.id == "ACCESS_CONTROL_AVAILABLE"
+        )
+        assert is_flag or is_banner_helper or is_guarded_block, (
+            f"line {node.lineno}: ProjectAccessBanner is used outside the availability checks"
+        )
+
+
+@pytest.mark.parametrize("step", PRIMARY_BUTTONS)
+def test_page_falls_back_to_no_banner_and_write_access_when_unavailable(step: str):
+    tree = ast.parse(_page_source(step))
+    helpers = [
+        node
+        for node in tree.body
+        if isinstance(node, ast.FunctionDef) and node.name in ("_can_write", "_access_banner")
+    ]
+    assert {helper.name for helper in helpers} == {"_can_write", "_access_banner"}
+
+    class FailingDashClient:
+        @staticmethod
+        def get_project_access(project_id: str):
+            raise AssertionError("the access API must not be called when it is unavailable")
+
+    namespace = {"ACCESS_CONTROL_AVAILABLE": False, "DashClient": FailingDashClient, "ProjectAccessBanner": None}
+    exec(compile(ast.Module(body=helpers, type_ignores=[]), "<template>", "exec"), namespace)
+
+    assert namespace["_can_write"]("project-id") is True
+    assert namespace["_access_banner"]("project-id") == []
+
+
 # Callbacks that only ever disable the primary button (on a click), so they cannot re-enable it
 ONLY_DISABLE_THE_BUTTON = {"sync_controls_on_clicks"}
 

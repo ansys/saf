@@ -392,19 +392,19 @@ instance-management-visor = ["ansys-saf-product-manager[visor] (==0.5.0)"]
 
 [[package]]
 name = "ansys-solutions-dash-super-components"
-version = "1.2.0"
+version = "1.1.0"
 description = "A collection of pre-assembled, high-level Dash UI components built on Dash Mantine Components for simulation web applications."
 optional = false
 python-versions = "<4,>=3.11"
 groups = ["ui"]
 files = [
-    {file = "ansys_solutions_dash_super_components-1.2.0-py3-none-any.whl", hash = "sha256:3fa8bf32efd8d32bd5490f63cf642e041f0b0a2eed7b53dc2e135718758dd8b2"},
-    {file = "ansys_solutions_dash_super_components-1.2.0.tar.gz", hash = "sha256:0f64deac88fbe7dda9189284a7c5ce8a916695d3349749d4635d223349714afb"},
+    {file = "ansys_solutions_dash_super_components-1.1.0-py3-none-any.whl", hash = "sha256:45572ff64c53859ce372307b07fe3221611f5fdae490ce7ff6e61741d5836654"},
+    {file = "ansys_solutions_dash_super_components-1.1.0.tar.gz", hash = "sha256:8f1dba9f5e129bd6ad5c9e07ac5a050e229a03c78cdc68330b25a0b63fc089fc"},
 ]
 
 [package.dependencies]
-dash = ">=3.0.0,<4.0"
-dash-ag-grid = ">=35.0.0,<36.0.0"
+dash = ">=2.18.2,<3.4.0"
+dash-ag-grid = ">=31.2.0,<32.0.0"
 dash-extensions = ">=1.0.20"
 dash-iconify = ">=0.1,<0.2"
 dash-mantine-components = ">=2.3.0,<3.0.0"
@@ -1464,14 +1464,14 @@ testing = ["beautifulsoup4 (>=4.8.2)", "cryptography", "dash_testing_stub (>=0.0
 
 [[package]]
 name = "dash-ag-grid"
-version = "35.3.0"
+version = "31.3.1"
 description = "Dash wrapper around AG Grid, the best interactive data grid for the web."
 optional = false
 python-versions = ">=3.6"
 groups = ["ui"]
 files = [
-    {file = "dash_ag_grid-35.3.0-py3-none-any.whl", hash = "sha256:7cc0ca54fe8be4deab044d89975819f6e9ac66904c84310becbf68cdce74a4e9"},
-    {file = "dash_ag_grid-35.3.0.tar.gz", hash = "sha256:012f7e7d5bff4862d1377ccb545ae2c80577e7909e118a88f1c408ff03a2403e"},
+    {file = "dash_ag_grid-31.3.1-py3-none-any.whl", hash = "sha256:2bce8e2a99c2d08800f6c119e4723c838789a093eea29b121aabdb541e1da156"},
+    {file = "dash_ag_grid-31.3.1.tar.gz", hash = "sha256:90069c340d893841d4e405fd3759794260946428c9cefcf70a356431e68c5020"},
 ]
 
 [package.dependencies]
@@ -6780,4 +6780,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.11,<3.15"
-content-hash = "8221f130e62a0134247e442c7d222326e2d5863954a55fa0838baf61b684fda9"
+content-hash = "afcbf21627fcec0e50ffbfc1ad09f424757ae03ce06836f78727b36f210d33a0"

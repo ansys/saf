@@ -20,7 +20,6 @@ import json
 import logging
 
 from ansys.saf.glow.client import DashClient, callback
-from ansys.solutions.dash_super_components import ProjectAccessBanner
 import dash
 from dash_extensions.enrich import Input, Output, State, callback_context, dcc, html
 from dash_iconify import DashIconify
@@ -36,13 +35,30 @@ dash.register_page(__name__, name="{{ cookiecutter.__step_display_name }}", path
 logger = logging.getLogger(__name__)
 
 
+try:
+    from ansys.solutions.dash_super_components import ProjectAccessBanner
+except ImportError:  # dash-super-components releases that do not have the access banner yet
+    ProjectAccessBanner = None
+
+# The project access UI needs ProjectAccessBanner and the access helpers of DashClient. When either is missing, the page
+# works as if project access control was not enabled: no banner, and the user can always write.
+ACCESS_CONTROL_AVAILABLE = ProjectAccessBanner is not None and hasattr(DashClient, "get_project_access")
 ACCESS_BANNER_ID = "{{ cookiecutter.__step_name }}-access-banner"
 
 
 def _can_write(project_id: str) -> bool:
-    """Return whether the current user may modify the project (always ``True`` without project access control)."""
+    """Return whether the current user may modify the project (``True`` without project access control)."""
+    if not ACCESS_CONTROL_AVAILABLE:
+        return True
     access = DashClient.get_project_access(project_id)
     return access is None or access.can_write
+
+
+def _access_banner(project_id: str) -> list:
+    """Return the access banner of the project, or nothing when project access control is unavailable."""
+    if not ACCESS_CONTROL_AVAILABLE:
+        return []
+    return [ProjectAccessBanner(project_id=project_id, aio_id=ACCESS_BANNER_ID)]
 
 
 def _result_text(value: float | None) -> str:
@@ -106,7 +122,7 @@ def layout(project: {{cookiecutter.__solution_definition_class_name}}):
         [
             # Shows who may edit the project and lets the user request or release write access (renders nothing
             # when project access control is not enabled).
-            ProjectAccessBanner(project_id=project.project_id, aio_id=ACCESS_BANNER_ID),
+            *_access_banner(project.project_id),
             html.H1("{{ cookiecutter.__step_display_name }}", className="display-3", style={"font-size": "48px", "fontWeight": "bold"}),
             html.P(
                 "Run a 4-point parametric study for sum(A, B).",
@@ -295,16 +311,17 @@ def reset_on_submit(n_clicks: int | None):
     return ("", "", True, "submitting", "submitting", "submitting", "submitting")
 
 
-@callback(
-    Output("{{ cookiecutter.__step_name }}-parametric-study-calculate", "disabled", allow_duplicate=True),
-    Input(ProjectAccessBanner.ids.listener(ACCESS_BANNER_ID), "message"),
-    State("url", "pathname"),
-    prevent_initial_call=True,
-)
-def toggle_calculate_on_write_access(message: dict | None, project: {{ cookiecutter.__solution_definition_class_name }}):
-    """Disable the Run button while the current user does not hold the write lock of the project."""
-    step = project.steps.{{ cookiecutter.__step_module_name }}
-    return step.job_running or not _can_write(project.project_id)
+if ACCESS_CONTROL_AVAILABLE:
+    @callback(
+        Output("{{ cookiecutter.__step_name }}-parametric-study-calculate", "disabled", allow_duplicate=True),
+        Input(ProjectAccessBanner.ids.listener(ACCESS_BANNER_ID), "message"),
+        State("url", "pathname"),
+        prevent_initial_call=True,
+    )
+    def toggle_calculate_on_write_access(message: dict | None, project: {{ cookiecutter.__solution_definition_class_name }}):
+        """Disable the Run button while the current user does not hold the write lock of the project."""
+        step = project.steps.{{ cookiecutter.__step_module_name }}
+        return step.job_running or not _can_write(project.project_id)
 
 
 @callback(

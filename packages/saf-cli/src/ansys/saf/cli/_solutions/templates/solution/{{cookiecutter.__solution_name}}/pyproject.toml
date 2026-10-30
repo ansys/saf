@@ -64,7 +64,7 @@ optional = true
 [tool.poetry.group.ui.dependencies]
 dash = "^3.0.0"
 dash_bootstrap_components = "^1.2"
-ansys-solutions-dash-super-components = ">=1.2.0.dev0,<2"
+ansys-solutions-dash-super-components = "^1.0.0"
 dash-extensions = "^2.0.5"
 dash-mantine-components = "^2.6.0"
 {% endif %}

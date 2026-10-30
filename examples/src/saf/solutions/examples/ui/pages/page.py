@@ -136,6 +136,7 @@ def get_page_list(theme: str, active_index: str | None = None) -> list[dict[str,
             "streamline-ultimate:cloud-data-transfer",
         ),
         leaf("game_of_life_page", "Game of Life", "game-icons:conway-life-glider"),
+        leaf("adr_page", "ADR Reference", "mdi:file-document-multiple-outline"),
     ]:
         if candidate is not None:
             items.append(candidate)

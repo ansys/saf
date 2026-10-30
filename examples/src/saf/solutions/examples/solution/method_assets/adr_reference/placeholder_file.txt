@@ -1,0 +1,4 @@
+This is a placeholder file attached to the ADR reference report as a File item.
+
+Replace it with a real file (for example an input deck or a result file)
+to let report readers download it directly from the report.

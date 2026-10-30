@@ -78,4 +78,8 @@ from saf.solutions.examples.ui.pages.page import layout
 
 _register_adr_asset_routes_if_configured(app)
 
+from saf.solutions.examples.solution.logic.adr_reference.report_routes import register_report_asset_routes
+
+register_report_asset_routes(app)
+
 app.layout = layout

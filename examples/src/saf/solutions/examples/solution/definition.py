@@ -21,6 +21,7 @@
 
 from ansys.saf.glow.solution import Solution, StepsModel
 
+from saf.solutions.examples.solution.adr_step import AdrStep
 from saf.solutions.examples.solution.basic_step import BasicStep
 from saf.solutions.examples.solution.beam_bending_report_step import BeamBendingReportStep
 from saf.solutions.examples.solution.beam_bending_step import BeamBendingStep
@@ -54,6 +55,7 @@ class Steps(StepsModel):
     beam_bending_step: BeamBendingStep
     beam_bending_report_step: BeamBendingReportStep
     game_of_life_step: GameOfLifeStep
+    adr_step: AdrStep
 
 
 class ExamplesSolution(Solution):

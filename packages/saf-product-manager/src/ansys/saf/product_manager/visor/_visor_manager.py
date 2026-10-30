@@ -53,19 +53,34 @@ class VisorSafClient:
         self._port = response["port"]
         self._host = response["host"]
 
-    def update(self, file_path: str, metadata: Metadata) -> None:
+    def update(self, file_path: str, metadata: Metadata) -> int:
         """Update the Visor instance."""
         update_payload = {
             "file_path": file_path,
             "metadata": metadata.model_dump(),
         }
         logger.debug(f"Updating Visor with payload: {update_payload}")
-        httpx2.post(
+        response = httpx2.post(
             f"http://{self._service_host}:{self._service_port}/update",
             json=update_payload,
             timeout=self._timeout,
         ).raise_for_status()
         logger.info("Visor service updated.")
+        return int(response.json()["dataset_id"])
+
+    def update_variables(self, dataset_id: int, variables: list[dict[str, Any]]) -> None:
+        """Update variables for a given dataset in the Visor instance."""
+        update_payload = {
+            "dataset_id": dataset_id,
+            "variables": variables,
+        }
+        logger.debug(f"Updating Visor variables with payload: {update_payload}")
+        httpx2.post(
+            f"http://{self._service_host}:{self._service_port}/{dataset_id}/update_variables",
+            json={"variables": variables},
+            timeout=self._timeout,
+        ).raise_for_status()
+        logger.info("Visor service variables updated.")
 
     @property
     def host(self):

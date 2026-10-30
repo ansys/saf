@@ -1,0 +1,17 @@
+[
+  {
+    "name": "dev",
+    "version": "dev",
+    "url": "https://saf.ansys.com/version/dev/"
+  },
+  {
+    "name": "2.5 (stable)",
+    "version": "2.5",
+    "url": "https://saf.ansys.com/version/stable/"
+  },
+  {
+    "name": "2.4",
+    "version": "2.4",
+    "url": "https://saf.ansys.com/version/2.4/"
+  }
+]

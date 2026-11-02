@@ -62,7 +62,7 @@ Install or refresh dependencies (adjust the ``--with`` list to match the optiona
 
 .. code-block:: console
 
-    saf execute my_solution "poetry install --with desktop,ui,build"
+    saf execute my_solution "poetry install --with desktop,ui"
 
 If you still need to raise the SDK constraint, add it in each group that references the SDK, then run
 ``poetry lock`` and ``poetry install`` again in that environment.
@@ -449,3 +449,12 @@ UI navigates to ``/projects/<project_id>``, your project landing page.
 
 If the log still mentions SAF Portal Desktop, or ``/projects`` does not load, run the ``pip show`` check in
 :ref:`projects_dashboard_check_package` again and fix the dependency case that matches your ``pyproject.toml``.
+
+(Optional) Remove the SAF Portal Desktop dependency
+===================================================
+
+If your solution declares ``ansys-saf-desktop-portal`` as a dependency, remove it:
+
+.. code-block:: console
+
+    saf execute my_solution "poetry remove ansys-saf-desktop-portal --group desktop"

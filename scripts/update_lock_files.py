@@ -360,7 +360,7 @@ def update_npm_locks(
                 command = ["npm", "update", package]
                 error = None
                 try:
-                    run(command, cwd=project_dir, check=True, capture_output=True, text=True)
+                    run(command, cwd=project_dir, check=True, capture_output=True, text=True, shell=True)
                 except subprocess.CalledProcessError as err:
                     error = err.stderr.strip() if err.stderr else "Unknown error"
                     print(f"  Warning: failed to update {package}")
@@ -381,7 +381,7 @@ def update_npm_locks(
             command = ["npm", "update", *packages]
             error = None
             try:
-                run(command, cwd=project_dir, check=True, capture_output=True, text=True)
+                run(command, cwd=project_dir, check=True, capture_output=True, text=True, shell=True)
             except subprocess.CalledProcessError as err:
                 error = err.stderr.strip() if err.stderr else "Unknown error"
                 print(f"  Warning: failed to update {lock_file}")

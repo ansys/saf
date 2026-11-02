@@ -25,9 +25,18 @@ This section provides migration guides for upgrading SAF solutions across major 
 
     Migrate the solution UI of the SAF CLI solution template to a multi-page Dash application.
 
+   .. grid-item-card:: :material-outlined:`upgrade;1.75em` :ref:`projects_dashboard_migration`
+    :class-card: highlight-card
+    :link-type: doc
+    :link: projects-dashboard
+    :shadow: lg
+
+    Migrate the solution from using legacy portal to using Projects Dashboard component.
+
 .. toctree::
    :maxdepth: 2
    :hidden:
 
    glow
    cli
+   projects-dashboard

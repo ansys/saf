@@ -58,9 +58,6 @@ class DependencyManager:
         new_group.add(tomlkit.nl())
         return new_group
 
-    def _get_group_str(self, group_name: str) -> str:
-        return "main" if group_name == "main" else f"{group_name} group"
-
     def _get_poetry_solution_dependency_groups(self, poetry_section: dict[str, Any]) -> dict[str, Any]:
         if "group" not in poetry_section:  # type: ignore
             if any(step_dep_group != "main" for step_dep_group in self._saf_template.dependencies):
@@ -125,8 +122,9 @@ class DependencyManager:
         )
         click.secho("Step specification of the common dependencies:", fg="yellow")
         for manual_dependency in manual_dependencies:
+            group_label = "main" if manual_dependency.group == "main" else f"{manual_dependency.group} group"
             click.secho(
-                f"  - {manual_dependency.name} ({self._get_group_str(manual_dependency.group)}): "
+                f"  - {manual_dependency.name} ({group_label}): "
                 f"{manual_dependency.specification}",
                 fg="yellow",
             )
@@ -220,31 +218,23 @@ class DependencyManager:
                 raise ValueError(f"Invalid dependency entry in '{self._pyproject_path}': {dependency!r}.")
         return names
 
-    def _existing_uv_dependency_names(
-        self,
-        project: MutableMapping[str, Any],
-        main_dependencies: Array,
-        dependency_groups: MutableMapping[str, Any],
-    ) -> set[str]:
-        """Collect packages declared in UV main dependencies, named groups, and optional extras."""
-        names = self._uv_dependency_names(main_dependencies)
+    def _merge_uv_dependencies(self, pyproject_content: TOMLDocument) -> list[ManualDependency]:
+        """Merge new UV requirements and prerelease settings, returning overlaps for manual review."""
+        project = self._uv_table(pyproject_content, "project")
+        main_dependencies = self._uv_array(project, "dependencies")
+        dependency_groups = self._uv_table(pyproject_content, "dependency-groups")
+        existing_names = self._uv_dependency_names(main_dependencies)
         for group in dependency_groups:
-            names.update(self._uv_dependency_names(self._uv_array(dependency_groups, group), allow_includes=True))
+            existing_names.update(
+                self._uv_dependency_names(self._uv_array(dependency_groups, group), allow_includes=True),
+            )
         optional_dependencies = project.get("optional-dependencies", {})
         if not isinstance(optional_dependencies, Mapping):
             raise ValueError(f"'project.optional-dependencies' must be a table in '{self._pyproject_path}'.")
         for extra, dependencies in optional_dependencies.items():
             if not isinstance(dependencies, Array):
                 raise ValueError(f"Optional dependencies '{extra}' must be an array in '{self._pyproject_path}'.")
-            names.update(self._uv_dependency_names(dependencies))
-        return names
-
-    def _merge_uv_dependencies(self, pyproject_content: TOMLDocument) -> list[ManualDependency]:
-        """Merge new UV requirements and prerelease settings, returning overlaps for manual review."""
-        project = self._uv_table(pyproject_content, "project")
-        main_dependencies = self._uv_array(project, "dependencies")
-        dependency_groups = self._uv_table(pyproject_content, "dependency-groups")
-        existing_names = self._existing_uv_dependency_names(project, main_dependencies, dependency_groups)
+            existing_names.update(self._uv_dependency_names(dependencies))
 
         manual_deps: list[ManualDependency] = []
         for group, dependencies in self._saf_template.dependencies.items():

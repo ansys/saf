@@ -221,7 +221,7 @@ jobs:
         run: moon run :uv-sync -- --no-dev --all-extras
 
       - name: Check licenses
-        uses: ansys/actions/check-licenses@7410037bfb276c79ae91eb3617b9f5d2876f0c94 # v11.0.8
+        uses: ansys/actions/check-licenses@87ff2e65e8884121f9afc97728ca9f213228ecc2 # v11.1.4
         with:
           python-version: ${{ vars.PYTHON_VERSION }}
           target: "all"
@@ -454,7 +454,7 @@ jobs:
           persist-credentials: false
 
       - name: Install uv
-        uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
+        uses: astral-sh/setup-uv@07a047e608db84b3d8c06cd9a7c7dcc9c355c18e # v10.3.2
         with:
           python-version: 3.12
           enable-cache: false

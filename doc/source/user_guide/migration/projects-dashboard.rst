@@ -15,10 +15,10 @@ The main procedure consists of:
 - Register a new page that displays the ``ProjectsDashboard`` component.
 - Update the layout and callbacks in ``page.py`` to display pages that don't belong to a project.
 
+.. _projects_dashboard_dependencies:
+
 Update the dependencies
 =======================
-
-.. _projects_dashboard_dependencies:
 
 Projects Dashboard is delivered as the Python package ``ansys-saf-projects-dashboard``. The desktop orchestrator
 uses it only when that package is installed in the solution environment where you run ``saf run``.
@@ -26,10 +26,10 @@ uses it only when that package is installed in the solution environment where yo
 Replace ``my_solution`` with your registered solution name. ``saf execute`` runs each command in that solution's
 virtual environment, not in the SAF CLI environment.
 
+.. _projects_dashboard_check_package:
+
 Check whether the package is already there
 ------------------------------------------
-
-.. _projects_dashboard_check_package:
 
 From your solution project directory:
 
@@ -37,7 +37,8 @@ From your solution project directory:
 
     saf execute my_solution "python -m pip show ansys-saf-projects-dashboard"
 
-If this prints a version, skip to :ref:`projects_dashboard_register_page`. If it fails, use one of the cases below.
+If this prints a version, the package is already installed — go to
+:ref:`projects_dashboard_register_page`. If the command fails, use Case A or Case B below.
 
 .. important::
 
@@ -80,10 +81,10 @@ Add Projects Dashboard to your ``desktop`` group:
 
 Run the check command again.
 
+.. _projects_dashboard_register_page:
+
 Register the Projects Dashboard page (``projects_page.py``)
 ===========================================================
-
-.. _projects_dashboard_register_page:
 
 Add a ``projects_page.py`` module next to ``page.py`` in your UI pages package:
 

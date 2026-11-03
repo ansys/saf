@@ -450,8 +450,8 @@ UI navigates to ``/projects/<project_id>``, your project landing page.
 If the log still mentions SAF Portal Desktop, or ``/projects`` does not load, run the ``pip show`` check in
 :ref:`projects_dashboard_check_package` again and fix the dependency case that matches your ``pyproject.toml``.
 
-(Optional) Remove the SAF Portal Desktop dependency
-===================================================
+Remove the SAF Portal Desktop dependency
+========================================
 
 If your solution declares ``ansys-saf-desktop-portal`` as a dependency, remove it:
 

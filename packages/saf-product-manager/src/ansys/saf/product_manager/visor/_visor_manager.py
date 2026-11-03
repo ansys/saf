@@ -68,6 +68,47 @@ class VisorSafClient:
         logger.info("Visor service updated.")
         return int(response.json()["dataset_id"])
 
+    def add_dataset(self, file_path: str, metadata: Metadata | None = None) -> int:
+        """Add a dataset to the Visor instance without clearing existing datasets."""
+        add_payload: dict[str, Any] = {"file_path": file_path}
+        if metadata is not None:
+            add_payload["metadata"] = metadata.model_dump()
+        logger.debug(f"Adding Visor dataset with payload: {add_payload}")
+        response = httpx2.post(
+            f"http://{self._service_host}:{self._service_port}/add_dataset",
+            json=add_payload,
+            timeout=self._timeout,
+        ).raise_for_status()
+        logger.info("Visor dataset added.")
+        return int(response.json()["dataset_id"])
+
+    def remove_dataset(self, dataset_id: int) -> None:
+        """Remove a dataset from the Visor instance by its ID."""
+        remove_payload = {"dataset_id": dataset_id}
+        logger.debug(f"Removing Visor dataset with payload: {remove_payload}")
+        httpx2.post(
+            f"http://{self._service_host}:{self._service_port}/remove_dataset",
+            json=remove_payload,
+            timeout=self._timeout,
+        ).raise_for_status()
+        logger.info("Visor dataset removed.")
+
+    def list_datasets(self) -> dict[str, Any]:
+        """List datasets currently loaded in the Visor instance."""
+        response = httpx2.get(
+            f"http://{self._service_host}:{self._service_port}/list_datasets",
+            timeout=self._timeout,
+        ).raise_for_status()
+        return dict(response.json().get("datasets", {}))
+
+    def list_variables(self, dataset_id: int) -> list[dict[str, Any]]:
+        """List variables for a dataset, grouped by part."""
+        response = httpx2.get(
+            f"http://{self._service_host}:{self._service_port}/{dataset_id}/list_variables",
+            timeout=self._timeout,
+        ).raise_for_status()
+        return list(response.json().get("parts", []))
+
     def update_variables(self, dataset_id: int, variables: list[dict[str, Any]]) -> None:
         """Update variables for a given dataset in the Visor instance."""
         update_payload = {

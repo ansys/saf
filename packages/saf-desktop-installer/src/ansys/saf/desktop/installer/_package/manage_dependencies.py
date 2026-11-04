@@ -46,6 +46,11 @@ from ansys.saf.desktop.installer._package.solution import create_requirements_tx
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+
+def _redact_url_credentials(url: str) -> str:
+    """Redact credential userinfo in URLs before logging."""
+    return re.sub(r"(?<=://)[^/@]+@", "***@", url)
+
 ########################################################################################################################
 # Variables
 ########################################################################################################################
@@ -168,7 +173,8 @@ def download_module(
         module_directory (Path): Directory to download
         certificate (str): path to the certificate authority file.
     """
-    logger.info(f"Downloading {module_name}==={module_version} from {index_url} to {module_directory}.")
+    safe_index_url = _redact_url_credentials(index_url)
+    logger.info(f"Downloading {module_name}==={module_version} from {safe_index_url} to {module_directory}.")
     command = [
         venv_python_exec,
         "-m",

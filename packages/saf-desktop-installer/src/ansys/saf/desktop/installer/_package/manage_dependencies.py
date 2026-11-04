@@ -31,6 +31,7 @@ import sys
 import tempfile
 import tomllib
 from typing import Any
+from urllib.parse import urlsplit
 
 from packaging.version import Version
 import toml
@@ -46,10 +47,6 @@ from ansys.saf.desktop.installer._package.solution import create_requirements_tx
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-
-def _redact_url_credentials(url: str) -> str:
-    """Redact credential userinfo in URLs before logging."""
-    return re.sub(r"(?<=://)[^/@]+@", "***@", url)
 
 ########################################################################################################################
 # Variables
@@ -173,8 +170,11 @@ def download_module(
         module_directory (Path): Directory to download
         certificate (str): path to the certificate authority file.
     """
-    safe_index_url = _redact_url_credentials(index_url)
-    logger.info(f"Downloading {module_name}==={module_version} from {safe_index_url} to {module_directory}.")
+    parsed_index_url = urlsplit(index_url)
+    if not parsed_index_url.username and not parsed_index_url.password:
+        logger.info(f"Downloading {module_name}==={module_version} from {index_url} to {module_directory}.")
+    else:
+        logger.info(f"Downloading {module_name}==={module_version} to {module_directory}.")
     command = [
         venv_python_exec,
         "-m",

@@ -18,6 +18,8 @@ from pathlib import Path
 import sys
 from zipfile import ZipFile
 
+import pytest
+
 from ansys.saf.desktop.installer._package.manage_dependencies import download_module
 
 
@@ -64,3 +66,49 @@ def test_download_module_matches_exact_version(tmp_path: Path):
 
     assert module_path.is_file()
     assert not sp_module_path.is_file()
+
+
+def test_download_module_does_not_log_url_containing_pat(
+    tmp_path: Path,
+    caplog: pytest.LogCaptureFixture,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    import ansys.saf.desktop.installer._package.manage_dependencies as manage_dependencies
+
+    monkeypatch.setattr(manage_dependencies.subprocess, "check_output", lambda *args, **kwargs: "")
+    secret_url = "https://ghp_secret@example.com/simple"
+    sensitive_destination = tmp_path / "private-download-directory"
+
+    download_module(
+        "example-package",
+        "1.2.3",
+        secret_url,
+        sensitive_destination,
+        Path(sys.executable),
+    )
+
+    assert "Downloading example-package===1.2.3 to " in caplog.text
+    assert secret_url not in caplog.text
+    assert f"to {sensitive_destination}." in caplog.text
+
+
+def test_download_module_logs_url_without_pat(
+    tmp_path: Path,
+    caplog: pytest.LogCaptureFixture,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    import ansys.saf.desktop.installer._package.manage_dependencies as manage_dependencies
+
+    monkeypatch.setattr(manage_dependencies.subprocess, "check_output", lambda *args, **kwargs: "")
+    public_url = "https://example.com/simple"
+    destination = tmp_path / "download"
+
+    download_module(
+        "example-package",
+        "1.2.3",
+        public_url,
+        destination,
+        Path(sys.executable),
+    )
+
+    assert f"Downloading example-package===1.2.3 from {public_url} to {destination}." in caplog.text

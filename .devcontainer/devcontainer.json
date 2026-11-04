@@ -1,0 +1,26 @@
+{
+    "image": "mcr.microsoft.com/devcontainers/python:3.11",
+    "features": {
+    },
+    "onCreateCommand": "pip install ansys-saf-cli && saf install -d all -f",
+    "postCreateCommand": "chmod +x /workspaces/solution03e2bfd/.venv/bin/activate && sed -i '$a source /workspaces/solution03e2bfd/.venv/bin/activate' ~/.bashrc && sed -i '$a source /workspaces/solution03e2bfd/.venv/bin/activate' ~/.zshrc",
+    "postAttachCommand": "tox -e style",
+    "customizations": {
+      "vscode": {
+        "extensions": [
+          "davidanson.vscode-markdownlint",
+          "donjayamanne.python-environment-manager",
+          "donjayamanne.python-extension-pack",
+          "github.vscode-github-actions",
+          "github.vscode-pull-request-github",
+          "kevinrose.vsc-python-indent",
+          "mhutchie.git-graph",
+          "ms-python.debugpy",
+          "ms-python.python",
+          "ms-python.vscode-pylance",
+          "shd101wyy.markdown-preview-enhanced",
+          "vscode-icons-team.vscode-icons"
+        ]
+      }
+    }
+  }

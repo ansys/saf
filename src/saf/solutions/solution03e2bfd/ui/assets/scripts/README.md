@@ -1,0 +1,1 @@
+# Add scripts acting on the frontend.

@@ -76,6 +76,7 @@ def test_download_module_does_not_log_url_containing_pat(
     import ansys.saf.desktop.installer._package.manage_dependencies as manage_dependencies
 
     monkeypatch.setattr(manage_dependencies.subprocess, "check_output", lambda *args, **kwargs: "")
+    caplog.set_level("INFO", logger=manage_dependencies.logger.name)
     secret_url = "https://ghp_secret@example.com/simple?token=secret"
     sensitive_destination = tmp_path / "private-download-directory"
 
@@ -102,6 +103,7 @@ def test_download_module_does_not_log_url_without_pat(
     import ansys.saf.desktop.installer._package.manage_dependencies as manage_dependencies
 
     monkeypatch.setattr(manage_dependencies.subprocess, "check_output", lambda *args, **kwargs: "")
+    caplog.set_level("INFO", logger=manage_dependencies.logger.name)
     public_url = "https://example.com/simple"
     destination = tmp_path / "download"
 

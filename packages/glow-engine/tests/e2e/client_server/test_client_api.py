@@ -16,7 +16,6 @@
 
 from collections.abc import Callable
 from concurrent.futures import ThreadPoolExecutor
-import contextlib
 import re
 from threading import Thread
 import time
@@ -96,7 +95,7 @@ class TestClientAPI:
         step.write_to_live_file()
         step.read_live_file_and_upload_content()
 
-        assert step.text_content == TEXT_FILE_DUMMY_STRING
+        assert step.text_content == f"{TEXT_FILE_DUMMY_STRING}\n"
 
     def test_live_file_write_and_append_in_transaction(self, function_project: ProjectFixture[EndToEndSolution]):
         """Test that a transaction can write and append a LiveFile through its path."""
@@ -106,12 +105,12 @@ class TestClientAPI:
         step.write_to_live_file(mode="w")
 
         assert step.live_file.exists()
-        assert step.live_file.read_text() == TEXT_FILE_DUMMY_STRING
+        assert step.live_file.read_text()[0] == f"{TEXT_FILE_DUMMY_STRING}\n"
 
         step.write_to_live_file(mode="a")
 
         assert step.live_file.exists()
-        assert step.live_file.read_text() == TEXT_FILE_DUMMY_STRING * 2
+        assert step.live_file.read_text()[0] == f"{TEXT_FILE_DUMMY_STRING}\n" * 2
 
     def test_live_file_read_from_client(self, function_project: ProjectFixture[EndToEndSolution]):
         """Test that the client can read a LiveFile."""
@@ -119,7 +118,7 @@ class TestClientAPI:
 
         step.write_to_live_file()
 
-        assert step.live_file.read_text() == TEXT_FILE_DUMMY_STRING
+        assert step.live_file.read_text()[0] == f"{TEXT_FILE_DUMMY_STRING}\n"
 
     def test_live_file_path_not_exposed_to_client(self, function_project: ProjectFixture[EndToEndSolution]):
         step = function_project.project.steps.transaction_verification_step
@@ -140,16 +139,15 @@ class TestClientAPI:
         observed_contents: set[str] = set()
         deadline = time.time() + 5
         while step.get_method_state("write_to_live_file_progressively").status == MethodStatus.Running:
-            with contextlib.suppress(FileNotFoundError):
-                observed_contents.add(step.live_file.read_text())
+            observed_contents.add(step.live_file.read_text()[0])
             time.sleep(0.02)
             if time.time() >= deadline:
                 pytest.fail("Timed out while waiting to observe LiveFile updates during transaction execution.")
 
         method.wait()
 
-        assert step.live_file.read_text() == "012345"
-        assert any(content in {"0", "01", "012", "0123", "01234"} for content in observed_contents)
+        assert step.live_file.read_text()[0] == "012345\n"
+        assert any(content in {"0\n", "01\n", "012\n", "0123\n", "01234\n"} for content in observed_contents)
 
     def test_set_attr_twice(self, function_project: ProjectFixture[EndToEndSolution]):
         """

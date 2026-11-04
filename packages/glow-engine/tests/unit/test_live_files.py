@@ -17,6 +17,7 @@
 import concurrent.futures
 from pathlib import Path
 import sys
+from typing import Any
 from unittest import mock
 
 import httpx2
@@ -108,32 +109,31 @@ def test_transaction_live_file_path_and_read(tmp_path: Path):
     assert not live_file.exists()
 
     live_file.path.parent.mkdir(parents=True)
-    live_file.path.write_text("alpha")
+    live_file.path.write_bytes(b"alpha\n")
 
     assert live_file.exists()
-    assert live_file.read_text() == "alpha"
-    assert live_file.read_bytes() == b"alpha"
+    assert live_file.read_text() == ("alpha\n", 6)
+    assert live_file.read_bytes() == (b"alpha\n", 6)
 
 
 def test_transaction_live_file_read_text_honors_encoding(tmp_path: Path):
     live_file = TransactionLiveFile("logs/runtime.log", tmp_path / "project-id", LiveFileOwnership())
-    text = "caf\u00e9"
+    text = "caf\u00e9\n"
     live_file.path.parent.mkdir(parents=True)
     live_file.path.write_bytes(text.encode("latin-1"))
 
-    assert live_file.read_text(encoding="latin-1") == text
+    assert live_file.read_text(encoding="latin-1") == (text, 5)
     with pytest.raises(UnicodeDecodeError):
         live_file.read_text()
 
 
-def test_live_file_read_missing_raises_file_not_found(tmp_path: Path):
+def test_live_file_read_missing_returns_empty_content(tmp_path: Path):
     live_file = TransactionLiveFile("logs/missing.log", tmp_path / "project-id", LiveFileOwnership())
 
-    with pytest.raises(FileNotFoundError):
-        live_file.read_text()
-
-    with pytest.raises(FileNotFoundError):
-        live_file.read_bytes()
+    assert live_file.read_text() == ("", 0)
+    assert live_file.read_bytes() == (b"", 0)
+    assert live_file.read_text(10) == ("", 0)
+    assert live_file.read_bytes(10) == (b"", 0)
 
 
 def test_transaction_live_file_path_is_owned_by_first_transaction_accessing_it(tmp_path: Path):
@@ -149,8 +149,8 @@ def test_transaction_live_file_path_is_owned_by_first_transaction_accessing_it(t
             _ = second.path
 
         first_path.parent.mkdir(parents=True)
-        first_path.write_text("alpha")
-        assert second.read_text() == "alpha"
+        first_path.write_bytes(b"alpha\n")
+        assert second.read_text() == ("alpha\n", 6)
         assert second.exists()
 
 
@@ -203,14 +203,87 @@ def test_transaction_live_file_ownership_is_enforced_across_processes(tmp_path: 
         assert pool.submit(_try_to_own_live_file, str(project_dir)).result() is True
 
 
+def _make_live_file(tmp_path: Path, relative_path: str = "logs/runtime.log") -> tuple[LiveFileProxy, Path]:
+    project_dir = tmp_path / "project-id"
+    file_path = project_dir / relative_path
+    file_path.parent.mkdir(parents=True)
+    return LiveFileProxy(relative_path, project_dir), file_path
+
+
+def test_live_file_read_bytes_follows_appends(tmp_path: Path):
+    live_file, file_path = _make_live_file(tmp_path)
+    file_path.write_bytes(b"abc")
+
+    data, offset = live_file.read_bytes()
+    assert (data, offset) == (b"abc", 3)
+
+    with file_path.open("ab") as f:
+        f.write(b"de")
+
+    assert live_file.read_bytes(offset) == (b"de", 5)
+    assert live_file.read_bytes(5) == (b"", 5)
+
+
+def test_live_file_read_text_holds_back_incomplete_line(tmp_path: Path):
+    live_file, file_path = _make_live_file(tmp_path)
+    file_path.write_bytes(b"first\r\nsec")
+
+    text, offset = live_file.read_text()
+    assert (text, offset) == ("first\n", 7)
+
+    with file_path.open("ab") as f:
+        f.write(b"ond\rthird\nfour")
+
+    assert live_file.read_text(offset) == ("second\nthird\n", 20)
+
+
+def test_live_file_read_text_never_splits_multibyte_characters(tmp_path: Path):
+    live_file, file_path = _make_live_file(tmp_path)
+    encoded = "café\n".encode()
+    file_path.write_bytes(encoded[:4])
+
+    assert live_file.read_text() == ("", 0)
+
+    file_path.write_bytes(encoded)
+
+    assert live_file.read_text() == ("café\n", len(encoded))
+
+
+def test_live_file_incremental_reads_restart_when_file_is_rewritten(tmp_path: Path):
+    live_file, file_path = _make_live_file(tmp_path)
+    file_path.write_bytes(b"old content\n")
+    _, offset = live_file.read_text()
+
+    file_path.write_bytes(b"new\n")
+
+    assert live_file.read_text(offset) == ("new\n", 4)
+    assert live_file.read_bytes(offset) == (b"new\n", 4)
+
+
+def test_live_file_incremental_reads_propagate_permission_error(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
+    live_file, file_path = _make_live_file(tmp_path)
+    file_path.write_bytes(b"content\n")
+    attempts: list[Path] = []
+
+    def locked_open(self: Path, *args: Any, **kwargs: Any):
+        attempts.append(self)
+        raise PermissionError()
+
+    monkeypatch.setattr(Path, "open", locked_open)
+
+    with pytest.raises(PermissionError):
+        live_file.read_bytes()
+    assert len(attempts) == 1
+
+
 def test_live_file_proxy_is_read_only(tmp_path: Path):
     project_dir = tmp_path / "project-id"
     live_file_path = project_dir / "logs" / "runtime.log"
     live_file_path.parent.mkdir(parents=True)
-    live_file_path.write_text("content")
+    live_file_path.write_bytes(b"content\n")
     live_file = LiveFileProxy("logs/runtime.log", project_dir)
 
-    assert live_file.read_text() == "content"
+    assert live_file.read_text() == ("content\n", 8)
     assert live_file.exists()
     assert not hasattr(live_file, "path")
 
@@ -219,7 +292,7 @@ def test_step_proxy_returns_live_file_proxy_for_live_file_fields(tmp_path: Path)
     project_root = tmp_path / "projects"
     project_file = project_root / "my_project_id" / "logs" / "runtime.log"
     project_file.parent.mkdir(parents=True)
-    project_file.write_text("hello")
+    project_file.write_bytes(b"hello\n")
 
     http_client = mock.Mock(spec=httpx2.Client)
     http_client.get.return_value = httpx2.Response(200, json={"live_file": "logs/runtime.log"})
@@ -228,7 +301,7 @@ def test_step_proxy_returns_live_file_proxy_for_live_file_fields(tmp_path: Path)
     live_file = step.live_file
 
     assert isinstance(live_file, LiveFileProxy)
-    assert live_file.read_text() == "hello"
+    assert live_file.read_text() == ("hello\n", 6)
     assert not hasattr(live_file, "path")
 
 
@@ -236,7 +309,7 @@ def test_step_proxy_get_fields_converts_live_file_field(tmp_path: Path):
     project_root = tmp_path / "projects"
     project_file = project_root / "my_project_id" / "logs" / "runtime.log"
     project_file.parent.mkdir(parents=True)
-    project_file.write_text("hello")
+    project_file.write_bytes(b"hello\n")
 
     http_client = mock.Mock(spec=httpx2.Client)
     http_client.get.return_value = httpx2.Response(200, json={"live_file": "logs/runtime.log", "field_1": 7})
@@ -245,7 +318,7 @@ def test_step_proxy_get_fields_converts_live_file_field(tmp_path: Path):
     fields = step.get_fields(["live_file", "field_1"])
 
     assert isinstance(fields["live_file"], LiveFileProxy)
-    assert fields["live_file"].read_text() == "hello"
+    assert fields["live_file"].read_text() == ("hello\n", 6)
     assert fields["field_1"] == 7
 
 
@@ -255,8 +328,8 @@ def test_step_proxy_live_file_is_project_scoped(tmp_path: Path):
     project_b_file = project_root / "project_b" / "logs" / "runtime.log"
     project_a_file.parent.mkdir(parents=True)
     project_b_file.parent.mkdir(parents=True)
-    project_a_file.write_text("project-a-content")
-    project_b_file.write_text("project-b-content")
+    project_a_file.write_bytes(b"project-a-content\n")
+    project_b_file.write_bytes(b"project-b-content\n")
 
     http_client = mock.Mock(spec=httpx2.Client)
     http_client.get.return_value = httpx2.Response(200, json={"live_file": "logs/runtime.log"})
@@ -264,8 +337,8 @@ def test_step_proxy_live_file_is_project_scoped(tmp_path: Path):
     step_a = _make_step_proxy(http_client, "project_a", project_root)
     step_b = _make_step_proxy(http_client, "project_b", project_root)
 
-    assert step_a.live_file.read_text() == "project-a-content"
-    assert step_b.live_file.read_text() == "project-b-content"
+    assert step_a.live_file.read_text()[0] == "project-a-content\n"
+    assert step_b.live_file.read_text()[0] == "project-b-content\n"
 
 
 def test_project_proxy_steps_propagates_project_id():

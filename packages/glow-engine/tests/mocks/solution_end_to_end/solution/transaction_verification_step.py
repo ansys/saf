@@ -218,11 +218,11 @@ class TransactionVerificationStep(StepModel):
         path = self.live_file.path
         path.parent.mkdir(parents=True, exist_ok=True)
         with path.open(mode) as f:
-            f.write(TEXT_FILE_DUMMY_STRING)
+            f.write(f"{TEXT_FILE_DUMMY_STRING}\n")
 
     @transaction(self=StepSpec(download=["live_file"], upload=["text_content"]))
     def read_live_file_and_upload_content(self) -> None:
-        self.text_content = self.live_file.read_text()
+        self.text_content, _ = self.live_file.read_text()
 
     @transaction(self=StepSpec(download=["live_file"]))
     @long_running
@@ -231,7 +231,7 @@ class TransactionVerificationStep(StepModel):
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text("")
         for content in ("0", "01", "012", "0123", "01234", "012345"):
-            path.write_text(content)
+            path.write_text(f"{content}\n")
             time.sleep(0.1)
 
     @transaction(self=StepSpec())

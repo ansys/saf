@@ -189,11 +189,64 @@ class LiveFile(str):
     def _absolute_path(self) -> Path:
         raise NotImplementedError()
 
-    def read_text(self, encoding: str = "utf-8") -> str:
-        return self._absolute_path.read_text(encoding=encoding)
+    def _read_from(self, offset: int) -> tuple[bytes, int]:
+            try:
+                with self._absolute_path.open("rb") as file:
+                    start = offset if os.fstat(file.fileno()).st_size >= offset else 0
+                    file.seek(start)
+                    return file.read(), start
+            except FileNotFoundError:
+                return b"", 0
 
-    def read_bytes(self) -> bytes:
-        return self._absolute_path.read_bytes()
+    def read_bytes(self, offset: int = 0) -> tuple[bytes, int]:
+        """Read the bytes written after ``offset``.
+
+        Pass the returned offset to the next call to only get the bytes written in between.
+        While a transaction is writing the file, the content can be incomplete.
+
+        Parameters
+        ----------
+        offset : int, default: 0
+            Offset returned by the previous call, or ``0`` to read from the start.
+
+        Returns
+        -------
+        tuple[bytes, int]
+            The new bytes and the offset to use in the next call. If the file does not exist, the result
+            is ``(b"", 0)``. If the file is shorter than ``offset``, it is considered rewritten and is read
+            from the start.
+        """
+        data, start = self._read_from(offset)
+        return data, start + len(data)
+
+    def read_text(self, offset: int = 0, encoding: str = "utf-8") -> tuple[str, int]:
+        """Read the complete lines written after ``offset``.
+
+        A trailing line without a line feed is considered still being written, so it is not returned
+        until it is complete, even when reading from the start. This also ensures that a multi-byte
+        character is never split. Pass the returned offset to the next call to only get the lines
+        written in between.
+
+        Parameters
+        ----------
+        offset : int, default: 0
+            Offset returned by the previous call, or ``0`` to read from the start.
+        encoding : str, default: "utf-8"
+            Encoding used to decode the file. It must encode the line feed as the single byte ``0x0A``,
+            as UTF-8, ASCII, and Latin-1 do.
+
+        Returns
+        -------
+        tuple[str, int]
+            The new complete lines, and the offset to use in the next call. Line endings are kept and,
+            as in :meth:`pathlib.Path.read_text`, translated to ``"\\n"``. If the file does not exist, the
+            result is ``("", 0)``. If the file is shorter than ``offset``, it is considered rewritten and
+            is read from the start.
+        """
+        data, start = self._read_from(offset)
+        end = data.rfind(b"\n") + 1
+        text = data[:end].decode(encoding).replace("\r\n", "\n").replace("\r", "\n")
+        return text, start + end
 
     def exists(self) -> bool:
         return self._absolute_path.exists()

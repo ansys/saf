@@ -15,7 +15,6 @@
 # limitations under the License.
 
 from collections.abc import Callable
-import contextlib
 import os
 from pathlib import Path
 import platform
@@ -87,8 +86,7 @@ class TestCustomProductInstances:
         while step.get_method_state("write_to_live_file_progressively_from_custom_http_product_instance").status == (
             MethodStatus.Running
         ):
-            with contextlib.suppress(FileNotFoundError):
-                observed_contents.add(step.live_file.read_text())
+            observed_contents.add(step.live_file.read_text()[0])
             time.sleep(0.02)
             if time.time() >= deadline:
                 pytest.fail("Timed out while waiting to observe LiveFile updates from the custom product.")
@@ -96,8 +94,8 @@ class TestCustomProductInstances:
         method.wait()
 
         assert step.live_file.exists()
-        assert step.live_file.read_text() == "012345"
-        assert any(content in {"0", "01", "012", "0123", "01234"} for content in observed_contents)
+        assert step.live_file.read_text()[0] == "012345\n"
+        assert any(content in {"0\n", "01\n", "012\n", "0123\n", "01234\n"} for content in observed_contents)
 
     def test_transaction_can_read_live_file_written_by_custom_http_product(
         self,
@@ -110,7 +108,7 @@ class TestCustomProductInstances:
         step.read_live_file_written_by_custom_http_product_instance()
 
         assert step.live_file.exists()
-        assert step.live_file.read_text() == "HELLO WORLD"
+        assert step.live_file.read_text()[0] == "HELLO WORLD\n"
         assert step.value == "Hello World,HELLO WORLD"
 
     def test_live_file_path_not_exposed_to_client_after_custom_http_product_writes(
@@ -124,7 +122,7 @@ class TestCustomProductInstances:
         step.read_live_file_written_by_custom_http_product_instance()
 
         assert step.live_file.exists()
-        assert step.live_file.read_text() == "HELLO WORLD"
+        assert step.live_file.read_text()[0] == "HELLO WORLD\n"
         assert not hasattr(step.live_file, "path")
 
     @pytest.mark.parametrize(

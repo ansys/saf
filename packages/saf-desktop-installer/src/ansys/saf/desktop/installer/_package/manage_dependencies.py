@@ -31,7 +31,6 @@ import sys
 import tempfile
 import tomllib
 from typing import Any
-from urllib.parse import urlsplit
 
 from packaging.version import Version
 import toml
@@ -170,11 +169,7 @@ def download_module(
         module_directory (Path): Directory to download
         certificate (str): path to the certificate authority file.
     """
-    parsed_index_url = urlsplit(index_url)
-    if not parsed_index_url.username and not parsed_index_url.password:
-        logger.info(f"Downloading {module_name}==={module_version} from {index_url} to {module_directory}.")
-    else:
-        logger.info(f"Downloading {module_name}==={module_version} to {module_directory}.")
+    logger.info(f"Downloading {module_name}==={module_version} to {module_directory}.")
     command = [
         venv_python_exec,
         "-m",

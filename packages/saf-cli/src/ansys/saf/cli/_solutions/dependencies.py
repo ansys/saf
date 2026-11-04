@@ -96,7 +96,7 @@ class DependencyManager:
             solution_dependencies[step_dependency_name] = inline_dependency
 
     @staticmethod
-    def _dependency_commands(backend: SolutionBackend, groups: set[str]) -> list[list[str]]:
+    def _get_lock_install_cmd(backend: SolutionBackend, groups: set[str]) -> list[list[str]]:
         """Build backend-specific lock and installation commands for the requested groups."""
         if backend is SolutionBackend.POETRY:
             install = ["poetry", "install"]
@@ -124,11 +124,10 @@ class DependencyManager:
         for manual_dependency in manual_dependencies:
             group_label = "main" if manual_dependency.group == "main" else f"{manual_dependency.group} group"
             click.secho(
-                f"  - {manual_dependency.name} ({group_label}): "
-                f"{manual_dependency.specification}",
+                f"  - {manual_dependency.name} ({group_label}): {manual_dependency.specification}",
                 fg="yellow",
             )
-        lock_command, install_command = (" ".join(command) for command in self._dependency_commands(backend, groups))
+        lock_command, install_command = (" ".join(command) for command in self._get_lock_install_cmd(backend, groups))
         click.secho(
             f"\nAfter reviewing the dependencies, please run:\n"
             f'  - saf execute {self._solution_root_dir.name} "{lock_command}"\n'
@@ -168,7 +167,7 @@ class DependencyManager:
         return manual_deps
 
     @staticmethod
-    def _uv_requirement(name: str, specification: str | dict[str, Any]) -> tuple[str, bool | None]:
+    def _format_uv_requirement(name: str, specification: str | dict[str, Any]) -> tuple[str, bool | None]:
         """Format a SAF dependency for UV, leaving dependency syntax validation to uv lock."""
         if isinstance(specification, str):
             specification = {"version": specification}
@@ -186,21 +185,21 @@ class DependencyManager:
             requirement += f"; {markers}"
         return requirement, specification.get("allow-prereleases")
 
-    def _uv_table(self, parent: MutableMapping[str, Any], key: str) -> MutableMapping[str, Any]:
+    def _get_or_create_uv_table(self, parent: MutableMapping[str, Any], key: str) -> MutableMapping[str, Any]:
         """Get or create a UV configuration table, rejecting non-table values."""
         value = parent.setdefault(key, tomlkit.table())
         if not isinstance(value, MutableMapping):
             raise ValueError(f"'{key}' must be a table in '{self._pyproject_path}'.")
         return cast("MutableMapping[str, Any]", value)
 
-    def _uv_array(self, parent: MutableMapping[str, Any], key: str) -> Array:
+    def _get_or_create_uv_array(self, parent: MutableMapping[str, Any], key: str) -> Array:
         """Get or create a UV dependency array, rejecting non-array values."""
         value = parent.setdefault(key, tomlkit.array())
         if not isinstance(value, Array):
             raise ValueError(f"'{key}' must be an array in '{self._pyproject_path}'.")
         return value
 
-    def _uv_dependency_names(self, dependencies: Array, *, allow_includes: bool = False) -> set[str]:
+    def _collect_uv_dependency_names(self, dependencies: Array, *, allow_includes: bool = False) -> set[str]:
         """Collect normalized package names, allowing group references where appropriate."""
         names: set[str] = set()
         for dependency in dependencies:
@@ -220,13 +219,16 @@ class DependencyManager:
 
     def _merge_uv_dependencies(self, pyproject_content: TOMLDocument) -> list[ManualDependency]:
         """Merge new UV requirements and prerelease settings, returning overlaps for manual review."""
-        project = self._uv_table(pyproject_content, "project")
-        main_dependencies = self._uv_array(project, "dependencies")
-        dependency_groups = self._uv_table(pyproject_content, "dependency-groups")
-        existing_names = self._uv_dependency_names(main_dependencies)
+        project = self._get_or_create_uv_table(pyproject_content, "project")
+        main_dependencies = self._get_or_create_uv_array(project, "dependencies")
+        dependency_groups = self._get_or_create_uv_table(pyproject_content, "dependency-groups")
+        existing_names = self._collect_uv_dependency_names(main_dependencies)
         for group in dependency_groups:
             existing_names.update(
-                self._uv_dependency_names(self._uv_array(dependency_groups, group), allow_includes=True),
+                self._collect_uv_dependency_names(
+                    self._get_or_create_uv_array(dependency_groups, group),
+                    allow_includes=True,
+                ),
             )
         optional_dependencies = project.get("optional-dependencies", {})
         if not isinstance(optional_dependencies, Mapping):
@@ -234,7 +236,7 @@ class DependencyManager:
         for extra, dependencies in optional_dependencies.items():
             if not isinstance(dependencies, Array):
                 raise ValueError(f"Optional dependencies '{extra}' must be an array in '{self._pyproject_path}'.")
-            existing_names.update(self._uv_dependency_names(dependencies))
+            existing_names.update(self._collect_uv_dependency_names(dependencies))
 
         return self._add_uv_template_dependencies(
             pyproject_content,
@@ -255,19 +257,19 @@ class DependencyManager:
         for group, dependencies in self._saf_template.dependencies.items():
             if not isinstance(dependencies, dict):
                 raise ValueError(f"Template dependency group '{group}' must be a mapping.")
-            target = main_dependencies if group == "main" else self._uv_array(dependency_groups, group)
+            target = main_dependencies if group == "main" else self._get_or_create_uv_array(dependency_groups, group)
             for name, specification in dependencies.items():
                 normalized_name = canonicalize_name(name)
                 if normalized_name in existing_names:
                     manual_deps.append(ManualDependency(name=name, specification=specification, group=group))
                     continue
-                requirement, prereleases = self._uv_requirement(name, specification)
+                requirement, prereleases = self._format_uv_requirement(name, specification)
                 target.append(requirement)
                 existing_names.add(normalized_name)
                 if prereleases is not None:
-                    tool = self._uv_table(pyproject_content, "tool")
-                    uv = self._uv_table(tool, "uv")
-                    package_prereleases = self._uv_table(uv, "prerelease-package")
+                    tool = self._get_or_create_uv_table(pyproject_content, "tool")
+                    uv = self._get_or_create_uv_table(tool, "uv")
+                    package_prereleases = self._get_or_create_uv_table(uv, "prerelease-package")
                     package_prereleases[normalized_name] = {True: "allow", False: "disallow"}[prereleases]
         return manual_deps
 
@@ -287,7 +289,7 @@ class DependencyManager:
 
         groups = {group for group in self._saf_template.dependencies if group != "main"}
         if not manual_deps:
-            for command in self._dependency_commands(backend, groups):
+            for command in self._get_lock_install_cmd(backend, groups):
                 subprocess.run(
                     [executable.as_posix(), *command[1:]],
                     env=solution_env,

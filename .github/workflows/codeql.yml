@@ -1,0 +1,60 @@
+name: "CodeQL"
+
+on:
+  workflow_dispatch:
+  workflow_call:
+  schedule:
+    - cron: '0 22 * * 0'
+
+permissions: {}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}-codeql
+  cancel-in-progress: true
+
+jobs:
+  analyze:
+    name: Analyze (${{ matrix.language }})
+    runs-on: 'ubuntu-latest'
+    timeout-minutes: 360
+    permissions:
+      contents: read
+      actions: read # Required for CodeQL analysis
+      security-events: write # Required to upload results of CodeQL analysis
+    strategy:
+      fail-fast: false
+      matrix:
+        language:
+          - 'python'
+          - 'javascript-typescript'
+    env:
+      UV_PYTHON: ${{ vars.PYTHON_VERSION }}
+      MOON_PYTHON_VERSION: ${{ vars.PYTHON_VERSION }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Setup Moon Toolchain
+        uses: moonrepo/setup-toolchain@261c62cb5b0f580c7be7c8cd0f023a2e96756095 # v0.6.4
+
+      - name: Install Python dependencies
+        shell: bash
+        run: moon run root:uv-sync -- --all-groups --all-extras
+
+      - name: Install npm dependencies
+        if: matrix.language == 'javascript-typescript'
+        run: moon run saf-projects-dashboard:setup-node
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@1fc58d04a4d4374f921bdac573c3811c240f9c26 # v4.39.2
+        with:
+          languages: ${{ matrix.language }}
+          config-file: ./.github/codeql-config.yml
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@1fc58d04a4d4374f921bdac573c3811c240f9c26 # v4.39.2
+        with:
+          category: "/language:${{ matrix.language }}"

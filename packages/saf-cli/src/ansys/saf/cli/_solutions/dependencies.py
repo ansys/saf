@@ -236,6 +236,21 @@ class DependencyManager:
                 raise ValueError(f"Optional dependencies '{extra}' must be an array in '{self._pyproject_path}'.")
             existing_names.update(self._uv_dependency_names(dependencies))
 
+        return self._add_uv_template_dependencies(
+            pyproject_content,
+            main_dependencies,
+            dependency_groups,
+            existing_names,
+        )
+
+    def _add_uv_template_dependencies(
+        self,
+        pyproject_content: TOMLDocument,
+        main_dependencies: Array,
+        dependency_groups: MutableMapping[str, Any],
+        existing_names: set[str],
+    ) -> list[ManualDependency]:
+        """Add template requirements and prerelease settings, returning overlaps for manual review."""
         manual_deps: list[ManualDependency] = []
         for group, dependencies in self._saf_template.dependencies.items():
             if not isinstance(dependencies, dict):

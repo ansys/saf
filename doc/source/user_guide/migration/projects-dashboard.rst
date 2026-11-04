@@ -23,8 +23,7 @@ Update the dependencies
 Projects Dashboard is delivered as the Python package ``ansys-saf-projects-dashboard``. The desktop orchestrator
 uses it only when that package is installed in the solution environment where you run ``saf run``.
 
-Replace ``my_solution`` with your registered solution name. ``saf execute`` runs each command in that solution's
-virtual environment, not in the SAF CLI environment.
+Replace ``my_solution`` with your registered solution name.
 
 .. _projects_dashboard_check_package:
 
@@ -38,7 +37,8 @@ From your solution project directory:
     saf execute my_solution "python -m pip show ansys-saf-projects-dashboard"
 
 If this prints a version, the package is already installed — go to
-:ref:`projects_dashboard_register_page`. If the command fails, use Case A or Case B below.
+:ref:`projects_dashboard_register_page`. If the command fails, open ``pyproject.toml``. If it contains
+``ansys-saf-sdk``, use Case A. Otherwise, use Case B.
 
 .. important::
 
@@ -55,31 +55,37 @@ Open ``pyproject.toml``. In ``[tool.poetry.group.desktop.dependencies]``, the SD
 
     ansys-saf-sdk = { version = ">=0.4.0,<1.0.0", extras = ["desktop"] }
 
-SDK ``0.4.0`` and later pull in Projects Dashboard through that extra. Use the same SDK version constraint in
-every Poetry group that declares ``ansys-saf-sdk``. If a group lists other extras (for example ``core-hps``), keep
-those extras on that group's line.
+SDK ``0.4.0`` and later pull in Projects Dashboard through that extra. If your constraint is lower, raise it. Use
+the same SDK version constraint in every Poetry group that declares ``ansys-saf-sdk``. If a group lists other
+extras (for example ``core-hps``), keep those extras on that group's line.
 
-Install or refresh dependencies (adjust the ``--with`` list to match the optional groups your solution uses):
+Lock the dependencies, then install them (adjust the ``--with`` list to match the optional groups your solution
+uses):
 
 .. code-block:: console
 
+    saf execute my_solution "poetry lock"
     saf execute my_solution "poetry install --with desktop,ui"
-
-If you still need to raise the SDK constraint, add it in each group that references the SDK, then run
-``poetry lock`` and ``poetry install`` again in that environment.
 
 Run the check command again. It must succeed before you change the UI.
 
 Case B — Solution does not use ``ansys-saf-sdk``
 ------------------------------------------------
 
-Add Projects Dashboard to your ``desktop`` group:
+Add Projects Dashboard to your ``desktop`` group. This command updates ``pyproject.toml`` and ``poetry.lock``:
 
 .. code-block:: console
 
     saf execute my_solution "poetry add ansys-saf-projects-dashboard --group desktop"
 
-Run the check command again.
+If your solution has no ``desktop`` group, replace ``desktop`` with the group that declares
+``ansys-saf-desktop-orchestrator``.
+
+Run the check command again. If it still fails, install the groups:
+
+.. code-block:: console
+
+    saf execute my_solution "poetry install --with desktop,ui"
 
 .. _projects_dashboard_register_page:
 
@@ -130,6 +136,33 @@ Until now, every page of your Solution UI belonged to a project. The Projects Da
 doesn't. The following steps teach ``page.py`` to tell the two kinds of pages apart. Replace ``MySolution`` with your
 solution class.
 
+Open your ``page.py`` and check that it has the elements the steps below use:
+
+- ``get_asset``, the function that returns the URL of an icon for a theme.
+- ``color-scheme-switch``, the theme switch of the header. Callbacks in steps 4, 5, 6, and 7 read it.
+- ``page-content`` and ``project-name``, which the display callbacks of step 4 write.
+- ``navbar-content``, which ``render_nav_tree`` of step 5 writes.
+
+If your ``page.py`` uses another id, use your id in the code. If your solution has no theme switch, remove the
+``color-scheme-switch`` State or Input and its parameter from the callbacks of steps 4, 5, and 7, set
+``theme = "light"`` where the code computes it from ``switch_on``, and skip step 6.
+
+The code below uses these imports. Add the ones ``page.py`` doesn't have:
+
+.. code-block:: python
+
+    import inspect
+    from typing import Any
+
+    from ansys.saf.glow.client import DashClient, Deployment, NotFoundException, callback
+    from ansys.solutions.dash_super_components import Tree
+    import dash
+    import dash_bootstrap_components as dbc
+    from dash_extensions.enrich import Input, Output, State, clientside_callback, dcc, html, no_update
+    import dash_mantine_components as dmc
+
+The code also calls ``_display_404_page``, which :ref:`dash_multipage_migration` adds to ``page.py``. Keep it.
+
 1. Update the main layout
 -------------------------
 
@@ -158,8 +191,6 @@ project page must be drawn again:
 
 .. code-block:: python
 
-    dcc.Store(id="active-page-index", data=None),
-    dcc.Store(id="active-project-id", data=None),
     dcc.Store(id="active-non-solution-page-index", data=None),
     dcc.Store(id="project-scoped-pathname", data=None),
     dcc.Store(id="project-layout-generation", data=0),
@@ -169,7 +200,8 @@ project page must be drawn again:
 
 Replace ``get_page_list`` with the following functions. ``_match_solution_page`` finds the project page matching a
 URL, ``_match_non_solution_page`` finds pages registered with ``project_scoped=False``, and ``get_page_list`` now
-leaves those pages out of the step navigation tree:
+leaves those pages out of the step navigation tree. If your ``get_page_list`` takes more arguments than ``theme``,
+keep them in the new function and in the calls to it.
 
 .. code-block:: python
 
@@ -301,6 +333,11 @@ page and increases a counter, which is what triggers drawing the project page in
      component of the main layout, such as the theme switch or a header button. These callbacks also run on
      ``/projects``.
 
+Search your UI modules for callbacks with a ``project: MySolution`` parameter. Change each one that is triggered by
+``Input("url", "pathname")`` or by a component of the main layout: trigger it with
+``Input("project-layout-generation", "data")``, and put ``State("project-scoped-pathname", "data")`` at the position
+of the ``project`` parameter. The next paragraph replaces ``display_project_name`` and ``display_page``, so skip them.
+
 Remove ``display_project_name`` and ``display_page``. Both receive a project from the URL, so they fail on
 ``/projects``, which has no project ID. Replace ``display_404_page`` too. Add the following callbacks:
 
@@ -308,6 +345,9 @@ Remove ``display_project_name`` and ``display_page``. Both receive a project fro
   only on project pages.
 - ``display_non_solution_page`` draws pages without a project, such as the dashboard.
 - ``display_404_page`` now shows the 404 page only when the URL matches neither kind of page.
+
+``display_solution_page`` lists ``State("project-scoped-pathname", "data")`` twice. Keep both: GLOW injects the
+project from the first one, and the second one gives the pathname that selects the page.
 
 .. code-block:: python
 
@@ -429,8 +469,57 @@ the dashboard in place. Drawing the dashboard again would reload its list of pro
         prevent_initial_call=True,
     )
 
-Keep your ``return_to_portal`` callback as is. In portal mode, the desktop orchestrator points its **Back to
-Projects** button to the Projects Dashboard.
+7. Show the Back to Projects button
+-----------------------------------
+
+In portal mode, the desktop orchestrator points the **Back to Projects** button to the Projects Dashboard. The
+solution template has this button in the header. If your header has no ``html.Div(id="return-to-portal")``, add
+one. If ``page.py`` has no ``return_to_portal`` callback, add the following. The icon ``carbon--return.svg`` is in
+the template folders ``ui/assets/icons/light`` and ``ui/assets/icons/dark``:
+
+.. code-block:: python
+
+    def _get_back_to_projects_link() -> tuple[str, str] | None:
+        """Return the URL and the text of the back-to-projects button, or None to hide it."""
+        portal_ui_url = DashClient.get_portal_ui_url()
+        if portal_ui_url is None:
+            return None
+        text = "Back to Projects" if DashClient.get_deployment_type() == Deployment.Desktop else "Back to Portal"
+        return portal_ui_url, text
+
+
+    @callback(
+        Output("return-to-portal", "children"),
+        Input("url", "pathname"),
+        Input("color-scheme-switch", "checked"),
+    )
+    def return_to_portal(pathname: str, switch_on: bool) -> list[html.A]:
+        """Display the button that returns to the projects, if any."""
+        theme = "dark" if switch_on else "light"
+
+        back_to_projects_link = _get_back_to_projects_link()
+        if back_to_projects_link is None:
+            return []
+        href, popover_text = back_to_projects_link
+
+        return [
+            html.A(
+                [
+                    dmc.ActionIcon(
+                        html.Img(src=get_asset("carbon--return.svg", "icons", theme)),
+                        id="back-to-projects-icon",
+                        variant="transparent",
+                    ),
+                    dbc.Popover(
+                        popover_text,
+                        target="back-to-projects-icon",
+                        body=True,
+                        trigger="hover",
+                    ),
+                ],
+                href=href,
+            )
+        ]
 
 Run the solution
 ================
@@ -447,6 +536,10 @@ The **Back to Projects** control in the header should return to that same page.
 
 Open the URL from the log and confirm that ``/projects`` loads the dashboard. Open a project and confirm that the
 UI navigates to ``/projects/<project_id>``, your project landing page.
+
+Click **Back to Projects**, open the same project again, then open another project. The project page must be drawn
+each time. If the solution logs ``Invalid pathname=``, a callback that receives a project ran on a URL without a
+project ID: go back to step 4 and rewrite that callback.
 
 If the log still mentions SAF Portal Desktop, or ``/projects`` does not load, run the ``pip show`` check in
 :ref:`projects_dashboard_check_package` again and fix the dependency case that matches your ``pyproject.toml``.

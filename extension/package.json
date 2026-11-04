@@ -1,0 +1,311 @@
+{
+  "name": "solutions-manager",
+  "displayName": "Solutions Manager",
+  "description": "Visual Studio Code extension for Solution Applications",
+  "version": "4.0.0",
+  "publisher": "Ansys",
+  "icon": "saf-logo.png",
+  "engines": {
+    "vscode": "^1.109.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ansys/saf.git",
+    "directory": "extension"
+  },
+  "license": "Apache-2.0",
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./out/extension.js",
+  "files": [
+    "out/**/*"
+  ],
+  "python": {
+    "minPythonVersion": "3.11",
+    "maxPythonVersion": "3.14"
+  },
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "solutions-manager",
+          "title": "SAF Solutions Manager",
+          "icon": "saf-logo.png"
+        }
+      ]
+    },
+    "views": {
+      "solutions-manager": [
+        {
+          "id": "safSolutions",
+          "name": "Available Solutions",
+          "visibility": "collapsed",
+          "when": "solutionsManager.panel.safSolutions.visible"
+        },
+        {
+          "id": "solutions-manager.createSolution",
+          "name": "Create Solution",
+          "type": "webview",
+          "visibility": "collapsed"
+        },
+        {
+          "id": "solutions-manager.solutionSetup",
+          "name": "Setup Solution",
+          "type": "webview",
+          "visibility": "collapsed"
+        },
+        {
+          "id": "solutions-manager.solutionConfig",
+          "name": "Run Solution",
+          "type": "webview",
+          "visibility": "collapsed"
+        },
+        {
+          "id": "solutionCustomization",
+          "name": "Customize Solution",
+          "type": "webview",
+          "visibility": "collapsed"
+        },
+        {
+          "id": "solutions-manager.buildInstaller",
+          "name": "Build Installer",
+          "type": "webview",
+          "visibility": "collapsed"
+        },
+        {
+          "id": "solutions-manager.archiveSolution",
+          "name": "Archive Solution",
+          "type": "webview",
+          "visibility": "collapsed"
+        },
+        {
+          "id": "poetryDependencies",
+          "name": "Dependencies",
+          "visibility": "collapsed"
+        },
+        {
+          "id": "helpAndSupport",
+          "name": "Help & Support",
+          "type": "tree",
+          "visibility": "collapsed"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "solutions-manager.createSolution",
+        "title": "Create Solution",
+        "category": "SAF Solutions Manager"
+      },
+      {
+        "command": "solutions-manager.addDependency",
+        "title": "Add Dependency",
+        "icon": "$(add)",
+        "category": "SAF Solutions Manager"
+      },
+      {
+        "command": "solutions-manager.updateDependency",
+        "title": "Update Dependency",
+        "icon": "$(refresh)",
+        "category": "SAF Solutions Manager"
+      },
+      {
+        "command": "solutions-manager.removeDependency",
+        "title": "Remove Dependency",
+        "icon": "$(trash)",
+        "category": "SAF Solutions Manager"
+      },
+      {
+        "command": "solutions-manager.syncDependencies",
+        "title": "Install/Sync Dependencies",
+        "icon": "$(sync)",
+        "category": "SAF Solutions Manager"
+      },
+      {
+        "command": "solutions-manager.runNativeDesktop",
+        "title": "Run as Native Desktop App",
+        "category": "SAF Solutions Manager"
+      },
+      {
+        "command": "solutions-manager.runNativeDesktopHPS",
+        "title": "Run as Native Desktop App with HPS",
+        "category": "SAF Solutions Manager"
+      },
+      {
+        "command": "solutions-manager.runContainerizedHPS",
+        "title": "Run as Containerized App with HPS",
+        "category": "SAF Solutions Manager"
+      },
+      {
+        "command": "solutions-manager.openSolution",
+        "title": "Open Solution in VS Code",
+        "category": "SAF Solutions Manager"
+      },
+      {
+        "command": "solutions-manager.refreshSolutionsList",
+        "title": "Refresh Solutions List",
+        "category": "SAF Solutions Manager",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "solutions-manager.installDevEnvironment",
+        "title": "Install Development Environment",
+        "category": "SAF Solutions Manager"
+      },
+      {
+        "command": "solutions-manager.openExtensionHelp",
+        "title": "Show Extension Help",
+        "icon": "$(book)",
+        "category": "SAF Solutions Manager"
+      },
+      {
+        "command": "solutions-manager.openGitHubIssues",
+        "title": "Report Issues",
+        "icon": "$(bug)",
+        "category": "SAF Solutions Manager"
+      },
+      {
+        "command": "solutions-manager.showAboutDialog",
+        "title": "About Solutions Manager",
+        "category": "SAF Solutions Manager"
+      },
+      {
+        "command": "solutions-manager.showQuickHelp",
+        "title": "Quick Help",
+        "category": "SAF Solutions Manager"
+      },
+      {
+        "command": "solutions-manager.showTroubleshootingGuide",
+        "title": "Troubleshooting Guide",
+        "category": "SAF Solutions Manager"
+      },
+      {
+        "command": "solutions-manager.openVSCodeExtensionPage",
+        "title": "Open Extension Page",
+        "category": "SAF Solutions Manager"
+      }
+    ],
+    "menus": {
+      "view/item/context": [
+        {
+          "command": "solutions-manager.updateDependency",
+          "when": "view == poetryDependencies && viewItem == dependency",
+          "group": "inline"
+        },
+        {
+          "command": "solutions-manager.removeDependency",
+          "when": "view == poetryDependencies && viewItem == dependency",
+          "group": "inline"
+        },
+        {
+          "command": "solutions-manager.openSolution",
+          "when": "view == safSolutions && viewItem == safSolutions",
+          "group": "inline"
+        }
+      ],
+      "view/title": [
+        {
+          "command": "solutions-manager.addDependency",
+          "when": "view == poetryDependencies",
+          "group": "navigation"
+        },
+        {
+          "command": "solutions-manager.refreshSolutionsList",
+          "when": "view == safSolutions",
+          "group": "navigation"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "SAF Solutions Manager",
+      "properties": {
+        "solutions-manager.enableSolutionsList": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable the Available Solutions view in the Explorer sidebar"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "rimraf out && tsc -p ./ && esbuild src/extension.ts --bundle --outfile=out/extension.js --external:vscode --format=cjs --platform=node --sourcemap && npm run copy-webview",
+    "package:vsix": "npm run compile && node scripts/package-vsix.mjs",
+    "compile:tests": "rimraf out/test && tsc -p ./tsconfig.test.json && esbuild out/test/setup.js --bundle --outfile=out/test/setup.bundle.js --external:vscode --format=cjs --platform=node --sourcemap && npm run copy-webview && npm run copy-package-json:tests",
+    "copy-webview": "rimraf out/webview && npx cpy-cli \"src/webview/**\" out/webview --parents",
+    "copy-package-json": "npx cpy-cli package.json out/",
+    "copy-package-json:tests": "node scripts/write-test-package-json.js",
+    "watch": "tsc -watch -p ./",
+    "typecheck": "tsc --noEmit -p ./ && tsc --noEmit -p ./tsconfig.test.json",
+    "lint": "eslint src --fix",
+    "lint:ci": "eslint src --max-warnings 0",
+    "test:coverage:clean": "rimraf .nyc_output coverage",
+    "test:unit": "mocha",
+    "test:unit:watch": "mocha --watch",
+    "test:unit:compiled": "npm run compile:tests && mocha -r out/test/setup.bundle.js \"out/test/unit/**/*.test.js\"",
+    "// test:unit:file": "Runs a single TypeScript unit test file using mocha and ts-node. Usage: npm run test:unit:file -- path/to/testfile.ts",
+    "test:unit:file": "mocha --no-config -r ts-node/register -r test/setup.ts",
+    "test:unit:coverage": "npm run compile:tests && c8 mocha -r out/test/setup.bundle.js \"out/test/unit/**/*.test.js\"",
+    "// test:integration": "To run a single integration test file using vscode-test: npm run test:integration -- path/to/testfile.js",
+    "test:integration": "npm run compile:tests && vscode-test --run --config .vscode-test.mjs --",
+    "test:integration:coverage": "npm run compile:tests && node scripts/instrument-for-coverage.mjs && vscode-test --run --config .vscode-test.mjs && node scripts/report-integration-coverage.mjs",
+    "test:all": "npm run test:coverage:clean && npm run test:unit:coverage && npm run test:integration:coverage",
+    "test": "npm run test:unit:coverage"
+  },
+  "devDependencies": {
+    "@istanbuljs/nyc-config-typescript": "^1.0.2",
+    "@istanbuljs/schema": "^0.1.3",
+    "@types/chai": "^4.3.20",
+    "@types/dotenv": "^8.2.3",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "^24.12.0",
+    "@types/node-fetch": "^2.6.12",
+    "@types/sinon": "^21.0.0",
+    "@types/vscode": "^1.109.0",
+    "@typescript-eslint/eslint-plugin": "^8.57.1",
+    "@typescript-eslint/parser": "^8.9.0",
+    "@vscode/test-cli": "^0.0.12",
+    "@vscode/test-electron": "^2.4.1",
+    "@vscode/vsce": "4.1.0",
+    "c8": "^11.0.0",
+    "chai": "^6.2.2",
+    "cpy-cli": "^7.0.0",
+    "esbuild": "^0.27.4",
+    "eslint": "^10.1.0",
+    "eslint-plugin-security": "^4.0.0",
+    "istanbul-lib-coverage": "^3.2.2",
+    "istanbul-lib-instrument": "^6.0.3",
+    "istanbul-lib-report": "^3.0.1",
+    "istanbul-lib-source-maps": "^5.0.6",
+    "istanbul-reports": "^3.2.0",
+    "minimatch": "^10.2.2",
+    "mocha": "^11.7.5",
+    "rimraf": "^6.1.3",
+    "sinon": "^21.0.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "dotenv": "^17.2.3",
+    "toml": "^4.2.0",
+    "winreg-ts": "^1.0.0"
+  },
+  "overrides": {
+    "minimatch": "^10.2.2",
+    "eslint": {
+      "file-entry-cache": {
+        "flat-cache": {
+          "flatted": "3.4.2"
+        }
+      }
+    },
+    "mocha": {
+      "diff": "^8.0.3",
+      "serialize-javascript": "^7.0.3"
+    }
+  }
+}

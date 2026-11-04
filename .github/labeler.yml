@@ -13,12 +13,14 @@
   - any:
       - changed-files:
           - any-glob-to-any-file: ['doc/**']
+          - any-glob-to-any-file: ['extension/README.rst', 'extension/extension-instructions.md']
 
 'dependencies':
   - any:
       - changed-files:
           - any-glob-to-any-file: ['**/poetry.lock']
           - any-glob-to-any-file: ['**/uv.lock']
+          - any-glob-to-any-file: ['extension/package-lock.json']
 
 'devops':
   - any:
@@ -29,6 +31,7 @@
   - any:
       - changed-files:
           - any-glob-to-any-file: ['**/tests/**']
+          - any-glob-to-any-file: ['extension/test/**']
 
 # -- Labels for specific packages -------------------------------------------
 'bdm-python-api':
@@ -112,3 +115,12 @@
   - any:
       - changed-files:
           - any-glob-to-any-file: ['packages/saf-sdk/**']
+
+# -- Label for the Solutions Manager VS Code extension ------------------------
+'saf-solutions-manager':
+  - any:
+      - changed-files:
+          - any-glob-to-any-file: ['extension/**']
+          - any-glob-to-any-file: ['.github/workflows/_saf_solutions_manager.yml']
+          - any-glob-to-any-file: ['.github/workflows/ci_cd_saf_solutions_manager_release.yml']
+          - any-glob-to-any-file: ['.github/workflows/saf_solutions_manager_certification.yml']

@@ -80,12 +80,11 @@ tasks:
       mutex: 'pre-commit'
 
   pre-commit:
-    description: "Run pre-commit against root-level files only (packages run their
-      own pre-commit task)"
+    description: "Run pre-commit against root files and extension sources (Python packages run their own task)"
     deps:
       - '~:gitleaks'
     script: 'uv run pre-commit run --files $(git ls-files -- ":(top,glob)*" ":(top).github/**"
-      ":(top)doc/**")'
+      ":(top)doc/**" ":(top)extension/**")'
     inputs:
       - '/.pre-commit-config.yaml'
       - '/pyproject.toml'
@@ -94,6 +93,7 @@ tasks:
       - '/.gitleaks.toml'
       - '/.moon/**/*'
       - '/doc/**/*'
+      - '/extension/**/*'
     options:
       runFromWorkspaceRoot: true
       # Shared pre-commit hook envs aren't safe for concurrent invocation across projects.
@@ -203,7 +203,7 @@ tasks:
     options:
       shell: true
       # Ensures the entire moon pipeline won't fail if the directories don't exist
-      allowFailure: true 
+      allowFailure: true
     toolchains:
       - 'system'
 

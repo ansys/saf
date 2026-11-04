@@ -1,0 +1,84 @@
+<!--
+Copyright (C) 2026 ANSYS, Inc. and/or its affiliates.
+SPDX-License-Identifier: Apache-2.0
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline' {{cspSource}}; script-src {{cspSource}};">
+  <title>Archive Solution</title>
+  <link rel="stylesheet" href="{{styleUri}}">
+</head>
+<body>
+  <div class="container">
+    <h3>Archive solution options</h3>
+
+    <div class="section">
+      <div class="section-title">Solution</div>
+      <div class="row">
+        <label for="solution-select">Solution</label>
+        <div class="solution-selector-row">
+          <select id="solution-select">
+            <option value="" disabled selected>Select a solution...</option>
+          </select>
+          <button id="browse-solution-btn" title="Browse for solution directory">🗁</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Output options</div>
+      <div class="row">
+        <label for="output-path">Output directory</label>
+        <div class="file-row">
+          <input type="text" id="output-path" />
+          <button id="browse-output-btn">...</button>
+        </div>
+        <div class="help-text">Directory where the archive file will be saved</div>
+      </div>
+
+      <div class="row">
+        <label for="archive-filename">Archive file name</label>
+        <input type="text" id="archive-filename" />
+        <div class="help-text">File name to use (without extension)</div>
+      </div>
+
+      <div class="row">
+        <label for="archive-extension">Extension</label>
+        <input type="text" id="archive-extension" />
+        <div class="help-text">Archive file extension (must start with '.')</div>
+      </div>
+    </div>
+
+    <hr>
+    <div class="row">
+      <h3>Archive solution command</h3>
+      <div class="command-row">
+        <div class="command-preview">
+          <code id="command-preview">saf archive</code>
+        </div>
+        <button id="copy-command-btn" title="Copy command">⧉</button>
+      </div>
+    </div>
+
+    <button id="archive-btn" class="action-button">Archive solution</button>
+  </div>
+
+  <script src="{{scriptUri}}"></script>
+</body>
+</html>

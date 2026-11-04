@@ -40,6 +40,9 @@
 - name: saf-sdk
   description: Package saf-sdk
   color: ffffff
+- name: saf-solutions-manager
+  description: Solutions Manager VS Code extension
+  color: ffffff
 - name: devops
   description: DevOps related changes
   color: #0052cc

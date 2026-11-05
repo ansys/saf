@@ -1031,7 +1031,7 @@ def _install_uv_dependencies(uv_exec: str, dependency_groups: list[str]) -> None
         "--python",
         sys.executable,
         "--no-python-downloads",
-        "--no-default-groups", # groups are specified later
+        "--no-default-groups",  # groups are specified later
         "--inexact",
     ]
     for group in dependency_groups:

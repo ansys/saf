@@ -1077,7 +1077,7 @@ wheels = [
 
 [[package]]
 name = "ansys-saf-sdk"
-version = "0.5.0"
+version = "0.6.0"
 source = { editable = "." }
 dependencies = [
     { name = "ansys-bdm-api" },
@@ -1121,7 +1121,6 @@ core-test = [
 ]
 desktop = [
     { name = "ansys-saf-desktop-orchestrator" },
-    { name = "ansys-saf-projects-dashboard" },
 ]
 instance-management = [
     { name = "ansys-saf-product-configuration" },
@@ -1154,6 +1153,9 @@ instance-management-optislang = [
 ]
 instance-management-visor = [
     { name = "ansys-saf-product-manager", extra = ["visor"] },
+]
+ui = [
+    { name = "ansys-saf-projects-dashboard" },
 ]
 
 [package.metadata]
@@ -1193,9 +1195,9 @@ requires-dist = [
     { name = "ansys-saf-product-manager", extras = ["mechanical"], marker = "extra == 'instance-management-mechanical'", specifier = "==0.5.0" },
     { name = "ansys-saf-product-manager", extras = ["optislang-wrapper"], marker = "extra == 'instance-management-optislang'", specifier = "==0.5.0" },
     { name = "ansys-saf-product-manager", extras = ["visor"], marker = "extra == 'instance-management-visor'", specifier = "==0.5.0" },
-    { name = "ansys-saf-projects-dashboard", marker = "extra == 'desktop'", specifier = "==0.2.0" },
+    { name = "ansys-saf-projects-dashboard", marker = "extra == 'ui'", specifier = "==0.2.0" },
 ]
-provides-extras = ["core-dash", "core-pim", "core-hps", "core-test", "core-mcp", "core-all", "instance-management", "instance-management-fluent", "instance-management-aedt", "instance-management-optislang", "instance-management-geometry", "instance-management-mapdl", "instance-management-mechanical", "instance-management-visor", "instance-management-all", "desktop", "build", "all"]
+provides-extras = ["core-dash", "core-pim", "core-hps", "core-test", "core-mcp", "core-all", "instance-management", "instance-management-fluent", "instance-management-aedt", "instance-management-optislang", "instance-management-geometry", "instance-management-mapdl", "instance-management-mechanical", "instance-management-visor", "instance-management-all", "desktop", "ui", "build", "all"]
 
 [[package]]
 name = "ansys-tools-common"

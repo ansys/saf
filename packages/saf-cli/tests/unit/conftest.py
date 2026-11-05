@@ -22,6 +22,7 @@ import pytest
 import tomlkit
 
 from ansys.saf.cli._config.const import DEFAULT_SOLUTION_NAMESPACE
+from ansys.saf.cli._solutions.backend_detection import SolutionBackend
 from ansys.saf.cli._solutions.plugins import SafTemplate
 from ansys.saf.cli._utilities.conversion import namespace_to_path
 from tests.conftest import get_template_path, get_templates_toml_path
@@ -68,28 +69,45 @@ def root_solution_dir(tmp_path: Path, solution_name: str, solution_namespace: st
 
 @pytest.fixture
 def root_solution_dir_with_pyproject_and_lock(root_solution_dir: Path, request: pytest.FixtureRequest) -> Path:
-    poetry_lock_path = root_solution_dir / "poetry.lock"
-    poetry_lock_path.touch()
-
+    """Create backend-specific project metadata and a lockfile, defaulting to Poetry."""
     pyproject_path = root_solution_dir / "pyproject.toml"
     config = getattr(request, "param", {})
-    data: dict[str, Any] = {"tool": {"poetry": {"name": "saf-solutions-my-solution"}}}
+    backend = SolutionBackend(config.get("backend", SolutionBackend.POETRY))
+    (root_solution_dir / f"{backend.value}.lock").touch()
+
+    data: dict[str, Any]
+    if backend is SolutionBackend.UV:
+        data = {
+            "project": {
+                "name": "saf-solutions-my-solution",
+                "version": "0.1.0",
+                "requires-python": ">=3.11,<3.15",
+                "dependencies": [],
+            },
+            "tool": {"uv": {}},
+        }
+        if "main_dependencies" in config or "ui_dependencies" in config:
+            data["project"]["dependencies"] = ["ansys-saf-sdk==0.2.0"]
+        if "ui_dependencies" in config:
+            data["dependency-groups"] = {"ui": ["dash>=4.2.0,<5.0.0"]}
+    else:
+        data = {"tool": {"poetry": {"name": "saf-solutions-my-solution"}}}
+        if "main_dependencies" in config or "ui_dependencies" in config:
+            data["tool"]["poetry"]["dependencies"] = {
+                "python": ">=3.11,<3.15",
+                "ansys-saf-sdk": "0.2.0",
+            }
+        if "ui_dependencies" in config:
+            data["tool"]["poetry"]["group"] = {
+                "ui": {
+                    "optional": True,
+                    "dependencies": {
+                        "dash": "^4.2.0",
+                    },
+                },
+            }
     if "version" in config:
         data.update({"saf-cli-version": {"saf-cli-version": config["version"]}})
-    if "main_dependencies" in config or "ui_dependencies" in config:
-        data["tool"]["poetry"]["dependencies"] = {
-            "python": ">=3.11,<3.15",
-            "ansys-saf-sdk": "0.2.0",
-        }
-    if "ui_dependencies" in config:
-        data["tool"]["poetry"]["group"] = {
-            "ui": {
-                "optional": True,
-                "dependencies": {
-                    "dash": "^4.2.0",
-                },
-            },
-        }
 
     pyproject_path.write_text(tomlkit.dumps(data))  # type: ignore
     return root_solution_dir

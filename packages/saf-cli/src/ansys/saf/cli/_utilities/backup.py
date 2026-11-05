@@ -54,7 +54,7 @@ class BackupManager:
             solution_package_name: Name of the solution package (used to compute base_solution_dir).
             namespace_root: Root namespace of the solution.
             files_to_backup: List of (file_path, base_dir) tuples to back up. If None, uses default files
-                           (page.py, definition.py, pyproject.toml, poetry.lock).
+                           (page.py, definition.py, pyproject.toml, poetry.lock, uv.lock).
         """
         self._solution_root_dir = solution_root_dir
         # Compute base_solution_dir from solution_root_dir and solution_package_name
@@ -69,6 +69,7 @@ class BackupManager:
                 (self._base_solution_dir / "solution" / "definition.py", self._base_solution_dir),
                 (solution_root_dir / "pyproject.toml", solution_root_dir),
                 (solution_root_dir / "poetry.lock", solution_root_dir),
+                (solution_root_dir / "uv.lock", solution_root_dir),
             ]
 
         self._files_to_backup = files_to_backup

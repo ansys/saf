@@ -55,7 +55,8 @@ Optional extras pull in additional packages, or extras of the core packages, for
 | `instance-management-mechanical` | Instance management support for Ansys Mechanical.                                              |
 | `instance-management-visor`      | Instance management support for Visor-based products.                                          |
 | `instance-management-all`        | All instance management product integrations.                                                  |
-| `desktop`                        | Desktop orchestrator and Projects dashboard for running solution applications as desktop apps. |
+| `desktop`                        | Desktop orchestrator |
+| `ui` | Projects dashboard for running solution applications as desktop apps. |
 | `build`                          | Desktop installer, for building standalone desktop installers.                                 |
 | `all`                            | Every optional extra combined.                                                                 |
 

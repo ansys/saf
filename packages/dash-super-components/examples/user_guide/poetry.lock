@@ -325,21 +325,21 @@ files = [
 
 [[package]]
 name = "dash-mantine-components"
-version = "2.8.0"
+version = "2.8.1"
 description = "Plotly Dash Components based on Mantine"
 optional = false
 python-versions = "*"
 groups = ["main"]
 files = [
-    {file = "dash_mantine_components-2.8.0-py3-none-any.whl", hash = "sha256:ad18542b0f376c041232b2b9fd2882065abbd68506f98dc9c75726104c16b54b"},
-    {file = "dash_mantine_components-2.8.0.tar.gz", hash = "sha256:8891dd8042c93697f673f30df9ea34e5a4e9a0486d6f42499e16825a2a07784a"},
+    {file = "dash_mantine_components-2.8.1-py3-none-any.whl", hash = "sha256:c0bf417b2357a1b687ab24e73321cbfb1c6a8f1c50bb302c03268914044b0aae"},
+    {file = "dash_mantine_components-2.8.1.tar.gz", hash = "sha256:a3603e11626d3c93a795ab09da884d12c1e1426313e2e24d09b9db3b4b9ea98a"},
 ]
 
 [package.dependencies]
 dash = ">=2"
 
 [package.extras]
-dev = ["black", "build", "dash-iconify", "dash[ci,dev,testing] (>=4)", "pytest (<8.1.0)", "pyyaml (>=5.0)", "selenium (<4.3.0)", "wheel"]
+dev = ["black", "build", "dash-iconify", "dash[ci,dev,testing] (>=4.5.0rc1)", "pytest (>=6.0.2,<8.1.0)", "pyyaml (>=5.0)", "selenium (>=4.11.0,<=4.49.0)", "wheel"]
 
 [[package]]
 name = "dataclass-wizard"

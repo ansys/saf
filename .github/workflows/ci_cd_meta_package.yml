@@ -465,7 +465,7 @@ jobs:
       - ubuntu-latest
     steps:
       - name: tagging commit
-        uses: ansys/saf-devops/apply-tag-on-commit@82c48355bb8dbdaddd0e855ed383c89824ee2c3c # v1.3.3
+        uses: ansys/saf-devops/apply-tag-on-commit@f5e7fa3b9b829e75ac638eba435462c1dc5d127e # v1.4.0
         with:
           tag: certified-saf-sdk
 

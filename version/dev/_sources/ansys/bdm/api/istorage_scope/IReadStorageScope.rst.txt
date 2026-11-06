@@ -1,0 +1,574 @@
+
+
+
+
+
+
+:class:`IReadStorageScope`
+==========================
+
+
+.. py:class:: ansys.bdm.api.istorage_scope.IReadStorageScope
+
+   Bases: :py:obj:`Protocol`
+
+
+   
+   Represents access to a read only Blob Data Management system.
+   Allows consumers to produce and consume :class:`EntityHandle` instances.
+
+   This is the synchronous version of the :class:`IAsyncReadStorageScope` interface.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+.. py:currentmodule:: IReadStorageScope
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~get_cached`
+            - Realize the data to a local filesystem if needed and returns a path to the cached or original file.
+          * - :py:attr:`~get_copy`
+            - Realize the data to a local filesystem by writing to a specified file.
+          * - :py:attr:`~get_stream`
+            - Open the EntityHandle contents for reading as a stream.
+          * - :py:attr:`~get_bytes`
+            - Return the content of the referenced blob.
+          * - :py:attr:`~get_text`
+            - Return the content of the referenced blob.
+          * - :py:attr:`~get_children`
+            - Return the entities contained in this entity.
+          * - :py:attr:`~get_child`
+            - Return the entity contained in this entity with a given name.
+          * - :py:attr:`~get_parent`
+            - Return the entity containing in this entity.
+          * - :py:attr:`~get_unreferenced_entities`
+            - Return a list of all entities within the context that are not referenced by the given live entity handles.
+          * - :py:attr:`~get_copy_from_dictionary`
+            - Create a recursive directory structure containing copies of entities from source.
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~asynchronous`
+            - Return a object with an asynchronous interface to the same scope.
+
+
+
+
+   .. tab-item:: Special methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~__enter__`
+            - Track the set of files that are stored centrally.
+          * - :py:attr:`~__exit__`
+            - Remove all files from local storage that are not stored centrally.
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.bdm.api.istorage_scope import IReadStorageScope
+
+Property detail
+---------------
+
+.. py:property:: asynchronous
+   :type: ansys.bdm.api.iasync_storage_scope.IAsyncReadStorageScope
+
+
+   
+   Return a object with an asynchronous interface to the same scope.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+Method detail
+-------------
+
+.. py:method:: __enter__() -> IReadStorageScope
+
+   
+   Track the set of files that are stored centrally.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: __exit__(__exc_type: type[BaseException] | None, __exc_value: BaseException | None, __traceback: types.TracebackType | None) -> None
+
+   
+   Remove all files from local storage that are not stored centrally.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_cached(entity: ansys.bdm.api.entity_handle.EntityHandle) -> pathlib.Path
+
+   
+   Realize the data to a local filesystem if needed and returns a path to the cached or original file.
+
+   The :class:`EntityHandle` is intended to represent an immutable value. The file
+   returned by this call may point to a cached or even the original file. Callers
+   must not modify the file on disk or undefined behavior, including class 3 errors,
+   may occur. If the caller needs to modify the file, consider using
+   :func:`get_copy()`, or copying the file before modifying it.
+
+   :Parameters:
+
+       **entity: EntityHandle**
+           The handle to the data to realize
+
+
+
+   :Returns:
+
+       Path
+           The path to the contents of the EntityHandle as realized locally. The caller
+           MUST NOT modify the returned path.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_copy(entity: ansys.bdm.api.entity_handle.EntityHandle, destination: pathlib.Path) -> None
+
+   
+   Realize the data to a local filesystem by writing to a specified file.
+
+   The caller is free to modify the written file. The caller is responsible
+   for deleting the generated file. If the destination path is within the storage root
+   then the copy at that location will be deleted when the storage scope context is closed.
+
+   :Parameters:
+
+       **entity: EntityHandle**
+           The handle to the data to realize
+
+       **destination: Path**
+           The path to the file to write
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_stream(entity: ansys.bdm.api.entity_handle.EntityHandle) -> io.RawIOBase
+
+   
+   Open the EntityHandle contents for reading as a stream.
+
+   The returned stream MUST NOT be writable. The returned stream MAY be seekable.
+
+   :Parameters:
+
+       **entity: EntityHandle**
+           The handle to the data to realize
+
+
+
+   :Returns:
+
+       RawIOBase
+           The stream which, when read, will return the contents of the EntityHandle.
+
+
+
+
+   :Raises:
+
+       CannotGenerateStreamForDirectoryError
+           If the entity requested is a collection
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_bytes(entity: ansys.bdm.api.entity_handle.EntityHandle) -> bytes
+
+   
+   Return the content of the referenced blob.
+
+
+   :Parameters:
+
+       **entity: EntityHandle**
+           The handle to the data to realize
+
+
+
+   :Returns:
+
+       bytes
+           the contents of the EntityHandle.
+
+
+
+
+   :Raises:
+
+       CannotGenerateStreamForDirectoryError
+           If the entity requested is a collection
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_text(entity: ansys.bdm.api.entity_handle.EntityHandle, encoding: str | None = None) -> str
+
+   
+   Return the content of the referenced blob.
+
+
+   :Parameters:
+
+       **entity: EntityHandle**
+           The handle to the data to realize
+
+       **encoding: Optional[str]**
+           The name of an encoding.  When this argument is not None the bytes
+           of ``entity`` will be read using that encoding.
+
+
+
+   :Returns:
+
+       str
+           the contents of the EntityHandle in text form with the encoding determined
+           in order of preference by:
+           - the encoding argument if not None
+           - the encoding field of the entity argument if set
+           - the BOM of the referenced entity if it contains one; or
+           - UTF-8
+
+
+
+
+   :Raises:
+
+       CannotGenerateStreamForDirectoryError
+           If the entity requested is a collection
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_children(entity: ansys.bdm.api.entity_handle.EntityHandle) -> list[ansys.bdm.api.entity_handle.EntityHandle]
+
+   
+   Return the entities contained in this entity.
+
+
+   :Parameters:
+
+       **entity: EntityHandle**
+           The entity to query
+
+
+
+   :Returns:
+
+       List[EntityHandle]
+           The list of entities that are children of the provided entity
+
+
+
+
+   :Raises:
+
+       NotADirectoryError
+           If the requested entity is not a directory
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_child(entity: ansys.bdm.api.entity_handle.EntityHandle, child_name: str) -> ansys.bdm.api.entity_handle.EntityHandle
+
+   
+   Return the entity contained in this entity with a given name.
+
+
+   :Parameters:
+
+       **entity: EntityHandle**
+           The entity to query
+
+       **child_name: str**
+           The child to search for
+
+
+
+   :Returns:
+
+       EntityHandle
+           The :class:`EntityHandle` requested
+
+
+
+
+   :Raises:
+
+       NotADirectoryError
+           If the requested entity is not a directory
+
+       EntityNotFoundInBlobStorageError
+           If the requested entity is not found
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_parent(entity: ansys.bdm.api.entity_handle.EntityHandle) -> ansys.bdm.api.entity_handle.EntityHandle | None
+
+   
+   Return the entity containing in this entity.
+
+
+   :Parameters:
+
+       **entity: EntityHandle**
+           The entity to query
+
+
+
+   :Returns:
+
+       Optional[EntityHandle]
+           The :class:`EntityHandle` requested, or None if the entity is stored at the root of its scope.
+
+
+
+
+   :Raises:
+
+       EntityNotFoundInBlobStorageError
+           If the requested entity is not found.
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_unreferenced_entities(context: str, live_handles: list[ansys.bdm.api.entity_handle.EntityHandle]) -> list[ansys.bdm.api.entity_handle.EntityHandle]
+
+   
+   Return a list of all entities within the context that are not referenced by the given live entity handles.
+
+
+   :Parameters:
+
+       **context: str**
+           A label for storage scopes that enables them to be categorized and configured given
+           a common system wide configuration.
+           It defines the bounds over which methods supporting garbage collection are constrained.
+
+       **live_handles: list[EntityHandle]**
+           A list of handles that are expected to refer to blobs.
+
+
+
+   :Returns:
+
+       list[EntityHandle]
+           The list of all entities within the context that are not referenced by the given live entity handles.
+
+
+
+
+   :Raises:
+
+       ValueError
+           If the live_handles do not belong to the provided context.
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_copy_from_dictionary(root: PathLike[str], source: ansys.bdm.api.recursive_dictionary.RecursiveDictionaryOfEntityHandles, glob: str | None = None) -> None
+
+   
+   Create a recursive directory structure containing copies of entities from source.
+
+   This method creates a directory structure on the file system at root containing
+   copies of the entities in source. If glob is None, all files at or within source
+   are copied to root. Note that file and directory names used when creating the
+   directory structure at root are always taken from the keys in source, not from
+   the original_name attribute of the EntityHandle objects.
+
+   :Parameters:
+
+       **root** : PathLike[str]
+           The root directory to create the directory structure in.
+
+       **source** : RecursiveDictionaryOfEntityHandles
+           A recursive nested dictionary of EntityHandle objects.
+
+       **glob** : str | None, optional
+           A glob pattern to filter which files and directories to copy. Behaves
+           identically to Path.match() and is interpreted as relative to root using
+           the keys in source as the path components. Default is None.
+
+
+
+
+
+
+
+   :Raises:
+
+       NotADirectoryError
+           If root points to an existing file.
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

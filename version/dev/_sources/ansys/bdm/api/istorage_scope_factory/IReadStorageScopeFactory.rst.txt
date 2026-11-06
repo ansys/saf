@@ -1,0 +1,149 @@
+
+
+
+
+
+
+:class:`IReadStorageScopeFactory`
+=================================
+
+
+.. py:class:: ansys.bdm.api.istorage_scope_factory.IReadStorageScopeFactory
+
+   Bases: :py:obj:`Protocol`
+
+
+   
+   Factory pattern for creating instances of IReadStorageScope and IAsyncReadStorageScope.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: IReadStorageScopeFactory
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~create_storage_scope`
+            - Create a new read only storage scope.
+          * - :py:attr:`~create_async_storage_scope`
+            - Create a new asynchronous read only storage scope.
+
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.bdm.api.istorage_scope_factory import IReadStorageScopeFactory
+
+
+
+Method detail
+-------------
+
+.. py:method:: create_storage_scope(context: str, template_vars: dict[str, str]) -> ansys.bdm.api.istorage_scope.IReadStorageScope
+
+   
+   Create a new read only storage scope.
+
+
+   :Parameters:
+
+       **context: str**
+           TODO: How to word what this genericaly does.
+
+       **template_vars: Dict[str, str]**
+           Template variables that may be used by the configuration system             to return an appropriate :class:`IStorageScope`. TODO: Define whether certain fields             need to be passed in?
+
+
+
+   :Returns:
+
+       IReadStorageScope
+           A configured and ready to use :class:`IReadStorageScope`
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: create_async_storage_scope(context: str, template_vars: dict[str, str]) -> ansys.bdm.api.iasync_storage_scope.IAsyncReadStorageScope
+   :async:
+
+
+   
+   Create a new asynchronous read only storage scope.
+
+
+   :Parameters:
+
+       **context: str**
+           TODO: How to word what this genericaly does.
+
+       **template_vars: Dict[str, str]**
+           Template variables that may be used by the configuration system             to return an appropriate :class:`IAsyncStorageScope`. TODO: Define whether certain fields             need to be passed in?
+
+
+
+   :Returns:
+
+       IAsyncReadStorageScope
+           A configured and ready to use :class:`IAsyncReadStorageScope`
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

@@ -1,0 +1,91 @@
+
+
+
+
+
+
+The ``entity_handle.py`` module
+===============================
+
+.. py:module:: ansys.bdm.api.entity_handle
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: entity_handle
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.bdm.api.entity_handle.EntityHandle`
+            - A handle to a entity stored by a BDM provider and the associated lightweight data about it.
+
+
+
+
+
+
+
+    .. tab-item:: Constants
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~NO_ENTITY`
+            - 
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> EntityHandle</ansys/bdm/api/entity_handle/EntityHandle>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Module detail
+-------------
+
+.. py:data:: NO_ENTITY
+   :type:  EntityHandle
+
+
+

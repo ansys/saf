@@ -1,0 +1,141 @@
+
+
+
+
+
+
+The ``optislang_wrapper.py`` module
+===================================
+
+.. py:module:: ansys.saf.product_configuration.optislang_wrapper
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: optislang_wrapper
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.saf.product_configuration.optislang_wrapper.OptislangWrapperInstanceVersionConfiguration`
+            - Configuration class for a specific version of Ansys optiSLang.
+
+
+          * - :py:obj:`~ansys.saf.product_configuration.optislang_wrapper.OptislangWrapperInstanceConfiguration`
+            - Configuration class for Ansys optiSLang wrapper.
+
+
+
+
+
+    .. tab-item:: Functions
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~format_version`
+            - Format the version to the expected format, for example 251 -> 2025 R1.
+
+
+
+
+    .. tab-item:: Constants
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~PRODUCT_NAME_SECURE`
+            - 
+
+
+          * - :py:obj:`~SUPPORTED_VERSIONS`
+            - 
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> OptislangWrapperInstanceVersionConfiguration</ansys/saf/product_configuration/optislang_wrapper/OptislangWrapperInstanceVersionConfiguration>
+    <span class="nf nf-cod-symbol_class"></span> OptislangWrapperInstanceConfiguration</ansys/saf/product_configuration/optislang_wrapper/OptislangWrapperInstanceConfiguration>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Module detail
+-------------
+
+.. py:function:: format_version(version: str) -> str
+
+   
+   Format the version to the expected format, for example 251 -> 2025 R1.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:data:: PRODUCT_NAME_SECURE
+   :value: 'optislang-wrapper-secure'
+
+
+.. py:data:: SUPPORTED_VERSIONS
+   :value: ['241', '242', '251', '252', '261']
+
+
+
+

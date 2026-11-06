@@ -1,0 +1,215 @@
+
+
+
+
+
+
+:class:`UserInfo`
+=================
+
+
+.. py:class:: ansys.iam.oidc.UserInfo(/, **data: Any)
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   
+   OpenID Connect set of standard claims about the profile information of the end-user.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: UserInfo
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~sub`
+            - 
+          * - :py:attr:`~name`
+            - 
+          * - :py:attr:`~given_name`
+            - 
+          * - :py:attr:`~family_name`
+            - 
+          * - :py:attr:`~middle_name`
+            - 
+          * - :py:attr:`~nickname`
+            - 
+          * - :py:attr:`~preferred_username`
+            - 
+          * - :py:attr:`~profile`
+            - 
+          * - :py:attr:`~picture`
+            - 
+          * - :py:attr:`~website`
+            - 
+          * - :py:attr:`~email`
+            - 
+          * - :py:attr:`~email_verified`
+            - 
+          * - :py:attr:`~gender`
+            - 
+          * - :py:attr:`~birthdate`
+            - 
+          * - :py:attr:`~zoneinfo`
+            - 
+          * - :py:attr:`~locale`
+            - 
+          * - :py:attr:`~phone_number`
+            - 
+          * - :py:attr:`~phone_number_verified`
+            - 
+          * - :py:attr:`~address`
+            - 
+          * - :py:attr:`~updated_at`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.iam.oidc import UserInfo
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: sub
+   :type:  str
+   :value: ''
+
+
+.. py:attribute:: name
+   :type:  str
+   :value: ''
+
+
+.. py:attribute:: given_name
+   :type:  str
+   :value: ''
+
+
+.. py:attribute:: family_name
+   :type:  str
+   :value: ''
+
+
+.. py:attribute:: middle_name
+   :type:  str
+   :value: ''
+
+
+.. py:attribute:: nickname
+   :type:  str
+   :value: ''
+
+
+.. py:attribute:: preferred_username
+   :type:  str
+   :value: ''
+
+
+.. py:attribute:: profile
+   :type:  str
+   :value: ''
+
+
+.. py:attribute:: picture
+   :type:  str
+   :value: ''
+
+
+.. py:attribute:: website
+   :type:  str
+   :value: ''
+
+
+.. py:attribute:: email
+   :type:  str
+   :value: ''
+
+
+.. py:attribute:: email_verified
+   :type:  bool
+   :value: False
+
+
+.. py:attribute:: gender
+   :type:  str
+   :value: ''
+
+
+.. py:attribute:: birthdate
+   :type:  str
+   :value: ''
+
+
+.. py:attribute:: zoneinfo
+   :type:  str
+   :value: ''
+
+
+.. py:attribute:: locale
+   :type:  str
+   :value: ''
+
+
+.. py:attribute:: phone_number
+   :type:  str
+   :value: ''
+
+
+.. py:attribute:: phone_number_verified
+   :type:  bool
+   :value: False
+
+
+.. py:attribute:: address
+   :type:  str
+   :value: ''
+
+
+.. py:attribute:: updated_at
+   :type:  str
+   :value: ''
+
+
+
+
+
+

@@ -1,0 +1,107 @@
+
+
+
+
+
+
+The ``mechanical.py`` module
+============================
+
+.. py:module:: ansys.saf.product_configuration.mechanical
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: mechanical
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.saf.product_configuration.mechanical.MechanicalInstanceVersionConfiguration`
+            - Configuration class for a specific version of Ansys Mechanical with secure gRPC connections.
+
+
+          * - :py:obj:`~ansys.saf.product_configuration.mechanical.MechanicalInstanceConfiguration`
+            - Configuration class for Ansys Mechanical with secure gRPC connections.
+
+
+
+
+
+
+
+    .. tab-item:: Constants
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~PRODUCT_NAME_SECURE`
+            - 
+
+
+          * - :py:obj:`~SERVICE_NAME`
+            - 
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> MechanicalInstanceVersionConfiguration</ansys/saf/product_configuration/mechanical/MechanicalInstanceVersionConfiguration>
+    <span class="nf nf-cod-symbol_class"></span> MechanicalInstanceConfiguration</ansys/saf/product_configuration/mechanical/MechanicalInstanceConfiguration>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Module detail
+-------------
+
+.. py:data:: PRODUCT_NAME_SECURE
+   :value: 'mechanical-secure'
+
+
+.. py:data:: SERVICE_NAME
+   :value: 'grpc'
+
+
+
+

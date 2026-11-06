@@ -1,0 +1,88 @@
+
+
+
+
+
+
+The ``api.py`` module
+=====================
+
+.. py:module:: ansys.saf.glow.api
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+.. py:currentmodule:: api
+.. tab-set::
+
+
+
+
+
+
+
+
+    .. tab-item:: Attributes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~logger`
+            - 
+
+
+          * - :py:obj:`~settings`
+            - 
+
+
+          * - :py:obj:`~base_api_app`
+            - 
+
+
+          * - :py:obj:`~app`
+            - 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Module detail
+-------------
+
+.. py:data:: logger
+
+.. py:data:: settings
+
+.. py:data:: base_api_app
+
+.. py:data:: app
+
+
+

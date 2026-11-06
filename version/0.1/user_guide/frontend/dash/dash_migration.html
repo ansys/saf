@@ -1,0 +1,1064 @@
+<!--
+Copyright (C) 2026 ANSYS, Inc. and/or its affiliates.
+SPDX-License-Identifier: Apache-2.0
+
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+ <!-- ©2026, ANSYS Inc. Unauthorized use, distribution or duplication is prohibited. -->
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" data-theme="dark">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Migrate the solution UI to a multi-page Dash application &#8212; SAF Doc</title>
+  
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "dark";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "dark";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/ansys-sphinx-theme.css?v=5ffe81b6" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=fd6457a4" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/ansys-sphinx-theme.css?v=5ffe81b6" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://www.nerdfonts.com/assets/css/webfont.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/code-tabs.css?v=1bc26e2f" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=110072de" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/carousel.css?v=272b576a" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/landing_page_banner.css?v=57c45261" />
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../../_static/scripts/fontawesome.js?digest=0790524f97105ba85085"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085" />
+
+
+  <!-- Include desired assets -->
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  
+
+  
+    <link href="../../../_static/css/breadcrumbs.css" rel="stylesheet" />
+  
+    <script src="../../../_static/documentation_options.js?v=8a448e45"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=49e1bf35"></script>
+    <script src="../../../_static/sg-tags.js?v=d80f6fa4"></script>
+    <script src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
+    <script src="../../../_static/code-tabs.js?v=c983d12e"></script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'user_guide/frontend/dash/dash_migration';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.18.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://saf.ansys.com/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.1';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <script src="../../../_static/js/sidebar-always-expanded.js?v=6b23dfe7"></script>
+    <script src="../../../_static/js/sdI_button_ref_tooltips.js?v=091f9e4c"></script>
+    <script src="../../../_static/js/primary-sidebar-sticky-offset.js?v=7ecdf44c"></script>
+    <link rel="icon" href="../../../_static/ansys-favicon.png"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="Customize the solution UI" href="customize_ui.html" />
+    <link rel="prev" title="Client-side interaction" href="client_side.html" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.1.0" />
+  
+    
+    <script src="../../../_static/searchtools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <script src="../../../searchindex.js"></script>
+  
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+
+  <link rel="canonical" href="https://saf.ansys.com/version/stable/user_guide/frontend/dash/dash_migration.html" />
+  </head>
+  <body data-default-mode="dark">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+  
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+    
+    <img src="../../../_static/endorsed-ansys-logos-full-color-rgb_dark.png" class="logo__image only-dark" alt="SAF Doc - Home"/>
+    <img src="../../../_static/endorsed-ansys-logos-full-color-rgb_light.png" class="logo__image only-light pst-js-only" alt="SAF Doc - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../index.html" title="SAF Doc home">Home</a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../overview/index.html">
+    Overview
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../getting_started/index.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../index.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api/index.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../contribute/index.html">
+    Contribute
+  </a>
+</li>
+
+  </ul>
+</nav>
+</div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+      
+        <div class="navbar-item">
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../../../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+  
+</div></div>
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/saf" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+  
+    
+<!--
+  Announcement Version Loader
+  Dynamically loads the announcement.html content into the announcement_msg div.
+-->
+<div id="announcement_msg" aria-live="polite"></div>
+<script>
+  // Fetch and inject the announcement HTML content
+  fetch("announcement.html")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error: ${response.status} Announcement.html file not found, Please ignore this, if you are in dev/stable documentation`);
+      }
+      return response.text();
+    })
+    .then((text) => {
+      var msgDiv = document.getElementById("announcement_msg");
+      if (msgDiv) {
+        msgDiv.innerHTML = text;
+      }
+    })
+    .catch((error) => {
+      // Log only unexpected fetch errors
+      if (!(error.message && error.message.startsWith("HTTP error: 404"))) {
+        console.error(`Fetch problem: ${error.message} Announcement.html could not be loaded.`);
+      }
+    });
+</script>
+  
+
+  <div class="header-nav-banner d-print-none">
+    <div class="header-nav-banner__inner">
+      <div class="header-nav-banner__crumbs">
+        
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+     
+    <li class="breadcrumb-item breadcrumb-home">
+      <a
+        href="../../../index.html"
+        class="nav-link"
+        aria-label="Home"
+      >
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="../../index.html" class="nav-link">User guide</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="../index.html" class="nav-link">Frontend development</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="index.html" class="nav-link">Dash frontend</a>
+    </li>
+      
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Migrate the solution UI to a multi-page Dash application</span></li>
+    
+  </ul>
+</nav>
+
+      </div>
+    </div>
+  </div>
+
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../index.html" title="SAF Doc home">Home</a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../overview/index.html">
+    Overview
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../getting_started/index.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../index.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api/index.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../contribute/index.html">
+    Contribute
+  </a>
+</li>
+
+  </ul>
+</nav>
+</div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../../../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+  
+</div></div>
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/saf" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item pst-sidebar-collapse"><button id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar"><svg class="pst-icon svg-inline--fa" role="img" aria-hidden="true" focusable="false" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="M3 15.5C2.36232 15.5 1.74874 15.2564 1.28478 14.8189C0.820828 14.3815 0.541576 13.7832 0.504167 13.1467L0.5 13L0.5 3C0.499965 2.36232 0.743605 1.74874 1.18107 1.28478C1.61854 0.820828 2.21676 0.541576 2.85333 0.504167L3 0.5L13 0.5C13.6377 0.499965 14.2513 0.743605 14.7152 1.18107C15.1792 1.61854 15.4584 2.21676 15.4958 2.85333L15.5 3L15.5 13C15.5 13.6377 15.2564 14.2513 14.8189 14.7152C14.3815 15.1792 13.7832 15.4584 13.1467 15.4958L13 15.5L3 15.5ZM3 13.8333L10.5 13.8333L10.5 2.16667L3 2.16667C2.79589 2.16669 2.59889 2.24163 2.44636 2.37726C2.29383 2.5129 2.19638 2.69979 2.1725 2.9025L2.16667 3L2.16667 13C2.16669 13.2041 2.24163 13.4011 2.37726 13.5536C2.5129 13.7062 2.69979 13.8036 2.9025 13.8275L3 13.8333ZM6.65583 10.325L6.5775 10.2558L4.91083 8.58917C4.76735 8.44567 4.68116 8.25476 4.66843 8.05223C4.65569 7.84971 4.71729 7.6495 4.84167 7.48917L4.91083 7.41083L6.5775 5.74417C6.72747 5.59471 6.9287 5.50794 7.14032 5.50148C7.35194 5.49502 7.55809 5.56935 7.7169 5.70937C7.8757 5.8494 7.97525 6.04463 7.99533 6.25539C8.01541 6.46616 7.95451 6.67667 7.825 6.84417L7.75583 6.9225L6.67917 8L7.75583 9.0775C7.89931 9.22099 7.98551 9.41191 7.99824 9.61443C8.01097 9.81695 7.94938 10.0172 7.825 10.1775L7.75583 10.2558C7.61234 10.3993 7.42142 10.4855 7.2189 10.4982C7.01638 10.511 6.81617 10.4494 6.65583 10.325Z"/>
+  </svg>
+  <span class="pst-collapse-sidebar-label">Collapse Sidebar</span>
+  <span class="pst-expand-sidebar-label">Expand Sidebar</span>
+</button></div>
+        <div class="sidebar-primary-item">
+
+
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../scaffold.html">Scaffold</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../run_locally/index.html">Run locally</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../projects.html">Manage projects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../debug/index.html">Debug</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../test/index.html">Test</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../add_step.html">Add steps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../package/index.html">Package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../deploy/index.html">Deploy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../backend/index.html">Backend development</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../index.html">Frontend development</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="index.html">Dash frontend</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="getting_started_with_dash.html">Get started with Plotly Dash</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dash_libraries.html">Dash libraries</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dash_templates.html">Dash templates</a></li>
+<li class="toctree-l3"><a class="reference internal" href="client_side.html">Client-side interaction</a></li>
+<li class="toctree-l3 current active"><a class="current reference internal" href="#">Migrate the solution UI to a multi-page Dash application</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customize_ui.html">Customize the solution UI</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dash_super_components/index.html">Dash Super Components</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../environment_variables.html">Environment variables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../solution_servers.html">Solution servers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../script.html">Script a solution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../supported_software.html">Supported software</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../components.html">SAF components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../best_practices/index.html">Best practices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../migration/index.html">Migration guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting/index.html">Troubleshooting guide</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+     
+    <li class="breadcrumb-item breadcrumb-home">
+      <a
+        href="../../../index.html"
+        class="nav-link"
+        aria-label="Home"
+      >
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="../../index.html" class="nav-link">User guide</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="../index.html" class="nav-link">Frontend development</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="index.html" class="nav-link">Dash frontend</a>
+    </li>
+      
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Migrate the solution UI to a multi-page Dash application</span></li>
+    
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="migrate-the-solution-ui-to-a-multi-page-dash-application">
+<span id="dash-multipage-migration"></span><h1>Migrate the solution UI to a multi-page Dash application<a class="headerlink" href="#migrate-the-solution-ui-to-a-multi-page-dash-application" title="Link to this heading">#</a></h1>
+<p>The instructions below assume that your Solution UI follows the structure of the solution template provided by SAF CLI in previous versions.</p>
+<p>Nevertheless, the changes are applicable with little modification to any Solution UI using Dash. See <a class="reference external" href="https://dash.plotly.com/urls" rel="noopener noreferrer" target="_blank">Dash official documentation</a> for more information. The main procedure consists of:</p>
+<ul>
+<li><p>Enable the multi-page support in your Dash app with <code class="docutils literal notranslate"><span class="pre">use_pages=True</span></code>.</p></li>
+<li><p>Register your pages with <code class="docutils literal notranslate"><span class="pre">dash.register_page</span></code>.</p></li>
+<li><p>Update your callbacks to use the new page registry and URL-based navigation.</p></li>
+</ul>
+<section id="update-dash-app-initialization-in-app-py">
+<h2>Update Dash app initialization in <code class="docutils literal notranslate"><span class="pre">app.py</span></code><a class="headerlink" href="#update-dash-app-initialization-in-app-py" title="Link to this heading">#</a></h2>
+<p>Add <code class="docutils literal notranslate"><span class="pre">use_pages=True</span></code> to your DashProxy initialization in <code class="docutils literal notranslate"><span class="pre">app.py</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">app</span> <span class="o">=</span> <span class="n">DashProxy</span><span class="p">(</span>
+    <span class="vm">__name__</span><span class="p">,</span>
+    <span class="n">suppress_callback_exceptions</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">transforms</span><span class="o">=</span><span class="p">[</span><span class="n">TriggerTransform</span><span class="p">(),</span> <span class="n">MultiplexerTransform</span><span class="p">()],</span>
+    <span class="n">requests_pathname_prefix</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s1">&#39;GLOW_UI_PATH_PREFIX&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;/&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+    <span class="n">use_pages</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="register-solution-pages-first-page-py">
+<h2>Register solution pages (<code class="docutils literal notranslate"><span class="pre">first_page.py</span></code>…)<a class="headerlink" href="#register-solution-pages-first-page-py" title="Link to this heading">#</a></h2>
+<p>Register your step pages (excluding <code class="docutils literal notranslate"><span class="pre">page.py</span></code>). Add the following instruction at the top of the file, after the imports:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">dash</span><span class="o">.</span><span class="n">register_page</span><span class="p">(</span>
+    <span class="vm">__name__</span><span class="p">,</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;First Step&quot;</span><span class="p">,</span>
+    <span class="n">path_template</span><span class="o">=</span><span class="s2">&quot;/projects/&lt;project_id&gt;/first-step&quot;</span><span class="p">,</span>  <span class="c1"># replace first-step with your page name</span>
+    <span class="n">icon_asset_name</span><span class="o">=</span><span class="s2">&quot;carbon--ibm-engineering-workflow-mgmt.svg&quot;</span><span class="p">,</span>  <span class="c1"># optional, modify as needed for each page</span>
+    <span class="n">icon_asset_path</span><span class="o">=</span><span class="s2">&quot;icons&quot;</span><span class="p">,</span>  <span class="c1"># optional</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<ul>
+<li><p>All pages must have a path template that starts with <code class="docutils literal notranslate"><span class="pre">/projects/&lt;project_id&gt;/</span></code> followed by a subpath that identifies the step or page, for example, <code class="docutils literal notranslate"><span class="pre">/projects/&lt;project_id&gt;/first-step</span></code>.</p></li>
+<li><p>There should be only <strong>one</strong> page with the path template <code class="docutils literal notranslate"><span class="pre">/projects/&lt;project_id&gt;</span></code>, without subpath. This will be used as the landing/about/initial page when opening a project.</p></li>
+<li><p>You can use the <code class="docutils literal notranslate"><span class="pre">order</span></code> parameter in the <code class="docutils literal notranslate"><span class="pre">register_page</span></code> function to control the order of the pages in the navigation tree. For example, add <code class="docutils literal notranslate"><span class="pre">order=1</span></code> to the first page, <code class="docutils literal notranslate"><span class="pre">order=2</span></code> to the second page, and so on.</p></li>
+</ul>
+<p>See <a class="reference external" href="https://dash.plotly.com/urls#reference-for-dash.register_page" rel="noopener noreferrer" target="_blank">Dash API reference</a> for more details on the parameters of the <code class="docutils literal notranslate"><span class="pre">register_page</span></code> function.</p>
+<p>Use project in your layout functions instead of step:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># def layout(step: FirstStep):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">layout</span><span class="p">(</span><span class="n">project</span><span class="p">:</span> <span class="n">MySolution</span><span class="p">):</span>
+    <span class="n">step</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">steps</span><span class="o">.</span><span class="n">first_step</span>
+</pre></div>
+</div>
+<p>Leave it as <code class="docutils literal notranslate"><span class="pre">def</span> <span class="pre">layout():</span></code> if it doesn’t require step information in the layout.</p>
+</section>
+<section id="update-your-main-callbacks-and-layout-in-page-py">
+<h2>Update your main callbacks and layout in <code class="docutils literal notranslate"><span class="pre">page.py</span></code><a class="headerlink" href="#update-your-main-callbacks-and-layout-in-page-py" title="Link to this heading">#</a></h2>
+<ol class="arabic">
+<li><p>Remove <code class="docutils literal notranslate"><span class="pre">get_page_list</span></code>, <code class="docutils literal notranslate"><span class="pre">display_page</span></code> and <code class="docutils literal notranslate"><span class="pre">update_nav_icons</span></code> callbacks. Add the following, replacing <code class="docutils literal notranslate"><span class="pre">MySolution</span></code> with your solution class:</p>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.saf.glow.client</span><span class="w"> </span><span class="kn">import</span> <span class="n">NotFoundException</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">get_page_list</span><span class="p">(</span><span class="n">theme</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">bool</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the page list with icons based on the current theme and registered pages.&quot;&quot;&quot;</span>
+    <span class="n">pages</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">page</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">dash</span><span class="o">.</span><span class="n">page_registry</span><span class="o">.</span><span class="n">values</span><span class="p">()):</span>
+        <span class="k">if</span> <span class="n">page</span><span class="p">[</span><span class="s2">&quot;module&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;not_found_404&quot;</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="n">page_id</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+        <span class="n">page_name</span> <span class="o">=</span> <span class="n">page</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
+        <span class="n">icon_name</span> <span class="o">=</span> <span class="n">page</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;icon_asset_name&quot;</span><span class="p">,</span> <span class="s2">&quot;carbon--ibm-engineering-workflow-mgmt.svg&quot;</span><span class="p">)</span>
+        <span class="n">icon_path</span> <span class="o">=</span> <span class="n">page</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;icon_asset_path&quot;</span><span class="p">,</span> <span class="s2">&quot;icons&quot;</span><span class="p">)</span>
+        <span class="n">icon_url</span> <span class="o">=</span> <span class="n">get_asset</span><span class="p">(</span><span class="n">icon_name</span><span class="p">,</span> <span class="n">icon_path</span><span class="p">,</span> <span class="n">theme</span><span class="p">)</span>
+        <span class="n">pages</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">page_id</span><span class="p">,</span> <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="n">page_name</span><span class="p">,</span> <span class="s2">&quot;icon&quot;</span><span class="p">:</span> <span class="n">icon_url</span><span class="p">,</span> <span class="s2">&quot;expanded&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
+    <span class="k">return</span> <span class="n">pages</span>
+
+
+<span class="nd">@callback</span><span class="p">(</span>
+    <span class="n">Output</span><span class="p">(</span><span class="s2">&quot;active-page-index&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">),</span>
+    <span class="n">Output</span><span class="p">(</span><span class="s2">&quot;active-project-id&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">),</span>
+    <span class="n">Input</span><span class="p">(</span><span class="s2">&quot;url&quot;</span><span class="p">,</span> <span class="s2">&quot;pathname&quot;</span><span class="p">),</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">resolve_active_page_and_project_information</span><span class="p">(</span><span class="n">pathname</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Resolve the active page index and project ID based on the current URL.&quot;&quot;&quot;</span>
+    <span class="c1"># Remove the GLOW_UI_PATH_PREFIX part from pathname</span>
+    <span class="n">relative_pathname</span> <span class="o">=</span> <span class="n">dash</span><span class="o">.</span><span class="n">strip_relative_path</span><span class="p">(</span><span class="n">pathname</span><span class="p">)</span>
+    <span class="n">path_parts</span> <span class="o">=</span> <span class="n">relative_pathname</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">relative_pathname</span> <span class="k">else</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">page</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">dash</span><span class="o">.</span><span class="n">page_registry</span><span class="o">.</span><span class="n">values</span><span class="p">()):</span>
+        <span class="k">if</span> <span class="n">page</span><span class="p">[</span><span class="s2">&quot;module&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;not_found_404&quot;</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="n">template_parts</span> <span class="o">=</span> <span class="n">page</span><span class="p">[</span><span class="s2">&quot;path_template&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span>
+        <span class="c1"># look for same parts, excluding &lt;project_id&gt; variable</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">path_parts</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">template_parts</span><span class="p">):</span>
+            <span class="k">continue</span>
+        <span class="n">project_id</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">matched</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">for</span> <span class="n">tp</span><span class="p">,</span> <span class="n">pp</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">template_parts</span><span class="p">,</span> <span class="n">path_parts</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">tp</span> <span class="o">==</span> <span class="s2">&quot;&lt;project_id&gt;&quot;</span><span class="p">:</span>
+                <span class="n">project_id</span> <span class="o">=</span> <span class="n">pp</span>
+            <span class="k">elif</span> <span class="n">tp</span> <span class="o">!=</span> <span class="n">pp</span><span class="p">:</span>
+                <span class="n">matched</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="k">break</span>
+        <span class="k">if</span> <span class="n">matched</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">),</span> <span class="n">project_id</span>
+    <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+
+
+<span class="nd">@callback</span><span class="p">(</span>
+    <span class="n">Output</span><span class="p">(</span><span class="s2">&quot;navbar-content&quot;</span><span class="p">,</span> <span class="s2">&quot;children&quot;</span><span class="p">),</span>
+    <span class="n">Input</span><span class="p">(</span><span class="s2">&quot;active-page-index&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">),</span>
+    <span class="n">Input</span><span class="p">(</span><span class="s2">&quot;color-scheme-switch&quot;</span><span class="p">,</span> <span class="s2">&quot;checked&quot;</span><span class="p">),</span>
+    <span class="n">prevent_initial_call</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">render_nav_tree</span><span class="p">(</span><span class="n">active_index</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="n">switch_on</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Sync the active tree item based on the active page index.&quot;&quot;&quot;</span>
+    <span class="n">theme</span> <span class="o">=</span> <span class="s2">&quot;dark&quot;</span> <span class="k">if</span> <span class="n">switch_on</span> <span class="k">else</span> <span class="s2">&quot;light&quot;</span>
+    <span class="k">return</span> <span class="n">Tree</span><span class="p">(</span><span class="n">aio_id</span><span class="o">=</span><span class="s2">&quot;navigation_tree&quot;</span><span class="p">,</span> <span class="n">items</span><span class="o">=</span><span class="n">get_page_list</span><span class="p">(</span><span class="n">theme</span><span class="p">),</span> <span class="n">active_item_id</span><span class="o">=</span><span class="n">active_index</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_display_404_page</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">module</span><span class="p">,</span> <span class="n">page</span> <span class="ow">in</span> <span class="n">dash</span><span class="o">.</span><span class="n">page_registry</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">module</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;not_found_404&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">page</span><span class="p">[</span><span class="s2">&quot;layout&quot;</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">html</span><span class="o">.</span><span class="n">H1</span><span class="p">(</span><span class="s2">&quot;404 - Page not found&quot;</span><span class="p">)</span>
+
+
+<span class="nd">@callback</span><span class="p">(</span>
+    <span class="n">Output</span><span class="p">(</span><span class="s2">&quot;page-content&quot;</span><span class="p">,</span> <span class="s2">&quot;children&quot;</span><span class="p">),</span>
+    <span class="n">Input</span><span class="p">(</span><span class="s2">&quot;url&quot;</span><span class="p">,</span> <span class="s2">&quot;pathname&quot;</span><span class="p">),</span>
+    <span class="n">Input</span><span class="p">(</span><span class="s2">&quot;active-page-index&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">),</span>
+    <span class="n">prevent_initial_call</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">display_page</span><span class="p">(</span><span class="n">project</span><span class="p">:</span> <span class="n">MySolution</span><span class="p">,</span> <span class="n">active_page_index</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the page layout, passing the project instance.</span>
+
+<span class="sd">    Using dash.page_container does not allow to inject the project instance as argument to the layout function,</span>
+<span class="sd">    only supports passing path variables, query parameters or other Inputs/States.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">active_page_index</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># triggered if pathname with correct project information but incorrect sub-path.</span>
+        <span class="c1"># anyway, the 404 page will be rendered by another callback</span>
+        <span class="k">return</span> <span class="n">no_update</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># verify that the project information is valid, otherwise return 404.</span>
+        <span class="c1"># Cannot be done in display_404_page callback because we need that one to succeed if project injection fails.</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">project_display_name</span>
+    <span class="k">except</span> <span class="n">NotFoundException</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">_display_404_page</span><span class="p">()</span>
+    <span class="n">pages</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">dash</span><span class="o">.</span><span class="n">page_registry</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>  <span class="c1"># page_registry is an ordered dict</span>
+    <span class="n">index</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">active_page_index</span><span class="p">)</span>
+    <span class="n">page</span> <span class="o">=</span> <span class="n">pages</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+    <span class="c1"># support layout module attribute and layout function (with or without project argument)</span>
+    <span class="n">layout_func</span> <span class="o">=</span> <span class="n">page</span><span class="p">[</span><span class="s2">&quot;layout&quot;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">layout_func</span><span class="p">):</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">layout_func</span><span class="p">)</span><span class="o">.</span><span class="n">parameters</span>
+        <span class="k">if</span> <span class="s2">&quot;project&quot;</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">layout_func</span><span class="p">(</span><span class="n">project</span><span class="o">=</span><span class="n">project</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">layout_func</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">layout_func</span>
+
+
+<span class="nd">@callback</span><span class="p">(</span>
+    <span class="n">Output</span><span class="p">(</span><span class="s2">&quot;page-content&quot;</span><span class="p">,</span> <span class="s2">&quot;children&quot;</span><span class="p">),</span>
+    <span class="n">Input</span><span class="p">(</span><span class="s2">&quot;active-page-index&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">),</span>
+    <span class="n">prevent_initial_call</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">display_404_page</span><span class="p">(</span><span class="n">active_page_index</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the 404 page layout when the active page index is None.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">active_page_index</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">_display_404_page</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">no_update</span>
+
+
+<span class="nd">@callback</span><span class="p">(</span>
+    <span class="n">Output</span><span class="p">(</span><span class="s2">&quot;url&quot;</span><span class="p">,</span> <span class="s2">&quot;href&quot;</span><span class="p">),</span>
+    <span class="n">Input</span><span class="p">(</span><span class="n">Tree</span><span class="o">.</span><span class="n">ids</span><span class="o">.</span><span class="n">selected_item</span><span class="p">(</span><span class="s2">&quot;navigation_tree&quot;</span><span class="p">),</span> <span class="s2">&quot;data&quot;</span><span class="p">),</span>
+    <span class="n">State</span><span class="p">(</span><span class="s2">&quot;active-project-id&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">),</span>
+    <span class="n">State</span><span class="p">(</span><span class="s2">&quot;url&quot;</span><span class="p">,</span> <span class="s2">&quot;pathname&quot;</span><span class="p">),</span>
+    <span class="n">prevent_initial_call</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">open_new_page</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="n">pathname</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Navigate to the selected page.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">project_id</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">value</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">no_update</span>
+    <span class="n">item_index</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">Tree</span><span class="o">.</span><span class="n">ids</span><span class="o">.</span><span class="n">get_index_from_navlink_item_id</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+    <span class="n">pages</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">dash</span><span class="o">.</span><span class="n">page_registry</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+    <span class="k">if</span> <span class="n">item_index</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">pages</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">no_update</span>
+    <span class="n">page</span> <span class="o">=</span> <span class="n">pages</span><span class="p">[</span><span class="n">item_index</span><span class="p">]</span>
+    <span class="c1"># Add GLOW_UI_PATH_PREFIX to the path returned to the browser</span>
+    <span class="n">target_path</span> <span class="o">=</span> <span class="n">dash</span><span class="o">.</span><span class="n">get_relative_path</span><span class="p">(</span>
+        <span class="n">page</span><span class="p">[</span><span class="s2">&quot;path_template&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&lt;project_id&gt;&quot;</span><span class="p">,</span> <span class="n">project_id</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="k">if</span> <span class="n">target_path</span> <span class="o">==</span> <span class="n">pathname</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">no_update</span>
+    <span class="k">return</span> <span class="n">target_path</span>
+
+
+<span class="nd">@callback</span><span class="p">(</span>
+    <span class="n">Output</span><span class="p">(</span><span class="s2">&quot;access-solution-doc&quot;</span><span class="p">,</span> <span class="s2">&quot;children&quot;</span><span class="p">),</span>
+    <span class="n">Output</span><span class="p">(</span><span class="s2">&quot;logo-image&quot;</span><span class="p">,</span> <span class="s2">&quot;src&quot;</span><span class="p">),</span>
+    <span class="n">Input</span><span class="p">(</span><span class="s2">&quot;color-scheme-switch&quot;</span><span class="p">,</span> <span class="s2">&quot;checked&quot;</span><span class="p">),</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">update_nav_icons</span><span class="p">(</span><span class="n">switch_on</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">html</span><span class="o">.</span><span class="n">Img</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Update navigation tree icons based on the current theme.&quot;&quot;&quot;</span>
+    <span class="n">theme</span> <span class="o">=</span> <span class="s2">&quot;dark&quot;</span> <span class="k">if</span> <span class="n">switch_on</span> <span class="k">else</span> <span class="s2">&quot;light&quot;</span>
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="n">html</span><span class="o">.</span><span class="n">Img</span><span class="p">(</span><span class="n">src</span><span class="o">=</span><span class="n">get_asset</span><span class="p">(</span><span class="s2">&quot;teenyicons--doc-solid.svg&quot;</span><span class="p">,</span> <span class="s2">&quot;icons&quot;</span><span class="p">,</span> <span class="n">theme</span><span class="p">)),</span>
+        <span class="n">get_asset</span><span class="p">(</span><span class="s2">&quot;placeholder_logo.png&quot;</span><span class="p">,</span> <span class="s2">&quot;logos&quot;</span><span class="p">,</span> <span class="n">theme</span><span class="p">),</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+<p>Note how <code class="docutils literal notranslate"><span class="pre">get_page_list</span></code> and <code class="docutils literal notranslate"><span class="pre">display_page</span></code> no longer hard code the available pages. Everything is dynamically built and routed using the information of the registered pages. Therefore, future addition or removal of pages will not require any change in these callbacks.</p>
+</div></blockquote>
+</li>
+<li><p>In your main layout, change the <code class="docutils literal notranslate"><span class="pre">refresh</span></code> attribute of the <code class="docutils literal notranslate"><span class="pre">url</span></code> component:</p>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># dcc.Location(id=&quot;url&quot;, refresh=False),</span>
+<span class="n">dcc</span><span class="o">.</span><span class="n">Location</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s2">&quot;url&quot;</span><span class="p">,</span> <span class="n">refresh</span><span class="o">=</span><span class="s2">&quot;callback-nav&quot;</span><span class="p">),</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>In your main layout, remove <code class="docutils literal notranslate"><span class="pre">prevent-display</span></code> components and add two new components <code class="docutils literal notranslate"><span class="pre">active-page-index</span></code> and <code class="docutils literal notranslate"><span class="pre">active-project-id</span></code>:</p>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">html</span><span class="o">.</span><span class="n">Div</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s2">&quot;alerts-container&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;position&quot;</span><span class="p">:</span> <span class="s2">&quot;fixed&quot;</span><span class="p">,</span> <span class="s2">&quot;top&quot;</span><span class="p">:</span> <span class="mi">90</span><span class="p">,</span> <span class="s2">&quot;right&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span> <span class="s2">&quot;width&quot;</span><span class="p">:</span> <span class="mi">350</span><span class="p">,</span> <span class="s2">&quot;zIndex&quot;</span><span class="p">:</span> <span class="mi">1000</span><span class="p">}),</span>
+<span class="c1"># dcc.Store(id=&quot;prevent-display&quot;, data=None),</span>
+<span class="n">dcc</span><span class="o">.</span><span class="n">Store</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s2">&quot;active-page-index&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">),</span>
+<span class="n">dcc</span><span class="o">.</span><span class="n">Store</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s2">&quot;active-project-id&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">),</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>Replace the content of your navigation tree component (<code class="docutils literal notranslate"><span class="pre">dmc.AppShellNavbar</span></code>) with:</p>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">navbar</span> <span class="o">=</span> <span class="n">dmc</span><span class="o">.</span><span class="n">AppShellNavbar</span><span class="p">(</span>
+    <span class="n">html</span><span class="o">.</span><span class="n">Div</span><span class="p">(),</span>
+    <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;navbar-content&quot;</span><span class="p">,</span>
+    <span class="n">p</span><span class="o">=</span><span class="s2">&quot;md&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ol>
+</section>
+<section id="optional-add-a-custom-404-page">
+<h2>(Optional) Add a custom 404 page<a class="headerlink" href="#optional-add-a-custom-404-page" title="Link to this heading">#</a></h2>
+<p>You can define a custom 404 page by adding a <code class="docutils literal notranslate"><span class="pre">not_found_404.py</span></code> module under your UI pages package:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">dash</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dash</span><span class="w"> </span><span class="kn">import</span> <span class="n">html</span>
+
+<span class="n">dash</span><span class="o">.</span><span class="n">register_page</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="n">layout</span> <span class="o">=</span> <span class="n">html</span><span class="o">.</span><span class="n">H1</span><span class="p">(</span><span class="s2">&quot;This is our custom 404 content&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>When this file is present, users will be shown this content if the URL path does not match any of the registered pages.</p>
+<p>See <a class="reference external" href="https://dash.plotly.com/urls#default-and-custom-404" rel="noopener noreferrer" target="_blank">Dash official documentation on default and custom 404 pages</a>.</p>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#update-dash-app-initialization-in-app-py">Update Dash app initialization in <code class="docutils literal notranslate"><span class="pre">app.py</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#register-solution-pages-first-page-py">Register solution pages (<code class="docutils literal notranslate"><span class="pre">first_page.py</span></code>…)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#update-your-main-callbacks-and-layout-in-page-py">Update your main callbacks and layout in <code class="docutils literal notranslate"><span class="pre">page.py</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#optional-add-a-custom-404-page">(Optional) Add a custom 404 page</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085"></script>
+
+
+  <!-- Include desired assets -->
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.7/require.min.js"></script>
+
+<script>
+// Passing the search options to the search.js file
+const SEARCH_OPTIONS = JSON.parse('{"keys": ["title", "text", "objectID"], "limit": 10, "threshold": 0.2}');
+const SEARCH_FILE = "../../../_static/search.json";
+const ADVANCE_SEARCH_PATH = "../../../search.html";
+const EXTRA_SOURCES = JSON.parse('""');
+</script>
+
+
+<script src="../../../_static/js/search.js"></script>
+
+  
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<footer class="bd-footer">
+  <div class="bd-footer__inner bd-page-width">
+    <div class="footer-items__start">
+      <div class="footer-item">
+        <div class="footer-items__start">
+          <div class="footer-item">
+            <img src="https://docs.pyansys.com/version/dev/_static/ansys_logo_transparent_white.png" alt="Ansys Logo" class="footer-ansys-logo">
+          </div>
+          <div class="footer-item"><br>
+            <p>2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-items__center">
+      <div class="footer-item">
+        <div class="footer-items__start">
+          <div class="connect-with-ansys">
+            <p>Latest documentation</p> <br>
+            <a href="https://www.ansys.com/" class="external-link" target="_blank" rel="noopener noreferrer">
+              <span class="link-text">Ansys.com</span>
+              <i class="fas fa-up-right-from-square"></i>
+            </a><br>
+            <a href="https://www.ansys.com/services/ansys-learning-hub" class="external-link" target="_blank" rel="noopener noreferrer">
+              <span class="link-text">Ansys Learning</span>
+              <i class="fas fa-up-right-from-square"></i>
+            </a><br>
+            <a href="https://www.ansys.com/support" class="external-link" target="_blank" rel="noopener noreferrer">
+              <span class="link-text">Ansys Support</span>
+              <i class="fas fa-up-right-from-square"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-items__end">
+      <div class="footer-item">
+        <div class="footer-right">
+          <span>Connect with Ansys</span>
+          <div class="social-icons">
+            <a href="https://www.youtube.com/user/ansysinc" target="_blank" rel="noopener" class="icon icon-youtube" aria-label="Youtube"><span class="sr-only">Youtube</span></a>
+            <a href="https://www.facebook.com/ansys" target="_blank" rel="noopener" class="icon icon-facebook" aria-label="Facebook"><span class="sr-only">Facebook</span></a>
+            <a href="https://www.linkedin.com/company/ansys-inc" target="_blank" rel="noopener" class="icon icon-linkedin" aria-label="Linkedin"><span class="sr-only">Linkedin</span></a>
+            <a href="https://github.com/ansys" target="_blank" rel="noopener" class="icon icon-github" aria-label="GitHub"><i class="fab fa-github"></i><span class="sr-only">GitHub</span></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+  </body>
+</html>

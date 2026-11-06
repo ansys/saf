@@ -1,0 +1,164 @@
+
+
+
+
+
+
+:class:`AsyncStorageScopeBase`
+==============================
+
+
+.. py:class:: ansys.bdm.base.base_async_storage_scope.AsyncStorageScopeBase
+
+   Bases: :py:obj:`ansys.bdm.api.iasync_storage_scope.IAsyncStorageScope`
+
+
+   
+   A partial implementation of ``IAsyncStorageScope`` that provides implementations
+   of some methods based on other more fundamental methods.  ``AsyncStorageScopeBase``
+   can be used as a base class for implementations of ``IAsyncStorageScope``.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: AsyncStorageScopeBase
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~get_bytes`
+            - Return the content of the referenced blob.
+          * - :py:attr:`~get_text`
+            - Return the content of the referenced blob.
+
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.bdm.base.base_async_storage_scope import AsyncStorageScopeBase
+
+
+
+Method detail
+-------------
+
+.. py:method:: get_bytes(entity: ansys.bdm.api.entity_handle.EntityHandle) -> bytes
+   :async:
+
+
+   
+   Return the content of the referenced blob.
+
+
+   :Parameters:
+
+       **entity: EntityHandle**
+           The handle to the data to realize
+
+
+
+   :Returns:
+
+       bytes
+           the contents of the EntityHandle.
+
+
+
+
+   :Raises:
+
+       CannotGenerateStreamForDirectoryError
+           If the entity requested is a collection
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_text(entity: ansys.bdm.api.entity_handle.EntityHandle, encoding: str | None = None) -> str
+   :async:
+
+
+   
+   Return the content of the referenced blob.
+
+
+   :Parameters:
+
+       **entity: EntityHandle**
+           The handle to the data to realize
+
+       **encoding: Optional[str]**
+           The name of an encoding.  When this argument is not None the bytes
+           of ``entity`` will be read using that encoding.
+
+
+
+   :Returns:
+
+       str
+           the contents of the blob referenced by ``entity`` in text form with the encoding determined
+           in order of preference:
+           - the encoding argument if not None
+           - the encoding field of the entity argument if set
+           - the BOM of the referenced entity if it contains one; or
+           - UTF-8
+
+
+
+
+   :Raises:
+
+       CannotGenerateStreamForDirectoryError
+           If the entity requested is a collection
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

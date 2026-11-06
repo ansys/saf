@@ -1,0 +1,265 @@
+# Copyright (C) 2026 ANSYS, Inc. and/or its affiliates.
+# SPDX-License-Identifier: Apache-2.0
+#
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+"""
+Logs Supervisor
+===============
+
+A minimal Dash app showing how to use the
+:class:`~ansys.solutions.dash_super_components.LogsSupervisor`
+component to monitor log  messages produced by a long-running process.
+
+See the `LogsSupervisor
+<https://upgraded-carnival-wn6lkym.pages.github.io/version/stable/api/dash-super-components/user-guide/logs-supervisor.html#ref_logs_supervisor>`_
+page in the User Guide for the full reference documentation.
+
+This example generates a local file that a background thread keeps writing on
+to simulate the log output from, for example, a long-running simulation, so you can
+easily explore the real-time update behaviour.
+
+In a SAF-based solution, the component is pointed at ``step.logfile.url`` — a
+URL served by the GLOW file server for a
+:class:`~ansys.saf.glow.solution.FileReference` field.
+For a detailed example of how to set up such a SAF solution, see the
+`showcase example
+<https://github.com/ansys/saf/blob/main/packages/dash-super-components/examples/showcase_all/src/ansys/solutions/showcase_dash_super_components/ui/pages/logs_supervisor_page.py>`_
+in the repository.
+
+.. note::
+
+   Run this file directly to launch the app:
+
+   .. code-block:: bash
+
+       pip install ansys-solutions-dash-super-components
+       python example_logs_supervisor.py
+
+   Then open ``http://localhost:8050`` in your browser and click **Generate Logs**.
+
+   This example can also be tested with a URL path prefix:
+
+   .. code-block:: bash
+
+       REQUESTS_PATHNAME_PREFIX=/myapp/ python example_logs_supervisor.py
+
+   Then open ``http://localhost:8050/myapp`` in your browser.
+"""
+
+# %%
+# Set up imports and the Dash application
+# ---------------------------------------
+#
+# The ``LogsSupervisor`` component requires a custom JavaScript renderer for
+# log-level badges and custom no-rows text. The app must be configured with the required external
+# script and register the Flask endpoint that serves it. Both steps are mandatory for
+# the log-level badge cell renderer in the AG Grid to work correctly. This must be done
+# before defining the layout.
+#
+# Furthermore, :class:`~dash_mantine_components.MantineProvider` must wrap the entire layout
+# for Mantine-based components to render correctly and the React version must
+# be set **before** importing the component library — this is a Dash Mantine
+# Components requirement when using Dash 2.x.
+#
+# The ``LogsSupervisor`` component uses the Dash Mantine Components notification system to show
+# error messages if the ``show_error_notifications`` is not set to ``False``.  Thus a
+# :class:`~dash_mantine_components.NotificationContainer` must be present in the layout for the
+# notifications to appear. This example uses the default notification container ID, but a custom ID
+# can be used instead, see the `LogsSupervisor
+# <https://upgraded-carnival-wn6lkym.pages.github.io/version/stable/api/dash-super-components/user-guide/logs-supervisor.html#ref_logs_supervisor>`_
+# page for details.
+#
+# The optional ``REQUESTS_PATHNAME_PREFIX`` environment variable lets you test the app behind a
+# URL path prefix.  See the `Adding external scripts with a URL path prefix
+# <https://upgraded-carnival-wn6lkym.pages.github.io/version/stable/api/dash-super-components/getting-started.html#ref_path_prefix>`_
+# section of the Getting Started page for details.
+#
+# To generate the simulated log file, additional imports are needed for logging, file handling, and
+# threading.
+
+import logging
+import os
+from pathlib import Path
+from random import choice
+import tempfile
+import threading
+import time
+
+from ansys.solutions.dash_super_components import LogsSupervisor, add_super_components_assets
+from dash import _dash_renderer
+
+try:
+    # dash >=3.2.0
+    from dash import NoUpdate
+except ImportError:
+    # dash >=2.18.2, <3.2.0
+    from dash._callback import NoUpdate  # pyright: ignore[reportPrivateImportUsage]
+from dash_extensions.enrich import DashProxy, Input, Output, callback, html, no_update
+import dash_mantine_components as dmc
+
+# Required only for Dash 2.x to use Mantine-based components
+_dash_renderer._set_react_version("18.2.0")
+
+# Set REQUESTS_PATHNAME_PREFIX to run the app with a URL prefix.
+# For example: REQUESTS_PATHNAME_PREFIX="myapp"
+# Important: The external script path must include the same prefix.
+_url_prefix = os.getenv("REQUESTS_PATHNAME_PREFIX", "").strip("/")
+_external_script = (
+    f"/{_url_prefix}/super-components/dashAgGridComponentFunctions.js"
+    if _url_prefix
+    else "/super-components/dashAgGridComponentFunctions.js"
+)
+_url_base_pathname = f"/{_url_prefix}/" if _url_prefix else "/"
+
+app = DashProxy(
+    __name__,
+    requests_pathname_prefix=_url_base_pathname,
+    routes_pathname_prefix=_url_base_pathname,
+    external_scripts=[_external_script],
+)
+add_super_components_assets(app)
+
+# %%
+# Simulate the log file
+# ----------------------
+#
+# In a real solution the log file is usually generated by a separate process,
+# for example, a physics solver, or by a ``@long_running`` transaction for a SAF-based solution.
+#
+# A local temporary file is written from a background thread to mimic the behavior
+# of the separate process or ``@long_running`` transaction. To avoid starting multiple log-writing
+# threads at the same time, a lock file on disk is used as a guard. Old log files and lock files
+# are removed on app start to ensure a clean state.
+
+LOG_FORMAT = "%(asctime)s - %(levelname)s - %(module)s - %(message)s"
+LOG_FILE = Path(tempfile.gettempdir()) / "dsc_logs_supervisor_example.log"
+LOG_FILE.unlink(missing_ok=True)
+
+_LOCK_FILE = LOG_FILE.with_suffix(".lock")
+_LOCK_FILE.unlink(missing_ok=True)
+
+
+def _generate_logs(log_file: Path, duration: int = 30) -> None:
+    """Write random log messages to *log_file* for *duration* seconds."""
+    _LOCK_FILE.touch()
+    try:
+        logger = logging.getLogger("example")
+        logger.setLevel(logging.DEBUG)
+        logger.handlers.clear()
+        handler = logging.FileHandler(log_file, mode="w")
+        handler.setFormatter(logging.Formatter(LOG_FORMAT))
+        logger.addHandler(handler)
+
+        messages = [
+            (logging.INFO, "Solver initialised successfully."),
+            (logging.INFO, "Iteration 1 complete."),
+            (logging.WARNING, "Residual convergence is slow."),
+            (logging.ERROR, "Failed to read boundary condition file."),
+            (logging.DEBUG, "Internal state: step=3, iter=42."),
+            (logging.CRITICAL, "Out-of-memory condition detected."),
+            (logging.INFO, "Mesh loaded: 1 245 678 cells."),
+            (logging.WARNING, "Negative volume detected in 3 cells."),
+        ]
+
+        deadline = time.monotonic() + duration
+        while time.monotonic() < deadline:
+            level, msg = choice(messages)
+            logger.log(level, msg)
+            time.sleep(0.5)
+
+        logger.info("Log generation finished.")
+        logger.removeHandler(handler)
+        handler.close()
+    finally:
+        _LOCK_FILE.unlink(missing_ok=True)
+
+
+# %%
+# Build the layout
+# ----------------
+#
+# :class:`~ansys.solutions.dash_super_components.LogsSupervisor` takes the
+# path (or URL) to the log file and the ``logging`` format string.  It polls
+# the file every ``interval`` milliseconds and refreshes the AG Grid table
+# automatically.
+#
+# The :class:`~dash_mantine_components.NotificationContainer` uses the default ID
+# ``"notification-container"``.  If a custom ID is used, call
+# :func:`~ansys.solutions.dash_super_components.configure` with the custom ID
+# before initializing the app.
+
+app.layout = dmc.MantineProvider(
+    [
+        dmc.NotificationContainer(id="notification-container", position="top-right"),
+        html.Div(
+            [
+                dmc.Title("Logs Supervisor", order=2, mb="md"),
+                dmc.Text(
+                    "Click Generate Logs to start writing log messages. "
+                    "The table refreshes automatically every 2 seconds.",
+                    c="dimmed",
+                    mb="xl",
+                ),
+                dmc.Button("Generate Logs", id="generate-logs-btn", mb="lg"),
+                dmc.Text(id="generate-logs-status", c="dimmed", mb="md"),
+                LogsSupervisor(
+                    log_file=str(LOG_FILE),
+                    log_format=LOG_FORMAT,
+                    aio_id="logs-supervisor",
+                    interval=2000,
+                    grid_props={
+                        "style": {"width": "100%", "height": "420px"},
+                    },
+                ),
+            ],
+            style={"maxWidth": 960, "margin": "40px auto", "padding": "0 16px"},
+        ),
+    ]
+)
+
+# %%
+# Add a callback to start log generation
+# ----------------------------------------
+#
+# The button starts a daemon thread that writes to the log file for 30 seconds and
+# activates the monitoring of the ``LogsSupervisor`` component through the ``data`` property of
+# ``LogsSupervisor.ids.activate_monitoring``.
+# ``LogsSupervisor`` then picks up new entries automatically via its interval
+# component — no further callbacks are required.
+#
+# Whether log generation is already running is determined by the presence of a lock file on disk.
+
+
+@callback(
+    Output("generate-logs-status", "children"),
+    Output(LogsSupervisor.ids.activate_monitoring("logs-supervisor"), "data"),
+    Input("generate-logs-btn", "n_clicks"),
+    prevent_initial_call=True,
+)
+def start_log_generation(n_clicks: int) -> tuple[str, bool | NoUpdate]:
+    """Start the background log-writing thread."""
+    if _LOCK_FILE.exists():
+        return "Log generation is already running…", no_update
+
+    threading.Thread(target=_generate_logs, args=(LOG_FILE,), daemon=True).start()
+    return "Generating logs for 30 seconds…", True  # activate_monitoring
+
+
+# %%
+# Run the app
+# -----------
+
+if __name__ == "__main__":
+    app.run()

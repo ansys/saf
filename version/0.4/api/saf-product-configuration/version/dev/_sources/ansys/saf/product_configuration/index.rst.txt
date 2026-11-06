@@ -1,0 +1,151 @@
+
+
+
+
+
+
+The ``ansys.saf.product_configuration`` library
+===============================================
+
+.. py:module:: ansys.saf.product_configuration
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+.. py:currentmodule:: product_configuration
+.. tab-set::
+
+    .. tab-item:: Subpackages
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.saf.product_configuration.manager`
+            - 
+
+
+          * - :py:obj:`~ansys.saf.product_configuration.pim`
+            - 
+
+
+          * - :py:obj:`~ansys.saf.product_configuration.wrappers`
+            - 
+
+
+
+    .. tab-item:: Submodules
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.saf.product_configuration.aedt`
+            - 
+
+
+          * - :py:obj:`~ansys.saf.product_configuration.fluent`
+            - 
+
+
+          * - :py:obj:`~ansys.saf.product_configuration.geometry`
+            - 
+
+
+          * - :py:obj:`~ansys.saf.product_configuration.interfaces`
+            - 
+
+
+          * - :py:obj:`~ansys.saf.product_configuration.mapdl`
+            - 
+
+
+          * - :py:obj:`~ansys.saf.product_configuration.mechanical`
+            - 
+
+
+          * - :py:obj:`~ansys.saf.product_configuration.optislang_wrapper`
+            - 
+
+
+          * - :py:obj:`~ansys.saf.product_configuration.visor`
+            - 
+
+
+
+
+
+
+
+
+    .. tab-item:: Attributes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~__version__`
+            - 
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-md-package"></span> manager</ansys/saf/product_configuration/manager/index>
+    <span class="nf nf-md-package"></span> pim</ansys/saf/product_configuration/pim/index>
+    <span class="nf nf-md-package"></span> wrappers</ansys/saf/product_configuration/wrappers/index>
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-fa-file"></span> aedt</ansys/saf/product_configuration/aedt/index>
+    <span class="nf nf-fa-file"></span> fluent</ansys/saf/product_configuration/fluent/index>
+    <span class="nf nf-fa-file"></span> geometry</ansys/saf/product_configuration/geometry/index>
+    <span class="nf nf-fa-file"></span> interfaces</ansys/saf/product_configuration/interfaces/index>
+    <span class="nf nf-fa-file"></span> mapdl</ansys/saf/product_configuration/mapdl/index>
+    <span class="nf nf-fa-file"></span> mechanical</ansys/saf/product_configuration/mechanical/index>
+    <span class="nf nf-fa-file"></span> optislang_wrapper</ansys/saf/product_configuration/optislang_wrapper/index>
+    <span class="nf nf-fa-file"></span> visor</ansys/saf/product_configuration/visor/index>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Module detail
+-------------
+
+.. py:data:: __version__
+
+
+

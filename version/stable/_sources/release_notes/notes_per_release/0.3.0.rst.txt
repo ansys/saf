@@ -1,0 +1,94 @@
+`0.3.0 <https://github.com/ansys/saf/releases/tag/v0.3.0-saf-sdk>`_ — September 24, 2026
+============================================================================================
+
+.. dropdown::
+  :class-container: dropdown
+  :chevron: down-up
+
+  .. note::
+     Installing ``ansys-saf-sdk`` requires pip 26.0 or higher.
+
+  .. rubric:: Dependency versions
+
+  The public package versions below were resolved for this version of ``ansys-saf-sdk``.
+
+  .. dropdown:: ansys-bdm-api 0.5.0
+
+    No changes
+
+  .. dropdown:: ansys-bdm-shared-volume 0.4.0
+
+    No changes
+
+  .. dropdown:: ansys-saf-glow-engine 2.4.0
+    :open:
+
+    .. list-table::
+      :header-rows: 1
+      :stub-columns: 1
+      :widths: 80 20
+
+      * - ✨ Feature
+        - Pull Request
+      * - Add SAF concepts as MCP resource
+        - `#6 <https://github.com/ansys/saf/pull/6>`_
+
+    .. list-table::
+      :header-rows: 1
+      :stub-columns: 1
+      :widths: 80 20
+
+      * - 📚 Documentation
+        - Pull Request
+      * - Set default theme to dark
+        - `#67 <https://github.com/ansys/saf/pull/67>`_
+      * - Fix API reference documentation page
+        - `#63 <https://github.com/ansys/saf/pull/63>`_
+      * - Update corporate logo in centralized and package API documentation
+        - `#55 <https://github.com/ansys/saf/pull/55>`_
+
+  .. dropdown:: ansys-saf-desktop-installer 1.17.0
+
+    No changes
+
+  .. dropdown:: ansys-saf-desktop-orchestrator 1.14.0
+
+    No changes
+
+  .. dropdown:: ansys-iam-oidc 0.9.0
+
+    No changes
+
+  .. dropdown:: ansys-saf-product-configuration 0.26.0
+
+    No changes
+
+  .. dropdown:: ansys-saf-product-manager 0.5.0
+
+    No changes
+
+  The private-package versions were fetched separately as the latest available versions
+
+  .. list-table::
+      :header-rows: 1
+      :stub-columns: 1
+      :widths: 80 20
+
+      * - Private package
+        - Version
+      * - ``ansys-saf-pim-light-server``
+        - ``0.3.12``
+      * - ``ansys-translation-utilities``
+        - ``0.4.1``
+      * - ``ansys-saf-desktop-portal``
+        - ``0.3.1``
+      * - ``ansys-saf-web-portal``
+        - ``0.1.dev10``
+      * - ``ansys-minerva-python-client``
+        - ``0.5.0``
+      * - ``ansys-datarepository-python-client``
+        - ``0.1.dev12``
+      * - ``ansys-saf-hermes``
+        - ``0.1.dev13``
+      * - ``ansys-saf-aspire``
+        - ``9.1.6``

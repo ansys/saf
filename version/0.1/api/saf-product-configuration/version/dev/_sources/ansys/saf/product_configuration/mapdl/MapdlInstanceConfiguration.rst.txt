@@ -1,0 +1,165 @@
+
+
+
+
+
+
+:class:`MapdlInstanceConfiguration`
+===================================
+
+
+.. py:class:: ansys.saf.product_configuration.mapdl.MapdlInstanceConfiguration
+
+   Bases: :py:obj:`ansys.saf.product_configuration.interfaces.IProductInstanceConfiguration`
+
+
+   
+   Configuration class for Ansys Mechanical APDL (MAPDL) using secure gRPC connections.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: MapdlInstanceConfiguration
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~get_version_configuration`
+            - Get configuration class for a particular version of MAPDL.
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~product_name`
+            - Name used to identify MAPDL in the product instance management system.
+          * - :py:attr:`~versions`
+            - Supported MAPDL versions.
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.saf.product_configuration.mapdl import MapdlInstanceConfiguration
+
+Property detail
+---------------
+
+.. py:property:: product_name
+   :type: str
+
+
+   
+   Name used to identify MAPDL in the product instance management system.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: versions
+   :type: list[str]
+
+
+   
+   Supported MAPDL versions.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+Method detail
+-------------
+
+.. py:method:: get_version_configuration(version: str) -> MapdlInstanceVersionConfiguration
+
+   
+   Get configuration class for a particular version of MAPDL.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

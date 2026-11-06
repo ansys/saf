@@ -59,7 +59,6 @@ extensions = [
     "sphinx_code_tabs",
     "sphinx.ext.todo",
     "sphinx_design",
-    "sphinx_togglebutton",
     "sphinx_toolbox.collapse",
     "sphinx.ext.graphviz",
     "sphinxcontrib.mermaid",

@@ -256,6 +256,7 @@ packages/saf-desktop-installer/report/assets/style.css
 # pytest reports
 report/
 !examples/src/saf/solutions/examples/solution/logic/pump/report
+packages/*/junit.xml
 
 # Environment variables
 .env
@@ -272,3 +273,4 @@ my_solution/
 
 # CodeQL
 saf-python-db/
+

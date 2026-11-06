@@ -27,6 +27,9 @@ tasks:
       - "--cov-report=html"
       - "--html=report/report.html"
       - "--md=report/report.md"
+      - "--junitxml=junit.xml"
+      - "-o"
+      - "junit_family=legacy"
       - "-p"
       - "no:faulthandler"
       - "-s" # Disable capturing of stdout and stderr during tests

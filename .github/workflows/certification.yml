@@ -245,6 +245,12 @@ jobs:
         shell: bash
         run: moon run ${PACKAGE}:vulnerability-check
 
+      - name: Upload vulnerability report
+        if: ${{ always() && hashFiles(format('dist/packages/{0}-vuln.md', needs.pre-certification.outputs.library-name))
+          != '' }}
+        shell: bash
+        run: cat "dist/packages/${PACKAGE}-vuln.md" >> $GITHUB_STEP_SUMMARY
+
       - uses: ansys/saf-devops/check-deps-vulnerabilities@f5e7fa3b9b829e75ac638eba435462c1dc5d127e # v1.4.0
         with:
           python-version: ${{ vars.PYTHON_VERSION }}

@@ -91,7 +91,7 @@ Method 2: Settings JSON
    .. code-block:: json
 
       {
-        "solutions-init.enableSolutionsList": false
+        "solutions-manager.enableSolutionsList": false
       }
 
 #. Set the value to ``true`` to show the view or ``false`` to hide it.

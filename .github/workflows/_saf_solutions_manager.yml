@@ -1,0 +1,173 @@
+name: Solutions Manager extension checks
+
+# Node-only checks for the VS Code extension in extension/. It is intentionally not part of the
+# Python package matrix (no wheel, pytest, PyPI or uv steps).
+
+on:
+  workflow_call:
+    inputs:
+      use-npm-cache:
+        description: "Cache npm downloads between runs (disable for certification)"
+        type: boolean
+        required: false
+        default: true
+    outputs:
+      vsix-artifact-name:
+        description: "Name of the workflow artifact that contains the VSIX"
+        value: ${{ jobs.package.outputs.artifact-name }}
+
+permissions: {}
+
+defaults:
+  run:
+    shell: bash
+    working-directory: extension
+
+jobs:
+  static-checks:
+    name: "Type-check and lint"
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Setup Node
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: extension/.nvmrc
+          cache: ${{ inputs.use-npm-cache && 'npm' || '' }}
+          cache-dependency-path: extension/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Type-check sources and tests
+        run: npm run typecheck
+
+      - name: Lint
+        run: npm run lint:ci
+
+  unit-tests:
+    name: "Unit tests"
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Setup Node
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: extension/.nvmrc
+          cache: ${{ inputs.use-npm-cache && 'npm' || '' }}
+          cache-dependency-path: extension/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run unit tests with coverage
+        run: npm run test:unit:coverage
+
+      - name: Upload unit test coverage
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: saf-solutions-manager-unit-coverage
+          path: extension/coverage
+          overwrite: true
+          if-no-files-found: warn
+
+  integration-tests:
+    name: "Integration tests"
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Setup Node
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: extension/.nvmrc
+          cache: ${{ inputs.use-npm-cache && 'npm' || '' }}
+          cache-dependency-path: extension/package-lock.json
+
+      # The tests install the pinned, published ansys-saf-cli from PyPI into a managed venv.
+      - name: Setup Python
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: ${{ vars.PYTHON_VERSION }}
+
+      # Integration test helpers create solution venvs with `uv venv`.
+      - name: Install uv
+        uses: astral-sh/setup-uv@07a047e608db84b3d8c06cd9a7c7dcc9c355c18e # v10.3.2
+        with:
+          enable-cache: false
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run integration tests with coverage
+        run: xvfb-run -a npm run test:integration:coverage
+
+  package:
+    name: "Package VSIX"
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      artifact-name: ${{ steps.names.outputs.artifact-name }}
+    env:
+      ARTIFACT_NAME: saf-solutions-manager-vsix
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Setup Node
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: extension/.nvmrc
+          cache: ${{ inputs.use-npm-cache && 'npm' || '' }}
+          cache-dependency-path: extension/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Package VSIX
+        run: npm run package:vsix
+
+      - name: Check the packaged README is the user guide
+        run: |
+          set -euo pipefail
+          vsix="$(ls dist/*.vsix)"
+          unzip -p "${vsix}" extension/readme.md > "${RUNNER_TEMP}/packaged-readme.md"
+          expected="$(head -n 1 extension-instructions.md)"
+          actual="$(head -n 1 "${RUNNER_TEMP}/packaged-readme.md")"
+          if [ "${actual}" != "${expected}" ]; then
+            echo "Packaged README starts with '${actual}', expected '${expected}'."
+            exit 1
+          fi
+          git diff --exit-code
+
+      - name: Expose artifact name
+        id: names
+        run: echo "artifact-name=${ARTIFACT_NAME}" >> "$GITHUB_OUTPUT"
+
+      - name: Upload VSIX
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: ${{ env.ARTIFACT_NAME }}
+          path: extension/dist/*.vsix
+          overwrite: true
+          if-no-files-found: error

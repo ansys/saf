@@ -1,0 +1,108 @@
+$schema: "https://moonrepo.dev/schemas/project.json"
+
+language: "typescript"
+stack: "frontend"
+layer: "application"
+
+project:
+  description: "Solutions Manager VS Code extension (Node/TypeScript, not a Python
+    package)"
+
+# Node-only project: opt out of the Python tasks inherited from .moon/tasks/all.yml.
+workspace:
+  inheritedTasks:
+    include: []
+
+# The workspace Node toolchain is rooted at packages/saf-projects-dashboard; run npm
+# from this directory with the system Node instead (see .nvmrc).
+toolchains:
+  node: false
+  npm: false
+  unstable_python: false
+  unstable_uv: false
+
+tasks:
+  npm-install:
+    description: "Install npm dependencies from package-lock.json"
+    command: "npm"
+    args:
+      - "ci"
+    inputs:
+      - "package.json"
+      - "package-lock.json"
+    options:
+      cache: false
+      runFromWorkspaceRoot: false
+    toolchains:
+      - "system"
+
+  typecheck:
+    description: "Type-check sources and tests"
+    command: "npm"
+    args:
+      - "run"
+      - "typecheck"
+    deps:
+      - "~:npm-install"
+    options:
+      cache: false
+      runFromWorkspaceRoot: false
+    toolchains:
+      - "system"
+
+  lint:
+    description: "Run ESLint without auto-fix"
+    command: "npm"
+    args:
+      - "run"
+      - "lint:ci"
+    deps:
+      - "~:npm-install"
+    options:
+      cache: false
+      runFromWorkspaceRoot: false
+    toolchains:
+      - "system"
+
+  test-unit:
+    description: "Run unit tests with coverage"
+    command: "npm"
+    args:
+      - "run"
+      - "test:unit:coverage"
+    deps:
+      - "~:npm-install"
+    options:
+      cache: false
+      runFromWorkspaceRoot: false
+    toolchains:
+      - "system"
+
+  test-integration:
+    description: "Run VS Code integration tests (needs a display; use xvfb-run on
+      Linux)"
+    command: "npm"
+    args:
+      - "run"
+      - "test:integration:coverage"
+    deps:
+      - "~:npm-install"
+    options:
+      cache: false
+      runFromWorkspaceRoot: false
+    toolchains:
+      - "system"
+
+  package-vsix:
+    description: "Compile and package the extension into dist/*.vsix"
+    command: "npm"
+    args:
+      - "run"
+      - "package:vsix"
+    deps:
+      - "~:npm-install"
+    options:
+      cache: false
+      runFromWorkspaceRoot: false
+    toolchains:
+      - "system"

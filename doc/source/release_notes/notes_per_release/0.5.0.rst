@@ -132,6 +132,6 @@
         * - ``ansys-saf-aspire``
           - ``9.1.6``
 
-.. note::
-   The compatibility of this release has been tested with PyAnsys for the commit `53e486e <https://github.com/ansys/pyansys/commit/53e486e7364f150a8577d60d445d4d3b9f3372a7>`_, from Python 3.12 to 3.14.
-   Please be aware that on Windows with Python 3.14, it is required to set the ``GRPC_PYTHON_CFLAGS`` environment variable to ``/std:c++17 /MT`` before installing the packages.
+  .. note::
+    The compatibility of this release has been tested with PyAnsys for the commit `53e486e <https://github.com/ansys/pyansys/commit/53e486e7364f150a8577d60d445d4d3b9f3372a7>`_, from Python 3.12 to 3.14.
+    Please be aware that on Windows with Python 3.14, it is required to set the ``GRPC_PYTHON_CFLAGS`` environment variable to ``/std:c++17 /MT`` before installing the packages.

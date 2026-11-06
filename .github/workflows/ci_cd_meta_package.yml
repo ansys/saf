@@ -431,7 +431,7 @@ jobs:
         run: |
           file="release-notes-rst/${VERSION}.rst"
           echo "Adding PyAnsys section to $file"
-          printf '\n.. note::\n   The compatibility of this release has been tested with PyAnsys for the commit `%s <https://github.com/ansys/pyansys/commit/%s>`_, from Python 3.12 to 3.14.\n   Please be aware that on Windows with Python 3.14, it is required to set the ``GRPC_PYTHON_CFLAGS`` environment variable to ``/std:c++17 /MT`` before installing the packages.\n' \
+          printf '\n  .. note::\n     The compatibility of this release has been tested with PyAnsys for the commit `%s <https://github.com/ansys/pyansys/commit/%s>`_, from Python 3.12 to 3.14.\n     Please be aware that on Windows with Python 3.14, it is required to set the ``GRPC_PYTHON_CFLAGS`` environment variable to ``/std:c++17 /MT`` before installing the packages.\n' \
             "$SHORT_COMMIT" "$COMMIT" >> "$file"
 
       - name: Upload rst release notes

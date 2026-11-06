@@ -288,8 +288,8 @@ jobs:
         env:
           PIP_QUIET: 1
           PIP_INDEX_URL: https://pypi.org/simple
-          PIP_EXTRA_INDEX_URL: https://PAT:${{ secrets.PYPI_PRIVATE_PAT }}@${{
-            secrets.PYPI_PRIVATE_URL }}
+          PIP_EXTRA_INDEX_URL: https://PAT:${{ secrets.PYPI_PRIVATE_PAT }}@${{ secrets.PYPI_PRIVATE_URL
+            }}
 
       - name: Add ansys-saf-pim-light-server to poetry project
         working-directory: my_project

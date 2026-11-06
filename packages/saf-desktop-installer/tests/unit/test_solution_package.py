@@ -694,8 +694,10 @@ def test_create_solution_metadata_with_synopsys_namespace(
             return_value="Custom NS Solution",
         ),
         patch(
-            "ansys.saf.desktop.installer._package.solution.get_solution_version",
-            return_value="0.1.dev0",
+            "ansys.saf.desktop.installer._package.solution.subprocess.run",
+            return_value=subprocess.CompletedProcess(
+                ["poetry", "version", "--no-interaction"], 0, "custom-ns-solution 0.1.dev0\n", "",
+            ),
         ),
     ):
         create_solution_metadata(solution_info, mock_installer_config)

@@ -42,18 +42,23 @@ class SolutionBackendInfo:
     lockfile_path: Path
 
 
-def detect_solution_backend(solution_root_dir: Path) -> SolutionBackendInfo:
-    """Detect a solution's backend from its pyproject metadata and lockfiles."""
+def detect_solution_backend(
+    solution_root_dir: Path,
+    *,
+    configuration: dict[str, Any] | None = None,
+) -> SolutionBackendInfo:
+    """Detect a backend, optionally reusing an already parsed pyproject."""
     root_dir = Path(solution_root_dir)
     pyproject_path = root_dir / "pyproject.toml"
     if not pyproject_path.is_file():
         raise FileNotFoundError(f"pyproject.toml not found in solution root directory '{root_dir}'.")
 
-    try:
-        with pyproject_path.open("rb") as pyproject_file:
-            configuration: dict[str, Any] = tomllib.load(pyproject_file)
-    except tomllib.TOMLDecodeError as error:
-        raise SolutionBackendError(f"Unable to parse '{pyproject_path}': {error}") from error
+    if configuration is None:
+        try:
+            with pyproject_path.open("rb") as pyproject_file:
+                configuration = tomllib.load(pyproject_file)
+        except tomllib.TOMLDecodeError as error:
+            raise SolutionBackendError(f"Unable to parse '{pyproject_path}': {error}") from error
 
     tool = _get_table(configuration, "tool", pyproject_path)
     build_system = _get_optional_table(configuration, "build-system", pyproject_path)
@@ -64,9 +69,7 @@ def detect_solution_backend(solution_root_dir: Path) -> SolutionBackendInfo:
     uv_lockfile = root_dir / "uv.lock"
     poetry_lockfile = root_dir / "poetry.lock"
     has_uv_metadata = uv is not None or uv_lockfile.is_file()
-    has_poetry_metadata = (
-        poetry is not None or poetry_lockfile.is_file() or _uses_poetry_build_backend(build_system)
-    )
+    has_poetry_metadata = poetry is not None or poetry_lockfile.is_file() or _uses_poetry_build_backend(build_system)
     has_mixed_metadata = has_uv_metadata and has_poetry_metadata
 
     if has_mixed_metadata:

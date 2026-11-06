@@ -103,7 +103,7 @@ def build_solution_wheel(definitions_folder: Path, solution_root_dir: Path) -> N
     logger.info(f"Building wheel using {backend_info.backend} in {solution_dist_dir}")
     try:
         subprocess.check_output(
-            command,  # noqa: S607
+            command,
             cwd=solution_root_dir,
             text=True,
             stderr=subprocess.STDOUT,

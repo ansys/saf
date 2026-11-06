@@ -521,10 +521,22 @@ jobs:
         run: moon run $PACKAGE:test -- $PYTEST_ARGS
 
       - name: Upload coverage reports to Codecov
+        if: ${{ always() && steps.run-tests-moon.outcome != 'skipped' }}
         uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7.1.1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           flags: ${{ env.PACKAGE }}
+          files: packages/*/coverage.xml
+          report_type: coverage
+
+      - name: Upload junit xml to Codecov
+        if: ${{ always() && steps.run-tests-moon.outcome != 'skipped' }}
+        uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7.1.1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          flags: ${{ env.PACKAGE }}
+          report_type: test_results
+          files: packages/*/junit.xml
 
       - name: Publish pytest reports (Moon)
         if: always() && steps.run-tests-moon.outcome != 'skipped' && env.USE_MOON

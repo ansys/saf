@@ -864,14 +864,14 @@ pandas = ["numpy (>=2.0.2)", "pandas (>=2.2.3)"]
 
 [[package]]
 name = "dash-extensions"
-version = "2.0.5"
+version = "2.0.6"
 description = "Extensions for Plotly Dash."
 optional = false
 python-versions = ">=3.11"
 groups = ["ui"]
 files = [
-    {file = "dash_extensions-2.0.5-py3-none-any.whl", hash = "sha256:e672f693c799614c6ca802c2ca07f0c083042647983114d42b7c5fd1c7fa25e6"},
-    {file = "dash_extensions-2.0.5.tar.gz", hash = "sha256:5ee9b444d5e4318637019fcd513857f9b4f488569963fa270f77ee07802e5405"},
+    {file = "dash_extensions-2.0.6-py3-none-any.whl", hash = "sha256:35a9ef516dd9431e472b68a76f4ae63a95223fcf9d319dfac79278157de85670"},
+    {file = "dash_extensions-2.0.6.tar.gz", hash = "sha256:84e0b2d60e48983fa275dc11df87b57b1930bfe0efe9ffafdc253199027c9fa8"},
 ]
 
 [package.dependencies]

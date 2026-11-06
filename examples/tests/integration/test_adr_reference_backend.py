@@ -28,15 +28,22 @@ from ansys.saf.glow.solution import NO_ENTITY, MethodStatus
 from pptx import Presentation
 import pytest
 
-from saf.solutions.examples.solution import adr_step
 from saf.solutions.examples.solution.definition import ExamplesSolution
-from saf.solutions.examples.solution.logic.adr_reference.report_definition import (
+from saf.solutions.examples.solution.logic.adr_report import adr_settings
+from saf.solutions.examples.solution.logic.adr_report.report_definition import (
     REPORT_SECTIONS,
     build_item_filter,
     build_project_tag,
 )
+from saf.solutions.examples.solution.steps import adr_step
 
 PROJECT_TAG = build_project_tag("integration-test")
+
+
+@pytest.fixture(autouse=True)
+def isolate_solution_env_file(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    """Keep the developer's solution .env file from affecting these integration tests."""
+    monkeypatch.setattr(adr_settings, "_SOLUTION_ENV_FILE", tmp_path / ".env")
 
 
 @pytest.fixture

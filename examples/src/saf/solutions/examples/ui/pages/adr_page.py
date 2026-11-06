@@ -28,16 +28,20 @@ from dash_extensions.enrich import Input, Output, State, dcc, html, no_update
 from dash_iconify import DashIconify
 import dash_mantine_components as dmc
 
-from saf.solutions.examples.solution.adr_step import AdrStep
 from saf.solutions.examples.solution.definition import ExamplesSolution
-from saf.solutions.examples.solution.logic.adr_reference.adr_settings import MEDIA_URL, check_adr_availability
-from saf.solutions.examples.solution.logic.adr_reference.report_definition import build_project_tag
+from saf.solutions.examples.solution.logic.adr_report.adr_settings import MEDIA_URL, check_adr_availability
+from saf.solutions.examples.solution.logic.adr_report.report_definition import build_project_tag
+from saf.solutions.examples.solution.steps.adr_step import AdrStep
 
 logger = logging.getLogger(__name__)
 
+PAGE_NAME = "ADR"
+PAGE_TITLE = "Ansys Dynamic Reporting (ADR)"
+
 dash.register_page(
     __name__,
-    name="ADR Reference",
+    name=PAGE_NAME,
+    title=PAGE_TITLE,
     path_template="/projects/<project_id>/adr-reference",
     icon_asset_name="game-icons--crossed-air-flows.svg",
     icon_asset_path="icons",
@@ -85,7 +89,7 @@ def layout() -> html.Div:
     return html.Div(
         [
             html.H1(
-                "ADR Reference Report",
+                PAGE_TITLE,
                 className="display-3",
                 style={"font-size": "40px", "font-weight": "bold"},
             ),
@@ -102,8 +106,9 @@ def layout() -> html.Div:
             dmc.Alert(
                 dmc.Text(
                     [
-                        "⚠️ This example requires an Ansys Dynamic Reporting installation. Set the "
-                        "ADR_INSTALLATION_DIRECTORY variable in the .env file of the solution, for example "
+                        "⚠️ This example requires an Ansys Dynamic Reporting installation. The solution's .env file "
+                        "is checked first for ADR_INSTALLATION_DIRECTORY; if it is missing or invalid, the system "
+                        "environment variable is checked. For example, set "
                         "C:\\Program Files\\ANSYS Inc\\v271\\ADR.\n",
                         "⚠️ With ansys-dynamicreporting-core 0.10, the PDF export relies on WeasyPrint, which "
                         "requires the GTK3 runtime. If it is not installed, the PDF export stays disabled.",
@@ -183,7 +188,7 @@ def _report_empty_state() -> dmc.Center:
             children=[
                 DashIconify(icon="mdi:file-document-outline", width=48, color="#adb5bd"),
                 dmc.Text("No report generated yet", fw=600),
-                dmc.Text("Click Generate Report to create the ADR reference report.", c="dimmed", size="sm"),
+                dmc.Text("Click Generate Report to create the ADR report.", c="dimmed", size="sm"),
             ],
         ),
     )

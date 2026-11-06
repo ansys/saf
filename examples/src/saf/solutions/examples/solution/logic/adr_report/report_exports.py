@@ -26,10 +26,7 @@ import zipfile
 
 from ansys.dynamicreporting.core.serverless import ADR
 
-from saf.solutions.examples.solution.logic.adr_reference.report_definition import (
-    PPTX_TEMPLATE_NAME,
-    REPORT_TEMPLATE_NAME,
-)
+from saf.solutions.examples.solution.logic.adr_report.report_definition import PPTX_TEMPLATE_NAME, REPORT_TEMPLATE_NAME
 
 logger = logging.getLogger(__name__)
 

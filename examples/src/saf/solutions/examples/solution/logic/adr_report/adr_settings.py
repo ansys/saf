@@ -18,7 +18,9 @@
 # ©2026, ANSYS Inc. Unauthorized use, distribution or duplication is prohibited.
 """Configuration of the serverless ADR instance used by the ADR reference example.
 
-The configuration is read from the environment (``.env`` file of the solution):
+``ADR_INSTALLATION_DIRECTORY`` is read from the solution's ``.env`` file first. If it is unset
+or does not point to an existing directory, the system environment variable is checked next.
+``GLOW_PROJECT_FILES_DIRECTORY`` is read from the system environment:
 
 - ``ADR_INSTALLATION_DIRECTORY``: Ansys Dynamic Reporting installation directory,
   for example ``C:\\Program Files\\ANSYS Inc\\v271\\ADR``.
@@ -31,8 +33,10 @@ its content separate by using its own templates and item tags.
 """
 
 from dataclasses import dataclass
+import os
 from pathlib import Path
 
+from dotenv import dotenv_values
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 MEDIA_URL = "/media/"
@@ -41,17 +45,18 @@ MEDIA_URL = "/media/"
 STATIC_URL = "/static_assets/"
 """URL prefix used by ADR to reference static files (CSS, JavaScript, fonts) in rendered reports."""
 
+_SOLUTION_ENV_FILE = Path(__file__).resolve().parents[3] / ".env"
+
 
 class AdrNotAvailableError(RuntimeError):
     """Raised when Ansys Dynamic Reporting is not installed or not configured."""
 
 
 class _AdrSettings(BaseSettings):
-    """Environment variables needed to set up serverless ADR."""
+    """System environment variables needed to set up serverless ADR."""
 
     model_config = SettingsConfigDict(extra="ignore")
 
-    adr_installation_directory: str = ""
     glow_project_files_directory: str = ""
 
 
@@ -81,9 +86,9 @@ def check_adr_availability() -> AdrAvailability:
     AdrAvailability
         Whether ADR is available and a message describing the result.
     """
-    settings = _AdrSettings()
+    installation_directory, configured_installation_directory = _get_adr_installation_directory()
 
-    if not settings.adr_installation_directory:
+    if installation_directory is None and configured_installation_directory is None:
         return AdrAvailability(
             is_available=False,
             message="The ADR_INSTALLATION_DIRECTORY environment variable is not set. "
@@ -91,14 +96,14 @@ def check_adr_availability() -> AdrAvailability:
             "ADR_INSTALLATION_DIRECTORY=C:\\Program Files\\ANSYS Inc\\v271\\ADR",
         )
 
-    installation_directory = Path(settings.adr_installation_directory)
-    if not installation_directory.is_dir():
+    if installation_directory is None:
         return AdrAvailability(
             is_available=False,
-            message=f"The ADR installation directory '{installation_directory}' does not exist. "
+            message=f"The ADR installation directory '{configured_installation_directory}' does not exist. "
             "Check the ADR_INSTALLATION_DIRECTORY environment variable.",
         )
 
+    settings = _AdrSettings()
     if not settings.glow_project_files_directory:
         return AdrAvailability(
             is_available=False,
@@ -107,6 +112,26 @@ def check_adr_availability() -> AdrAvailability:
         )
 
     return AdrAvailability(is_available=True, message=f"ADR found in '{installation_directory}'.")
+
+
+def _get_adr_installation_directory() -> tuple[Path | None, str | None]:
+    """Return the first valid installation directory and the preferred configured value."""
+    solution_env_value = dotenv_values(_SOLUTION_ENV_FILE).get("ADR_INSTALLATION_DIRECTORY")
+    system_env_value = os.environ.get("ADR_INSTALLATION_DIRECTORY")
+    values = (solution_env_value, system_env_value)
+    preferred_value = next((value.strip() for value in values if value and value.strip()), None)
+
+    for value in values:
+        if not value or not value.strip():
+            continue
+        try:
+            installation_directory = Path(value.strip())
+            if installation_directory.is_dir():
+                return installation_directory, preferred_value
+        except (OSError, ValueError):
+            continue
+
+    return None, preferred_value
 
 
 def get_adr_paths() -> AdrPaths:
@@ -126,10 +151,14 @@ def get_adr_paths() -> AdrPaths:
     if not availability.is_available:
         raise AdrNotAvailableError(availability.message)
 
+    installation_directory, _ = _get_adr_installation_directory()
+    if installation_directory is None:
+        raise AdrNotAvailableError(availability.message)
+
     settings = _AdrSettings()
     database_directory = Path(settings.glow_project_files_directory).parent / "adr" / "report_data"
     return AdrPaths(
-        installation_directory=Path(settings.adr_installation_directory),
+        installation_directory=installation_directory,
         database_directory=database_directory,
         media_directory=database_directory / "media",
         static_directory=database_directory.parent / "static_assets",

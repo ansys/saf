@@ -27,12 +27,7 @@ import threading
 
 from ansys.dynamicreporting.core.serverless import ADR
 
-from saf.solutions.examples.solution.logic.adr_reference.adr_settings import (
-    MEDIA_URL,
-    STATIC_URL,
-    AdrPaths,
-    get_adr_paths,
-)
+from saf.solutions.examples.solution.logic.adr_report.adr_settings import MEDIA_URL, STATIC_URL, AdrPaths, get_adr_paths
 
 logger = logging.getLogger(__name__)
 

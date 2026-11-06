@@ -27,7 +27,7 @@ from typing import Any
 
 import flask
 
-from saf.solutions.examples.solution.logic.adr_reference.adr_settings import (
+from saf.solutions.examples.solution.logic.adr_report.adr_settings import (
     MEDIA_URL,
     STATIC_URL,
     AdrNotAvailableError,

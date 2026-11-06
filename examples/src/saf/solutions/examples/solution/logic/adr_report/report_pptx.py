@@ -40,7 +40,7 @@ from ansys.dynamicreporting.core.serverless import ADR, File, Item
 from pptx import Presentation
 from pptx.slide import Slide
 
-from saf.solutions.examples.solution.logic.adr_reference.report_definition import (
+from saf.solutions.examples.solution.logic.adr_report.report_definition import (
     PPTX_INPUT_ITEM_NAME,
     REPORT_SECTIONS,
     REPORT_TITLE,

@@ -32,7 +32,7 @@ from pathlib import Path
 from ansys.dynamicreporting.core.serverless import ADR, HTML, File, Image, Item, Scene, String, Table, Tree
 import numpy as np
 
-from saf.solutions.examples.solution.logic.adr_reference.report_definition import (
+from saf.solutions.examples.solution.logic.adr_report.report_definition import (
     FILE_SECTION,
     HTML_SECTION,
     IMAGE_SECTION,

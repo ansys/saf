@@ -34,7 +34,7 @@ import logging
 
 from ansys.dynamicreporting.core.serverless import ADR, BasicLayout, PanelLayout, PPTXLayout, Template, TOCLayout
 
-from saf.solutions.examples.solution.logic.adr_reference.report_definition import (
+from saf.solutions.examples.solution.logic.adr_report.report_definition import (
     PPTX_INPUT_ITEM_NAME,
     PPTX_TEMPLATE_NAME,
     REPORT_SECTIONS,

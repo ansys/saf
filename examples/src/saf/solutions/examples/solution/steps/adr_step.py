@@ -31,31 +31,28 @@ from pathlib import Path
 from ansys.dynamicreporting.core.serverless import ADR
 from ansys.saf.glow.solution import NO_ENTITY, EntityHandle, StepModel, StepSpec, transaction
 
-from saf.solutions.examples.solution.logic.adr_reference.adr_instance import adr_lock, get_or_create_adr
-from saf.solutions.examples.solution.logic.adr_reference.adr_settings import (
-    AdrNotAvailableError,
-    check_adr_availability,
-)
-from saf.solutions.examples.solution.logic.adr_reference.report_definition import build_item_filter
-from saf.solutions.examples.solution.logic.adr_reference.report_exports import (
+from saf.solutions.examples.solution.logic.adr_report.adr_instance import adr_lock, get_or_create_adr
+from saf.solutions.examples.solution.logic.adr_report.adr_settings import AdrNotAvailableError, check_adr_availability
+from saf.solutions.examples.solution.logic.adr_report.report_definition import build_item_filter
+from saf.solutions.examples.solution.logic.adr_report.report_exports import (
     export_report_html_archive,
     export_report_pdf,
     export_report_pptx,
     render_report_html,
 )
-from saf.solutions.examples.solution.logic.adr_reference.report_items import (
+from saf.solutions.examples.solution.logic.adr_report.report_items import (
     ReportItemFiles,
     create_report_items,
     delete_report_items,
 )
-from saf.solutions.examples.solution.logic.adr_reference.report_pptx import recreate_pptx_input_item
-from saf.solutions.examples.solution.logic.adr_reference.report_templates import recreate_report_templates
+from saf.solutions.examples.solution.logic.adr_report.report_pptx import recreate_pptx_input_item
+from saf.solutions.examples.solution.logic.adr_report.report_templates import recreate_report_templates
 
 logger = logging.getLogger(__name__)
 
-PLACEHOLDER_IMAGE_ASSET = "adr_reference/placeholder_image.png"
-PLACEHOLDER_SCENE_ASSET = "adr_reference/placeholder_cube.avz"
-PLACEHOLDER_FILE_ASSET = "adr_reference/placeholder_file.txt"
+PLACEHOLDER_IMAGE_ASSET = "adr_report/placeholder_image.png"
+PLACEHOLDER_SCENE_ASSET = "adr_report/placeholder_cube.avz"
+PLACEHOLDER_FILE_ASSET = "adr_report/placeholder_file.txt"
 
 
 class AdrStep(StepModel):

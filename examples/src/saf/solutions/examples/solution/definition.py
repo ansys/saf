@@ -21,6 +21,7 @@
 
 from ansys.saf.glow.solution import Solution, StepsModel
 
+from saf.solutions.examples.solution.steps.adr_step import AdrStep
 from saf.solutions.examples.solution.steps.basic_step import BasicStep
 from saf.solutions.examples.solution.steps.beam_bending_report_step import BeamBendingReportStep
 from saf.solutions.examples.solution.steps.beam_bending_step import BeamBendingStep
@@ -38,7 +39,6 @@ from saf.solutions.examples.solution.steps.long_transaction_step import LongTran
 from saf.solutions.examples.solution.steps.pump.pump_model_setup_step import PumpModelSetupStep
 from saf.solutions.examples.solution.steps.pump.pump_report_step import PumpReportStep
 from saf.solutions.examples.solution.steps.pump.pump_solve_step import PumpSolveStep
-from saf.solutions.examples.solution.adr_step import AdrStep
 
 
 class Steps(StepsModel):

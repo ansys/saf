@@ -28,18 +28,26 @@ from ansys.saf.glow._testing.solution import is_within_dash_callback_context
 from dash.testing import ignore_register_page
 import pytest
 
-from saf.solutions.examples.solution import adr_step
 from saf.solutions.examples.solution.definition import ExamplesSolution
-from saf.solutions.examples.solution.logic.adr_reference.report_definition import build_project_tag
+from saf.solutions.examples.solution.logic.adr_report import adr_settings
+from saf.solutions.examples.solution.logic.adr_report.report_definition import build_project_tag
+from saf.solutions.examples.solution.steps import adr_step
 
 with ignore_register_page():
     from saf.solutions.examples.ui.app import app as examples_app
     from saf.solutions.examples.ui.pages import adr_page
+    from saf.solutions.examples.ui.pages.page import get_page_list
 
 
 pytestmark = pytest.mark.usefixtures("init_dashclient")
 
 EXPORT_BUTTON_IDS = ("adr-page-export-pdf-button", "adr-page-export-pptx-button", "adr-page-export-html-button")
+
+
+@pytest.fixture(autouse=True)
+def isolate_solution_env_file(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    """Keep the developer's solution .env file from affecting these integration tests."""
+    monkeypatch.setattr(adr_settings, "_SOLUTION_ENV_FILE", tmp_path / ".env")
 
 
 @pytest.fixture(scope="module")
@@ -230,6 +238,18 @@ def test_layout_shows_title_information_and_warning() -> None:
         "Blockquote",
         "Alert",
     ]
+
+
+def test_page_uses_requested_adr_labels(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Verify the tree label, browser title, and page heading use the requested ADR names."""
+    monkeypatch.setitem(adr_page.dash.page_registry, adr_page.__name__, {"module": adr_page.__name__})
+    headings = [component for component in _find_components(adr_page.layout()) if component["type"] == "H1"]
+
+    assert adr_page.PAGE_NAME == "ADR"
+    assert adr_page.PAGE_TITLE == "Ansys Dynamic Reporting (ADR)"
+    assert any(item["text"] == "ADR" for item in get_page_list("dark"))
+    assert len(headings) == 1
+    assert headings[0]["props"]["children"] == "Ansys Dynamic Reporting (ADR)"
 
 
 def test_initialization_shows_alert_when_adr_is_not_configured(

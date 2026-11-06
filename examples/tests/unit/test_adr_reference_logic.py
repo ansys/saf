@@ -40,18 +40,19 @@ from pptx import Presentation
 from pptx.enum.shapes import PP_PLACEHOLDER
 import pytest
 
-from saf.solutions.examples.solution.logic.adr_reference import (
+from saf.solutions.examples.solution.logic.adr_report import (
+    adr_settings,
     report_exports,
     report_items,
     report_pptx,
     report_templates,
 )
-from saf.solutions.examples.solution.logic.adr_reference.adr_settings import (
+from saf.solutions.examples.solution.logic.adr_report.adr_settings import (
     AdrNotAvailableError,
     check_adr_availability,
     get_adr_paths,
 )
-from saf.solutions.examples.solution.logic.adr_reference.report_definition import (
+from saf.solutions.examples.solution.logic.adr_report.report_definition import (
     PPTX_INPUT_ITEM_NAME,
     PPTX_TEMPLATE_NAME,
     REPORT_SECTIONS,
@@ -60,9 +61,17 @@ from saf.solutions.examples.solution.logic.adr_reference.report_definition impor
     build_item_tags,
     build_project_tag,
 )
-from saf.solutions.examples.solution.logic.adr_reference.report_routes import register_report_asset_routes
+from saf.solutions.examples.solution.logic.adr_report.report_routes import register_report_asset_routes
 
 PROJECT_TAG = "project=1234"
+
+
+@pytest.fixture(autouse=True)
+def solution_env_file(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> Path:
+    """Use an isolated solution .env file so local configuration does not affect the tests."""
+    env_file = tmp_path / ".env"
+    monkeypatch.setattr(adr_settings, "_SOLUTION_ENV_FILE", env_file)
+    return env_file
 
 
 @pytest.fixture
@@ -91,16 +100,50 @@ def test_adr_is_not_available_when_installation_directory_is_not_set(monkeypatch
 
 
 def test_adr_is_not_available_when_installation_directory_does_not_exist(
-    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path, solution_env_file: Path
 ) -> None:
     """Verify ADR is reported as unavailable when the installation directory is missing."""
     monkeypatch.setenv("ADR_INSTALLATION_DIRECTORY", str(tmp_path / "missing"))
     monkeypatch.setenv("GLOW_PROJECT_FILES_DIRECTORY", str(tmp_path))
+    solution_env_file.write_text(f"ADR_INSTALLATION_DIRECTORY='{tmp_path / 'solution-missing'}'\n", encoding="utf-8")
 
     availability = check_adr_availability()
 
     assert not availability.is_available
     assert "does not exist" in availability.message
+    assert str(tmp_path / "solution-missing") in availability.message
+
+
+def test_adr_installation_directory_uses_solution_env_before_system_env(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path, solution_env_file: Path
+) -> None:
+    """Verify a valid solution .env path takes priority over a valid system environment path."""
+    solution_installation_directory = tmp_path / "solution-ADR"
+    solution_installation_directory.mkdir()
+    system_installation_directory = tmp_path / "system-ADR"
+    system_installation_directory.mkdir()
+    solution_env_file.write_text(f"ADR_INSTALLATION_DIRECTORY='{solution_installation_directory}'\n", encoding="utf-8")
+    monkeypatch.setenv("ADR_INSTALLATION_DIRECTORY", str(system_installation_directory))
+    monkeypatch.setenv("GLOW_PROJECT_FILES_DIRECTORY", str(tmp_path))
+
+    paths = get_adr_paths()
+
+    assert paths.installation_directory == solution_installation_directory
+
+
+def test_adr_installation_directory_falls_back_to_system_when_solution_env_is_invalid(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path, solution_env_file: Path
+) -> None:
+    """Verify an invalid solution .env path falls back to a valid system environment path."""
+    system_installation_directory = tmp_path / "system-ADR"
+    system_installation_directory.mkdir()
+    solution_env_file.write_text(f"ADR_INSTALLATION_DIRECTORY='{tmp_path / 'solution-missing'}'\n", encoding="utf-8")
+    monkeypatch.setenv("ADR_INSTALLATION_DIRECTORY", str(system_installation_directory))
+    monkeypatch.setenv("GLOW_PROJECT_FILES_DIRECTORY", str(tmp_path))
+
+    paths = get_adr_paths()
+
+    assert paths.installation_directory == system_installation_directory
 
 
 def test_adr_is_not_available_when_project_files_directory_is_not_set(

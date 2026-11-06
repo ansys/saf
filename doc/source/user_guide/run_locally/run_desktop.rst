@@ -89,7 +89,7 @@ Run in a desktop window
 
        .. image:: /_static/images/solutions_manager_run_solution_view_desktop.png
           :alt: Solutions Manager Run Solution in desktop view
-          :width: 50%
+          :width: 40%
 
     #. Provide the following values:
 
@@ -151,7 +151,7 @@ Run in a web browser
 
          .. image:: /_static/images/solutions_manager_run_solution_view_browser.png
             :alt: Solutions Manager Run Solution in browser view
-            :width: 50%
+            :width: 40%
 
       #. Provide the following values:
 
@@ -171,10 +171,10 @@ Run in a web browser
 
             Enter the name of the project you want to run.
 
-          e. If needed, configure the solution environment.
+         e. If needed, configure the solution environment.
 
-             .. seealso::
-               The **Run Solution** pane provides options for specifying the solution environment. For more information, see :ref:`envar-config-system-envvar` and :ref:`envar-config-environment-file` in the :ref:`environment_variables` page.
+            .. seealso::
+              The **Run Solution** pane provides options for specifying the solution environment. For more information, see :ref:`envar-config-system-envvar` and :ref:`envar-config-environment-file` in the :ref:`environment_variables` page.
 
       #. Run the solution.
 

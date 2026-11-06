@@ -26,7 +26,8 @@ This is where users, partners, students, and our own internal subject matter exp
 To participate, click either the **Forum** tab or the :guilabel:`Browse the forums` button.
 
 .. image:: /_static/images/dev_portal_community.png
-   :width: 70%
+   :width: 100%
+   :alt: Developer portal community access
 
 
 Learn
@@ -43,8 +44,8 @@ The `Developer documentation <https://developer.ansys.com/docs>`_ page houses ou
 To access, click either the **Documentation** tab or the :guilabel:`View documentation` button.
 
 .. image:: /_static/images/dev_portal_doc.png
-   :width: 85%
-   :alt: Developer documentation screenshot
+   :width: 100%
+   :alt: Developer documentation page
 
 
 Knowledge base
@@ -55,19 +56,18 @@ The `Knowledge base <https://developer.ansys.com/knowledge-base>`_ houses our gr
 To access, click the **Knowledge base** tab.
 
 .. image:: /_static/images/dev_portal_kb.png
-      :width: 85%
-      :alt: Knowledge base screenshot
+      :width: 100%
+      :alt: Knowledge base page
 
 Articles
 ----------
 
 Articles on multiple subjects are consolidated into a single section, divided into the following categories:
 
-.. image:: /_static/images/dev_portal_article.png
-   :alt: Articles screenshot
-
 To access, scroll down to the **Recent articles** section and click the :guilabel:`More articles` button.
 
 .. image:: /_static/images/dev_portal_article_access.png
-      :alt: Recent articles screenshot
+      :width: 100%
+      :alt: Articles page
+
 

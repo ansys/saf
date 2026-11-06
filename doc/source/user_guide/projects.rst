@@ -144,7 +144,7 @@ These modifications render the project unusable. If made, the project cannot be 
 -	Modifying the validator of a step field when the new one invalidates the current field value.
 -	Modifying the type of a step field: if the current field value cannot be cast to the new type (for example, from ``str`` to ``int``).
 
-Project Icons
+Project icons
 =============
 
 Project card icons are resolved using this order of precedence:
@@ -176,14 +176,14 @@ The image container uses a responsive 16:9 aspect ratio.
 .. rubric:: Default project placeholder
 
 .. figure:: /_static/images/projects_default_icon.png
-    :width: 65%
+    :alt: Default project icon
 
 .. rubric:: Custom project icon
 
 .. figure:: /_static/images/projects_custom_icon.png
-    :width: 65%
+    :alt: Custom project icon
 
-Projects Metadata
+Projects metadata
 =================
 
 The solution header displays image and description content above the project
@@ -218,7 +218,7 @@ The image container uses a responsive 16:9 aspect ratio.
 .. rubric:: Default metadata placeholders
 
 .. figure:: /_static/images/projects_metadata_default.png
-    :width: 65%
+    :alt: Default metadata placeholders
 
 
 Project files location

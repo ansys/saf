@@ -46,6 +46,7 @@ from ansys.saf.desktop.installer._package.solution import create_requirements_tx
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+
 ########################################################################################################################
 # Variables
 ########################################################################################################################
@@ -168,7 +169,7 @@ def download_module(
         module_directory (Path): Directory to download
         certificate (str): path to the certificate authority file.
     """
-    logger.info(f"Downloading {module_name}==={module_version} from {index_url} to {module_directory}.")
+    logger.info(f"Downloading {module_name}==={module_version} to {module_directory}.")
     command = [
         venv_python_exec,
         "-m",

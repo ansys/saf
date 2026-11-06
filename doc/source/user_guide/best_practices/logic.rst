@@ -43,18 +43,20 @@ and Pythonic manner. This includes adhering to the following principles:
 
 #. Modular design
 
-    - Business logic must be organized into dedicated Python modules based on functionality or domain responsibility.
-    - Each module should contain either:
-        - Functions that encapsulate well-defined tasks, or
-        - Classes that represent logical objects or services with cohesive behavior.
+   - Business logic must be organized into dedicated Python modules based on functionality or domain responsibility.
+   - Each module should contain either:
+
+     - Functions that encapsulate well-defined tasks, or
+     - Classes that represent logical objects or services with cohesive behavior.
 
 #. No Top-Level Code
 
-    - Avoid writing executable code at the top level of a module (that is, not inside a function or class). This includes any logic that performs computations, file I/O, network calls, or data processing.
-    - Top-level code should be strictly limited to:
-        - Function/class definitions
-        - Constant declarations
-        - Optional guard blocks like ``if __name__ == "__main__":`` for module testing
+   - Avoid writing executable code at the top level of a module (that is, not inside a function or class). This includes any logic that performs computations, file I/O, network calls, or data processing.
+   - Top-level code should be strictly limited to:
+
+     - Function/class definitions
+     - Constant declarations
+     - Optional guard blocks like ``if __name__ == "__main__":`` for module testing
 
 #. Separate starting and stopping products from code that operates on the product.
 

@@ -58,7 +58,7 @@ without the overhead of the full framework.
 
 .. image:: /_static/images/recommended_dev_flow.svg
    :align: center
-   :width: 70%
+   :width: 100%
    :alt: Diagram showing the recommended development flow: write domain logic, unit-test, wire into SAF, integration test
 
 .. code-block:: python
@@ -113,5 +113,5 @@ before writing a single line of frontend code.
 
 .. image:: /_static/images/backend_first_workflow.svg
    :align: center
-   :width: 70%
+   :width: 100%
    :alt: Diagram showing the two virtual environments created by saf install and the symbolic link between them

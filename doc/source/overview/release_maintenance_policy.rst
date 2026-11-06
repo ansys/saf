@@ -31,7 +31,7 @@ The following diagram illustrates this rule for version ``1.x``, where ``1.40`` 
 
 .. image:: /_static/images/release_maintenance_policy_fixes_on_latest_minor_release.svg
    :align: center
-   :width: 70%
+   :width: 85%
    :alt: SAF release maintenance policy diagram showing that bugs found in any minor are fixed only in the latest minor release
 
 
@@ -57,7 +57,7 @@ latest ``1.40.x`` patch receives fixes. Once the 6 months elapse, ``1.x`` reache
 
 .. image:: /_static/images/release_maintenance_policy_breaking_changes.svg
    :align: center
-   :width: 70%
+   :width: 85%
    :alt: SAF release maintenance policy diagram showing the 6-month maintenance window for the previous major version after a breaking change
 
 Rule 3: Strict semantic versioning

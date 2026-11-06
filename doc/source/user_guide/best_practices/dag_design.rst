@@ -20,7 +20,7 @@ Each ``@transaction`` declares which fields it reads (``download``) and writes
 
 .. image:: /_static/images/dag_fundamentals.svg
    :align: center
-   :width: 80%
+   :width: 100%
    :alt: Diagram showing how StepSpec download and upload fields form a directed acyclic graph
 
 .. code-block:: python
@@ -93,7 +93,7 @@ invalidates every step below it. Keep the DAG as flat as possible.
 
 .. image:: /_static/images/dag_depth.svg
    :align: center
-   :width: 80%
+   :width: 100%
    :alt: Diagram comparing a shallow DAG with a deep chain to illustrate cascading recomputation risks
 
 .. code-block:: python

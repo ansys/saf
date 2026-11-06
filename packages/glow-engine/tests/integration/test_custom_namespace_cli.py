@@ -131,7 +131,7 @@ def glow_process_no_env(
     request: pytest.FixtureRequest,
     tmp_path_factory: pytest.TempPathFactory,
 ) -> Process:
-    """Launch a server with NO env vars and NO ansys.solutions in PYTHONPATH.
+    """Launch a server with NO env vars and ansys.solutions explicitly unavailable.
 
     The process is expected to fail immediately.  Using ``bg=False`` so the
     fixture blocks until the process exits and captures the full output.
@@ -141,7 +141,9 @@ def glow_process_no_env(
     env = os.environ.copy()
     env.pop("GLOW_SOLUTION_DEFINITION", None)
     env.pop("GLOW_UI_MODULE", None)
-    # Replace PYTHONPATH with an empty directory so that ansys.solutions is not findable.
+    # PYTHONPATH alone cannot hide ansys.solutions provided by installed workspace packages.
+    # Block the namespace during subprocess startup without affecting other ansys packages.
+    (root / "sitecustomize.py").write_text('import sys\nsys.modules["ansys.solutions"] = None\n', encoding="utf-8")
     env["PYTHONPATH"] = str(root)
 
     match request.param:

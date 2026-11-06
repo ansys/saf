@@ -14,7 +14,7 @@ Synchronous vs. asynchronous transactions
 
 .. image:: /_static/images/sync_vs_async_transactions.svg
    :align: center
-   :width: 80%
+   :width: 100%
    :alt: Side-by-side comparison of synchronous and asynchronous transaction execution models
 
 
@@ -160,7 +160,7 @@ A transaction can read fields from other steps by declaring them as parameters w
 
 .. image:: /_static/images/cross_step_transactions.svg
    :align: center
-   :width: 80%
+   :width: 100%
    :alt: Diagram showing how cross-step transactions read fields from upstream steps via StepSpec download
 
 Rules:
@@ -213,7 +213,7 @@ outermost, ``@long_running`` is always innermost.
 
 .. image:: /_static/images/decorator_order.svg
    :align: center
-   :width: 80%
+   :width: 100%
    :alt: Diagram showing the required decorator order: @transaction outermost, @create_instance middle, @long_running innermost
 
 .. code-block:: python

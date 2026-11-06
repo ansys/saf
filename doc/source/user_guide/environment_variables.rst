@@ -35,61 +35,61 @@ System environment variables are set in your shell or system configuration. You 
 
 .. tab-set::
 
-   .. tab-item:: SAF CLI
+  .. tab-item:: SAF CLI
 
     Set environment variables using SAF CLI:
 
-      .. tab-set::
+    .. tab-set::
 
-         .. tab-item:: Windows (PowerShell)
+      .. tab-item:: Windows (PowerShell)
 
-            .. code-block:: powershell
+        .. code-block:: powershell
 
-               $env:GLOW_API_PORT = "50001"
-               $env:GLOW_API_HOST = "0.0.0.0"
+          $env:GLOW_API_PORT = "50001"
+          $env:GLOW_API_HOST = "0.0.0.0"
 
-         .. tab-item:: Linux/macOS
+      .. tab-item:: Linux/macOS
 
-            .. code-block:: bash
+        .. code-block:: bash
 
-               export GLOW_API_PORT=50001
-               export GLOW_API_HOST=0.0.0.0
+          export GLOW_API_PORT=50001
+          export GLOW_API_HOST=0.0.0.0
 
-   .. tab-item:: Solutions Manager
+  .. tab-item:: Solutions Manager
 
-      Set environment variables using Solutions Manager:
+     Set environment variables using Solutions Manager:
 
-      #. Open Visual Studio Code.
+     #. Open Visual Studio Code.
 
-      #. In the Activity Bar, click the **Run Solution** icon.
+     #. In the Activity Bar, click the **Run Solution** icon.
 
-      #. Under **Solution environment**, click the :guilabel:`Configure solution environment`.
+     #. Under **Solution environment**, click the :guilabel:`Configure solution environment`.
 
-         The **SAF Environment Configuration** interface opens in the editor. Environment settings are divided into categories.
+        The **SAF Environment Configuration** interface opens in the editor. Environment settings are divided into categories.
 
-      #. Find the environment variable you want to set:
+     #. Find the environment variable you want to set:
 
-         * Use the search bar to search for a specific environment variable.
-         * Expand the **Filter by category** and select a category.
+        * Use the search bar to search for a specific environment variable.
+        * Expand the **Filter by category** and select a category.
 
-           .. image:: /_static/images/getting_started_solutions_manager_saf_environ_config_page.png
-              :alt: Solutions Manager SAF Environment Configuration page
-              :width: 90%
+          .. image:: /_static/images/getting_started_solutions_manager_saf_environ_config_page.png
+             :alt: Solutions Manager SAF Environment Configuration page
+             :width: 90%
 
-      #. Modify the configuration parameters as needed:
+     #. Modify the configuration parameters as needed:
 
-         * Select or deselect the check box to enable or disable an environment variable.
-         * Once an environment variable is enabled, you can modify its value in the **Value** field,
-           either by selecting from a drop-down list or by entering a value.
-         * Click the :guilabel:`Enable all` or :guilabel:`Disable all` button to quickly enable or
-           disable all environment variables in the selected category.
+        * Select or deselect the check box to enable or disable an environment variable.
+        * Once an environment variable is enabled, you can modify its value in the **Value** field,
+          either by selecting from a drop-down list or by entering a value.
+        * Click the :guilabel:`Enable all` or :guilabel:`Disable all` button to quickly enable or
+          disable all environment variables in the selected category.
 
-      #. Click the :guilabel:`Save configuration` button to save your changes.
+     #. Click the :guilabel:`Save configuration` button to save your changes.
 
-         The configuration is saved in a ``.env`` file in the solution's root directory.
-         When the solution is launched from Solutions Manager, it will use the saved configuration file.
+        The configuration is saved in a ``.env`` file in the solution's root directory.
+        When the solution is launched from Solutions Manager, it will use the saved configuration file.
 
-      #. Close the editor page to exit the **SAF Environment Configuration** interface.
+     #. Close the editor page to exit the **SAF Environment Configuration** interface.
 
 
 .. _envar-config-environment-file:
@@ -136,7 +136,7 @@ You can configure the solution with this file using either SAF CLI or Solutions 
 
          .. image:: /_static/images/solutions_manager_environment_variables_file.png
           :alt: Solutions Manager environment variables file
-          :width: 35%
+          :width: 45%
 
       When the solution is launched from Solutions Manager, it will use the selected environment configuration file.
 

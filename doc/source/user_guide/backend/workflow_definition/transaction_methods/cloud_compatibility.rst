@@ -59,5 +59,7 @@ The diagram below depicts the execution of the ``generate_username`` transaction
 
 .. image:: /_static/images/solution_definition_transction.png
    :align: left
+   :alt: Execution of the generate_username transaction method
+   :width: 70%
 
 

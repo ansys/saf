@@ -61,19 +61,19 @@ Blank page in SAF Portal or solution UI caused by a corrupted ``.js`` file assoc
 
     .. image:: /_static/images/registry_editor.png
        :alt: Opening Registry Editor from the Windows search bar
-       :width: 40%
+       :width: 35%
 
  #. Navigate to ``Computer\HKEY_CLASSES_ROOT\.js``.
 
     .. image:: /_static/images/registry_editor_hkey_classes_root.png
        :alt: Registry Editor showing the HKEY_CLASSES_ROOT node
-       :width: 40%
+       :width: 50%
 
  #. Right-click the **Content Type** value under the ``.js`` key and select **Delete**.
 
     .. image:: /_static/images/registry_editor_js.png
        :alt: Deleting the Content Type value under HKEY_CLASSES_ROOT\.js
-       :width: 70%
+       :width: 90%
 
  #. Reboot the computer.
 

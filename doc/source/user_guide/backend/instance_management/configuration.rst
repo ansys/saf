@@ -41,6 +41,9 @@ Solution and PIM Light Server in same Windows OS
 ------------------------------------------------
 
 .. figure:: /_static/images/windows_desktop_pim.png
+  :align: center
+  :width: 45%
+  :alt: Windows desktop PIM overview
 
 This is the most common one, for example when using ``saf run`` in development mode or with an installed solution when executed through the shortcut.
 
@@ -57,6 +60,9 @@ Solution and PIM Light Server in same Linux OS
 ----------------------------------------------
 
 .. figure:: /_static/images/linux_desktop_pim.png
+  :align: center
+  :width: 45%
+  :alt: Linux desktop PIM overview
 
 This is the equivalent to the previous one, but on Linux.
 
@@ -67,6 +73,10 @@ Solution and HPS in same Linux OS
 ---------------------------------
 
 .. figure:: /_static/images/linux_desktop_hps.png
+  :align: center
+  :width: 60%
+  :alt: Linux desktop HPS overview
+
 
 This will make SAF Desktop Orchestrator to avoid launching PIM Light server.
 
@@ -84,6 +94,9 @@ Solution and HPS scaler/evaluator in same Windows OS, HPS Deployment in WSL
 ---------------------------------------------------------------------------
 
 .. figure:: /_static/images/windows_desktop_hps.png
+  :align: center
+  :width: 60%
+  :alt: Windows desktop HPS overview
 
 This will make SAF Desktop Orchestrator to avoid launching PIM Light server.
 
@@ -113,6 +126,9 @@ Solution and PIM Light Server in same Linux OS
 ----------------------------------------------
 
 .. figure:: /_static/images/linux_docker_pim.png
+  :align: center
+  :width: 50%
+  :alt: Linux desktop PIM overview
 
 Requires to mount 2 directories, ``$PROJECT_FILES_DIR`` (for example, ``/home/my_user/project_files``) and ``$GRPC_CERTS_DIR`` (for example, ``/home/my_user/my_certificates``) into the GLOW API server container as follows:
 
@@ -146,6 +162,9 @@ Solution and HPS in same Linux OS
 ---------------------------------
 
 .. figure:: /_static/images/linux_docker_hps.png
+   :align: center
+   :width: 50%
+   :alt: Linux desktop HPS overview
 
 Requires to mount 1 directory, ``$PROJECT_FILES_DIR`` (for example, ``/home/my_user/project_files``) into the GLOW API server container as follows:
 
@@ -179,6 +198,9 @@ Solution in WSL and PIM Light server in Windows host
 ----------------------------------------------------
 
 .. figure:: /_static/images/windows_docker_pim.png
+   :align: center
+   :width: 60%
+   :alt: Windows desktop PIM overview
 
 Requires to mount 2 directories, ``$PROJECT_FILES_DIR`` (for example, ``C:/Users/my_user/project_files`` accessible in WSL as ``/mnt/c/Users/my_user/project_files``) and ``$GRPC_CERTS_DIR`` (for example, ``C:/Users/my_user/my_certificates`` accessible in WSL as ``/mnt/c/Users/my_user/my_certificates``) into the GLOW API server container as follows:
 
@@ -205,6 +227,9 @@ Solution and HPS Deployments in same WSL, HPS evaluator/scaler in Windows host
 ------------------------------------------------------------------------------
 
 .. figure:: /_static/images/windows_docker_hps.png
+  :align: center
+  :width: 60%
+  :alt: Windows desktop HPS overview
 
 Requires to mount 1 directory, ``$PROJECT_FILES_DIR`` (for example, ``C:/Users/my_user/project_files`` accessible in WSL as ``/mnt/c/Users/my_user/project_files``) into the GLOW API server container as follows:
 

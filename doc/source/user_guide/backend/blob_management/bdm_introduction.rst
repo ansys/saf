@@ -18,7 +18,7 @@ BDM Python API system is built around two fundamental concepts:
 .. figure:: /_static/images/bdm_overview.png
    :alt: BDM Python API overview
    :align: center
-   :width: 50%
+   :width: 75%
 
    BDM Python API Overview
 

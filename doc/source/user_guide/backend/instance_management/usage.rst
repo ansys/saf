@@ -173,10 +173,10 @@ whilst providing a rapid response to the end user, is as follows:
 
 3. Ensure that the transaction method decorated with ``@create_instance`` has the following features:
 
-    - contains a call to the product instance manager's ``initialize`` method
-    - assigns ``True`` to the boolean field created in (1).
-    - is decorated with ``@long_running``.
-    - stores the values of the non-overridable properties of the instance into the fields created in (2)
+   - contains a call to the product instance manager's ``initialize`` method
+   - assigns ``True`` to the boolean field created in (1).
+   - is decorated with ``@long_running``.
+   - stores the values of the non-overridable properties of the instance into the fields created in (2)
 
    For example:
 
@@ -202,9 +202,9 @@ whilst providing a rapid response to the end user, is as follows:
 4. Create a transaction method which is decorated with the ``@instance`` decorator with the same product instance name.
    This method does the following in order:
 
-     - restart the instance if it is not already running;
-     - if the instance was not running, reload into the instance the instance state that existed at the end of the last transaction method that used the instance; and
-     - reset the instance into a known good starting state for the rest of the workflow whether or not the instance was running
+   - restart the instance if it is not already running;
+   - if the instance was not running, reload into the instance the instance state that existed at the end of the last transaction method that used the instance; and
+   - reset the instance into a known good starting state for the rest of the workflow whether or not the instance was running
 
    The ``@instance`` decorator achieves the restart and reload which can take time which is why the method is decorated with ``@long_running``.
    The code for resetting the state of the instance is contained in the body of the method.

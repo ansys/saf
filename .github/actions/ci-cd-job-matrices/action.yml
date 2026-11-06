@@ -24,12 +24,8 @@ outputs:
     value: ${{ steps.script.outputs.pr_changes }}
   packages-matrix:
     value: ${{ steps.script.outputs.packages_matrix }}
-  compatibility-matrix:
-    value: ${{ steps.script.outputs.compatibility_matrix }}
   tests-matrix:
     value: ${{ steps.script.outputs.tests_matrix }}
-  tests-generated-solution-flag:
-    value: ${{ steps.script.outputs.tests_generated_solution_flag }}
 
 runs:
   using: "composite"

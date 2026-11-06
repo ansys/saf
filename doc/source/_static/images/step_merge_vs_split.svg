@@ -33,7 +33,7 @@
   <rect x="50" y="250" width="300" height="60" rx="6" fill="#0f172a"/>
   <text x="60" y="268" fill="#64748b" font-size="9">Example scenarios:</text>
   <text x="60" y="286" fill="#94a3b8" font-size="9">• Unit converter (one input, one output)</text>
-  <text x="60" y="300" fill="#94a3b8" font-size="9">• Quick parameter study (< 5 fields)</text>
+  <text x="60" y="300" fill="#94a3b8" font-size="9">• Quick parameter study (&lt; 5 fields)</text>
 
   <!-- RIGHT: Split -->
   <rect x="390" y="56" width="340" height="270" rx="10" fill="#1e293b" stroke="#34d399" stroke-width="1.5"/>

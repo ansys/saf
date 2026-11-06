@@ -1,0 +1,89 @@
+`0.6.0 <https://github.com/ansys/saf/releases/tag/v0.6.0-saf-sdk>`_ — November 5, 2026
+======================================================================================
+
+.. dropdown::
+  :class-container: dropdown
+  :open:
+  :chevron: down-up
+
+  .. note::
+     Installing ``ansys-saf-sdk`` requires pip 26.2.2 or higher.
+
+  .. rubric:: Dependency versions
+
+  The public package versions below were resolved for this version of ``ansys-saf-sdk``.
+
+
+  .. dropdown:: ansys-bdm-api 0.5.0
+
+    No changes
+
+
+  .. dropdown:: ansys-bdm-shared-volume 0.4.0
+
+    No changes
+
+
+  .. dropdown:: ansys-saf-glow-engine 2.5.0
+
+    No changes
+
+
+  .. dropdown:: ansys-saf-desktop-installer 1.19.0
+
+    No changes
+
+
+  .. dropdown:: ansys-saf-desktop-orchestrator 1.14.0
+
+    No changes
+
+
+  .. dropdown:: ansys-iam-oidc 0.9.0
+
+    No changes
+
+
+  .. dropdown:: ansys-saf-product-configuration 0.26.0
+
+    No changes
+
+
+  .. dropdown:: ansys-saf-product-manager 0.5.0
+
+    No changes
+
+
+  .. dropdown:: ansys-saf-projects-dashboard 0.2.0
+
+    No changes
+
+  The private-package versions were fetched separately as the latest available versions
+
+    .. list-table::
+        :header-rows: 1
+        :stub-columns: 1
+        :widths: 80 20
+
+        * - Private package
+          - Version
+        * - ``ansys-saf-pim-light-server``
+          - ``0.3.12``
+        * - ``ansys-translation-utilities``
+          - ``0.4.1``
+        * - ``ansys-saf-desktop-portal``
+          - ``0.3.1``
+        * - ``ansys-saf-web-portal``
+          - ``0.1.dev10``
+        * - ``ansys-minerva-python-client``
+          - ``0.5.0``
+        * - ``ansys-datarepository-python-client``
+          - ``0.1.dev12``
+        * - ``ansys-saf-hermes``
+          - ``0.1.dev13``
+        * - ``ansys-saf-aspire``
+          - ``9.1.6``
+
+.. note::
+   The compatibility of this release has been tested with PyAnsys for the commit `0ed22c8 <https://github.com/ansys/pyansys/commit/0ed22c8ea3473d66f5a7883b886b117ababffcfb>`_, from Python 3.12 to 3.14.
+   Please be aware that on Windows with Python 3.14, it is required to set the ``GRPC_PYTHON_CFLAGS`` environment variable to ``/std:c++17 /MT`` before installing the packages.

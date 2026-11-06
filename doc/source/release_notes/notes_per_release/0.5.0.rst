@@ -1,0 +1,137 @@
+`0.5.0 <https://github.com/ansys/saf/releases/tag/v0.5.0-saf-sdk>`_ — October 22, 2026
+======================================================================================
+
+.. dropdown::
+  :class-container: dropdown
+  :chevron: down-up
+
+  .. note::
+     Installing ``ansys-saf-sdk`` requires pip 26.2.2 or higher.
+
+  .. rubric:: Dependency versions
+
+  The public package versions below were resolved for this version of ``ansys-saf-sdk``.
+
+
+  .. dropdown:: ansys-bdm-api 0.5.0
+
+    No changes
+
+
+  .. dropdown:: ansys-bdm-shared-volume 0.4.0
+
+    No changes
+
+
+  .. dropdown:: ansys-saf-glow-engine 2.5.0
+
+    No changes
+
+
+  .. dropdown:: ansys-saf-desktop-installer 1.19.0
+    :open:
+
+    .. list-table::
+      :header-rows: 1
+      :stub-columns: 1
+      :widths: 80 20
+
+      * - 🛡️ Security fixes
+        - Pull Request
+      * - 🔴 **Critical** - Upgraded **certifi** certifi bundles emSign root CAs with compromised intermediate CA keys Closure reason: Fixed
+        - `#363 <https://github.com/ansys/saf/security/dependabot/363>`_
+
+    .. list-table::
+      :header-rows: 1
+      :stub-columns: 1
+      :widths: 80 20
+
+      * - 🛠️ Fixes
+        - Pull Request
+      * - fix(saf-desktop-installer): check user privilege level and create solution shortcut on right location
+        - `#283 <https://github.com/ansys/saf/pull/283>`_
+      * - fix(saf-desktop-installer): remove absolute paths on generated installer lock
+        - `#263 <https://github.com/ansys/saf/pull/263>`_
+
+    .. list-table::
+      :header-rows: 1
+      :stub-columns: 1
+      :widths: 80 20
+
+      * - ♾️ CI
+        - Pull Request
+      * - ci(fix): fix ci-cd for release
+        - `#295 <https://github.com/ansys/saf/pull/295>`_
+      * - ci(refactor): improve ci for documentation
+        - `#255 <https://github.com/ansys/saf/pull/255>`_
+
+    .. list-table::
+      :header-rows: 1
+      :stub-columns: 1
+      :widths: 80 20
+
+      * - 🧹 Chores
+        - Pull Request
+      * - chore(saf-cli/saf-desktop-installer): update virtualenv and packaging
+        - `#327 <https://github.com/ansys/saf/pull/327>`_
+      * - chore(saf-desktop-installer): update certifi for mocked solutions
+        - `#319 <https://github.com/ansys/saf/pull/319>`_
+      * - chore: update poetry for saf-desktop-installer tests
+        - `#315 <https://github.com/ansys/saf/pull/315>`_
+      * - chore(bump): v1.19.dev0/saf-desktop-installer
+        - `#257 <https://github.com/ansys/saf/pull/257>`_
+
+
+  .. dropdown:: ansys-saf-desktop-orchestrator 1.14.0
+
+    No changes
+
+
+  .. dropdown:: ansys-iam-oidc 0.9.0
+
+    No changes
+
+
+  .. dropdown:: ansys-saf-product-configuration 0.26.0
+
+    No changes
+
+
+  .. dropdown:: ansys-saf-product-manager 0.5.0
+
+    No changes
+
+
+  .. dropdown:: ansys-saf-projects-dashboard 0.2.0
+
+    No changes
+
+  The private-package versions were fetched separately as the latest available versions
+
+    .. list-table::
+        :header-rows: 1
+        :stub-columns: 1
+        :widths: 80 20
+
+        * - Private package
+          - Version
+        * - ``ansys-saf-pim-light-server``
+          - ``0.3.12``
+        * - ``ansys-translation-utilities``
+          - ``0.4.1``
+        * - ``ansys-saf-desktop-portal``
+          - ``0.3.1``
+        * - ``ansys-saf-web-portal``
+          - ``0.1.dev10``
+        * - ``ansys-minerva-python-client``
+          - ``0.5.0``
+        * - ``ansys-datarepository-python-client``
+          - ``0.1.dev12``
+        * - ``ansys-saf-hermes``
+          - ``0.1.dev13``
+        * - ``ansys-saf-aspire``
+          - ``9.1.6``
+
+.. note::
+   The compatibility of this release has been tested with PyAnsys for the commit `53e486e <https://github.com/ansys/pyansys/commit/53e486e7364f150a8577d60d445d4d3b9f3372a7>`_, from Python 3.12 to 3.14.
+   Please be aware that on Windows with Python 3.14, it is required to set the ``GRPC_PYTHON_CFLAGS`` environment variable to ``/std:c++17 /MT`` before installing the packages.

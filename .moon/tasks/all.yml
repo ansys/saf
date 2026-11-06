@@ -421,6 +421,10 @@ tasks:
       - "--desc"
       - "on"
       - "--strict"
+      - "-f"
+      - "markdown"
+      - "-o"
+      - "dist/$projectSource-vuln.md"
     env:
       UV_MALWARE_CHECK: '1'
     inputs:

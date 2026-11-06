@@ -18,17 +18,106 @@ from pathlib import Path
 import platform
 import re
 import subprocess
+from unittest.mock import patch
 
 import pytest
 import pytest_mock
 
 from ansys.saf.desktop.installer._package.solution import (
+    SolutionInfo,
     create_env_file,
     create_version_file,
     get_appdata_directory,
     get_solution_package_dir,
+    get_solution_version,
     move_assets_and_deployment_script,
 )
+
+
+@pytest.fixture
+def uv_solution_root(tmp_path: Path) -> Path:
+    """Create a UV project with static PEP 621 metadata."""
+    root = tmp_path / "uv-solution"
+    root.mkdir()
+    (root / "pyproject.toml").write_text(
+        '[project]\nname = "uv-solution"\nversion = "1.2.3"\n\n[tool.uv]\n',
+        encoding="utf-8",
+    )
+    return root
+
+
+def test_uv_solution_metadata(uv_solution_root: Path) -> None:
+    """Read UV name and version without invoking Poetry or another subprocess."""
+    with patch("ansys.saf.desktop.installer._package.solution.subprocess.run") as run:
+        info = SolutionInfo(uv_solution_root)
+        assert info.solution_package_name == "uv-solution"
+        assert info.solution_version == "1.2.3"
+    run.assert_not_called()
+
+
+@pytest.mark.parametrize("field", ["name", "version"])
+@pytest.mark.parametrize("value", [None, '"   "', "123"])
+def test_uv_metadata_requires_nonempty_strings(uv_solution_root: Path, field: str, value: str | None) -> None:
+    """Reject missing, blank, or non-string UV metadata with a field-specific error."""
+    project = uv_solution_root / "pyproject.toml"
+    content = project.read_text(encoding="utf-8")
+    old_value = '"uv-solution"' if field == "name" else '"1.2.3"'
+    replacement = "" if value is None else f"{field} = {value}\n"
+    project.write_text(content.replace(f"{field} = {old_value}\n", replacement), encoding="utf-8")
+    info = SolutionInfo(uv_solution_root)
+    attribute = "solution_package_name" if field == "name" else "solution_version"
+
+    with pytest.raises(ValueError, match=rf"project\.{field}.*non-empty string"):
+        getattr(info, attribute)
+
+
+def test_uv_metadata_requires_project_table(uv_solution_root: Path) -> None:
+    """Report a missing project table explicitly instead of raising a key error."""
+    (uv_solution_root / "pyproject.toml").write_text("[tool.uv]\n", encoding="utf-8")
+
+    with pytest.raises(ValueError, match=r"Missing or invalid \[project\]"):
+        _ = SolutionInfo(uv_solution_root).solution_package_name
+
+
+def test_poetry_metadata_uses_solution_root(
+    solution_root_dir: Path, monkeypatch: pytest.MonkeyPatch, tmp_path: Path,
+) -> None:
+    """Resolve Poetry's version from the solution directory, not the current directory."""
+    monkeypatch.chdir(tmp_path)
+    command = ["poetry", "version", "--no-interaction"]
+    with patch(
+        "ansys.saf.desktop.installer._package.solution.subprocess.run",
+        return_value=subprocess.CompletedProcess(command, 0, "my-solution 0.1.dev0\n"),
+    ) as run:
+        info = SolutionInfo(solution_root_dir)
+        assert info.solution_package_name == "ansys-solutions-my-solution-dash"
+        run.assert_not_called()
+        assert info.solution_version == "0.1.dev0"
+    run.assert_called_with(
+        command, cwd=solution_root_dir, capture_output=True, check=True, text=True,
+    )
+
+
+@pytest.mark.parametrize("output", ["", "solution", "solution unknown"])
+def test_poetry_version_rejects_invalid_output(solution_root_dir: Path, output: str) -> None:
+    """Preserve errors for missing or unknown versions returned by Poetry."""
+    with (
+        patch(
+            "ansys.saf.desktop.installer._package.solution.subprocess.run",
+            return_value=subprocess.CompletedProcess(["poetry"], 0, output),
+        ),
+        pytest.raises(ValueError, match="[Ss]olution version"),
+    ):
+        get_solution_version(solution_root_dir)
+
+
+def test_get_solution_version_defaults_to_current_directory(
+    uv_solution_root: Path, monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Keep the no-argument version getter working for the current solution."""
+    monkeypatch.chdir(uv_solution_root)
+
+    assert get_solution_version() == "1.2.3"
 
 
 @pytest.fixture

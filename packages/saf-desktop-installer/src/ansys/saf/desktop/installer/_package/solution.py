@@ -23,6 +23,7 @@ Common functions for solution package utility.
 # Imports
 ########################################################################################################################
 import datetime
+from functools import cached_property
 import importlib
 import inspect
 import json
@@ -34,9 +35,13 @@ import re
 import shutil
 import subprocess
 import sys
+import tomllib
 
-import toml
-
+from ansys.saf.desktop.installer._package.backend_detection import (
+    SolutionBackend,
+    SolutionBackendError,
+    detect_solution_backend,
+)
 from ansys.saf.desktop.installer._package.config import (
     DESKTOP_ORCHESTRATOR_MODULE_NAME,
     DESKTOP_ORCHESTRATOR_PACKAGE_NAME,
@@ -60,6 +65,56 @@ GLOW_SOLUTION_DEFINITION_ENV = "GLOW_SOLUTION_DEFINITION"
 ########################################################################################################################
 
 
+class _SolutionMetadata:
+    """Read project metadata once and resolve backend-specific fields lazily."""
+
+    def __init__(self, solution_root_dir: Path):
+        self.root_dir = solution_root_dir
+        self.pyproject_path = solution_root_dir / "pyproject.toml"
+        try:
+            with self.pyproject_path.open("rb") as pyproject_file:
+                configuration = tomllib.load(pyproject_file)
+        except tomllib.TOMLDecodeError as error:
+            raise SolutionBackendError(f"Unable to parse '{self.pyproject_path}': {error}") from error
+        self.backend = detect_solution_backend(solution_root_dir, configuration=configuration).backend
+        if self.backend is SolutionBackend.UV:
+            self.fields = configuration.get("project")
+            self.section = "project"
+        else:
+            self.fields = configuration.get("tool", {}).get("poetry")
+            self.section = "tool.poetry"
+        if not isinstance(self.fields, dict):
+            raise ValueError(f"Missing or invalid [{self.section}] metadata in '{self.pyproject_path}'.")
+
+    def _required_string(self, field: str) -> str:
+        value = self.fields.get(field)
+        if not isinstance(value, str) or not value.strip():
+            raise ValueError(f"'{self.section}.{field}' must be a non-empty string in '{self.pyproject_path}'.")
+        return value
+
+    @property
+    def package_name(self) -> str:
+        return self._required_string("name")
+
+    @cached_property
+    def version(self) -> str:
+        if self.backend is SolutionBackend.UV:
+            return self._required_string("version")
+        result = subprocess.run(
+            ["poetry", "version", "--no-interaction"],  # noqa: S607
+            cwd=self.root_dir,
+            capture_output=True,
+            check=True,
+            text=True,
+        )
+        parts = result.stdout.strip().split()
+        if len(parts) < 2:
+            raise ValueError("Failed to get solution version.")
+        if parts[1] == "unknown":
+            raise ValueError("Solution version is unknown.")
+        return parts[1]
+
+
 class SolutionInfo:
     def __init__(self, solution_root_dir: Path):
         self.solution_root_dir = solution_root_dir
@@ -67,8 +122,10 @@ class SolutionInfo:
         self._solution_module_name: str | None = None
         self._solution_module_dotted_path: str | None = None
         self._solution_display_name: str | None = None
-        self._solution_package_name: str | None = None
-        self._solution_version: str | None = None
+
+    @cached_property
+    def _metadata(self) -> _SolutionMetadata:
+        return _SolutionMetadata(self.solution_root_dir)
 
     @property
     def solution_module_name(self) -> str:
@@ -93,15 +150,11 @@ class SolutionInfo:
 
     @property
     def solution_package_name(self) -> str:
-        if self._solution_package_name is None:
-            self._solution_package_name = get_solution_package_name(self.solution_root_dir)
-        return self._solution_package_name
+        return self._metadata.package_name
 
     @property
     def solution_version(self) -> str:
-        if self._solution_version is None:
-            self._solution_version = get_solution_version()
-        return self._solution_version
+        return self._metadata.version
 
 
 def get_solution_module_name(solution_root_dir: Path) -> str:
@@ -182,8 +235,7 @@ def get_solution_package_name(solution_root_dir: Path) -> str:
 
     Returns:
         str: Solution package name."""
-    pyproject_data = toml.load(solution_root_dir / "pyproject.toml")
-    return pyproject_data["tool"]["poetry"]["name"]
+    return _SolutionMetadata(solution_root_dir).package_name
 
 
 def get_solution_module_dotted_path(solution_root_dir: Path, solution_module_name: str) -> str:
@@ -249,27 +301,12 @@ def get_solution_display_name(solution_module_dotted_path: str) -> str:
     raise ValueError("The solution definition does not contain a Solution subclass.")
 
 
-def get_solution_version() -> str:
-    """Get solution version.
+def get_solution_version(solution_root_dir: Path | None = None) -> str:
+    """Get the solution version from UV metadata or Poetry in the solution root.
 
-    Args:
-        None
-
-    Returns:
-        str: Solution version."""
-    try:
-        solution_version = (
-            subprocess.run(["poetry", "version", "--no-interaction"], capture_output=True, check=True, text=True)  # noqa: S607
-            .stdout.strip()
-            .split()[1]
-        )
-        if solution_version == "":
-            raise ValueError("Solution version is empty.")
-        if solution_version == "unknown":
-            raise ValueError("Solution version is unknown.")
-        return solution_version
-    except IndexError:
-        raise ValueError("Failed to get solution version.") from None
+    If no root is supplied, use the current working directory.
+    """
+    return _SolutionMetadata(solution_root_dir if solution_root_dir is not None else Path.cwd()).version
 
 
 def copy_configuration_files(solution_root_dir: Path, solution_module_name: str) -> None:

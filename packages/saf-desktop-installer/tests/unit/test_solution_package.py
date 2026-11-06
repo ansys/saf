@@ -173,6 +173,60 @@ def test_add_poetry_project_relativizes_lock_path_dependencies(tmp_path: Path) -
     mock_relativize.assert_called_once_with(definitions_folder)
 
 
+@pytest.mark.parametrize(
+    ("backend", "pyproject", "command"),
+    [
+        (
+            "poetry",
+            '[tool.poetry]\nname = "ansys-solution"\nversion = "1.2.3"\nreadme = "README.md"\n',
+            ["poetry", "build", "--no-interaction"],
+        ),
+        (
+            "uv",
+            '[project]\nname = "ansys-solution"\nversion = "1.2.3"\nreadme = "README.md"\n\n[tool.uv]\n',
+            ["uv", "build"],
+        ),
+    ],
+)
+def test_build_solution_wheel_uses_detected_backend(
+    tmp_path: Path,
+    backend: str,
+    pyproject: str,
+    command: list[str],
+) -> None:
+    """Select the backend's build command, copy its wheel, and request metadata adjustment."""
+    solution_root_dir = tmp_path / "solution"
+    solution_root_dir.mkdir()
+    (solution_root_dir / "pyproject.toml").write_text(pyproject, encoding="utf-8")
+    (solution_root_dir / "README.md").touch()
+    definitions_folder = tmp_path / "definitions"
+    definitions_folder.mkdir()
+    wheel_name = "ansys_solution-1.2.3-py3-none-any.whl"
+
+    def build_wheel(args: list[str], **kwargs: Any) -> bytes:
+        assert args == command
+        assert kwargs["cwd"] == solution_root_dir
+        dist_folder = solution_root_dir / "dist"
+        dist_folder.mkdir()
+        (dist_folder / wheel_name).touch()
+        return b""
+
+    with (
+        patch(
+            "ansys.saf.desktop.installer._package.manage_dependencies.subprocess.check_output",
+            side_effect=build_wheel,
+        ) as mock_build,
+        patch(
+            "ansys.saf.desktop.installer._package.manage_dependencies.modify_solution_wheel_metadata",
+        ) as mock_modify_metadata,
+    ):
+        manage_dependencies.build_solution_wheel(definitions_folder, solution_root_dir)
+
+    mock_build.assert_called_once()
+    assert (definitions_folder / wheel_name).is_file()
+    mock_modify_metadata.assert_called_once_with(definitions_folder, "ansys_solution", "1.2.3")
+
+
 @pytest.fixture
 def mock_installer_config(solution_root_dir: Path) -> InstallerConfig:
     return InstallerConfig(
@@ -640,8 +694,10 @@ def test_create_solution_metadata_with_synopsys_namespace(
             return_value="Custom NS Solution",
         ),
         patch(
-            "ansys.saf.desktop.installer._package.solution.get_solution_version",
-            return_value="0.1.dev0",
+            "ansys.saf.desktop.installer._package.solution.subprocess.run",
+            return_value=subprocess.CompletedProcess(
+                ["poetry", "version", "--no-interaction"], 0, "custom-ns-solution 0.1.dev0\n", "",
+            ),
         ),
     ):
         create_solution_metadata(solution_info, mock_installer_config)
@@ -914,7 +970,7 @@ def test_encryption_workflow_when_adding_wheels(
 ):
     """Verify that encrypted files are cleaned from solution root after encryption build."""
     # Mock the build_wheel and download functions to avoid wheel file processing
-    mocker.patch.object(manage_dependencies, "build_wheel_using_poetry")
+    mocker.patch.object(manage_dependencies, "build_solution_wheel")
     mocker.patch.object(manage_dependencies, "get_packages_with_wheel_url_deps", return_value=[])
     mocker.patch.object(manage_dependencies, "download_internal_dependencies")
     copy_files_spy = mocker.spy(manage_dependencies, "copy_files")
@@ -968,7 +1024,7 @@ def test_encryption_workflow_when_adding_wheels_executes_finally_on_error(
     """Verify finally restores and cleans files when wheel build fails after encryption."""
     mocker.patch.object(
         manage_dependencies,
-        "build_wheel_using_poetry",
+        "build_solution_wheel",
         side_effect=RuntimeError("mock wheel build failure"),
     )
     copy_files_spy = mocker.spy(manage_dependencies, "copy_files")

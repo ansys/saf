@@ -39,6 +39,7 @@ from ansys.saf.desktop.installer._common.utils import (
     modify_solution_wheel_metadata,
     simplify_wheel_dependency_constraints,
 )
+from ansys.saf.desktop.installer._package.backend_detection import SolutionBackend, detect_solution_backend
 from ansys.saf.desktop.installer._package.config import InstallerConfig
 from ansys.saf.desktop.installer._package.download_python import PythonManager
 from ansys.saf.desktop.installer._package.solution import create_requirements_txt
@@ -84,28 +85,36 @@ def _check_readme_file_from_pyproject(pyproject_location: Path) -> Path:
     return readme_file
 
 
-def build_wheel_using_poetry(definitions_folder: Path, solution_root_dir: Path) -> None:
-    """Build wheel using poetry.
+def build_solution_wheel(definitions_folder: Path, solution_root_dir: Path) -> None:
+    """Build the solution wheel with its configured backend.
 
     Args:
         definitions_folder (Path): Path to the definitions folder.
         solution_root_dir (Path): Path to the solution root directory.
     """
     solution_dist_dir = solution_root_dir / "dist"
-    logger.info(f"Building wheel using poetry in {solution_dist_dir}")
-    _check_readme_file_from_pyproject(solution_root_dir / "pyproject.toml")
+    backend_info = detect_solution_backend(solution_root_dir)
+    if backend_info.backend is SolutionBackend.POETRY:
+        _check_readme_file_from_pyproject(solution_root_dir / "pyproject.toml")
+        command = ["poetry", "build", "--no-interaction"]
+    else:
+        command = ["uv", "build"]
+
+    logger.info(f"Building wheel using {backend_info.backend} in {solution_dist_dir}")
     try:
         subprocess.check_output(
-            ["poetry", "build", "--no-interaction"],  # noqa: S607
+            command,
             cwd=solution_root_dir,
             text=True,
             stderr=subprocess.STDOUT,
         )
     except subprocess.CalledProcessError as e:
-        raise RuntimeError(f"Failed to build wheel using poetry: {e.output}") from e
+        raise RuntimeError(f"Failed to build wheel using {backend_info.backend}: {e.output}") from e
     project_wheel = next(solution_dist_dir.glob(WHL_CONSTANT), None)
     if not project_wheel or not project_wheel.is_file():
-        raise FileNotFoundError(f"Wheel file not found in {solution_dist_dir} after building with poetry.")
+        raise FileNotFoundError(
+            f"Wheel file not found in {solution_dist_dir} after building with {backend_info.backend}."
+        )
     logger.info(f"Wheel built successfully: {project_wheel.name}")
     logger.info(f"Copying {project_wheel.name} to {definitions_folder}")
     shutil.copy(project_wheel, definitions_folder / project_wheel.name)
@@ -523,7 +532,7 @@ def add_wheels(
                 # them back afterwards.
                 encrypt_solution(installer_config.encryption_file, solution_root_dir, installer_config.encryption_key)
                 logger.info("building solution wheel")
-                build_wheel_using_poetry(definitions_folder, solution_root_dir)
+                build_solution_wheel(definitions_folder, solution_root_dir)
             finally:
                 # Copy back the original files to solution_root_dir so future builds are not affected by the encryption
                 # of the current build.
@@ -534,7 +543,7 @@ def add_wheels(
                 delete_encrypted_files(solution_root_dir, installer_config.encryption_file)
     else:
         logger.info("building solution wheel")
-        build_wheel_using_poetry(definitions_folder, solution_root_dir)
+        build_solution_wheel(definitions_folder, solution_root_dir)
     packages_with_wheel_url_deps = get_packages_with_wheel_url_deps(
         installer_config.pyproject_location.with_name("poetry.lock"),
     )

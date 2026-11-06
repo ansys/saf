@@ -194,6 +194,7 @@ def test_build_solution_wheel_uses_detected_backend(
     pyproject: str,
     command: list[str],
 ) -> None:
+    """Select the backend's build command, copy its wheel, and request metadata adjustment."""
     solution_root_dir = tmp_path / "solution"
     solution_root_dir.mkdir()
     (solution_root_dir / "pyproject.toml").write_text(pyproject, encoding="utf-8")

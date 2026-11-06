@@ -112,7 +112,9 @@ def build_solution_wheel(definitions_folder: Path, solution_root_dir: Path) -> N
         raise RuntimeError(f"Failed to build wheel using {backend_info.backend}: {e.output}") from e
     project_wheel = next(solution_dist_dir.glob(WHL_CONSTANT), None)
     if not project_wheel or not project_wheel.is_file():
-        raise FileNotFoundError(f"Wheel file not found in {solution_dist_dir} after building with {backend_info.backend}.")
+        raise FileNotFoundError(
+            f"Wheel file not found in {solution_dist_dir} after building with {backend_info.backend}."
+        )
     logger.info(f"Wheel built successfully: {project_wheel.name}")
     logger.info(f"Copying {project_wheel.name} to {definitions_folder}")
     shutil.copy(project_wheel, definitions_folder / project_wheel.name)

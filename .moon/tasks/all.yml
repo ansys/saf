@@ -349,7 +349,7 @@ tasks:
       # Using [] to avoid to fails tests is no data are collected
       - ".coverag[e]"
       - "coverage.xm[l]"
-
+      - "junit.xm[l]"
 
   export:
     description: "Export the project"

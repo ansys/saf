@@ -64,8 +64,6 @@ extensions = [
     "sphinx.ext.graphviz",
     "sphinxcontrib.mermaid",
     "sphinx_gallery.gen_gallery",
-    "sphinx_togglebutton",
-    "sphinx_design",
 ]
 
 # ---------------------------------------------------------------------------

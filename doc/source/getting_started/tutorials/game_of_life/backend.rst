@@ -395,7 +395,6 @@ Read it like this:
 
 .. list-table::  Meaning of ``StepSpec`` arguments
    :header-rows: 1
-
    :widths: 25 75
 
    * - Argument

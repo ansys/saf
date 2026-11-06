@@ -71,6 +71,7 @@ def mock_step_proxy() -> Callable[[str], StepProxy]:
             step_name,
             MyStep,
             httpx2.Client(),
+            "my_project_id",
             Path.cwd(),
             GqlClientConnectionPool(url=f"{os.environ['GLOW_API_URL']}/graphql"),
         )

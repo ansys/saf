@@ -40,6 +40,7 @@ from ansys.saf.glow._core.gql import GqlClientConnectionPool
 from ansys.saf.glow._core.instance.decorator import InstancesUsedByMethod
 from ansys.saf.glow._core.instance.iinstance_system import IProductInstanceSystemFactory
 from ansys.saf.glow._core.instance.manager import ProductInstanceManager
+from ansys.saf.glow._core.live_files import LiveFileOwnership
 from ansys.saf.glow._core.livehandles import (
     WrapperBuilder,  # pyright: ignore[reportPrivateUsage]
 )
@@ -305,76 +306,80 @@ def transaction(enable_termination_event: bool = False, **kwargs: StepSpec):
             result = None
             solution_type = type(solution)
             args_for_step_func: dict[str, Any] = _input_params or {}
-
-            # load step params
-            transaction_step_models: list[TransactionStepModel] = []
-            for step_name, step_spec in kwargs.items():
-                if step_name == "self":
-                    step_type = step_self.__class__
-                    step_name_str = _get_step_name_from_self(step_type, solution_type)
-                else:
-                    step_type = solution_type.get_steps_fields()[step_name]
-                    step_name_str = step_name
-                step_url = f"{project_url}/steps/{python_identifier_to_url_part(step_name_str)}"
-                transaction_step_model = TransactionStepModel(
-                    step_url=step_url,
-                    step_spec=step_spec,
-                    step_method=step_method_wrapper,  # pyright: ignore[reportArgumentType]
-                    step_type=step_type,
-                    http_client=http_client,
-                    settings=settings,
-                    storage_scope=storage_scope,
-                    graphql_client=graphql_client,
-                    oidc_client=oidc_client,
-                    asset_manager=asset_manager,
-                    access_token=_access_token,
-                    data_repository=_data_repository,
-                    hps_blob_manager=_hps_blob_manager,
-                )
-                transaction_step_model.download()
-                args_for_step_func[step_name] = transaction_step_model
-                transaction_step_models.append(transaction_step_model)
-
-            # load solution configuration params
-            if _solution_configuration_param:
-                args_for_step_func[_solution_configuration_param.name] = _get_solution_configuration(
-                    http_client,
-                    project_url,
-                    _solution_configuration_param.type,
-                )
-
-            # Setting transaction thread-local variable for managing unshared products
-            transaction_local.settings = settings
             project_id = project_url.rstrip("/").split("/")[-1]
-            transaction_local.project_directory = settings.computed_project_files_directory / project_id
-            transaction_local.instance_system_factory = instance_system_factory
-            transaction_local.multiplexor_storage_factory = _multiplexor_storage_factory
+            project_files_dir = settings.computed_project_files_directory / project_id
 
-            # Setting transaction thread-local variable for HPS job submission API
-            transaction_local.access_token = _access_token
-            transaction_local.hps_blob_manager = _hps_blob_manager
-            transaction_local.step_type = step_self.__class__
+            with LiveFileOwnership() as live_file_ownership:
+                # load step params
+                transaction_step_models: list[TransactionStepModel] = []
+                for step_name, step_spec in kwargs.items():
+                    if step_name == "self":
+                        step_type = step_self.__class__
+                        step_name_str = _get_step_name_from_self(step_type, solution_type)
+                    else:
+                        step_type = solution_type.get_steps_fields()[step_name]
+                        step_name_str = step_name
+                    step_url = f"{project_url}/steps/{python_identifier_to_url_part(step_name_str)}"
+                    transaction_step_model = TransactionStepModel(
+                        step_url=step_url,
+                        step_spec=step_spec,
+                        step_method=step_method_wrapper,  # pyright: ignore[reportArgumentType]
+                        step_type=step_type,
+                        http_client=http_client,
+                        settings=settings,
+                        project_files_dir=project_files_dir,
+                        live_file_ownership=live_file_ownership,
+                        storage_scope=storage_scope,
+                        graphql_client=graphql_client,
+                        oidc_client=oidc_client,
+                        asset_manager=asset_manager,
+                        access_token=_access_token,
+                        data_repository=_data_repository,
+                        hps_blob_manager=_hps_blob_manager,
+                    )
+                    transaction_step_model.download()
+                    args_for_step_func[step_name] = transaction_step_model
+                    transaction_step_models.append(transaction_step_model)
 
-            if hasattr(step_func, "__wrapped__"):
-                # step_func is not the real step method, but a decorated function
-                # (@long_running, @create_instance or @instance)
-                # so let's pass the needed arguments
-                result = step_func(
-                    step_self,
-                    project_url,
-                    solution,
-                    name_of_step_containing_method,
-                    settings,
-                    http_client,
-                    **args_for_step_func,
-                )
-            else:
-                # step_func is the real step method: use only the arguments it needs
-                result = step_func(**args_for_step_func)
+                # load solution configuration params
+                if _solution_configuration_param:
+                    args_for_step_func[_solution_configuration_param.name] = _get_solution_configuration(
+                        http_client,
+                        project_url,
+                        _solution_configuration_param.type,
+                    )
 
-            for transaction_step_model in transaction_step_models:
-                transaction_step_model.upload()
-            return result
+                # Setting transaction thread-local variable for managing unshared products
+                transaction_local.settings = settings
+                transaction_local.project_directory = project_files_dir
+                transaction_local.instance_system_factory = instance_system_factory
+                transaction_local.multiplexor_storage_factory = _multiplexor_storage_factory
+
+                # Setting transaction thread-local variable for HPS job submission API
+                transaction_local.access_token = _access_token
+                transaction_local.hps_blob_manager = _hps_blob_manager
+                transaction_local.step_type = step_self.__class__
+
+                if hasattr(step_func, "__wrapped__"):
+                    # step_func is not the real step method, but a decorated function
+                    # (@long_running, @create_instance or @instance)
+                    # so let's pass the needed arguments
+                    result = step_func(
+                        step_self,
+                        project_url,
+                        solution,
+                        name_of_step_containing_method,
+                        settings,
+                        http_client,
+                        **args_for_step_func,
+                    )
+                else:
+                    # step_func is the real step method: use only the arguments it needs
+                    result = step_func(**args_for_step_func)
+
+                for transaction_step_model in transaction_step_models:
+                    transaction_step_model.upload()
+                return result
 
         step_method_wrapper._wrapped_transaction_method = step_func  # pyright: ignore[reportAttributeAccessIssue]
         step_method_wrapper._transaction = kwargs  # pyright: ignore[reportAttributeAccessIssue]

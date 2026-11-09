@@ -216,6 +216,8 @@ jobs:
       actions: read # Required for CodeQL analysis
       security-events: write # Required to upload results of CodeQL analysis
     uses: ./.github/workflows/codeql.yml
+    secrets:
+      PYANSYS_CI_BOT_TOKEN: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
 
   check-dependencies-licenses:
     name: "Check dependencies licenses"

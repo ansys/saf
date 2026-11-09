@@ -3,8 +3,12 @@ name: "CodeQL"
 on:
   workflow_dispatch:
   workflow_call:
+    secrets:
+      PYANSYS_CI_BOT_TOKEN:
+        description: "Token for the PyAnsys CI bot"
+        required: true
   schedule:
-    - cron: '0 22 * * 0'
+    - cron: '0 22 * * *'
 
 permissions: {}
 
@@ -58,3 +62,27 @@ jobs:
         uses: github/codeql-action/analyze@1fc58d04a4d4374f921bdac573c3811c240f9c26 # v4.39.2
         with:
           category: "/language:${{ matrix.language }}"
+
+  convert-alert-to-user-story:
+    name: Convert CodeQL alert to user story
+    needs: analyze
+    runs-on: 'ubuntu-latest'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Setup uv
+        uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
+        with:
+          python-version: 3.12
+
+      - name: Convert CodeQL alert to user story
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
+          DRY_RUN: ${{ case(github.event_name == 'schedule', '', '--dry-run') }}
+        run: uv run scripts/code_scan_alert_to_user_story.py --repository ${GITHUB_REPOSITORY}
+          --min-severity high ${DRY_RUN}

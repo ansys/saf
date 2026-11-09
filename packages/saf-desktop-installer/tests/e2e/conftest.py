@@ -72,6 +72,7 @@ SOLUTION_DISPLAY_NAME = {
     "my-solution-dash-old": "My Solution Dash Old",
     "my-solution-dash-projects-dashboard": "My Solution Dash Projects Dashboard",
     "my-solution-dash-projects-dashboard-only": "My Solution Dash Projects Dashboard",
+    "projects-dashboard-only": "My Solution Dash Projects Dashboard",
     "synopsys-custom-ns-solution": "Custom NS Solution",
 }
 SOLUTION_CLASS_NAME = {
@@ -80,6 +81,7 @@ SOLUTION_CLASS_NAME = {
     "my-solution-dash-old": "MySolutionDashOldSolution",
     "my-solution-dash-projects-dashboard": "MySolutionDashProjectsDashboardSolution",
     "my-solution-dash-projects-dashboard-only": "MySolutionDashProjectsDashboardSolution",
+    "projects-dashboard-only": "MySolutionDashProjectsDashboardSolution",
     "synopsys-custom-ns-solution": "MyCustomNSSolution",
 }
 SOLUTION_EXTRA_PACKAGES = {
@@ -89,6 +91,7 @@ SOLUTION_EXTRA_PACKAGES = {
     # projects-dashboard is a locked dependency of the mock; desktop-portal is injected so both are available.
     "my-solution-dash-projects-dashboard": {"ansys_saf_desktop_portal": "desktop", "ansys_saf_aspire": "desktop"},
     "my-solution-dash-projects-dashboard-only": {"ansys_saf_aspire": "desktop"},
+    "projects-dashboard-only": {"ansys_saf_aspire": "desktop"},
     "synopsys-custom-ns-solution": {"ansys_saf_desktop_portal": "desktop", "ansys_saf_aspire": "desktop"},
 }
 logger = logging.getLogger(__name__)

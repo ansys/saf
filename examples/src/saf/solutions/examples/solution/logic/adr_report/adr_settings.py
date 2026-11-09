@@ -100,7 +100,8 @@ def check_adr_availability() -> AdrAvailability:
         return AdrAvailability(
             is_available=False,
             message=f"The ADR installation directory '{configured_installation_directory}' does not exist. "
-            "Check the ADR_INSTALLATION_DIRECTORY environment variable.",
+            "Check the ADR_INSTALLATION_DIRECTORY environment variable in the .env file of the solution and "
+            "set it to point to the correct ADR installation directory.",
         )
 
     settings = _AdrSettings()

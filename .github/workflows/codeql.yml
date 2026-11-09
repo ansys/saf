@@ -3,7 +3,7 @@ name: "CodeQL"
 on:
   workflow_dispatch:
   workflow_call:
-    secrets: 
+    secrets:
       PYANSYS_CI_BOT_TOKEN:
         description: "Token for the PyAnsys CI bot"
         required: true

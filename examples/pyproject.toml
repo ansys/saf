@@ -81,7 +81,6 @@ pytest-pycodestyle = "^2.5.0"
 pytest-pythonpath = "^0.7"
 pytest-xdist = "^3.0.2"
 pytest-mock = "^3.12"
-tox = "^4.4.0"
 selenium = "^4.0"
 
 [tool.poetry.group.build]

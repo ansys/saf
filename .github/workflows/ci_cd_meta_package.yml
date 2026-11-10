@@ -222,6 +222,35 @@ jobs:
           echo "Latest pyansys commit on main branch: ${COMMIT}"
           echo "pyansys-commit-of-main=${COMMIT}" >> "$GITHUB_OUTPUT"
 
+  generate-sbom:
+    name: "Generate SBOM"
+    needs:
+      - build-meta-package
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
+        with:
+          python-version: ${{ vars.PYTHON_VERSION }}
+
+      - name: Generate SBOM
+        working-directory: ${{ github.workspace }}/packages/saf-sdk
+        run: |
+          uv export --all-extras --format cyclonedx1.5 --output-file dist/ansys-saf-sdk-sbom.json --preview-features sbom-export
+
+      - name: Upload sbom
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: sbom
+          path: packages/saf-sdk/dist/ansys-saf-sdk-sbom.json
+          if-no-files-found: error
+          overwrite: true
+
   check-wheel-can-be-poetry-installed:
     name: "Check ansys-saf-sdk can be poetry installed"
     needs:
@@ -586,10 +615,16 @@ jobs:
           name: ${{ env.LIBRARY_NAME }}-artifacts
           path: ${{ env.LIBRARY_NAME }}-artifacts
 
+      - name: Download sbom artifact
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: sbom
+          path: sbom
+
       - name: Create release
         id: create-release
         run: |
-          gh release create ${RELEASE_NAME} "${LIBRARY_NAME}-artifacts"/*.whl \
+          gh release create ${RELEASE_NAME} "${LIBRARY_NAME}-artifacts"/*.whl sbom/*.json \
             --title ${RELEASE_NAME} \
             --notes-file release-notes/release_notes.md \
             --latest \

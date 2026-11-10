@@ -389,6 +389,7 @@ tasks:
     command: 'uv'
     args:
       - "export"
+      - "--all-extras"
       - "--package"
       - "$projectAlias"
       - "--format"

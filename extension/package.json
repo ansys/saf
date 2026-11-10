@@ -274,7 +274,7 @@
     "c8": "^11.0.0",
     "chai": "^6.2.2",
     "cpy-cli": "^7.0.0",
-    "esbuild": "^0.27.4",
+    "esbuild": "^0.28.2",
     "eslint": "^10.1.0",
     "eslint-plugin-security": "^4.0.0",
     "istanbul-lib-coverage": "^3.2.2",
@@ -291,7 +291,7 @@
   },
   "dependencies": {
     "dotenv": "^17.2.3",
-    "toml": "^4.2.0",
+    "toml": "^5.0.1",
     "winreg-ts": "^1.0.0"
   },
   "overrides": {

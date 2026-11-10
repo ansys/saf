@@ -132,7 +132,9 @@ jobs:
 
   release-information:
     name: Release Information
-    needs: [validate-release-branch, certification]
+    needs: 
+      - validate-release-branch
+      - certification
     outputs:
       release-name: ${{ steps.retrieve-release-info.outputs.release-name }}
       version-to-bump-in-triggering-branch: ${{ steps.retrieve-release-info.outputs.version-to-bump-in-triggering-branch
@@ -168,7 +170,6 @@ jobs:
     needs:
       - release-information
       - certification
-    if: ${{ always() && needs.certification.result == 'success' }}
     runs-on: ubuntu-latest
     steps:
       - name: Generate release notes
@@ -188,6 +189,35 @@ jobs:
           release-notes: release-notes
           alerts-token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
 
+  generate-sbom:
+    name: "Generate SBOM"
+    permissions:
+      contents: read
+    runs-on: ubuntu-latest
+    env:
+      PACKAGE: ${{ inputs.library }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Setup Moon Toolchain
+        uses: moonrepo/setup-toolchain@261c62cb5b0f580c7be7c8cd0f023a2e96756095 # v0.6.4
+
+      - name: generate sbom with Moon
+        shell: bash
+        run: moon run ${PACKAGE}:sbom
+
+      - name: Publish SBOM
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: ${{ inputs.library }}-sbom
+          path: dist/packages/${{ inputs.library }}-sbom.json
+          overwrite: true
+          if-no-files-found: error
+
   prepare-release:
     permissions:
       contents: write # To create the release page in GitHub
@@ -195,8 +225,8 @@ jobs:
     needs:
       - release-information
       - generate-release-notes
+      - generate-sbom
       - certification
-    if: ${{ always() && needs.certification.result == 'success' }}
     runs-on: ubuntu-latest
     env:
       BRANCH_NAME: ${{ inputs.dev-release && 'main' || needs.release-information.outputs.release-branch-name
@@ -237,15 +267,22 @@ jobs:
           name: release-notes
           path: release-notes
 
+      - name: Download SBOM artifact
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: ${{ inputs.library }}-sbom
+          path: sbom
+
       - name: Create release
         id: create-release
         run: |
-          gh release create ${RELEASE_NAME} --title ${RELEASE_NAME} --notes-file release-notes/release_notes.md ${RELEASE_LABEL} --target ${BRANCH_NAME}
+          gh release create ${RELEASE_NAME} --title ${RELEASE_NAME} --notes-file release-notes/release_notes.md ${RELEASE_LABEL} --target ${BRANCH_NAME} ${SBOM_PATH}
         env:
           GH_TOKEN: ${{ github.token }}
           RELEASE_NAME: ${{ needs.release-information.outputs.release-name }}-${{
             inputs.library }}
           RELEASE_LABEL: ${{ inputs.dev-release && '--prerelease' || '--latest' }}
+          SBOM_PATH: sbom/${{ inputs.library }}-sbom.json
 
   doc:
     name: "Documentation"

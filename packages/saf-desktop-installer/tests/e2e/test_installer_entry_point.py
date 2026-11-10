@@ -1495,7 +1495,7 @@ class TestInstallerProjectsDashboard:
     ):
         """Without desktop-portal, the dashboard alone still makes the installer add --portal."""
         solution_root_dir = solution_root_dir.rename(
-            solution_root_dir.parent / "my-solution-dash-projects-dashboard-only",
+            solution_root_dir.parent / "projects-dashboard-only",
         )
         solution_venv_python_exec, glow_api_port, glow_ui_port, _ = setup_solution(solution_root_dir)
         build_solution([], solution_venv_python_exec, solution_root_dir)

@@ -121,6 +121,4 @@
   - any:
       - changed-files:
           - any-glob-to-any-file: ['extension/**']
-          - any-glob-to-any-file: ['.github/workflows/_saf_solutions_manager.yml']
-          - any-glob-to-any-file: ['.github/workflows/ci_cd_saf_solutions_manager_release.yml']
-          - any-glob-to-any-file: ['.github/workflows/saf_solutions_manager_certification.yml']
+          - any-glob-to-any-file: ['.github/workflows/ci_cd_extension.yml']

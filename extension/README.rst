@@ -103,13 +103,14 @@ The same tasks are available through Moon from the repository root:
 
 .. code:: bash
 
-    moon run extension:typecheck extension:lint extension:test-unit
+    moon run extension:typecheck extension:lint extension:test
     moon run extension:test-integration
     moon run extension:package-vsix
+    moon run extension:vulnerability-check extension:check-license extension:sbom
 
-The Moon project disables the workspace Node and Python toolchains (the workspace Node toolchain is rooted in
-``packages/saf-projects-dashboard``) and runs npm with the Node on your ``PATH``. CI calls npm directly in
-``.github/workflows/_saf_solutions_manager.yml``.
+Moon provisions Node 22 for this project (see ``toolchains.node.version`` in ``moon.yml``), overriding the Node 20
+used by the workspace for ``packages/saf-projects-dashboard``. Run the Moon tasks one invocation at a time: ``test``
+and ``package-vsix`` both rebuild ``out/``. CI runs the same tasks in ``.github/workflows/ci_cd_extension.yml``.
 
 Package the VSIX
 ----------------
@@ -141,11 +142,12 @@ packages. To change it:
 
     npm version <new-version> --no-git-tag-version
 
-Releases use ``.github/workflows/ci_cd_saf_solutions_manager_release.yml`` (manual dispatch from ``main`` or
-``release/**``). It checks that the requested version matches ``package.json``, runs the certification workflow
-(``saf_solutions_manager_certification.yml``: checks, ``npm audit``, license allowlist, SBOM), and attaches the
-VSIX to a GitHub Release tagged ``saf-solutions-manager-v<version>``. Publishing to the VS Code Marketplace is
-not automated.
+Releases use ``.github/workflows/ci_cd_extension.yml`` (manual dispatch with ``release`` enabled, from ``main`` or
+``release/**``). It reads the version from ``package.json``, runs all checks (type-check, lint, unit and
+integration tests, ``npm audit``, license allowlist, SBOM, VSIX packaging) and attaches the VSIX and the SBOM to a
+GitHub Release tagged ``v<version>-saf-solutions-manager``. The ``dev-release`` input marks it as a pre-release.
+Successful runs on ``main`` and ``release/**`` also move the
+``certified-saf-solutions-manager`` tag. Publishing to the VS Code Marketplace is not automated.
 
 Contributing
 ------------

@@ -519,8 +519,10 @@ jobs:
     needs: ci-cd-config
     if: ${{ contains(needs.ci-cd-config.outputs.pr-changes, 'extension') }}
     permissions:
-      contents: read
-    uses: ./.github/workflows/_saf_solutions_manager.yml
+      contents: write
+    uses: ./.github/workflows/ci_cd_extension.yml
+    secrets:
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
   meta-package:
     name: "SAF SDK Meta Package"

@@ -1,0 +1,322 @@
+name: CI-CD for Solutions Manager extension
+run-name: >-
+  Extension: ${{ inputs.release && 'Release' || (github.event_name == 'schedule' &&
+  'Certification' || 'Dry Run') }} by ${{ github.actor }} #magic___^_^___line
+# Node-only workflow for the VS Code extension in extension/. The extension is not a SAF Python package, so it is
+# kept out of the package matrix, certification.yml and ci_cd_release.yml. All checks run through Moon.
+
+on:
+  workflow_dispatch:
+    inputs:
+      release:
+        description: "Release the extension as a GitHub Release (version read from
+          extension/package.json)"
+        required: false
+        type: boolean
+        default: false
+      dev-release:
+        description: "Development release mode (true = prerelease flow, false = stable
+          release flow)"
+        required: false
+        type: boolean
+        default: false
+  workflow_call:
+    secrets:
+      CODECOV_TOKEN:
+        description: "Token for Codecov"
+        required: true
+  schedule:
+    - cron: '0 21 * * 1-5'
+
+# Apply the principle of least privilege to state at job level the right
+# permissions. More information about workflow permissions in the page
+# https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#permissions
+permissions: {}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}-extension
+  cancel-in-progress: ${{ !inputs.release }}
+
+jobs:
+  version:
+    name: "Resolve version"
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read # Read the extension manifest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      release-name: ${{ steps.version.outputs.release-name }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          sparse-checkout: extension/package.json
+
+      - name: Read version
+        id: version
+        shell: bash
+        run: |
+          version="$(jq -r '.version' extension/package.json)"
+          echo "version=${version}" >> "$GITHUB_OUTPUT"
+          echo "release-name=v${version}-saf-solutions-manager" >> "$GITHUB_OUTPUT"
+
+      - name: Validate release request
+        if: ${{ inputs.release }}
+        shell: bash
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+          RELEASE_NAME: ${{ steps.version.outputs.release-name }}
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          if ! [[ "${VERSION}" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?(\+[0-9A-Za-z.-]+)?$ ]]; then
+            echo "'${VERSION}' is not a valid semantic version."
+            exit 1
+          fi
+
+          case "${GITHUB_REF}" in
+            refs/heads/main|refs/heads/release/*) ;;
+            *)
+              echo "Releases must run from main or release/**, not ${GITHUB_REF}."
+              exit 1
+              ;;
+          esac
+
+          existing="$(gh api "repos/${REPO}/git/ref/tags/${RELEASE_NAME}" --jq '.object.sha' 2>/dev/null || true)"
+          if [ -n "${existing}" ] && [ "${existing}" != "${GITHUB_SHA}" ]; then
+            echo "Tag ${RELEASE_NAME} already points at ${existing}, not ${GITHUB_SHA}."
+            exit 1
+          fi
+
+  static-checks:
+    name: "Type-check and lint"
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read # Read the source code of the extension
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Setup Moon Toolchain
+        uses: moonrepo/setup-toolchain@261c62cb5b0f580c7be7c8cd0f023a2e96756095 # v0.6.4
+
+      - name: Type-check and lint
+        shell: bash
+        run: moon run extension:typecheck extension:lint
+
+  unit-tests:
+    name: "Unit tests"
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read # Read the source code of the extension
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Setup Moon Toolchain
+        uses: moonrepo/setup-toolchain@261c62cb5b0f580c7be7c8cd0f023a2e96756095 # v0.6.4
+
+      - name: Run unit tests with coverage
+        shell: bash
+        run: moon run extension:test
+
+      - name: Upload coverage reports to Codecov
+        if: ${{ !cancelled() }}
+        uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7.1.1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          flags: extension
+          files: extension/coverage/lcov.info
+          report_type: coverage
+
+  integration-tests:
+    name: "Integration tests"
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read # Read the source code of the extension
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Setup Moon Toolchain
+        uses: moonrepo/setup-toolchain@261c62cb5b0f580c7be7c8cd0f023a2e96756095 # v0.6.4
+
+      # The tests install the pinned, published ansys-saf-cli from PyPI into a managed venv.
+      - name: Setup Python
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: ${{ vars.PYTHON_VERSION }}
+
+      # Integration test helpers create solution venvs with `uv venv`.
+      - name: Install uv
+        uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
+        with:
+          enable-cache: false
+
+      - name: Run integration tests with coverage
+        shell: bash
+        run: xvfb-run -a moon run extension:test-integration
+
+      - name: Upload coverage reports to Codecov
+        if: ${{ !cancelled() }}
+        uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7.1.1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          flags: extension-integration
+          files: extension/coverage/integration/lcov.info
+          report_type: coverage
+
+  supply-chain:
+    name: "Dependency audit, licenses and SBOM"
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read # Read the dependencies of the extension
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Setup Moon Toolchain
+        uses: moonrepo/setup-toolchain@261c62cb5b0f580c7be7c8cd0f023a2e96756095 # v0.6.4
+
+      - name: Audit, check licenses and export SBOM
+        shell: bash
+        run: moon run extension:vulnerability-check extension:check-license extension:sbom
+
+      - name: Upload SBOM
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: saf-solutions-manager-sbom
+          path: dist/saf-solutions-manager-sbom.json
+          overwrite: true
+          if-no-files-found: error
+
+  package:
+    name: "Package VSIX"
+    needs: version
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read # Read the source code of the extension
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Setup Moon Toolchain
+        uses: moonrepo/setup-toolchain@261c62cb5b0f580c7be7c8cd0f023a2e96756095 # v0.6.4
+
+      - name: Package VSIX
+        shell: bash
+        run: moon run extension:package-vsix
+
+      - name: Check the packaged README is the user guide
+        shell: bash
+        working-directory: extension
+        run: |
+          set -euo pipefail
+          vsix="$(ls dist/*.vsix)"
+          unzip -p "${vsix}" extension/readme.md > "${RUNNER_TEMP}/packaged-readme.md"
+          expected="$(head -n 1 extension-instructions.md)"
+          actual="$(head -n 1 "${RUNNER_TEMP}/packaged-readme.md")"
+          if [ "${actual}" != "${expected}" ]; then
+            echo "Packaged README starts with '${actual}', expected '${expected}'."
+            exit 1
+          fi
+          git diff --exit-code
+
+      - name: Upload VSIX
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: ${{ needs.version.outputs.release-name }}
+          path: extension/dist/*.vsix
+          overwrite: true
+          if-no-files-found: error
+
+  tagging-commit:
+    name: "Tagging commit"
+    permissions:
+      contents: write # Required for creating/pushing tags and commits
+    needs:
+      - version
+      - static-checks
+      - unit-tests
+      - integration-tests
+      - supply-chain
+      - package
+    if: ${{ github.ref_name == 'main' || startsWith(github.ref_name, 'release/') }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: tagging commit
+        uses: ansys/saf-devops/apply-tag-on-commit@f5e7fa3b9b829e75ac638eba435462c1dc5d127e # v1.4.0
+        with:
+          tag: certified-saf-solutions-manager
+
+  release:
+    name: "Create GitHub Release"
+    needs:
+      - version
+      - static-checks
+      - unit-tests
+      - integration-tests
+      - supply-chain
+      - package
+    if: ${{ inputs.release }}
+    runs-on: ubuntu-latest
+    environment: saf-release
+    permissions:
+      contents: write # Create the release and upload the VSIX and SBOM assets
+    env:
+      VERSION: ${{ needs.version.outputs.version }}
+      RELEASE_NAME: ${{ needs.version.outputs.release-name }}
+      DEV_RELEASE: ${{ inputs.dev-release }}
+      GH_TOKEN: ${{ github.token }}
+      REPO: ${{ github.repository }}
+    steps:
+      - name: Download VSIX
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: ${{ needs.version.outputs.release-name }}
+          path: ${{ runner.temp }}/vsix
+
+      - name: Download SBOM
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: saf-solutions-manager-sbom
+          path: ${{ runner.temp }}/sbom
+
+      - name: Create release and upload assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          vsix="${RUNNER_TEMP}/vsix/solutions-manager-${VERSION}.vsix"
+          sbom="${RUNNER_TEMP}/sbom/saf-solutions-manager-sbom.json"
+          test -f "${vsix}"
+          test -f "${sbom}"
+
+          if ! gh release view "${RELEASE_NAME}" --repo "${REPO}" >/dev/null 2>&1; then
+            args=(--repo "${REPO}" --target "${GITHUB_SHA}" --title "${RELEASE_NAME}" --generate-notes)
+            if [ "${DEV_RELEASE}" = "true" ]; then
+              args+=(--prerelease)
+            else
+              args+=(--latest)
+            fi
+            gh release create "${RELEASE_NAME}" "${args[@]}"
+          fi
+
+          # --clobber makes retries idempotent.
+          gh release upload "${RELEASE_NAME}" "${vsix}" "${sbom}" --repo "${REPO}" --clobber

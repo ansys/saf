@@ -13,11 +13,10 @@ workspace:
   inheritedTasks:
     include: []
 
-# The workspace Node toolchain is rooted at packages/saf-projects-dashboard; run npm
-# from this directory with the system Node instead (see .nvmrc).
+# Project-level pin: only this project uses Node 22 (vsce needs >= 22); other projects keep the workspace Node.
 toolchains:
-  node: false
-  npm: false
+  node:
+    version: "22.23.4"
   unstable_python: false
   unstable_uv: false
 
@@ -30,11 +29,12 @@ tasks:
     inputs:
       - "package.json"
       - "package-lock.json"
-    options:
-      cache: false
-      runFromWorkspaceRoot: false
+    outputs:
+      - "node_modules"
     toolchains:
-      - "system"
+      - "node"
+    options:
+      runFromWorkspaceRoot: false
 
   typecheck:
     description: "Type-check sources and tests"
@@ -44,11 +44,16 @@ tasks:
       - "typecheck"
     deps:
       - "~:npm-install"
-    options:
-      cache: false
-      runFromWorkspaceRoot: false
+    inputs:
+      - "src/**/*"
+      - "test/**/*"
+      - "package.json"
+      - "tsconfig.json"
+      - "tsconfig.test.json"
     toolchains:
-      - "system"
+      - "node"
+    options:
+      runFromWorkspaceRoot: false
 
   lint:
     description: "Run ESLint without auto-fix"
@@ -58,13 +63,17 @@ tasks:
       - "lint:ci"
     deps:
       - "~:npm-install"
-    options:
-      cache: false
-      runFromWorkspaceRoot: false
+    inputs:
+      - "src/**/*"
+      - "eslint.config.mjs"
+      - "package.json"
+      - "tsconfig.json"
     toolchains:
-      - "system"
+      - "node"
+    options:
+      runFromWorkspaceRoot: false
 
-  test-unit:
+  test:
     description: "Run unit tests with coverage"
     command: "npm"
     args:
@@ -72,12 +81,23 @@ tasks:
       - "test:unit:coverage"
     deps:
       - "~:npm-install"
-    options:
-      cache: false
-      runFromWorkspaceRoot: false
+    inputs:
+      - "src/**/*"
+      - "test/**/*"
+      - "scripts/**/*"
+      - "package.json"
+      - "tsconfig.json"
+      - "tsconfig.test.json"
+      - ".mocharc.json"
+      - ".nycrc.json"
+    outputs:
+      - "coverage/lcov.info"
     toolchains:
-      - "system"
+      - "node"
+    options:
+      runFromWorkspaceRoot: false
 
+  # Not cached: downloads VS Code and the pinned ansys-saf-cli, and depends on the machine.
   test-integration:
     description: "Run VS Code integration tests (needs a display; use xvfb-run on
       Linux)"
@@ -87,11 +107,12 @@ tasks:
       - "test:integration:coverage"
     deps:
       - "~:npm-install"
+    toolchains:
+      - "node"
     options:
       cache: false
+      outputStyle: "stream"
       runFromWorkspaceRoot: false
-    toolchains:
-      - "system"
 
   package-vsix:
     description: "Compile and package the extension into dist/*.vsix"
@@ -101,8 +122,68 @@ tasks:
       - "package:vsix"
     deps:
       - "~:npm-install"
+    inputs:
+      - "src/**/*"
+      - "scripts/**/*"
+      - "package.json"
+      - "tsconfig.json"
+      - "extension-instructions.md"
+      - "saf-logo.png"
+      - "LICENSE"
+      - "CHANGELOG.md"
+      - ".vscodeignore"
+    outputs:
+      - "dist/*.vsix"
+    toolchains:
+      - "node"
+    options:
+      runFromWorkspaceRoot: false
+
+  vulnerability-check:
+    description: "Audit production dependencies for known vulnerabilities"
+    command: "npm"
+    args:
+      - "audit"
+      - "--omit=dev"
+      - "--audit-level=high"
+    deps:
+      - "~:npm-install"
+    toolchains:
+      - "node"
     options:
       cache: false
       runFromWorkspaceRoot: false
+
+  check-license:
+    description: "Check production dependency licenses against the allowlist"
+    command: "node"
+    args:
+      - "scripts/check-licenses.mjs"
+    deps:
+      - "~:npm-install"
+    inputs:
+      - "package.json"
+      - "package-lock.json"
+      - "scripts/check-licenses.mjs"
     toolchains:
-      - "system"
+      - "node"
+    options:
+      runFromWorkspaceRoot: false
+
+  sbom:
+    description: "Export the CycloneDX SBOM of the production dependencies"
+    command: "node"
+    args:
+      - "scripts/generate-sbom.mjs"
+    deps:
+      - "~:npm-install"
+    inputs:
+      - "package.json"
+      - "package-lock.json"
+      - "scripts/generate-sbom.mjs"
+    outputs:
+      - "/dist/saf-solutions-manager-sbom.json"
+    toolchains:
+      - "node"
+    options:
+      runFromWorkspaceRoot: false

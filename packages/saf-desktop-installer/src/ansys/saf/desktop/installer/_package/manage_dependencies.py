@@ -19,6 +19,8 @@ A Python script to download dependencies from a pyproject.toml.
 Platform      : OS independent
 """
 
+from contextlib import suppress
+import hashlib
 import json
 import logging
 import os
@@ -31,7 +33,10 @@ import sys
 import tempfile
 import tomllib
 from typing import Any
+from urllib.parse import quote, unquote, urlsplit, urlunsplit
 
+from packaging.requirements import InvalidRequirement, Requirement
+from packaging.utils import canonicalize_name, parse_sdist_filename, parse_wheel_filename
 from packaging.version import Version
 import toml
 
@@ -42,7 +47,7 @@ from ansys.saf.desktop.installer._common.utils import (
 from ansys.saf.desktop.installer._package.backend_detection import SolutionBackend, detect_solution_backend
 from ansys.saf.desktop.installer._package.config import InstallerConfig
 from ansys.saf.desktop.installer._package.download_python import PythonManager
-from ansys.saf.desktop.installer._package.solution import create_requirements_txt
+from ansys.saf.desktop.installer._package.solution import create_poetry_requirements_txt
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -63,7 +68,7 @@ LOCK_PATH_DEPENDENCY_PATTERN = re.compile(r'(\bpath\s*=\s*)("(?:[^"\\\r\n]|\\.)*
 ########################################################################################################################
 
 
-def _check_readme_file_from_pyproject(pyproject_location: Path) -> Path:
+def _check_poetry_readme_file_from_pyproject(pyproject_location: Path) -> Path:
     """Get the readme file dynamically from the pyproject.toml file.
 
     Args:
@@ -95,7 +100,7 @@ def build_solution_wheel(definitions_folder: Path, solution_root_dir: Path) -> N
     solution_dist_dir = solution_root_dir / "dist"
     backend_info = detect_solution_backend(solution_root_dir)
     if backend_info.backend is SolutionBackend.POETRY:
-        _check_readme_file_from_pyproject(solution_root_dir / "pyproject.toml")
+        _check_poetry_readme_file_from_pyproject(solution_root_dir / "pyproject.toml")
         command = ["poetry", "build", "--no-interaction"]
     else:
         command = ["uv", "build"]
@@ -129,7 +134,11 @@ def obfuscate_solution(definitions_folder: Path, venv_python_exec: Path) -> None
         definitions_folder (Path): Path to the definitions folder
     """
     logger.info(f"Obfuscating solution and internal dependencies in {definitions_folder}")
-    for wheel in definitions_folder.glob(WHL_CONSTANT):
+    wheels = list(definitions_folder.glob(WHL_CONSTANT))
+    wheelhouse = definitions_folder / "wheelhouse"
+    if wheelhouse.is_dir():
+        wheels.extend(wheelhouse.glob(WHL_CONSTANT))
+    for wheel in wheels:
         logger.info(f"Obfuscating {wheel}")
         try:
             subprocess.check_output(
@@ -161,24 +170,25 @@ def encrypt_solution(encryption_file: Path, root: Path, encryption_key: str | No
     c(encryption_file, key=encryption_key, root=root)
 
 
-def download_module(
-    module_name: str,
-    module_version: str,
+def download_pypi_package_with_pip(
+    package_name: str,
+    package_version: str,
     index_url: str,
-    module_directory: Path,
+    package_directory: Path,
     venv_python_exec: Path,
     certificate: str | None = None,
 ):
-    """Download a module from the ANSYS internal PyPI server.
+    """Download an exact package version from the configured package index using pip.
 
     Args:
-        module_name (str): Name of the module to download.
-        module_version (str): Version of the module to download.
-        index_url (str): URL of the ANSYS internal PyPI server.
-        module_directory (Path): Directory to download
-        certificate (str): path to the certificate authority file.
+        package_name (str): Name of the package to download.
+        package_version (str): Version of the package to download.
+        index_url (str): URL of the package index.
+        package_directory (Path): Directory where the downloaded package is saved.
+        venv_python_exec (Path): Python executable to run pip from.
+        certificate (str | None): Path to the certificate authority file.
     """
-    logger.info(f"Downloading {module_name}==={module_version} to {module_directory}.")
+    logger.info(f"Downloading {package_name}==={package_version} to {package_directory}.")
     command = [
         venv_python_exec,
         "-m",
@@ -189,8 +199,8 @@ def download_module(
         "--index-url",
         index_url,
         "--dest",
-        module_directory,
-        f"{module_name}==={module_version}",  # Using === to force exact version match
+        package_directory,
+        f"{package_name}==={package_version}",  # Using === to force exact version match
     ]
     if certificate:
         command.extend(["--cert", certificate])
@@ -200,8 +210,8 @@ def download_module(
     )
 
 
-def download_tool(tool: str, definitions_folder: Path, venv_python_exec: Path) -> None:
-    logger.info(f"downloading {tool}")
+def download_build_tool_with_pip(tool: str, definitions_folder: Path, venv_python_exec: Path) -> None:
+    logger.info(f"Downloading {tool} build-tool wheels with pip.")
     tools_directory = definitions_folder / "tools"
     tool_directory = tools_directory / tool
     tool_directory.mkdir(parents=True, exist_ok=True)
@@ -230,36 +240,46 @@ def copy_module(module_location: Path, module_directory: Path):
     shutil.copy(module_location, module_directory)
 
 
-def download_git_source(
+def _github_url_with_token(url: str, github_token: str | None, *, required: bool = True) -> str:
+    if not github_token:
+        if required:
+            raise ValueError(
+                "Must provide a GitHub token to download dependencies from GitHub."
+                " Set the ANSYS_GITHUB_PAT environment variable or"
+                " provide the GitHub token as a command line argument --github-token.",
+            )
+        return url
+    if url.startswith("https://"):
+        return url.replace("https://", f"https://{quote(github_token, safe='')}@", 1)
+    return url
+
+
+def _download_poetry_git_dependency(
     package: dict[str, Any],
-    module_directory: Path,
+    package_directory: Path,
     venv_python_exec: Path,
     github_token: str | None = None,
 ) -> None:
     """Download a git source package."""
-    if not github_token:
-        raise ValueError(
-            "Must provide a GitHub token to download dependencies from GitHub."
-            " Set the ANSYS_GITHUB_PAT environment variable or"
-            " provide the GitHub token as a command line argument --github-token.",
-        )
-
-    index_url = package["source"]["url"]
+    index_url = _github_url_with_token(package["source"]["url"], github_token)
     source = package["source"]["reference"]
 
-    index_url = index_url.replace("https://", f"https://{github_token}@")
     index_url = f"git+{index_url}@{source}"
 
-    download_module(
+    download_pypi_package_with_pip(
         package["name"],
         package["version"],
         index_url,
-        module_directory,
+        package_directory,
         venv_python_exec,
     )
 
 
-def download_private_package(package: dict[str, Any], module_directory: Path, venv_python_exec: Path) -> None:
+def _download_poetry_private_dependency(
+    package: dict[str, Any],
+    package_directory: Path,
+    venv_python_exec: Path,
+) -> None:
     """Download a private package."""
     index_url = package["source"]["url"]
     source = package["source"]["reference"]
@@ -274,17 +294,17 @@ def download_private_package(package: dict[str, Any], module_directory: Path, ve
     prefix = f"{username}:{password}" if username else f"{password}"
     index_url = index_url.replace("https://", f"https://{prefix}@")
 
-    download_module(
+    download_pypi_package_with_pip(
         package["name"],
         package["version"],
         index_url,
-        module_directory,
+        package_directory,
         venv_python_exec,
         certificate=certificate,
     )
 
 
-def handle_file_source(package: dict[str, Any], poetry_lock_file: Path, module_directory: Path) -> None:
+def _copy_poetry_file_dependency(package: dict[str, Any], poetry_lock_file: Path, package_directory: Path) -> None:
     """Handle downloading a package from a file source."""
     package_location = Path(package["source"]["url"])
     if not package_location.exists():
@@ -294,10 +314,10 @@ def handle_file_source(package: dict[str, Any], poetry_lock_file: Path, module_d
             f"Package location {package_location} does not exist."
             " Make sure the package location in the lock file is correct and the file exists.",
         )
-    copy_module(package_location, module_directory)
+    copy_module(package_location, package_directory)
 
 
-def has_dependencies_with_wheel_url(package: dict[str, Any]) -> bool:
+def _has_poetry_wheel_url_dependencies(package: dict[str, Any]) -> bool:
     """Check if the package has dependencies with wheel URL."""
     dependencies = package.get("dependencies", {})
     for _, dep_info in dependencies.items():
@@ -312,7 +332,7 @@ def has_dependencies_with_wheel_url(package: dict[str, Any]) -> bool:
     return False
 
 
-def get_packages_with_wheel_url_deps(poetry_lock_file: Path) -> list[tuple[str, str]]:
+def _get_poetry_packages_with_wheel_url_dependencies(poetry_lock_file: Path) -> list[tuple[str, str]]:
     """Get packages with wheel URL dependencies from a poetry.lock file.
 
     Args:
@@ -325,13 +345,13 @@ def get_packages_with_wheel_url_deps(poetry_lock_file: Path) -> list[tuple[str, 
     lock_file_content = toml.load(poetry_lock_file)
     packages_with_wheel_url_deps: list[tuple[str, str]] = []
     for package in lock_file_content["package"]:
-        if has_dependencies_with_wheel_url(package) and package_matches_platform(package):
+        if _has_poetry_wheel_url_dependencies(package) and _poetry_package_matches_platform(package):
             packages_with_wheel_url_deps.append((package["name"], package["version"]))
 
     return packages_with_wheel_url_deps
 
 
-def download_dependencies(
+def _stage_poetry_locked_dependencies(
     poetry_lock_file: Path,
     module_directory: Path,
     venv_python_exec: Path,
@@ -361,16 +381,16 @@ def download_dependencies(
             )
         ):
             continue
-        if package["source"]["type"] == "file" and package_matches_platform(package):
-            handle_file_source(package, poetry_lock_file, module_directory)
+        if package["source"]["type"] == "file" and _poetry_package_matches_platform(package):
+            _copy_poetry_file_dependency(package, poetry_lock_file, module_directory)
         # TODO: This may have issues with public .git dependencies
         elif package["source"]["url"].endswith(".git"):
-            download_git_source(package, module_directory, venv_python_exec, github_token)
+            _download_poetry_git_dependency(package, module_directory, venv_python_exec, github_token)
         elif "reference" in package["source"]:
-            download_private_package(package, module_directory, venv_python_exec)
+            _download_poetry_private_dependency(package, module_directory, venv_python_exec)
 
 
-def simplify_wheel_url_dependencies(
+def _simplify_poetry_wheel_url_dependencies(
     packages_with_wheel_url_deps: list[tuple[str, str]],
     module_directory: Path,
 ) -> None:
@@ -395,7 +415,7 @@ def simplify_wheel_url_dependencies(
         simplify_wheel_dependency_constraints(wheel_path)
 
 
-def download_internal_dependencies(
+def _stage_poetry_solution_dependencies(
     solution_root_dir: Path,
     solution_module_name: str,
     solution_display_name: str,
@@ -403,18 +423,18 @@ def download_internal_dependencies(
     venv_python_exec: Path,
     github_token: str | None = None,
 ) -> None:
-    """Download internal dependencies from Solutions PyPI repository.
+    """Stage local, Git, and private dependencies from the solution's Poetry lockfile.
 
     Args:
         solution_display_name (str): Display name of the solution.
         pyproject_location (Path): Path to the pyproject.toml file.
         github_token (str): Personal Access Token for downloading dependencies from GitHub.
     """
-    logger.info(f"Downloading internal dependencies from Solutions PyPI for {solution_display_name} solution")
+    logger.info(f"Staging Poetry lockfile dependencies for {solution_display_name} solution")
     definitions_folder: Path = solution_root_dir / "dist" / "solution" / "definitions" / solution_module_name
     definitions_folder.mkdir(parents=True, exist_ok=True)
 
-    download_dependencies(
+    _stage_poetry_locked_dependencies(
         pyproject_location.with_name("poetry.lock"),
         definitions_folder,
         venv_python_exec,
@@ -422,7 +442,675 @@ def download_internal_dependencies(
     )
 
 
-def download_external_dependencies(
+def export_uv_requirements(solution_root_dir: Path, python_exec: Path, requirements_path: Path) -> Path:
+    """Export locked UV dependencies for installation, retaining source paths for later staging."""
+    project_file = solution_root_dir / "pyproject.toml"
+    lock_file = solution_root_dir / "uv.lock"
+    if not lock_file.is_file():
+        raise FileNotFoundError(f"UV lockfile not found: {lock_file}")
+
+    with project_file.open("rb") as project:
+        configuration = tomllib.load(project)
+    groups = configuration.get("dependency-groups", {})
+    if not isinstance(groups, dict):
+        raise ValueError(f"'dependency-groups' must be a table in '{project_file}'.")
+
+    command = [
+        "uv",
+        "export",
+        "--locked",
+        "--no-default-groups",
+        "--no-emit-project",
+        "--python",
+        str(python_exec),
+    ]
+    for group in ("desktop", "ui", "doc"):
+        if group in groups:
+            command.extend(["--group", group])
+
+    try:
+        result = subprocess.run(command, cwd=solution_root_dir, capture_output=True, check=True, text=True)
+    except subprocess.CalledProcessError as e:
+        raise RuntimeError(f"UV dependency export failed: {e.stderr}") from e
+    requirements_path.write_text(result.stdout, encoding="utf-8")
+    return requirements_path
+
+
+def _selected_uv_lock_packages(solution_root_dir: Path, requirements_path: Path) -> list[dict[str, Any]]:
+    """Select native UV lock entries represented in UV's target-specific requirements export."""
+    lock_file = solution_root_dir / "uv.lock"
+    with lock_file.open("rb") as source_file:
+        lock = tomllib.load(source_file)
+    if lock.get("version") != 1:
+        raise ValueError(f"Unsupported UV lockfile version in {lock_file}: {lock.get('version')!r}")
+    packages = lock.get("package", [])
+    if not isinstance(packages, list) or not all(
+        isinstance(package, dict) and isinstance(package.get("name"), str) for package in packages
+    ):
+        raise ValueError(f"Invalid package list in {lock_file}.")
+
+    selected = _selected_uv_requirements(requirements_path)
+    return [
+        package
+        for package in packages
+        if (versions := selected.get(canonicalize_name(package["name"]))) is not None
+        and (None in versions or package.get("version") in versions)
+    ]
+
+
+def _selected_uv_requirements(requirements_path: Path) -> dict[str, set[str | None]]:
+    """Parse names and exact versions from UV's requirements export."""
+    selected: dict[str, set[str | None]] = {}
+    for line in requirements_path.read_text(encoding="utf-8").splitlines():
+        requirement_line = line.strip().removesuffix("\\").rstrip()
+        if not requirement_line or requirement_line.startswith(("#", "-")):
+            continue
+        try:
+            requirement = Requirement(requirement_line)
+        except InvalidRequirement:
+            file_package = _uv_file_requirement_package(requirement_line)
+            if file_package is None:
+                continue
+            name, version = file_package
+            selected.setdefault(canonicalize_name(name), set()).add(version)
+            continue
+
+        exact_versions = {
+            specifier.version
+            for specifier in requirement.specifier
+            if specifier.operator in {"==", "==="} and "*" not in specifier.version
+        }
+        versions = exact_versions or {None}
+        selected.setdefault(canonicalize_name(requirement.name), set()).update(versions)
+    return selected
+
+
+def _uv_file_requirement_package(requirement: str) -> tuple[str, str] | None:
+    parsed_url = urlsplit(requirement)
+    if parsed_url.scheme != "file":
+        return None
+    filename = Path(unquote(parsed_url.path)).name
+    try:
+        name, version, _, _ = parse_wheel_filename(filename)
+    except ValueError:
+        try:
+            name, version = parse_sdist_filename(filename)
+        except ValueError:
+            return None
+    return name, str(version)
+
+
+def stage_uv_selected_local_dependencies(
+    solution_root_dir: Path,
+    lock_packages: list[dict[str, Any]],
+    wheelhouse: Path,
+    python_exec: Path,
+    github_token: str | None = None,
+) -> None:
+    """Build wheels for local and Git UV dependencies, letting pip evaluate target markers."""
+    requirements = [
+        requirement
+        for package in lock_packages
+        if (requirement := _uv_staged_requirement(package, solution_root_dir, github_token)) is not None
+    ]
+
+    if not requirements:
+        return
+
+    wheelhouse.mkdir(parents=True, exist_ok=True)
+    with tempfile.TemporaryDirectory() as temporary_directory:
+        requirements_path = Path(temporary_directory) / "local-requirements.txt"
+        requirements_path.write_text("\n".join(requirements), encoding="utf-8")
+        command = [
+            str(python_exec),
+            "-m",
+            "pip",
+            "wheel",
+            "--disable-pip-version-check",
+            "--no-deps",
+            "--no-build-isolation",
+            "--wheel-dir",
+            str(wheelhouse),
+            "-r",
+            str(requirements_path),
+        ]
+        try:
+            subprocess.run(command, cwd=solution_root_dir, check=True, capture_output=True, text=True)
+        except subprocess.CalledProcessError as e:
+            message = e.stderr or e.stdout or str(e)
+            for secret in (github_token, quote(github_token, safe="") if github_token else None):
+                if secret:
+                    message = message.replace(secret, "***")
+            raise RuntimeError(f"Failed to stage local or Git UV dependencies: {message}") from e
+
+
+def _uv_staged_requirement(
+    package: Any,
+    solution_root_dir: Path,
+    github_token: str | None,
+) -> str | None:
+    for requirement in (
+        _uv_local_requirement(package, solution_root_dir),
+        _uv_archive_requirement(package),
+        _uv_git_requirement(package, github_token),
+    ):
+        if requirement is not None:
+            return requirement
+    return None
+
+
+def _uv_archive_requirement(package: Any) -> str | None:
+    if not isinstance(package, dict):
+        raise ValueError("Invalid package entry in uv.lock.")
+    source = package.get("source")
+    if not isinstance(source, dict) or not isinstance(source.get("url"), str):
+        return None
+    name = package.get("name")
+    if not isinstance(name, str) or not name:
+        raise ValueError("Invalid URL package in uv.lock.")
+    return _with_uv_marker(f"{name} @ {source['url']}", package)
+
+
+def _uv_git_requirement(package: Any, github_token: str | None) -> str | None:
+    if not isinstance(package, dict):
+        raise ValueError("Invalid package entry in uv.lock.")
+    source = package.get("source")
+    if not isinstance(source, dict) or "git" not in source:
+        return None
+    name = package.get("name")
+    git_source = source["git"]
+    if not isinstance(name, str) or not isinstance(git_source, str):
+        raise ValueError("Invalid Git dependency in uv.lock.")
+    parsed_source = urlsplit(git_source)
+    revision, *fragments = parsed_source.fragment.split("&")
+    if not revision:
+        raise ValueError("Missing locked Git revision in uv.lock.")
+    url = urlunsplit((parsed_source.scheme, parsed_source.netloc, parsed_source.path, parsed_source.query, ""))
+    url = _github_url_with_token(url, github_token, required=False)
+    parsed_url = urlsplit(url)
+    if parsed_url.scheme not in {"https", "file"}:
+        raise ValueError(f"Unsupported Git dependency URL in uv.lock: {url!r}")
+    git_url = urlunsplit(
+        (
+            parsed_url.scheme,
+            parsed_url.netloc,
+            f"{parsed_url.path}@{revision}",
+            parsed_url.query,
+            "",
+        ),
+    )
+    git_url = f"git+{git_url}"
+    for fragment in fragments:
+        if fragment.startswith("subdirectory="):
+            git_url += f"#{fragment}"
+            break
+    return _with_uv_marker(f"{name} @ {git_url}", package)
+
+
+def _with_uv_marker(requirement: str, package: dict[str, Any]) -> str:
+    markers = package.get("resolution-markers")
+    if markers is None:
+        return requirement
+    if not isinstance(markers, list) or not all(isinstance(marker, str) for marker in markers):
+        raise ValueError("Invalid resolution markers in uv.lock.")
+    if not markers:
+        return requirement
+    marker = " or ".join(f"({value})" for value in markers)
+    return f"{requirement} ; {marker}"
+
+
+def create_uv_installation_project(
+    solution_root_dir: Path,
+    definitions_folder: Path,
+    python_exec: Path,
+    github_token: str | None = None,
+    offline_package: bool = False,
+) -> None:
+    """Create a portable UV project and stage the locked local dependencies."""
+    project_file = solution_root_dir / "pyproject.toml"
+    lock_file = solution_root_dir / "uv.lock"
+    groups = ["desktop", "ui", "doc"]
+    with project_file.open("rb") as source_file:
+        project = tomllib.load(source_file)
+    dependency_groups = project.get("dependency-groups", {})
+    if not isinstance(dependency_groups, dict):
+        raise ValueError(f"'dependency-groups' must be a table in '{project_file}'.")
+
+    selected_groups = [group for group in groups if group in dependency_groups]
+    project["dependency-groups"] = {group: dependency_groups[group] for group in selected_groups}
+    definitions_folder.mkdir(parents=True, exist_ok=True)
+    wheelhouse = definitions_folder / "wheelhouse"
+
+    with tempfile.TemporaryDirectory() as temporary_directory:
+        requirements_path = Path(temporary_directory) / "requirements.txt"
+        export_uv_requirements(solution_root_dir, python_exec, requirements_path)
+        lock_packages = _selected_uv_lock_packages(solution_root_dir, requirements_path)
+        stage_uv_selected_local_dependencies(solution_root_dir, lock_packages, wheelhouse, python_exec, github_token)
+        _stage_uv_private_dependencies(solution_root_dir, lock_packages, wheelhouse, python_exec)
+        if offline_package:
+            stage_uv_external_dependencies(solution_root_dir, definitions_folder, python_exec, lock_packages)
+        _rewrite_uv_local_sources(
+            project,
+            solution_root_dir,
+            lock_packages,
+            wheelhouse,
+            include_public_registry_packages=offline_package,
+        )
+
+    project_path = definitions_folder / "pyproject.toml"
+    project_path.write_text(toml.dumps(project), encoding="utf-8")
+    shutil.copy2(lock_file, definitions_folder / "uv.lock")
+    (definitions_folder / "uv-groups.txt").write_text("\n".join(selected_groups), encoding="utf-8")
+
+    uv_executable = shutil.which("uv")
+    if uv_executable is None:
+        raise FileNotFoundError("The UV executable could not be found to bundle with the solution.")
+
+    try:
+        subprocess.run(
+            [uv_executable, "lock", "--offline", "--python", str(python_exec)],
+            cwd=definitions_folder,
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+    except subprocess.CalledProcessError as e:
+        raise RuntimeError(f"Failed to create portable UV lockfile: {e.stderr}") from e
+    _export_uv_pip_requirements(uv_executable, definitions_folder, python_exec, selected_groups)
+
+    tools_directory = definitions_folder / "tools"
+    tools_directory.mkdir(parents=True, exist_ok=True)
+    executable_name = "uv.exe" if platform.system() == "Windows" else "uv"
+    shutil.copy2(uv_executable, tools_directory / executable_name)
+
+
+def _export_uv_pip_requirements(
+    uv_executable: str,
+    definitions_folder: Path,
+    python_exec: Path,
+    groups: list[str],
+) -> None:
+    command = [
+        uv_executable,
+        "export",
+        "--locked",
+        "--no-default-groups",
+        "--no-emit-project",
+        "--no-hashes",
+        "--python",
+        str(python_exec),
+    ]
+    for group in groups:
+        command.extend(["--group", group])
+    try:
+        result = subprocess.run(
+            command,
+            cwd=definitions_folder,
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+    except subprocess.CalledProcessError as e:
+        raise RuntimeError(f"Failed to export portable UV requirements: {e.stderr}") from e
+    (definitions_folder / "uv-requirements.txt").write_text(result.stdout, encoding="utf-8")
+
+
+def refresh_uv_project_lock(definitions_folder: Path, python_exec: Path) -> None:
+    """Recalculate local wheel hashes after obfuscation."""
+    executable_name = "uv.exe" if platform.system() == "Windows" else "uv"
+    uv_executable = definitions_folder / "tools" / executable_name
+    try:
+        subprocess.run(
+            [str(uv_executable), "lock", "--offline", "--python", str(python_exec)],
+            cwd=definitions_folder,
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+    except subprocess.CalledProcessError as e:
+        raise RuntimeError(f"Failed to refresh portable UV lockfile: {e.stderr}") from e
+
+
+def _rewrite_uv_local_sources(
+    project: dict[str, Any],
+    solution_root_dir: Path,
+    lock_packages: list[dict[str, Any]],
+    wheelhouse: Path,
+    include_public_registry_packages: bool = False,
+) -> None:
+    """Point each locked local dependency at its staged wheel."""
+    wheels_by_package: dict[str, list[tuple[str, Path]]] = {}
+    for wheel in wheelhouse.glob(WHL_CONSTANT):
+        name, version, _, _ = parse_wheel_filename(wheel.name)
+        wheels_by_package.setdefault(canonicalize_name(name), []).append((str(version), wheel))
+    local_sources: dict[str, list[dict[str, str]]] = {}
+    for package in lock_packages:
+        if _is_uv_staged_package(package, solution_root_dir) or (
+            include_public_registry_packages and _is_public_uv_package(package)
+        ):
+            name, source = _uv_wheel_source(package, wheels_by_package)
+            if source is not None:
+                local_sources.setdefault(name, []).append(source)
+
+    if not local_sources:
+        return
+    tool = project.setdefault("tool", {})
+    uv = tool.setdefault("uv", {})
+    sources = uv.setdefault("sources", {})
+    if not isinstance(sources, dict):
+        raise ValueError("The [tool.uv.sources] section must be a table.")
+    sources.update({name: values[0] if len(values) == 1 else values for name, values in local_sources.items()})
+
+
+def _is_uv_staged_package(package: dict[str, Any], solution_root_dir: Path) -> bool:
+    source = package.get("source")
+    if not isinstance(source, dict):
+        raise ValueError("Invalid package source in uv.lock.")
+    if (
+        _uv_local_source(package, solution_root_dir) is not None
+        or isinstance(source.get("git"), str)
+        or isinstance(source.get("url"), str)
+    ):
+        return True
+    index_url = source.get("registry")
+    return isinstance(index_url, str) and not _is_public_uv_index(index_url)
+
+
+def _uv_wheel_source(
+    package: dict[str, Any],
+    wheels_by_package: dict[str, list[tuple[str, Path]]],
+) -> tuple[str, dict[str, str] | None]:
+    name = package.get("name")
+    version = package.get("version")
+    if not isinstance(name, str):
+        raise ValueError("Invalid staged package entry in uv.lock.")
+    candidates = wheels_by_package.get(canonicalize_name(name), [])
+    matching_wheels = (
+        [wheel for wheel_version, wheel in candidates if wheel_version == version]
+        if isinstance(version, str)
+        else [wheel for _, wheel in candidates]
+    )
+    if not matching_wheels:
+        return name, None
+    if len(matching_wheels) > 1:
+        raise ValueError(f"Multiple staged wheels match package '{name}' in uv.lock.")
+    source = {"path": f"wheelhouse/{matching_wheels[0].name}"}
+    markers = package.get("resolution-markers")
+    if markers is not None:
+        if not isinstance(markers, list) or not all(isinstance(marker, str) for marker in markers):
+            raise ValueError("Invalid resolution markers in uv.lock.")
+        if markers:
+            source["marker"] = " or ".join(f"({value})" for value in markers)
+    return name, source
+
+
+def _stage_uv_private_dependencies(
+    solution_root_dir: Path,
+    lock_packages: list[dict[str, Any]],
+    wheelhouse: Path,
+    python_exec: Path,
+) -> None:
+    """Build wheels for packages locked to non-PyPI registries."""
+    private_packages = _get_private_uv_packages(lock_packages)
+    if not private_packages:
+        return
+
+    with (solution_root_dir / "pyproject.toml").open("rb") as project_file:
+        project = tomllib.load(project_file)
+    indexes = project.get("tool", {}).get("uv", {}).get("index", [])
+    if not isinstance(indexes, list):
+        indexes = []
+
+    for index_url, index_packages in private_packages.items():
+        requirements = [_private_uv_requirement(package) for package in index_packages]
+        _build_private_uv_wheels(solution_root_dir, wheelhouse, python_exec, index_url, indexes, requirements)
+
+
+def _get_private_uv_packages(packages: list[dict[str, Any]]) -> dict[str, list[dict[str, Any]]]:
+    private_packages: dict[str, list[dict[str, Any]]] = {}
+    for package in packages:
+        source = package.get("source")
+        if not isinstance(source, dict):
+            raise ValueError("Invalid package source in uv.lock.")
+        index_url = source.get("registry")
+        if isinstance(index_url, str) and not _is_public_uv_index(index_url):
+            private_packages.setdefault(index_url, []).append(package)
+    return private_packages
+
+
+def _private_uv_requirement(package: dict[str, Any]) -> str:
+    name, version = package.get("name"), package.get("version")
+    if not isinstance(name, str) or not isinstance(version, str):
+        raise ValueError("Invalid private package entry in uv.lock.")
+    return _with_uv_marker(f"{name}=={version}", package)
+
+
+def _build_private_uv_wheels(
+    solution_root_dir: Path,
+    wheelhouse: Path,
+    python_exec: Path,
+    index_url: str,
+    indexes: list[Any],
+    requirements: list[str],
+) -> None:
+    with tempfile.TemporaryDirectory() as temporary_directory:
+        requirements_path = Path(temporary_directory) / "private-requirements.txt"
+        requirements_path.write_text("\n".join(requirements), encoding="utf-8")
+        credentials_url, secrets = _uv_index_credentials(index_url, indexes)
+        environment = os.environ.copy()
+        environment["PIP_INDEX_URL"] = credentials_url
+        command = [
+            str(python_exec),
+            "-m",
+            "pip",
+            "wheel",
+            "--disable-pip-version-check",
+            "--no-deps",
+            "--extra-index-url",
+            "https://pypi.org/simple",
+            "--wheel-dir",
+            str(wheelhouse),
+            "-r",
+            str(requirements_path),
+        ]
+        try:
+            subprocess.run(
+                command,
+                cwd=solution_root_dir,
+                env=environment,
+                check=True,
+                capture_output=True,
+                text=True,
+            )
+        except subprocess.CalledProcessError as e:
+            message = (e.stderr or e.stdout or str(e)).replace(credentials_url, index_url)
+            for secret in secrets:
+                message = message.replace(secret, "***")
+            raise RuntimeError(f"Failed to stage private UV dependencies: {message}") from e
+
+
+def _is_public_uv_index(index_url: str) -> bool:
+    return urlsplit(index_url).hostname == "pypi.org"
+
+
+def _is_public_uv_package(package: dict[str, Any]) -> bool:
+    source = package.get("source")
+    index_url = source.get("registry") if isinstance(source, dict) else None
+    return isinstance(index_url, str) and _is_public_uv_index(index_url)
+
+
+def _uv_index_credentials(index_url: str, indexes: list[Any]) -> tuple[str, list[str]]:
+    for index in indexes:
+        if not isinstance(index, dict) or index.get("url") != index_url or not isinstance(index.get("name"), str):
+            continue
+        index_name = re.sub(r"[^A-Za-z0-9]", "_", index["name"]).upper()
+        username = os.environ.get(f"UV_INDEX_{index_name}_USERNAME", "")
+        password = os.environ.get(f"UV_INDEX_{index_name}_PASSWORD", "")
+        if not username and not password:
+            return index_url, []
+        parsed_url = urlsplit(index_url)
+        userinfo = quote(username, safe="")
+        if password:
+            userinfo += f":{quote(password, safe='')}"
+        credentialed_url = urlunsplit(
+            (
+                parsed_url.scheme,
+                f"{userinfo}@{parsed_url.netloc}",
+                parsed_url.path,
+                parsed_url.query,
+                parsed_url.fragment,
+            ),
+        )
+        return credentialed_url, [secret for secret in (username, password) if secret]
+    return index_url, []
+
+
+def stage_uv_external_dependencies(
+    solution_root_dir: Path,
+    definitions_folder: Path,
+    python_exec: Path,
+    lock_packages: list[dict[str, Any]],
+) -> None:
+    """Build wheels for locked non-local UV dependencies for an offline installer."""
+    wheelhouse = definitions_folder / "wheelhouse"
+    wheelhouse.mkdir(parents=True, exist_ok=True)
+    with tempfile.TemporaryDirectory() as temporary_directory:
+        requirements_path = Path(temporary_directory) / "requirements.txt"
+        command = [
+            "uv",
+            "export",
+            "--locked",
+            "--no-default-groups",
+            "--no-emit-project",
+            "--no-emit-local",
+            "--no-hashes",
+            "--python",
+            str(python_exec),
+        ]
+        with (solution_root_dir / "pyproject.toml").open("rb") as project_file:
+            project = tomllib.load(project_file)
+        groups = project.get("dependency-groups", {})
+        if not isinstance(groups, dict):
+            raise ValueError("The 'dependency-groups' section must be a table.")
+        for group in ("desktop", "ui", "doc"):
+            if group in groups:
+                command.extend(["--group", group])
+        try:
+            result = subprocess.run(
+                command,
+                cwd=solution_root_dir,
+                check=True,
+                capture_output=True,
+                text=True,
+            )
+        except subprocess.CalledProcessError as e:
+            raise RuntimeError(f"UV dependency export failed: {e.stderr}") from e
+        requirements_path.write_text(
+            _exclude_uv_staged_requirements(result.stdout, lock_packages, solution_root_dir),
+            encoding="utf-8",
+        )
+        try:
+            subprocess.run(
+                [
+                    str(python_exec),
+                    "-m",
+                    "pip",
+                    "wheel",
+                    "--disable-pip-version-check",
+                    "--no-deps",
+                    "--index-url",
+                    "https://pypi.org/simple",
+                    "--find-links",
+                    str(wheelhouse),
+                    "--wheel-dir",
+                    str(wheelhouse),
+                    "-r",
+                    str(requirements_path),
+                ],
+                cwd=solution_root_dir,
+                check=True,
+                capture_output=True,
+                text=True,
+            )
+        except subprocess.CalledProcessError as e:
+            raise RuntimeError(f"Failed to stage external UV dependencies: {e.stderr}") from e
+
+
+def _exclude_uv_staged_requirements(
+    requirements: str,
+    lock_packages: list[dict[str, Any]],
+    solution_root_dir: Path,
+) -> str:
+    """Omit requirements already built into wheelhouse wheels."""
+    staged_names = {
+        canonicalize_name(package["name"])
+        for package in lock_packages
+        if isinstance(package.get("name"), str) and _is_uv_staged_package(package, solution_root_dir)
+    }
+
+    filtered_lines: list[str] = []
+    skip_continuation = False
+    for line in requirements.splitlines():
+        if line.startswith((" ", "\t")):
+            if not skip_continuation:
+                filtered_lines.append(line)
+            continue
+        skip_continuation = False
+        if line and not line.startswith(("#", "-")):
+            with suppress(InvalidRequirement):
+                skip_continuation = canonicalize_name(Requirement(line).name) in staged_names
+        if not skip_continuation:
+            filtered_lines.append(line)
+    return "\n".join(filtered_lines)
+
+
+def _uv_local_requirement(package: Any, solution_root_dir: Path) -> str | None:
+    if not isinstance(package, dict):
+        raise ValueError("Invalid package entry in uv.lock.")
+    source = _uv_local_source(package, solution_root_dir)
+    if source is None:
+        return None
+    package_name = package.get("name")
+    if not isinstance(package_name, str) or not package_name:
+        raise ValueError("Invalid package name in uv.lock.")
+    return _with_uv_marker(f"{package_name} @ {source.as_uri()}", package)
+
+
+def _uv_local_source(package: dict[str, Any], solution_root_dir: Path) -> Path | None:
+    source_info = package.get("source")
+    if not isinstance(source_info, dict):
+        raise ValueError("Invalid package source in uv.lock.")
+    path = source_info.get("path")
+    if path is None:
+        return None
+    if not isinstance(path, str):
+        raise ValueError("Invalid local path in uv.lock.")
+    source = Path(path)
+    if not source.is_absolute():
+        source = solution_root_dir / source
+    wheels = package.get("wheels", [])
+    expected_hash = next(
+        (
+            entry["hash"].removeprefix("sha256:")
+            for entry in wheels
+            if isinstance(entry, dict)
+            and entry.get("filename") == source.name
+            and isinstance(entry.get("hash"), str)
+            and entry["hash"].startswith("sha256:")
+        ),
+        None,
+    )
+    if source.suffix == ".whl" and expected_hash is None:
+        raise ValueError(f"Missing SHA-256 hash for local archive {source}.")
+    if source.is_file():
+        with source.open("rb") as archive_file:
+            digest = hashlib.file_digest(archive_file, "sha256").hexdigest()
+        if expected_hash is not None and digest != expected_hash:
+            raise ValueError(f"SHA-256 hash mismatch for local archive {source}.")
+    return source.resolve()
+
+
+def _download_poetry_external_dependencies(
     definitions_folder: Path,
     pyproject_location: Path,
     venv_python_exec: Path,
@@ -434,9 +1122,9 @@ def download_external_dependencies(
         definitions_folder (Path): Path to the definitions folder.
         pyproject_location (Path): Path to the pyproject.toml file.
     """
-    download_tool("pip", definitions_folder, venv_python_exec)
-    download_tool("poetry", definitions_folder, venv_python_exec)
-    temporary_requirements = create_requirements_txt(pyproject_location, definitions_folder)
+    download_build_tool_with_pip("pip", definitions_folder, venv_python_exec)
+    download_build_tool_with_pip("poetry", definitions_folder, venv_python_exec)
+    temporary_requirements = create_poetry_requirements_txt(pyproject_location, definitions_folder)
     logger.info(f"Downloading solution's external dependencies with python version {python_version}")
     try:
         subprocess.check_output(
@@ -458,7 +1146,7 @@ def download_external_dependencies(
     temporary_requirements.unlink()
 
 
-def package_matches_platform(package: dict[str, Any]) -> bool:
+def _poetry_package_matches_platform(package: dict[str, Any]) -> bool:
     """Check if the package matches the current platform."""
     if "source" not in package:
         return True
@@ -509,7 +1197,7 @@ def copy_files(source_dir: Path, target_dir: Path, files_file_path: Path):
         shutil.copy(source_file, target_file)
 
 
-def add_wheels(
+def build_and_stage_solution_packages(
     definitions_folder: Path,
     venv_python_exec: Path,
     solution_root_dir: Path,
@@ -517,8 +1205,9 @@ def add_wheels(
     solution_display_name: str,
     installer_config: InstallerConfig,
     python_version: str,
+    backend: SolutionBackend | None = None,
 ) -> None:
-    logger.info("Adding dependencies to solution folder and optionally obfuscating them.")
+    logger.info("Building and staging solution packages, optionally obfuscating them.")
     if installer_config.encrypt:
         with tempfile.TemporaryDirectory() as tmpdirname:
             tmp_dir_path = Path(tmpdirname)
@@ -544,31 +1233,47 @@ def add_wheels(
     else:
         logger.info("building solution wheel")
         build_solution_wheel(definitions_folder, solution_root_dir)
-    packages_with_wheel_url_deps = get_packages_with_wheel_url_deps(
-        installer_config.pyproject_location.with_name("poetry.lock"),
-    )
-    download_internal_dependencies(
-        solution_root_dir,
-        solution_module_name,
-        solution_display_name,
-        installer_config.pyproject_location,
-        venv_python_exec,
-        github_token=installer_config.github_token,
-    )
+    backend = backend or detect_solution_backend(solution_root_dir).backend
+    poetry_packages_with_wheel_url_dependencies: list[tuple[str, str]] = []
+    if backend is SolutionBackend.POETRY:
+        poetry_packages_with_wheel_url_dependencies = _get_poetry_packages_with_wheel_url_dependencies(
+            installer_config.pyproject_location.with_name("poetry.lock"),
+        )
+        _stage_poetry_solution_dependencies(
+            solution_root_dir,
+            solution_module_name,
+            solution_display_name,
+            installer_config.pyproject_location,
+            venv_python_exec,
+            github_token=installer_config.github_token,
+        )
+    else:
+        create_uv_installation_project(
+            solution_root_dir,
+            definitions_folder,
+            venv_python_exec,
+            installer_config.github_token,
+            installer_config.offline_package,
+        )
     if installer_config.obfuscate:
         obfuscate_solution(definitions_folder, venv_python_exec)
-    if installer_config.offline_package:
-        download_external_dependencies(
+        if backend is SolutionBackend.UV:
+            refresh_uv_project_lock(definitions_folder, venv_python_exec)
+    if installer_config.offline_package and backend is SolutionBackend.POETRY:
+        _download_poetry_external_dependencies(
             definitions_folder,
             installer_config.pyproject_location,
             venv_python_exec,
             python_version,
         )
-        convert_tar_gz_files_to_wheels(definitions_folder, venv_python_exec)
-        simplify_wheel_url_dependencies(packages_with_wheel_url_deps, definitions_folder)
+        _convert_poetry_archives_to_wheels(definitions_folder, venv_python_exec)
+        _simplify_poetry_wheel_url_dependencies(
+            poetry_packages_with_wheel_url_dependencies,
+            definitions_folder,
+        )
 
 
-def convert_tar_gz_files_to_wheels(definitions_folder: Path, venv_python_exec: Path) -> None:
+def _convert_poetry_archives_to_wheels(definitions_folder: Path, venv_python_exec: Path) -> None:
     # pip download gets .tar.gz files instead of wheels for some packages. Since a subset of these
     # are not installable offline so we convert them to wheels here. Use a temporary directory here
     # because the wheel command downloads wheels as a side effect
@@ -608,7 +1313,7 @@ def convert_tar_gz_files_to_wheels(definitions_folder: Path, venv_python_exec: P
     shutil.rmtree(temp_dir)
 
 
-def merge_group_dependencies(
+def _merge_poetry_group_dependencies(
     groups: list[str],
     poetry: dict[str, Any],
     dependencies: dict[str, Any],
@@ -628,7 +1333,7 @@ def merge_group_dependencies(
                     extras.extend(extra for extra in info["extras"] if extra not in extras)  # type: ignore[reportUnknownVariableType]
 
 
-def add_poetry_project(
+def create_poetry_installation_project(
     venv_python_exec: Path,
     pyproject_location: Path,
     definitions_folder: Path,
@@ -647,7 +1352,7 @@ def add_poetry_project(
         package = wheel.stem.split("-")[0].replace("_", "-")
         dependencies[package] = {"path": f"./{wheel.name}"}
 
-    merge_group_dependencies(["desktop", "ui", "doc"], poetry, dependencies)
+    _merge_poetry_group_dependencies(["desktop", "ui", "doc"], poetry, dependencies)
 
     # In already existing solutions, ansys-saf-desktop-installer might still be included among the "desktop"
     # dependencies. If that is the case, we exclude it from the pyproject along with pyinstaller, which is
@@ -679,10 +1384,10 @@ def add_poetry_project(
         )
     except subprocess.CalledProcessError as e:
         raise RuntimeError(f"Failed to lock poetry project: {e.stderr}") from e
-    relativize_lock_path_dependencies(definitions_folder)
+    relativize_poetry_lock_path_dependencies(definitions_folder)
 
 
-def relativize_lock_path_dependencies(definitions_folder: Path) -> None:
+def relativize_poetry_lock_path_dependencies(definitions_folder: Path) -> None:
     """Make absolute path dependencies in ``poetry.lock`` relative to the lock folder.
 
     Poetry writes path dependencies read from wheel METADATA verbatim, which leaks build-machine paths.
@@ -709,14 +1414,19 @@ def relativize_lock_path_dependencies(definitions_folder: Path) -> None:
     poetry_lock_path.write_text(LOCK_PATH_DEPENDENCY_PATTERN.sub(_relativize, content), encoding="utf-8")
 
 
-def add_tools_requirements(solution_root_dir: Path, solution_module_name: str, venv_python_exec: Path) -> None:
+def write_backend_tool_requirements(
+    solution_root_dir: Path,
+    solution_module_name: str,
+    venv_python_exec: Path,
+    backend: SolutionBackend,
+) -> None:
     definitions_folder = get_definitions_folder(solution_root_dir, solution_module_name)
     project_file_path = solution_root_dir / "pyproject.toml"
     project = toml.load(project_file_path)
 
     tools_directory = definitions_folder / "tools"
     tools_directory.mkdir(parents=True, exist_ok=True)
-    logger.info(f"Adding requirements files for pip and poetry to {tools_directory}")
+    logger.info(f"Adding tool requirements files to {tools_directory}")
 
     pip_version_information = subprocess.check_output(
         [venv_python_exec, "-m", "pip", "--disable-pip-version-check", "--version"],
@@ -724,27 +1434,30 @@ def add_tools_requirements(solution_root_dir: Path, solution_module_name: str, v
     )
     pip_version = pip_version_information.split()[1]
 
-    if "build-system-requirements" not in project:
-        raise KeyError(f"build-system-requirements key not found in {project_file_path}.")
+    poetry_reqs = None
+    if backend is SolutionBackend.POETRY:
+        if "build-system-requirements" not in project:
+            raise KeyError(f"build-system-requirements key not found in {project_file_path}.")
 
-    build_system_requirements = project["build-system-requirements"]
+        build_system_requirements = project["build-system-requirements"]
 
-    if "build-system-version" not in build_system_requirements:
-        raise KeyError(
-            f"build-system-version key not found in build-system-requirements section in {project_file_path}.",
-        )
+        if "build-system-version" not in build_system_requirements:
+            raise KeyError(
+                f"build-system-version key not found in build-system-requirements section in {project_file_path}.",
+            )
 
-    poetry_version = build_system_requirements["build-system-version"]
+        poetry_version = build_system_requirements["build-system-version"]
+        poetry_reqs = f"poetry=={poetry_version}"
+        if Version(poetry_version) >= Version("2.0.0"):
+            poetry_reqs += "\npoetry-plugin-export>=1.8"
 
     (tools_directory / "pip_requirements.txt").write_text(f"pip=={pip_version}")
-    poetry_reqs = f"poetry=={poetry_version}"
-    if Version(poetry_version) >= Version("2.0.0"):
-        poetry_reqs += "\npoetry-plugin-export>=1.8"
-    (tools_directory / "poetry_requirements.txt").write_text(poetry_reqs)
+    if poetry_reqs is not None:
+        (tools_directory / "poetry_requirements.txt").write_text(poetry_reqs)
 
 
 def download_embeddable_python(solution_folder: Path, installer_config: InstallerConfig) -> tuple[Path, str]:
-    # We always download python because we need it at least for the poetry lock command in the definitions folder
+    # The selected Python is used to stage dependencies for either supported backend.
     python_manager = PythonManager(
         solution_folder,
         installer_config.python_version,
@@ -764,7 +1477,11 @@ def _get_venv_python_exec(venv_folder: Path) -> Path:
         raise RuntimeError("Unsupported operating system")
 
 
-def create_venv_in_definitions_folder(definitions_folder: Path, downloaded_python_exec: Path) -> tuple[Path, Path]:
+def create_venv_in_definitions_folder(
+    definitions_folder: Path,
+    downloaded_python_exec: Path,
+    backend: SolutionBackend,
+) -> tuple[Path, Path]:
     definitions_venv = definitions_folder / ".venv"
     logger.info(f"Creating virtual environment in {definitions_venv} using Python executable {downloaded_python_exec}")
     try:
@@ -779,8 +1496,12 @@ def create_venv_in_definitions_folder(definitions_folder: Path, downloaded_pytho
             stderr=subprocess.STDOUT,
         )
         venv_python_exec = _get_venv_python_exec(definitions_venv)
+        packages = ["wheel"]
+        if backend is SolutionBackend.POETRY:
+            packages.append("poetry")
+        packages.extend(["setuptools", "pyc-wheel"])
         subprocess.check_output(
-            [str(venv_python_exec), "-m", "pip", "install", "wheel", "poetry", "setuptools", "pyc-wheel"],
+            [str(venv_python_exec), "-m", "pip", "install", *packages],
             text=True,
             stderr=subprocess.STDOUT,
         )

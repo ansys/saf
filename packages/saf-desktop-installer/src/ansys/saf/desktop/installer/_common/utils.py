@@ -22,6 +22,7 @@ import re
 import subprocess
 import tarfile
 import tempfile
+import tomllib
 import zipfile
 
 from packaging.markers import Marker
@@ -225,10 +226,18 @@ def safe_extract(file: zipfile.ZipFile | tarfile.TarFile, target_dir: Path) -> N
 
 
 def has_portal_dependency(solution_root_dir: Path) -> bool:
-    """Check if the solution uses the SAF Projects Dashboard or SAF Portal by looking for
-    ansys-saf-projects-dashboard, ansys-saf-desktop-portal, or ansys-saf-portal in the poetry.lock"""
-    poetry_lock_data = toml.load(solution_root_dir / "poetry.lock")
-    for package in poetry_lock_data["package"]:
-        if package["name"] in ["ansys-saf-desktop-portal", "ansys-saf-portal", "ansys-saf-projects-dashboard"]:
-            return True
-    return False
+    """Check the backend lockfile for a SAF Portal dependency."""
+    uv_lock = solution_root_dir / "uv.lock"
+    poetry_lock = solution_root_dir / "poetry.lock"
+    if uv_lock.is_file():
+        with uv_lock.open("rb") as lock_file:
+            packages = tomllib.load(lock_file).get("package", [])
+    else:
+        if not poetry_lock.is_file():
+            raise FileNotFoundError(f"No supported lockfile found in {solution_root_dir}.")
+        packages = toml.load(poetry_lock).get("package", [])
+    return any(
+        package.get("name") in {"ansys-saf-desktop-portal", "ansys-saf-portal", "ansys-saf-projects-dashboard"}
+        for package in packages
+        if isinstance(package, dict)
+    )

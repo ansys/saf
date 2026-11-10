@@ -77,12 +77,16 @@ class _SolutionMetadata:
         except tomllib.TOMLDecodeError as error:
             raise SolutionBackendError(f"Unable to parse '{self.pyproject_path}': {error}") from error
         self.backend = detect_solution_backend(solution_root_dir, configuration=configuration).backend
-        if self.backend is SolutionBackend.UV:
-            self.fields = configuration.get("project")
-            self.section = "project"
-        else:
-            self.fields = configuration.get("tool", {}).get("poetry")
-            self.section = "tool.poetry"
+        project = configuration.get("project")
+        if project is not None and not isinstance(project, dict):
+            raise ValueError(f"Missing or invalid [project] metadata in '{self.pyproject_path}'.")
+        self.fields = project
+        self.section = "project"
+        if self.backend is SolutionBackend.POETRY:
+            poetry = configuration.get("tool", {}).get("poetry")
+            if project is None or ("name" not in project and poetry is not None):
+                self.fields = poetry
+                self.section = "tool.poetry"
         if not isinstance(self.fields, dict):
             raise ValueError(f"Missing or invalid [{self.section}] metadata in '{self.pyproject_path}'.")
 
@@ -98,21 +102,21 @@ class _SolutionMetadata:
 
     @cached_property
     def version(self) -> str:
-        if self.backend is SolutionBackend.UV:
-            return self._required_string("version")
-        result = subprocess.run(
-            ["poetry", "version", "--no-interaction"],  # noqa: S607
-            cwd=self.root_dir,
-            capture_output=True,
-            check=True,
-            text=True,
-        )
-        parts = result.stdout.strip().split()
-        if len(parts) < 2:
-            raise ValueError("Failed to get solution version.")
-        if parts[1] == "unknown":
-            raise ValueError("Solution version is unknown.")
-        return parts[1]
+        if self.backend is SolutionBackend.POETRY:
+            result = subprocess.run(
+                ["poetry", "version", "--no-interaction"],  # noqa: S607
+                cwd=self.root_dir,
+                capture_output=True,
+                check=True,
+                text=True,
+            )
+            parts = result.stdout.strip().split()
+            if len(parts) < 2:
+                raise ValueError("Failed to get solution version.")
+            if parts[1] == "unknown":
+                raise ValueError("Solution version is unknown.")
+            return parts[1]
+        return self._required_string("version")
 
 
 class SolutionInfo:
@@ -344,6 +348,7 @@ def create_solution_metadata(
     solution_metadata = {
         "glow-package-name": DESKTOP_ORCHESTRATOR_PACKAGE_NAME,
         "glow-entry-point-module": DESKTOP_ORCHESTRATOR_MODULE_NAME,
+        "solution-backend": detect_solution_backend(solution_info.solution_root_dir).backend.value,
         "use-glow": (
             "True" if installer_config.solution_ui_framework == "dash" and installer_config.use_glow else "False"
         ),
@@ -367,7 +372,7 @@ def create_solution_metadata(
     metadata_file.write_text(json.dumps(solution_metadata, indent=4))
 
 
-def create_requirements_txt(pyproject_location: Path, definitions_folder: Path) -> Path:
+def create_poetry_requirements_txt(pyproject_location: Path, definitions_folder: Path) -> Path:
     """Create requirements.txt file using poetry.
 
     Args:

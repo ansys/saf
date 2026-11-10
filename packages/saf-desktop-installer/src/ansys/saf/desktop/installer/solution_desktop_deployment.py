@@ -79,6 +79,7 @@ from ansys.saf.desktop.installer._installer.prerequisites import (
     is_long_paths_enabled,
     is_webview2_installed,
 )
+from ansys.saf.desktop.installer._package.backend_detection import SolutionBackend
 from ansys.saf.desktop.installer._ui_styles import (
     LONG_PATH_WARNING_HIDDEN_STYLE,
     LONG_PATH_WARNING_SHOWN_STYLE,
@@ -88,7 +89,7 @@ from ansys.saf.desktop.installer._ui_styles import (
 
 # =================================================== [constants] =================================================== #
 
-VIRTUAL_ENVIRONMENT_NAME = ".venv"  # this is the name that poetry gives the virtual environment it creates
+VIRTUAL_ENVIRONMENT_NAME = ".venv"
 ROOT_DIR = Path(sys._MEIPASS).absolute() if hasattr(sys, "_MEIPASS") else Path(__file__).parent.absolute()  # type: ignore
 PYTHON_NOT_FOUND = "Python not found"
 INSTALLER_HEADING = "Solution Installer"
@@ -536,6 +537,13 @@ def installation(
         installation_directory / "definitions" / package_metadata["solution-module-name"]
     )
     print("Python interpreter: ", python_interpreter)
+    if package_metadata.get("solution-backend", SolutionBackend.POETRY.value) == SolutionBackend.UV.value:
+        return _install_uv_backend_solution(
+            solution_installation_directory,
+            package_metadata,
+            python_interpreter,
+            use_pip,
+        )
 
     # we create a temporary virtual environment for poetry
     install_tools_venv = "install_tools_venv"
@@ -621,7 +629,7 @@ def installation(
         # so it is very unlikely that the following code will be executed
         # but just in case we will extract the requirements using poetry and install them using pip
 
-        install_using_pip(
+        _install_poetry_solution_using_pip(
             installation_directory,
             package_metadata,
             solution_installation_directory,
@@ -657,7 +665,174 @@ def installation(
     return SolutionInfo(solution_installation_directory, solution_use_portal)
 
 
-def install_using_pip(
+def _install_uv_backend_solution(
+    solution_installation_directory: Path,
+    package_metadata: dict[str, Any],
+    python_interpreter: Path,
+    use_pip: bool,
+) -> SolutionInfo:
+    tools_directory = solution_installation_directory / "tools"
+    uv_executable = tools_directory / ("uv.exe" if platform.system() == "Windows" else "uv")
+    solution_wheel = get_wheel(
+        package_metadata["solution-package-name"],
+        solution_installation_directory,
+    )
+    if use_pip:
+        _install_uv_solution_using_pip(
+            solution_installation_directory,
+            python_interpreter,
+            solution_wheel,
+            package_metadata,
+        )
+    else:
+        if not uv_executable.is_file():
+            raise FileNotFoundError(f"Bundled UV executable not found: {uv_executable}")
+        _install_uv_solution_using_uv(
+            solution_installation_directory,
+            python_interpreter,
+            solution_wheel,
+            package_metadata,
+            uv_executable,
+        )
+
+    solution_use_portal = has_portal_dependency(solution_installation_directory)
+    print(f"solution uses portal: {solution_use_portal}")
+    for wheel in solution_installation_directory.glob("*.whl"):
+        delete_entity(wheel)
+    _cleanup_uv_project(solution_installation_directory, tools_directory)
+    return SolutionInfo(solution_installation_directory, solution_use_portal)
+
+
+def _install_uv_solution_using_uv(
+    solution_installation_directory: Path,
+    python_interpreter: Path,
+    solution_wheel: Path,
+    package_metadata: dict[str, Any],
+    uv_executable: Path,
+) -> None:
+    try:
+        subprocess.check_output(
+            _uv_sync_command(uv_executable, solution_installation_directory, python_interpreter, package_metadata),
+            cwd=solution_installation_directory,
+            stderr=subprocess.PIPE,
+            text=True,
+        )
+    except subprocess.CalledProcessError as e:
+        raise RuntimeError(f"Failed to install UV dependencies: {e.stderr}") from e
+
+    solution_python = get_python_interpreter_in_venv(solution_installation_directory / VIRTUAL_ENVIRONMENT_NAME)
+    try:
+        subprocess.check_output(
+            [
+                str(uv_executable),
+                "pip",
+                "install",
+                "--python",
+                str(solution_python),
+                "--no-deps",
+                str(solution_wheel),
+            ],
+            cwd=solution_installation_directory,
+            stderr=subprocess.PIPE,
+            text=True,
+        )
+    except subprocess.CalledProcessError as e:
+        raise RuntimeError(f"Failed to install the solution wheel with UV: {e.stderr}") from e
+
+
+def _install_uv_solution_using_pip(
+    solution_installation_directory: Path,
+    python_interpreter: Path,
+    solution_wheel: Path,
+    package_metadata: dict[str, Any],
+) -> None:
+    requirements_file = solution_installation_directory / "uv-requirements.txt"
+    if not requirements_file.is_file():
+        raise FileNotFoundError(f"UV requirements file not found: {requirements_file}")
+    try:
+        subprocess.check_output(
+            [str(python_interpreter), "-m", "venv", VIRTUAL_ENVIRONMENT_NAME],
+            cwd=solution_installation_directory,
+            stderr=subprocess.PIPE,
+            text=True,
+        )
+    except subprocess.CalledProcessError as e:
+        raise RuntimeError(f"Failed to create the solution virtual environment: {e.stderr}") from e
+
+    solution_python = get_python_interpreter_in_venv(solution_installation_directory / VIRTUAL_ENVIRONMENT_NAME)
+    command = [
+        str(solution_python),
+        "-m",
+        "pip",
+        "install",
+        "--disable-pip-version-check",
+    ]
+    if package_metadata.get("offline-package") == "True":
+        command.extend(["--no-index", "--find-links", "wheelhouse"])
+    command.extend(["-r", str(requirements_file)])
+    try:
+        subprocess.check_output(
+            command,
+            cwd=solution_installation_directory,
+            stderr=subprocess.PIPE,
+            text=True,
+        )
+        subprocess.check_output(
+            [
+                str(solution_python),
+                "-m",
+                "pip",
+                "install",
+                "--disable-pip-version-check",
+                "--no-deps",
+                str(solution_wheel),
+            ],
+            cwd=solution_installation_directory,
+            stderr=subprocess.PIPE,
+            text=True,
+        )
+    except subprocess.CalledProcessError as e:
+        raise RuntimeError(f"Failed to install UV dependencies using pip: {e.stderr}") from e
+
+
+def _uv_sync_command(
+    uv_executable: Path,
+    solution_installation_directory: Path,
+    python_interpreter: Path,
+    package_metadata: dict[str, Any],
+) -> list[str]:
+    command = [
+        str(uv_executable),
+        "sync",
+        "--locked",
+        "--no-install-project",
+        "--python",
+        str(python_interpreter),
+    ]
+    groups_file = solution_installation_directory / "uv-groups.txt"
+    if groups_file.is_file():
+        for group in groups_file.read_text(encoding="utf-8").splitlines():
+            if group:
+                command.extend(["--group", group])
+    if package_metadata.get("offline-package") == "True":
+        command.extend(["--offline", "--no-index", "--find-links", "wheelhouse"])
+    return command
+
+
+def _cleanup_uv_project(solution_installation_directory: Path, tools_directory: Path) -> None:
+    for temporary_path in (
+        solution_installation_directory / "pyproject.toml",
+        solution_installation_directory / "uv.lock",
+        solution_installation_directory / "uv-requirements.txt",
+        solution_installation_directory / "uv-groups.txt",
+        solution_installation_directory / "wheelhouse",
+        tools_directory,
+    ):
+        if temporary_path.exists():
+            delete_entity(temporary_path)
+
+
+def _install_poetry_solution_using_pip(
     installation_directory: Path,
     package_metadata: dict[str, Any],
     solution_installation_directory: Path,

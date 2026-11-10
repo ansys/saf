@@ -18,10 +18,12 @@ from __future__ import annotations
 
 import json
 import logging
+from enum import Enum
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
 import httpx2
+import numpy as np
 
 from ansys.bdm.api import NO_ENTITY, EntityHandle
 from ansys.saf.glow.solution import InstanceManager, ProductInstanceManager, RecoveryStateInfo
@@ -109,19 +111,50 @@ class VisorSafClient:
         ).raise_for_status()
         return list(response.json().get("parts", []))
 
+    def list_part_states(self, dataset_id: int) -> dict[str, Any]:
+        """Return runtime part states for a dataset, including active color variables."""
+        response = httpx2.get(
+            f"http://{self._service_host}:{self._service_port}/{dataset_id}/part_states",
+            timeout=self._timeout,
+        ).raise_for_status()
+        return dict(response.json())
+
     def update_variables(self, dataset_id: int, variables: list[dict[str, Any]]) -> None:
-        """Update variables for a given dataset in the Visor instance."""
-        update_payload = {
-            "dataset_id": dataset_id,
-            "variables": variables,
-        }
-        logger.debug(f"Updating Visor variables with payload: {update_payload}")
+        """Send variable updates as one multipart request with float32 binary parts."""
+        metadata = {"variables": [self._metadata_of(var) for var in variables]}
+        files = [
+            ("data", (f"{index}.bin", self._payload_of(var), "application/octet-stream"))
+            for index, var in enumerate(variables)
+        ]
+        logger.debug(
+            "Updating Visor variables for dataset %s: %s (%s binary parts)",
+            dataset_id,
+            metadata,
+            len(files),
+        )
         httpx2.post(
             f"http://{self._service_host}:{self._service_port}/{dataset_id}/update_variables",
-            json={"variables": variables},
+            data={"metadata": json.dumps(metadata)},
+            files=files,
             timeout=self._timeout,
         ).raise_for_status()
         logger.info("Visor service variables updated.")
+
+    @staticmethod
+    def _metadata_of(variable: dict[str, Any]) -> dict[str, Any]:
+        """Return the variable's fields other than data, with an enum type converted to its name."""
+        var_type = variable["type"]
+        return {
+            "name": variable["name"],
+            "type": var_type.name if isinstance(var_type, Enum) else str(var_type),
+            "num_components": int(variable["num_components"]),
+            "part_id": variable.get("part_id"),
+        }
+
+    @staticmethod
+    def _payload_of(variable: dict[str, Any]) -> bytes:
+        """Encode the variable's data as C-ordered little-endian float32 bytes."""
+        return np.asarray(variable["data"], dtype="<f4").tobytes(order="C")
 
     @property
     def host(self):

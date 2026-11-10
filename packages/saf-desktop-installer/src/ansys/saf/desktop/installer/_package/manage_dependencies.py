@@ -254,24 +254,32 @@ def _github_url_with_token(url: str, github_token: str | None, *, required: bool
     return url
 
 
-def _download_poetry_git_dependency(
+def _download_poetry_git_source(
     package: dict[str, Any],
     package_directory: Path,
     venv_python_exec: Path,
     github_token: str | None = None,
 ) -> None:
-    """Download a git source package."""
-    index_url = _github_url_with_token(package["source"]["url"], github_token)
-    source = package["source"]["reference"]
+    """Download a locked Git dependency with optional token authentication."""
+    source = package["source"]
+    url = _github_url_with_token(source["url"], github_token, required=False)
+    revision = source.get("resolved_reference") or source["reference"]
+    requirement = f"{package['name']} @ git+{url}@{revision}"
 
-    index_url = f"git+{index_url}@{source}"
-
-    download_pypi_package_with_pip(
-        package["name"],
-        package["version"],
-        index_url,
-        package_directory,
-        venv_python_exec,
+    logger.info(f"Downloading Git dependency {package['name']} to {package_directory}.")
+    subprocess.check_output(
+        [
+            venv_python_exec,
+            "-m",
+            "pip",
+            "download",
+            "--disable-pip-version-check",
+            "--no-deps",
+            "--dest",
+            package_directory,
+            requirement,
+        ],
+        text=True,
     )
 
 
@@ -383,9 +391,8 @@ def _stage_poetry_locked_dependencies(
             continue
         if package["source"]["type"] == "file" and _poetry_package_matches_platform(package):
             _copy_poetry_file_dependency(package, poetry_lock_file, module_directory)
-        # TODO: This may have issues with public .git dependencies
-        elif package["source"]["url"].endswith(".git"):
-            _download_poetry_git_dependency(package, module_directory, venv_python_exec, github_token)
+        elif package["source"]["type"] == "git":
+            _download_poetry_git_source(package, module_directory, venv_python_exec, github_token)
         elif "reference" in package["source"]:
             _download_poetry_private_dependency(package, module_directory, venv_python_exec)
 
@@ -415,7 +422,7 @@ def _simplify_poetry_wheel_url_dependencies(
         simplify_wheel_dependency_constraints(wheel_path)
 
 
-def _stage_poetry_solution_dependencies(
+def _stage_poetry_internal_dependencies(
     solution_root_dir: Path,
     solution_module_name: str,
     solution_display_name: str,
@@ -1239,7 +1246,7 @@ def build_and_stage_solution_packages(
         poetry_packages_with_wheel_url_dependencies = _get_poetry_packages_with_wheel_url_dependencies(
             installer_config.pyproject_location.with_name("poetry.lock"),
         )
-        _stage_poetry_solution_dependencies(
+        _stage_poetry_internal_dependencies(
             solution_root_dir,
             solution_module_name,
             solution_display_name,

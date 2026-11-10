@@ -132,7 +132,7 @@ jobs:
 
   release-information:
     name: Release Information
-    needs: 
+    needs:
       - validate-release-branch
       - certification
     outputs:

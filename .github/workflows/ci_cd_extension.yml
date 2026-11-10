@@ -152,7 +152,7 @@ jobs:
       - name: Setup Moon Toolchain
         uses: moonrepo/setup-toolchain@261c62cb5b0f580c7be7c8cd0f023a2e96756095 # v0.6.4
 
-      # The tests install the pinned, published ansys-saf-cli from PyPI into a managed venv.
+      # Moon's Python/uv toolchains gave unpinned versions and the repo .venv when tried, so pin them here.
       - name: Setup Python
         uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
         with:

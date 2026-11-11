@@ -141,12 +141,12 @@ jobs:
             exit 0
           fi
 
-          if git diff --quiet "${CERTIFICATION_TAG}" HEAD -- extension .github/workflows/ci_cd_extension.yml; then
+          if git diff --quiet "${CERTIFICATION_TAG}" HEAD -- extension .github/workflows/ci_cd_solutions_manager.yml; then
             echo "No changes since ${CERTIFICATION_TAG}; skipping the checks."
             echo "run-checks=false" >> "$GITHUB_OUTPUT"
           else
             echo "Changes since ${CERTIFICATION_TAG}:"
-            git diff --name-only "${CERTIFICATION_TAG}" HEAD -- extension .github/workflows/ci_cd_extension.yml
+            git diff --name-only "${CERTIFICATION_TAG}" HEAD -- extension .github/workflows/ci_cd_solutions_manager.yml
             echo "run-checks=true" >> "$GITHUB_OUTPUT"
           fi
 

@@ -121,4 +121,4 @@
   - any:
       - changed-files:
           - any-glob-to-any-file: ['extension/**']
-          - any-glob-to-any-file: ['.github/workflows/ci_cd_extension.yml']
+          - any-glob-to-any-file: ['.github/workflows/ci_cd_solutions_manager.yml']

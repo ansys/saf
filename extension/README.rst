@@ -110,7 +110,7 @@ The same tasks are available through Moon from the repository root:
 
 Moon provisions Node 22 for this project (see ``toolchains.node.version`` in ``moon.yml``), overriding the Node 20
 used by the workspace for ``packages/saf-projects-dashboard``. Run the Moon tasks one invocation at a time: ``test``
-and ``package-vsix`` both rebuild ``out/``. CI runs the same tasks in ``.github/workflows/ci_cd_extension.yml``.
+and ``package-vsix`` both rebuild ``out/``. CI runs the same tasks in ``.github/workflows/ci_cd_solutions_manager.yml``.
 
 Package the VSIX
 ----------------
@@ -142,7 +142,7 @@ packages. To change it:
 
     npm version <new-version> --no-git-tag-version
 
-Releases use ``.github/workflows/ci_cd_extension.yml`` (manual dispatch with ``release`` enabled, from ``main`` or
+Releases use ``.github/workflows/ci_cd_solutions_manager.yml`` (manual dispatch with ``release`` enabled, from ``main`` or
 ``release/**``). It reads the version from ``package.json``, runs all checks (type-check, lint, unit and
 integration tests, ``npm audit``, license allowlist, SBOM, VSIX packaging) and attaches the VSIX and the SBOM to a
 GitHub Release tagged ``v<version>-saf-solutions-manager``. The ``dev-release`` input marks it as a pre-release.

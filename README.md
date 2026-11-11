@@ -50,7 +50,7 @@ Whether you're packaging enterprise simulation expertise into a repeatable workf
 | **Product Integration**   | Product Manager           | Provides managers for interacting with Ansys products |
 |                           | Product Configuration     | Provides configurations and wrappers for launching Ansys products |
 | **Developer Experience**  | CLI                       | Command line interface to manage solution applications |
-|                           | Solutions Manager         | VS Code extension to ease the developer's experience |
+|                           | Solutions Manager         | VS Code extension to ease the developer's experience, see [extension/README.rst](extension/README.rst) |
 |                           | Testing                   | Provides fixtures to test a solution application |
 |                           | Templates                 | Step templates for solution customization |
 | **UI components**         | Super Components for Dash | Pre-assembled, high-level UI components for simulation web apps |

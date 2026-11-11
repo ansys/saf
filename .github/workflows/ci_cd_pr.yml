@@ -514,6 +514,16 @@ jobs:
           MOON_PYTHON_VERSION: ${{ vars.PYTHON_VERSION }}
         run: moon run root:test-upgrade-solution-templates
 
+  extension-checks:
+    name: "Solutions Manager extension"
+    needs: ci-cd-config
+    if: ${{ contains(needs.ci-cd-config.outputs.pr-changes, 'extension') }}
+    permissions:
+      contents: write # Required by the tagging and release jobs of the called workflow (skipped in PRs)
+    uses: ./.github/workflows/ci_cd_extension.yml
+    secrets:
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+
   meta-package:
     name: "SAF SDK Meta Package"
     needs: ci-cd-config
@@ -551,6 +561,7 @@ jobs:
       - run-github-workflows-of-generated-solution
       - run-tests-actions
       - run-tests-scripts
+      - extension-checks
       - doc
       - sbom
       - meta-package

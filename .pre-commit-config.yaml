@@ -49,9 +49,12 @@ repos:
             packages/saf-projects-dashboard/doc/styles/|
             packages/saf-projects-dashboard/doc/source/_static|
             packages/saf-projects-dashboard/.*package-lock\.json|
-            packages/saf-projects-dashboard/.*\.js
+            packages/saf-projects-dashboard/.*\.js|
+            extension/package-lock\.json
           )$
-        args: [--ignore-words=doc/styles/config/vocabularies/ANSYS/accept.txt]
+        args:
+          - --ignore-words=doc/styles/config/vocabularies/ANSYS/accept.txt
+          - --ignore-words-list=afterall
 
   - repo: https://github.com/google/yamlfmt
     rev: b5ca1890231d5e1e5181fef75a1be609d1e25029 # frozen: v0.21.0
@@ -66,7 +69,7 @@ repos:
     rev: ad4e7598809ad98cde5aaf52d80040c7ac56e7cf # v0.7.2
     hooks:
       - id: add-license-headers
-        files: '\.(py|bat|html|css|proto)$'
+        files: '(\.(py|bat|html|css|proto)$|^extension/.*\.(ts|tsx)$|^extension/(src|test|scripts)/.*\.(js|jsx|mjs)$)'
         exclude: |
           (?xi)(
             packages/saf-desktop-installer/src/ansys/saf/desktop/installer/_package/assets/bootstrap\.min\.css|

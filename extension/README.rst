@@ -94,7 +94,7 @@ Run these from ``extension/``:
    * - ``npm run test:integration:coverage``
      - VS Code integration tests (downloads VS Code and installs the pinned SAF CLI)
    * - ``npm run package:vsix``
-     - Compile and build ``dist/solutions-manager-<version>.vsix``
+     - Compile and build ``dist/saf-solutions-manager-<version>.vsix``
 
 Integration tests need a display. On Linux run them under ``xvfb-run -a``. They also need network access to PyPI
 and, on Windows, long paths enabled. They back up and restore the SAF CLI database.
@@ -123,7 +123,7 @@ Package the VSIX
    never packaged.
 #. Fails if a required file is missing, then builds the VSIX with a pinned ``@vscode/vsce``.
 
-Install the result with ``code --install-extension dist/solutions-manager-<version>.vsix``.
+Install the result with ``code --install-extension dist/saf-solutions-manager-<version>.vsix``.
 
 SAF CLI version
 ---------------

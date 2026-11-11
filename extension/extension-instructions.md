@@ -38,8 +38,8 @@ an intuitive sidebar interface.
 ### Get the Extension Package
 
 1. Go to the SAF GitHub releases page: [SAF Releases](https://github.com/ansys/saf/releases)
-2. Open the latest release whose tag starts with `saf-solutions-manager-v`
-3. Download the release asset named `solutions-manager-extension-<version>.vsix`
+2. Open the latest release whose tag ends with `-saf-solutions-manager` (for example `v4.0.0-saf-solutions-manager`)
+3. Download the release asset named `saf-solutions-manager-<version>.vsix`
 
 ### Install in Visual Studio Code
 

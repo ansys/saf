@@ -26,7 +26,8 @@ const staging = join(root, '.vsix-staging');
 const distDir = join(root, 'dist');
 
 const manifest = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8'));
-const vsixPath = join(distDir, `${manifest.name}-${manifest.version}.vsix`);
+// Prefixed with "saf-" so release assets are named after the library, like the other SAF packages.
+const vsixPath = join(distDir, `saf-${manifest.name}-${manifest.version}.vsix`);
 
 for (const required of ['out/extension.js', 'out/webview', 'saf-logo.png', 'LICENSE', 'CHANGELOG.md', 'extension-instructions.md']) {
   if (!existsSync(join(root, required))) {

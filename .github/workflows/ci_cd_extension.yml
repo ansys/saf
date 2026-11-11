@@ -1,9 +1,11 @@
 name: CI-CD for Solutions Manager extension
 run-name: >-
-  Extension: ${{ inputs.release && 'Release' || (github.event_name == 'schedule' &&
-  'Certification' || 'Dry Run') }} by ${{ github.actor }} #magic___^_^___line
+  Extension: ${{ inputs.release && 'Certify + Release' || ((github.event_name == 'schedule'
+  || github.ref_name == 'main' || startsWith(github.ref_name, 'release/')) && 'Certify'
+  || 'Dry Run') }} by ${{ github.actor }}
 # Node-only workflow for the VS Code extension in extension/. The extension is not a SAF Python package, so it is
-# kept out of the package matrix, certification.yml and ci_cd_release.yml. All checks run through Moon.
+# kept out of the package matrix, certification.yml and ci_cd_release.yml. This workflow is its certification: a passing
+# run on main or release/** applies the certified-saf-solutions-manager tag. All checks run through Moon.
 
 on:
   workflow_dispatch:
@@ -90,8 +92,68 @@ jobs:
             exit 1
           fi
 
+  change-detection:
+    name: "Detect changes since last certification"
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read # Read the history and the certification tag
+    outputs:
+      run-checks: ${{ steps.detect.outputs.run-checks }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0 # Fetch all history to access the certification tag
+
+      - name: Detect changes
+        id: detect
+        shell: bash
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          RELEASE: ${{ inputs.release }}
+          REF_NAME: ${{ github.ref_name }}
+          CERTIFICATION_TAG: certified-saf-solutions-manager
+        run: |
+          set -euo pipefail
+
+          # Only unattended or non-release certification runs on main/release/** may be skipped.
+          can_skip=false
+          case "${EVENT_NAME}" in
+            schedule|workflow_dispatch)
+              if [ "${RELEASE}" != "true" ]; then
+                case "${REF_NAME}" in
+                  main|release/*) can_skip=true ;;
+                esac
+              fi
+              ;;
+          esac
+
+          if [ "${can_skip}" != "true" ]; then
+            echo "This run is not skippable."
+            echo "run-checks=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          if ! git rev-parse --verify --quiet "refs/tags/${CERTIFICATION_TAG}" >/dev/null; then
+            echo "No certification tag found: ${CERTIFICATION_TAG}"
+            echo "run-checks=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          if git diff --quiet "${CERTIFICATION_TAG}" HEAD -- extension .github/workflows/ci_cd_extension.yml; then
+            echo "No changes since ${CERTIFICATION_TAG}; skipping the checks."
+            echo "run-checks=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "Changes since ${CERTIFICATION_TAG}:"
+            git diff --name-only "${CERTIFICATION_TAG}" HEAD -- extension .github/workflows/ci_cd_extension.yml
+            echo "run-checks=true" >> "$GITHUB_OUTPUT"
+          fi
+
   static-checks:
     name: "Type-check and lint"
+    needs: change-detection
+    if: ${{ needs.change-detection.outputs.run-checks == 'true' }}
     runs-on: ubuntu-latest
     permissions:
       contents: read # Read the source code of the extension
@@ -111,6 +173,8 @@ jobs:
 
   unit-tests:
     name: "Unit tests"
+    needs: change-detection
+    if: ${{ needs.change-detection.outputs.run-checks == 'true' }}
     runs-on: ubuntu-latest
     permissions:
       contents: read # Read the source code of the extension
@@ -139,6 +203,8 @@ jobs:
 
   integration-tests:
     name: "Integration tests"
+    needs: change-detection
+    if: ${{ needs.change-detection.outputs.run-checks == 'true' }}
     runs-on: ubuntu-latest
     permissions:
       contents: read # Read the source code of the extension
@@ -179,6 +245,8 @@ jobs:
 
   supply-chain:
     name: "Dependency audit, licenses and SBOM"
+    needs: change-detection
+    if: ${{ needs.change-detection.outputs.run-checks == 'true' }}
     runs-on: ubuntu-latest
     permissions:
       contents: read # Read the dependencies of the extension
@@ -206,7 +274,10 @@ jobs:
 
   package:
     name: "Package VSIX"
-    needs: version
+    needs:
+      - version
+      - change-detection
+    if: ${{ needs.change-detection.outputs.run-checks == 'true' }}
     runs-on: ubuntu-latest
     permissions:
       contents: read # Read the source code of the extension
@@ -303,7 +374,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          vsix="${RUNNER_TEMP}/vsix/solutions-manager-${VERSION}.vsix"
+          vsix="${RUNNER_TEMP}/vsix/saf-solutions-manager-${VERSION}.vsix"
           sbom="${RUNNER_TEMP}/sbom/saf-solutions-manager-sbom.json"
           test -f "${vsix}"
           test -f "${sbom}"

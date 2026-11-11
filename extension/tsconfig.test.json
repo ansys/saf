@@ -1,0 +1,24 @@
+{
+	"extends": "./tsconfig.json",
+	"compilerOptions": {
+		"outDir": "out",
+		"rootDir": ".",
+		"sourceMap": true,
+		"resolveJsonModule": true,
+		"types": ["mocha", "node"],
+		"declaration": true,
+		"declarationMap": true,
+		"emitDeclarationOnly": false,
+		"declarationDir": "out/types"
+	},
+	"include": [
+		"src/**/*",
+		"test/**/*"
+	],
+	"exclude": [
+		"node_modules",
+		"out",
+		"test/fixtures/**/*",
+		".vscode-test"
+	]
+}

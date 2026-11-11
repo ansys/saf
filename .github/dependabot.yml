@@ -34,6 +34,23 @@ updates:
       include:
         - '*'
       default-days: 7
+  - package-ecosystem: "npm"
+    directory: "/extension"
+    schedule:
+      interval: "daily"
+    commit-message:
+      prefix: "ci(dependabot-npm-extension):"
+    versioning-strategy: "lockfile-only"
+    open-pull-requests-limit: 1
+    groups:
+      npm-security:
+        applies-to: "security-updates"
+        patterns:
+          - "*"
+    cooldown:
+      include:
+        - '*'
+      default-days: 7
   - package-ecosystem: "uv"
     directory: "/"
     schedule:

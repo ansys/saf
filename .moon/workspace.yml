@@ -16,6 +16,7 @@ projects:
     - "packages/saf-projects-dashboard"
     - "packages/saf-testing"
     - "packages/saf-templates"
+    - "extension"
   # Root-level project for workspace-wide, run-once tasks.
   sources:
     root: ".moon"

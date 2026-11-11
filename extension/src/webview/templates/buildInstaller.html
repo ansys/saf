@@ -1,0 +1,150 @@
+<!--
+Copyright (C) 2026 ANSYS, Inc. and/or its affiliates.
+SPDX-License-Identifier: Apache-2.0
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy"
+    content="default-src 'none'; style-src 'unsafe-inline' {{cspSource}}; script-src {{cspSource}};">
+  <title>Build Installer</title>
+  <link rel="stylesheet" href="{{styleUri}}">
+</head>
+
+<body>
+  <div class="container">
+    <h3>Solution build options</h3>
+
+    <div class="section">
+      <div class="section-title">Basic options</div>
+      <div class="row">
+        <label for="solution-select">Solution</label>
+        <div class="solution-selector-row">
+          <select id="solution-select">
+            <option value="" disabled selected>Select a solution...</option>
+          </select>
+          <button id="browse-solution-btn" title="Browse for solution directory">🗁</button>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Python options</div>
+        <div class="row">
+          <label for="python-version">Python version</label>
+          <input type="text" id="python-version" placeholder="e.g., 3.10.12" />
+        </div>
+
+        <div class="checkbox-row">
+          <input type="checkbox" id="exclude-python" />
+          <label for="exclude-python">Exclude Python interpreter</label>
+        </div>
+      </div>
+
+      <div class="checkbox-row">
+        <input type="checkbox" id="offline-package" />
+        <label for="offline-package">Offline package</label>
+      </div>
+
+      <div class="checkbox-row">
+        <input type="checkbox" id="display-console-window" />
+        <label for="display-console-window">Display console window</label>
+      </div>
+
+      <div class="checkbox-row">
+        <input type="checkbox" id="encrypt" />
+        <label for="encrypt">Encrypt solution code</label>
+      </div>
+
+      <div class="checkbox-row">
+        <input type="checkbox" id="obfuscate" />
+        <label for="obfuscate">Obfuscate solution code</label>
+      </div>
+
+      <div class="checkbox-row has-help">
+        <input type="checkbox" id="executable-as-dir" />
+        <label for="executable-as-dir">Bundle executable as directory</label>
+      </div>
+      <div class="help-text checkbox-help">Required when the installer exceeds the 4 GB PyInstaller limit.</div>
+
+      <div class="checkbox-row">
+        <input type="checkbox" id="force-python-from-source" />
+        <label for="force-python-from-source">Force building Python from source</label>
+      </div>
+
+      <div class="checkbox-row">
+        <input type="checkbox" id="no-executable" />
+        <label for="no-executable">Do not create an executable</label>
+      </div>
+
+      <div class="row">
+        <label for="encryption-file">Encryption file list</label>
+        <div class="file-row">
+          <input type="text" id="encryption-file" placeholder="Select a file listing files to encrypt" />
+          <button id="browse-encryption-file-btn" title="Browse for encryption file list">...</button>
+        </div>
+      </div>
+
+      <div class="row">
+        <label for="encryption-key">Encryption key</label>
+        <input type="password" id="encryption-key" placeholder="Encryption key" autocomplete="off" />
+      </div>
+
+      <div class="row">
+        <label for="env-file">Environment file</label>
+        <div class="file-row">
+          <input type="text" id="env-file" placeholder="Select an environment file" />
+          <button id="browse-env-file-btn" title="Browse for environment file">...</button>
+        </div>
+      </div>
+
+      <div class="row">
+        <label for="solution-entry-point">Solution entry point</label>
+        <input type="text" id="solution-entry-point" placeholder="e.g., ansys.solutions.mysoln.main" />
+      </div>
+
+      <div class="row">
+        <label for="github-token">GitHub token</label>
+        <input type="password" id="github-token" placeholder="Personal access token" autocomplete="off" />
+      </div>
+
+      <div class="row">
+        <label for="solution-ui-framework">Solution UI framework</label>
+        <input type="text" id="solution-ui-framework" placeholder="e.g., dash" />
+      </div>
+    </div>
+
+    <hr>
+    <div class="row">
+      <h3>Solution build command</h3>
+      <div class="command-row">
+        <div class="command-preview">
+          <code id="command-preview">saf build</code>
+        </div>
+        <button id="copy-command-btn" title="Copy command">⧉</button>
+      </div>
+    </div>
+
+    <button id="build-btn" class="action-button">Build installer</button>
+  </div>
+
+  <script src="{{scriptUri}}"></script>
+</body>
+
+</html>

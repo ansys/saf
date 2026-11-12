@@ -27,7 +27,7 @@ A solution is composed of:
 
 This solution is managed with **SAF CLI** (`saf`). SAF CLI automatically activates the solution's virtual environment
 and sets the solution root as the working directory when it runs commands. You typically don't need to activate the
-virtual environment manually or invoke Python/Poetry directly — prefer running tasks via `saf`.
+virtual environment manually or invoke Python/UV directly — prefer running tasks via `saf`.
 
 ## Folder structure
 
@@ -37,13 +37,13 @@ virtual environment manually or invoke Python/Poetry directly — prefer running
 - `doc/`: Sphinx documentation sources.
 - `examples/`: Example scripts and usage snippets.
 - `deployments/`: Deployment recipes (Docker Compose files for standalone, HPS, Minerva, and distributed setups).
-- `pyproject.toml`, `poetry.lock`: Dependency and build configuration (Poetry). Never edit `poetry.lock` by hand;
-  regenerate it via `saf execute {{ cookiecutter.__solution_name }} "poetry lock"`.
+- `pyproject.toml`, `uv.lock`: Dependency and build configuration (UV). Never edit `uv.lock` by hand;
+  regenerate it via `saf execute {{ cookiecutter.__solution_name }} "uv lock"`.
 - `.pre-commit-config.yaml`, `tox.ini`, `.flake8`: Code quality configuration.
 
 ## Key technologies and tools
 
-- **Python {{ cookiecutter.__python_version }}**, **Poetry** for dependencies.
+- **Python {{ cookiecutter.__python_version }}**, **UV** for dependencies.
 - **GLOW** (`ansys-saf-glow-engine`): backend engine that powers the solution.
 {%- if cookiecutter.__ui_framework == "dash" %}
 - **Dash**: Python UI framework used by this solution.
@@ -66,7 +66,7 @@ saf install {{ cookiecutter.__solution_name }} -d all -f    # force a clean rein
 
 ### Run commands in the solution environment
 
-Any command that must run inside the solution's virtual environment (poetry, pytest, sphinx-build, tox, ...) **must**
+Any command that must run inside the solution's virtual environment (uv, pytest, sphinx-build, tox, ...) **must**
 be wrapped with `saf execute`:
 
 ```bash
@@ -79,10 +79,10 @@ Common tasks:
 saf execute {{ cookiecutter.__solution_name }} "pytest tests"
 saf execute {{ cookiecutter.__solution_name }} "sphinx-build doc/source doc/build/html --color -vW -bhtml"
 saf execute {{ cookiecutter.__solution_name }} "tox -e style"
-saf execute {{ cookiecutter.__solution_name }} "poetry add <package>"
-saf execute {{ cookiecutter.__solution_name }} "poetry add <package> --group <group>"
-saf execute {{ cookiecutter.__solution_name }} "poetry add <package> --source <source>"
-saf execute {{ cookiecutter.__solution_name }} "poetry lock"
+saf execute {{ cookiecutter.__solution_name }} "uv add <package>"
+saf execute {{ cookiecutter.__solution_name }} "uv add --group <group> <package>"
+saf execute {{ cookiecutter.__solution_name }} "uv add --index <index> <package>"
+saf execute {{ cookiecutter.__solution_name }} "uv lock"
 ```
 
 ### Run the solution
@@ -142,9 +142,9 @@ Producing installers (`saf build`, with `--offline-package`, `--python-version`,
 When introducing a new dependency:
 
 - **Never edit `pyproject.toml` directly** to add, remove, or change a dependency, its version, or its group. Do not
-  edit `poetry.lock` by hand either.
-- Always add, remove, or update dependencies through `saf execute {{ cookiecutter.__solution_name }} "poetry <cmd> ..."`
-  (for example `poetry add`, `poetry remove`, `poetry lock`) so `pyproject.toml` and `poetry.lock` stay consistent.
+  edit `uv.lock` by hand either.
+- Always add, remove, or update dependencies through `saf execute {{ cookiecutter.__solution_name }} "uv <cmd> ..."`
+  (for example `uv add`, `uv remove`, `uv lock`) so `pyproject.toml` and `uv.lock` stay consistent.
 
 When there are several candidates that solve the same problem, flag maintenance status (recent releases, active issue
 tracker) and known security advisories (PyPI / OSV) to the user so they can pick informed. Do not silently reject a
@@ -162,4 +162,4 @@ package on these grounds.
 - Inspect any command's options with `saf <command> --help`.
 - If the environment appears broken, force a clean reinstall:
   `saf install {{ cookiecutter.__solution_name }} -d all -f`.
-- For private PyPI access issues, verify Poetry's credentials configuration for the relevant private source.
+- For private PyPI access issues, verify UV's index and credentials configuration for the relevant private source.

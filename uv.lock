@@ -1221,7 +1221,7 @@ provides-extras = ["aedt", "all", "fluent", "optislang"]
 
 [[package]]
 name = "ansys-saf-product-manager"
-version = "0.6.dev0"
+version = "0.6.1"
 source = { editable = "packages/saf-product-manager" }
 dependencies = [
     { name = "ansys-bdm-api" },

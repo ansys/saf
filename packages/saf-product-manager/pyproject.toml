@@ -112,6 +112,7 @@ optional-dependencies.optislang-wrapper = [
 ]
 optional-dependencies.visor = [
   "httpx2>=2.5.0",
+  "numpy>=1.26.0,<3",
 ]
 
 [tool.uv]

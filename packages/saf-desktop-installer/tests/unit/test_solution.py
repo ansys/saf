@@ -55,6 +55,73 @@ def test_uv_solution_metadata(uv_solution_root: Path) -> None:
     run.assert_not_called()
 
 
+@pytest.mark.parametrize(
+    ("version", "expected"),
+    [("1.0-rc1", "1.0rc1"), ("1.0.0-beta", "1.0.0b0"), ("1.0.0.dev0", "1.0.0.dev0")],
+)
+def test_uv_version_is_normalized(uv_solution_root: Path, version: str, expected: str) -> None:
+    """Return the same normalized version as Poetry and as the built wheel filename."""
+    project = uv_solution_root / "pyproject.toml"
+    project.write_text(
+        project.read_text(encoding="utf-8").replace('"1.2.3"', f'"{version}"'),
+        encoding="utf-8",
+    )
+
+    assert SolutionInfo(uv_solution_root).solution_version == expected
+
+
+def test_uv_version_rejects_invalid_version(uv_solution_root: Path) -> None:
+    """Report a non-PEP 440 UV version as a metadata error."""
+    project = uv_solution_root / "pyproject.toml"
+    project.write_text(
+        project.read_text(encoding="utf-8").replace('"1.2.3"', '"not a version"'),
+        encoding="utf-8",
+    )
+
+    with pytest.raises(ValueError, match=r"project\.version.*PEP 440"):
+        _ = SolutionInfo(uv_solution_root).solution_version
+
+
+def _use_dynamic_uv_version(uv_solution_root: Path) -> None:
+    project = uv_solution_root / "pyproject.toml"
+    project.write_text(
+        project.read_text(encoding="utf-8").replace('version = "1.2.3"', 'dynamic = ["version"]'),
+        encoding="utf-8",
+    )
+
+
+def test_uv_dynamic_version_is_read_from_built_wheel(uv_solution_root: Path) -> None:
+    """Read a backend-computed UV version from the wheel built in a temporary folder."""
+    _use_dynamic_uv_version(uv_solution_root)
+
+    def build_wheel(command: list[str], **kwargs: object) -> subprocess.CompletedProcess[str]:
+        out_dir = Path(command[command.index("--out-dir") + 1])
+        (out_dir / "uv_solution-2.1.0b0-py3-none-any.whl").touch()
+        return subprocess.CompletedProcess(command, 0, "", "")
+
+    with patch("ansys.saf.desktop.installer._package.solution.subprocess.run", side_effect=build_wheel) as run:
+        assert SolutionInfo(uv_solution_root).solution_version == "2.1.0b0"
+
+    command = run.call_args.args[0]
+    assert command[:4] == ["uv", "build", "--wheel", "--out-dir"]
+    assert run.call_args.kwargs["cwd"] == uv_solution_root
+    assert not Path(command[4]).exists()
+
+
+def test_uv_dynamic_version_reports_build_failure(uv_solution_root: Path) -> None:
+    """Surface the UV build error when the dynamic version cannot be computed."""
+    _use_dynamic_uv_version(uv_solution_root)
+
+    with (
+        patch(
+            "ansys.saf.desktop.installer._package.solution.subprocess.run",
+            return_value=subprocess.CompletedProcess(["uv"], 1, "", "backend failed"),
+        ),
+        pytest.raises(RuntimeError, match="dynamic version: backend failed"),
+    ):
+        _ = SolutionInfo(uv_solution_root).solution_version
+
+
 @pytest.mark.parametrize("field", ["name", "version"])
 @pytest.mark.parametrize("value", [None, '"   "', "123"])
 def test_uv_metadata_requires_nonempty_strings(uv_solution_root: Path, field: str, value: str | None) -> None:
@@ -80,7 +147,9 @@ def test_uv_metadata_requires_project_table(uv_solution_root: Path) -> None:
 
 
 def test_poetry_metadata_uses_solution_root(
-    solution_root_dir: Path, monkeypatch: pytest.MonkeyPatch, tmp_path: Path,
+    solution_root_dir: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
 ) -> None:
     """Resolve Poetry's version from the solution directory, not the current directory."""
     monkeypatch.chdir(tmp_path)
@@ -94,8 +163,40 @@ def test_poetry_metadata_uses_solution_root(
         run.assert_not_called()
         assert info.solution_version == "0.1.dev0"
     run.assert_called_with(
-        command, cwd=solution_root_dir, capture_output=True, check=True, text=True,
+        command,
+        cwd=solution_root_dir,
+        capture_output=True,
+        check=True,
+        text=True,
     )
+
+
+@pytest.mark.parametrize(
+    ("project_metadata", "expected_name"),
+    [
+        ('[project]\nname = "standard-name"\n', "standard-name"),
+        ('[tool.poetry]\nname = "legacy-name"\n', "legacy-name"),
+        ('[project]\nname = "standard-name"\n\n[tool.poetry]\nname = "legacy-name"\n', "standard-name"),
+        ('[project]\ndynamic = ["name"]\n\n[tool.poetry]\nname = "legacy-name"\n', "legacy-name"),
+    ],
+    ids=["standard", "legacy", "standard-preferred", "dynamic-fallback"],
+)
+def test_poetry_project_name_layouts(tmp_path: Path, project_metadata: str, expected_name: str) -> None:
+    """Read Poetry names from standard metadata, falling back to legacy metadata."""
+    (tmp_path / "pyproject.toml").write_text(
+        project_metadata + '\n[build-system]\nbuild-backend = "poetry.core.masonry.api"\n',
+        encoding="utf-8",
+    )
+    command = ["poetry", "version", "--no-interaction"]
+
+    with patch(
+        "ansys.saf.desktop.installer._package.solution.subprocess.run",
+        return_value=subprocess.CompletedProcess(command, 0, f"{expected_name} 1.2.3\n"),
+    ) as run:
+        info = SolutionInfo(tmp_path)
+        assert info.solution_package_name == expected_name
+        assert info.solution_version == "1.2.3"
+    run.assert_called_once_with(command, cwd=tmp_path, capture_output=True, check=True, text=True)
 
 
 @pytest.mark.parametrize("output", ["", "solution", "solution unknown"])
@@ -112,7 +213,8 @@ def test_poetry_version_rejects_invalid_output(solution_root_dir: Path, output: 
 
 
 def test_get_solution_version_defaults_to_current_directory(
-    uv_solution_root: Path, monkeypatch: pytest.MonkeyPatch,
+    uv_solution_root: Path,
+    monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     """Keep the no-argument version getter working for the current solution."""
     monkeypatch.chdir(uv_solution_root)

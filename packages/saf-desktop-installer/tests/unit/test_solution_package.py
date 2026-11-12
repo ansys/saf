@@ -14,6 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import hashlib
 import json
 from pathlib import Path
 import platform
@@ -30,8 +31,13 @@ import pytest_mock
 import toml
 
 from ansys.saf.desktop.installer._package import manage_dependencies
+from ansys.saf.desktop.installer._package.backend_detection import SolutionBackend
 from ansys.saf.desktop.installer._package.config import InstallerConfig
-from ansys.saf.desktop.installer._package.manage_dependencies import add_wheels, copy_files, delete_encrypted_files
+from ansys.saf.desktop.installer._package.manage_dependencies import (
+    build_and_stage_solution_packages,
+    copy_files,
+    delete_encrypted_files,
+)
 from ansys.saf.desktop.installer._package.solution import (
     SolutionInfo,
     create_solution_metadata,
@@ -49,7 +55,547 @@ from ansys.saf.desktop.installer._package.solution_package import (
 from tests.conftest import CUSTOM_PACKAGE_FOR_TEST_2_WHEEL_NAMES
 
 
-def test_merge_group_dependencies_adds_extras_to_main_dependency():
+@pytest.mark.parametrize(
+    ("groups", "selected_groups"),
+    [
+        ("", []),
+        ("desktop = []\ndoc = []\ndev = []\n", ["desktop", "doc"]),
+        ("desktop = []\nui = []\ndoc = []\n", ["desktop", "ui", "doc"]),
+    ],
+)
+def test_export_uv_requirements_selects_existing_groups(
+    tmp_path: Path,
+    mocker: pytest_mock.MockerFixture,
+    groups: str,
+    selected_groups: list[str],
+) -> None:
+    """Export locked main dependencies and only the requested groups that exist."""
+    project = tmp_path / "solution"
+    project.mkdir()
+    (project / "pyproject.toml").write_text(f"[dependency-groups]\n{groups}", encoding="utf-8")
+    (project / "uv.lock").touch()
+    output = tmp_path / "requirements.txt"
+    python = tmp_path / "python"
+    command = ["uv", "export", "--locked", "--no-default-groups", "--no-emit-project", "--python", str(python)]
+    for group in selected_groups:
+        command.extend(["--group", group])
+    run = mocker.patch.object(
+        manage_dependencies.subprocess,
+        "run",
+        return_value=subprocess.CompletedProcess(command, 0, "package==1.0\n", ""),
+    )
+
+    result = manage_dependencies.export_uv_requirements(project, python, output)
+
+    assert result == output
+    assert output.read_text(encoding="utf-8") == "package==1.0\n"
+    run.assert_called_once_with(command, cwd=project, capture_output=True, check=True, text=True)
+
+
+def test_export_uv_requirements_requires_lock(tmp_path: Path, mocker: pytest_mock.MockerFixture) -> None:
+    """Reject missing UV locks before trying to export dependencies."""
+    (tmp_path / "pyproject.toml").write_text("[tool.uv]\n", encoding="utf-8")
+    run = mocker.patch.object(manage_dependencies.subprocess, "run")
+
+    with pytest.raises(FileNotFoundError, match="uv.lock"):
+        manage_dependencies.export_uv_requirements(tmp_path, tmp_path / "python", tmp_path / "requirements.txt")
+
+    run.assert_not_called()
+
+
+def test_export_uv_requirements_reports_export_failure(tmp_path: Path, mocker: pytest_mock.MockerFixture) -> None:
+    """Report a UV export failure, including a stale lock, without writing requirements."""
+    (tmp_path / "pyproject.toml").write_text("[tool.uv]\n", encoding="utf-8")
+    (tmp_path / "uv.lock").touch()
+    output = tmp_path / "requirements.txt"
+    error = subprocess.CalledProcessError(1, ["uv", "export"], stderr="The lockfile needs to be updated")
+    mocker.patch.object(manage_dependencies.subprocess, "run", side_effect=error)
+
+    with pytest.raises(RuntimeError, match="UV dependency export failed.*lockfile needs to be updated"):
+        manage_dependencies.export_uv_requirements(tmp_path, tmp_path / "python", output)
+
+    assert not output.exists()
+
+
+def test_select_uv_lock_packages_from_selected_requirements(tmp_path: Path) -> None:
+    """Use UV's selected requirements to filter native lock entries by package/version."""
+    wheel = tmp_path / "example-1.0-py3-none-any.whl"
+    lock = tmp_path / "uv.lock"
+    lock.write_text(
+        "version = 1\n"
+        '[[package]]\nname = "example"\nversion = "1.0"\nsource = { path = "example-1.0-py3-none-any.whl" }\n'
+        '[[package]]\nname = "idna"\nversion = "3.10"\nsource = { registry = "https://pypi.org/simple" }\n'
+        '[[package]]\nname = "dev-only"\nversion = "1.0"\nsource = { registry = "https://pypi.org/simple" }\n',
+        encoding="utf-8",
+    )
+    requirements = tmp_path / "requirements.txt"
+    requirements.write_text(
+        f"{wheel.as_uri()} \\\n    --hash=sha256:example\nidna==3.10 \\\n    --hash=sha256:example\n",
+        encoding="utf-8",
+    )
+
+    selected = manage_dependencies._selected_uv_lock_packages(tmp_path, requirements)  # pyright: ignore[reportPrivateUsage]
+
+    assert [(package["name"], package["version"]) for package in selected] == [("example", "1.0"), ("idna", "3.10")]
+
+
+def test_stage_uv_selected_local_dependencies(tmp_path: Path, mocker: pytest_mock.MockerFixture) -> None:
+    """Build wheels for native UV local, Git, and URL lock sources."""
+    wheel = tmp_path / "example-1.0-py3-none-any.whl"
+    wheel.write_bytes(b"wheel")
+    digest = hashlib.sha256(wheel.read_bytes()).hexdigest()
+    project = tmp_path / "local-project"
+    project.mkdir()
+    packages = [
+        {
+            "name": "local",
+            "source": {"path": "local-project"},
+            "resolution-markers": ["python_full_version < '3.13'"],
+        },
+        {
+            "name": "example",
+            "source": {"path": wheel.name},
+            "wheels": [{"filename": wheel.name, "hash": f"sha256:{digest}"}],
+        },
+        {"name": "git", "source": {"git": "https://github.com/org/repo.git#abcdef"}},
+        {"name": "remote", "source": {"url": "https://example.invalid/a.whl"}},
+    ]
+    python = tmp_path / "python"
+    wheelhouse = tmp_path / "wheelhouse"
+
+    def run(command: list[str], **kwargs: Any) -> subprocess.CompletedProcess[str]:
+        requirements = Path(command[-1]).read_text(encoding="utf-8").splitlines()
+        assert requirements == [
+            f"local @ {project.resolve().as_uri()} ; (python_full_version < '3.13')",
+            f"example @ {wheel.resolve().as_uri()}",
+            "git @ git+https://github.com/org/repo.git@abcdef",
+            "remote @ https://example.invalid/a.whl",
+        ]
+        assert command == [
+            str(python),
+            "-m",
+            "pip",
+            "wheel",
+            "--disable-pip-version-check",
+            "--no-deps",
+            "--wheel-dir",
+            str(wheelhouse),
+            "-r",
+            command[-1],
+        ]
+        assert kwargs == {"cwd": tmp_path, "check": True, "capture_output": True, "text": True}
+        return subprocess.CompletedProcess(command, 0, "", "")
+
+    mocker.patch.object(manage_dependencies.subprocess, "run", side_effect=run)
+    assert manage_dependencies.stage_uv_selected_local_dependencies(tmp_path, packages, wheelhouse, python) is None
+
+
+def test_stage_uv_selected_local_wheel_checks_hash(tmp_path: Path, mocker: pytest_mock.MockerFixture) -> None:
+    """Reject a changed local wheel before staging it."""
+    wheel = tmp_path / "local.whl"
+    wheel.write_bytes(b"modified")
+    packages = [
+        {
+            "name": "local",
+            "source": {"path": "local.whl"},
+            "wheels": [{"filename": "local.whl", "hash": "sha256:wrong"}],
+        },
+    ]
+    with pytest.raises(ValueError, match="SHA-256 hash mismatch"):
+        manage_dependencies.stage_uv_selected_local_dependencies(
+            tmp_path,
+            packages,
+            tmp_path / "wheelhouse",
+            tmp_path,
+        )
+
+
+def test_uv_installation_project_uses_built_dynamic_version(tmp_path: Path) -> None:
+    """Give the portable UV project a static version so `uv lock` does not call the build backend."""
+    (tmp_path / "my_solution-2.1.0b0-py3-none-any.whl").touch()
+    (tmp_path / "other_package-9.0-py3-none-any.whl").touch()
+    project: dict[str, Any] = {"project": {"name": "My.Solution", "dynamic": ["version", "readme"]}}
+
+    manage_dependencies._use_built_uv_solution_version(project, tmp_path)  # pyright: ignore[reportPrivateUsage]
+
+    assert project["project"] == {"name": "My.Solution", "version": "2.1.0b0", "dynamic": ["readme"]}
+
+
+def test_uv_installation_project_keeps_static_version(tmp_path: Path) -> None:
+    """Leave static UV project versions untouched."""
+    project: dict[str, Any] = {"project": {"name": "my-solution", "version": "1.0"}}
+
+    manage_dependencies._use_built_uv_solution_version(project, tmp_path)  # pyright: ignore[reportPrivateUsage]
+
+    assert project["project"] == {"name": "my-solution", "version": "1.0"}
+
+
+def test_rewrite_uv_local_sources_points_at_staged_wheels(tmp_path: Path) -> None:
+    """Rewrite local project sources to portable wheelhouse paths."""
+    project_root = tmp_path / "source"
+    local_source = project_root / "local-dependency"
+    local_source.mkdir(parents=True)
+    packages = [
+        {
+            "name": "local-dependency",
+            "version": "1.0",
+            "source": {"path": "local-dependency"},
+            "resolution-markers": ["sys_platform == 'win32'"],
+        },
+        {
+            "name": "private-package",
+            "version": "2.0",
+            "source": {"registry": "https://packages.example/simple"},
+        },
+        {"name": "idna", "version": "3.10", "source": {"registry": "https://pypi.org/simple"}},
+    ]
+    wheelhouse = tmp_path / "wheelhouse"
+    wheelhouse.mkdir()
+    wheel = wheelhouse / "local_dependency-1.0-py3-none-any.whl"
+    wheel.touch()
+    private_wheel = wheelhouse / "private_package-2.0-py3-none-any.whl"
+    private_wheel.touch()
+    public_wheel = wheelhouse / "idna-3.10-py3-none-any.whl"
+    public_wheel.touch()
+    project: dict[str, Any] = {"tool": {"uv": {"sources": {}}}}
+
+    manage_dependencies._rewrite_uv_local_sources(  # pyright: ignore[reportPrivateUsage]
+        project,
+        project_root,
+        packages,
+        wheelhouse,
+        include_public_registry_packages=True,
+    )
+
+    assert project["tool"]["uv"]["sources"]["local-dependency"] == {
+        "path": f"wheelhouse/{wheel.name}",
+        "marker": "(sys_platform == 'win32')",
+    }
+    assert project["tool"]["uv"]["sources"]["private-package"] == {"path": f"wheelhouse/{private_wheel.name}"}
+    assert "idna" not in project["tool"]["uv"]["sources"]
+    assert project["project"]["dependencies"] == [
+        "local-dependency ; ((sys_platform == 'win32'))",
+        "private-package",
+    ]
+
+
+def test_stage_uv_private_dependencies_uses_uv_index_credentials(
+    tmp_path: Path,
+    mocker: pytest_mock.MockerFixture,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    project = tmp_path / "source"
+    project.mkdir()
+    (project / "pyproject.toml").write_text(
+        '[tool.uv]\n[[tool.uv.index]]\nname = "company"\nurl = "https://packages.example/simple"\n',
+        encoding="utf-8",
+    )
+    packages = [
+        {
+            "name": "internal-package",
+            "version": "1.0",
+            "source": {"registry": "https://packages.example/simple"},
+        },
+    ]
+    wheelhouse = tmp_path / "wheelhouse"
+    wheelhouse.mkdir()
+    monkeypatch.setenv("UV_INDEX_COMPANY_USERNAME", "build-user")
+    monkeypatch.setenv("UV_INDEX_COMPANY_PASSWORD", "build-token")
+
+    def run(command: list[str], **kwargs: Any) -> subprocess.CompletedProcess[str]:
+        assert kwargs["env"]["PIP_INDEX_URL"] == "https://build-user:build-token@packages.example/simple"
+        assert Path(command[command.index("-r") + 1]).read_text(encoding="utf-8") == "internal-package==1.0"
+        return subprocess.CompletedProcess(command, 0, "", "")
+
+    mocker.patch.object(manage_dependencies.subprocess, "run", side_effect=run)
+
+    manage_dependencies._stage_uv_private_dependencies(  # pyright: ignore[reportPrivateUsage]
+        project,
+        packages,
+        wheelhouse,
+        tmp_path / "python",
+    )
+
+
+def test_uv_git_requirement_uses_locked_revision_and_subdirectory() -> None:
+    package = {
+        "name": "git-package",
+        "source": {"git": "https://github.com/org/repo.git#abcdef&subdirectory=python%20package"},
+    }
+
+    requirement = manage_dependencies._uv_git_requirement(  # pyright: ignore[reportPrivateUsage]
+        package,
+        "ghp+test",
+    )
+
+    assert requirement == (
+        "git-package @ git+https://ghp%2Btest@github.com/org/repo.git@abcdef#subdirectory=python%20package"
+    )
+
+
+@pytest.mark.parametrize("query", ["", "?rev=main", "?tag=v1.0", "?branch=main"])
+def test_uv_public_git_requirement_does_not_require_token(query: str) -> None:
+    package = {
+        "name": "public-git-package",
+        "source": {"git": f"https://github.com/org/repo.git{query}#abcdef"},
+    }
+
+    requirement = manage_dependencies._uv_git_requirement(  # pyright: ignore[reportPrivateUsage]
+        package,
+        None,
+    )
+
+    assert requirement == "public-git-package @ git+https://github.com/org/repo.git@abcdef"
+
+
+def test_uv_git_requirement_moves_query_subdirectory_to_pip_fragment() -> None:
+    package = {
+        "name": "git-package",
+        "source": {"git": "https://github.com/org/repo.git?rev=main&subdirectory=python%20package#abcdef"},
+    }
+
+    requirement = manage_dependencies._uv_git_requirement(  # pyright: ignore[reportPrivateUsage]
+        package,
+        None,
+    )
+
+    assert requirement == "git-package @ git+https://github.com/org/repo.git@abcdef#subdirectory=python%20package"
+
+
+def test_obfuscate_solution_includes_uv_wheelhouse_dependencies(
+    tmp_path: Path, mocker: pytest_mock.MockerFixture
+) -> None:
+    root_wheel = tmp_path / "solution-1.0-py3-none-any.whl"
+    root_wheel.touch()
+    wheelhouse = tmp_path / "wheelhouse"
+    wheelhouse.mkdir()
+    private_wheel = wheelhouse / "private-1.0-py3-none-any.whl"
+    private_wheel.touch()
+    check_output = mocker.patch.object(manage_dependencies.subprocess, "check_output")
+    python = tmp_path / "python"
+
+    manage_dependencies.obfuscate_solution(tmp_path, python)
+
+    assert {call.args[0][-1] for call in check_output.call_args_list} == {str(root_wheel), str(private_wheel)}
+
+
+def test_stage_uv_selected_local_dependencies_reports_pip_failure(
+    tmp_path: Path,
+    mocker: pytest_mock.MockerFixture,
+) -> None:
+    """Surface local source build failures from the target Python's pip."""
+    project = tmp_path / "project"
+    project.mkdir()
+    packages = [{"name": "local", "source": {"path": "project"}}]
+    error = subprocess.CalledProcessError(1, ["python", "-m", "pip", "wheel"], stderr="wheel build failed")
+    mocker.patch.object(manage_dependencies.subprocess, "run", side_effect=error)
+
+    with pytest.raises(RuntimeError, match="Failed to stage local or Git UV dependencies.*wheel build failed"):
+        manage_dependencies.stage_uv_selected_local_dependencies(
+            tmp_path,
+            packages,
+            tmp_path / "wheelhouse",
+            tmp_path / "python",
+        )
+
+
+@pytest.mark.parametrize(
+    ("backend", "packages"),
+    [
+        (SolutionBackend.POETRY, ["wheel", "poetry", "setuptools", "pyc-wheel"]),
+        (SolutionBackend.UV, ["wheel", "setuptools", "pyc-wheel"]),
+    ],
+)
+def test_create_definitions_venv_installs_backend_tools(
+    tmp_path: Path,
+    backend: SolutionBackend,
+    packages: list[str],
+) -> None:
+    """Create the build environment and install only the tools needed by its backend."""
+    definitions = tmp_path / "definitions"
+    python = tmp_path / "python"
+    venv = definitions / ".venv"
+    venv_python = venv / "Scripts" / "python.exe" if platform.system() == "Windows" else venv / "bin" / "python"
+
+    with patch("ansys.saf.desktop.installer._package.manage_dependencies.subprocess.check_output") as run:
+        result = manage_dependencies.create_venv_in_definitions_folder(definitions, python, backend)
+
+    assert result == (venv, venv_python)
+    assert run.call_count == 2
+    assert run.call_args_list[0].args[0] == [str(python), "-m", "venv", str(venv)]
+    assert run.call_args_list[1].args[0] == [str(venv_python), "-m", "pip", "install", *packages]
+
+
+@pytest.mark.parametrize("failure_call", [0, 1], ids=["create-venv", "install-tools"])
+def test_create_definitions_venv_reports_failures(
+    tmp_path: Path,
+    failure_call: int,
+) -> None:
+    """Report errors from environment creation or tool installation."""
+    error = subprocess.CalledProcessError(1, ["python"], output="test failure")
+    outputs: list[bytes | subprocess.CalledProcessError] = [b"", b""]
+    outputs[failure_call] = error
+    with (
+        patch(
+            "ansys.saf.desktop.installer._package.manage_dependencies.subprocess.check_output",
+            side_effect=outputs,
+        ),
+        pytest.raises(RuntimeError, match="Failed to create virtual environment.*test failure"),
+    ):
+        manage_dependencies.create_venv_in_definitions_folder(tmp_path, tmp_path / "python", SolutionBackend.POETRY)
+
+
+@pytest.mark.parametrize(
+    ("section", "backend"),
+    [("tool.poetry", SolutionBackend.POETRY), ("tool.uv", SolutionBackend.UV)],
+)
+def test_setup_solution_folder_passes_detected_backend(
+    tmp_path: Path,
+    mock_installer_config: InstallerConfig,
+    mocker: pytest_mock.MockerFixture,
+    section: str,
+    backend: SolutionBackend,
+) -> None:
+    """Pass the solution's detected backend to environment and tool preparation."""
+    (tmp_path / "pyproject.toml").write_text(f"[{section}]\n")
+    solution_info = mocker.Mock(spec=SolutionInfo)
+    solution_info.solution_root_dir = tmp_path
+    solution_info.solution_module_name = "example"
+    solution_info.solution_display_name = "Example"
+    solution_info.solution_version = "1.0"
+    module = "ansys.saf.desktop.installer._package.solution_package"
+    for name in (
+        "build_and_embed_documentation",
+        "create_solution_metadata",
+        "create_version_file",
+        "move_assets_and_deployment_script",
+    ):
+        mocker.patch(f"{module}.{name}")
+    definitions = tmp_path / "definitions"
+    python = tmp_path / "python"
+    mocker.patch(f"{module}.get_definitions_folder", return_value=definitions)
+    mocker.patch(f"{module}.download_embeddable_python", return_value=(python, "3.11"))
+    venv = definitions / ".venv"
+    venv_python = venv / "python"
+    create_venv = mocker.patch(f"{module}.create_venv_in_definitions_folder", return_value=(venv, venv_python))
+    write_tool_requirements = mocker.patch(
+        f"{module}.write_backend_tool_requirements",
+        side_effect=RuntimeError("stop"),
+    )
+
+    with pytest.raises(RuntimeError, match="stop"):
+        setup_solution_folder(solution_info, mock_installer_config)
+
+    create_venv.assert_called_once_with(definitions, python, backend)
+    write_tool_requirements.assert_called_once_with(tmp_path, "example", venv_python, backend)
+
+
+def test_setup_uv_solution_skips_poetry_project_generation(
+    tmp_path: Path,
+    mock_installer_config: InstallerConfig,
+    mocker: pytest_mock.MockerFixture,
+) -> None:
+    (tmp_path / "pyproject.toml").write_text(
+        '[project]\nname = "example"\nversion = "1.0"\n[tool.uv]\n',
+        encoding="utf-8",
+    )
+    mock_installer_config.pyproject_location = tmp_path / "pyproject.toml"
+    solution_info = mocker.Mock(spec=SolutionInfo)
+    solution_info.solution_root_dir = tmp_path
+    solution_info.solution_module_name = "example"
+    solution_info.solution_display_name = "Example"
+    solution_info.solution_version = "1.0"
+    module = "ansys.saf.desktop.installer._package.solution_package"
+    for name in (
+        "build_and_embed_documentation",
+        "create_solution_metadata",
+        "create_version_file",
+        "move_assets_and_deployment_script",
+        "write_backend_tool_requirements",
+        "create_env_file",
+        "copy_configuration_files",
+    ):
+        mocker.patch(f"{module}.{name}")
+    definitions = tmp_path / "definitions"
+    python = tmp_path / "python"
+    mocker.patch(f"{module}.get_definitions_folder", return_value=definitions)
+    mocker.patch(f"{module}.download_embeddable_python", return_value=(python, "3.11"))
+    mocker.patch(
+        f"{module}.create_venv_in_definitions_folder",
+        return_value=(definitions / ".venv", definitions / ".venv" / "python"),
+    )
+    build_and_stage = mocker.patch(f"{module}.build_and_stage_solution_packages")
+    create_poetry_project = mocker.patch(f"{module}.create_poetry_installation_project")
+
+    setup_solution_folder(solution_info, mock_installer_config)
+
+    assert build_and_stage.call_args.args[-1] is SolutionBackend.UV
+    create_poetry_project.assert_not_called()
+
+
+@pytest.mark.parametrize(
+    ("backend", "configuration", "poetry_requirements"),
+    [
+        (SolutionBackend.POETRY, '[build-system-requirements]\nbuild-system-version = "1.8.4"\n', "poetry==1.8.4"),
+        (
+            SolutionBackend.POETRY,
+            '[build-system-requirements]\nbuild-system-version = "2.5.1"\n',
+            "poetry==2.5.1\npoetry-plugin-export>=1.8",
+        ),
+        (SolutionBackend.UV, "[tool.uv]\n", None),
+    ],
+)
+def test_write_backend_tool_requirements(
+    tmp_path: Path,
+    mocker: pytest_mock.MockerFixture,
+    backend: SolutionBackend,
+    configuration: str,
+    poetry_requirements: str | None,
+) -> None:
+    """Write pip requirements and only the selected backend's tool requirements."""
+    (tmp_path / "pyproject.toml").write_text(configuration)
+    python = tmp_path / "python"
+    check_output = mocker.patch.object(manage_dependencies.subprocess, "check_output", return_value="pip 24.0 from x")
+
+    manage_dependencies.write_backend_tool_requirements(tmp_path, "example", python, backend)
+
+    tools = tmp_path / "dist" / "solution" / "definitions" / "example" / "tools"
+    assert (tools / "pip_requirements.txt").read_text() == "pip==24.0"
+    poetry_file = tools / "poetry_requirements.txt"
+    if poetry_requirements is None:
+        assert not poetry_file.exists()
+    else:
+        assert poetry_file.read_text() == poetry_requirements
+    check_output.assert_called_once_with([python, "-m", "pip", "--disable-pip-version-check", "--version"], text=True)
+
+
+@pytest.mark.parametrize(
+    ("configuration", "missing_key"),
+    [
+        ("[tool.poetry]\n", "build-system-requirements"),
+        ("[build-system-requirements]\n", "build-system-version"),
+    ],
+)
+def test_write_backend_tool_requirements_requires_poetry_version(
+    tmp_path: Path,
+    mocker: pytest_mock.MockerFixture,
+    configuration: str,
+    missing_key: str,
+) -> None:
+    """Keep the existing errors for missing Poetry version configuration."""
+    (tmp_path / "pyproject.toml").write_text(configuration)
+    mocker.patch.object(manage_dependencies.subprocess, "check_output", return_value="pip 24.0 from x")
+
+    with pytest.raises(KeyError, match=missing_key):
+        manage_dependencies.write_backend_tool_requirements(
+            tmp_path,
+            "example",
+            tmp_path / "python",
+            SolutionBackend.POETRY,
+        )
+
+
+def test_merge_poetry_group_dependencies_adds_extras_to_main_dependency():
     dependencies: dict[str, Any] = {
         "example-package": {"version": "^1.0", "extras": ["main-extra"], "python": ">=3.11"},
     }
@@ -61,7 +607,11 @@ def test_merge_group_dependencies_adds_extras_to_main_dependency():
         },
     }
 
-    manage_dependencies.merge_group_dependencies(["desktop", "ui", "doc"], poetry, dependencies)
+    manage_dependencies._merge_poetry_group_dependencies(  # pyright: ignore[reportPrivateUsage]
+        ["desktop", "ui", "doc"],
+        poetry,
+        dependencies,
+    )
 
     assert dependencies == {
         "example-package": {
@@ -72,18 +622,22 @@ def test_merge_group_dependencies_adds_extras_to_main_dependency():
     }
 
 
-def test_merge_group_dependencies_adds_extras_to_string_main_dependency():
+def test_merge_poetry_group_dependencies_adds_extras_to_string_main_dependency():
     dependencies: dict[str, Any] = {"example-package": "^1.0"}
     poetry: dict[str, Any] = {
         "group": {"desktop": {"dependencies": {"example_package": {"extras": ["desktop-extra"]}}}},
     }
 
-    manage_dependencies.merge_group_dependencies(["desktop"], poetry, dependencies)
+    manage_dependencies._merge_poetry_group_dependencies(  # pyright: ignore[reportPrivateUsage]
+        ["desktop"],
+        poetry,
+        dependencies,
+    )
 
     assert dependencies == {"example-package": {"version": "^1.0", "extras": ["desktop-extra"]}}
 
 
-def test_relativize_lock_path_dependencies(tmp_path: Path, caplog: pytest.LogCaptureFixture) -> None:
+def test_relativize_poetry_lock_path_dependencies(tmp_path: Path, caplog: pytest.LogCaptureFixture) -> None:
     definitions_folder = tmp_path / "definitions" / "my_solution"
     definitions_folder.mkdir(parents=True)
     inside = (definitions_folder / "dep-1.0.0-py3-none-any.whl").as_posix()
@@ -112,7 +666,7 @@ url = "my_solution-0.1.0-py3-none-any.whl"
     poetry_lock = definitions_folder / "poetry.lock"
     poetry_lock.write_text(lock_content, encoding="utf-8")
 
-    manage_dependencies.relativize_lock_path_dependencies(definitions_folder)
+    manage_dependencies.relativize_poetry_lock_path_dependencies(definitions_folder)
 
     dependencies = toml.loads(poetry_lock.read_text(encoding="utf-8"))["package"][0]["dependencies"]
     assert dependencies["dep"] == {"path": "dep-1.0.0-py3-none-any.whl"}
@@ -137,7 +691,10 @@ url = "my_solution-0.1.0-py3-none-any.whl"
         "build\\back",
     ],
 )
-def test_relativize_lock_path_dependencies_with_escaped_characters(tmp_path: Path, build_dir_name: str) -> None:
+def test_relativize_poetry_lock_path_dependencies_with_escaped_characters(
+    tmp_path: Path,
+    build_dir_name: str,
+) -> None:
     definitions_folder = tmp_path / build_dir_name / "definitions"
     definitions_folder.mkdir(parents=True)
     wheel_path = str(definitions_folder / "dep-1.0.0-py3-none-any.whl")
@@ -147,13 +704,13 @@ def test_relativize_lock_path_dependencies_with_escaped_characters(tmp_path: Pat
         encoding="utf-8",
     )
 
-    manage_dependencies.relativize_lock_path_dependencies(definitions_folder)
+    manage_dependencies.relativize_poetry_lock_path_dependencies(definitions_folder)
 
     dependencies = tomllib.loads(poetry_lock.read_text(encoding="utf-8"))["package"][0]["dependencies"]
     assert dependencies["dep"] == {"path": "dep-1.0.0-py3-none-any.whl"}
 
 
-def test_add_poetry_project_relativizes_lock_path_dependencies(tmp_path: Path) -> None:
+def test_create_poetry_installation_project_relativizes_lock_path_dependencies(tmp_path: Path) -> None:
     solution_root_dir = tmp_path / "solution"
     solution_root_dir.mkdir()
     pyproject = solution_root_dir / "pyproject.toml"
@@ -166,10 +723,15 @@ def test_add_poetry_project_relativizes_lock_path_dependencies(tmp_path: Path) -
     with (
         patch("ansys.saf.desktop.installer._package.manage_dependencies.subprocess.check_output"),
         patch(
-            "ansys.saf.desktop.installer._package.manage_dependencies.relativize_lock_path_dependencies",
+            "ansys.saf.desktop.installer._package.manage_dependencies.relativize_poetry_lock_path_dependencies",
         ) as mock_relativize,
     ):
-        manage_dependencies.add_poetry_project(Path("python"), pyproject, definitions_folder, "3.12")
+        manage_dependencies.create_poetry_installation_project(
+            Path("python"),
+            pyproject,
+            definitions_folder,
+            "3.12",
+        )
     mock_relativize.assert_called_once_with(definitions_folder)
 
 
@@ -696,7 +1258,10 @@ def test_create_solution_metadata_with_synopsys_namespace(
         patch(
             "ansys.saf.desktop.installer._package.solution.subprocess.run",
             return_value=subprocess.CompletedProcess(
-                ["poetry", "version", "--no-interaction"], 0, "custom-ns-solution 0.1.dev0\n", "",
+                ["poetry", "version", "--no-interaction"],
+                0,
+                "custom-ns-solution 0.1.dev0\n",
+                "",
             ),
         ),
     ):
@@ -710,6 +1275,32 @@ def test_create_solution_metadata_with_synopsys_namespace(
     assert metadata["solution-name"] == "synopsys-custom-ns-solution"
     assert metadata["solution-display-name"] == "Custom NS Solution"
     assert metadata["solution-version"] == "0.1.dev0"
+    assert metadata["solution-backend"] == "poetry"
+
+
+def test_create_solution_metadata_marks_uv_backend(
+    tmp_path: Path,
+    mock_installer_config: InstallerConfig,
+    mocker: pytest_mock.MockerFixture,
+) -> None:
+    (tmp_path / "dist" / "solution").mkdir(parents=True)
+    (tmp_path / "pyproject.toml").write_text(
+        '[project]\nname = "example"\nversion = "1.0"\n[tool.uv]\n',
+        encoding="utf-8",
+    )
+    mock_installer_config.pyproject_location = tmp_path / "pyproject.toml"
+    solution_info = mocker.Mock()
+    solution_info.solution_root_dir = tmp_path
+    solution_info.solution_module_name = "example"
+    solution_info.solution_version = "1.0"
+    solution_info.solution_display_name = "Example"
+    solution_info.solution_package_name = "example"
+    solution_info.solution_module_dotted_path = "ansys.solutions.example"
+
+    create_solution_metadata(solution_info, mock_installer_config)
+
+    metadata = json.loads((tmp_path / "dist" / "solution" / "solution-metadata.json").read_text())
+    assert metadata["solution-backend"] == "uv"
 
 
 @pytest.mark.usefixtures("mock_subprocess_calls", "mock_solution_display_name")
@@ -963,7 +1554,7 @@ def mock_encrypt_solution(mocker: pytest_mock.MockerFixture) -> None:
 
 
 @pytest.mark.usefixtures("mock_subprocess_calls", "mock_solution_display_name", "mock_encrypt_solution")
-def test_encryption_workflow_when_adding_wheels(
+def test_encryption_workflow_when_building_and_staging_solution_packages(
     solution_root_dir: Path,
     mock_installer_config: InstallerConfig,
     mocker: pytest_mock.MockerFixture,
@@ -971,8 +1562,9 @@ def test_encryption_workflow_when_adding_wheels(
     """Verify that encrypted files are cleaned from solution root after encryption build."""
     # Mock the build_wheel and download functions to avoid wheel file processing
     mocker.patch.object(manage_dependencies, "build_solution_wheel")
-    mocker.patch.object(manage_dependencies, "get_packages_with_wheel_url_deps", return_value=[])
-    mocker.patch.object(manage_dependencies, "download_internal_dependencies")
+    mocker.patch.object(manage_dependencies, "_get_poetry_packages_with_wheel_url_dependencies", return_value=[])
+    mocker.patch.object(manage_dependencies, "_stage_poetry_internal_dependencies")
+    mocker.patch.object(manage_dependencies, "modify_solution_wheel_metadata")
     copy_files_spy = mocker.spy(manage_dependencies, "copy_files")
     delete_encrypted_files_spy = mocker.spy(manage_dependencies, "delete_encrypted_files")
 
@@ -986,7 +1578,7 @@ def test_encryption_workflow_when_adding_wheels(
     encryption_manifest = solution_root_dir / "encrypt_manifest.txt"
     encryption_manifest.write_text(f"src/ansys/solutions/{solution_module_name}/method_assets/factor.txt\n")
 
-    # Execute: call add_wheels with encryption enabled
+    # Execute: build and stage solution packages with encryption enabled
     mock_installer_config.encrypt = True
     mock_installer_config.encryption_file = encryption_manifest
 
@@ -997,7 +1589,7 @@ def test_encryption_workflow_when_adding_wheels(
     venv_python_exec.parent.mkdir(parents=True, exist_ok=True)
     venv_python_exec.touch()
 
-    add_wheels(
+    build_and_stage_solution_packages(
         definitions_folder,
         venv_python_exec,
         solution_root_dir,
@@ -1016,7 +1608,7 @@ def test_encryption_workflow_when_adding_wheels(
 
 
 @pytest.mark.usefixtures("mock_subprocess_calls", "mock_solution_display_name", "mock_encrypt_solution")
-def test_encryption_workflow_when_adding_wheels_executes_finally_on_error(
+def test_encryption_workflow_when_solution_package_build_fails_after_encryption(
     solution_root_dir: Path,
     mock_installer_config: InstallerConfig,
     mocker: pytest_mock.MockerFixture,
@@ -1041,7 +1633,7 @@ def test_encryption_workflow_when_adding_wheels_executes_finally_on_error(
     encryption_manifest = solution_root_dir / "encrypt_manifest.txt"
     encryption_manifest.write_text(f"src/ansys/solutions/{solution_module_name}/method_assets/factor.txt\n")
 
-    # Execute: call add_wheels with encryption enabled
+    # Execute: build and stage solution packages with encryption enabled
     mock_installer_config.encrypt = True
     mock_installer_config.encryption_file = encryption_manifest
 
@@ -1053,7 +1645,7 @@ def test_encryption_workflow_when_adding_wheels_executes_finally_on_error(
     venv_python_exec.touch()
 
     with pytest.raises(RuntimeError, match="mock wheel build failure"):
-        add_wheels(
+        build_and_stage_solution_packages(
             definitions_folder,
             venv_python_exec,
             solution_root_dir,

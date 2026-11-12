@@ -42,7 +42,7 @@ from selenium.webdriver.common.by import By
 
 import ansys.saf.desktop.installer._common.utils as common_utils
 from ansys.saf.desktop.installer._common.utils import has_portal_dependency, simplify_wheel_dependency_constraints
-from ansys.saf.desktop.installer._package.manage_dependencies import simplify_wheel_url_dependencies
+from ansys.saf.desktop.installer._package.manage_dependencies import _simplify_poetry_wheel_url_dependencies
 from ansys.saf.desktop.installer._ui_styles import install_button_style
 from ansys.saf.desktop.installer.solution_desktop_deployment import (
     FOLDERID_DESKTOP,
@@ -52,10 +52,12 @@ from ansys.saf.desktop.installer.solution_desktop_deployment import (
     _ensure_third_party_extracted,  # pyright: ignore[reportPrivateUsage]
     _get_windows_desktop_directory,  # pyright: ignore[reportPrivateUsage]
     _is_windows_admin,  # pyright: ignore[reportPrivateUsage]
+    _uv_sync_command,  # pyright: ignore[reportPrivateUsage]
     build_long_path_section,
     delete_existing_solution_shortcut,
     form_layout,
     get_shortcut_path,
+    get_wheel,
     install_shortcut,
     main,
     modify_solution_wheel_metadata,
@@ -155,6 +157,22 @@ def test_modify_solution_wheel_metadata(solution_root_dir: Path) -> None:
         assert not any(other_wheel_name in line for line in metadata_path.read_text().splitlines())
 
 
+def test_solution_wheel_lookup_uses_normalized_wheel_filename(tmp_path: Path) -> None:
+    """Find the solution wheel when its project name and version are not written in wheel form."""
+    wheel_path = tmp_path / "my_solution-1.0.0b0-py3-none-any.whl"
+    with zipfile.ZipFile(wheel_path, "w") as wheel:
+        wheel.writestr(
+            "my_solution-1.0.0b0.dist-info/METADATA",
+            "Metadata-Version: 2.1\nName: My.Solution\nVersion: 1.0.0b0\n",
+        )
+
+    assert get_wheel("My.Solution", tmp_path) == wheel_path
+    modify_solution_wheel_metadata(tmp_path, "My.Solution", "1.0.0-beta")
+
+    with zipfile.ZipFile(wheel_path) as wheel:
+        assert "Version: 1.0.0b0" in wheel.read("my_solution-1.0.0b0.dist-info/METADATA").decode()
+
+
 def test_simplify_wheel_dependency_constraints(tmp_path: Path) -> None:
     metadata_content = """Metadata-Version: 2.1
 Name: test-package
@@ -227,7 +245,7 @@ def test_get_installed_package_version():
         common_utils._get_installed_package_version("wrong_package")  # pyright: ignore[reportPrivateUsage]
 
 
-def test_simplify_wheel_url_dependencies(tmp_path: Path) -> None:
+def test_simplify_poetry_wheel_url_dependencies(tmp_path: Path) -> None:
     mock_wheel_path = (
         Path(__file__).parent.parent
         / "mocks"
@@ -251,7 +269,7 @@ def test_simplify_wheel_url_dependencies(tmp_path: Path) -> None:
         side_effect=mock_get_version,
     ):
         packages_with_wheel_url_deps = [("ansys-solutions-custom-package-for-installer-test", "0.1.dev0")]
-        simplify_wheel_url_dependencies(packages_with_wheel_url_deps, tmp_path)
+        _simplify_poetry_wheel_url_dependencies(packages_with_wheel_url_deps, tmp_path)
 
     with tempfile.TemporaryDirectory() as tmpdir:
         tmpdir_path = Path(tmpdir)
@@ -264,11 +282,11 @@ def test_simplify_wheel_url_dependencies(tmp_path: Path) -> None:
         assert "@ https://" not in content
 
 
-def test_simplify_wheel_url_dependencies_wheel_not_found(tmp_path: Path) -> None:
+def test_simplify_poetry_wheel_url_dependencies_wheel_not_found(tmp_path: Path) -> None:
     packages_with_wheel_url_deps = [("nonexistent-package", "1.0.0")]
 
     with pytest.raises(FileNotFoundError, match="Could not find wheel for package nonexistent-package==1.0.0"):
-        simplify_wheel_url_dependencies(packages_with_wheel_url_deps, tmp_path)
+        _simplify_poetry_wheel_url_dependencies(packages_with_wheel_url_deps, tmp_path)
 
 
 @windows_only()
@@ -1815,6 +1833,43 @@ def test_solution_detect_saf_desktop_portal_dependency(tmp_path: Path) -> None:
 def test_solution_without_portal_doesnt_detect_portal_dependency(tmp_path: Path) -> None:
     _write_poetry_lock(tmp_path, ["some-other-package"])
     assert not has_portal_dependency(tmp_path)
+
+
+def test_solution_detect_saf_portal_dependency_from_uv_lock(tmp_path: Path) -> None:
+    (tmp_path / "uv.lock").write_text(
+        'version = 1\n[[package]]\nname = "ansys-saf-projects-dashboard"\nversion = "1.0.0"\n',
+        encoding="utf-8",
+    )
+
+    assert has_portal_dependency(tmp_path)
+
+
+def test_uv_sync_command_uses_selected_groups_and_offline_wheelhouse(tmp_path: Path) -> None:
+    (tmp_path / "uv-groups.txt").write_text("desktop\nui\n", encoding="utf-8")
+
+    command = _uv_sync_command(
+        tmp_path / "uv.exe",
+        tmp_path,
+        tmp_path / "python.exe",
+        {"offline-package": "True"},
+    )
+
+    assert command == [
+        str(tmp_path / "uv.exe"),
+        "sync",
+        "--locked",
+        "--no-install-project",
+        "--python",
+        str(tmp_path / "python.exe"),
+        "--group",
+        "desktop",
+        "--group",
+        "ui",
+        "--offline",
+        "--no-index",
+        "--find-links",
+        "wheelhouse",
+    ]
 
 
 @pytest.mark.parametrize(

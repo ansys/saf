@@ -35,7 +35,12 @@ import re
 import shutil
 import subprocess
 import sys
+import tempfile
 import tomllib
+from typing import Any
+
+from packaging.utils import parse_wheel_filename
+from packaging.version import InvalidVersion, Version
 
 from ansys.saf.desktop.installer._package.backend_detection import (
     SolutionBackend,
@@ -80,15 +85,16 @@ class _SolutionMetadata:
         project = configuration.get("project")
         if project is not None and not isinstance(project, dict):
             raise ValueError(f"Missing or invalid [project] metadata in '{self.pyproject_path}'.")
-        self.fields = project
+        fields = project
         self.section = "project"
         if self.backend is SolutionBackend.POETRY:
             poetry = configuration.get("tool", {}).get("poetry")
             if project is None or ("name" not in project and poetry is not None):
-                self.fields = poetry
+                fields = poetry
                 self.section = "tool.poetry"
-        if not isinstance(self.fields, dict):
+        if not isinstance(fields, dict):
             raise ValueError(f"Missing or invalid [{self.section}] metadata in '{self.pyproject_path}'.")
+        self.fields: dict[str, Any] = fields
 
     def _required_string(self, field: str) -> str:
         value = self.fields.get(field)
@@ -116,7 +122,34 @@ class _SolutionMetadata:
             if parts[1] == "unknown":
                 raise ValueError("Solution version is unknown.")
             return parts[1]
-        return self._required_string("version")
+        dynamic_fields = self.fields.get("dynamic", [])
+        if isinstance(dynamic_fields, list) and "version" in dynamic_fields:
+            return self._uv_dynamic_version()
+        version = self._required_string("version")
+        try:
+            return str(Version(version))
+        except InvalidVersion as error:
+            raise ValueError(
+                f"'{self.section}.version' is not a valid PEP 440 version in '{self.pyproject_path}': {version}"
+            ) from error
+
+    def _uv_dynamic_version(self) -> str:
+        """Build the UV solution wheel in a temporary folder and return the version computed by its build backend."""
+        logger.info("Building the solution wheel to read its dynamic version.")
+        with tempfile.TemporaryDirectory() as wheel_dir:
+            result = subprocess.run(
+                ["uv", "build", "--wheel", "--out-dir", wheel_dir],  # noqa: S607
+                cwd=self.root_dir,
+                capture_output=True,
+                check=False,
+                text=True,
+            )
+            if result.returncode != 0:
+                raise RuntimeError(f"Failed to build the solution wheel to read its dynamic version: {result.stderr}")
+            wheels = list(Path(wheel_dir).glob("*.whl"))
+            if len(wheels) != 1:
+                raise RuntimeError(f"Expected one solution wheel to read its dynamic version, found {len(wheels)}.")
+            return str(parse_wheel_filename(wheels[0].name)[1])
 
 
 class SolutionInfo:

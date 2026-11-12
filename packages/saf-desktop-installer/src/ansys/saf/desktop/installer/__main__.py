@@ -87,8 +87,7 @@ def _prepare_poetry_backend(offline_package: bool) -> None:
         subprocess.check_output([poetry_venv_python_exec, "-m", "pip", "install", "poetry-plugin-export>=1.8"])
     except subprocess.CalledProcessError as e:
         raise RuntimeError(
-            "Failed to install poetry-plugin-export, which is required "
-            "to build with --offline-package for Poetry >=2",
+            "Failed to install poetry-plugin-export, which is required to build with --offline-package for Poetry >=2",
         ) from e
 
 

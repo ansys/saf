@@ -26,6 +26,8 @@ import tomllib
 import zipfile
 
 from packaging.markers import Marker
+from packaging.requirements import Requirement
+from packaging.utils import canonicalize_name, parse_wheel_filename
 from packaging.version import Version
 import toml
 
@@ -92,18 +94,27 @@ def _modify_wheel_metadata(
                     zip_out.write(file_path, file_path.relative_to(tmpdir_path))
 
 
+def _find_solution_wheel(directory: Path, package_name: str, version: str) -> Path:
+    """Return the single wheel in a directory whose filename matches the package name and version."""
+    wheels = [
+        wheel
+        for wheel in directory.glob("*.whl")
+        if parse_wheel_filename(wheel.name)[:2] == (canonicalize_name(package_name), Version(version))
+    ]
+    if not wheels:
+        raise FileNotFoundError(f"Missing solution wheel for {package_name} {version} in: {directory}")
+    if len(wheels) != 1:
+        raise RuntimeError(f"Multiple solution wheels found for {package_name} {version} in: {directory}")
+    return wheels[0]
+
+
 def modify_solution_wheel_metadata(
     solution_installation_directory: Path,
     solution_package_name: str,
     solution_version: str,
 ) -> None:
-    """Modify solution wheel metadata to fix local wheel dependency paths."""
-    solution_wheel_package_name = solution_package_name.replace("-", "_")
-    solution_wheel = (
-        solution_installation_directory / f"{solution_wheel_package_name}-{solution_version}-py3-none-any.whl"
-    )
-    if not solution_wheel.is_file():
-        raise FileNotFoundError(f"Missing solution wheel at: {solution_wheel}")
+    """Repoint local-wheel and staged Git dependencies at the installation directory."""
+    solution_wheel = _find_solution_wheel(solution_installation_directory, solution_package_name, solution_version)
 
     def transform_metadata(metadata_content: str) -> str:
         """Transform metadata to point to the new installation directory."""
@@ -118,7 +129,31 @@ def modify_solution_wheel_metadata(
             sub_str = rf"\1 file://{solution_installation_directory_str}/\2\3"
         else:
             raise RuntimeError("Unsupported operating system.")
-        return pattern.sub(sub_str, metadata_content)
+        metadata_content = pattern.sub(sub_str, metadata_content)
+
+        def replace_staged_git_dependency(match: re.Match[str]) -> str:
+            requirement = Requirement(match.group(1))
+            if not requirement.url or not requirement.url.startswith("git+"):
+                return match.group(0)
+            wheels = [
+                wheel
+                for wheel in solution_installation_directory.glob("*.whl")
+                if parse_wheel_filename(wheel.name)[0] == canonicalize_name(requirement.name)
+            ]
+            if not wheels:
+                return match.group(0)
+            if len(wheels) != 1:
+                raise RuntimeError(f"Multiple staged wheels found for Git dependency {requirement.name}.")
+            extras = f"[{','.join(sorted(requirement.extras))}]" if requirement.extras else ""
+            marker = f" ; {requirement.marker}" if requirement.marker else ""
+            return f"Requires-Dist: {requirement.name}{extras} @ {wheels[0].resolve().as_uri()}{marker}"
+
+        return re.sub(
+            r"^Requires-Dist:\s*(?=[^\r\n]*@\s*git\+)([^\r\n]+)$",
+            replace_staged_git_dependency,
+            metadata_content,
+            flags=re.MULTILINE,
+        )
 
     _modify_wheel_metadata(solution_wheel, transform_metadata)
 

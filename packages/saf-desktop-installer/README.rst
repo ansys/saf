@@ -51,11 +51,15 @@ Key capabilities include:
   operating system where the build is executed (Windows ``.exe`` or Linux
   executable).
 - **Online and offline modes**: By default, installers download dependencies at
-  install time, while local and private dependencies are bundled. The
+  install time, while local, Git, and private dependencies are bundled. The
   ``--offline-package`` option bundles the remaining dependencies for
-  environments without internet access.
+  environments without internet access. UV offline packages use a local-wheel
+  lockfile scoped to the build operating system and selected Python minor
+  version; they are not cross-platform dependency bundles.
 - **UV and Poetry solutions**: UV is used for UV-based solutions. Existing
   Poetry-based solutions remain supported, but Poetry support is deprecated.
+  UV solutions can declare ``dynamic = ["version"]``; the version computed by
+  the build backend is read from a wheel built in a temporary folder.
 - **Customizable build options**: Supports encryption, code obfuscation, custom
   entry points, and configurable Python versions.
 - **Documentation embedding**: Automatically builds and embeds Sphinx

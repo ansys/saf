@@ -33,7 +33,7 @@ import sys
 import tempfile
 import tomllib
 from typing import Any
-from urllib.parse import quote, unquote, urlsplit, urlunsplit
+from urllib.parse import parse_qsl, quote, unquote, urlencode, urlsplit, urlunsplit
 
 from packaging.requirements import InvalidRequirement, Requirement
 from packaging.utils import canonicalize_name, parse_sdist_filename, parse_wheel_filename
@@ -47,7 +47,11 @@ from ansys.saf.desktop.installer._common.utils import (
 from ansys.saf.desktop.installer._package.backend_detection import SolutionBackend, detect_solution_backend
 from ansys.saf.desktop.installer._package.config import InstallerConfig
 from ansys.saf.desktop.installer._package.download_python import PythonManager
-from ansys.saf.desktop.installer._package.solution import create_poetry_requirements_txt
+from ansys.saf.desktop.installer._package.solution import (
+    create_poetry_requirements_txt,
+    get_solution_package_name,
+    get_solution_version,
+)
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -260,7 +264,7 @@ def _download_poetry_git_source(
     venv_python_exec: Path,
     github_token: str | None = None,
 ) -> None:
-    """Download a locked Git dependency with optional token authentication."""
+    """Build a locked Git dependency wheel with optional token authentication."""
     source = package["source"]
     url = _github_url_with_token(source["url"], github_token, required=False)
     revision = source.get("resolved_reference") or source["reference"]
@@ -272,10 +276,10 @@ def _download_poetry_git_source(
             venv_python_exec,
             "-m",
             "pip",
-            "download",
+            "wheel",
             "--disable-pip-version-check",
             "--no-deps",
-            "--dest",
+            "--wheel-dir",
             package_directory,
             requirement,
         ],
@@ -575,7 +579,6 @@ def stage_uv_selected_local_dependencies(
             "wheel",
             "--disable-pip-version-check",
             "--no-deps",
-            "--no-build-isolation",
             "--wheel-dir",
             str(wheelhouse),
             "-r",
@@ -632,7 +635,12 @@ def _uv_git_requirement(package: Any, github_token: str | None) -> str | None:
     revision, *fragments = parsed_source.fragment.split("&")
     if not revision:
         raise ValueError("Missing locked Git revision in uv.lock.")
-    url = urlunsplit((parsed_source.scheme, parsed_source.netloc, parsed_source.path, parsed_source.query, ""))
+    query = parse_qsl(parsed_source.query, keep_blank_values=True)
+    fragments.extend(f"subdirectory={quote(value, safe='/')}" for key, value in query if key == "subdirectory")
+    repository_query = [(key, value) for key, value in query if key not in {"rev", "tag", "branch", "subdirectory"}]
+    url = urlunsplit(
+        (parsed_source.scheme, parsed_source.netloc, parsed_source.path, urlencode(repository_query), ""),
+    )
     url = _github_url_with_token(url, github_token, required=False)
     parsed_url = urlsplit(url)
     if parsed_url.scheme not in {"https", "file"}:
@@ -666,6 +674,33 @@ def _with_uv_marker(requirement: str, package: dict[str, Any]) -> str:
     return f"{requirement} ; {marker}"
 
 
+def _use_built_uv_solution_version(project: dict[str, Any], definitions_folder: Path) -> None:
+    """Replace a dynamic project version with the built solution wheel version so UV can lock without building."""
+    metadata = project.get("project")
+    if not isinstance(metadata, dict):
+        return
+    dynamic_fields = metadata.get("dynamic")
+    if not isinstance(dynamic_fields, list) or "version" not in dynamic_fields:
+        return
+    package_name = canonicalize_name(metadata["name"])
+    versions = [
+        version
+        for name, version, *_ in (parse_wheel_filename(wheel.name) for wheel in definitions_folder.glob("*.whl"))
+        if name == package_name
+    ]
+    if len(versions) != 1:
+        raise RuntimeError(
+            f"Expected one built {package_name} wheel in {definitions_folder} to read its version, "
+            f"found {len(versions)}."
+        )
+    metadata["version"] = str(versions[0])
+    remaining_dynamic_fields = [field for field in dynamic_fields if field != "version"]
+    if remaining_dynamic_fields:
+        metadata["dynamic"] = remaining_dynamic_fields
+    else:
+        del metadata["dynamic"]
+
+
 def create_uv_installation_project(
     solution_root_dir: Path,
     definitions_folder: Path,
@@ -685,6 +720,21 @@ def create_uv_installation_project(
 
     selected_groups = [group for group in groups if group in dependency_groups]
     project["dependency-groups"] = {group: dependency_groups[group] for group in selected_groups}
+    _use_built_uv_solution_version(project, definitions_folder)
+    if offline_package:
+        target_environment = subprocess.check_output(
+            [
+                str(python_exec),
+                "-c",
+                "import sys; print(f\"sys_platform == '{sys.platform}' and "
+                "python_version == '{sys.version_info.major}.{sys.version_info.minor}'\")",
+            ],
+            text=True,
+        ).strip()
+        uv_settings = project.setdefault("tool", {}).setdefault("uv", {})
+        uv_settings["environments"] = [target_environment]
+        uv_settings["no-index"] = True
+        uv_settings["find-links"] = ["wheelhouse"]
     definitions_folder.mkdir(parents=True, exist_ok=True)
     wheelhouse = definitions_folder / "wheelhouse"
 
@@ -791,22 +841,33 @@ def _rewrite_uv_local_sources(
         name, version, _, _ = parse_wheel_filename(wheel.name)
         wheels_by_package.setdefault(canonicalize_name(name), []).append((str(version), wheel))
     local_sources: dict[str, list[dict[str, str]]] = {}
+    public_registry_names: set[str] = set()
     for package in lock_packages:
-        if _is_uv_staged_package(package, solution_root_dir) or (
-            include_public_registry_packages and _is_public_uv_package(package)
-        ):
+        if include_public_registry_packages and _is_public_uv_package(package):
+            public_registry_names.add(canonicalize_name(package["name"]))
+        elif _is_uv_staged_package(package, solution_root_dir):
             name, source = _uv_wheel_source(package, wheels_by_package)
             if source is not None:
                 local_sources.setdefault(name, []).append(source)
 
-    if not local_sources:
+    if not local_sources and not public_registry_names:
         return
     tool = project.setdefault("tool", {})
     uv = tool.setdefault("uv", {})
     sources = uv.setdefault("sources", {})
     if not isinstance(sources, dict):
         raise ValueError("The [tool.uv.sources] section must be a table.")
+    sources = {name: source for name, source in sources.items() if canonicalize_name(name) not in public_registry_names}
+    uv["sources"] = sources
     sources.update({name: values[0] if len(values) == 1 else values for name, values in local_sources.items()})
+    project_metadata = project.setdefault("project", {})
+    dependencies = project_metadata.setdefault("dependencies", [])
+    direct_names = {canonicalize_name(Requirement(dependency).name) for dependency in dependencies}
+    for name, values in local_sources.items():
+        if canonicalize_name(name) not in direct_names:
+            markers = [value["marker"] for value in values if "marker" in value]
+            marker = " or ".join(f"({value})" for value in markers) if len(markers) == len(values) else ""
+            dependencies.append(f"{name} ; {marker}" if marker else name)
 
 
 def _is_uv_staged_package(package: dict[str, Any], solution_root_dir: Path) -> bool:
@@ -1253,6 +1314,11 @@ def build_and_stage_solution_packages(
             installer_config.pyproject_location,
             venv_python_exec,
             github_token=installer_config.github_token,
+        )
+        modify_solution_wheel_metadata(
+            definitions_folder,
+            get_solution_package_name(solution_root_dir),
+            get_solution_version(solution_root_dir),
         )
     else:
         create_uv_installation_project(

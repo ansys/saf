@@ -115,4 +115,4 @@ saf-sdk:
   - 'packages/saf-sdk/**'
 extension:
   - 'extension/**'
-  - '.github/workflows/ci_cd_extension.yml'
+  - '.github/workflows/ci_cd_solutions_manager.yml'

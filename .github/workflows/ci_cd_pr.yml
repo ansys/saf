@@ -520,7 +520,7 @@ jobs:
     if: ${{ contains(needs.ci-cd-config.outputs.pr-changes, 'extension') }}
     permissions:
       contents: write # Required by the tagging and release jobs of the called workflow (skipped in PRs)
-    uses: ./.github/workflows/ci_cd_extension.yml
+    uses: ./.github/workflows/ci_cd_solutions_manager.yml
     secrets:
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 

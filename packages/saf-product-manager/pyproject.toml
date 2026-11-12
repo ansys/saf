@@ -4,7 +4,7 @@ requires = [ "uv-build>=0.12.18,<1" ]
 
 [project]
 name = "ansys-saf-product-manager"
-version = "0.6.0"
+version = "0.6.1"
 description = "SAF Product Manager"
 readme = "README.rst"
 license = "Apache-2.0"

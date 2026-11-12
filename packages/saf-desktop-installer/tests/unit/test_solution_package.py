@@ -1377,10 +1377,6 @@ def test_package_with_readme_random_format(
     mock_installer_config: InstallerConfig,
 ):
     solution_info = SolutionInfo(solution_root_dir)
-    solution_package_name = "ansys-solutions-my-solution-dash"
-    solution_info._solution_package_name = solution_package_name  # pyright: ignore[reportPrivateUsage]
-    solution_version = "0.1.dev0"
-    solution_info._solution_version = solution_version  # pyright: ignore[reportPrivateUsage]
 
     pyproject_content = toml.load(mock_installer_config.pyproject_location)
     readme_value = "READMEfast.py"

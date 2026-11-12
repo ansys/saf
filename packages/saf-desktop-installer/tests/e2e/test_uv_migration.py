@@ -188,7 +188,7 @@ def _create_private_index(wheel_path: Path) -> type[BaseHTTPRequestHandler]:
 
             self.send_error(404)
 
-        def log_message(self, _format: str, *args: object) -> None:
+        def log_message(self, format: str, *args: object) -> None:  # noqa: A002
             return
 
     return PrivateIndexHandler

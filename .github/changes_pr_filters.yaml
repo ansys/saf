@@ -113,3 +113,6 @@ saf-sdk:
   - '.github/actions/sdk-meta-package/**'
   - '.github/workflows/ci_cd_meta_package.yml'
   - 'packages/saf-sdk/**'
+extension:
+  - 'extension/**'
+  - '.github/workflows/ci_cd_solutions_manager.yml'

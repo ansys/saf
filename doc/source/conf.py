@@ -49,7 +49,6 @@ version = configuration["project"]["version"]
 copyright = f"©{datetime.now().year} ANSYS, Inc. All rights reserved."
 author = "ANSYS Inc."
 
-
 extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.autosummary",
@@ -87,67 +86,6 @@ sphinx_gallery_conf = {
     "image_scrapers": (),
     "remove_config_comments": True,
 }
-
-# ---------------------------------------------------------------------------
-# Intersphinx: component API references
-# Each entry links the central doc to a component's published API reference.
-# URL pattern: https://<component-cname>/version/stable/objects.inv
-# ---------------------------------------------------------------------------
-intersphinx_mapping = {
-    "python": ("https://docs.python.org/dev", None),
-    "glow": (
-        f"https://{os.getenv('GLOW_DOC_CNAME', 'glow-engine.docs.solutions.ansys.com')}/version/stable",
-        None,
-    ),
-    "saf_cli": (
-        f"https://{os.getenv('SAF_CLI_DOC_CNAME', 'saf-cli.docs.solutions.ansys.com')}/version/stable",
-        None,
-    ),
-    "bdm_api": ("https://bdm-python-api.docs.solutions.ansys.com/version/stable", None),
-    "bdm_shared_volume": (
-        "https://bdm-python-shared-volume.docs.solutions.ansys.com/version/stable",
-        None,
-    ),
-    "iam_oidc": (
-        "https://ansys-iam-oidc.docs.solutions.ansys.com/version/stable",
-        None,
-    ),
-    "product_config": (
-        "https://saf-product-configuration.docs.solutions.ansys.com/version/stable",
-        None,
-    ),
-    "product_manager": (
-        "https://saf-product-manager.docs.solutions.ansys.com/version/stable",
-        None,
-    ),
-    "orchestrator": (
-        "https://saf-desktop-orchestrator.docs.solutions.ansys.com/version/stable",
-        None,
-    ),
-    "installer": (
-        "https://saf-desktop-installer.docs.solutions.ansys.com/version/stable",
-        None,
-    ),
-    "testing": (
-        "https://saf-sdk-testing.docs.solutions.ansys.com/version/stable",
-        None,
-    ),
-    "templates": (
-        "https://saf-templates.docs.solutions.ansys.com/version/stable",
-        None,
-    ),
-    # "super_components": placeholder removed — dash-super-components now lives in the saf metapackage;
-    # cross-reference it via the merged api/dash-super-components path instead of a standalone domain.
-    "translation": (
-        "https://translation-utilities.docs.solutions.ansys.com/version/stable",
-        None,
-    ),
-    # "minerva": placeholder removed — same URL as iam_oidc; update when Minerva client publishes its own docs
-}
-
-# Allow local / offline builds to skip intersphinx fetching entirely.
-if os.getenv("DISABLE_INTERSPHINX", "false").lower() == "true":
-    intersphinx_mapping = {}
 
 html_favicon = ansys_favicon
 notfound_template = "404.rst"
@@ -434,6 +372,28 @@ def process_substitutions_in_directives(app, docname, source):
         source[0] = re.sub(pattern, replace_substitution, content)
 
 
+def include_all_release_notes(app, docname, source):
+    """Expand the release-note include placeholder with every RST note file."""
+    marker = ".. RELEASE_NOTES_INCLUDE_ALL"
+    if docname != "release_notes/index" or not source or marker not in source[0]:
+        return
+
+    release_notes_dir = Path(app.srcdir) / "release_notes"
+    notes_dir = release_notes_dir / "notes_per_release"
+    note_files = sorted(
+        notes_dir.rglob("*.rst"),
+        key=lambda path: (
+            tuple(int(part) for part in re.findall(r"\d+", path.stem)),
+            path.as_posix(),
+        ),
+        reverse=True,
+    )
+    include_directives = "\n\n".join(
+        f".. include:: {path.relative_to(release_notes_dir).as_posix()}" for path in note_files
+    )
+    source[0] = source[0].replace(marker, include_directives, 1)
+
+
 # Sphinx-gallery generates examples/dash_super_components_examples/index.rst from the shared
 # README at packages/dash-super-components/examples/gallery_apps/README.rst. That README is titled
 # "Examples" because it is also used to generate the package's own standalone doc site, where
@@ -478,6 +438,7 @@ def setup(app):
     app.add_css_file("custom.css")
     app.connect("doctree-resolved", add_target_blank_to_external_links)
     app.connect("source-read", process_substitutions_in_directives)
+    app.connect("source-read", include_all_release_notes)
     app.connect("source-read", retitle_generated_gallery_index)
 
 

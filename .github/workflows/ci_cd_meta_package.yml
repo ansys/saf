@@ -2,12 +2,14 @@
 name: CI-CD for SAF SDK Meta Package
 run-name: >-
   Meta-Package: ${{ inputs.release && 'Release' || 'Dry Run' }} by ${{ github.actor
-  }} Update type: ${{ inputs.meta-package-version-update-type }} ${{ fromJSON(inputs.version-overrides
-  || '{}')['ansys-bdm-api'] && format('ansys-bdm-api: {0}', fromJSON(inputs.version-overrides
-  || '{}')['ansys-bdm-api']) || '' }} ${{ fromJSON(inputs.version-overrides || '{}')['ansys-bdm-shared-volume']
-  && format('ansys-bdm-shared-volume: {0}', fromJSON(inputs.version-overrides || '{}')['ansys-bdm-shared-volume'])
-  || '' }} ${{ fromJSON(inputs.version-overrides || '{}')['ansys-saf-glow-engine']
-  && format('ansys-saf-glow-engine: {0}', fromJSON(inputs.version-overrides || '{}')['ansys-saf-glow-engine'])
+  }} ${{ github.event_name == 'schedule' && 'Certification' || 'Update type:' }} ${{
+  case(github.event_name == 'schedule', '', inputs.meta-package-version-update-type)
+  }} ${{ fromJSON(inputs.version-overrides || '{}')['ansys-bdm-api'] && format('ansys-bdm-api:
+  {0}', fromJSON(inputs.version-overrides || '{}')['ansys-bdm-api']) || '' }} ${{
+  fromJSON(inputs.version-overrides || '{}')['ansys-bdm-shared-volume'] && format('ansys-bdm-shared-volume:
+  {0}', fromJSON(inputs.version-overrides || '{}')['ansys-bdm-shared-volume']) ||
+  '' }} ${{ fromJSON(inputs.version-overrides || '{}')['ansys-saf-glow-engine'] &&
+  format('ansys-saf-glow-engine: {0}', fromJSON(inputs.version-overrides || '{}')['ansys-saf-glow-engine'])
   || '' }} ${{ fromJSON(inputs.version-overrides || '{}')['ansys-saf-desktop-installer']
   && format('ansys-saf-desktop-installer: {0}', fromJSON(inputs.version-overrides
   || '{}')['ansys-saf-desktop-installer']) || '' }} ${{ fromJSON(inputs.version-overrides
@@ -62,9 +64,9 @@ on:
     secrets:
       PYANSYS_CI_BOT_TOKEN:
         required: true
-      PYANSYS_PYPI_PRIVATE_PAT:
+      PYPI_PRIVATE_PAT:
         required: true
-      PYANSYS_PYPI_PRIVATE_URL:
+      PYPI_PRIVATE_URL:
         required: true
       BUMP_VERSION_TOKEN:
         required: false
@@ -107,7 +109,7 @@ jobs:
           persist-credentials: false
 
       - name: Install uv
-        uses: astral-sh/setup-uv@07a047e608db84b3d8c06cd9a7c7dcc9c355c18e # v10.3.2
+        uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
 
       - name: Test SDK meta-package utility
         shell: bash
@@ -133,6 +135,7 @@ jobs:
           sparse-checkout: |
             .github/actions/sdk-meta-package
             packages/${{ env.LIBRARY_NAME }}
+            doc/source/release_notes/notes_per_release
 
       - name: Validate version overrides
         shell: bash
@@ -193,7 +196,7 @@ jobs:
             || '{}')['ansys-saf-product-manager'] || '' }}
 
       - name: "Build wheel"
-        uses: ansys/actions/build-library@87ff2e65e8884121f9afc97728ca9f213228ecc2 # v11.1.4
+        uses: ansys/actions/build-library@f5e1481b9c128197a30d1dc1dfc52b8cd6865555 # v11.1.5
         with:
           library-name: ${{ env.LIBRARY_NAME }}
           checkout: false
@@ -218,6 +221,35 @@ jobs:
           COMMIT=$(curl -s https://api.github.com/repos/ansys/pyansys/branches/main | jq -r '.commit.sha')
           echo "Latest pyansys commit on main branch: ${COMMIT}"
           echo "pyansys-commit-of-main=${COMMIT}" >> "$GITHUB_OUTPUT"
+
+  generate-sbom:
+    name: "Generate SBOM"
+    needs:
+      - build-meta-package
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
+        with:
+          python-version: ${{ vars.PYTHON_VERSION }}
+
+      - name: Generate SBOM
+        working-directory: ${{ github.workspace }}/packages/saf-sdk
+        run: |
+          uv export --all-extras --format cyclonedx1.5 --output-file dist/ansys-saf-sdk-sbom.json --preview-features sbom-export
+
+      - name: Upload sbom
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: sbom
+          path: packages/saf-sdk/dist/ansys-saf-sdk-sbom.json
+          if-no-files-found: error
+          overwrite: true
 
   check-wheel-can-be-poetry-installed:
     name: "Check ansys-saf-sdk can be poetry installed"
@@ -285,8 +317,8 @@ jobs:
         env:
           PIP_QUIET: 1
           PIP_INDEX_URL: https://pypi.org/simple
-          PIP_EXTRA_INDEX_URL: https://PAT:${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}@${{
-            secrets.PYANSYS_PYPI_PRIVATE_URL }}
+          PIP_EXTRA_INDEX_URL: https://PAT:${{ secrets.PYPI_PRIVATE_PAT }}@${{ secrets.PYPI_PRIVATE_URL
+            }}
 
       - name: Add ansys-saf-pim-light-server to poetry project
         working-directory: my_project
@@ -372,22 +404,30 @@ jobs:
       - resolve-pyansys-references
       - check-wheel-can-be-poetry-installed
     runs-on: ubuntu-latest
+    env:
+      COMMIT: ${{ needs.resolve-pyansys-references.outputs.pyansys-commit-of-main
+        }}
     steps:
+      - name: Retrieve PyAnsys short commit
+        id: short-commit
+        shell: bash
+        run: |
+          SHORT_COMMIT=$(echo "$COMMIT" | cut -c1-7)
+          echo "short-commit=$SHORT_COMMIT" >> "$GITHUB_OUTPUT"
+
       - name: Download release notes
         uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: release-notes
           path: release-notes
 
-      - name: Add PyAnsys section to the release notes
+      - name: Add PyAnsys section to the md release notes
         working-directory: release-notes
         env:
+          SHORT_COMMIT: ${{ steps.short-commit.outputs.short-commit }}
           SECTION_PLACEHOLDER: '<!-- THIS LINE IS A PLACEHOLDER FOR PYANSYS COMPATIBILITY
             SECTION -->'
-          COMMIT: ${{ needs.resolve-pyansys-references.outputs.pyansys-commit-of-main
-            }}
         run: |
-          SHORT_COMMIT=$(echo "$COMMIT" | cut -c1-7)
           ESCAPED_SECTION_PLACEHOLDER=$(printf '%s\n' "$SECTION_PLACEHOLDER" | sed 's/[][\.*^$/]/\\&/g')
 
           sed -i "/$ESCAPED_SECTION_PLACEHOLDER/r /dev/stdin" release_notes.md <<EOF
@@ -398,11 +438,36 @@ jobs:
           Please be aware that on Windows with Python 3.14, it is required to set the \`GRPC_PYTHON_CFLAGS\` environment variable to \`/std:c++17 /MT\` before installing the packages.
           EOF
 
-      - name: Upload release notes
+      - name: Upload md release notes
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: release-notes
           path: release-notes/release_notes.md
+          if-no-files-found: error
+          overwrite: true
+
+      - name: Download rst release notes
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: release-notes-rst
+          path: release-notes-rst
+
+      - name: Add PyAnsys section to the rst release notes
+        shell: bash
+        env:
+          VERSION: ${{ needs.build-meta-package.outputs.version }}
+          SHORT_COMMIT: ${{ steps.short-commit.outputs.short-commit }}
+        run: |
+          file="release-notes-rst/${VERSION}.rst"
+          echo "Adding PyAnsys section to $file"
+          printf '\n  .. note::\n     The compatibility of this release has been tested with PyAnsys for the commit `%s <https://github.com/ansys/pyansys/commit/%s>`_, from Python 3.12 to 3.14.\n     Please be aware that on Windows with Python 3.14, it is required to set the ``GRPC_PYTHON_CFLAGS`` environment variable to ``/std:c++17 /MT`` before installing the packages.\n' \
+            "$SHORT_COMMIT" "$COMMIT" >> "$file"
+
+      - name: Upload rst release notes
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: release-notes-rst
+          path: release-notes-rst/*
           if-no-files-found: error
           overwrite: true
 
@@ -510,12 +575,20 @@ jobs:
           name: uv-lock
           path: artifacts
 
+      - name: Download rst artifact
+        if: ${{ needs.build-meta-package.outputs.update-type != 'no_update' }}
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: release-notes-rst
+          path: rst-artifacts
+
       - name: Move pyproject.toml and uv.lock to packages/saf-sdk
         if: ${{ needs.build-meta-package.outputs.update-type != 'no_update' }}
         shell: bash
         run: |
           mv artifacts/pyproject.toml packages/saf-sdk/pyproject.toml
           mv artifacts/uv.lock packages/saf-sdk/uv.lock
+          mv rst-artifacts/* doc/source/release_notes/notes_per_release/
 
       - name: Commit changes
         if: ${{ needs.build-meta-package.outputs.update-type != 'no_update' }}
@@ -542,10 +615,16 @@ jobs:
           name: ${{ env.LIBRARY_NAME }}-artifacts
           path: ${{ env.LIBRARY_NAME }}-artifacts
 
+      - name: Download sbom artifact
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: sbom
+          path: sbom
+
       - name: Create release
         id: create-release
         run: |
-          gh release create ${RELEASE_NAME} "${LIBRARY_NAME}-artifacts"/*.whl \
+          gh release create ${RELEASE_NAME} "${LIBRARY_NAME}-artifacts"/*.whl sbom/*.json \
             --title ${RELEASE_NAME} \
             --notes-file release-notes/release_notes.md \
             --latest \

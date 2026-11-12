@@ -54,7 +54,8 @@ jobs:
   check-linked-issues-in-pull-request-description:
     name: "Check linked issues in pull-request description"
     if: github.event_name == 'pull_request' && github.event.action != 'closed' &&
-      github.event.pull_request.draft == false
+      github.event.pull_request.draft == false && !contains(github.event.pull_request.labels.*.name,
+      'skip:linked-issues')
     permissions:
       pull-requests: read # Read PR description to find linked issues
       issues: write # Update issue descriptions with PR links
@@ -196,6 +197,18 @@ jobs:
         shell: bash
         run: moon run :vulnerability-check --affected
 
+      - name: Upload vulnerability report
+        if: ${{ always() }}
+        shell: bash
+        run: |
+          for report in dist/packages/*-vuln.md; do
+            if [ -f "$report" ]; then
+              echo "## $(basename "$report" .md)" >> $GITHUB_STEP_SUMMARY
+              cat "$report" >> $GITHUB_STEP_SUMMARY
+              echo "" >> $GITHUB_STEP_SUMMARY
+            fi
+          done
+
   codeql:
     # This job is not added intentionally to the requirements to merge the PR as it is informative only for the PR author and reviewers.
     permissions:
@@ -203,6 +216,8 @@ jobs:
       actions: read # Required for CodeQL analysis
       security-events: write # Required to upload results of CodeQL analysis
     uses: ./.github/workflows/codeql.yml
+    secrets:
+      PYANSYS_CI_BOT_TOKEN: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
 
   check-dependencies-licenses:
     name: "Check dependencies licenses"
@@ -229,7 +244,7 @@ jobs:
         run: moon run :uv-sync -- --no-dev --all-extras
 
       - name: Check licenses
-        uses: ansys/actions/check-licenses@87ff2e65e8884121f9afc97728ca9f213228ecc2 # v11.1.4
+        uses: ansys/actions/check-licenses@f5e1481b9c128197a30d1dc1dfc52b8cd6865555 # v11.1.5
         with:
           python-version: ${{ vars.PYTHON_VERSION }}
           target: "all"
@@ -462,7 +477,7 @@ jobs:
           persist-credentials: false
 
       - name: Install uv
-        uses: astral-sh/setup-uv@07a047e608db84b3d8c06cd9a7c7dcc9c355c18e # v10.3.2
+        uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
         with:
           python-version: 3.12
           enable-cache: false
@@ -499,6 +514,16 @@ jobs:
           MOON_PYTHON_VERSION: ${{ vars.PYTHON_VERSION }}
         run: moon run root:test-upgrade-solution-templates
 
+  extension-checks:
+    name: "Solutions Manager extension"
+    needs: ci-cd-config
+    if: ${{ contains(needs.ci-cd-config.outputs.pr-changes, 'extension') }}
+    permissions:
+      contents: write # Required by the tagging and release jobs of the called workflow (skipped in PRs)
+    uses: ./.github/workflows/ci_cd_solutions_manager.yml
+    secrets:
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+
   meta-package:
     name: "SAF SDK Meta Package"
     needs: ci-cd-config
@@ -511,8 +536,8 @@ jobs:
       pull-requests: write # Write access to pull requests
     secrets:
       PYANSYS_CI_BOT_TOKEN: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
-      PYANSYS_PYPI_PRIVATE_PAT: ${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}
-      PYANSYS_PYPI_PRIVATE_URL: ${{ secrets.PYANSYS_PYPI_PRIVATE_URL }}
+      PYPI_PRIVATE_PAT: ${{ secrets.PYPI_PRIVATE_PAT }}
+      PYPI_PRIVATE_URL: ${{ secrets.PYPI_PRIVATE_URL }}
       AZURE_DEVOPS_ORG: ${{ secrets.AZURE_DEVOPS_ORG }}
       AZURE_DEVOPS_FEED: ${{ secrets.AZURE_DEVOPS_FEED }}
       AZURE_DEVOPS_PAT: ${{ secrets.AZURE_DEVOPS_PAT }}
@@ -536,6 +561,7 @@ jobs:
       - run-github-workflows-of-generated-solution
       - run-tests-actions
       - run-tests-scripts
+      - extension-checks
       - doc
       - sbom
       - meta-package

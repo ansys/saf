@@ -16,12 +16,14 @@
 
 from __future__ import annotations
 
+from enum import Enum
 import json
 import logging
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
 import httpx2
+import numpy as np
 
 from ansys.bdm.api import NO_ENTITY, EntityHandle
 from ansys.saf.glow.solution import InstanceManager, ProductInstanceManager, RecoveryStateInfo
@@ -53,19 +55,106 @@ class VisorSafClient:
         self._port = response["port"]
         self._host = response["host"]
 
-    def update(self, file_path: str, metadata: Metadata) -> None:
+    def update(self, file_path: str, metadata: Metadata) -> int:
         """Update the Visor instance."""
         update_payload = {
             "file_path": file_path,
             "metadata": metadata.model_dump(),
         }
         logger.debug(f"Updating Visor with payload: {update_payload}")
-        httpx2.post(
+        response = httpx2.post(
             f"http://{self._service_host}:{self._service_port}/update",
             json=update_payload,
             timeout=self._timeout,
         ).raise_for_status()
         logger.info("Visor service updated.")
+        return int(response.json()["dataset_id"])
+
+    def add_dataset(self, file_path: str, metadata: Metadata | None = None) -> int:
+        """Add a dataset to the Visor instance without clearing existing datasets."""
+        add_payload: dict[str, Any] = {"file_path": file_path}
+        if metadata is not None:
+            add_payload["metadata"] = metadata.model_dump()
+        logger.debug(f"Adding Visor dataset with payload: {add_payload}")
+        response = httpx2.post(
+            f"http://{self._service_host}:{self._service_port}/add_dataset",
+            json=add_payload,
+            timeout=self._timeout,
+        ).raise_for_status()
+        logger.info("Visor dataset added.")
+        return int(response.json()["dataset_id"])
+
+    def remove_dataset(self, dataset_id: int) -> None:
+        """Remove a dataset from the Visor instance by its ID."""
+        remove_payload = {"dataset_id": dataset_id}
+        logger.debug(f"Removing Visor dataset with payload: {remove_payload}")
+        httpx2.post(
+            f"http://{self._service_host}:{self._service_port}/remove_dataset",
+            json=remove_payload,
+            timeout=self._timeout,
+        ).raise_for_status()
+        logger.info("Visor dataset removed.")
+
+    def list_datasets(self) -> dict[str, Any]:
+        """List datasets currently loaded in the Visor instance."""
+        response = httpx2.get(
+            f"http://{self._service_host}:{self._service_port}/list_datasets",
+            timeout=self._timeout,
+        ).raise_for_status()
+        return dict(response.json().get("datasets", {}))
+
+    def list_variables(self, dataset_id: int) -> list[dict[str, Any]]:
+        """List variables for a dataset, grouped by part."""
+        response = httpx2.get(
+            f"http://{self._service_host}:{self._service_port}/{dataset_id}/list_variables",
+            timeout=self._timeout,
+        ).raise_for_status()
+        return list(response.json().get("parts", []))
+
+    def list_part_states(self, dataset_id: int) -> dict[str, Any]:
+        """Return runtime part states for a dataset, including active color variables."""
+        response = httpx2.get(
+            f"http://{self._service_host}:{self._service_port}/{dataset_id}/part_states",
+            timeout=self._timeout,
+        ).raise_for_status()
+        return dict(response.json())
+
+    def update_variables(self, dataset_id: int, variables: list[dict[str, Any]]) -> None:
+        """Send variable updates as one multipart request with float32 binary parts."""
+        metadata = {"variables": [self._metadata_of(var) for var in variables]}
+        files = [
+            ("data", (f"{index}.bin", self._payload_of(var), "application/octet-stream"))
+            for index, var in enumerate(variables)
+        ]
+        logger.debug(
+            "Updating Visor variables for dataset %s: %s (%s binary parts)",
+            dataset_id,
+            metadata,
+            len(files),
+        )
+        httpx2.post(
+            f"http://{self._service_host}:{self._service_port}/{dataset_id}/update_variables",
+            data={"metadata": json.dumps(metadata)},
+            files=files,
+            timeout=self._timeout,
+        ).raise_for_status()
+        logger.info("Visor service variables updated.")
+
+    @staticmethod
+    def _metadata_of(variable: dict[str, Any]) -> dict[str, Any]:
+        """Return the variable's fields other than data, with an enum type converted to its name."""
+        var_type = variable["type"]
+        return {
+            "name": variable["name"],
+            "type": var_type.name if isinstance(var_type, Enum) else str(var_type),
+            "num_components": int(variable["num_components"]),
+            "part_id": variable.get("part_id"),
+        }
+
+    @staticmethod
+    def _payload_of(variable: dict[str, Any]) -> bytes:
+        """Encode the variable's data as C-ordered little-endian float32 bytes."""
+        return np.asarray(variable["data"], dtype="<f4").tobytes(order="C")
 
     @property
     def host(self):

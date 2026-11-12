@@ -322,6 +322,9 @@ tasks:
       - "--cov-report=html"
       - "--html=report/report.html"
       - "--md=report/report.md"
+      - "--junitxml=junit.xml"
+      - "-o"
+      - "junit_family=legacy"
       - "-p"
       - "no:faulthandler"
       - "-s" # Disable capturing of stdout and stderr during tests
@@ -346,7 +349,7 @@ tasks:
       # Using [] to avoid to fails tests is no data are collected
       - ".coverag[e]"
       - "coverage.xm[l]"
-
+      - "junit.xm[l]"
 
   export:
     description: "Export the project"
@@ -386,6 +389,7 @@ tasks:
     command: 'uv'
     args:
       - "export"
+      - "--all-extras"
       - "--package"
       - "$projectAlias"
       - "--format"
@@ -421,6 +425,10 @@ tasks:
       - "--desc"
       - "on"
       - "--strict"
+      - "-f"
+      - "markdown"
+      - "-o"
+      - "dist/$projectSource-vuln.md"
     env:
       UV_MALWARE_CHECK: '1'
     inputs:

@@ -280,7 +280,7 @@ class OnPremHpsAuthenticator(IHpsAuthenticator):
             hps_refresh_token = tokens.get("refresh_token")
             # Internally, an auth_url variable is created by appending the value of the url argument. The resulting
             # auth_url value coincides with the value of self._glow_auth_issuer_url.
-            client = Client(url=hps_server_url, access_token=hps_access_token, refresh_token=hps_refresh_token)
+            client = Client(url=hps_server_url, client_id=self._client_id, access_token=hps_access_token, refresh_token=hps_refresh_token)
         else:
             client = Client(url=hps_server_url, username=self._hps_user, password=self._hps_pwd)
 

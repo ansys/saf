@@ -3,7 +3,6 @@
 
 .. dropdown::
   :class-container: dropdown
-  :open:
   :chevron: down-up
 
   .. note::

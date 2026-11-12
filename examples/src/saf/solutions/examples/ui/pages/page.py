@@ -487,7 +487,7 @@ def render_nav_tree(active_index: str | None, switch_on: bool) -> Tree:
     return Tree(
         aio_id="navigation_tree",
         items=get_page_list(theme, active_index),
-        active_item_id=active_index,
+        selected_item=active_index,
     )
 
 

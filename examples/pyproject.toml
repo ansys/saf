@@ -55,7 +55,7 @@ ansys-saf-sdk = {version = "^0.5.0", extras = ["desktop"], allow-prereleases = t
 [tool.poetry.group.ui]
 optional = true
 [tool.poetry.group.ui.dependencies]
-ansys-solutions-dash-super-components = {version = "0.2.dev7", allow-prereleases = true}
+ansys-solutions-dash-super-components = {version = "0.2.dev8", allow-prereleases = true}
 dash = "^3.0.0"
 dash_bootstrap_components = {version = "^1.2"} # required by solution_desktop_deployment
 dash-extensions = ">=0.1.13"

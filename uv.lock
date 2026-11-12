@@ -1319,6 +1319,8 @@ optislang-wrapper = [
 ]
 visor = [
     { name = "httpx2" },
+    { name = "numpy", version = "2.4.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.12'" },
+    { name = "numpy", version = "2.5.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.12'" },
 ]
 
 [package.metadata]
@@ -1360,6 +1362,7 @@ requires-dist = [
     { name = "jupyterlab", marker = "extra == 'all'", specifier = ">=4.6.2,<5.0.0" },
     { name = "matplotlib", marker = "extra == 'aedt'", specifier = ">=3.5.0,<4.0.0" },
     { name = "matplotlib", marker = "extra == 'all'", specifier = ">=3.5.0,<4.0.0" },
+    { name = "numpy", marker = "extra == 'visor'", specifier = ">=1.26.0,<3" },
     { name = "openpyxl", marker = "extra == 'aedt'", specifier = ">=3.1.0,<4.0.0" },
     { name = "openpyxl", marker = "extra == 'all'", specifier = ">=3.1.0,<4.0.0" },
     { name = "osmnx", marker = "extra == 'aedt'", specifier = ">=2.0.0,<3.0.0" },

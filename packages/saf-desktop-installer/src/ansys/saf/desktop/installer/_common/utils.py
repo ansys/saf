@@ -94,27 +94,36 @@ def _modify_wheel_metadata(
                     zip_out.write(file_path, file_path.relative_to(tmpdir_path))
 
 
-def _find_solution_wheel(directory: Path, package_name: str, version: str) -> Path:
-    """Return the single wheel in a directory whose filename matches the package name and version."""
-    wheels = [
-        wheel
-        for wheel in directory.glob("*.whl")
-        if parse_wheel_filename(wheel.name)[:2] == (canonicalize_name(package_name), Version(version))
-    ]
-    if not wheels:
-        raise FileNotFoundError(f"Missing solution wheel for {package_name} {version} in: {directory}")
-    if len(wheels) != 1:
-        raise RuntimeError(f"Multiple solution wheels found for {package_name} {version} in: {directory}")
-    return wheels[0]
+def find_wheels(directory: Path, package_name: str, version: str | None = None, glob: str = "*.whl") -> list[Path]:
+    """Return the wheels in a directory matching a package name and, optionally, a version."""
+    name = canonicalize_name(package_name)
+    expected_version = Version(version) if version is not None else None
+    matches: list[Path] = []
+    for wheel in directory.glob(glob):
+        wheel_name, wheel_version, *_ = parse_wheel_filename(wheel.name)
+        if wheel_name == name and (expected_version is None or wheel_version == expected_version):
+            matches.append(wheel)
+    return matches
 
 
-def modify_solution_wheel_metadata(
+def modify_solution_wheel_metadata(  # noqa: C901
     solution_installation_directory: Path,
     solution_package_name: str,
     solution_version: str,
 ) -> None:
     """Repoint local-wheel and staged Git dependencies at the installation directory."""
-    solution_wheel = _find_solution_wheel(solution_installation_directory, solution_package_name, solution_version)
+    solution_wheels = find_wheels(solution_installation_directory, solution_package_name, solution_version)
+    if not solution_wheels:
+        raise FileNotFoundError(
+            f"Missing solution wheel for {solution_package_name} {solution_version} in: "
+            f"{solution_installation_directory}"
+        )
+    if len(solution_wheels) != 1:
+        raise RuntimeError(
+            f"Multiple solution wheels found for {solution_package_name} {solution_version} in: "
+            f"{solution_installation_directory}"
+        )
+    solution_wheel = solution_wheels[0]
 
     def transform_metadata(metadata_content: str) -> str:
         """Transform metadata to point to the new installation directory."""
@@ -132,14 +141,16 @@ def modify_solution_wheel_metadata(
         metadata_content = pattern.sub(sub_str, metadata_content)
 
         def replace_staged_git_dependency(match: re.Match[str]) -> str:
+            """Replace a Git ``Requires-Dist`` entry with the wheel staged for it at build time.
+
+            This way the installation does not need Git or a token.
+            Lines that are not ``git+`` URLs, or have no matching staged wheel, are returned unchanged.
+            Extras and markers are preserved.
+            """
             requirement = Requirement(match.group(1))
             if not requirement.url or not requirement.url.startswith("git+"):
                 return match.group(0)
-            wheels = [
-                wheel
-                for wheel in solution_installation_directory.glob("*.whl")
-                if parse_wheel_filename(wheel.name)[0] == canonicalize_name(requirement.name)
-            ]
+            wheels = find_wheels(solution_installation_directory, requirement.name)
             if not wheels:
                 return match.group(0)
             if len(wheels) != 1:

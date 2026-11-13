@@ -70,10 +70,9 @@ import zipfile
 import click
 from dash import Dash, Input, Output, State, dcc, html, no_update  # pyright: ignore[reportMissingTypeStubs]
 import dash_bootstrap_components as dbc  # pyright: ignore[reportMissingTypeStubs]
-from packaging.utils import canonicalize_name, parse_wheel_filename
 import webview as pywebview  # pyright: ignore[reportMissingTypeStubs]
 
-from ansys.saf.desktop.installer._common.utils import has_portal_dependency, modify_solution_wheel_metadata
+from ansys.saf.desktop.installer._common.utils import find_wheels, has_portal_dependency, modify_solution_wheel_metadata
 from ansys.saf.desktop.installer._installer.prerequisites import (
     LONG_PATHS_ERROR_MSG,
     WEBVIEW2_ERROR_MSG,
@@ -263,11 +262,7 @@ def get_python_version(python_exe: Path) -> str:
 def get_wheel(package_name: str, wheel_directory: Path) -> Path:
     """Get the wheel of a given package."""
 
-    wheels = [
-        wheel
-        for wheel in wheel_directory.glob("*-py3-none-any.whl")
-        if parse_wheel_filename(wheel.name)[0] == canonicalize_name(package_name)
-    ]
+    wheels = find_wheels(wheel_directory, package_name, glob="*-py3-none-any.whl")
     # Check if directory contains wheels
     if not wheels:
         sys.exit(f"No wheels matching package {package_name} in {wheel_directory}")

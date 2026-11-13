@@ -26,7 +26,7 @@ Create a solution
 
            a. Enter a solution name.
 
-              You can use the default option (``my-solution``) or provide a custom one.
+              You can use the default option (``my_solution``) or provide a custom one.
 
            b. Enter a solution display name.
 
@@ -60,7 +60,7 @@ Create a solution
 
          a. Enter a solution name.
 
-            You can use the default name (``my-solution``) or provide a custom one.
+            You can use the default name (``my_solution``) or provide a custom one.
 
          b. Enter a solution display name.
 
@@ -72,11 +72,11 @@ Create a solution
 
          d. Enter the solution namespace.
 
-            Enter the namespace to use for the solution.
+            You can use the default namespace (``saf.solutions``) or provide a custom one.
 
-         e. Enter the target directory.
+         e. Select the target directory.
 
-            Enter the directory where the solution will be saved.
+            Click the :guilabel:`...` button next to the **Target directory** field, then browse to the directory where the solution will be saved.
 
       #. Generate the solution.
 

@@ -108,6 +108,41 @@ describe('CreateSolutionViewProvider', () => {
       expect(mockWebview.html).to.include('if (namespace) command += \' --namespace \' + namespace;');
       expect(mockWebview.html).to.include('id="namespace"');
     });
+
+    it('should prefill the CLI defaults in the form', () => {
+      provider.resolveWebviewView(mockWebviewView, {} as any, {} as any);
+
+      expect(mockWebview.html).to.match(/id="solution-name"[^>]*value="my_solution"/);
+      expect(mockWebview.html).to.match(/id="display-name"[^>]*value="My Solution"/);
+      expect(mockWebview.html).to.match(/id="namespace"[^>]*value="saf\.solutions"/);
+      expect(mockWebview.html).to.include('<option value="dash" selected>dash</option>');
+      expect(mockWebview.html).to.not.include('Select framework...');
+    });
+
+    it('should expose the defaults to the webview script', () => {
+      provider.resolveWebviewView(mockWebviewView, {} as any, {} as any);
+
+      expect(mockWebview.html).to.include(
+        'const DEFAULTS = {"name":"my_solution","displayName":"My Solution","uiType":"dash","namespace":"saf.solutions"};'
+      );
+    });
+
+    it('should restore the defaults when the form is reset', () => {
+      provider.resolveWebviewView(mockWebviewView, {} as any, {} as any);
+
+      expect(mockWebview.html).to.include('solutionNameInput.value = DEFAULTS.name;');
+      expect(mockWebview.html).to.include('displayNameInput.value = DEFAULTS.displayName;');
+      expect(mockWebview.html).to.include('uiTypeSelect.value = DEFAULTS.uiType;');
+      expect(mockWebview.html).to.include('namespaceInput.value = DEFAULTS.namespace;');
+      expect(mockWebview.html).to.include('displayNameManuallyEdited = false;');
+    });
+
+    it('should keep deriving the display name from the solution name until it is edited', () => {
+      provider.resolveWebviewView(mockWebviewView, {} as any, {} as any);
+
+      expect(mockWebview.html).to.include('if (!displayNameManuallyEdited && name) {');
+      expect(mockWebview.html).to.include('name.split(/[-_]/)');
+    });
   });
 
   describe('webview-ready message handler', () => {

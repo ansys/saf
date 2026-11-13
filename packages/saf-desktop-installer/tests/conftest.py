@@ -26,6 +26,8 @@ from selenium.webdriver.chrome.webdriver import WebDriver
 MOCKED_SOLUTION_DIR = (Path(__file__).parent / "mocks").resolve()
 DEFAULT_MOCK_SOLUTION_NAME = "my-solution-dash"
 DEFAULT_MOCK_SOLUTION_DISPLAY_NAME = "My Solution Dash"
+POETRY_MOCK_SOLUTION_NAME = "my-solution-dash-old"
+use_poetry_mock_solution = pytest.mark.parametrize("solution_root_dir", [POETRY_MOCK_SOLUTION_NAME], indirect=True)
 CUSTOM_PACKAGE_FOR_TEST_2_WHEEL_NAMES: dict[str, str] = {
     "Windows": "custom_package_for_test_2-0.0.1-py3-none-win_amd64.whl",
     "Linux": "custom_package_for_test_2-0.0.1-py3-none-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl",

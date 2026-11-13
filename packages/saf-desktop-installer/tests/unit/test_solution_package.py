@@ -21,10 +21,12 @@ import platform
 import re
 import shutil
 import subprocess
+import sys
 import tomllib
 from typing import Any
 from unittest.mock import patch
 
+from packaging.markers import default_environment
 from packaging.version import Version
 import pytest
 import pytest_mock
@@ -52,7 +54,7 @@ from ansys.saf.desktop.installer._package.solution_package import (
     build_executable_installer,
     setup_solution_folder,
 )
-from tests.conftest import CUSTOM_PACKAGE_FOR_TEST_2_WHEEL_NAMES
+from tests.conftest import CUSTOM_PACKAGE_FOR_TEST_2_WHEEL_NAMES, use_poetry_mock_solution
 
 
 @pytest.mark.parametrize(
@@ -137,6 +139,56 @@ def test_select_uv_lock_packages_from_selected_requirements(tmp_path: Path) -> N
     selected = manage_dependencies._selected_uv_lock_packages(tmp_path, requirements)  # pyright: ignore[reportPrivateUsage]
 
     assert [(package["name"], package["version"]) for package in selected] == [("example", "1.0"), ("idna", "3.10")]
+
+
+def test_select_uv_lock_packages_from_relative_per_platform_wheel_paths(tmp_path: Path) -> None:
+    """Select only the target's wheel when UV exports [tool.uv.sources] wheels as relative paths with markers."""
+    windows_wheel = "build_assets/example-1.0-py3-none-win_amd64.whl"
+    linux_wheel = "build_assets/example-1.0-py3-none-manylinux_2_28_x86_64.whl"
+    (tmp_path / "uv.lock").write_text(
+        "version = 1\n"
+        f'[[package]]\nname = "example"\nversion = "1.0"\nsource = {{ path = "{windows_wheel}" }}\n'
+        f'[[package]]\nname = "example"\nversion = "1.0"\nsource = {{ path = "{linux_wheel}" }}\n',
+        encoding="utf-8",
+    )
+    requirements = tmp_path / "requirements.txt"
+    requirements.write_text(
+        f"./{windows_wheel} ; sys_platform == 'win32'\n./{linux_wheel} ; sys_platform == 'linux'\n",
+        encoding="utf-8",
+    )
+
+    selected = manage_dependencies._selected_uv_lock_packages(  # pyright: ignore[reportPrivateUsage]
+        tmp_path, requirements, Path(sys.executable)
+    )
+
+    expected_wheel = windows_wheel if sys.platform == "win32" else linux_wheel
+    assert [package["source"]["path"] for package in selected] == [expected_wheel]
+
+
+def test_pin_staged_wheel_url_dependencies(tmp_path: Path) -> None:
+    """Pin URL requirements of staged wheels to staged copies and leave other URL requirements untouched."""
+    import zipfile
+
+    with zipfile.ZipFile(tmp_path / "scooby-0.11.2-py3-none-any.whl", "w") as wheel:
+        wheel.writestr("scooby-0.11.2.dist-info/METADATA", "Metadata-Version: 2.1\nName: scooby\nVersion: 0.11.2\n")
+    parent = tmp_path / "parent-1.0-py3-none-any.whl"
+    with zipfile.ZipFile(parent, "w") as wheel:
+        wheel.writestr(
+            "parent-1.0.dist-info/METADATA",
+            "Metadata-Version: 2.1\nName: parent\nVersion: 1.0\n"
+            "Requires-Dist: scooby[cpu] @ https://example.com/scooby-0.11.2-py3-none-any.whl"
+            " ; sys_platform == 'win32'\n"
+            "Requires-Dist: other @ https://example.com/other-1.0-py3-none-any.whl\n",
+        )
+        wheel.writestr("parent/__init__.py", "")
+
+    manage_dependencies._pin_staged_wheel_url_dependencies(tmp_path)  # pyright: ignore[reportPrivateUsage]
+
+    with zipfile.ZipFile(parent) as wheel:
+        metadata = wheel.read("parent-1.0.dist-info/METADATA").decode()
+        assert "parent/__init__.py" in wheel.namelist()
+    assert 'Requires-Dist: scooby[cpu]==0.11.2 ; sys_platform == "win32"\n' in metadata
+    assert "Requires-Dist: other @ https://example.com/other-1.0-py3-none-any.whl\n" in metadata
 
 
 def test_stage_uv_selected_local_dependencies(tmp_path: Path, mocker: pytest_mock.MockerFixture) -> None:
@@ -826,7 +878,19 @@ def mock_subprocess_calls(  # noqa: C901
     windows_source_expected_python_exec = python_dir / "python.exe"
     windows_nuget_expected_python_exec = python_dir / "tools" / "python.exe"
 
-    def _mock_subprocess_run(args: list[str], **kwargs: dict[str, Any]):  # type: ignore
+    def _project_name_and_version(project_dir: Path) -> tuple[str, str]:
+        pyproject = toml.load(project_dir / "pyproject.toml")
+        metadata = pyproject.get("project") or pyproject["tool"]["poetry"]
+        return metadata["name"], metadata["version"]
+
+    def _build_mock_wheel(args: list[str], project_dir: Path) -> subprocess.CompletedProcess[str]:
+        name, version = _project_name_and_version(project_dir)
+        wheel = project_dir / "dist" / f"{name.replace('-', '_')}-{version}-py3-none-any.whl"
+        wheel.parent.mkdir(parents=True, exist_ok=True)
+        wheel.touch()
+        return subprocess.CompletedProcess(args, 0, f"Built {wheel.name}", "")
+
+    def _mock_subprocess_run(args: list[str], **kwargs: dict[str, Any]):  # type: ignore  # noqa: C901
         if args == ["sphinx-build", "doc/source", "doc/build/html", "--color", "-vW", "-bhtml"]:
             if not (solution_root_dir / "doc").is_dir():
                 raise subprocess.CalledProcessError(1, args, "mock error when building doc", "")
@@ -834,18 +898,14 @@ def mock_subprocess_calls(  # noqa: C901
                 expected_doc_html.parent.mkdir(parents=True, exist_ok=True)
                 expected_doc_html.write_text("mock_documentation")
         elif args == ["poetry", "version", "--no-interaction"]:
-            return subprocess.CompletedProcess(args, 0, "ansys-solutions-my-solution-dash 0.1", "")
+            name, version = _project_name_and_version(Path(kwargs["cwd"]))  # type: ignore
+            return subprocess.CompletedProcess(args, 0, f"{name} {version}", "")
         elif args[-4:] == ["-m", "pip", "--disable-pip-version-check", "--version"]:
             return subprocess.CompletedProcess(args, 0, "pip 22.3.1 from mock_directory", "")
-        elif args == ["poetry", "build", "--no-interaction"]:
-            expected_tmp_wheel = (
-                Path(kwargs["cwd"])  # type: ignore
-                / "dist"
-                / "ansys_solutions_my_solution_dash-0.1.dev0-py3-none-any.whl"
-            )
-            expected_tmp_wheel.parent.mkdir(parents=True, exist_ok=True)
-            expected_tmp_wheel.touch()
-            return subprocess.CompletedProcess(args, 0, f"Built {expected_tmp_wheel.name}", "")
+        elif args in (["poetry", "build", "--no-interaction"], ["uv", "build"]):
+            return _build_mock_wheel(args, Path(kwargs["cwd"]))  # type: ignore
+        elif len(args) == 3 and args[1] == "-c" and "sys_platform" in args[2]:
+            return subprocess.CompletedProcess(args, 0, json.dumps(default_environment()), "")
         elif "pyinstaller" in str(args[0]):
             expected_exec.parent.mkdir(parents=True, exist_ok=True)
             expected_exec.touch()
@@ -857,7 +917,8 @@ def mock_subprocess_calls(  # noqa: C901
             windows_nuget_expected_python_exec.parent.mkdir(parents=True)
             windows_nuget_expected_python_exec.touch()
 
-        return subprocess.CompletedProcess(args, 0, b"", b"")  # type: ignore
+        empty_output = "" if kwargs.get("text") else b""
+        return subprocess.CompletedProcess(args, 0, empty_output, empty_output)  # type: ignore
 
     subprocess_run_mock = mocker.patch("subprocess.run")
     subprocess_run_mock.side_effect = _mock_subprocess_run
@@ -1264,20 +1325,9 @@ def test_create_solution_metadata_with_synopsys_namespace(
     (solution_root_dir / "dist" / "solution").mkdir(parents=True, exist_ok=True)
     solution_info = SolutionInfo(solution_root_dir)
 
-    with (
-        patch(
-            "ansys.saf.desktop.installer._package.solution.get_solution_display_name",
-            return_value="Custom NS Solution",
-        ),
-        patch(
-            "ansys.saf.desktop.installer._package.solution.subprocess.run",
-            return_value=subprocess.CompletedProcess(
-                ["poetry", "version", "--no-interaction"],
-                0,
-                "custom-ns-solution 0.1.dev0\n",
-                "",
-            ),
-        ),
+    with patch(
+        "ansys.saf.desktop.installer._package.solution.get_solution_display_name",
+        return_value="Custom NS Solution",
     ):
         create_solution_metadata(solution_info, mock_installer_config)
 
@@ -1289,7 +1339,7 @@ def test_create_solution_metadata_with_synopsys_namespace(
     assert metadata["solution-name"] == "synopsys-custom-ns-solution"
     assert metadata["solution-display-name"] == "Custom NS Solution"
     assert metadata["solution-version"] == "0.1.dev0"
-    assert metadata["solution-backend"] == "poetry"
+    assert metadata["solution-backend"] == "uv"
 
 
 def test_create_solution_metadata_marks_uv_backend(
@@ -1317,6 +1367,7 @@ def test_create_solution_metadata_marks_uv_backend(
     assert metadata["solution-backend"] == "uv"
 
 
+@use_poetry_mock_solution
 @pytest.mark.usefixtures("mock_subprocess_calls", "mock_solution_display_name")
 def test_package_with_no_readme_key_in_pyproject(solution_root_dir: Path, mock_installer_config: InstallerConfig):
     solution_info = SolutionInfo(solution_root_dir)
@@ -1337,6 +1388,7 @@ def test_package_with_no_readme_key_in_pyproject(solution_root_dir: Path, mock_i
     "readme_value",
     [["README.md", "README.str"], {"file": "README.md", "content-type": "text/markdown"}],
 )
+@use_poetry_mock_solution
 @pytest.mark.usefixtures("mock_subprocess_calls", "mock_solution_display_name")
 def test_package_with_readme_key_is_not_str(
     readme_value: dict[str, str] | list[str],
@@ -1359,6 +1411,7 @@ def test_package_with_readme_key_is_not_str(
         setup_solution_folder(solution_info, mock_installer_config)
 
 
+@use_poetry_mock_solution
 @pytest.mark.usefixtures("mock_subprocess_calls", "mock_solution_display_name")
 def test_package_with_missing_readme_file(
     solution_root_dir: Path,
@@ -1385,6 +1438,7 @@ def test_package_with_missing_readme_file(
         setup_solution_folder(solution_info, mock_installer_config)
 
 
+@use_poetry_mock_solution
 @pytest.mark.usefixtures("mock_subprocess_calls", "mock_solution_display_name")
 def test_package_with_readme_random_format(
     solution_root_dir: Path,
@@ -1406,6 +1460,7 @@ def test_package_with_readme_random_format(
         setup_solution_folder(solution_info, mock_installer_config)
 
 
+@use_poetry_mock_solution
 @pytest.mark.parametrize("poetry_version", ["1.8.4", "2.5.1"], ids=["poetry_below_2", "poetry_2_or_higher"])
 @pytest.mark.usefixtures("mock_subprocess_calls", "mock_solution_display_name")
 def test_package_with_mock_solution(
@@ -1432,11 +1487,11 @@ def test_package_with_mock_solution(
 
     # documentation is copied to src/
     assert (
-        solution_root_dir / "src" / "ansys" / "solutions" / "my_solution_dash" / "html-doc" / "index.html"
+        solution_root_dir / "src" / "ansys" / "solutions" / "my_solution_dash_old" / "html-doc" / "index.html"
     ).read_text() == "mock_documentation"
 
     # solution wheel is generated
-    expected_wheel = solution_root_dir / "dist" / "ansys_solutions_my_solution_dash-0.1.dev0-py3-none-any.whl"
+    expected_wheel = solution_root_dir / "dist" / "ansys_solutions_my_solution_dash_old-0.1.dev0-py3-none-any.whl"
     assert expected_wheel.is_file()
 
     # pyinstaller-based executable is generated
@@ -1456,7 +1511,7 @@ def test_package_with_mock_solution(
     assert next(python_dir.glob(f"**/{'python.exe' if platform.system() == 'Windows' else 'python3'}")).is_file()
 
     # local pyproject.toml wheels are copied to the definitions directory
-    expected_wheel_dir = solution_root_dir / "dist" / "solution" / "definitions" / "my_solution_dash"
+    expected_wheel_dir = solution_root_dir / "dist" / "solution" / "definitions" / "my_solution_dash_old"
     current_platform = platform.system()
     expected_wheel_name = CUSTOM_PACKAGE_FOR_TEST_2_WHEEL_NAMES.get(current_platform)
     assert expected_wheel_name is not None, f"Unsupported platform: {current_platform}"
@@ -1466,7 +1521,7 @@ def test_package_with_mock_solution(
     assert "build_assets" not in dist_pyproject.read_text()
 
     # pip and poetry requirement files are generated with the correct content
-    expected_tools_dir = solution_root_dir / "dist" / "solution" / "definitions" / "my_solution_dash" / "tools"
+    expected_tools_dir = solution_root_dir / "dist" / "solution" / "definitions" / "my_solution_dash_old" / "tools"
     pip_requirements = expected_tools_dir / "pip_requirements.txt"
     poetry_requirements = expected_tools_dir / "poetry_requirements.txt"
     assert pip_requirements.is_file()

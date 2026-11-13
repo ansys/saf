@@ -34,7 +34,9 @@ import tempfile
 import tomllib
 from typing import Any
 from urllib.parse import parse_qsl, quote, unquote, urlencode, urlsplit, urlunsplit
+import zipfile
 
+from packaging.markers import Marker
 from packaging.requirements import InvalidRequirement, Requirement
 from packaging.utils import canonicalize_name, parse_sdist_filename, parse_wheel_filename
 from packaging.version import Version
@@ -487,7 +489,11 @@ def export_uv_requirements(solution_root_dir: Path, python_exec: Path, requireme
     return requirements_path
 
 
-def _selected_uv_lock_packages(solution_root_dir: Path, requirements_path: Path) -> list[dict[str, Any]]:
+def _selected_uv_lock_packages(
+    solution_root_dir: Path,
+    requirements_path: Path,
+    python_exec: Path | None = None,
+) -> list[dict[str, Any]]:
     """Select native UV lock entries represented in UV's target-specific requirements export."""
     lock_file = solution_root_dir / "uv.lock"
     with lock_file.open("rb") as source_file:
@@ -500,18 +506,25 @@ def _selected_uv_lock_packages(solution_root_dir: Path, requirements_path: Path)
     ):
         raise ValueError(f"Invalid package list in {lock_file}.")
 
-    selected = _selected_uv_requirements(requirements_path)
+    selected, local_archives = _selected_uv_requirements(requirements_path, solution_root_dir, python_exec)
     return [
         package
         for package in packages
         if (versions := selected.get(canonicalize_name(package["name"]))) is not None
         and (None in versions or package.get("version") in versions)
+        and _uv_lock_archive_is_selected(package, solution_root_dir, local_archives)
     ]
 
 
-def _selected_uv_requirements(requirements_path: Path) -> dict[str, set[str | None]]:
-    """Parse names and exact versions from UV's requirements export."""
+def _selected_uv_requirements(
+    requirements_path: Path,
+    solution_root_dir: Path,
+    python_exec: Path | None = None,
+) -> tuple[dict[str, set[str | None]], set[str]]:
+    """Parse names, exact versions and target-applicable local archive paths from UV's requirements export."""
     selected: dict[str, set[str | None]] = {}
+    local_archives: set[str] = set()
+    marker_environment: dict[str, str] | None = None
     for line in requirements_path.read_text(encoding="utf-8").splitlines():
         requirement_line = line.strip().removesuffix("\\").rstrip()
         if not requirement_line or requirement_line.startswith(("#", "-")):
@@ -519,11 +532,19 @@ def _selected_uv_requirements(requirements_path: Path) -> dict[str, set[str | No
         try:
             requirement = Requirement(requirement_line)
         except InvalidRequirement:
-            file_package = _uv_file_requirement_package(requirement_line)
+            location, _, marker = requirement_line.partition(";")
+            location = location.strip()
+            file_package = _uv_file_requirement_package(location, solution_root_dir)
             if file_package is None:
                 continue
-            name, version = file_package
+            if marker.strip():
+                if marker_environment is None and python_exec is not None:
+                    marker_environment = _uv_target_marker_environment(python_exec)
+                if not Marker(marker.strip()).evaluate(marker_environment):
+                    continue
+            name, version, archive_path = file_package
             selected.setdefault(canonicalize_name(name), set()).add(version)
+            local_archives.add(archive_path)
             continue
 
         exact_versions = {
@@ -533,14 +554,54 @@ def _selected_uv_requirements(requirements_path: Path) -> dict[str, set[str | No
         }
         versions = exact_versions or {None}
         selected.setdefault(canonicalize_name(requirement.name), set()).update(versions)
-    return selected
+    return selected, local_archives
 
 
-def _uv_file_requirement_package(requirement: str) -> tuple[str, str] | None:
+def _normalized_local_path(path: Path) -> str:
+    return os.path.normcase(path.resolve())
+
+
+def _uv_lock_archive_is_selected(package: dict[str, Any], solution_root_dir: Path, local_archives: set[str]) -> bool:
+    """Keep only the locked local archive selected for the target, e.g. one of several per-platform wheels."""
+    source = package.get("source")
+    path = source.get("path") if isinstance(source, dict) else None
+    if not isinstance(path, str) or not path.endswith((".whl", ".tar.gz", ".zip")):
+        return True
+    archive = Path(path)
+    if not archive.is_absolute():
+        archive = solution_root_dir / archive
+    return _normalized_local_path(archive) in local_archives
+
+
+def _uv_target_marker_environment(python_exec: Path) -> dict[str, str]:
+    """Return the PEP 508 marker environment of the target interpreter."""
+    script = (
+        "import json, os, platform, sys\n"
+        "v = sys.implementation.version\n"
+        "iv = f'{v.major}.{v.minor}.{v.micro}'\n"
+        "iv += '' if v.releaselevel == 'final' else v.releaselevel[0] + str(v.serial)\n"
+        "print(json.dumps({'implementation_name': sys.implementation.name, 'implementation_version': iv,"
+        " 'os_name': os.name, 'platform_machine': platform.machine(), 'platform_release': platform.release(),"
+        " 'platform_system': platform.system(), 'platform_version': platform.version(),"
+        " 'python_full_version': platform.python_version(),"
+        " 'platform_python_implementation': platform.python_implementation(),"
+        " 'python_version': '.'.join(platform.python_version_tuple()[:2]), 'sys_platform': sys.platform}))\n"
+    )
+    return json.loads(subprocess.check_output([str(python_exec), "-c", script], text=True))
+
+
+def _uv_file_requirement_package(requirement: str, solution_root_dir: Path) -> tuple[str, str, str] | None:
+    """Return the name, version and normalized path of a local archive exported as a file URL or a path."""
     parsed_url = urlsplit(requirement)
-    if parsed_url.scheme != "file":
+    if parsed_url.scheme == "file":
+        archive = Path(unquote(parsed_url.path).lstrip("/") if os.name == "nt" else unquote(parsed_url.path))
+    elif parsed_url.scheme and len(parsed_url.scheme) > 1:
         return None
-    filename = Path(unquote(parsed_url.path)).name
+    else:
+        archive = Path(requirement)
+        if not archive.is_absolute():
+            archive = solution_root_dir / archive
+    filename = archive.name
     try:
         name, version, _, _ = parse_wheel_filename(filename)
     except ValueError:
@@ -548,7 +609,7 @@ def _uv_file_requirement_package(requirement: str) -> tuple[str, str] | None:
             name, version = parse_sdist_filename(filename)
         except ValueError:
             return None
-    return name, str(version)
+    return name, str(version), _normalized_local_path(archive)
 
 
 def stage_uv_selected_local_dependencies(
@@ -721,31 +782,31 @@ def create_uv_installation_project(
     selected_groups = [group for group in groups if group in dependency_groups]
     project["dependency-groups"] = {group: dependency_groups[group] for group in selected_groups}
     _use_built_uv_solution_version(project, definitions_folder)
+    # An installer targets the build's operating system, so the packaged lock only needs that platform. Offline
+    # packages also pin the Python minor version, because their wheelhouse only holds wheels for that version.
+    target = _uv_target_marker_environment(python_exec)
+    target_environment = f"sys_platform == '{target['sys_platform']}'"
+    uv_settings = project.setdefault("tool", {}).setdefault("uv", {})
     if offline_package:
-        target_environment = subprocess.check_output(
-            [
-                str(python_exec),
-                "-c",
-                "import sys; print(f\"sys_platform == '{sys.platform}' and "
-                "python_version == '{sys.version_info.major}.{sys.version_info.minor}'\")",
-            ],
-            text=True,
-        ).strip()
-        uv_settings = project.setdefault("tool", {}).setdefault("uv", {})
-        uv_settings["environments"] = [target_environment]
+        target_environment += f" and python_version == '{target['python_version']}'"
         uv_settings["no-index"] = True
         uv_settings["find-links"] = ["wheelhouse"]
+    uv_settings["environments"] = [target_environment]
     definitions_folder.mkdir(parents=True, exist_ok=True)
     wheelhouse = definitions_folder / "wheelhouse"
 
     with tempfile.TemporaryDirectory() as temporary_directory:
         requirements_path = Path(temporary_directory) / "requirements.txt"
         export_uv_requirements(solution_root_dir, python_exec, requirements_path)
-        lock_packages = _selected_uv_lock_packages(solution_root_dir, requirements_path)
+        lock_packages = _selected_uv_lock_packages(solution_root_dir, requirements_path, python_exec)
         stage_uv_selected_local_dependencies(solution_root_dir, lock_packages, wheelhouse, python_exec, github_token)
         _stage_uv_private_dependencies(solution_root_dir, lock_packages, wheelhouse, python_exec)
         if offline_package:
+            logger.info(
+                f"Downloading solution's external dependencies with python version {target['python_full_version']}"
+            )
             stage_uv_external_dependencies(solution_root_dir, definitions_folder, python_exec, lock_packages)
+        _pin_staged_wheel_url_dependencies(wheelhouse)
         _rewrite_uv_local_sources(
             project,
             solution_root_dir,
@@ -834,6 +895,56 @@ def refresh_uv_project_lock(definitions_folder: Path, python_exec: Path, offline
         )
     except subprocess.CalledProcessError as e:
         raise RuntimeError(f"Failed to refresh portable UV lockfile: {e.stderr}") from e
+
+
+def _pin_staged_wheel_url_dependencies(wheelhouse: Path) -> None:
+    """Replace `name @ http(s)://...` requirements of staged wheels with the version of the staged copy.
+
+    A staged wheel can depend on another package through a URL (e.g. `scooby @ https://.../scooby.whl`). When that
+    package is staged too, UV would otherwise see two URLs for it and refuse to lock.
+    """
+    staged_versions = {
+        str(canonicalize_name(name)): str(version)
+        for name, version, _, _ in (parse_wheel_filename(wheel.name) for wheel in wheelhouse.glob(WHL_CONSTANT))
+    }
+    for wheel in wheelhouse.glob(WHL_CONSTANT):
+        with zipfile.ZipFile(wheel) as archive:
+            metadata_name = next(
+                (name for name in archive.namelist() if name.count("/") == 1 and name.endswith(".dist-info/METADATA")),
+                None,
+            )
+            if metadata_name is None:
+                continue
+            metadata = archive.read(metadata_name).decode("utf-8")
+        pinned_metadata = "".join(
+            _pin_staged_url_requirement(line, staged_versions) for line in metadata.splitlines(keepends=True)
+        )
+        if pinned_metadata != metadata:
+            _replace_wheel_member(wheel, metadata_name, pinned_metadata.encode("utf-8"))
+
+
+def _pin_staged_url_requirement(line: str, staged_versions: dict[str, str]) -> str:
+    if not line.startswith("Requires-Dist:"):
+        return line
+    try:
+        requirement = Requirement(line.removeprefix("Requires-Dist:").strip())
+    except InvalidRequirement:
+        return line
+    version = staged_versions.get(canonicalize_name(requirement.name))
+    if not requirement.url or not requirement.url.startswith(("http://", "https://")) or version is None:
+        return line
+    extras = f"[{','.join(sorted(requirement.extras))}]" if requirement.extras else ""
+    marker = f" ; {requirement.marker}" if requirement.marker else ""
+    line_ending = line[len(line.rstrip("\r\n")) :]
+    return f"Requires-Dist: {requirement.name}{extras}=={version}{marker}{line_ending}"
+
+
+def _replace_wheel_member(wheel: Path, member_name: str, content: bytes) -> None:
+    rewritten_wheel = wheel.with_suffix(".tmp")
+    with zipfile.ZipFile(wheel) as source, zipfile.ZipFile(rewritten_wheel, "w", zipfile.ZIP_DEFLATED) as target:
+        for item in source.infolist():
+            target.writestr(item, content if item.filename == member_name else source.read(item.filename))
+    rewritten_wheel.replace(wheel)
 
 
 def _rewrite_uv_local_sources(

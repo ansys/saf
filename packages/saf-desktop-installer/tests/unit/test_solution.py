@@ -32,6 +32,7 @@ from ansys.saf.desktop.installer._package.solution import (
     get_solution_version,
     move_assets_and_deployment_script,
 )
+from tests.conftest import use_poetry_mock_solution
 
 
 @pytest.fixture
@@ -146,6 +147,7 @@ def test_uv_metadata_requires_project_table(uv_solution_root: Path) -> None:
         _ = SolutionInfo(uv_solution_root).solution_package_name
 
 
+@use_poetry_mock_solution
 def test_poetry_metadata_uses_solution_root(
     solution_root_dir: Path,
     monkeypatch: pytest.MonkeyPatch,
@@ -159,7 +161,7 @@ def test_poetry_metadata_uses_solution_root(
         return_value=subprocess.CompletedProcess(command, 0, "my-solution 0.1.dev0\n"),
     ) as run:
         info = SolutionInfo(solution_root_dir)
-        assert info.solution_package_name == "ansys-solutions-my-solution-dash"
+        assert info.solution_package_name == "ansys-solutions-my-solution-dash-old"
         run.assert_not_called()
         assert info.solution_version == "0.1.dev0"
     run.assert_called_with(
@@ -199,6 +201,7 @@ def test_poetry_project_name_layouts(tmp_path: Path, project_metadata: str, expe
     run.assert_called_once_with(command, cwd=tmp_path, capture_output=True, check=True, text=True)
 
 
+@use_poetry_mock_solution
 @pytest.mark.parametrize("output", ["", "solution", "solution unknown"])
 def test_poetry_version_rejects_invalid_output(solution_root_dir: Path, output: str) -> None:
     """Preserve errors for missing or unknown versions returned by Poetry."""

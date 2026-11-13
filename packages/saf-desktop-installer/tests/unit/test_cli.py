@@ -24,6 +24,7 @@ import pytest_mock
 from ansys.saf.desktop.installer.__main__ import _load_filtered_dotenv, package_solution
 from ansys.saf.desktop.installer._package.config import InstallerConfig
 from ansys.saf.desktop.installer._package.solution import SolutionInfo
+from tests.conftest import use_poetry_mock_solution
 
 
 @pytest.fixture
@@ -54,6 +55,7 @@ def test_uv_packaging_skips_poetry_preparation(
 
 
 @pytest.mark.usefixtures("mock_installer_calls")
+@use_poetry_mock_solution
 @pytest.mark.parametrize("offline_package", [False, True])
 def test_poetry_packaging_warns_and_checks_plugin_only_offline(
     solution_root_dir: Path,
@@ -82,6 +84,7 @@ def test_poetry_packaging_warns_and_checks_plugin_only_offline(
 
 
 @pytest.mark.usefixtures("mock_installer_calls")
+@use_poetry_mock_solution
 @pytest.mark.parametrize("fails", [False, True])
 def test_poetry_offline_packaging_installs_required_plugin(
     solution_root_dir: Path,

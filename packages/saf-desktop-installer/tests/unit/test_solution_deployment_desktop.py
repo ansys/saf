@@ -69,7 +69,11 @@ from ansys.saf.testing.selenium import (
     wait_for_expected_property,
     wait_for_partial_text,
 )
-from tests.conftest import CUSTOM_PACKAGE_FOR_TEST_2_WHEEL_NAMES, check_installer_gui_is_using_local_bootstrap_css
+from tests.conftest import (
+    CUSTOM_PACKAGE_FOR_TEST_2_WHEEL_NAMES,
+    check_installer_gui_is_using_local_bootstrap_css,
+    use_poetry_mock_solution,
+)
 from tests.unit.conftest import InstallerUi
 from tests.utils import remove_directory_write_permissions
 
@@ -126,6 +130,7 @@ def test_solution_desktop_deployment_exception_handling_no_ui(
         assert "fake_exception" in result.output
 
 
+@use_poetry_mock_solution
 def test_modify_solution_wheel_metadata(solution_root_dir: Path) -> None:
     output = subprocess.check_output(["poetry", "build", "--no-interaction"], cwd=solution_root_dir, text=True)
     project_wheel_name = f"{output.split()[1].replace('-', '_')}-0.1.dev0-py3-none-any.whl"
@@ -137,7 +142,7 @@ def test_modify_solution_wheel_metadata(solution_root_dir: Path) -> None:
     shutil.copy(project_wheel_path, destination_path)
     modify_solution_wheel_metadata(
         solution_installation_directory=destination_path.parent,
-        solution_package_name="ansys-solutions-my-solution-dash",
+        solution_package_name="ansys-solutions-my-solution-dash-old",
         solution_version="0.1.dev0",
     )
     current_platform = platform.system()

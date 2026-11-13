@@ -115,8 +115,8 @@ Update your main callbacks and layout in ``page.py``
                        break
                if matched:
                    return str(i), project_id
-            project_id = path_parts[1] if len(path_parts) >= 2 and path_parts[0] == "projects" else None
-            return None, project_id
+           project_id = path_parts[1] if len(path_parts) >= 2 and path_parts[0] == "projects" else None
+           return None, project_id
 
 
        @callback(

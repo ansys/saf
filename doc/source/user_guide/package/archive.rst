@@ -50,7 +50,7 @@ You can create a solution archive with the ``saf archive`` command in either SAF
 
        b. Select the output directory for the archive.
 
-          By default, the output directory is the current working directory. Browse to a different folder or enter the path manually.
+          By default, the output directory is the solution's root directory. Browse to a different folder or enter the path manually.
 
           .. important::
 

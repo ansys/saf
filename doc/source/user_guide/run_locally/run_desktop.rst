@@ -83,8 +83,6 @@ Run in a desktop window
 
     #. In the Activity Bar, click the **Solutions Manager** icon.
 
-    #. In the **Solutions Manager**  pane, expand the **Create Solution** view.
-
     #. In the **Solutions Manager**  pane, expand the **Run Solution** view.
 
        .. image:: /_static/images/solutions_manager_run_solution_view_desktop.png
@@ -103,11 +101,12 @@ Run in a desktop window
 
        c. Select a log level:
 
-          The default log level is **INFO**. You can select a different log level if needed.
+          Select :guilabel:`Default` to start the solution without the ``--loglevel`` option, which uses the **INFO** log level.
+          Alternatively, select one of the available levels: **DEBUG**, **INFO**, **WARNING**, **ERROR**, or **CRITICAL**.
 
-       d. Enter a project name.
+       d. Optionally, enter a project name.
 
-          Enter the name of the project you want to run.
+          Enter the name of the project you want to run. If you leave the field empty, a project with a randomly generated name is created.
 
        e. If needed, configure the solution environment.
 
@@ -165,11 +164,12 @@ Run in a web browser
 
          c. Select a log level:
 
-            The default log level is **INFO**. You can select a different log level if needed.
+            Select :guilabel:`Default` to start the solution without the ``--loglevel`` option, which uses the **INFO** log level.
+            Alternatively, select one of the available levels: **DEBUG**, **INFO**, **WARNING**, **ERROR**, or **CRITICAL**.
 
-         d. Enter a project name.
+         d. Optionally, enter a project name.
 
-            Enter the name of the project you want to run.
+            Enter the name of the project you want to run. If you leave the field empty, a project with a randomly generated name is created.
 
          e. If needed, configure the solution environment.
 
@@ -227,13 +227,13 @@ Run from SAF Portal
 
          c. Select a log level:
 
-            The default log level is **INFO**. You can select a different log level if needed.
+            Select :guilabel:`Default` to start the solution without the ``--loglevel`` option, which uses the **INFO** log level.
+            Alternatively, select one of the available levels: **DEBUG**, **INFO**, **WARNING**, **ERROR**, or **CRITICAL**.
 
-         d. Enter a project name.
+            .. note::
+              The **Project name** field is not available when **Portal mode** is selected. You create and open projects from SAF Portal.
 
-            Ener the name of the project you want to run.
-
-         e. If needed, configure the solution environment.
+         d. If needed, configure the solution environment.
 
             .. seealso::
               The **Run Solution** pane provides options for specifying the solution environment. For more information, see :ref:`envar-config-system-envvar` and :ref:`envar-config-environment-file` in the :ref:`environment_variables` page.

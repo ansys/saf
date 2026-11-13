@@ -37,6 +37,13 @@ export class CreateSolutionViewProvider implements vscode.WebviewViewProvider {
   private readonly workspaceRoot: string | undefined;
   private static readonly SOLUTION_CREATION_TIMEOUT_MS = 10000;
   private static readonly FILE_CHECK_INTERVAL_MS = 200;
+  // Mirrors the defaults in packages/saf-cli/src/ansys/saf/cli/_config/const.py
+  private static readonly DEFAULTS = {
+    name: 'my_solution',
+    displayName: 'My Solution',
+    uiType: 'dash',
+    namespace: 'saf.solutions'
+  };
 
   constructor(private readonly _extensionUri: vscode.Uri) {
     this.workspaceRoot = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
@@ -252,14 +259,14 @@ export class CreateSolutionViewProvider implements vscode.WebviewViewProvider {
         <div>
           <div class="row">
             <label for="solution-name">Solution name</label>
-            <input type="text" id="solution-name" placeholder="my-solution" />
+            <input type="text" id="solution-name" placeholder="${CreateSolutionViewProvider.DEFAULTS.name}" value="${CreateSolutionViewProvider.DEFAULTS.name}" />
             <div class="help-text">Letters, numbers, hyphens and underscores only</div>
             <div id="name-error" class="validation-error" style="display: none;"></div>
           </div>
 
           <div class="row">
             <label for="display-name">Display name</label>
-            <input type="text" id="display-name" placeholder="My Solution" />
+            <input type="text" id="display-name" placeholder="${CreateSolutionViewProvider.DEFAULTS.displayName}" value="${CreateSolutionViewProvider.DEFAULTS.displayName}" />
             <div class="help-text">Human-readable name for the solution</div>
             <div id="display-name-error" class="validation-error" style="display: none;"></div>
           </div>
@@ -267,8 +274,7 @@ export class CreateSolutionViewProvider implements vscode.WebviewViewProvider {
           <div class="row">
             <label for="ui-type">UI framework</label>
             <select id="ui-type">
-              <option value="" disabled selected>Select framework...</option>
-              <option value="dash">dash</option>
+              <option value="dash" selected>dash</option>
               <option value="none">none</option>
             </select>
             <div id="ui-type-error" class="validation-error" style="display: none;"></div>
@@ -276,7 +282,7 @@ export class CreateSolutionViewProvider implements vscode.WebviewViewProvider {
 
           <div class="row">
             <label for="namespace">Namespace</label>
-            <input type="text" id="namespace" placeholder="saf.solutions" />
+            <input type="text" id="namespace" placeholder="${CreateSolutionViewProvider.DEFAULTS.namespace}" value="${CreateSolutionViewProvider.DEFAULTS.namespace}" />
             <div class="help-text">Namespace for the solution</div>
             <div id="namespace-error" class="validation-error" style="display: none;"></div>
           </div>
@@ -307,13 +313,14 @@ export class CreateSolutionViewProvider implements vscode.WebviewViewProvider {
 
       <script>
         const vscode = acquireVsCodeApi();
+        const DEFAULTS = ${JSON.stringify(CreateSolutionViewProvider.DEFAULTS)};
 
         // State management
         const state = vscode.getState() || {
-          solutionName: '',
-          displayName: '',
-          namespace: '',
-          uiType: '',
+          solutionName: DEFAULTS.name,
+          displayName: DEFAULTS.displayName,
+          namespace: DEFAULTS.namespace,
+          uiType: DEFAULTS.uiType,
           targetDirectory: ''
         };
 
@@ -373,10 +380,10 @@ export class CreateSolutionViewProvider implements vscode.WebviewViewProvider {
         function resetInputValues(options) {
           const keepTargetDirectory = options?.keepTargetDirectory ?? false;
 
-          solutionNameInput.value = '';
-          displayNameInput.value = '';
-          uiTypeSelect.value = '';
-          namespaceInput.value = '';
+          solutionNameInput.value = DEFAULTS.name;
+          displayNameInput.value = DEFAULTS.displayName;
+          uiTypeSelect.value = DEFAULTS.uiType;
+          namespaceInput.value = DEFAULTS.namespace;
           if (!keepTargetDirectory) {
             targetDirectoryInput.value = '';
           }

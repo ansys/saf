@@ -15,6 +15,8 @@
 // limitations under the License.
 
 import { expect } from 'chai';
+import * as fs from 'node:fs';
+import * as path from 'node:path';
 import * as sinon from 'sinon';
 import * as vscode from 'vscode';
 import { BuildInstallerProvider } from '../../../src/providers/BuildInstallerProvider';
@@ -470,6 +472,16 @@ describe('BuildInstallerProvider', () => {
       expect((vscode.window.showErrorMessage as sinon.SinonStub).firstCall.args[0]).to.include(
         'Failed to build installer: lookup failed'
       );
+    });
+  });
+
+  describe('build installer template', () => {
+    it('should suggest a patched Python version in the placeholder', () => {
+      const templatePath = path.join(process.cwd(), 'src', 'webview', 'templates', 'buildInstaller.html');
+      // eslint-disable-next-line security/detect-non-literal-fs-filename
+      const html = fs.readFileSync(templatePath, 'utf8');
+
+      expect(html).to.include('id="python-version" placeholder="e.g., 3.11.14"');
     });
   });
 });

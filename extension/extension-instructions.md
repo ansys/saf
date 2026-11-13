@@ -112,7 +112,7 @@ Configure the Python virtual environment for the solution
   - Organize variables by category
   - Enable/disable specific variables
   - Set custom values for variables
-  - Save configurations to .env file
+  - Save configurations per solution (stored in VS Code workspace state, not in a `.env` file)
   - Search and filter functionality
   - Bulk enable/disable variables by category
 
@@ -234,9 +234,12 @@ Dependencies are displayed in the Poetry Dependencies view:
     - Use the "Enable all" or "Disable all" buttons to quickly
       manage variables by category
 
-4. Click the "Save Configuration" button to save your changes to a
-  .env file in your workspace
-5. The saved configuration will be automatically loaded when you run your solution
+4. Click the "Save Configuration" button to save your changes. The
+  configuration is stored per solution in VS Code workspace state (no
+  `.env` file is written)
+5. The saved configuration is applied as environment variables when you run
+  your solution from Solutions Manager, and takes precedence over a selected
+  environment file
 
 ## Troubleshooting
 

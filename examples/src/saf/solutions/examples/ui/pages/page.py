@@ -471,7 +471,8 @@ def resolve_active_page_and_project_information(
                 break
         if matched:
             return str(i), project_id
-    return None, None
+    project_id = path_parts[1] if len(path_parts) >= 2 and path_parts[0] == "projects" else None
+    return None, project_id
 
 
 @callback(
@@ -486,7 +487,7 @@ def render_nav_tree(active_index: str | None, switch_on: bool) -> Tree:
     return Tree(
         aio_id="navigation_tree",
         items=get_page_list(theme, active_index),
-        active_item_id=active_index,
+        selected_item=active_index,
     )
 
 

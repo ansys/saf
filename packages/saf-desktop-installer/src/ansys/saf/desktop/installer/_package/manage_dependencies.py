@@ -765,7 +765,7 @@ def create_uv_installation_project(
 
     try:
         subprocess.run(
-            [uv_executable, "lock", "--offline", "--python", str(python_exec)],
+            _uv_lock_command(uv_executable, python_exec, offline_package),
             cwd=definitions_folder,
             check=True,
             capture_output=True,
@@ -812,13 +812,21 @@ def _export_uv_pip_requirements(
     (definitions_folder / "uv-requirements.txt").write_text(result.stdout, encoding="utf-8")
 
 
-def refresh_uv_project_lock(definitions_folder: Path, python_exec: Path) -> None:
+def _uv_lock_command(uv_executable: str | Path, python_exec: Path, offline_package: bool) -> list[str]:
+    """Lock the portable project; online packages may fetch registry metadata missing from the local UV cache."""
+    command = [str(uv_executable), "lock", "--python", str(python_exec)]
+    if offline_package:
+        command.insert(2, "--offline")
+    return command
+
+
+def refresh_uv_project_lock(definitions_folder: Path, python_exec: Path, offline_package: bool = False) -> None:
     """Recalculate local wheel hashes after obfuscation."""
     executable_name = "uv.exe" if platform.system() == "Windows" else "uv"
     uv_executable = definitions_folder / "tools" / executable_name
     try:
         subprocess.run(
-            [str(uv_executable), "lock", "--offline", "--python", str(python_exec)],
+            _uv_lock_command(uv_executable, python_exec, offline_package),
             cwd=definitions_folder,
             check=True,
             capture_output=True,
@@ -1331,7 +1339,7 @@ def build_and_stage_solution_packages(
     if installer_config.obfuscate:
         obfuscate_solution(definitions_folder, venv_python_exec)
         if backend is SolutionBackend.UV:
-            refresh_uv_project_lock(definitions_folder, venv_python_exec)
+            refresh_uv_project_lock(definitions_folder, venv_python_exec, installer_config.offline_package)
     if installer_config.offline_package and backend is SolutionBackend.POETRY:
         _download_poetry_external_dependencies(
             definitions_folder,

@@ -210,6 +210,20 @@ def test_stage_uv_selected_local_wheel_checks_hash(tmp_path: Path, mocker: pytes
         )
 
 
+@pytest.mark.parametrize("offline_package", [False, True])
+def test_refresh_uv_project_lock_uses_network_only_for_online_packages(
+    tmp_path: Path,
+    mocker: pytest_mock.MockerFixture,
+    offline_package: bool,
+) -> None:
+    """Online packages may need registry metadata that is not in the local UV cache."""
+    run = mocker.patch.object(manage_dependencies.subprocess, "run")
+
+    manage_dependencies.refresh_uv_project_lock(tmp_path, tmp_path / "python.exe", offline_package)
+
+    assert ("--offline" in run.call_args.args[0]) is offline_package
+
+
 def test_uv_installation_project_uses_built_dynamic_version(tmp_path: Path) -> None:
     """Give the portable UV project a static version so `uv lock` does not call the build backend."""
     (tmp_path / "my_solution-2.1.0b0-py3-none-any.whl").touch()

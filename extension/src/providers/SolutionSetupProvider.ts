@@ -118,7 +118,7 @@ export class SolutionSetupProvider implements vscode.WebviewViewProvider {
 
       // Build the command with options
       const safCliExecutable = StorageService.getSafCliTerminalCommand();
-      let setupCommand = safCliExecutable + ` install ${solutionName} -d all`;
+      let setupCommand = safCliExecutable + ` install ${solutionName}`;
 
       // basic options
       if (options.cleanVenvLock) {
@@ -272,9 +272,6 @@ export class SolutionSetupProvider implements vscode.WebviewViewProvider {
           if (solution) {
             command += ' ' + solution;
           }
-
-          // Install all dependencies by default
-          command += ' -d all';
 
           // Clean-up options
           if (cleanVenvRadio.checked) {

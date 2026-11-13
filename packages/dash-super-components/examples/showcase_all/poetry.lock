@@ -152,19 +152,19 @@ tests = ["ansys-api-platform-instancemanagement (==1.0.0)", "grpcio-health-check
 
 [[package]]
 name = "ansys-saf-desktop-orchestrator"
-version = "1.12.0"
+version = "1.14.0"
 description = "Solution Application Framework (SAF) Desktop Orchestrator"
 optional = false
 python-versions = "<4,>=3.11"
 groups = ["desktop"]
 files = [
-    {file = "ansys_saf_desktop_orchestrator-1.12.0-py3-none-any.whl", hash = "sha256:bd00fc640c4a762f1f6381a03922ab73c4347b410907729822cb1cb6bf6df110"},
-    {file = "ansys_saf_desktop_orchestrator-1.12.0.tar.gz", hash = "sha256:5c1f6141939f3ad8ada2537178982e621a6925a1f174e050b44e5ca856f35869"},
+    {file = "ansys_saf_desktop_orchestrator-1.14.0-py3-none-any.whl", hash = "sha256:c4517fe12d3efed8cea5f74384e25a83c7dbecebc357dce8d9d767c68cdb5780"},
+    {file = "ansys_saf_desktop_orchestrator-1.14.0.tar.gz", hash = "sha256:7881d9d20913c59e42a8d2d691a525df44443f67a5bac0ce6ff84325688a8b5c"},
 ]
 
 [package.dependencies]
-ansys-saf-glow-engine = {version = ">=2.1.dev0,<3.0", extras = ["pim"]}
-ansys-saf-product-configuration = ">=0.20.0,<1.0"
+ansys-saf-glow-engine = {version = ">=2.1.0,<3.0.0", extras = ["pim"]}
+ansys-saf-product-configuration = ">=0.21.0,<1.0"
 grpcio = ">=1.47.0,<2.0.0"
 grpcio-health-checking = ">=1.24.0,<2.0.0"
 httpx2 = ">=2.5.0,<3.0.0"

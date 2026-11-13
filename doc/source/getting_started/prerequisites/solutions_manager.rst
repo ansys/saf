@@ -17,7 +17,7 @@ Installation
 
 To download and install the Solutions Manager extension:
 
-#. Download the ``solutions-manager-extension-v*.*.*.vsix`` file for the desired release from the `Releases <https://github.com/ansys/saf/releases?q=solutions-manager&expanded=true>`_ page.
+#. Download the ``saf-solutions-manager-*.*.*.vsix`` file for the desired release from the `Releases <https://github.com/ansys/saf/releases?q=solutions-manager&expanded=true>`_ page.
 
 #. Open VS Code.
 
@@ -32,7 +32,7 @@ To download and install the Solutions Manager extension:
       :alt: Install from VSIX option in the Extensions view
       :width: 65%
 
-#. Browse to the downloaded ``solutions-manager-extension-v*.*.*.vsix`` file, select it, and click :guilabel:`Install`.
+#. Browse to the downloaded ``saf-solutions-manager-*.*.*.vsix`` file, select it, and click :guilabel:`Install`.
 
 After the installation is complete, the Solutions Manager automatically installs ``ansys-saf-cli`` and configures the required environment. You can now begin creating and managing SAF solutions directly from VS Code.
 
@@ -91,7 +91,7 @@ Method 2: Settings JSON
    .. code-block:: json
 
       {
-        "solutions-init.enableSolutionsList": false
+        "solutions-manager.enableSolutionsList": false
       }
 
 #. Set the value to ``true`` to show the view or ``false`` to hide it.

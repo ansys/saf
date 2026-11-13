@@ -86,12 +86,15 @@ directly on ``ansys/saf`` without creating a fork.
        git clone git@github.com:ansys/saf.git
        cd saf
 
-#. Create a branch from an up-to-date ``main``:
+#. Create a branch from an up-to-date ``main`` using the required
+  ``<issue-number>/<brief-description>`` format. For example,
+  ``123/add-export-command``. Branches that do not follow this convention are
+  rejected:
 
    .. code-block:: bash
 
        git fetch origin
-       git checkout -b <my-branch> origin/main
+       git checkout -b <issue-number>/<brief-description> origin/main
 
 #. Make your changes and commit them. Follow the `Conventional Commits`_
    specification for commit messages.
@@ -100,7 +103,7 @@ directly on ``ansys/saf`` without creating a fork.
 
    .. code-block:: bash
 
-       git push --set-upstream origin <my-branch>
+       git push --set-upstream origin <issue-number>/<brief-description>
 
 #. :ref:`Open a pull-request <open_a_pull_request_as_a_member>` from your
    branch against ``main``.
@@ -139,12 +142,14 @@ pull-request from your fork to ``ansys/saf`` to have them reviewed and merged.
 
        git remote add upstream git@github.com:ansys/saf.git
 
-#. Create a branch from an up-to-date ``upstream/main``:
+#. Create a branch from an up-to-date ``upstream/main`` using the required
+  ``<issue-number>/<brief-description>`` format. Branches that do not follow
+  this convention are rejected:
 
    .. code-block:: bash
 
        git fetch upstream
-       git checkout -b <my-branch> upstream/main
+       git checkout -b <issue-number>/<brief-description> upstream/main
 
 #. Make your changes and commit them. Follow the `Conventional Commits`_
    specification for commit messages.
@@ -153,7 +158,7 @@ pull-request from your fork to ``ansys/saf`` to have them reviewed and merged.
 
    .. code-block:: bash
 
-       git push --set-upstream origin <my-branch>
+       git push --set-upstream origin <issue-number>/<brief-description>
 
 #. :ref:`Open a pull-request from your fork <open_a_pull_request_from_a_fork>`
    against the ``main`` branch of ``ansys/saf``.
@@ -313,7 +318,8 @@ Open a pull-request as an organization member
 #. In GitHub, open a pull-request with:
 
    - **base repository**: ``ansys/saf``, **base** branch: ``main``.
-   - **head repository**: ``ansys/saf``, **compare** branch: ``<my-branch>``.
+   - **head repository**: ``ansys/saf``, **compare** branch:
+     ``<issue-number>/<brief-description>``.
 
    Make sure the title and description follow the rules listed above.
 
@@ -333,7 +339,8 @@ Open a pull-request from a fork
 #. In GitHub, open a pull-request with:
 
    - **base repository**: ``ansys/saf``, **base** branch: ``main``.
-   - **head repository**: your fork, **compare** branch: ``<my-branch>``.
+   - **head repository**: your fork, **compare** branch:
+     ``<issue-number>/<brief-description>``.
 
    Make sure the title and description follow the rules listed above.
 

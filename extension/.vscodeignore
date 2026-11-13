@@ -1,0 +1,48 @@
+# Development and build artifacts
+.github/
+dist/
+.vscode/**
+.vscode-test/**
+.vscode-test.mjs
+node_modules/**
+out/test/**
+
+
+# Python virtual environments and cache
+.venv/
+__pycache__/
+.poetry/
+poetry.toml
+
+
+# Source files (compiled .js files in out/ are included)
+src/**
+test/**
+
+# TypeScript and build configuration
+**/tsconfig.json
+tsconfig.test.json
+**/*.map
+
+# Testing infrastructure
+.mocharc.json
+.nycrc.json
+coverage/**
+.nyc_output/**
+
+# Linting
+**/eslint.config.mjs
+
+# Git and other VCS
+.gitignore
+
+# Documentation (the packaged README.md is staged from extension-instructions.md)
+.yarnrc
+vsc-extension-quickstart.md
+doc/**
+extension-instructions.md
+.vsix-staging/**
+dist/**
+
+# All TypeScript source files (we ship compiled .js)
+**/*.ts

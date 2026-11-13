@@ -1,0 +1,113 @@
+<!--
+Copyright (C) 2026 ANSYS, Inc. and/or its affiliates.
+SPDX-License-Identifier: Apache-2.0
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline' {{cspSource}}; script-src {{cspSource}};">
+    <title>Solution Configuration</title>
+    <link rel="stylesheet" href="{{styleUri}}">
+</head>
+<body>
+    <div class="container">
+    <div class="section">
+        <h3>Solution run options</h3>
+        <div class="row">
+        <label for="solution-select">Solution</label>
+        <div class="solution-selector-row">
+            <select id="solution-select">
+            <option value="" disabled selected>Select a solution...</option>
+            </select>
+            <button id="browse-solution-btn" title="Browse for solution directory">🗁</button>
+        </div>
+        </div>
+
+        <div class="row checkbox-row">
+        <input type="checkbox" id="portal" />
+        <label for="portal">Portal mode</label>
+        </div>
+
+        <div class="row checkbox-row">
+        <input type="checkbox" id="browser" />
+        <label for="browser">Browser mode</label>
+        </div>
+
+        <div class="row checkbox-row">
+        <input type="checkbox" id="debug" />
+        <label for="debug">Debug mode</label>
+        </div>
+
+        <div class="row checkbox-row">
+        <input type="checkbox" id="uiDebugger" />
+        <label for="uiDebugger">UI debugger</label>
+        </div>
+
+        <div class="row checkbox-row">
+        <input type="checkbox" id="noUi" />
+        <label for="noUi">No UI</label>
+        </div>
+
+        <div class="row">
+        <label for="logLevel">Log level</label>
+        <select id="logLevel">
+            <option value="">Default</option>
+            <option value="DEBUG">DEBUG</option>
+            <option value="INFO">INFO</option>
+            <option value="WARNING">WARNING</option>
+            <option value="ERROR">ERROR</option>
+            <option value="CRITICAL">CRITICAL</option>
+        </select>
+        </div>
+
+        <div class="row">
+        <label for="project">Project name</label>
+        <input type="text" id="project" placeholder="Project name" />
+        </div>
+
+        <div class="row">
+        <label for="envFile">Solution environment</label>
+        <button id="config-env-btn" class="action-button" style="width: 100%!important;">Configure solution environment</button>
+        <div class="or-separator">— or —</div>
+        <div class="file-row">
+            <input type="text" id="envFile" placeholder="Select an environment file" />
+            <button id="browse-btn">...</button>
+        </div>
+        </div>
+    </div>
+
+    <hr>
+    <div class="row">
+        <h3>Solution run command</h3>
+        <div class="command-row">
+        <div class="command-preview">
+            <code id="command-preview">saf run</code>
+        </div>
+        <button id="copy-command-btn" title="Copy command">⧉</button>
+        </div>
+    </div>
+
+    <div>
+        <button id="run-btn" class="action-button">Run solution</button>
+    </div>
+    </div>
+
+    <script src="{{scriptUri}}"></script>
+</body>
+</html>

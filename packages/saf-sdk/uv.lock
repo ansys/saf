@@ -961,7 +961,7 @@ optislang = [
 
 [[package]]
 name = "ansys-saf-product-manager"
-version = "0.5.0"
+version = "0.6.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "ansys-bdm-api" },
@@ -969,9 +969,9 @@ dependencies = [
     { name = "ansys-saf-glow-engine" },
     { name = "ansys-saf-product-configuration" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/cd/e7/1e8eaf14080c93545cc00b6ed916992b437c4a311a9633834cba0042b121/ansys_saf_product_manager-0.5.0.tar.gz", hash = "sha256:2dceaf50969a5277da994fcd6323d0246d7a5def8cb7d9f6f3564ca49f641f15", size = 25893, upload-time = "2026-09-02T13:51:50.955Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/5e/3d/48a47c74c388877cfd656137d8beccd66e6f15d0c67e0a1e6d1778df5601/ansys_saf_product_manager-0.6.0.tar.gz", hash = "sha256:c82d2152488a10f401af34e3c87242a31d7991b39594a5fdf293c562f21e6c81", size = 27224, upload-time = "2026-11-12T07:45:24.675Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/a3/77/63f110dc5ca5e87dd59feef164b26de8cbde0bea0864b9d13ccc20f950cd/ansys_saf_product_manager-0.5.0-py3-none-any.whl", hash = "sha256:633755e4276da5c94f947e18fcc49570146713f21809da40bf85e37754e83907", size = 39642, upload-time = "2026-09-02T13:51:49.416Z" },
+    { url = "https://files.pythonhosted.org/packages/45/0d/9037e22775a419da9320cfe8a635cb7c0ae83dd9cbbdee1fd2bd009334fc/ansys_saf_product_manager-0.6.0-py3-none-any.whl", hash = "sha256:447f534ac76f5cb06831441d9e06fa2cb4918adcf3ddd8d95ede7e8d81a53925", size = 41691, upload-time = "2026-11-12T07:45:23.334Z" },
 ]
 
 [package.optional-dependencies]
@@ -1061,6 +1061,8 @@ optislang-wrapper = [
 ]
 visor = [
     { name = "httpx2" },
+    { name = "numpy", version = "2.4.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.12'" },
+    { name = "numpy", version = "2.5.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.12'" },
 ]
 
 [[package]]
@@ -1077,7 +1079,7 @@ wheels = [
 
 [[package]]
 name = "ansys-saf-sdk"
-version = "0.6.0"
+version = "0.7.0"
 source = { editable = "." }
 dependencies = [
     { name = "ansys-bdm-api" },
@@ -1183,18 +1185,18 @@ requires-dist = [
     { name = "ansys-saf-product-configuration", extras = ["all"], marker = "extra == 'instance-management-all'", specifier = "==0.26.0" },
     { name = "ansys-saf-product-configuration", extras = ["fluent"], marker = "extra == 'instance-management-fluent'", specifier = "==0.26.0" },
     { name = "ansys-saf-product-configuration", extras = ["optislang"], marker = "extra == 'instance-management-optislang'", specifier = "==0.26.0" },
-    { name = "ansys-saf-product-manager", specifier = "==0.5.0" },
-    { name = "ansys-saf-product-manager", marker = "extra == 'instance-management'", specifier = "==0.5.0" },
-    { name = "ansys-saf-product-manager", extras = ["aedt"], marker = "extra == 'instance-management-aedt'", specifier = "==0.5.0" },
-    { name = "ansys-saf-product-manager", extras = ["all"], marker = "extra == 'all'", specifier = "==0.5.0" },
-    { name = "ansys-saf-product-manager", extras = ["all"], marker = "extra == 'core-all'", specifier = "==0.5.0" },
-    { name = "ansys-saf-product-manager", extras = ["all"], marker = "extra == 'instance-management-all'", specifier = "==0.5.0" },
-    { name = "ansys-saf-product-manager", extras = ["fluent"], marker = "extra == 'instance-management-fluent'", specifier = "==0.5.0" },
-    { name = "ansys-saf-product-manager", extras = ["geometry"], marker = "extra == 'instance-management-geometry'", specifier = "==0.5.0" },
-    { name = "ansys-saf-product-manager", extras = ["mapdl"], marker = "extra == 'instance-management-mapdl'", specifier = "==0.5.0" },
-    { name = "ansys-saf-product-manager", extras = ["mechanical"], marker = "extra == 'instance-management-mechanical'", specifier = "==0.5.0" },
-    { name = "ansys-saf-product-manager", extras = ["optislang-wrapper"], marker = "extra == 'instance-management-optislang'", specifier = "==0.5.0" },
-    { name = "ansys-saf-product-manager", extras = ["visor"], marker = "extra == 'instance-management-visor'", specifier = "==0.5.0" },
+    { name = "ansys-saf-product-manager", specifier = "==0.6.0" },
+    { name = "ansys-saf-product-manager", marker = "extra == 'instance-management'", specifier = "==0.6.0" },
+    { name = "ansys-saf-product-manager", extras = ["aedt"], marker = "extra == 'instance-management-aedt'", specifier = "==0.6.0" },
+    { name = "ansys-saf-product-manager", extras = ["all"], marker = "extra == 'all'", specifier = "==0.6.0" },
+    { name = "ansys-saf-product-manager", extras = ["all"], marker = "extra == 'core-all'", specifier = "==0.6.0" },
+    { name = "ansys-saf-product-manager", extras = ["all"], marker = "extra == 'instance-management-all'", specifier = "==0.6.0" },
+    { name = "ansys-saf-product-manager", extras = ["fluent"], marker = "extra == 'instance-management-fluent'", specifier = "==0.6.0" },
+    { name = "ansys-saf-product-manager", extras = ["geometry"], marker = "extra == 'instance-management-geometry'", specifier = "==0.6.0" },
+    { name = "ansys-saf-product-manager", extras = ["mapdl"], marker = "extra == 'instance-management-mapdl'", specifier = "==0.6.0" },
+    { name = "ansys-saf-product-manager", extras = ["mechanical"], marker = "extra == 'instance-management-mechanical'", specifier = "==0.6.0" },
+    { name = "ansys-saf-product-manager", extras = ["optislang-wrapper"], marker = "extra == 'instance-management-optislang'", specifier = "==0.6.0" },
+    { name = "ansys-saf-product-manager", extras = ["visor"], marker = "extra == 'instance-management-visor'", specifier = "==0.6.0" },
     { name = "ansys-saf-projects-dashboard", marker = "extra == 'ui'", specifier = "==0.2.0" },
 ]
 provides-extras = ["core-dash", "core-pim", "core-hps", "core-test", "core-mcp", "core-all", "instance-management", "instance-management-fluent", "instance-management-aedt", "instance-management-optislang", "instance-management-geometry", "instance-management-mapdl", "instance-management-mechanical", "instance-management-visor", "instance-management-all", "desktop", "ui", "build", "all"]
@@ -4441,11 +4443,11 @@ wheels = [
 
 [[package]]
 name = "oauthlib"
-version = "4.0.0"
+version = "4.0.1"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/7a/d8/a1bcc8ba112a627f8ffbdc212a78ce18d3ac07e91a5ca65d27918eee25a1/oauthlib-4.0.0.tar.gz", hash = "sha256:efb274799819440f95b4ab3b818869f1ce9ae26c5beacba0201d1a1b76b54f86", size = 187232, upload-time = "2026-09-28T06:01:18.77Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/33/17/2bb072de0b990303c985f26869fd47bb179024a051f47e7f9d208eb92f8e/oauthlib-4.0.1.tar.gz", hash = "sha256:3d73febdb6faa00f277c81fb04be7b7586fb96fc3b7f0b9c772dada69a25ede7", size = 191219, upload-time = "2026-10-31T09:52:58.008Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/d9/f4/78229a1066068ca14fc60fb26cf7381cabe4382261392b90e5f9552722d4/oauthlib-4.0.0-py3-none-any.whl", hash = "sha256:624c28c13a0a59cabf9747dfa52af63be3e512a7f2714df16e91b5b3a145e6cd", size = 159715, upload-time = "2026-09-28T06:01:17.008Z" },
+    { url = "https://files.pythonhosted.org/packages/df/ef/3b8adde1b32a6f540758bff734d3442c621734c83708e5f02b0ba2f43b84/oauthlib-4.0.1-py3-none-any.whl", hash = "sha256:498a298876e996301950a5b053d12c31628bb7b895db03666430c69ce182eb61", size = 161934, upload-time = "2026-10-31T09:52:56.206Z" },
 ]
 
 [[package]]
@@ -6442,7 +6444,7 @@ wheels = [
 
 [[package]]
 name = "scikit-rf"
-version = "2.1.0"
+version = "0.32.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "numpy", version = "2.4.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.12'" },
@@ -6450,11 +6452,10 @@ dependencies = [
     { name = "pandas" },
     { name = "scipy", version = "1.17.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.12'" },
     { name = "scipy", version = "1.18.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.12'" },
-    { name = "typing-extensions" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/9c/b2/13c0ea0f4a015e7e9b1cbee3cede611c76561400aa988acb0692643068df/scikit_rf-2.1.0.tar.gz", hash = "sha256:f9aa5b25777d26d8b8f06a3f7d9f95795786ce496bbaf9121047dc412b974d3f", size = 617558, upload-time = "2026-08-13T16:39:14.821Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/02/ad/22a5c9bcc95c11ee5b5fe6979ba70461cd9cd4bc23a7bf85c77c9ec12d55/scikit-rf-0.32.0.tar.gz", hash = "sha256:c5c4650e2360b6a98cdd1cf9c4d353934e5ac533738ec6a068f7bca76a53b65b", size = 833696, upload-time = "2024-03-02T08:01:41.938Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/9a/4c/f9f754511c46ab1057618c3ec5508bbc95bf1b7d1d1194f4c3f4ed1739ee/scikit_rf-2.1.0-py3-none-any.whl", hash = "sha256:d963709b101d90e66172ba889e7377cb68f1ad78fe494a1b5b32b242b54a32c0", size = 667132, upload-time = "2026-08-13T16:39:13.518Z" },
+    { url = "https://files.pythonhosted.org/packages/5f/fd/89d8a818dcfd843a1e104ac4b579299f6405b7ecad40cf621b845416fece/scikit_rf-0.32.0-py3-none-any.whl", hash = "sha256:e5daa5946093ca6ff50db4ab8a2bfd7b5199953e9e83919cda7e72770193750e", size = 879503, upload-time = "2024-03-02T08:01:32.901Z" },
 ]
 
 [[package]]

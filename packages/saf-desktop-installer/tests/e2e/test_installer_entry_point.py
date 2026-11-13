@@ -42,6 +42,7 @@ from ansys.saf.testing.selenium import (
     wait_for_element_and_click,
     wait_for_partial_text,
 )
+from tests.conftest import use_poetry_mock_solution
 from tests.e2e.conftest import (
     BuildSolution,
     ExecuteSolution,
@@ -85,7 +86,6 @@ def _block_internet_access():
 
 @pytest.mark.usefixtures("check_gtk_launch_and_xvfb_are_installed")
 class TestInstaller:
-    @pytest.mark.usefixtures("disable_global_poetry_virtualenvs_creation")
     @pytest.mark.parametrize(
         "as_standard_user",
         [pytest.param(False, id="current_user"), pytest.param(True, id="standard_user", marks=windows_only())],
@@ -125,10 +125,7 @@ class TestInstaller:
         assert env_file.is_file()
         env_file_content = env_file.read_text()
         # write fake credentials to env file and ensure that file is loaded
-        env_file_content += (
-            "\nPOETRY_HTTP_BASIC_MY_PRIVATE_PYPI_USERNAME=my_user\n"
-            "POETRY_HTTP_BASIC_MY_PRIVATE_PYPI_PASSWORD=my_password"
-        )
+        env_file_content += "\nUV_INDEX_MY_PRIVATE_PYPI_USERNAME=my_user\nUV_INDEX_MY_PRIVATE_PYPI_PASSWORD=my_password"
         env_file.write_text(env_file_content)
 
         output = build_solution([], solution_venv_python_exec, solution_root_dir)
@@ -327,7 +324,7 @@ class TestInstaller:
         cleanup_shortcut: list[Path],
     ):
         """
-        Test that the packaged poetry.lock has no build-machine path dependencies (issue #216).
+        Test that the packaged uv.lock has no build-machine path dependencies (issue #216).
 
         The build folder is made unreadable before installing, as on the affected customer machine.
         """
@@ -339,14 +336,13 @@ class TestInstaller:
         check_built_solution_files(solution_root_dir, python_version=python_version)
 
         definitions_dir = solution_root_dir / "dist" / "solution" / "definitions"
-        packaged_lock = definitions_dir / _get_solution_module_name(solution_root_dir) / "poetry.lock"
+        packaged_lock = definitions_dir / _get_solution_module_name(solution_root_dir) / "uv.lock"
         lock_paths = re.findall(r'\bpath\s*=\s*"([^"]+)"', packaged_lock.read_text(encoding="utf-8"))
         assert any("custom_package_for_test_2" in path for path in lock_paths)
         assert not any(Path(path).is_absolute() for path in lock_paths), lock_paths
 
         with deny_directory_access(definitions_dir):
             installation_output = install_solution(solution_root_dir, tmp_path)
-        # The installer falls back to pip when every `poetry install` attempt fails, hiding the error.
         assert not find_msg_in_output("installing using pip", installation_output)
         shortcut_path = check_installed_solution_files(tmp_path, solution_root_dir)
         cleanup_shortcut.append(shortcut_path)
@@ -500,17 +496,19 @@ class TestInstaller:
 
         # Adding an extra dependency that has a package name that is different as a .tar.gz than as a .whl:
         # python-pptx-0.6.19.tar.gz becomes python_pptx-0.6.19-py3-none-any.whl (first dash becomes and underscore)
-        poetry_exec_name = "poetry.exe" if platform.system() == "Windows" else "poetry"
-        solution_venv_poetry_exec = solution_venv_python_exec.parent / poetry_exec_name
-        solution_venv_dir = solution_root_dir / ".venv"
         solution_env = os.environ.copy()
-        # For poetry to install dependencies in the right venv
-        solution_env["VIRTUAL_ENV"] = solution_venv_dir.as_posix()
-        cmd = [solution_venv_poetry_exec, "add", "python-pptx=0.6.19"]
-        subprocess.check_output(cmd, env=solution_env, cwd=solution_root_dir)
+        solution_env.pop("VIRTUAL_ENV", None)
+        subprocess.check_output(
+            ["uv", "add", "--no-sync", "python-pptx==0.6.19"], env=solution_env, cwd=solution_root_dir
+        )
+        subprocess.check_output(
+            ["uv", "sync", "--all-groups", "--python", sys.executable],
+            env=solution_env,
+            cwd=solution_root_dir,
+        )
         # Check that the extra dependency is installed in the solution environment
         result = subprocess.run(
-            [solution_venv_python_exec, "-m", "pip", "show", "python-pptx"],
+            ["uv", "pip", "show", "--python", solution_venv_python_exec, "python-pptx"],
             capture_output=True,
         )
         assert result.returncode == 0
@@ -1017,23 +1015,21 @@ class TestInstaller:
         """Build a solution with SAF SDK extras distributed across dependency groups."""
         pyproject_path = solution_root_dir / "pyproject.toml"
         pyproject = toml.load(pyproject_path)
-        poetry = pyproject["tool"]["poetry"]
-        dependencies = poetry["dependencies"]
-        dependencies.pop("ansys-saf-glow-engine")
-        dependencies["ansys-saf-sdk"] = "^0.1.0"
-
-        desktop_dependencies = poetry["group"]["desktop"]["dependencies"]
-        desktop_dependencies.pop("ansys-saf-desktop-orchestrator")
-        desktop_dependencies["ansys-saf-sdk"] = {"version": "^0.1.0", "extras": ["desktop"]}
+        project = pyproject["project"]
+        project["dependencies"] = [
+            dependency for dependency in project["dependencies"] if not dependency.startswith("ansys-saf-glow-engine")
+        ] + ["ansys-saf-sdk>=0.1.0,<0.2.0"]
+        desktop_dependencies = pyproject["dependency-groups"]["desktop"]
+        pyproject["dependency-groups"]["desktop"] = [
+            dependency
+            for dependency in desktop_dependencies
+            if not dependency.startswith("ansys-saf-desktop-orchestrator")
+        ] + ["ansys-saf-sdk[desktop]>=0.1.0,<0.2.0"]
 
         with pyproject_path.open("w") as pyproject_file:
             toml.dump(pyproject, pyproject_file)
 
         solution_venv_python_exec, glow_api_port, glow_ui_port, portal_ui_port = setup_solution(solution_root_dir)
-        poetry_executable = solution_venv_python_exec.with_name(
-            "poetry.exe" if platform.system() == "Windows" else "poetry",
-        )
-        subprocess.run([poetry_executable, "lock"], cwd=solution_root_dir, check=True)
 
         build_solution([], solution_venv_python_exec, solution_root_dir)
         check_built_solution_files(solution_root_dir)
@@ -1041,8 +1037,8 @@ class TestInstaller:
         definitions_pyproject = toml.load(
             solution_root_dir / "dist" / "solution" / "definitions" / "my_solution_dash" / "pyproject.toml",
         )
-        sdk_dependency = definitions_pyproject["tool"]["poetry"]["dependencies"]["ansys-saf-sdk"]
-        assert sdk_dependency == {"version": "^0.1.0", "extras": ["desktop"]}
+        assert "ansys-saf-sdk>=0.1.0,<0.2.0" in definitions_pyproject["project"]["dependencies"]
+        assert "ansys-saf-sdk[desktop]>=0.1.0,<0.2.0" in definitions_pyproject["dependency-groups"]["desktop"]
 
         installation_output = install_solution(solution_root_dir, tmp_path)
         assert find_msg_in_output("Preload application", installation_output)
@@ -1112,8 +1108,9 @@ class TestInstaller:
             session_selenium_webdriver,
         )
 
-    @pytest.mark.parametrize("solution_root_dir", ["my-solution-dash-old"], indirect=True)
-    def test_installer_with_solution_with_installer_duplicated_in_desktop_group(
+    @use_poetry_mock_solution
+    @pytest.mark.usefixtures("disable_global_poetry_virtualenvs_creation")
+    def test_poetry_solution_offline_package_install_and_launch(
         self,
         tmp_path: Path,
         solution_root_dir: Path,
@@ -1125,23 +1122,42 @@ class TestInstaller:
         session_selenium_webdriver: WebDriver,
     ):
         """
-        Test saf-desktop-installer when a solution has it in the desktop group and in the build group. This is legacy
-        behaviour, SAF-CLI minor than 3.6.0. Modern solutions only have it in the build group.
+        Poetry compatibility test. A legacy Poetry solution, with the installer in both its desktop and build groups,
+        is built with --offline-package and installed and launched without internet access. We check:
+
+        - that the build warns that Poetry-based solutions are deprecated,
+        - that a missing poetry-plugin-export is installed to allow the offline build,
+        - that the built solution files exist,
+        - that the solution installs with Poetry offline and its dependencies are installed, and
+        - that the solution executes correctly.
         """
         solution_venv_python_exec, glow_api_port, glow_ui_port, portal_ui_port = setup_solution(solution_root_dir)
 
-        args = ["--offline-package"]
-        build_solution(args, solution_venv_python_exec, solution_root_dir)
-        check_built_solution_files(
-            solution_root_dir,
-            with_documentation=False,
-            offline_package=True,
-            with_method_assets=False,
+        poetry_venv_python_exec = (
+            solution_root_dir
+            / ".poetry"
+            / ".venv"
+            / ("Scripts" if platform.system() == "Windows" else "bin")
+            / ("python.exe" if platform.system() == "Windows" else "python")
         )
+        assert poetry_venv_python_exec.is_file()
+        result = subprocess.run([poetry_venv_python_exec, "-m", "pip", "uninstall", "-y", "poetry-plugin-export"])
+        assert result.returncode == 0
+
+        desktop_installer_output = build_solution(["--offline-package"], solution_venv_python_exec, solution_root_dir)
+        assert find_msg_in_output("Poetry-based solutions are deprecated", desktop_installer_output)
+        assert find_msg_in_output(
+            "Installing poetry-plugin-export in the poetry environment to allow build with --offline-package",
+            desktop_installer_output,
+        )
+        result = subprocess.run([poetry_venv_python_exec, "-m", "pip", "show", "poetry-plugin-export"])
+        assert result.returncode == 0
+        check_built_solution_files(solution_root_dir, offline_package=True, with_method_assets=False)
 
         # Block internet access to verify offline installation and execution works without network connectivity.
         with _block_internet_access():
             installation_output = install_solution(solution_root_dir, tmp_path)
+            assert not find_msg_in_output("installing using pip", installation_output)
             assert find_msg_in_output("Preload application", installation_output)
             assert find_msg_in_output("Execution time:", installation_output)
             assert_webview2_is_checked(installation_output)
@@ -1183,69 +1199,6 @@ class TestInstaller:
 
         args = ["--offline-package"]
         build_solution(args, solution_venv_python_exec, solution_root_dir)
-        check_built_solution_files(solution_root_dir, offline_package=True)
-
-        # Block internet access to verify offline installation and execution works without network connectivity.
-        with _block_internet_access():
-            installation_output = install_solution(solution_root_dir, tmp_path, extra_flags=["--use-pip"])
-            assert find_msg_in_output("Preload application", installation_output)
-            assert find_msg_in_output("Execution time:", installation_output)
-            assert_webview2_is_checked(installation_output)
-            assert_long_paths_are_checked(installation_output)
-            shortcut_path = check_installed_solution_files(tmp_path, solution_root_dir)
-            cleanup_shortcut.append(shortcut_path)
-            check_solution_module_preload_is_executed(tmp_path, solution_root_dir)
-            check_dependencies(
-                tmp_path,
-                solution_root_dir,
-                required_dependencies=["tqdm", "pooch", "custom-package-for-test-2", "scooby"],
-                excluded_dependencies=["ansys-saf-desktop-installer", "pyinstaller"],
-            )
-
-            solution_proc = execute_solution(shortcut_path, solution_root_dir)
-            check_solution_launched_correctly(
-                solution_proc,
-                glow_api_port,
-                glow_ui_port,
-                portal_ui_port,
-                session_selenium_webdriver,
-            )
-
-    def test_installer_with_offline_package_and_no_export_plugin(
-        self,
-        tmp_path: Path,
-        solution_root_dir: Path,
-        setup_solution: SetupSolution,
-        build_solution: BuildSolution,
-        install_solution: InstallSolution,
-        execute_solution: ExecuteSolution,
-        cleanup_shortcut: list[Path],
-        session_selenium_webdriver: WebDriver,
-    ):
-        """
-        Test saf-desktop-installer installation using --offline-package without poetry-plugin-export.
-        """
-        solution_venv_python_exec, glow_api_port, glow_ui_port, portal_ui_port = setup_solution(solution_root_dir)
-
-        poetry_venv_python_exec = (
-            solution_root_dir
-            / ".poetry"
-            / ".venv"
-            / ("Scripts" if platform.system() == "Windows" else "bin")
-            / ("python.exe" if platform.system() == "Windows" else "python")
-        )
-        assert poetry_venv_python_exec.is_file()
-        result = subprocess.run([poetry_venv_python_exec, "-m", "pip", "uninstall", "-y", "poetry-plugin-export"])
-        assert result.returncode == 0
-
-        args = ["--offline-package"]
-        desktop_installer_output = build_solution(args, solution_venv_python_exec, solution_root_dir)
-        assert find_msg_in_output(
-            "Installing poetry-plugin-export in the poetry environment to allow build with --offline-package",
-            desktop_installer_output,
-        )
-        result = subprocess.run([poetry_venv_python_exec, "-m", "pip", "show", "poetry-plugin-export"])
-        assert result.returncode == 0
         check_built_solution_files(solution_root_dir, offline_package=True)
 
         # Block internet access to verify offline installation and execution works without network connectivity.
@@ -1376,7 +1329,6 @@ class TestInstallerCustomNamespace:
         [None, "synopsys.custom_ns_solution.solution.definition"],
         ids=["without_env_var", "with_env_var"],
     )
-    @pytest.mark.usefixtures("disable_global_poetry_virtualenvs_creation")
     def test_install_and_launch_with_synopsys_namespace(
         self,
         tmp_path: Path,

@@ -1,68 +1,71 @@
 [build-system]
-build-backend = "poetry.core.masonry.api"
-requires = [ "poetry-core>=2.0.0", "setuptools>=67.0" ]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
 
-[tool.poetry]
+[project]
 name = "ansys-solutions-my-solution-dash"
 version = "0.1.dev0"
 description = ""
-license = "Proprietary"
-authors = [ "ANSYS, Inc. <solution-applications.maintainers@ansys.com>" ]
-maintainers = [ "ANSYS, Inc. <solution-applications.maintainers@ansys.com>" ]
+license = "LicenseRef-Proprietary"
+authors = [{ name = "ANSYS, Inc.", email = "solution-applications.maintainers@ansys.com" }]
+maintainers = [{ name = "ANSYS, Inc.", email = "solution-applications.maintainers@ansys.com" }]
 readme = "README.md"
-keywords = [ "Ansys Solutions" ]
+keywords = ["Ansys Solutions"]
+requires-python = ">=3.11,<3.15"
 classifiers = [
-  "Development Status :: 3 - Alpha",
-  "Intended Audience :: Other Audience",
-  "License :: Other/Proprietary License",
-  "Natural Language :: English",
-  "Operating System :: Microsoft :: Windows",
-  "Programming Language :: Python :: 3",
-  "Topic :: Scientific/Engineering",
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Other Audience",
+    "Natural Language :: English",
+    "Operating System :: Microsoft :: Windows",
+    "Programming Language :: Python :: 3",
+    "Topic :: Scientific/Engineering",
 ]
-packages = [
-  { include = "ansys", from = "src" },
+dependencies = [
+    "ansys-saf-glow-engine>=2.2.0,<3.0.0",
+    # Using custom-package-for-test-2 as an example of a package with different wheels per platform,
+    # but same wheel for all Python versions to avoid compatibility issues.
+    "custom-package-for-test-2; sys_platform == 'win32' or sys_platform == 'linux'",
+    # Using ansys-solutions-custom-package-for-installer-test as an example of a package that has a subdependency
+    # defined with a URL.
+    "ansys-solutions-custom-package-for-installer-test",
 ]
 
-[[tool.poetry.source]]
-name = "PyPI"
-priority = "primary"
+[dependency-groups]
+desktop = [
+    "ansys-saf-desktop-orchestrator[all]>=1.14,<2.0",
+    "tqdm>=4.0.0,<5.0.0", # example of custom desktop dependency
+]
+ui = [
+    "dash>=3.0.0,<4.0.0",
+    "dash-bootstrap-components>=1.2,<2.0", # required by solution_desktop_deployment
+    "dash-extensions>=2.0.0,<3.0.0",       # required by solution_desktop_deployment
+    "pooch>=1.0.0,<2.0.0",                 # example of custom UI dependency
+]
+build = [
+    "ansys-saf-desktop-installer[all]>=1.16,<2.0",
+]
+doc = [
+    "sphinx>=6.2.1,<7.0.0",
+]
 
-[tool.poetry.dependencies]
-python = ">=3.11,<3.15"
-ansys-saf-glow-engine = { version = "^2.2.0", allow-prereleases = true }
-# Using custom-package-for-test-2 as an example of a package with different wheels per platform,
-# but same wheel for all Python versions to avoid compatibility issues.
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["ansys*"]
+namespaces = true
+
+[tool.setuptools.package-data]
+"ansys.solutions.my_solution_dash" = ["html-doc/**/*", "method_assets/*", "solution/**/*.encrypted"]
+
+[tool.uv]
+package = true
+prerelease = "if-necessary"
+
+[tool.uv.sources]
 custom-package-for-test-2 = [
-  { path = "build_assets/custom_package_for_test_2-0.0.1-py3-none-win_amd64.whl", markers = "sys_platform == 'win32'" },
-  { path = "build_assets/custom_package_for_test_2-0.0.1-py3-none-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl", markers = "sys_platform == 'linux'" },
+    { path = "build_assets/custom_package_for_test_2-0.0.1-py3-none-win_amd64.whl", marker = "sys_platform == 'win32'" },
+    { path = "build_assets/custom_package_for_test_2-0.0.1-py3-none-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl", marker = "sys_platform == 'linux'" },
 ]
-# Using ansys-solutions-custom-package-for-installer-test as an example of a package that has a subdependency defined with a URL.
 ansys-solutions-custom-package-for-installer-test = { path = "build_assets/ansys_solutions_custom_package_for_installer_test-0.1.dev0-py3-none-any.whl" }
-
-[tool.poetry.group.desktop]
-optional = true
-[tool.poetry.group.desktop.dependencies]
-ansys-saf-desktop-orchestrator = { version = "^1.14", allow-prereleases = true, extras = [ "all" ] }
-tqdm = "^4.0.0"   # example of custom desktop dependency
-
-[tool.poetry.group.ui]
-optional = true
-[tool.poetry.group.ui.dependencies]
-dash = "^3.0.0"
-dash_bootstrap_components = { version = "^1.2" } # required by solution_desktop_deployment
-dash-extensions = "^2.0.0"                       # required by solution_desktop_deployment
-pooch = "^1.0.0"  # example of custom UI dependency
-
-[tool.poetry.group.build]
-optional = true
-[tool.poetry.group.build.dependencies]
-ansys-saf-desktop-installer = { version = "^1.16", allow-prereleases = true, extras = [ "all" ] }
-
-[tool.poetry.group.doc]
-optional = true
-[tool.poetry.group.doc.dependencies]
-sphinx = "^6.2.1"
-
-[build-system-requirements]
-build-system-version = "2.5.1"

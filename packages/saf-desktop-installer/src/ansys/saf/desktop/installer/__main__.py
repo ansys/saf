@@ -24,6 +24,7 @@ import sys
 from dotenv import dotenv_values
 
 from ansys.saf.desktop.installer._common.utils import check_poetry_plugin_export_is_required
+from ansys.saf.desktop.installer._package.backend_detection import SolutionBackend, detect_solution_backend
 from ansys.saf.desktop.installer._package.config import (
     DEFAULT_ENCRIPTION_FILE,
     DEFAULT_PYTHON_VERSION,
@@ -49,7 +50,7 @@ def _load_filtered_dotenv(dotenv_file: Path, env: dict[str, str] | None = None) 
     # that match what we are looking for.
     env_vars = dotenv_values(dotenv_file)
 
-    allowed_prefixes = ("POETRY_HTTP_BASIC_", "POETRY_CERTIFICATES_")
+    allowed_prefixes = ("POETRY_HTTP_BASIC_", "POETRY_CERTIFICATES_", "UV_INDEX_", "UV_DEFAULT_INDEX")
     filtered_env_vars = {key: value for key, value in env_vars.items() if key.startswith(allowed_prefixes)}
 
     for key, value in filtered_env_vars.items():
@@ -73,7 +74,28 @@ def _get_poetry_venv_python_exec() -> Path:
     )
 
 
+def _prepare_poetry_backend(offline_package: bool) -> None:
+    logger.warning("Poetry-based solutions are deprecated. Packaging will continue using Poetry.")
+    if not offline_package or not check_poetry_plugin_export_is_required(offline_package):
+        return
+
+    logger.info(
+        "Installing poetry-plugin-export in the poetry environment to allow build with --offline-package",
+    )
+    poetry_venv_python_exec = _get_poetry_venv_python_exec()
+    try:
+        subprocess.check_output([poetry_venv_python_exec, "-m", "pip", "install", "poetry-plugin-export>=1.8"])
+    except subprocess.CalledProcessError as e:
+        raise RuntimeError(
+            "Failed to install poetry-plugin-export, which is required to build with --offline-package for Poetry >=2",
+        ) from e
+
+
 def package_solution(solution_info: SolutionInfo, installer_config: InstallerConfig) -> None:
+    backend = detect_solution_backend(solution_info.solution_root_dir).backend
+    if backend is SolutionBackend.POETRY:
+        _prepare_poetry_backend(installer_config.offline_package)
+
     env_file = installer_config.env_file or (solution_info.solution_root_dir / ".env")
     if env_file.is_file():
         logger.info(f"Environment variables loaded from {env_file.resolve()}")
@@ -205,19 +227,6 @@ if __name__ == "__main__":
             f"Python version {args.python_version}. If the target system uses a different Python version, "
             "use the option --python-version to specify that version.",
         )
-
-    if check_poetry_plugin_export_is_required(args.offline_package):
-        logger.info(
-            "Installing poetry-plugin-export in the poetry environment to allow build with --offline-package",
-        )
-        poetry_venv_python_exec = _get_poetry_venv_python_exec()
-        try:
-            subprocess.check_output([poetry_venv_python_exec, "-m", "pip", "install", "poetry-plugin-export>=1.8"])
-        except subprocess.CalledProcessError as e:
-            raise RuntimeError(
-                "Failed to install poetry-plugin-export, which is required "
-                "to build with --offline-package for Poetry >=2",
-            ) from e
 
     # We assume this script is executed in the root dir of the solution to be packaged
     solution_info = SolutionInfo(solution_root_dir=Path.cwd())

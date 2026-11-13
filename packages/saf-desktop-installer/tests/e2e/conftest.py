@@ -46,8 +46,9 @@ from tenacity import TryAgain, retry, stop_after_attempt, wait_fixed
 import toml
 
 from ansys.saf.desktop.installer.__main__ import _load_filtered_dotenv  # pyright: ignore[reportPrivateUsage]
+from ansys.saf.desktop.installer._package.backend_detection import SolutionBackend, detect_solution_backend
 from ansys.saf.desktop.installer._package.download_python import MINIMUM_REQUIRED_VERSIONS
-from ansys.saf.desktop.installer._package.solution import get_solution_namespace_info
+from ansys.saf.desktop.installer._package.solution import get_solution_namespace_info, get_solution_package_name
 from ansys.saf.desktop.installer.solution_desktop_deployment import (
     SECURITY_MAX_SID_SIZE,
     TARGET_SOLUTIONS_DIRECTORY_NAME,
@@ -231,11 +232,36 @@ class SetupSolution(Protocol):
     def __call__(self, solution_root_dir: Path) -> tuple[Path, str, str, str]: ...
 
 
-def _setup_solution(solution_root_dir: Path) -> tuple[Path, str, str, str]:
-    # setup a working venv for the solution like what saf install would do in a real setup.
+def _is_poetry_solution(solution_root_dir: Path) -> bool:
+    return detect_solution_backend(solution_root_dir).backend is SolutionBackend.POETRY
+
+
+def _copy_installer_next_to_solution(solution_root_dir: Path) -> Path:
+    # we copy the installer code to a new folder on the same mount as the solution
+    # otherwise adding it as a path dependency fails
+    installer_src_dir = Path(__file__).parent.parent.parent
+    installer_lib_dest_dir = solution_root_dir.parent / "saf-desktop-installer"
+    installer_lib_dest_dir.mkdir()
+    shutil.copytree(
+        installer_src_dir,
+        installer_lib_dest_dir,
+        dirs_exist_ok=True,
+        ignore=shutil.ignore_patterns(
+            "doc",
+            ".poetry",
+            ".github",
+            ".ruff_cache",
+            ".venv",
+            "tests",
+            "*.pyc",
+            "__pycache__",
+        ),
+    )
+    return installer_lib_dest_dir
+
+
+def _setup_poetry_solution(solution_root_dir: Path, solution_env: dict[str, str]) -> Path:
     solution_pyproject_data = toml.load(solution_root_dir / "pyproject.toml")
-    solution_env = os.environ.copy()
-    _load_filtered_dotenv(solution_root_dir / ".env", solution_env)
 
     solution_venv_dir = solution_root_dir / ".venv"
     _create_virtual_environment(solution_venv_dir)
@@ -269,34 +295,15 @@ def _setup_solution(solution_root_dir: Path) -> tuple[Path, str, str, str]:
     subprocess.run(cmd)
     assert solution_venv_poetry_exec.is_file()
 
-    # we copy the installer code to a new folder on the same mount as the solution
-    # otherwise the poetry add that follows will fail
-    installer_src_dir = Path(__file__).parent.parent.parent
-    installer_lib_dest_dir = solution_root_dir.parent / "saf-desktop-installer"
-    installer_lib_dest_dir.mkdir()
-    shutil.copytree(
-        installer_src_dir,
-        installer_lib_dest_dir,
-        dirs_exist_ok=True,
-        ignore=shutil.ignore_patterns(
-            "doc",
-            ".poetry",
-            ".github",
-            ".ruff_cache",
-            ".venv",
-            "tests",
-            "*.pyc",
-            "__pycache__",
-        ),
-    )
+    installer_lib_dest_dir = _copy_installer_next_to_solution(solution_root_dir)
 
     # add private packages to the solution
-    _add_extra_packages_to_solution(
+    for staged_whl_file, group_to_add in _stage_extra_packages(
         solution_root_dir,
-        solution_venv_poetry_exec,
-        solution_env,
         SOLUTION_EXTRA_PACKAGES[solution_root_dir.name],
-    )
+    ):
+        cmd = [solution_venv_poetry_exec, "add", "--group", group_to_add, staged_whl_file.as_posix()]
+        subprocess.run(cmd, cwd=solution_root_dir, env=solution_env, check=True)
 
     # create a dependency on the src installer in the build group via poetry add
     if solution_root_dir.name == "my-solution-dash-old":
@@ -308,6 +315,43 @@ def _setup_solution(solution_root_dir: Path) -> tuple[Path, str, str, str]:
     # install the solution dependencies
     cmd = [solution_venv_poetry_exec, "install", "--all-groups"]
     subprocess.run(cmd, cwd=solution_root_dir, env=solution_env, check=True)
+
+    return _get_virtual_environment_executable_path(solution_venv_dir, "python")
+
+
+def _setup_uv_solution(solution_root_dir: Path, solution_env: dict[str, str]) -> Path:
+    # The solution venv is the project's .venv, as created by saf install.
+    solution_env.pop("VIRTUAL_ENV", None)
+    installer_lib_dest_dir = _copy_installer_next_to_solution(solution_root_dir)
+
+    # add private packages to the solution
+    for staged_whl_file, group_to_add in _stage_extra_packages(
+        solution_root_dir,
+        SOLUTION_EXTRA_PACKAGES[solution_root_dir.name],
+    ):
+        cmd = ["uv", "add", "--no-sync", "--group", group_to_add, staged_whl_file.as_posix()]
+        subprocess.run(cmd, cwd=solution_root_dir, env=solution_env, check=True)
+
+    # create a dependency on the src installer in the build group
+    cmd = ["uv", "add", "--no-sync", "--group", "build", installer_lib_dest_dir.as_posix()]
+    subprocess.run(cmd, cwd=solution_root_dir, env=solution_env, check=True)
+
+    # install the solution dependencies
+    cmd = ["uv", "sync", "--all-groups", "--python", sys.executable]
+    subprocess.run(cmd, cwd=solution_root_dir, env=solution_env, check=True)
+
+    return _get_virtual_environment_executable_path(solution_root_dir / ".venv", "python")
+
+
+def _setup_solution(solution_root_dir: Path) -> tuple[Path, str, str, str]:
+    # setup a working venv for the solution like what saf install would do in a real setup.
+    solution_env = os.environ.copy()
+    _load_filtered_dotenv(solution_root_dir / ".env", solution_env)
+
+    if _is_poetry_solution(solution_root_dir):
+        solution_venv_python_exec = _setup_poetry_solution(solution_root_dir, solution_env)
+    else:
+        solution_venv_python_exec = _setup_uv_solution(solution_root_dir, solution_env)
 
     env_path = solution_root_dir / ".env"
     # Replace APPDATA_PLACEHOLDER in the solution's .env file with the appropriate value according to the OS.
@@ -321,7 +365,6 @@ def _setup_solution(solution_root_dir: Path) -> tuple[Path, str, str, str]:
     set_key(env_path, "GLOW_UI_PORT", glow_ui_port)
     set_key(env_path, "PORTAL_UI_PORT", portal_ui_port)
 
-    solution_venv_python_exec = _get_virtual_environment_executable_path(solution_venv_dir, "python")
     assert solution_venv_python_exec.is_file()
 
     return solution_venv_python_exec, glow_api_port, glow_ui_port, portal_ui_port
@@ -378,32 +421,27 @@ def session_solution_setup(
     return session_solution_factory("my-solution-dash")
 
 
-def _add_extra_packages_to_solution(
+def _stage_extra_packages(
     solution_root_dir: Path,
-    solution_venv_poetry_exec: Path,
-    solution_env: dict[str, str],
     packages_to_add: dict[str, str],
-) -> None:
-    """Copy extra wheel files into the solution directory and add them to the solution."""
+) -> list[tuple[Path, str]]:
+    """Copy extra wheel files into the solution directory and return them with their dependency group."""
     extra_packages_dir = os.getenv("SAF_EXTRA_PACKAGES_DIR", None)
     if not extra_packages_dir:
-        return None
+        return []
 
     staged_dir = solution_root_dir / ".saf-extra-packages"
     staged_dir.mkdir(exist_ok=True)
 
+    staged_packages: list[tuple[Path, str]] = []
     for whl_file in Path(extra_packages_dir).resolve().glob("*.whl"):
         for package_name, group_to_add in packages_to_add.items():
             if not whl_file.name.startswith(package_name):
                 continue
             staged_whl_file = staged_dir / whl_file.name
             shutil.copy2(whl_file, staged_whl_file)
-            subprocess.run(
-                [solution_venv_poetry_exec, "add", "--group", group_to_add, staged_whl_file.as_posix()],
-                cwd=solution_root_dir,
-                env=solution_env,
-                check=True,
-            )
+            staged_packages.append((staged_whl_file, group_to_add))
+    return staged_packages
 
 
 ################################################### SOLUTION BUILD ####################################################
@@ -434,14 +472,22 @@ def _get_built_solution_embeddable_python_executable(
 def _get_expected_build_packages(build_packages_directory: Path, solution_root_dir: Path) -> list[Path]:
     pyproject_content = toml.load(solution_root_dir / build_packages_directory / "pyproject.toml")
     expected_build_packages: list[Path] = []
-    dependencies = pyproject_content["tool"]["poetry"]["dependencies"]
-    for dep in dependencies:
-        if (
-            dep not in ["python", "ansys-saf-desktop-installer"]
-            and isinstance(dependencies[dep], dict)
-            and "path" in dependencies[dep]
-        ):
-            expected_build_packages.append(build_packages_directory / dependencies[dep]["path"])
+    if "poetry" in pyproject_content.get("tool", {}) and "project" not in pyproject_content:
+        dependencies = pyproject_content["tool"]["poetry"]["dependencies"]
+        for dep in dependencies:
+            if (
+                dep not in ["python", "ansys-saf-desktop-installer"]
+                and isinstance(dependencies[dep], dict)
+                and "path" in dependencies[dep]
+            ):
+                expected_build_packages.append(build_packages_directory / dependencies[dep]["path"])
+        return expected_build_packages
+
+    for sources in pyproject_content.get("tool", {}).get("uv", {}).get("sources", {}).values():
+        for source in sources if isinstance(sources, list) else [sources]:
+            path = source.get("path", "")
+            if path.endswith(".whl") and (source.get("marker") is None or Marker(source["marker"]).evaluate()):
+                expected_build_packages.append(build_packages_directory / path)
     return expected_build_packages
 
 
@@ -451,6 +497,7 @@ def _get_common_built_solution_files(
     solution_root_dir: Path,
 ) -> list[Path]:
     dist_dir = Path("dist")
+    definitions_dir = dist_dir / "solution" / "definitions" / solution_module_name
     shortcut_suffix = ".ico" if platform.system() == "Windows" else ".png"
     expected_solution_files = [
         dist_dir / f"{solution_package_name}-0.1.dev0-py3-none-any.whl",
@@ -462,16 +509,23 @@ def _get_common_built_solution_files(
         dist_dir / "solution" / "assets" / "favicon.png",
         dist_dir / "solution" / "assets" / f"shortcut{shortcut_suffix}",
         dist_dir / "solution" / "assets" / "installer_ui_logo.png",
-        dist_dir / "solution" / "definitions" / solution_module_name / ".env",
-        dist_dir / "solution" / "definitions" / solution_module_name / "pyproject.toml",
-        dist_dir / "solution" / "definitions" / solution_module_name / "poetry.lock",
-        dist_dir / "solution" / "definitions" / solution_module_name / "tools" / "pip_requirements.txt",
-        dist_dir / "solution" / "definitions" / solution_module_name / "tools" / "poetry_requirements.txt",
+        definitions_dir / ".env",
+        definitions_dir / "pyproject.toml",
+        definitions_dir / "tools" / "pip_requirements.txt",
     ]
-    expected_build_packages = _get_expected_build_packages(
-        dist_dir / "solution" / "definitions" / solution_module_name,
-        solution_root_dir,
-    )
+    if _is_poetry_solution(solution_root_dir):
+        expected_solution_files += [
+            definitions_dir / "poetry.lock",
+            definitions_dir / "tools" / "poetry_requirements.txt",
+        ]
+    else:
+        expected_solution_files += [
+            definitions_dir / "uv.lock",
+            definitions_dir / "uv-groups.txt",
+            definitions_dir / "uv-requirements.txt",
+            definitions_dir / "tools" / ("uv.exe" if platform.system() == "Windows" else "uv"),
+        ]
+    expected_build_packages = _get_expected_build_packages(definitions_dir, solution_root_dir)
     return expected_solution_files + expected_build_packages
 
 
@@ -507,8 +561,7 @@ def check_built_solution_files(
 ):
     solution_module_name = _get_solution_module_name(solution_root_dir)
 
-    pyproject_data = toml.load(solution_root_dir / "pyproject.toml")
-    solution_package_name = pyproject_data["tool"]["poetry"]["name"].replace("-", "_")
+    solution_package_name = get_solution_package_name(solution_root_dir).replace("-", "_")
 
     assert all(
         (solution_root_dir / path).is_file()
@@ -551,14 +604,21 @@ def check_built_solution_files(
             solution_root_dir / "dist" / "solution" / "definitions" / solution_module_name / "pyproject.toml"
         ).is_file()
 
-    wheels_dir = solution_root_dir / "dist" / "solution" / "definitions" / solution_module_name
-    assert list(wheels_dir.glob("ansys_*.whl"))
+    definitions_dir = solution_root_dir / "dist" / "solution" / "definitions" / solution_module_name
+    assert (definitions_dir / f"{solution_package_name}-0.1.dev0-py3-none-any.whl").is_file()
+    # Poetry stages dependency wheels next to the solution wheel; UV stages them in a wheelhouse folder.
+    wheels_dir = definitions_dir if _is_poetry_solution(solution_root_dir) else definitions_dir / "wheelhouse"
+    staged_wheels = list(wheels_dir.glob("*.whl"))
+    staged_ansys_wheels = list(wheels_dir.glob("ansys_*.whl"))
+    assert staged_ansys_wheels
     if offline_package:
-        assert any(f.name.startswith("aiofiles-") and f.suffix == ".whl" for f in list(wheels_dir.glob("*.whl")))
-        assert len(list(wheels_dir.glob("*.whl"))) > len(list(wheels_dir.glob("ansys_*.whl"))) + 10
+        assert any(f.name.startswith("aiofiles-") for f in staged_wheels)
+        assert len(staged_wheels) > len(staged_ansys_wheels) + 10
     else:
-        # There is only one non ansys_*.whl file, which is the custom-package-for-test-2 local wheel package
-        assert len(list(wheels_dir.glob("*.whl"))) == len(list(wheels_dir.glob("ansys_*.whl"))) + 1
+        # The only non ansys_*.whl staged wheels are the custom-package-for-test-2 local wheel and, for UV, scooby,
+        # which is required through a direct wheel URL (Poetry resolves it from PyPI instead)
+        expected_non_ansys_wheels = 1 if _is_poetry_solution(solution_root_dir) else 2
+        assert len(staged_wheels) == len(staged_ansys_wheels) + expected_non_ansys_wheels
 
     installer_path = _get_solution_installer_path(solution_root_dir)
     assert installer_path.is_file() if with_installer else not installer_path.exists()
@@ -582,31 +642,36 @@ def check_built_solution_files(
     else:
         assert embeddable_python_exec is None or not embeddable_python_exec.is_file()
 
-    # Check no virtual environment was created inside dist/ when creating the poetry.lock file
+    # Check no virtual environment was left inside dist/ after preparing the packaged lock file
     assert not (solution_root_dir / "dist" / "solution" / "definitions" / solution_module_name / ".venv").is_dir()
 
 
 def check_dependencies_can_be_upgraded(solution_root_dir: Path, solution_venv_python_exec: Path):
-    poetry_lock_path = solution_root_dir / "poetry.lock"
-    original_poetry_lock_data = toml.load(poetry_lock_path)
-    shutil.move(poetry_lock_path, poetry_lock_path.with_suffix(".lock.bak"))
+    is_poetry_solution = _is_poetry_solution(solution_root_dir)
+    lock_path = solution_root_dir / ("poetry.lock" if is_poetry_solution else "uv.lock")
+    original_lock_data = toml.load(lock_path)
+    shutil.move(lock_path, lock_path.with_suffix(".lock.bak"))
 
-    solution_venv_poetry_exec = solution_venv_python_exec.parent / (
-        "poetry.exe" if platform.system() == "Windows" else "poetry"
-    )
-    cmd = [solution_venv_poetry_exec, "lock"]
-    subprocess.run(cmd, cwd=solution_root_dir)
+    if is_poetry_solution:
+        solution_venv_poetry_exec = solution_venv_python_exec.parent / (
+            "poetry.exe" if platform.system() == "Windows" else "poetry"
+        )
+        subprocess.run([solution_venv_poetry_exec, "lock"], cwd=solution_root_dir)
+    else:
+        subprocess.run(["uv", "lock"], cwd=solution_root_dir)
 
-    new_poetry_lock_data = toml.load(poetry_lock_path)
+    new_lock_data = toml.load(lock_path)
 
-    original_packages = {package["name"]: package["version"] for package in original_poetry_lock_data["package"]}
+    original_packages = {
+        package["name"]: package["version"] for package in original_lock_data["package"] if "version" in package
+    }
     assert any(
         parse_version(new_package["version"]) > parse_version(original_version)
-        for new_package in new_poetry_lock_data["package"]
-        if (original_version := original_packages.get(new_package["name"]))
+        for new_package in new_lock_data["package"]
+        if "version" in new_package and (original_version := original_packages.get(new_package["name"]))
     )
 
-    shutil.move(poetry_lock_path.with_suffix(".lock.bak"), poetry_lock_path)
+    shutil.move(lock_path.with_suffix(".lock.bak"), lock_path)
 
 
 class BuildSolution(Protocol):
@@ -849,6 +914,34 @@ def _check_markers(markers: Any, python_version: str) -> bool:
     )
 
 
+def _get_expected_poetry_package_versions(solution_root_dir: Path, python_version: str) -> dict[str, str]:
+    poetry_lock_data = toml.load(solution_root_dir / "poetry.lock")
+    expected_package_versions: dict[str, str] = {}
+    for package in poetry_lock_data["package"]:
+        if not any(group in package.get("groups", []) for group in ["main", "desktop", "ui", "doc"]) or package[
+            "name"
+        ] in ["ansys-saf-desktop-installer", "pyinstaller"]:
+            continue
+        if _check_markers(package.get("markers", ""), python_version):
+            expected_package_versions[package["name"].replace("_", "-").lower()] = package["version"]
+    return expected_package_versions
+
+
+def _get_expected_uv_package_versions(solution_root_dir: Path, python_version: str, tmp_path: Path) -> dict[str, str]:
+    pylock_path = tmp_path / "pylock.expected.toml"
+    cmd = ["uv", "export", "--frozen", "--format", "pylock.toml", "--no-default-groups", "--no-emit-project"]
+    groups = toml.load(solution_root_dir / "pyproject.toml").get("dependency-groups", {})
+    for group in ("desktop", "ui", "doc"):
+        if group in groups:
+            cmd += ["--group", group]
+    subprocess.run([*cmd, "--output-file", str(pylock_path)], cwd=solution_root_dir, check=True, capture_output=True)
+    expected_package_versions: dict[str, str] = {}
+    for package in toml.load(pylock_path)["packages"]:
+        if _check_markers(package.get("marker", ""), python_version):
+            expected_package_versions[package["name"].replace("_", "-").lower()] = package["version"]
+    return expected_package_versions
+
+
 def check_dependencies(
     tmp_path: Path,
     solution_root_dir: Path,
@@ -869,15 +962,10 @@ def check_dependencies(
     """
     python_version = python_version or f"{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}"
 
-    poetry_lock_data = toml.load(solution_root_dir / "poetry.lock")
-    expected_package_versions: dict[str, str] = {}
-    for package in poetry_lock_data["package"]:
-        if not any(group in package.get("groups", []) for group in ["main", "desktop", "ui", "doc"]) or package[
-            "name"
-        ] in ["ansys-saf-desktop-installer", "pyinstaller"]:
-            continue
-        if _check_markers(package.get("markers", ""), python_version):
-            expected_package_versions[package["name"].replace("_", "-").lower()] = package["version"]
+    if _is_poetry_solution(solution_root_dir):
+        expected_package_versions = _get_expected_poetry_package_versions(solution_root_dir, python_version)
+    else:
+        expected_package_versions = _get_expected_uv_package_versions(solution_root_dir, python_version, tmp_path)
 
     assert expected_package_versions
 
@@ -888,25 +976,26 @@ def check_dependencies(
     )
     assert installed_solution_venv_python_exec.is_file()
 
-    cmd = [installed_solution_venv_python_exec, "-m", "pip", "list", "--format", "json"]
+    cmd = ["uv", "pip", "list", "--python", installed_solution_venv_python_exec, "--format", "json"]
     installed_package_versions = {
         pkg["name"].replace("_", "-").lower(): pkg["version"]
         for pkg in json.loads(subprocess.check_output(cmd, text=True))
     }
 
-    # The installed packages include the expected packages plus pip and the solution itself
-    assert len(expected_package_versions) == len(installed_package_versions) - 2
-    assert all(installed_package_versions[package] == version for package, version in expected_package_versions.items())
+    # The installed packages are the expected packages plus the solution itself and, depending on the installer, pip
+    installed_package_versions.pop("pip", None)
+    assert installed_package_versions.pop(get_solution_package_name(solution_root_dir).replace("_", "-").lower())
+    assert installed_package_versions == expected_package_versions
 
     for package in excluded_dependencies or []:
-        cmd = [installed_solution_venv_python_exec, "-m", "pip", "show", package]
+        cmd = ["uv", "pip", "show", "--python", installed_solution_venv_python_exec, package]
         result = subprocess.run(cmd, capture_output=True, text=True)
         if result.returncode == 0:
             logger.error("Dependency %s should NOT be installed but was found in the solution", package)
             raise ValueError(f"Dependency {package} should NOT be installed but was found in the solution.")
 
     for package in required_dependencies or []:
-        cmd = [installed_solution_venv_python_exec, "-m", "pip", "show", package]
+        cmd = ["uv", "pip", "show", "--python", installed_solution_venv_python_exec, package]
         try:
             subprocess.check_output(cmd, text=True)
         except subprocess.CalledProcessError as e:
@@ -1203,6 +1292,17 @@ def check_installed_solution_files(
     installed_solution_module_name_dir = installed_solution_version_dir / "definitions" / solution_module_name
     assert (installed_solution_module_name_dir / ".venv").is_dir()
     assert (installed_solution_module_name_dir / ".env").is_file()
+    if not _is_poetry_solution(solution_root_dir):
+        # The UV project files and bundled tools are only needed during the installation
+        packaging_leftovers = (
+            "pyproject.toml",
+            "uv.lock",
+            "uv-requirements.txt",
+            "uv-groups.txt",
+            "wheelhouse",
+            "tools",
+        )
+        assert not [name for name in packaging_leftovers if (installed_solution_module_name_dir / name).exists()]
     if with_python:
         _check_solution_environment_uses_downloaded_python(
             installation_path,

@@ -22,9 +22,12 @@ import re
 import subprocess
 import tarfile
 import tempfile
+import tomllib
 import zipfile
 
 from packaging.markers import Marker
+from packaging.requirements import Requirement
+from packaging.utils import canonicalize_name, parse_wheel_filename
 from packaging.version import Version
 import toml
 
@@ -91,18 +94,36 @@ def _modify_wheel_metadata(
                     zip_out.write(file_path, file_path.relative_to(tmpdir_path))
 
 
-def modify_solution_wheel_metadata(
+def find_wheels(directory: Path, package_name: str, version: str | None = None, glob: str = "*.whl") -> list[Path]:
+    """Return the wheels in a directory matching a package name and, optionally, a version."""
+    name = canonicalize_name(package_name)
+    expected_version = Version(version) if version is not None else None
+    matches: list[Path] = []
+    for wheel in directory.glob(glob):
+        wheel_name, wheel_version, *_ = parse_wheel_filename(wheel.name)
+        if wheel_name == name and (expected_version is None or wheel_version == expected_version):
+            matches.append(wheel)
+    return matches
+
+
+def modify_solution_wheel_metadata(  # noqa: C901
     solution_installation_directory: Path,
     solution_package_name: str,
     solution_version: str,
 ) -> None:
-    """Modify solution wheel metadata to fix local wheel dependency paths."""
-    solution_wheel_package_name = solution_package_name.replace("-", "_")
-    solution_wheel = (
-        solution_installation_directory / f"{solution_wheel_package_name}-{solution_version}-py3-none-any.whl"
-    )
-    if not solution_wheel.is_file():
-        raise FileNotFoundError(f"Missing solution wheel at: {solution_wheel}")
+    """Repoint local-wheel and staged Git dependencies at the installation directory."""
+    solution_wheels = find_wheels(solution_installation_directory, solution_package_name, solution_version)
+    if not solution_wheels:
+        raise FileNotFoundError(
+            f"Missing solution wheel for {solution_package_name} {solution_version} in: "
+            f"{solution_installation_directory}"
+        )
+    if len(solution_wheels) != 1:
+        raise RuntimeError(
+            f"Multiple solution wheels found for {solution_package_name} {solution_version} in: "
+            f"{solution_installation_directory}"
+        )
+    solution_wheel = solution_wheels[0]
 
     def transform_metadata(metadata_content: str) -> str:
         """Transform metadata to point to the new installation directory."""
@@ -117,7 +138,33 @@ def modify_solution_wheel_metadata(
             sub_str = rf"\1 file://{solution_installation_directory_str}/\2\3"
         else:
             raise RuntimeError("Unsupported operating system.")
-        return pattern.sub(sub_str, metadata_content)
+        metadata_content = pattern.sub(sub_str, metadata_content)
+
+        def replace_staged_git_dependency(match: re.Match[str]) -> str:
+            """Replace a Git ``Requires-Dist`` entry with the wheel staged for it at build time.
+
+            This way the installation does not need Git or a token.
+            Lines that are not ``git+`` URLs, or have no matching staged wheel, are returned unchanged.
+            Extras and markers are preserved.
+            """
+            requirement = Requirement(match.group(1))
+            if not requirement.url or not requirement.url.startswith("git+"):
+                return match.group(0)
+            wheels = find_wheels(solution_installation_directory, requirement.name)
+            if not wheels:
+                return match.group(0)
+            if len(wheels) != 1:
+                raise RuntimeError(f"Multiple staged wheels found for Git dependency {requirement.name}.")
+            extras = f"[{','.join(sorted(requirement.extras))}]" if requirement.extras else ""
+            marker = f" ; {requirement.marker}" if requirement.marker else ""
+            return f"Requires-Dist: {requirement.name}{extras} @ {wheels[0].resolve().as_uri()}{marker}"
+
+        return re.sub(
+            r"^Requires-Dist:\s*(?=[^\r\n]*@\s*git\+)([^\r\n]+)$",
+            replace_staged_git_dependency,
+            metadata_content,
+            flags=re.MULTILINE,
+        )
 
     _modify_wheel_metadata(solution_wheel, transform_metadata)
 
@@ -225,10 +272,18 @@ def safe_extract(file: zipfile.ZipFile | tarfile.TarFile, target_dir: Path) -> N
 
 
 def has_portal_dependency(solution_root_dir: Path) -> bool:
-    """Check if the solution uses the SAF Projects Dashboard or SAF Portal by looking for
-    ansys-saf-projects-dashboard, ansys-saf-desktop-portal, or ansys-saf-portal in the poetry.lock"""
-    poetry_lock_data = toml.load(solution_root_dir / "poetry.lock")
-    for package in poetry_lock_data["package"]:
-        if package["name"] in ["ansys-saf-desktop-portal", "ansys-saf-portal", "ansys-saf-projects-dashboard"]:
-            return True
-    return False
+    """Check the backend lockfile for a SAF Portal dependency."""
+    uv_lock = solution_root_dir / "uv.lock"
+    poetry_lock = solution_root_dir / "poetry.lock"
+    if uv_lock.is_file():
+        with uv_lock.open("rb") as lock_file:
+            packages = tomllib.load(lock_file).get("package", [])
+    else:
+        if not poetry_lock.is_file():
+            raise FileNotFoundError(f"No supported lockfile found in {solution_root_dir}.")
+        packages = toml.load(poetry_lock).get("package", [])
+    return any(
+        package.get("name") in {"ansys-saf-desktop-portal", "ansys-saf-portal", "ansys-saf-projects-dashboard"}
+        for package in packages
+        if isinstance(package, dict)
+    )

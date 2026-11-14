@@ -1,0 +1,103 @@
+
+
+
+
+
+
+:class:`Fluent2DDPSolverInstanceVersionConfiguration`
+=====================================================
+
+
+.. py:class:: ansys.saf.product_configuration.fluent.Fluent2DDPSolverInstanceVersionConfiguration(version: str)
+
+   Bases: :py:obj:`AbstractFluentInstanceVersionConfiguration`
+
+
+   
+   Configuration class for a specific version of Ansys Fluent
+   in solver mode with 2D geometry in double precision and secure gRPC connection.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: Fluent2DDPSolverInstanceVersionConfiguration
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~execution_command`
+            - The command to launch Fluent in solver mode with 2D geometry in double precision.
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.saf.product_configuration.fluent import Fluent2DDPSolverInstanceVersionConfiguration
+
+Property detail
+---------------
+
+.. py:property:: execution_command
+   :type: str
+
+
+   
+   The command to launch Fluent in solver mode with 2D geometry in double precision.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+
+

@@ -1,0 +1,127 @@
+
+
+
+
+
+
+The ``geometry.py`` module
+==========================
+
+.. py:module:: ansys.saf.product_configuration.geometry
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: geometry
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.saf.product_configuration.geometry.BaseGeometryInstanceVersionConfiguration`
+            - Base configuration class for Ansys Geometry service.
+
+
+          * - :py:obj:`~ansys.saf.product_configuration.geometry.Geometry251InstanceVersionConfiguration`
+            - Configuration class for a 251 version of Ansys Geometry service with secure gRPC connections.
+
+
+          * - :py:obj:`~ansys.saf.product_configuration.geometry.GeometryInstanceVersionConfiguration`
+            - Configuration class for 252 or higher version of Ansys Geometry service with secure gRPC connections.
+
+
+          * - :py:obj:`~ansys.saf.product_configuration.geometry.GeometryInstanceConfiguration`
+            - Configuration class for Ansys Geometry service with secure gRPC connections.
+
+
+
+
+
+
+
+    .. tab-item:: Constants
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~PRODUCT_NAME_SECURE`
+            - 
+
+
+          * - :py:obj:`~SERVICE_NAME`
+            - 
+
+
+          * - :py:obj:`~DEFAULT_DOTNET_ROOT`
+            - 
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> BaseGeometryInstanceVersionConfiguration</ansys/saf/product_configuration/geometry/BaseGeometryInstanceVersionConfiguration>
+    <span class="nf nf-cod-symbol_class"></span> Geometry251InstanceVersionConfiguration</ansys/saf/product_configuration/geometry/Geometry251InstanceVersionConfiguration>
+    <span class="nf nf-cod-symbol_class"></span> GeometryInstanceVersionConfiguration</ansys/saf/product_configuration/geometry/GeometryInstanceVersionConfiguration>
+    <span class="nf nf-cod-symbol_class"></span> GeometryInstanceConfiguration</ansys/saf/product_configuration/geometry/GeometryInstanceConfiguration>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Module detail
+-------------
+
+.. py:data:: PRODUCT_NAME_SECURE
+   :value: 'geometry-secure'
+
+
+.. py:data:: SERVICE_NAME
+   :value: 'grpc'
+
+
+.. py:data:: DEFAULT_DOTNET_ROOT
+
+
+

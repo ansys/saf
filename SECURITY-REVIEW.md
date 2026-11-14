@@ -16,6 +16,15 @@
 
 SoupSieve is present transitively through Beautiful Soup in the affected lockfile configurations. The root and SDK `uv.lock` files select SoupSieve 2.10 below Python 3.11.5 and 4.1 starting at Python 3.11.5. The examples and solution-template Poetry lockfiles select 2.10 for Python 3.11 and 4.1 for the later supported Python versions. The template lockfiles place this dependency in the optional `doc` group, not the SAF CLI runtime dependency set.
 
+`uv tree --invert --package soupsieve --all-groups` confirms these package/configuration paths:
+
+- `ansys-saf-product-configuration` and `ansys-saf-product-manager`: their `aedt` and `all` extras include JupyterLab, which brings in SoupSieve transitively.
+- `ansys-saf-sdk`: extras that include the product-configuration or product-manager `aedt`/`all` extras bring in SoupSieve. The SDK lock contains the same Python-version split.
+- `saf-solutions-examples`: its lock resolves SoupSieve in the main dependency group through the selected SAF SDK extras.
+- `ansys-saf-cli`: its generated solution templates include SoupSieve only through the optional `doc` dependency group.
+
+The root `ansys-saf-workspace` tree also contains SoupSieve through development and documentation tools, but the root workspace is not a distributable product. Presence in `uv tree` confirms dependency exposure for the listed configurations; it does not by itself prove that the vulnerable behavior is reachable in a deployed application.
+
 A tracked-source search found no repository-owned SoupSieve or Beautiful Soup imports/calls and no application path passing HTML or CSS selectors to those libraries. However, that does not establish that transitive dependencies never invoke the vulnerable behavior. The repository also does not establish which extras are installed in deployments, how Jupyter is exposed, or whether untrusted content can reach relevant dependency code.
 
 Consequently, all three findings are **undetermined for product exploitability**: vulnerable dependency versions are present in the stated configurations, but repository and deployment evidence does not establish the attacker-controlled input path required by each advisory. No dynamic exploit test was performed.

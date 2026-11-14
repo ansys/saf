@@ -1,0 +1,80 @@
+
+
+
+
+
+
+The ``mapdl`` package
+=========================
+
+.. py:module:: ansys.saf.product_manager.mapdl
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: mapdl
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.saf.product_manager.mapdl.InternalMapdlManager`
+            - A private class to manage a Mapdl instance with secure gRPC connection.
+
+
+          * - :py:obj:`~ansys.saf.product_manager.mapdl.MapdlManager`
+            - A manager of a MAPDL product instance.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> InternalMapdlManager</ansys/saf/product_manager/mapdl/InternalMapdlManager>
+    <span class="nf nf-cod-symbol_class"></span> MapdlManager</ansys/saf/product_manager/mapdl/MapdlManager>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

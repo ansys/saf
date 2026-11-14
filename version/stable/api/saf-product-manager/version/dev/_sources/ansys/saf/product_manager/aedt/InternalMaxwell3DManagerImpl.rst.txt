@@ -1,0 +1,79 @@
+
+
+
+
+
+
+:class:`InternalMaxwell3DManagerImpl`
+=====================================
+
+
+.. py:class:: ansys.saf.product_manager.aedt.InternalMaxwell3DManagerImpl(**kwargs: Any)
+
+   Bases: :py:obj:`AbstractAedtManagerImpl`\ [\ :py:obj:`ansys.aedt.core.Maxwell3d`\ ]
+
+
+   
+   A manager of a `AEDT Maxwell <https://www.ansys.com/en-gb/products/electronics/ansys-maxwell>`_ 3D product instance.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: InternalMaxwell3DManagerImpl
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~get_aedt_product_client`
+            - 
+
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.saf.product_manager.aedt import InternalMaxwell3DManagerImpl
+
+
+
+Method detail
+-------------
+
+.. py:method:: get_aedt_product_client(project_name: str, specified_version: str, machine: str, port: int, design_name: str | None = None, solution_type: str | None = None) -> ansys.aedt.core.Maxwell3d
+
+
+
+

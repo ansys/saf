@@ -1,0 +1,264 @@
+
+
+
+
+
+
+:class:`InternalMechanicalManager`
+==================================
+
+
+.. py:class:: ansys.saf.product_manager.mechanical.InternalMechanicalManager(**kwargs: Any)
+
+   Bases: :py:obj:`ansys.saf.glow.solution.InstanceManager`\ [\ :py:obj:`ansys.mechanical.core.Mechanical`\ , :py:obj:`MechanicalStateInfo`\ ]
+
+
+   
+   A private class to manage a Mechanical instance with secure gRPC connections.
+
+   Mechanical implements its own project directory, where all files are uploaded to/generated/downloaded from.
+   It is not configurable. Thus, this manager:
+   - stores a copy of it in GLOW's product space when saving the instance state
+   - loads a copy of it from GLOW's product space when restoring the instance state
+   The user must use pymechanical's upload()/download() to move files to the product working directory.
+   Using this manager's upload()/download() will only move them to the product space.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:currentmodule:: InternalMechanicalManager
+
+Overview
+--------
+
+.. tab-set::
+
+
+   .. tab-item:: Constructors
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~get_product_name_implement`
+            - Return the name of Mechanical in the PIM environment.
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~initialize`
+            - Initialize and start the Mechanical server.
+          * - :py:attr:`~get_client_object_implement`
+            - Return an instance of Mechanical's client given the host and port of the shared product instance.
+          * - :py:attr:`~save_state_implement`
+            - Save the state of Mechanical instance to the given directory.
+          * - :py:attr:`~load_state_implement`
+            - Loads the state of Mechanical instance from the given directory.
+          * - :py:attr:`~shutdown_implement`
+            - Gracefully terminates Mechanical instance process.
+
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~PRODUCT_NAME`
+            - 
+          * - :py:attr:`~SERVICE_NAME`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.saf.product_manager.mechanical import InternalMechanicalManager
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: PRODUCT_NAME
+   :value: 'mechanical-secure'
+
+
+.. py:attribute:: SERVICE_NAME
+   :value: 'grpc'
+
+
+
+
+Method detail
+-------------
+
+.. py:method:: initialize(version: str | None = None)
+
+   
+   Initialize and start the Mechanical server.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_product_name_implement() -> str
+   :classmethod:
+
+
+   
+   Return the name of Mechanical in the PIM environment.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_client_object_implement(hostname: str, port: int) -> ansys.mechanical.core.Mechanical
+
+   
+   Return an instance of Mechanical's client given the host and port of the shared product instance.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: save_state_implement() -> None
+
+   
+   Save the state of Mechanical instance to the given directory.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: load_state_implement() -> None
+
+   
+   Loads the state of Mechanical instance from the given directory.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: shutdown_implement() -> None
+
+   
+   Gracefully terminates Mechanical instance process.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

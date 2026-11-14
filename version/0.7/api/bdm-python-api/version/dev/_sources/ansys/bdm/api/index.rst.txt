@@ -1,0 +1,146 @@
+
+
+
+
+
+
+The ``ansys.bdm.api`` library
+=============================
+
+.. py:module:: ansys.bdm.api
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+.. py:currentmodule:: api
+.. tab-set::
+
+
+    .. tab-item:: Submodules
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.bdm.api.entity_handle`
+            - 
+
+
+          * - :py:obj:`~ansys.bdm.api.iasync_entity_writer`
+            - 
+
+
+          * - :py:obj:`~ansys.bdm.api.iasync_storage_scope`
+            - 
+
+
+          * - :py:obj:`~ansys.bdm.api.ientity_writer`
+            - 
+
+
+          * - :py:obj:`~ansys.bdm.api.istorage_scope`
+            - 
+
+
+          * - :py:obj:`~ansys.bdm.api.istorage_scope_factory`
+            - 
+
+
+          * - :py:obj:`~ansys.bdm.api.recursive_dictionary`
+            - 
+
+
+          * - :py:obj:`~ansys.bdm.api.storage_exceptions`
+            - 
+
+
+
+
+
+
+
+
+    .. tab-item:: Attributes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~__version__`
+            - 
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-fa-file"></span> entity_handle</ansys/bdm/api/entity_handle/index>
+    <span class="nf nf-fa-file"></span> iasync_entity_writer</ansys/bdm/api/iasync_entity_writer/index>
+    <span class="nf nf-fa-file"></span> iasync_storage_scope</ansys/bdm/api/iasync_storage_scope/index>
+    <span class="nf nf-fa-file"></span> ientity_writer</ansys/bdm/api/ientity_writer/index>
+    <span class="nf nf-fa-file"></span> istorage_scope</ansys/bdm/api/istorage_scope/index>
+    <span class="nf nf-fa-file"></span> istorage_scope_factory</ansys/bdm/api/istorage_scope_factory/index>
+    <span class="nf nf-fa-file"></span> recursive_dictionary</ansys/bdm/api/recursive_dictionary/index>
+    <span class="nf nf-fa-file"></span> storage_exceptions</ansys/bdm/api/storage_exceptions/index>
+
+
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+
+TODO: package documentation
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+Module detail
+-------------
+
+.. py:data:: __version__
+
+
+

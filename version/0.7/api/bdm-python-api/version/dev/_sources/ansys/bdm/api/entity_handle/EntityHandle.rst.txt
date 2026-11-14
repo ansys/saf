@@ -1,0 +1,306 @@
+
+
+
+
+
+
+:class:`EntityHandle`
+=====================
+
+
+.. py:class:: ansys.bdm.api.entity_handle.EntityHandle(/, **data: Any)
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   
+   A handle to a entity stored by a BDM provider and the associated lightweight data about it.
+
+   This lightweight, immutable object is intended to be easy to serialize and pass around across processes,
+   services, and hosts. The actual behavior of the entity contents is up to the :class:`IStorageScope` or
+   :class:`IAsyncStorageScope`.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+.. py:currentmodule:: EntityHandle
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~is_blob`
+            - True if this entity refers to a blob. False if it refers to a collection of blobs.
+          * - :py:attr:`~original_name`
+            - The original filename of the entity.
+          * - :py:attr:`~entity_id`
+            - A unique id that identifies the entity.
+          * - :py:attr:`~opaque_identifier`
+            - A custom identifier that the :class:`IStorageScope` can use to identify the
+          * - :py:attr:`~mime_type`
+            - The mime type of the data, if it is known. None otherwise.
+          * - :py:attr:`~encoding`
+            - The Internet Assigned Numbers Authority (IANA) registered encoding name used for textual data.
+          * - :py:attr:`~size`
+            - Size of the data in bytes, if known.
+
+
+
+   .. tab-item:: Special methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~__eq__`
+            - 
+          * - :py:attr:`~__hash__`
+            - 
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.bdm.api.entity_handle import EntityHandle
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: is_blob
+   :type:  bool
+
+   
+   True if this entity refers to a blob. False if it refers to a collection of blobs.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:attribute:: original_name
+   :type:  str | None
+   :value: None
+
+
+   
+   The original filename of the entity.
+
+   This is just the filename and does not include the path. May be `None` or empty if not known.
+   May not refer to a file on the local system.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:attribute:: entity_id
+   :type:  uuid.UUID
+
+   
+   A unique id that identifies the entity.
+
+   Typically this value is a new, random Guid created at the moment that the
+   :class:`Entityandle` is created from contents such as a file on disk. It should
+   be preserved across clone and save/load operations. It is not guaranteed to be
+   the same value if you read the same contents into an BlobHandle twice.
+
+   The UUID '00000000-0000-0000-0000-000000000000' is reserved for :data:`NO_ENTITY`.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:attribute:: opaque_identifier
+   :type:  str
+
+   
+   A custom identifier that the :class:`IStorageScope` can use to identify the
+   handle. Opaque as each BDM system may have its own form for this field. Consumers
+   are not to assume anything about this field, even if it looks parseable.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:attribute:: mime_type
+   :type:  str | None
+   :value: None
+
+
+   
+   The mime type of the data, if it is known. None otherwise.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:attribute:: encoding
+   :type:  str | None
+   :value: None
+
+
+   
+   The Internet Assigned Numbers Authority (IANA) registered encoding name used for textual data.
+
+   This may be None if not known and should not be set for binary mime types.
+
+   This encoding name may be passed to other languages and implementations. IANA registered
+   encoding names MUST be used.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:attribute:: size
+   :type:  int | None
+   :value: None
+
+
+   
+   Size of the data in bytes, if known.
+
+   Size must be None if is_blob is False.
+
+   Note that 0 is a valid blob size and has a different meaning than None.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+Method detail
+-------------
+
+.. py:method:: __eq__(__value: object, /) -> bool
+
+.. py:method:: __hash__() -> int
+
+
+
+

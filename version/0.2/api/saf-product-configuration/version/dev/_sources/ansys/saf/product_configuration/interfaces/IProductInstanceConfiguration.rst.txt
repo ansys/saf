@@ -1,0 +1,168 @@
+
+
+
+
+
+
+:class:`IProductInstanceConfiguration`
+======================================
+
+
+.. py:class:: ansys.saf.product_configuration.interfaces.IProductInstanceConfiguration
+
+   Bases: :py:obj:`Protocol`
+
+
+   
+   Interface to configure a product instance.
+
+   All products managed by the product instance system (HPS or PIM) must implement this interface.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: IProductInstanceConfiguration
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~get_version_configuration`
+            - Return the configuration of a product for a specific version.
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~product_name`
+            - This is the product name that is exposed by the product instance management system.
+          * - :py:attr:`~versions`
+            - The set of versions that are supported.
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.saf.product_configuration.interfaces import IProductInstanceConfiguration
+
+Property detail
+---------------
+
+.. py:property:: product_name
+   :type: str
+
+
+   
+   This is the product name that is exposed by the product instance management system.
+
+   It should be consistent with the name used in the PIM light and HPS configurations.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: versions
+   :type: list[str]
+
+
+   
+   The set of versions that are supported.
+
+   The last version is the default if no version is specified when an instance is created.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+Method detail
+-------------
+
+.. py:method:: get_version_configuration(version: str) -> IProductInstanceVersionConfiguration
+
+   
+   Return the configuration of a product for a specific version.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

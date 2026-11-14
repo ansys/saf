@@ -1,0 +1,153 @@
+
+
+
+
+
+
+The ``encoder.py`` module
+=========================
+
+.. py:module:: ansys.bdm.base.encoder
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+.. py:currentmodule:: encoder
+.. tab-set::
+
+
+
+
+
+
+
+    .. tab-item:: Functions
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~decode_bom`
+            - Return a tuple consisting of
+
+
+          * - :py:obj:`~encode_text`
+            - Return a string which is derived from the given byte data
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Module detail
+-------------
+
+.. py:function:: decode_bom(bom: bytes) -> tuple[str | None, int]
+
+   
+   Return a tuple consisting of
+   1) the name of the encoding stored in the BOM prefix of the given byte data; and
+   2) the length of BOM in bytes.
+
+   If the byte data does not contain a BOM then a tuple ``(None, 0)`` is returned.
+
+   :Parameters:
+
+       **bom: bytes**
+           byte data that may or may not be prefixed with a BOM
+
+
+
+   :Returns:
+
+       Tuple[Optional[str], int]
+           a tuple consisting of
+           1) the name of the encoding stored in the BOM prefix of the given byte data; and
+           2) the length of BOM in bytes.
+           
+           If the byte data does not contain a BOM then a tuple ``(None, 0)`` is returned.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: encode_text(data: bytes, handle: ansys.bdm.api.entity_handle.EntityHandle, encoding: str | None = None) -> str
+
+   
+   Return a string which is derived from the given byte data
+
+
+   :Parameters:
+
+       **data: bytes**
+           byte data that may or may not be prefixed with a BOM that provides the data for the returned string
+
+       **handle: EntityHandle**
+           the entity handle that refers to the object that contains the given data
+
+       **encoding: Optional[str]**
+           The name of an encoding.  When this argument is not None the returned
+           string will be decoded using the given encoding.
+
+
+
+   :Returns:
+
+       str
+           a string containing the byte data with the encoding determined
+           in order of preference by:
+           - the encoding argument if not None
+           - the encoding field of the entity argument if set
+           - the BOM of the referenced entity if it contains one; or
+           - UTF-8
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+

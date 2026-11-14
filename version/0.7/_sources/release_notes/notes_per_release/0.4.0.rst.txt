@@ -1,0 +1,216 @@
+`0.4.0 <https://github.com/ansys/saf/releases/tag/v0.4.0-saf-sdk>`_ — October 14, 2026
+======================================================================================
+
+.. dropdown::
+  :class-container: dropdown
+  :chevron: down-up
+
+  .. note::
+     Installing ``ansys-saf-sdk`` requires pip 26.2.2 or higher.
+
+  .. rubric:: Dependency versions
+
+  The public package versions below were resolved for this version of ``ansys-saf-sdk``.
+
+
+  .. dropdown:: ansys-bdm-api 0.5.0
+
+    No changes
+
+
+  .. dropdown:: ansys-bdm-shared-volume 0.4.0
+
+    No changes
+
+
+  .. dropdown:: ansys-saf-glow-engine 2.5.0
+    :open:
+
+    .. list-table::
+      :header-rows: 1
+      :stub-columns: 1
+      :widths: 80 20
+
+      * - ✨ Features
+        - Pull Request
+      * - feat(glow): add MCP tools to upload or download entity handles within data structures
+        - `#200 <https://github.com/ansys/saf/pull/200>`_
+      * - feat(glow): restrict solution access by client roles
+        - `#176 <https://github.com/ansys/saf/pull/176>`_
+      * - feat: support collection of HPS projects
+        - `#148 <https://github.com/ansys/saf/pull/148>`_
+
+    .. list-table::
+      :header-rows: 1
+      :stub-columns: 1
+      :widths: 80 20
+
+      * - 🛠️ Fixes
+        - Pull Request
+      * - fix(glow): cleanup HPS Clients
+        - `#209 <https://github.com/ansys/saf/pull/209>`_
+
+    .. list-table::
+      :header-rows: 1
+      :stub-columns: 1
+      :widths: 80 20
+
+      * - 🏗️ Build
+        - Pull Request
+      * - build(deps): upgrade pyjwt,authlib,urllib3,virtualenv
+        - `#184 <https://github.com/ansys/saf/pull/184>`_
+
+    .. list-table::
+      :header-rows: 1
+      :stub-columns: 1
+      :widths: 80 20
+
+      * - ♾️ CI
+        - Pull Request
+      * - ci(fix): fix reference for build
+        - `#220 <https://github.com/ansys/saf/pull/220>`_
+
+    .. list-table::
+      :header-rows: 1
+      :stub-columns: 1
+      :widths: 80 20
+
+      * - 🧹 Chores
+        - Pull Request
+      * - chore(bump): v2.5.dev0/glow-engine
+        - `#130 <https://github.com/ansys/saf/pull/130>`_
+
+
+  .. dropdown:: ansys-saf-desktop-installer 1.18.0
+    :open:
+
+    .. list-table::
+      :header-rows: 1
+      :stub-columns: 1
+      :widths: 80 20
+
+      * - 🛠️ Fixes
+        - Pull Request
+      * - fix(desktop-installer): check saf-projects-dashboard as a dependency
+        - `#171 <https://github.com/ansys/saf/pull/171>`_
+
+    .. list-table::
+      :header-rows: 1
+      :stub-columns: 1
+      :widths: 80 20
+
+      * - 📚 Documentation
+        - Pull Request
+      * - docs: Update contributor section
+        - `#238 <https://github.com/ansys/saf/pull/238>`_
+
+    .. list-table::
+      :header-rows: 1
+      :stub-columns: 1
+      :widths: 80 20
+
+      * - ♻️ Refactoring
+        - Pull Request
+      * - refactor: expose guidance info as MCP tools
+        - `#78 <https://github.com/ansys/saf/pull/78>`_
+
+    .. list-table::
+      :header-rows: 1
+      :stub-columns: 1
+      :widths: 80 20
+
+      * - 🧪 Tests
+        - Pull Request
+      * - test(saf-desktop-installer): Extend projects-dashboard unit and e2e tests
+        - `#239 <https://github.com/ansys/saf/pull/239>`_
+
+    .. list-table::
+      :header-rows: 1
+      :stub-columns: 1
+      :widths: 80 20
+
+      * - 🏗️ Build
+        - Pull Request
+      * - build(deps): upgrade pyjwt,authlib,urllib3,virtualenv
+        - `#184 <https://github.com/ansys/saf/pull/184>`_
+      * - build(deps): Upgrade anyio >= 4.15
+        - `#76 <https://github.com/ansys/saf/pull/76>`_
+
+    .. list-table::
+      :header-rows: 1
+      :stub-columns: 1
+      :widths: 80 20
+
+      * - ♾️ CI
+        - Pull Request
+      * - ci(feat): convert saf-cli to moon
+        - `#234 <https://github.com/ansys/saf/pull/234>`_
+      * - ci(feat): convert glow-engine to moon
+        - `#214 <https://github.com/ansys/saf/pull/214>`_
+      * - ci(fix): revert pip-system-certs
+        - `#208 <https://github.com/ansys/saf/pull/208>`_
+      * - ci(feat): convert saf product manager
+        - `#179 <https://github.com/ansys/saf/pull/179>`_
+      * - ci(feat): saf-desktop-installer converted to moon
+        - `#147 <https://github.com/ansys/saf/pull/147>`_
+
+    .. list-table::
+      :header-rows: 1
+      :stub-columns: 1
+      :widths: 80 20
+
+      * - 🧹 Chores
+        - Pull Request
+      * - chore(bump): v1.18.dev0/saf-desktop-installer
+        - `#39 <https://github.com/ansys/saf/pull/39>`_
+
+
+  .. dropdown:: ansys-saf-desktop-orchestrator 1.14.0
+
+    No changes
+
+
+  .. dropdown:: ansys-iam-oidc 0.9.0
+
+    No changes
+
+
+  .. dropdown:: ansys-saf-product-configuration 0.26.0
+
+    No changes
+
+
+  .. dropdown:: ansys-saf-product-manager 0.5.0
+
+    No changes
+
+
+  .. dropdown:: ansys-saf-projects-dashboard 0.2.0
+
+    No changes
+
+  The private-package versions were fetched separately as the latest available versions
+
+    .. list-table::
+        :header-rows: 1
+        :stub-columns: 1
+        :widths: 80 20
+
+        * - Private package
+          - Version
+        * - ``ansys-saf-pim-light-server``
+          - ``0.3.12``
+        * - ``ansys-translation-utilities``
+          - ``0.4.1``
+        * - ``ansys-saf-desktop-portal``
+          - ``0.3.1``
+        * - ``ansys-saf-web-portal``
+          - ``0.1.dev10``
+        * - ``ansys-minerva-python-client``
+          - ``0.5.0``
+        * - ``ansys-datarepository-python-client``
+          - ``0.1.dev12``
+        * - ``ansys-saf-hermes``
+          - ``0.1.dev13``
+        * - ``ansys-saf-aspire``
+          - ``9.1.6``

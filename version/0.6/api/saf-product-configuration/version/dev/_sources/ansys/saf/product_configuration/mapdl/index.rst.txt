@@ -1,0 +1,99 @@
+
+
+
+
+
+
+The ``mapdl.py`` module
+=======================
+
+.. py:module:: ansys.saf.product_configuration.mapdl
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: mapdl
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.saf.product_configuration.mapdl.MapdlInstanceVersionConfiguration`
+            - Configuration class for a specific version of Ansys Mechanical APDL (MAPDL) using secure gRPC connections.
+
+
+          * - :py:obj:`~ansys.saf.product_configuration.mapdl.MapdlInstanceConfiguration`
+            - Configuration class for Ansys Mechanical APDL (MAPDL) using secure gRPC connections.
+
+
+
+
+
+
+
+    .. tab-item:: Constants
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~SERVICE_NAME`
+            - 
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> MapdlInstanceVersionConfiguration</ansys/saf/product_configuration/mapdl/MapdlInstanceVersionConfiguration>
+    <span class="nf nf-cod-symbol_class"></span> MapdlInstanceConfiguration</ansys/saf/product_configuration/mapdl/MapdlInstanceConfiguration>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Module detail
+-------------
+
+.. py:data:: SERVICE_NAME
+   :value: 'grpc'
+
+
+
+

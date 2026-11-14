@@ -1,0 +1,80 @@
+
+
+
+
+
+
+The ``geometry`` package
+============================
+
+.. py:module:: ansys.saf.product_manager.geometry
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: geometry
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.saf.product_manager.geometry.GeometryManager`
+            - A manager of a Geometry service instance with secure gRPC connections.
+
+
+          * - :py:obj:`~ansys.saf.product_manager.geometry.InternalGeometryManager`
+            - A private class to manage a Geometry instance with secure gRPC connections.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> GeometryManager</ansys/saf/product_manager/geometry/GeometryManager>
+    <span class="nf nf-cod-symbol_class"></span> InternalGeometryManager</ansys/saf/product_manager/geometry/InternalGeometryManager>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

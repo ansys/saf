@@ -1,0 +1,69 @@
+
+
+
+
+
+
+The ``pim`` package
+=======================
+
+.. py:module:: ansys.saf.product_configuration.pim
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+.. py:currentmodule:: pim
+.. tab-set::
+
+
+    .. tab-item:: Submodules
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.saf.product_configuration.pim.config_writer`
+            - 
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-fa-file"></span> config_writer</ansys/saf/product_configuration/pim/config_writer/index>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

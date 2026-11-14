@@ -1,0 +1,249 @@
+
+
+
+
+
+
+The ``optislang.py`` module
+===========================
+
+.. py:module:: ansys.saf.product_configuration.wrappers.optislang
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: optislang
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.saf.product_configuration.wrappers.optislang.OptislangWrapperErrorCodes`
+            - 
+
+
+          * - :py:obj:`~ansys.saf.product_configuration.wrappers.optislang.OptislangInstance`
+            - 
+
+
+
+
+
+    .. tab-item:: Functions
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~get_global_optislang_instance`
+            - 
+
+
+          * - :py:obj:`~license_exception_handler`
+            - 
+
+
+          * - :py:obj:`~server_start_exception_handler`
+            - 
+
+
+          * - :py:obj:`~start_instance`
+            - 
+
+
+          * - :py:obj:`~close_optislang`
+            - 
+
+
+          * - :py:obj:`~shutdown`
+            - 
+
+
+          * - :py:obj:`~get_connection`
+            - 
+
+
+          * - :py:obj:`~get_logs`
+            - 
+
+
+          * - :py:obj:`~health`
+            - 
+
+
+          * - :py:obj:`~main`
+            - 
+
+
+
+    .. tab-item:: Attributes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~app`
+            - 
+
+
+          * - :py:obj:`~GlobalOptislangInstanceDep`
+            - 
+
+
+
+    .. tab-item:: Constants
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~CONNECTION_MODE_LOCAL_DOMAIN`
+            - 
+
+
+          * - :py:obj:`~CONNECTION_MODE_TCP`
+            - 
+
+
+          * - :py:obj:`~SAF_OPTISLANG_TIMEOUT`
+            - 
+
+
+          * - :py:obj:`~DEFAULT_SAF_OPTISLANG_TIMEOUT`
+            - 
+
+
+          * - :py:obj:`~ERROR_MESSAGE_FORMAT`
+            - 
+
+
+          * - :py:obj:`~LICENSE_ERROR_MESSAGE`
+            - 
+
+
+          * - :py:obj:`~OSL_SERVER_START_ERROR_MESSAGE`
+            - 
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> OptislangWrapperErrorCodes</ansys/saf/product_configuration/wrappers/optislang/OptislangWrapperErrorCodes>
+    <span class="nf nf-cod-symbol_class"></span> OptislangInstance</ansys/saf/product_configuration/wrappers/optislang/OptislangInstance>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Module detail
+-------------
+
+.. py:function:: get_global_optislang_instance() -> OptislangInstance
+
+.. py:function:: license_exception_handler(request: fastapi.Request, exc: ansys.optislang.core.errors.OslServerLicensingError)
+   :async:
+
+
+.. py:function:: server_start_exception_handler(request: fastapi.Request, exc: ansys.optislang.core.errors.OslServerStartError)
+   :async:
+
+
+.. py:function:: start_instance(optislang_instance: GlobalOptislangInstanceDep, project_path: pathlib.Path = Body(...), project_properties_file: pathlib.Path = Body(...), input_files: list[pathlib.Path] = Body(...), osl_version: int = Body(...), loglevel: str = Body(...), connection_mode: str = Body(default=CONNECTION_MODE_LOCAL_DOMAIN), log_file_path: pathlib.Path | None = Body(default=None))
+   :async:
+
+
+.. py:function:: close_optislang(optislang_instance: GlobalOptislangInstanceDep)
+   :async:
+
+
+.. py:function:: shutdown(optislang_instance: GlobalOptislangInstanceDep)
+   :async:
+
+
+.. py:function:: get_connection(optislang_instance: GlobalOptislangInstanceDep)
+   :async:
+
+
+.. py:function:: get_logs(optislang_instance: GlobalOptislangInstanceDep)
+   :async:
+
+
+.. py:function:: health()
+   :async:
+
+
+.. py:function:: main(port: int, host: str, transport_mode: ansys.saf.product_configuration.wrappers.types.TransportMode)
+
+.. py:data:: CONNECTION_MODE_LOCAL_DOMAIN
+   :value: 'LOCAL_DOMAIN'
+
+
+.. py:data:: CONNECTION_MODE_TCP
+   :value: 'TCP'
+
+
+.. py:data:: SAF_OPTISLANG_TIMEOUT
+   :value: 'SAF_OPTISLANG_TIMEOUT'
+
+
+.. py:data:: DEFAULT_SAF_OPTISLANG_TIMEOUT
+   :value: 300
+
+
+.. py:data:: ERROR_MESSAGE_FORMAT
+   :value: 'Unable to start optiSLang {osl_version}: {error}. Please try again later or contact your IT...
+
+
+.. py:data:: LICENSE_ERROR_MESSAGE
+   :value: 'No available licenses at this time'
+
+
+.. py:data:: OSL_SERVER_START_ERROR_MESSAGE
+   :value: 'OptiSLang server error'
+
+
+.. py:data:: app
+
+.. py:data:: GlobalOptislangInstanceDep
+
+
+

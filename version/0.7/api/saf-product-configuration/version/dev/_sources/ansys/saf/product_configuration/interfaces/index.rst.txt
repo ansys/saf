@@ -1,0 +1,127 @@
+
+
+
+
+
+
+The ``interfaces.py`` module
+============================
+
+.. py:module:: ansys.saf.product_configuration.interfaces
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: interfaces
+.. tab-set::
+
+
+
+    .. tab-item:: Interfaces
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.saf.product_configuration.interfaces.ISoftware`
+            - Interface to define the software requirements.
+
+
+          * - :py:obj:`~ansys.saf.product_configuration.interfaces.IProductInstanceVersionConfiguration`
+            - Interface to configure a given version of a product instance.
+
+
+          * - :py:obj:`~ansys.saf.product_configuration.interfaces.IProductInstanceConfiguration`
+            - Interface to configure a product instance.
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.saf.product_configuration.interfaces.Software`
+            - Define the software requirements.
+
+
+
+    .. tab-item:: Enums
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.saf.product_configuration.interfaces.ServiceType`
+            - Define the type of API the service is using.
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_interface"></span> ISoftware</ansys/saf/product_configuration/interfaces/ISoftware>
+    <span class="nf nf-cod-symbol_interface"></span> IProductInstanceVersionConfiguration</ansys/saf/product_configuration/interfaces/IProductInstanceVersionConfiguration>
+    <span class="nf nf-cod-symbol_interface"></span> IProductInstanceConfiguration</ansys/saf/product_configuration/interfaces/IProductInstanceConfiguration>
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> Software</ansys/saf/product_configuration/interfaces/Software>
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_enum"></span> ServiceType</ansys/saf/product_configuration/interfaces/ServiceType>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

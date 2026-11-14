@@ -1,0 +1,90 @@
+
+
+
+
+
+
+The ``configurations_manager.py`` module
+========================================
+
+.. py:module:: ansys.saf.product_configuration.manager.configurations_manager
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: configurations_manager
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.saf.product_configuration.manager.configurations_manager.ProductInstanceConfigurationsManager`
+            - Manage the default and custom product instance configurations.
+
+
+
+
+
+
+    .. tab-item:: Attributes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~logger`
+            - 
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> ProductInstanceConfigurationsManager</ansys/saf/product_configuration/manager/configurations_manager/ProductInstanceConfigurationsManager>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Module detail
+-------------
+
+.. py:data:: logger
+
+
+

@@ -365,13 +365,13 @@
     {
         "test-report-artifact-name-suffix": "sdi_linux_extended_test_installer_with_offline_package_and_no_export_plugin",
         "install-gtk-xvfb": "true",
-        "pytest-additional-arguments": "-n0 tests/e2e/test_installer_entry_point.py::TestInstaller::test_installer_with_offline_package_and_no_export_plugin",
+        "pytest-additional-arguments": "-n0 tests/e2e/test_installer_entry_point.py::TestInstaller::test_installer_with_offline_package_and_no_export_plugin tests/e2e/test_uv_migration.py::test_uv_solution_builds_and_installs_online_and_offline",
         "runner-name": "public-ubuntu-latest-16-cores",
         "download-extra-packages": "true"
     },
     {
         "test-report-artifact-name-suffix": "sdi_windows_extended_test_installer_with_offline_package_and_no_export_plugin",
-        "pytest-additional-arguments": "-n0 tests/e2e/test_installer_entry_point.py::TestInstaller::test_installer_with_offline_package_and_no_export_plugin",
+        "pytest-additional-arguments": "-n0 tests/e2e/test_installer_entry_point.py::TestInstaller::test_installer_with_offline_package_and_no_export_plugin tests/e2e/test_uv_migration.py::test_uv_solution_builds_and_installs_online_and_offline",
         "runner-name": "windows-latest",
         "download-extra-packages": "true"
     },

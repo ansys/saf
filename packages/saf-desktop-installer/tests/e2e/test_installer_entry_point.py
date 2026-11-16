@@ -319,13 +319,14 @@ class TestInstaller:
         self,
         tmp_path: Path,
         solution_root_dir: Path,
+        solution_backend: SolutionBackend,
         setup_solution: SetupSolution,
         build_solution: BuildSolution,
         install_solution: InstallSolution,
         cleanup_shortcut: list[Path],
     ):
         """
-        Test that the packaged uv.lock has no build-machine path dependencies (issue #216).
+        Test that the packaged lock file has no build-machine path dependencies (issue #216).
 
         The build folder is made unreadable before installing, as on the affected customer machine.
         """
@@ -337,8 +338,14 @@ class TestInstaller:
         check_built_solution_files(solution_root_dir, python_version=python_version)
 
         definitions_dir = solution_root_dir / "dist" / "solution" / "definitions"
-        packaged_lock = definitions_dir / _get_solution_module_name(solution_root_dir) / "uv.lock"
-        lock_paths = re.findall(r'\bpath\s*=\s*"([^"]+)"', packaged_lock.read_text(encoding="utf-8"))
+        lock_name = "poetry.lock" if solution_backend is SolutionBackend.POETRY else "uv.lock"
+        packaged_lock = definitions_dir / _get_solution_module_name(solution_root_dir) / lock_name
+        lock_text = packaged_lock.read_text(encoding="utf-8")
+        if solution_backend is SolutionBackend.POETRY:
+            path_pattern = r'\burl\s*=\s*"([^"]+)"'
+        else:
+            path_pattern = r'\bpath\s*=\s*"([^"]+)"'
+        lock_paths = re.findall(path_pattern, lock_text)
         assert any("custom_package_for_test_2" in path for path in lock_paths)
         assert not any(Path(path).is_absolute() for path in lock_paths), lock_paths
 
@@ -476,7 +483,11 @@ class TestInstaller:
             session_selenium_webdriver,
         )
 
-    @pytest.mark.parametrize("python_version", [None, "3.11.8", "3.12.4", "3.12.12", "3.13.0", "3.14.0"])
+    @pytest.mark.parametrize(
+        "python_version",
+        [None, "3.11.8", "3.12.4", "3.12.12", "3.13.0", "3.14.0"],
+        ids=["default", "python_3_11_8", "python_3_12_4", "python_3_12_12", "python_3_13_0", "python_3_14_0"],
+    )
     def test_installer_with_offline_package_with_different_python_versions(
         self,
         tmp_path: Path,
@@ -706,7 +717,11 @@ class TestInstaller:
             session_selenium_webdriver,
         )
 
-    @pytest.mark.parametrize("python_version", ["3.11.15", "3.12.9"])
+    @pytest.mark.parametrize(
+        "python_version",
+        ["3.11.15", "3.12.9"],
+        ids=["python_3_11_15", "python_3_12_9"],
+    )
     def test_installer_with_force_python_from_source(
         self,
         tmp_path: Path,
@@ -761,7 +776,7 @@ class TestInstaller:
             session_selenium_webdriver,
         )
 
-    @pytest.mark.parametrize("with_key", [True, False])
+    @pytest.mark.parametrize("with_key", [True, False], ids=["with_key", "without_key"])
     def test_installer_with_encrypt(
         self,
         solution_root_dir: Path,
@@ -1006,6 +1021,7 @@ class TestInstaller:
         self,
         tmp_path: Path,
         solution_root_dir: Path,
+        solution_backend: SolutionBackend,
         setup_solution: SetupSolution,
         build_solution: BuildSolution,
         install_solution: InstallSolution,
@@ -1016,16 +1032,30 @@ class TestInstaller:
         """Build a solution with SAF SDK extras distributed across dependency groups."""
         pyproject_path = solution_root_dir / "pyproject.toml"
         pyproject = load_toml(pyproject_path)
-        project = pyproject["project"]
-        project["dependencies"] = [
-            dependency for dependency in project["dependencies"] if not dependency.startswith("ansys-saf-glow-engine")
-        ] + ["ansys-saf-sdk>=0.1.0,<0.2.0"]
-        desktop_dependencies = pyproject["dependency-groups"]["desktop"]
-        pyproject["dependency-groups"]["desktop"] = [
-            dependency
-            for dependency in desktop_dependencies
-            if not dependency.startswith("ansys-saf-desktop-orchestrator")
-        ] + ["ansys-saf-sdk[desktop]>=0.1.0,<0.2.0"]
+        if solution_backend is SolutionBackend.POETRY:
+            poetry = pyproject["tool"]["poetry"]
+            dependencies = poetry["dependencies"]
+            dependencies.pop("ansys-saf-glow-engine")
+            dependencies["ansys-saf-sdk"] = {"version": ">=0.1.0,<0.2.0"}
+            desktop_dependencies = poetry["group"]["desktop"]["dependencies"]
+            desktop_dependencies.pop("ansys-saf-desktop-orchestrator")
+            desktop_dependencies["ansys-saf-sdk"] = {
+                "version": ">=0.1.0,<0.2.0",
+                "extras": ["desktop"],
+            }
+        else:
+            project = pyproject["project"]
+            project["dependencies"] = [
+                dependency
+                for dependency in project["dependencies"]
+                if not dependency.startswith("ansys-saf-glow-engine")
+            ] + ["ansys-saf-sdk>=0.1.0,<0.2.0"]
+            desktop_dependencies = pyproject["dependency-groups"]["desktop"]
+            pyproject["dependency-groups"]["desktop"] = [
+                dependency
+                for dependency in desktop_dependencies
+                if not dependency.startswith("ansys-saf-desktop-orchestrator")
+            ] + ["ansys-saf-sdk[desktop]>=0.1.0,<0.2.0"]
 
         pyproject_path.write_text(tomlkit.dumps(pyproject), encoding="utf-8")
 
@@ -1037,8 +1067,13 @@ class TestInstaller:
         definitions_pyproject = load_toml(
             solution_root_dir / "dist" / "solution" / "definitions" / "my_solution_dash" / "pyproject.toml",
         )
-        assert "ansys-saf-sdk>=0.1.0,<0.2.0" in definitions_pyproject["project"]["dependencies"]
-        assert "ansys-saf-sdk[desktop]>=0.1.0,<0.2.0" in definitions_pyproject["dependency-groups"]["desktop"]
+        if solution_backend is SolutionBackend.POETRY:
+            sdk_dependency = definitions_pyproject["tool"]["poetry"]["dependencies"]["ansys-saf-sdk"]
+            assert sdk_dependency["version"] == ">=0.1.0,<0.2.0"
+            assert sdk_dependency["extras"] == ["desktop"]
+        else:
+            assert "ansys-saf-sdk>=0.1.0,<0.2.0" in definitions_pyproject["project"]["dependencies"]
+            assert "ansys-saf-sdk[desktop]>=0.1.0,<0.2.0" in definitions_pyproject["dependency-groups"]["desktop"]
 
         installation_output = install_solution(solution_root_dir, tmp_path)
         assert find_msg_in_output("Preload application", installation_output)

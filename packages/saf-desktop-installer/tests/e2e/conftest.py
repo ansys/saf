@@ -960,8 +960,11 @@ def _get_expected_uv_package_versions(solution_root_dir: Path, python_version: s
     subprocess.run([*cmd, "--output-file", str(pylock_path)], cwd=solution_root_dir, check=True, capture_output=True)
     expected_package_versions: dict[str, str] = {}
     for package in load_toml(pylock_path)["packages"]:
+        package_name = package["name"].replace("_", "-").lower()
+        if package_name in {"ansys-saf-desktop-installer", "pyinstaller"}:
+            continue
         if _check_markers(package.get("marker", ""), python_version):
-            expected_package_versions[package["name"].replace("_", "-").lower()] = package["version"]
+            expected_package_versions[package_name] = package["version"]
     return expected_package_versions
 
 

@@ -16,18 +16,25 @@
 
 from pathlib import Path
 import re
-import shutil
 from typing import cast
 
 import pytest
 import pytest_mock
 from selenium.webdriver.chrome.webdriver import WebDriver
 
+from ansys.saf.desktop.installer._package.backend_detection import SolutionBackend
+from tests.utils import copy_mock_solution
+
 MOCKED_SOLUTION_DIR = (Path(__file__).parent / "mocks").resolve()
 DEFAULT_MOCK_SOLUTION_NAME = "my-solution-dash"
 DEFAULT_MOCK_SOLUTION_DISPLAY_NAME = "My Solution Dash"
 POETRY_MOCK_SOLUTION_NAME = "my-solution-dash-old"
-use_poetry_mock_solution = pytest.mark.parametrize("solution_root_dir", [POETRY_MOCK_SOLUTION_NAME], indirect=True)
+use_poetry_mock_solution = pytest.mark.parametrize(
+    ("solution_root_dir", "solution_backend"),
+    [(POETRY_MOCK_SOLUTION_NAME, SolutionBackend.POETRY)],
+    ids=[POETRY_MOCK_SOLUTION_NAME],
+    indirect=True,
+)
 CUSTOM_PACKAGE_FOR_TEST_2_WHEEL_NAMES: dict[str, str] = {
     "Windows": "custom_package_for_test_2-0.0.1-py3-none-win_amd64.whl",
     "Linux": "custom_package_for_test_2-0.0.1-py3-none-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl",
@@ -44,13 +51,24 @@ def mock_solution_display_name(mocker: pytest_mock.MockFixture) -> None:
 
 
 @pytest.fixture
-def solution_root_dir(tmp_path: Path, request: pytest.FixtureRequest, monkeypatch: pytest.MonkeyPatch) -> Path:
+def solution_root_dir(
+    tmp_path: Path,
+    request: pytest.FixtureRequest,
+    monkeypatch: pytest.MonkeyPatch,
+    solution_backend: SolutionBackend,
+) -> Path:
     solution_name = getattr(request, "param", DEFAULT_MOCK_SOLUTION_NAME)
     orig_solution_root_dir = MOCKED_SOLUTION_DIR / solution_name
     dist_solution_root_dir = tmp_path / solution_name
-    shutil.copytree(orig_solution_root_dir, dist_solution_root_dir)
+    copy_mock_solution(orig_solution_root_dir, dist_solution_root_dir, solution_backend)
     monkeypatch.syspath_prepend(dist_solution_root_dir / "src")  # pyright: ignore[reportUnknownMemberType]
     return dist_solution_root_dir
+
+
+@pytest.fixture(scope="session")
+def solution_backend(request: pytest.FixtureRequest) -> SolutionBackend:
+    """Choose the mock backend without changing the stored configurations."""
+    return SolutionBackend(getattr(request, "param", SolutionBackend.UV))
 
 
 def check_installer_gui_is_using_local_bootstrap_css(selenium_webdriver: WebDriver) -> None:

@@ -63,7 +63,6 @@ logger = logging.getLogger(__name__)
 ########################################################################################################################
 # root dir is where this script was executed from using the command line
 WHL_CONSTANT = "*.whl"
-REQ_FILE = "requirements.txt"
 ENCRYPTED_FILE_SUFFIX = ".encrypted"
 LOCK_PATH_DEPENDENCY_PATTERN = re.compile(r'(\bpath\s*=\s*)("(?:[^"\\\r\n]|\\.)*")')
 
@@ -103,14 +102,14 @@ def build_solution_wheel(definitions_folder: Path, solution_root_dir: Path) -> N
         solution_root_dir (Path): Path to the solution root directory.
     """
     solution_dist_dir = solution_root_dir / "dist"
-    backend_info = detect_solution_backend(solution_root_dir)
-    if backend_info.backend is SolutionBackend.POETRY:
+    backend = detect_solution_backend(solution_root_dir)
+    if backend is SolutionBackend.POETRY:
         _check_poetry_readme_file_from_pyproject(solution_root_dir / "pyproject.toml")
         command = ["poetry", "build", "--no-interaction"]
     else:
         command = ["uv", "build"]
 
-    logger.info(f"Building wheel using {backend_info.backend} in {solution_dist_dir}")
+    logger.info(f"Building wheel using {backend} in {solution_dist_dir}")
     try:
         subprocess.check_output(
             command,
@@ -119,12 +118,10 @@ def build_solution_wheel(definitions_folder: Path, solution_root_dir: Path) -> N
             stderr=subprocess.STDOUT,
         )
     except subprocess.CalledProcessError as e:
-        raise RuntimeError(f"Failed to build wheel using {backend_info.backend}: {e.output}") from e
+        raise RuntimeError(f"Failed to build wheel using {backend}: {e.output}") from e
     project_wheel = next(solution_dist_dir.glob(WHL_CONSTANT), None)
     if not project_wheel or not project_wheel.is_file():
-        raise FileNotFoundError(
-            f"Wheel file not found in {solution_dist_dir} after building with {backend_info.backend}."
-        )
+        raise FileNotFoundError(f"Wheel file not found in {solution_dist_dir} after building with {backend}.")
     logger.info(f"Wheel built successfully: {project_wheel.name}")
     logger.info(f"Copying {project_wheel.name} to {definitions_folder}")
     shutil.copy(project_wheel, definitions_folder / project_wheel.name)
@@ -234,25 +231,8 @@ def download_build_tool_with_pip(tool: str, definitions_folder: Path, venv_pytho
     requirements_file_path.write_text(requirements)
 
 
-def copy_module(module_location: Path, module_directory: Path):
-    """Copy a module from a location to a directory.
-
-    Args:
-        module_location (Path): Location of the module to copy.
-        module_directory (Path): Directory to copy the module to.
-    """
-    print(f"Copying {module_location} to {module_directory}.")
-    shutil.copy(module_location, module_directory)
-
-
-def _github_url_with_token(url: str, github_token: str | None, *, required: bool = True) -> str:
+def _github_url_with_token(url: str, github_token: str | None) -> str:
     if not github_token:
-        if required:
-            raise ValueError(
-                "Must provide a GitHub token to download dependencies from GitHub."
-                " Set the ANSYS_GITHUB_PAT environment variable or"
-                " provide the GitHub token as a command line argument --github-token.",
-            )
         return url
     if url.startswith("https://"):
         return url.replace("https://", f"https://{quote(github_token, safe='')}@", 1)
@@ -267,7 +247,7 @@ def _download_poetry_git_source(
 ) -> None:
     """Build a locked Git dependency wheel with optional token authentication."""
     source = package["source"]
-    url = _github_url_with_token(source["url"], github_token, required=False)
+    url = _github_url_with_token(source["url"], github_token)
     revision = source.get("resolved_reference") or source["reference"]
     requirement = f"{package['name']} @ git+{url}@{revision}"
 
@@ -327,7 +307,9 @@ def _copy_poetry_file_dependency(package: dict[str, Any], poetry_lock_file: Path
             f"Package location {package_location} does not exist."
             " Make sure the package location in the lock file is correct and the file exists.",
         )
-    copy_module(package_location, package_directory)
+
+    logger.info(f"Copying {package_location} to {package_directory}.")
+    shutil.copy(package_location, package_directory)
 
 
 def _has_poetry_wheel_url_dependencies(package: dict[str, Any]) -> bool:
@@ -699,7 +681,7 @@ def _uv_git_requirement(package: Any, github_token: str | None) -> str | None:
     url = urlunsplit(
         (parsed_source.scheme, parsed_source.netloc, parsed_source.path, urlencode(repository_query), ""),
     )
-    url = _github_url_with_token(url, github_token, required=False)
+    url = _github_url_with_token(url, github_token)
     parsed_url = urlsplit(url)
     if parsed_url.scheme not in {"https", "file"}:
         raise ValueError(f"Unsupported Git dependency URL in uv.lock: {url!r}")
@@ -1413,7 +1395,7 @@ def build_and_stage_solution_packages(
     else:
         logger.info("building solution wheel")
         build_solution_wheel(definitions_folder, solution_root_dir)
-    backend = backend or detect_solution_backend(solution_root_dir).backend
+    backend = backend or detect_solution_backend(solution_root_dir)
     poetry_packages_with_wheel_url_dependencies: list[tuple[str, str]] = []
     if backend is SolutionBackend.POETRY:
         poetry_packages_with_wheel_url_dependencies = _get_poetry_packages_with_wheel_url_dependencies(

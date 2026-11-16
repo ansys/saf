@@ -115,6 +115,19 @@ Contributions are welcome!
 If you would like to contribute, please follow the guidelines provided in the `Contribute`_
 section of the official documentation.
 
+Test mock solutions
+-------------------
+
+The four solutions under ``tests/mocks/`` share their source code, documentation
+and assets between backends. Each contains ``pyproject.poetry.toml``,
+``pyproject.uv.toml``, ``poetry.lock`` and ``uv.lock``.
+
+The test fixtures select ``solution_backend`` and copy the matching configuration
+as ``pyproject.toml``, together with only its lockfile, into an isolated temporary
+directory. The stored mocks are templates, not projects to build directly: both
+lockfiles must never reach backend detection together. Poetry-specific tests
+explicitly select the Poetry backend; other tests keep the existing UV default.
+
 
 License
 =======

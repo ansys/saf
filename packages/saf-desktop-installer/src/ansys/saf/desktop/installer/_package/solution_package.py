@@ -54,11 +54,6 @@ from ansys.saf.desktop.installer._package.solution import (
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-########################################################################################################################
-# Variables
-########################################################################################################################
-WHL_CONSTANT = "*.whl"
-REQ_FILE = "requirements.txt"
 
 ########################################################################################################################
 # Functions
@@ -125,7 +120,7 @@ def setup_solution_folder(
     # version of the dependencies. This is particularly important when using the offline packaging option,
     # but can also be necessary even if this option is not used, as the internal dependencies, which are always
     # downloaded, have different versions for different Python versions.
-    backend = detect_solution_backend(solution_info.solution_root_dir).backend
+    backend = detect_solution_backend(solution_info.solution_root_dir)
     definitions_venv, venv_python_exec = create_venv_in_definitions_folder(
         definitions_folder,
         downloaded_python_exec,

@@ -23,6 +23,7 @@ from unittest.mock import patch
 import pytest
 import pytest_mock
 
+from ansys.saf.desktop.installer._package.backend_detection import SolutionBackend, detect_solution_backend
 from ansys.saf.desktop.installer._package.solution import (
     SolutionInfo,
     create_env_file,
@@ -32,6 +33,43 @@ from ansys.saf.desktop.installer._package.solution import (
     move_assets_and_deployment_script,
 )
 from tests.conftest import use_poetry_mock_solution
+
+
+@pytest.mark.parametrize("solution_backend", list(SolutionBackend), indirect=True)
+@pytest.mark.parametrize(
+    "solution_root_dir",
+    [
+        "my-solution-dash",
+        "my-solution-dash-old",
+        "my-solution-dash-projects-dashboard",
+        "synopsys-custom-ns-solution",
+    ],
+    indirect=True,
+)
+def test_mock_solution_selects_only_requested_backend(
+    solution_root_dir: Path,
+    solution_backend: SolutionBackend,
+) -> None:
+    """Materialize either backend without mixed metadata or changes to the shared mock."""
+    source = Path(__file__).parent.parent / "mocks" / solution_root_dir.name
+    source_project = source / f"pyproject.{solution_backend.value}.toml"
+    source_lock = source / f"{solution_backend.value}.lock"
+    project_content = source_project.read_bytes()
+    lock_content = source_lock.read_bytes()
+    project = solution_root_dir / "pyproject.toml"
+    lock = solution_root_dir / source_lock.name
+
+    assert project.read_bytes() == project_content
+    assert lock.read_bytes() == lock_content
+    assert detect_solution_backend(solution_root_dir) is solution_backend
+    assert not list(solution_root_dir.glob("pyproject.*.toml"))
+    other_backend = SolutionBackend.POETRY if solution_backend is SolutionBackend.UV else SolutionBackend.UV
+    assert not (solution_root_dir / f"{other_backend.value}.lock").exists()
+
+    project.write_text("# edited temporary project\n", encoding="utf-8")
+    lock.write_text("# edited temporary lock\n", encoding="utf-8")
+    assert source_project.read_bytes() == project_content
+    assert source_lock.read_bytes() == lock_content
 
 
 @pytest.fixture

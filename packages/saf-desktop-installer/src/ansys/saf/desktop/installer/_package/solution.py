@@ -81,7 +81,7 @@ class _SolutionMetadata:
             configuration = load_toml(self.pyproject_path)
         except TOMLKitError as error:
             raise SolutionBackendError(f"Unable to parse '{self.pyproject_path}': {error}") from error
-        self.backend = detect_solution_backend(solution_root_dir, configuration=configuration).backend
+        self.backend = detect_solution_backend(solution_root_dir, configuration=configuration)
         project = configuration.get("project")
         if project is not None and not isinstance(project, dict):
             raise ValueError(f"Missing or invalid [project] metadata in '{self.pyproject_path}'.")
@@ -362,7 +362,7 @@ def create_solution_metadata(
     solution_metadata = {
         "glow-package-name": DESKTOP_ORCHESTRATOR_PACKAGE_NAME,
         "glow-entry-point-module": DESKTOP_ORCHESTRATOR_MODULE_NAME,
-        "solution-backend": detect_solution_backend(solution_info.solution_root_dir).backend.value,
+        "solution-backend": detect_solution_backend(solution_info.solution_root_dir).value,
         "use-glow": (
             "True" if installer_config.solution_ui_framework == "dash" and installer_config.use_glow else "False"
         ),

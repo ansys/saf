@@ -32,14 +32,13 @@ def _write_pyproject(solution_root_dir: Path, content: str) -> None:
     (solution_root_dir / "pyproject.toml").write_text(content, encoding="utf-8")
 
 
-def test_detect_uv_from_tool_table_and_returns_expected_lockfile(tmp_path: Path) -> None:
+def test_detect_uv_from_tool_table(tmp_path: Path) -> None:
     """Recognize an empty tool.uv table even when uv.lock does not exist."""
     _write_pyproject(tmp_path, "[project]\nname = 'solution'\n\n[tool.uv]\n")
 
     result = detect_solution_backend(tmp_path)
 
-    assert result.backend is SolutionBackend.UV
-    assert result.lockfile_path == tmp_path / "uv.lock"
+    assert result is SolutionBackend.UV
 
 
 def test_detect_uv_from_lockfile(tmp_path: Path) -> None:
@@ -49,8 +48,7 @@ def test_detect_uv_from_lockfile(tmp_path: Path) -> None:
 
     result = detect_solution_backend(tmp_path)
 
-    assert result.backend is SolutionBackend.UV
-    assert result.lockfile_path == tmp_path / "uv.lock"
+    assert result is SolutionBackend.UV
 
 
 @pytest.mark.parametrize(
@@ -67,8 +65,7 @@ def test_detect_poetry(tmp_path: Path, pyproject: str) -> None:
 
     result = detect_solution_backend(tmp_path)
 
-    assert result.backend is SolutionBackend.POETRY
-    assert result.lockfile_path == tmp_path / "poetry.lock"
+    assert result is SolutionBackend.POETRY
 
 
 def test_detect_poetry_from_lockfile(tmp_path: Path) -> None:
@@ -78,8 +75,7 @@ def test_detect_poetry_from_lockfile(tmp_path: Path) -> None:
 
     result = detect_solution_backend(tmp_path)
 
-    assert result.backend is SolutionBackend.POETRY
-    assert result.lockfile_path == tmp_path / "poetry.lock"
+    assert result is SolutionBackend.POETRY
 
 
 def test_detect_backend_rejects_mixed_metadata(tmp_path: Path) -> None:

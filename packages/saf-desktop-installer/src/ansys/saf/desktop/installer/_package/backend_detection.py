@@ -16,7 +16,6 @@
 
 """Detect the dependency backend used by a SAF solution."""
 
-from dataclasses import dataclass
 from enum import StrEnum
 from pathlib import Path
 from typing import Any, cast
@@ -37,19 +36,11 @@ class SolutionBackendError(ValueError):
     """Raised when a solution backend cannot be identified unambiguously."""
 
 
-@dataclass(frozen=True)
-class SolutionBackendInfo:
-    """Backend and expected lockfile for a solution."""
-
-    backend: SolutionBackend
-    lockfile_path: Path
-
-
 def detect_solution_backend(
     solution_root_dir: Path,
     *,
     configuration: dict[str, Any] | None = None,
-) -> SolutionBackendInfo:
+) -> SolutionBackend:
     """Detect a backend, optionally reusing an already parsed pyproject."""
     root_dir = Path(solution_root_dir)
     pyproject_path = root_dir / "pyproject.toml"
@@ -63,7 +54,6 @@ def detect_solution_backend(
             raise SolutionBackendError(f"Unable to parse '{pyproject_path}': {error}") from error
 
     tool = _get_table(configuration, "tool", pyproject_path)
-    build_system = _get_optional_table(configuration, "build-system", pyproject_path)
     build_system = _get_optional_table(configuration, "build-system", pyproject_path)
     poetry = _get_optional_table(tool, "poetry", pyproject_path)
     uv = _get_optional_table(tool, "uv", pyproject_path)
@@ -80,9 +70,9 @@ def detect_solution_backend(
             "A solution must use exactly one dependency-management backend.",
         )
     if has_uv_metadata:
-        return SolutionBackendInfo(SolutionBackend.UV, uv_lockfile)
+        return SolutionBackend.UV
     if has_poetry_metadata:
-        return SolutionBackendInfo(SolutionBackend.POETRY, poetry_lockfile)
+        return SolutionBackend.POETRY
     raise SolutionBackendError(
         f"Unable to identify a supported dependency backend in '{pyproject_path}'. "
         "Expected UV metadata ([tool.uv] or uv.lock) or Poetry metadata "

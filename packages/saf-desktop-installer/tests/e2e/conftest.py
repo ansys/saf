@@ -65,7 +65,7 @@ from ansys.saf.testing.selenium import (
 )
 from tests.e2e.installer_process import SolutionInstallerProcess
 from tests.e2e.solution_process import SolutionShortcutProcess
-from tests.utils import get_appdata_directory
+from tests.utils import copy_mock_solution, get_appdata_directory
 
 SOLUTION_DISPLAY_NAME = {
     "my-solution-dash": "My Solution Dash",
@@ -94,7 +94,7 @@ SOLUTION_EXTRA_PACKAGES = {
 }
 logger = logging.getLogger(__name__)
 # Cache for session solutions
-_session_solutions_cache: dict[str, tuple[Path, Path, str, str, str]] = {}
+_session_solutions_cache: dict[tuple[SolutionBackend, str], tuple[Path, Path, str, str, str]] = {}
 
 
 #################################################### PREREQUISITES ####################################################
@@ -233,7 +233,7 @@ class SetupSolution(Protocol):
 
 
 def _is_poetry_solution(solution_root_dir: Path) -> bool:
-    return detect_solution_backend(solution_root_dir).backend is SolutionBackend.POETRY
+    return detect_solution_backend(solution_root_dir) is SolutionBackend.POETRY
 
 
 def _copy_installer_next_to_solution(solution_root_dir: Path) -> Path:
@@ -379,18 +379,20 @@ def setup_solution() -> SetupSolution:
 @pytest.fixture(scope="session")
 def session_solution_factory(
     tmp_path_factory: pytest.TempPathFactory,
+    solution_backend: SolutionBackend,
 ) -> Callable[[str], tuple[Path, Path, str, str, str]]:
     """Factory to create session solutions with different parameters."""
 
     def _get_or_create_solution(solution_name: str = "my-solution-dash") -> tuple[Path, Path, str, str, str]:
-        if solution_name in _session_solutions_cache:
+        cache_key = (solution_backend, solution_name)
+        if cache_key in _session_solutions_cache:
             logger.info(f"Using cached session solution: {solution_name}")
-            return _session_solutions_cache[solution_name]
+            return _session_solutions_cache[cache_key]
 
         logger.info(f"Creating new session solution: {solution_name}")
 
         # Create a session-level temp directory
-        session_tmp = tmp_path_factory.mktemp(f"session_solution_{solution_name}")
+        session_tmp = tmp_path_factory.mktemp(f"session_solution_{solution_backend.value}_{solution_name}")
 
         # Copy the solution template to session directory
         test_assets_dir = Path(__file__).parent.parent / "mocks"
@@ -400,13 +402,13 @@ def session_solution_factory(
             raise ValueError(f"Solution template not found: {template_dir}")
 
         solution_root_dir = session_tmp / solution_name
-        shutil.copytree(template_dir, solution_root_dir)
+        copy_mock_solution(template_dir, solution_root_dir, solution_backend)
 
         # Use the extracted _setup_solution function directly
         solution_venv_python_exec, glow_api_port, glow_ui_port, portal_ui_port = _setup_solution(solution_root_dir)
 
         result = (solution_root_dir, solution_venv_python_exec, glow_api_port, glow_ui_port, portal_ui_port)
-        _session_solutions_cache[solution_name] = result
+        _session_solutions_cache[cache_key] = result
         logger.info(f"Cached session solution: {solution_name}")
         return result
 

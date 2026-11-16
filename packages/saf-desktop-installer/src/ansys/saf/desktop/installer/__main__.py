@@ -92,7 +92,7 @@ def _prepare_poetry_backend(offline_package: bool) -> None:
 
 
 def package_solution(solution_info: SolutionInfo, installer_config: InstallerConfig) -> None:
-    backend = detect_solution_backend(solution_info.solution_root_dir).backend
+    backend = detect_solution_backend(solution_info.solution_root_dir)
     if backend is SolutionBackend.POETRY:
         _prepare_poetry_backend(installer_config.offline_package)
 

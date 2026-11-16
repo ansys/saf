@@ -316,6 +316,29 @@ def test_uv_installation_project_keeps_static_version(tmp_path: Path) -> None:
     assert project["project"] == {"name": "my-solution", "version": "1.0"}
 
 
+def test_uv_installation_dependency_groups_exclude_build_tools() -> None:
+    dependency_groups = {
+        "desktop": [
+            "ansys-saf-desktop-installer[all]>=1.16,<2.0",
+            "PyInstaller>=6.0",
+            "tqdm>=4.0",
+            {"include-group": "shared"},
+        ],
+        "ui": ["dash>=3.0"],
+        "build": ["ansys-saf-desktop-installer[all]>=1.16,<2.0"],
+    }
+
+    selected_groups = manage_dependencies._uv_installation_dependency_groups(  # pyright: ignore[reportPrivateUsage]
+        dependency_groups,
+        ["desktop", "ui"],
+    )
+
+    assert selected_groups == {
+        "desktop": ["tqdm>=4.0", {"include-group": "shared"}],
+        "ui": ["dash>=3.0"],
+    }
+
+
 def test_rewrite_uv_local_sources_points_at_staged_wheels(tmp_path: Path) -> None:
     """Rewrite local project sources to portable wheelhouse paths."""
     project_root = tmp_path / "source"

@@ -95,6 +95,7 @@ class TestInstaller:
         self,
         tmp_path: Path,
         solution_root_dir: Path,
+        solution_backend: SolutionBackend,
         setup_solution: SetupSolution,
         build_solution: BuildSolution,
         install_solution: InstallSolution,
@@ -492,6 +493,7 @@ class TestInstaller:
         self,
         tmp_path: Path,
         solution_root_dir: Path,
+        solution_backend: SolutionBackend,
         setup_solution: SetupSolution,
         build_solution: BuildSolution,
         install_solution: InstallSolution,
@@ -510,14 +512,30 @@ class TestInstaller:
         # python-pptx-0.6.19.tar.gz becomes python_pptx-0.6.19-py3-none-any.whl (first dash becomes and underscore)
         solution_env = os.environ.copy()
         solution_env.pop("VIRTUAL_ENV", None)
-        subprocess.check_output(
-            ["uv", "add", "--no-sync", "python-pptx==0.6.19"], env=solution_env, cwd=solution_root_dir
-        )
-        subprocess.check_output(
-            ["uv", "sync", "--all-groups", "--python", sys.executable],
-            env=solution_env,
-            cwd=solution_root_dir,
-        )
+        if solution_backend is SolutionBackend.UV:
+            subprocess.check_output(
+                ["uv", "add", "--no-sync", "python-pptx==0.6.19"], env=solution_env, cwd=solution_root_dir
+            )
+            subprocess.check_output(
+                ["uv", "sync", "--all-groups", "--python", sys.executable],
+                env=solution_env,
+                cwd=solution_root_dir,
+            )
+        else:
+            solution_env["VIRTUAL_ENV"] = str(solution_venv_python_exec.parent.parent)
+            poetry_executable = solution_venv_python_exec.with_name(
+                "poetry.exe" if sys.platform == "win32" else "poetry"
+            )
+            subprocess.check_output(
+                [poetry_executable, "add", "--no-interaction", "python-pptx==0.6.19"],
+                env=solution_env,
+                cwd=solution_root_dir,
+            )
+            subprocess.check_output(
+                [poetry_executable, "install", "--all-groups"],
+                env=solution_env,
+                cwd=solution_root_dir,
+            )
         # Check that the extra dependency is installed in the solution environment
         result = subprocess.run(
             ["uv", "pip", "show", "--python", solution_venv_python_exec, "python-pptx"],
@@ -1411,6 +1429,7 @@ class TestInstallerCustomNamespace:
         self,
         tmp_path: Path,
         solution_root_dir: Path,
+        solution_backend: SolutionBackend,
         glow_solution_definition: str | None,
         setup_solution: SetupSolution,
         build_solution: BuildSolution,
@@ -1435,7 +1454,7 @@ class TestInstallerCustomNamespace:
             solution_root_dir,
             with_documentation=False,
             with_method_assets=False,
-            expected_non_ansys_wheels=0,
+            expected_non_ansys_wheels=1 if solution_backend is SolutionBackend.POETRY else 0,
         )
 
         metadata_path = solution_root_dir / "dist" / "solution" / "solution-metadata.json"

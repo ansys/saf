@@ -714,6 +714,23 @@ def _with_uv_marker(requirement: str, package: dict[str, Any]) -> str:
     return f"{requirement} ; {marker}"
 
 
+def _uv_installation_dependency_groups(
+    dependency_groups: dict[str, Any],
+    selected_groups: list[str],
+) -> dict[str, list[Any]]:
+    excluded_dependencies = {"ansys-saf-desktop-installer", "pyinstaller"}
+    return {
+        group: [
+            dependency
+            for dependency in dependency_groups[group]
+            if not (
+                isinstance(dependency, str) and canonicalize_name(Requirement(dependency).name) in excluded_dependencies
+            )
+        ]
+        for group in selected_groups
+    }
+
+
 def _use_built_uv_solution_version(project: dict[str, Any], definitions_folder: Path) -> None:
     """Replace a dynamic project version with the built solution wheel version so UV can lock without building."""
     metadata = project.get("project")
@@ -758,7 +775,7 @@ def create_uv_installation_project(
         raise ValueError(f"'dependency-groups' must be a table in '{project_file}'.")
 
     selected_groups = [group for group in groups if group in dependency_groups]
-    project["dependency-groups"] = {group: dependency_groups[group] for group in selected_groups}
+    project["dependency-groups"] = _uv_installation_dependency_groups(dependency_groups, selected_groups)
     _use_built_uv_solution_version(project, definitions_folder)
     # An installer targets the build's operating system, so the packaged lock only needs that platform. Offline
     # packages also pin the Python minor version, because their wheelhouse only holds wheels for that version.

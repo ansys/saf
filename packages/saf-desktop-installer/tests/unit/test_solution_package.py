@@ -262,18 +262,38 @@ def test_stage_uv_selected_local_wheel_checks_hash(tmp_path: Path, mocker: pytes
         )
 
 
-@pytest.mark.parametrize("offline_package", [False, True])
-def test_refresh_uv_project_lock_uses_network_only_for_online_packages(
-    tmp_path: Path,
-    mocker: pytest_mock.MockerFixture,
-    offline_package: bool,
-) -> None:
-    """Online packages may need registry metadata that is not in the local UV cache."""
-    run = mocker.patch.object(manage_dependencies.subprocess, "run")
+def test_refresh_uv_project_lock_updates_only_staged_wheel_hashes(tmp_path: Path) -> None:
+    """Refresh hashes for obfuscated local wheels without changing registry artifacts."""
+    wheelhouse = tmp_path / "wheelhouse"
+    wheelhouse.mkdir()
+    wheel_name = "local-package-1.0-py3-none-any.whl"
+    wheel = wheelhouse / wheel_name
+    wheel.write_bytes(b"obfuscated wheel")
+    lock_file = tmp_path / "uv.lock"
+    lock_file.write_text(
+        f"""
+[[package]]
+name = "local-package"
+version = "1.0"
+source = {{ path = "wheelhouse/{wheel_name}" }}
+wheels = [{{ filename = "{wheel_name}", hash = "sha256:old-hash" }}]
 
-    manage_dependencies.refresh_uv_project_lock(tmp_path, tmp_path / "python.exe", offline_package)
+[[package]]
+name = "registry-package"
+version = "1.0"
+source = {{ registry = "https://pypi.org/simple" }}
+wheels = [{{ filename = "registry_package-1.0-py3-none-any.whl", hash = "sha256:registry-hash" }}]
+""",
+        encoding="utf-8",
+    )
 
-    assert ("--offline" in run.call_args.args[0]) is offline_package
+    manage_dependencies.refresh_uv_project_lock(tmp_path)
+
+    packages = load_toml(lock_file)["package"]
+    local_package = next(package for package in packages if package["name"] == "local-package")
+    registry_package = next(package for package in packages if package["name"] == "registry-package")
+    assert local_package["wheels"][0]["hash"] == f"sha256:{hashlib.sha256(wheel.read_bytes()).hexdigest()}"
+    assert registry_package["wheels"][0]["hash"] == "sha256:registry-hash"
 
 
 def test_uv_installation_project_uses_built_dynamic_version(tmp_path: Path) -> None:

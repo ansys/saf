@@ -32,6 +32,7 @@ from selenium.webdriver.chrome.webdriver import WebDriver
 import tomlkit
 
 from ansys.saf.desktop.installer._common.utils import load_toml
+from ansys.saf.desktop.installer._package.backend_detection import SolutionBackend
 from ansys.saf.desktop.installer._package.config import (
     DESKTOP_ORCHESTRATOR_MODULE_NAME,
     DESKTOP_ORCHESTRATOR_PACKAGE_NAME,
@@ -43,7 +44,6 @@ from ansys.saf.testing.selenium import (
     wait_for_element_and_click,
     wait_for_partial_text,
 )
-from tests.conftest import use_poetry_mock_solution
 from tests.e2e.conftest import (
     BuildSolution,
     ExecuteSolution,
@@ -1108,9 +1108,8 @@ class TestInstaller:
             session_selenium_webdriver,
         )
 
-    @use_poetry_mock_solution
-    @pytest.mark.usefixtures("disable_global_poetry_virtualenvs_creation")
-    def test_poetry_solution_offline_package_install_and_launch(
+    @pytest.mark.parametrize("solution_root_dir", ["my-solution-dash-old"], indirect=True)
+    def test_installer_with_solution_with_installer_duplicated_in_desktop_group(
         self,
         tmp_path: Path,
         solution_root_dir: Path,
@@ -1122,42 +1121,22 @@ class TestInstaller:
         session_selenium_webdriver: WebDriver,
     ):
         """
-        Poetry compatibility test. A legacy Poetry solution, with the installer in both its desktop and build groups,
-        is built with --offline-package and installed and launched without internet access. We check:
-
-        - that the build warns that Poetry-based solutions are deprecated,
-        - that a missing poetry-plugin-export is installed to allow the offline build,
-        - that the built solution files exist,
-        - that the solution installs with Poetry offline and its dependencies are installed, and
-        - that the solution executes correctly.
+        Test saf-desktop-installer when a solution has it in the desktop group and in the build group. This is legacy
+        behaviour, SAF-CLI minor than 3.6.0. Modern solutions only have it in the build group.
         """
         solution_venv_python_exec, glow_api_port, glow_ui_port, portal_ui_port = setup_solution(solution_root_dir)
 
-        poetry_venv_python_exec = (
-            solution_root_dir
-            / ".poetry"
-            / ".venv"
-            / ("Scripts" if platform.system() == "Windows" else "bin")
-            / ("python.exe" if platform.system() == "Windows" else "python")
+        build_solution(["--offline-package"], solution_venv_python_exec, solution_root_dir)
+        check_built_solution_files(
+            solution_root_dir,
+            with_documentation=False,
+            offline_package=True,
+            with_method_assets=False,
         )
-        assert poetry_venv_python_exec.is_file()
-        result = subprocess.run([poetry_venv_python_exec, "-m", "pip", "uninstall", "-y", "poetry-plugin-export"])
-        assert result.returncode == 0
-
-        desktop_installer_output = build_solution(["--offline-package"], solution_venv_python_exec, solution_root_dir)
-        assert find_msg_in_output("Poetry-based solutions are deprecated", desktop_installer_output)
-        assert find_msg_in_output(
-            "Installing poetry-plugin-export in the poetry environment to allow build with --offline-package",
-            desktop_installer_output,
-        )
-        result = subprocess.run([poetry_venv_python_exec, "-m", "pip", "show", "poetry-plugin-export"])
-        assert result.returncode == 0
-        check_built_solution_files(solution_root_dir, offline_package=True, with_method_assets=False)
 
         # Block internet access to verify offline installation and execution works without network connectivity.
         with _block_internet_access():
             installation_output = install_solution(solution_root_dir, tmp_path)
-            assert not find_msg_in_output("installing using pip", installation_output)
             assert find_msg_in_output("Preload application", installation_output)
             assert find_msg_in_output("Execution time:", installation_output)
             assert_webview2_is_checked(installation_output)
@@ -1199,6 +1178,70 @@ class TestInstaller:
 
         args = ["--offline-package"]
         build_solution(args, solution_venv_python_exec, solution_root_dir)
+        check_built_solution_files(solution_root_dir, offline_package=True)
+
+        # Block internet access to verify offline installation and execution works without network connectivity.
+        with _block_internet_access():
+            installation_output = install_solution(solution_root_dir, tmp_path, extra_flags=["--use-pip"])
+            assert find_msg_in_output("Preload application", installation_output)
+            assert find_msg_in_output("Execution time:", installation_output)
+            assert_webview2_is_checked(installation_output)
+            assert_long_paths_are_checked(installation_output)
+            shortcut_path = check_installed_solution_files(tmp_path, solution_root_dir)
+            cleanup_shortcut.append(shortcut_path)
+            check_solution_module_preload_is_executed(tmp_path, solution_root_dir)
+            check_dependencies(
+                tmp_path,
+                solution_root_dir,
+                required_dependencies=["tqdm", "pooch", "custom-package-for-test-2", "scooby"],
+                excluded_dependencies=["ansys-saf-desktop-installer", "pyinstaller"],
+            )
+
+            solution_proc = execute_solution(shortcut_path, solution_root_dir)
+            check_solution_launched_correctly(
+                solution_proc,
+                glow_api_port,
+                glow_ui_port,
+                portal_ui_port,
+                session_selenium_webdriver,
+            )
+
+    @pytest.mark.parametrize("solution_backend", [SolutionBackend.POETRY], indirect=True)
+    def test_installer_with_offline_package_and_no_export_plugin(
+        self,
+        tmp_path: Path,
+        solution_root_dir: Path,
+        setup_solution: SetupSolution,
+        build_solution: BuildSolution,
+        install_solution: InstallSolution,
+        execute_solution: ExecuteSolution,
+        cleanup_shortcut: list[Path],
+        session_selenium_webdriver: WebDriver,
+    ):
+        """
+        Test saf-desktop-installer installation using --offline-package without poetry-plugin-export.
+        """
+        solution_venv_python_exec, glow_api_port, glow_ui_port, portal_ui_port = setup_solution(solution_root_dir)
+
+        poetry_venv_python_exec = (
+            solution_root_dir
+            / ".poetry"
+            / ".venv"
+            / ("Scripts" if platform.system() == "Windows" else "bin")
+            / ("python.exe" if platform.system() == "Windows" else "python")
+        )
+        assert poetry_venv_python_exec.is_file()
+        result = subprocess.run([poetry_venv_python_exec, "-m", "pip", "uninstall", "-y", "poetry-plugin-export"])
+        assert result.returncode == 0
+
+        args = ["--offline-package"]
+        desktop_installer_output = build_solution(args, solution_venv_python_exec, solution_root_dir)
+        assert find_msg_in_output(
+            "Installing poetry-plugin-export in the poetry environment to allow build with --offline-package",
+            desktop_installer_output,
+        )
+        result = subprocess.run([poetry_venv_python_exec, "-m", "pip", "show", "poetry-plugin-export"])
+        assert result.returncode == 0
         check_built_solution_files(solution_root_dir, offline_package=True)
 
         # Block internet access to verify offline installation and execution works without network connectivity.
@@ -1353,7 +1396,12 @@ class TestInstallerCustomNamespace:
             solution_root_dir,
         )
         build_solution([], solution_venv_python_exec, solution_root_dir)
-        check_built_solution_files(solution_root_dir, with_documentation=False, with_method_assets=False)
+        check_built_solution_files(
+            solution_root_dir,
+            with_documentation=False,
+            with_method_assets=False,
+            expected_non_ansys_wheels=0,
+        )
 
         metadata_path = solution_root_dir / "dist" / "solution" / "solution-metadata.json"
         assert metadata_path.is_file(), "solution-metadata.json was not generated"

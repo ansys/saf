@@ -43,6 +43,7 @@ import pytest
 from selenium.webdriver.chrome.webdriver import WebDriver
 from selenium.webdriver.common.by import By
 from tenacity import TryAgain, retry, stop_after_attempt, wait_fixed
+import tomlkit
 
 from ansys.saf.desktop.installer.__main__ import _load_filtered_dotenv  # pyright: ignore[reportPrivateUsage]
 from ansys.saf.desktop.installer._common.utils import load_toml
@@ -95,6 +96,16 @@ SOLUTION_EXTRA_PACKAGES = {
 logger = logging.getLogger(__name__)
 # Cache for session solutions
 _session_solutions_cache: dict[tuple[SolutionBackend, str], tuple[Path, Path, str, str, str]] = {}
+
+
+@pytest.fixture(
+    scope="session",
+    params=[SolutionBackend.UV, SolutionBackend.POETRY],
+    ids=lambda backend: backend.value,
+)
+def solution_backend(request: pytest.FixtureRequest) -> SolutionBackend:
+    """Run E2E scenarios against both supported solution backends."""
+    return SolutionBackend(request.param)
 
 
 #################################################### PREREQUISITES ####################################################
@@ -182,6 +193,15 @@ def modify_solution_module_name(solution_root_dir: Path) -> None:
     for path in solution_root_dir.rglob("src/**/*.py"):
         file_path = solution_root_dir / path
         file_path.write_text(file_path.read_text().replace(old_dotted, new_dotted))
+
+    pyproject_path = solution_root_dir / "pyproject.toml"
+    pyproject = tomlkit.parse(pyproject_path.read_text(encoding="utf-8"))
+    package_data = pyproject.get("tool", {}).get("setuptools", {}).get("package-data")
+    old_package = ".".join([*namespace_root_parts, old_module_name])
+    new_package = ".".join([*namespace_root_parts, new_module_name])
+    if package_data and old_package in package_data:
+        package_data[new_package] = package_data.pop(old_package)
+        pyproject_path.write_text(tomlkit.dumps(pyproject), encoding="utf-8")
 
 
 ################################################### SOLUTION SETUP ####################################################
@@ -560,6 +580,7 @@ def check_built_solution_files(
     python_version: str | None = None,
     force_python_from_source: bool = False,
     executable_as_dir: bool = False,
+    expected_non_ansys_wheels: int | None = None,
 ):
     solution_module_name = _get_solution_module_name(solution_root_dir)
 
@@ -617,9 +638,9 @@ def check_built_solution_files(
         assert any(f.name.startswith("aiofiles-") for f in staged_wheels)
         assert len(staged_wheels) > len(staged_ansys_wheels) + 10
     else:
-        # The only non ansys_*.whl staged wheels are the custom-package-for-test-2 local wheel and, for UV, scooby,
-        # which is required through a direct wheel URL (Poetry resolves it from PyPI instead)
-        expected_non_ansys_wheels = 1 if _is_poetry_solution(solution_root_dir) else 2
+        if expected_non_ansys_wheels is None:
+            # The default mock stages custom-package-for-test-2 and, for UV, scooby from a direct wheel URL.
+            expected_non_ansys_wheels = 1 if _is_poetry_solution(solution_root_dir) else 2
         assert len(staged_wheels) == len(staged_ansys_wheels) + expected_non_ansys_wheels
 
     installer_path = _get_solution_installer_path(solution_root_dir)

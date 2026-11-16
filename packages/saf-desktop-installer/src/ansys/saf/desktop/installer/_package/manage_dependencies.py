@@ -859,20 +859,39 @@ def _uv_lock_command(uv_executable: str | Path, python_exec: Path, offline_packa
     return command
 
 
-def refresh_uv_project_lock(definitions_folder: Path, python_exec: Path, offline_package: bool = False) -> None:
-    """Recalculate local wheel hashes after obfuscation."""
-    executable_name = "uv.exe" if platform.system() == "Windows" else "uv"
-    uv_executable = definitions_folder / "tools" / executable_name
-    try:
-        subprocess.run(
-            _uv_lock_command(uv_executable, python_exec, offline_package),
-            cwd=definitions_folder,
-            check=True,
-            capture_output=True,
-            text=True,
-        )
-    except subprocess.CalledProcessError as e:
-        raise RuntimeError(f"Failed to refresh portable UV lockfile: {e.stderr}") from e
+def refresh_uv_project_lock(definitions_folder: Path) -> None:
+    """Update lock hashes for local wheels modified during obfuscation."""
+    lock_file = definitions_folder / "uv.lock"
+    lock = tomlkit.parse(lock_file.read_text(encoding="utf-8"))
+    packages = lock.get("package")
+    if not isinstance(packages, list):
+        raise ValueError(f"No package list found in '{lock_file}'.")
+
+    wheelhouse = (definitions_folder / "wheelhouse").resolve()
+    for package in packages:
+        source = package.get("source")
+        if not isinstance(source, dict) or not isinstance(source.get("path"), str):
+            continue
+
+        wheel_path = (definitions_folder / source["path"]).resolve()
+        if wheelhouse not in wheel_path.parents or wheel_path.suffix != ".whl":
+            continue
+        if not wheel_path.is_file():
+            raise FileNotFoundError(f"Staged wheel referenced by '{lock_file}' does not exist: {wheel_path}")
+
+        package_wheels = package.get("wheels")
+        if not isinstance(package_wheels, list):
+            raise ValueError(f"No wheel metadata found for staged package in '{lock_file}': {package.get('name')}")
+        matching_wheels = [
+            wheel for wheel in package_wheels if isinstance(wheel, dict) and wheel.get("filename") == wheel_path.name
+        ]
+        if len(matching_wheels) != 1:
+            raise ValueError(f"Expected one lock entry for staged wheel '{wheel_path.name}' in '{lock_file}'.")
+
+        digest = hashlib.sha256(wheel_path.read_bytes()).hexdigest()
+        matching_wheels[0]["hash"] = f"sha256:{digest}"
+
+    lock_file.write_text(tomlkit.dumps(lock), encoding="utf-8")
 
 
 def _pin_staged_wheel_url_dependencies(wheelhouse: Path) -> None:
@@ -1425,7 +1444,7 @@ def build_and_stage_solution_packages(
     if installer_config.obfuscate:
         obfuscate_solution(definitions_folder, venv_python_exec)
         if backend is SolutionBackend.UV:
-            refresh_uv_project_lock(definitions_folder, venv_python_exec, installer_config.offline_package)
+            refresh_uv_project_lock(definitions_folder)
     if installer_config.offline_package and backend is SolutionBackend.POETRY:
         _download_poetry_external_dependencies(
             definitions_folder,

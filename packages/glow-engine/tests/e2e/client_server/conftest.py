@@ -16,12 +16,13 @@
 
 from collections.abc import Callable, Generator
 from pathlib import Path
+import time
 from typing import TypeVar
 
 import pytest
 
 from ansys.saf.glow.client import Client
-from ansys.saf.glow.solution import Solution
+from ansys.saf.glow.solution import MethodState, Solution
 from ansys.saf.testing.solution.end_to_end import EnableAutomaticProjectMigrationConfig, GlowBaseProcess, ProjectFixture
 from tests.e2e.client_server.migration_helper import upgrade_or_import_project
 
@@ -86,3 +87,21 @@ def project_migrator(
         return project_initializer_and_migrator(mod, lambda _: None)
 
     return f
+
+
+def wait_for_method(
+    method_name: str,
+    state_retrieval_func: Callable[[str], MethodState],
+    status_to_exit: str,
+    max_tries: int = 250,
+    wait_seconds: float = 0.2,
+):
+    tries = 0
+    while state_retrieval_func(method_name).status == status_to_exit:
+        time.sleep(wait_seconds)
+        tries += 1
+        if tries > max_tries:
+            pytest.fail(
+                f"Max number of tries reached while waiting for {method_name} "
+                f"to exit status {status_to_exit} using function {state_retrieval_func}.",
+            )

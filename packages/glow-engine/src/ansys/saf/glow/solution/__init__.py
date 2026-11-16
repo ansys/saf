@@ -20,6 +20,7 @@ from ansys.saf.glow._core.field_state import FieldState
 from ansys.saf.glow._core.instance.decorator import create_instance, instance
 from ansys.saf.glow._core.instance.manager import InstanceManager, ProductInstanceManager
 from ansys.saf.glow._core.instance.recoverystate import RecoveryStateInfo
+from ansys.saf.glow._core.live_files import LiveFile
 from ansys.saf.glow._core.long_running import long_running
 from ansys.saf.glow._core.method_status import MethodState, MethodStatus
 from ansys.saf.glow._core.migrations import Migration, MigrationContext, MigrationTransformation
@@ -49,6 +50,7 @@ __all__ = [
     "ForbiddenError",
     "FieldState",
     "instance",
+    "LiveFile",
     "MigrationContext",
     "long_running",
     "MethodIdentifier",

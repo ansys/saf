@@ -50,6 +50,7 @@ class ProjectProxy:
         context_mgr_used: bool = False,
     ) -> None:
         self._name = name
+        self._project_id = name.removeprefix("projects/")
         self._solution_type = solution_type
         self._url = url
         self._external_url = external_url
@@ -70,6 +71,7 @@ class ProjectProxy:
             url: str,
             external_url: str,
             http_client: httpx2.Client,
+            project_id: str,
             project_files_dir: Path,
             graphql_client: GqlClientConnectionPool,
             access_token: str | None = None,
@@ -78,6 +80,7 @@ class ProjectProxy:
             self._url = url
             self._external_url = external_url
             self._http_client = http_client
+            self._project_id = project_id
             self._project_files_dir = project_files_dir
             self._graphql_client = graphql_client
             self._access_token = access_token
@@ -91,6 +94,7 @@ class ProjectProxy:
                     step_name=name,
                     step_model_type=step_model_type,
                     http_client=self._http_client,
+                    project_id=self._project_id,
                     project_files_dir=self._project_files_dir,
                     graphql_client=self._graphql_client,
                 )
@@ -107,6 +111,7 @@ class ProjectProxy:
             url=self._url,
             external_url=self._external_url,
             http_client=self._http_client,
+            project_id=self._project_id,
             project_files_dir=self._project_files_dir,
             graphql_client=self._graphql_client,
             access_token=self._access_token,
@@ -118,7 +123,7 @@ class ProjectProxy:
 
     @property
     def project_id(self) -> str:
-        return self._name.removeprefix("projects/")
+        return self._project_id
 
     @property
     def project_name(self) -> str:

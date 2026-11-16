@@ -23,13 +23,13 @@ import shutil
 import subprocess
 import sys
 from threading import Thread
-import tomllib
 from zipfile import ZipFile
 
 import pytest
-import toml
+import tomlkit
 
 from ansys.saf.desktop.installer.__main__ import package_solution
+from ansys.saf.desktop.installer._common.utils import load_toml
 from ansys.saf.desktop.installer._package import manage_dependencies
 from ansys.saf.desktop.installer._package.backend_detection import SolutionBackend
 from ansys.saf.desktop.installer._package.config import InstallerConfig
@@ -93,7 +93,7 @@ def test_uv_offline_lock_uses_staged_transitive_wheels(tmp_path: Path) -> None:
         wheelhouse,
         include_public_registry_packages=True,
     )
-    (tmp_path / "pyproject.toml").write_text(toml.dumps(project), encoding="utf-8")
+    (tmp_path / "pyproject.toml").write_text(tomlkit.dumps(project), encoding="utf-8")
     for action in ("lock", "sync"):
         command = [
             uv,
@@ -108,7 +108,7 @@ def test_uv_offline_lock_uses_staged_transitive_wheels(tmp_path: Path) -> None:
         if action == "sync":
             command.extend(["--locked", "--find-links", str(wheelhouse)])
         subprocess.run(command, cwd=tmp_path, check=True, capture_output=True, text=True)
-    lock = tomllib.loads((tmp_path / "uv.lock").read_text(encoding="utf-8"))
+    lock = load_toml(tmp_path / "uv.lock")
     assert {package["name"] for package in lock["package"]} == {
         "portable-test",
         "portable-parent",

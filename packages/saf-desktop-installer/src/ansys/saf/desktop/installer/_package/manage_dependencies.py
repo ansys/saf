@@ -31,7 +31,6 @@ import shutil
 import subprocess
 import sys
 import tempfile
-import tomllib
 from typing import Any
 from urllib.parse import parse_qsl, quote, unquote, urlencode, urlsplit, urlunsplit
 import zipfile
@@ -40,9 +39,10 @@ from packaging.markers import Marker
 from packaging.requirements import InvalidRequirement, Requirement
 from packaging.utils import canonicalize_name, parse_sdist_filename, parse_wheel_filename
 from packaging.version import Version
-import toml
+import tomlkit
 
 from ansys.saf.desktop.installer._common.utils import (
+    load_toml,
     modify_solution_wheel_metadata,
     simplify_wheel_dependency_constraints,
 )
@@ -80,7 +80,7 @@ def _check_poetry_readme_file_from_pyproject(pyproject_location: Path) -> Path:
     Args:
         pyproject_location (Path): Path to the pyproject.toml file.
     """
-    pyproject_toml_content = toml.load(pyproject_location)
+    pyproject_toml_content = load_toml(pyproject_location)
     pyproject_readme_value = pyproject_toml_content.get("tool", {}).get("poetry", {}).get("readme")
 
     if not pyproject_readme_value:
@@ -356,7 +356,7 @@ def _get_poetry_packages_with_wheel_url_dependencies(poetry_lock_file: Path) -> 
         list[tuple[str, str]]: List of packages with wheel URL dependencies.
             Format: (package_name, package_version).
     """
-    lock_file_content = toml.load(poetry_lock_file)
+    lock_file_content = load_toml(poetry_lock_file)
     packages_with_wheel_url_deps: list[tuple[str, str]] = []
     for package in lock_file_content["package"]:
         if _has_poetry_wheel_url_dependencies(package) and _poetry_package_matches_platform(package):
@@ -384,7 +384,7 @@ def _stage_poetry_locked_dependencies(
             Format: (package_name, package_version).
     """
     logger.info(f"Downloading dependencies from {poetry_lock_file} to {module_directory}.")
-    lock_file_content = toml.load(poetry_lock_file)
+    lock_file_content = load_toml(poetry_lock_file)
     for package in lock_file_content["package"]:
         if (
             package["name"] in ["python"]
@@ -462,8 +462,7 @@ def export_uv_requirements(solution_root_dir: Path, python_exec: Path, requireme
     if not lock_file.is_file():
         raise FileNotFoundError(f"UV lockfile not found: {lock_file}")
 
-    with project_file.open("rb") as project:
-        configuration = tomllib.load(project)
+    configuration = load_toml(project_file)
     groups = configuration.get("dependency-groups", {})
     if not isinstance(groups, dict):
         raise ValueError(f"'dependency-groups' must be a table in '{project_file}'.")
@@ -496,8 +495,7 @@ def _selected_uv_lock_packages(
 ) -> list[dict[str, Any]]:
     """Select native UV lock entries represented in UV's target-specific requirements export."""
     lock_file = solution_root_dir / "uv.lock"
-    with lock_file.open("rb") as source_file:
-        lock = tomllib.load(source_file)
+    lock = load_toml(lock_file)
     if lock.get("version") != 1:
         raise ValueError(f"Unsupported UV lockfile version in {lock_file}: {lock.get('version')!r}")
     packages = lock.get("package", [])
@@ -773,8 +771,7 @@ def create_uv_installation_project(
     project_file = solution_root_dir / "pyproject.toml"
     lock_file = solution_root_dir / "uv.lock"
     groups = ["desktop", "ui", "doc"]
-    with project_file.open("rb") as source_file:
-        project = tomllib.load(source_file)
+    project = load_toml(project_file)
     dependency_groups = project.get("dependency-groups", {})
     if not isinstance(dependency_groups, dict):
         raise ValueError(f"'dependency-groups' must be a table in '{project_file}'.")
@@ -816,7 +813,7 @@ def create_uv_installation_project(
         )
 
     project_path = definitions_folder / "pyproject.toml"
-    project_path.write_text(toml.dumps(project), encoding="utf-8")
+    project_path.write_text(tomlkit.dumps(project), encoding="utf-8")
     shutil.copy2(lock_file, definitions_folder / "uv.lock")
     (definitions_folder / "uv-groups.txt").write_text("\n".join(selected_groups), encoding="utf-8")
 
@@ -1042,8 +1039,7 @@ def _stage_uv_private_dependencies(
     if not private_packages:
         return
 
-    with (solution_root_dir / "pyproject.toml").open("rb") as project_file:
-        project = tomllib.load(project_file)
+    project = load_toml(solution_root_dir / "pyproject.toml")
     indexes = project.get("tool", {}).get("uv", {}).get("index", [])
     if not isinstance(indexes, list):
         indexes = []
@@ -1174,8 +1170,7 @@ def stage_uv_external_dependencies(
             "--python",
             str(python_exec),
         ]
-        with (solution_root_dir / "pyproject.toml").open("rb") as project_file:
-            project = tomllib.load(project_file)
+        project = load_toml(solution_root_dir / "pyproject.toml")
         groups = project.get("dependency-groups", {})
         if not isinstance(groups, dict):
             raise ValueError("The 'dependency-groups' section must be a table.")
@@ -1535,7 +1530,7 @@ def create_poetry_installation_project(
     logger.info("creating poetry project for install")
     project_file = definitions_folder / "pyproject.toml"
     shutil.copy(pyproject_location, project_file)
-    project = toml.load(project_file)
+    project = load_toml(project_file)
     poetry = project["tool"]["poetry"]
     poetry["name"] = "project"
     dependencies: dict[str, Any] = poetry["dependencies"]
@@ -1560,8 +1555,7 @@ def create_poetry_installation_project(
     # downloaded external dependencies might not support the minimum python version limit.
     dependencies["python"] = dependencies["python"].replace("3.11", python_version)
 
-    with project_file.open("w") as f:
-        toml.dump(project, f)
+    project_file.write_text(tomlkit.dumps(project), encoding="utf-8")
 
     lock_location = pyproject_location.with_name("poetry.lock")
     if lock_location.is_file():
@@ -1590,7 +1584,7 @@ def relativize_poetry_lock_path_dependencies(definitions_folder: Path) -> None:
     lock_dir = definitions_folder.resolve()
 
     def _relativize(match: re.Match[str]) -> str:
-        dependency_path = Path(tomllib.loads(f"v = {match.group(2)}")["v"])
+        dependency_path = Path(tomlkit.parse(f"v = {match.group(2)}").unwrap()["v"])
         if not dependency_path.is_absolute():
             return match.group(0)
         try:
@@ -1614,7 +1608,7 @@ def write_backend_tool_requirements(
 ) -> None:
     definitions_folder = get_definitions_folder(solution_root_dir, solution_module_name)
     project_file_path = solution_root_dir / "pyproject.toml"
-    project = toml.load(project_file_path)
+    project = load_toml(project_file_path)
 
     tools_directory = definitions_folder / "tools"
     tools_directory.mkdir(parents=True, exist_ok=True)

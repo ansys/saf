@@ -36,12 +36,13 @@ import shutil
 import subprocess
 import sys
 import tempfile
-import tomllib
 from typing import Any
 
 from packaging.utils import parse_wheel_filename
 from packaging.version import InvalidVersion, Version
+from tomlkit.exceptions import TOMLKitError
 
+from ansys.saf.desktop.installer._common.utils import load_toml
 from ansys.saf.desktop.installer._package.backend_detection import (
     SolutionBackend,
     SolutionBackendError,
@@ -77,9 +78,8 @@ class _SolutionMetadata:
         self.root_dir = solution_root_dir
         self.pyproject_path = solution_root_dir / "pyproject.toml"
         try:
-            with self.pyproject_path.open("rb") as pyproject_file:
-                configuration = tomllib.load(pyproject_file)
-        except tomllib.TOMLDecodeError as error:
+            configuration = load_toml(self.pyproject_path)
+        except TOMLKitError as error:
             raise SolutionBackendError(f"Unable to parse '{self.pyproject_path}': {error}") from error
         self.backend = detect_solution_backend(solution_root_dir, configuration=configuration).backend
         project = configuration.get("project")

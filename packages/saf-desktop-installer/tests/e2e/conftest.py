@@ -43,9 +43,9 @@ import pytest
 from selenium.webdriver.chrome.webdriver import WebDriver
 from selenium.webdriver.common.by import By
 from tenacity import TryAgain, retry, stop_after_attempt, wait_fixed
-import toml
 
 from ansys.saf.desktop.installer.__main__ import _load_filtered_dotenv  # pyright: ignore[reportPrivateUsage]
+from ansys.saf.desktop.installer._common.utils import load_toml
 from ansys.saf.desktop.installer._package.backend_detection import SolutionBackend, detect_solution_backend
 from ansys.saf.desktop.installer._package.download_python import MINIMUM_REQUIRED_VERSIONS
 from ansys.saf.desktop.installer._package.solution import get_solution_namespace_info, get_solution_package_name
@@ -261,7 +261,7 @@ def _copy_installer_next_to_solution(solution_root_dir: Path) -> Path:
 
 
 def _setup_poetry_solution(solution_root_dir: Path, solution_env: dict[str, str]) -> Path:
-    solution_pyproject_data = toml.load(solution_root_dir / "pyproject.toml")
+    solution_pyproject_data = load_toml(solution_root_dir / "pyproject.toml")
 
     solution_venv_dir = solution_root_dir / ".venv"
     _create_virtual_environment(solution_venv_dir)
@@ -470,7 +470,7 @@ def _get_built_solution_embeddable_python_executable(
 
 
 def _get_expected_build_packages(build_packages_directory: Path, solution_root_dir: Path) -> list[Path]:
-    pyproject_content = toml.load(solution_root_dir / build_packages_directory / "pyproject.toml")
+    pyproject_content = load_toml(solution_root_dir / build_packages_directory / "pyproject.toml")
     expected_build_packages: list[Path] = []
     if "poetry" in pyproject_content.get("tool", {}) and "project" not in pyproject_content:
         dependencies = pyproject_content["tool"]["poetry"]["dependencies"]
@@ -649,7 +649,7 @@ def check_built_solution_files(
 def check_dependencies_can_be_upgraded(solution_root_dir: Path, solution_venv_python_exec: Path):
     is_poetry_solution = _is_poetry_solution(solution_root_dir)
     lock_path = solution_root_dir / ("poetry.lock" if is_poetry_solution else "uv.lock")
-    original_lock_data = toml.load(lock_path)
+    original_lock_data = load_toml(lock_path)
     shutil.move(lock_path, lock_path.with_suffix(".lock.bak"))
 
     if is_poetry_solution:
@@ -660,7 +660,7 @@ def check_dependencies_can_be_upgraded(solution_root_dir: Path, solution_venv_py
     else:
         subprocess.run(["uv", "lock"], cwd=solution_root_dir)
 
-    new_lock_data = toml.load(lock_path)
+    new_lock_data = load_toml(lock_path)
 
     original_packages = {
         package["name"]: package["version"] for package in original_lock_data["package"] if "version" in package
@@ -915,7 +915,7 @@ def _check_markers(markers: Any, python_version: str) -> bool:
 
 
 def _get_expected_poetry_package_versions(solution_root_dir: Path, python_version: str) -> dict[str, str]:
-    poetry_lock_data = toml.load(solution_root_dir / "poetry.lock")
+    poetry_lock_data = load_toml(solution_root_dir / "poetry.lock")
     expected_package_versions: dict[str, str] = {}
     for package in poetry_lock_data["package"]:
         if not any(group in package.get("groups", []) for group in ["main", "desktop", "ui", "doc"]) or package[
@@ -930,13 +930,13 @@ def _get_expected_poetry_package_versions(solution_root_dir: Path, python_versio
 def _get_expected_uv_package_versions(solution_root_dir: Path, python_version: str, tmp_path: Path) -> dict[str, str]:
     pylock_path = tmp_path / "pylock.expected.toml"
     cmd = ["uv", "export", "--frozen", "--format", "pylock.toml", "--no-default-groups", "--no-emit-project"]
-    groups = toml.load(solution_root_dir / "pyproject.toml").get("dependency-groups", {})
+    groups = load_toml(solution_root_dir / "pyproject.toml").get("dependency-groups", {})
     for group in ("desktop", "ui", "doc"):
         if group in groups:
             cmd += ["--group", group]
     subprocess.run([*cmd, "--output-file", str(pylock_path)], cwd=solution_root_dir, check=True, capture_output=True)
     expected_package_versions: dict[str, str] = {}
-    for package in toml.load(pylock_path)["packages"]:
+    for package in load_toml(pylock_path)["packages"]:
         if _check_markers(package.get("marker", ""), python_version):
             expected_package_versions[package["name"].replace("_", "-").lower()] = package["version"]
     return expected_package_versions
@@ -1429,7 +1429,7 @@ def disable_global_poetry_virtualenvs_creation(tmp_path: Path) -> Generator[None
     poetry_global_config_path = _get_global_poetry_config_path()
     assert poetry_global_config_path
     assert poetry_global_config_path.is_file()
-    poetry_global_config = toml.load(poetry_global_config_path)
+    poetry_global_config = load_toml(poetry_global_config_path)
     assert not poetry_global_config["virtualenvs"]["create"]
 
     yield

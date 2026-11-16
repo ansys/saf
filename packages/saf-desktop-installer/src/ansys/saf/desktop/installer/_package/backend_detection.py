@@ -19,8 +19,11 @@
 from dataclasses import dataclass
 from enum import StrEnum
 from pathlib import Path
-import tomllib
 from typing import Any, cast
+
+from tomlkit.exceptions import TOMLKitError
+
+from ansys.saf.desktop.installer._common.utils import load_toml
 
 
 class SolutionBackend(StrEnum):
@@ -55,9 +58,8 @@ def detect_solution_backend(
 
     if configuration is None:
         try:
-            with pyproject_path.open("rb") as pyproject_file:
-                configuration = tomllib.load(pyproject_file)
-        except tomllib.TOMLDecodeError as error:
+            configuration = load_toml(pyproject_path)
+        except TOMLKitError as error:
             raise SolutionBackendError(f"Unable to parse '{pyproject_path}': {error}") from error
 
     tool = _get_table(configuration, "tool", pyproject_path)

@@ -29,8 +29,9 @@ from packaging.version import parse
 from PIL import Image
 import pytest
 from selenium.webdriver.chrome.webdriver import WebDriver
-import toml
+import tomlkit
 
+from ansys.saf.desktop.installer._common.utils import load_toml
 from ansys.saf.desktop.installer._package.config import (
     DESKTOP_ORCHESTRATOR_MODULE_NAME,
     DESKTOP_ORCHESTRATOR_PACKAGE_NAME,
@@ -1014,7 +1015,7 @@ class TestInstaller:
     ):
         """Build a solution with SAF SDK extras distributed across dependency groups."""
         pyproject_path = solution_root_dir / "pyproject.toml"
-        pyproject = toml.load(pyproject_path)
+        pyproject = load_toml(pyproject_path)
         project = pyproject["project"]
         project["dependencies"] = [
             dependency for dependency in project["dependencies"] if not dependency.startswith("ansys-saf-glow-engine")
@@ -1026,15 +1027,14 @@ class TestInstaller:
             if not dependency.startswith("ansys-saf-desktop-orchestrator")
         ] + ["ansys-saf-sdk[desktop]>=0.1.0,<0.2.0"]
 
-        with pyproject_path.open("w") as pyproject_file:
-            toml.dump(pyproject, pyproject_file)
+        pyproject_path.write_text(tomlkit.dumps(pyproject), encoding="utf-8")
 
         solution_venv_python_exec, glow_api_port, glow_ui_port, portal_ui_port = setup_solution(solution_root_dir)
 
         build_solution([], solution_venv_python_exec, solution_root_dir)
         check_built_solution_files(solution_root_dir)
 
-        definitions_pyproject = toml.load(
+        definitions_pyproject = load_toml(
             solution_root_dir / "dist" / "solution" / "definitions" / "my_solution_dash" / "pyproject.toml",
         )
         assert "ansys-saf-sdk>=0.1.0,<0.2.0" in definitions_pyproject["project"]["dependencies"]

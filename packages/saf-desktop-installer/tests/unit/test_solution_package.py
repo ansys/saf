@@ -22,7 +22,6 @@ import re
 import shutil
 import subprocess
 import sys
-import tomllib
 from typing import Any
 from unittest.mock import patch
 
@@ -30,8 +29,9 @@ from packaging.markers import default_environment
 from packaging.version import Version
 import pytest
 import pytest_mock
-import toml
+import tomlkit
 
+from ansys.saf.desktop.installer._common.utils import load_toml
 from ansys.saf.desktop.installer._package import manage_dependencies
 from ansys.saf.desktop.installer._package.backend_detection import SolutionBackend
 from ansys.saf.desktop.installer._package.config import InstallerConfig
@@ -734,7 +734,7 @@ url = "my_solution-0.1.0-py3-none-any.whl"
 
     manage_dependencies.relativize_poetry_lock_path_dependencies(definitions_folder)
 
-    dependencies = toml.loads(poetry_lock.read_text(encoding="utf-8"))["package"][0]["dependencies"]
+    dependencies = load_toml(poetry_lock)["package"][0]["dependencies"]
     assert dependencies["dep"] == {"path": "dep-1.0.0-py3-none-any.whl"}
     assert dependencies["nested"] == {"path": "sub/nested-1.0.0-py3-none-any.whl"}
     assert dependencies["other"] == {"path": outside}
@@ -772,7 +772,7 @@ def test_relativize_poetry_lock_path_dependencies_with_escaped_characters(
 
     manage_dependencies.relativize_poetry_lock_path_dependencies(definitions_folder)
 
-    dependencies = tomllib.loads(poetry_lock.read_text(encoding="utf-8"))["package"][0]["dependencies"]
+    dependencies = load_toml(poetry_lock)["package"][0]["dependencies"]
     assert dependencies["dep"] == {"path": "dep-1.0.0-py3-none-any.whl"}
 
 
@@ -879,7 +879,7 @@ def mock_subprocess_calls(  # noqa: C901
     windows_nuget_expected_python_exec = python_dir / "tools" / "python.exe"
 
     def _project_name_and_version(project_dir: Path) -> tuple[str, str]:
-        pyproject = toml.load(project_dir / "pyproject.toml")
+        pyproject = load_toml(project_dir / "pyproject.toml")
         metadata = pyproject.get("project") or pyproject["tool"]["poetry"]
         return metadata["name"], metadata["version"]
 
@@ -1372,10 +1372,9 @@ def test_create_solution_metadata_marks_uv_backend(
 def test_package_with_no_readme_key_in_pyproject(solution_root_dir: Path, mock_installer_config: InstallerConfig):
     solution_info = SolutionInfo(solution_root_dir)
 
-    pyproject_content = toml.load(mock_installer_config.pyproject_location)
+    pyproject_content = load_toml(mock_installer_config.pyproject_location)
     pyproject_content.setdefault("tool", {}).setdefault("poetry", {}).pop("readme", None)
-    with Path.open(mock_installer_config.pyproject_location, "w") as f:
-        toml.dump(pyproject_content, f)
+    mock_installer_config.pyproject_location.write_text(tomlkit.dumps(pyproject_content), encoding="utf-8")
 
     with pytest.raises(
         ValueError,
@@ -1397,11 +1396,10 @@ def test_package_with_readme_key_is_not_str(
 ):
     solution_info = SolutionInfo(solution_root_dir)
 
-    pyproject_content = toml.load(mock_installer_config.pyproject_location)
+    pyproject_content = load_toml(mock_installer_config.pyproject_location)
     pyproject_content.setdefault("tool", {}).setdefault("poetry", {})["readme"] = readme_value
 
-    with Path.open(mock_installer_config.pyproject_location, "w") as f:
-        toml.dump(pyproject_content, f)
+    mock_installer_config.pyproject_location.write_text(tomlkit.dumps(pyproject_content), encoding="utf-8")
 
     expected_warning_msg = f"The readme field in {mock_installer_config.pyproject_location} is not a string."
     with pytest.raises(
@@ -1419,12 +1417,11 @@ def test_package_with_missing_readme_file(
 ):
     solution_info = SolutionInfo(solution_root_dir)
 
-    pyproject_content = toml.load(mock_installer_config.pyproject_location)
+    pyproject_content = load_toml(mock_installer_config.pyproject_location)
     readme_value = "README.md"
     pyproject_content.setdefault("tool", {}).setdefault("poetry", {})["readme"] = readme_value
 
-    with Path.open(mock_installer_config.pyproject_location, "w") as f:
-        toml.dump(pyproject_content, f)
+    mock_installer_config.pyproject_location.write_text(tomlkit.dumps(pyproject_content), encoding="utf-8")
 
     # Remove the README.md file to simulate the missing file scenario
     readme_path = solution_root_dir / readme_value
@@ -1446,12 +1443,11 @@ def test_package_with_readme_random_format(
 ):
     solution_info = SolutionInfo(solution_root_dir)
 
-    pyproject_content = toml.load(mock_installer_config.pyproject_location)
+    pyproject_content = load_toml(mock_installer_config.pyproject_location)
     readme_value = "READMEfast.py"
     pyproject_content.setdefault("tool", {}).setdefault("poetry", {})["readme"] = readme_value
 
-    with Path.open(mock_installer_config.pyproject_location, "w") as f:
-        toml.dump(pyproject_content, f)
+    mock_installer_config.pyproject_location.write_text(tomlkit.dumps(pyproject_content), encoding="utf-8")
 
     # Create a README.md file with random content
     (solution_root_dir / readme_value).touch(exist_ok=True)
@@ -1470,9 +1466,9 @@ def test_package_with_mock_solution(
 ):
     solution_info = SolutionInfo(solution_root_dir)
     pyproject_path = solution_root_dir / "pyproject.toml"
-    pyproject = toml.load(pyproject_path)
+    pyproject = load_toml(pyproject_path)
     pyproject["build-system-requirements"]["build-system-version"] = poetry_version
-    pyproject_path.write_text(toml.dumps(pyproject))
+    pyproject_path.write_text(tomlkit.dumps(pyproject), encoding="utf-8")
     with patch("ansys.saf.desktop.installer._package.manage_dependencies.modify_solution_wheel_metadata"):
         setup_solution_folder(solution_info, mock_installer_config)
     build_executable_installer(
@@ -1527,7 +1523,7 @@ def test_package_with_mock_solution(
     assert pip_requirements.is_file()
     assert "pip==" in pip_requirements.read_text()
     assert poetry_requirements.is_file()
-    pyproject = toml.load(solution_root_dir / "pyproject.toml")
+    pyproject = load_toml(solution_root_dir / "pyproject.toml")
     assert pyproject["build-system-requirements"]["build-system-version"] == poetry_version
     poetry_requirements_content = poetry_requirements.read_text()
     assert f"poetry=={poetry_version}" in poetry_requirements_content

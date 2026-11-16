@@ -22,14 +22,19 @@ import re
 import subprocess
 import tarfile
 import tempfile
-import tomllib
+from typing import Any
 import zipfile
 
 from packaging.markers import Marker
 from packaging.requirements import Requirement
 from packaging.utils import canonicalize_name, parse_wheel_filename
 from packaging.version import Version
-import toml
+import tomlkit
+
+
+def load_toml(path: Path) -> dict[str, Any]:
+    """Read a TOML file as plain Python data. Raises ``tomlkit.exceptions.TOMLKitError`` on invalid TOML."""
+    return tomlkit.parse(path.read_text(encoding="utf-8")).unwrap()
 
 
 def matches_current_platform(markers: str) -> bool:
@@ -276,12 +281,11 @@ def has_portal_dependency(solution_root_dir: Path) -> bool:
     uv_lock = solution_root_dir / "uv.lock"
     poetry_lock = solution_root_dir / "poetry.lock"
     if uv_lock.is_file():
-        with uv_lock.open("rb") as lock_file:
-            packages = tomllib.load(lock_file).get("package", [])
+        packages = load_toml(uv_lock).get("package", [])
     else:
         if not poetry_lock.is_file():
             raise FileNotFoundError(f"No supported lockfile found in {solution_root_dir}.")
-        packages = toml.load(poetry_lock).get("package", [])
+        packages = load_toml(poetry_lock).get("package", [])
     return any(
         package.get("name") in {"ansys-saf-desktop-portal", "ansys-saf-portal", "ansys-saf-projects-dashboard"}
         for package in packages

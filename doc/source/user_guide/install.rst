@@ -229,10 +229,10 @@ Both SAF CLI and Solutions Manager manage dependencies by driving Poetry, the de
            The dependency groups shown are populated from the solution's ``pyproject.toml`` file. Expand a group to view the packages installed in the solution environment.
 
            .. note::
-               Packages installed from a private source are marked with a lock icon. For more information, see :ref:`user_guide_install_manage_dependencies_private_packages`.
+               To see the source of a package, hover over it in the view. For more information about private sources, see :ref:`user_guide_install_manage_dependencies_private_packages`.
 
            .. tip::
-               If the environment falls out of sync with ``pyproject.toml`` or ``poetry.lock`` (for example, after a manual edit), the view shows a warning. To reconcile the environment, click :guilabel:`Sync Dependencies` or the sync icon in the view's title bar.
+               If the environment falls out of sync with ``pyproject.toml`` or ``poetry.lock`` (for example, after a manual edit), the view shows a warning. To reconcile the environment, click :guilabel:`Sync Dependencies` in the notification or select the **Sync Dependencies** item in the view.
 
 .. seealso::
     For more information about using Poetry for dependency management, see the official `Poetry <https://python-poetry.org/docs/>`_ documentation.
@@ -320,8 +320,6 @@ Update a dependency
             :alt: Update Dependency icon
             :width: 45%
 
-        #. In the confirmation dialog at the bottom right corner of the window, click :guilabel:`Yes`.
-
            Solutions Manager runs the equivalent ``poetry update`` command and shows a progress notification, followed by a success or failure message.
 
         #. Verify that the package version has been updated.
@@ -392,7 +390,7 @@ Dependencies installed from a private source, such as the PyAnsys private PyPI i
 Before you add, update, or remove a private package, valid credentials for its source must already be available, as described in :ref:`user_guide_install_manage_private_sources`. Neither SAF CLI nor Solutions Manager prompts for credentials as part of these actions.
 
 .. note::
-    In Solutions Manager, these packages are marked with a lock icon in the **Dependencies** view.
+    In Solutions Manager, hover over a package in the **Dependencies** view to see its source.
     The **Add Dependency** command does not specify a source explicitly.
 
 

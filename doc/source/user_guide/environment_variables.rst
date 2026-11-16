@@ -61,7 +61,9 @@ System environment variables are set in your shell or system configuration. You 
 
      #. Open Visual Studio Code.
 
-     #. In the Activity Bar, click the **Run Solution** icon.
+     #. In the Activity Bar, click the **Solutions Manager** icon.
+
+     #. Expand the **Run Solution** view.
 
      #. Under **Solution environment**, click the :guilabel:`Configure solution environment`.
 
@@ -86,8 +88,10 @@ System environment variables are set in your shell or system configuration. You 
 
      #. Click the :guilabel:`Save configuration` button to save your changes.
 
-        The configuration is saved in a ``.env`` file in the solution's root directory.
-        When the solution is launched from Solutions Manager, it will use the saved configuration file.
+        Solutions Manager stores the configuration for each solution. It does not write it to a ``.env`` file.
+        When you launch the solution from Solutions Manager, the enabled variables are applied as environment variables.
+        They take precedence over the values from a selected environment file.
+        The saved configuration does not apply when you run the solution with SAF CLI.
 
      #. Close the editor page to exit the **SAF Environment Configuration** interface.
 
@@ -127,7 +131,9 @@ You can configure the solution with this file using either SAF CLI or Solutions 
 
       #. Open Visual Studio Code.
 
-      #. In the Activity Bar, click the **Run Solution** icon.
+      #. In the Activity Bar, click the **Solutions Manager** icon.
+
+      #. Expand the **Run Solution** view.
 
       #. Under **Solution environment**, click the button next to the **Select an environment file** search bar,
          then browse to and select the ``.env`` file you want to use.

@@ -81,7 +81,7 @@ export const ENVIRONMENT_VARIABLE_DEFINITIONS: EnvironmentVariableDefinition[] =
     { name: 'GLOW_DATA_REPOSITORY_UPLOAD_ROOT', defaultValue: '/Data', description: 'The absolute path in the data repository to which a relative upload path is appended when uploading data.', category: 'Data Repository' },
 
     // Project Migration
-    { name: 'GLOW_ENABLE_PROJECT_MIGRATION', defaultValue: false, description: 'Whether to activate automatic project migration. This environment variable should only be enabled for development, never in a production environment.', category: 'Project Migration' },
+    { name: 'GLOW_ENABLE_AUTOMATIC_PROJECT_MIGRATION', defaultValue: false, description: 'Whether to activate automatic project migration. This environment variable should only be enabled for development, never in a production environment.', category: 'Project Migration' },
 
     // Telemetry
     { name: 'OTEL_EXPORTER_OTLP_ENDPOINT', defaultValue: null, description: 'The endpoint for the OTLP exporters (traces, logs, and metrics).', category: 'Telemetry' },

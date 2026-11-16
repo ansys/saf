@@ -369,9 +369,7 @@ def test_uv_solution_builds_and_installs_online_and_offline(
         build_and_stage_solution_packages(
             online_definitions_dir,
             Path(sys.executable),
-            solution_root,
-            "uv_migration",
-            "UV Migration Test",
+            SolutionInfo(solution_root),
             InstallerConfig(pyproject_location=pyproject_path),
             f"{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}",
             backend=SolutionBackend.UV,

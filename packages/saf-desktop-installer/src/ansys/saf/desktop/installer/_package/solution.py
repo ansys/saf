@@ -264,17 +264,6 @@ def get_solution_namespace_info(solution_root_dir: Path) -> tuple[tuple[str, ...
     raise FileNotFoundError(f"Could not find solution module under {src_dir}.")
 
 
-def get_solution_package_name(solution_root_dir: Path) -> str:
-    """Get solution package name.
-
-    Args:
-        solution_root_dir (Path): Path to the solution's root directory
-
-    Returns:
-        str: Solution package name."""
-    return _SolutionMetadata(solution_root_dir).package_name
-
-
 def get_solution_module_dotted_path(solution_root_dir: Path, solution_module_name: str) -> str:
     """Get solution module dotted path as a string.
 
@@ -336,14 +325,6 @@ def get_solution_display_name(solution_module_dotted_path: str) -> str:
                 return solution_display_name
 
     raise ValueError("The solution definition does not contain a Solution subclass.")
-
-
-def get_solution_version(solution_root_dir: Path | None = None) -> str:
-    """Get the solution version from UV metadata or Poetry in the solution root.
-
-    If no root is supplied, use the current working directory.
-    """
-    return _SolutionMetadata(solution_root_dir if solution_root_dir is not None else Path.cwd()).version
 
 
 def copy_configuration_files(solution_root_dir: Path, solution_module_name: str) -> None:

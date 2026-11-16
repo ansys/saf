@@ -29,7 +29,6 @@ from ansys.saf.desktop.installer._package.solution import (
     create_version_file,
     get_appdata_directory,
     get_solution_package_dir,
-    get_solution_version,
     move_assets_and_deployment_script,
 )
 from tests.conftest import use_poetry_mock_solution
@@ -212,17 +211,7 @@ def test_poetry_version_rejects_invalid_output(solution_root_dir: Path, output: 
         ),
         pytest.raises(ValueError, match="[Ss]olution version"),
     ):
-        get_solution_version(solution_root_dir)
-
-
-def test_get_solution_version_defaults_to_current_directory(
-    uv_solution_root: Path,
-    monkeypatch: pytest.MonkeyPatch,
-) -> None:
-    """Keep the no-argument version getter working for the current solution."""
-    monkeypatch.chdir(uv_solution_root)
-
-    assert get_solution_version() == "1.2.3"
+        _ = SolutionInfo(solution_root_dir).solution_version
 
 
 @pytest.fixture

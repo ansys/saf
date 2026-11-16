@@ -142,9 +142,7 @@ def setup_solution_folder(
     build_and_stage_solution_packages(
         definitions_folder,
         venv_python_exec,
-        solution_info.solution_root_dir,
-        solution_info.solution_module_name,
-        solution_info.solution_display_name,
+        solution_info,
         installer_config,
         python_version,
         backend,

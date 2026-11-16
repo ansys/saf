@@ -48,7 +48,7 @@ from ansys.saf.desktop.installer.__main__ import _load_filtered_dotenv  # pyrigh
 from ansys.saf.desktop.installer._common.utils import load_toml
 from ansys.saf.desktop.installer._package.backend_detection import SolutionBackend, detect_solution_backend
 from ansys.saf.desktop.installer._package.download_python import MINIMUM_REQUIRED_VERSIONS
-from ansys.saf.desktop.installer._package.solution import get_solution_namespace_info, get_solution_package_name
+from ansys.saf.desktop.installer._package.solution import SolutionInfo, get_solution_namespace_info
 from ansys.saf.desktop.installer.solution_desktop_deployment import (
     SECURITY_MAX_SID_SIZE,
     TARGET_SOLUTIONS_DIRECTORY_NAME,
@@ -561,7 +561,7 @@ def check_built_solution_files(
 ):
     solution_module_name = _get_solution_module_name(solution_root_dir)
 
-    solution_package_name = get_solution_package_name(solution_root_dir).replace("-", "_")
+    solution_package_name = SolutionInfo(solution_root_dir).solution_package_name.replace("-", "_")
 
     assert all(
         (solution_root_dir / path).is_file()
@@ -984,7 +984,9 @@ def check_dependencies(
 
     # The installed packages are the expected packages plus the solution itself and, depending on the installer, pip
     installed_package_versions.pop("pip", None)
-    assert installed_package_versions.pop(get_solution_package_name(solution_root_dir).replace("_", "-").lower())
+    assert installed_package_versions.pop(
+        SolutionInfo(solution_root_dir).solution_package_name.replace("_", "-").lower()
+    )
     assert installed_package_versions == expected_package_versions
 
     for package in excluded_dependencies or []:

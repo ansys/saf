@@ -595,8 +595,37 @@ def test_setup_uv_solution_skips_poetry_project_generation(
 
     setup_solution_folder(solution_info, mock_installer_config)
 
+    assert build_and_stage.call_args.args[2] is solution_info
     assert build_and_stage.call_args.args[-1] is SolutionBackend.UV
     create_poetry_project.assert_not_called()
+
+
+def test_poetry_staging_uses_supplied_solution_metadata(
+    tmp_path: Path,
+    mocker: pytest_mock.MockerFixture,
+) -> None:
+    solution_info = mocker.Mock(spec=SolutionInfo)
+    solution_info.solution_root_dir = tmp_path
+    solution_info.solution_module_name = "example"
+    solution_info.solution_display_name = "Example"
+    solution_info.solution_package_name = "example-solution"
+    solution_info.solution_version = "1.2.3"
+    mocker.patch.object(manage_dependencies, "build_solution_wheel")
+    mocker.patch.object(manage_dependencies, "_get_poetry_packages_with_wheel_url_dependencies", return_value=[])
+    mocker.patch.object(manage_dependencies, "_stage_poetry_internal_dependencies")
+    modify_metadata = mocker.patch.object(manage_dependencies, "modify_solution_wheel_metadata")
+    definitions = tmp_path / "definitions"
+
+    build_and_stage_solution_packages(
+        definitions,
+        tmp_path / "python",
+        solution_info,
+        InstallerConfig(pyproject_location=tmp_path / "pyproject.toml"),
+        "3.12",
+        backend=SolutionBackend.POETRY,
+    )
+
+    modify_metadata.assert_called_once_with(definitions, "example-solution", "1.2.3")
 
 
 @pytest.mark.parametrize(
@@ -1653,9 +1682,7 @@ def test_encryption_workflow_when_building_and_staging_solution_packages(
     build_and_stage_solution_packages(
         definitions_folder,
         venv_python_exec,
-        solution_root_dir,
-        solution_module_name,
-        "Test Solution",
+        SolutionInfo(solution_root_dir),
         mock_installer_config,
         "3.11.14",
     )
@@ -1709,9 +1736,7 @@ def test_encryption_workflow_when_solution_package_build_fails_after_encryption(
         build_and_stage_solution_packages(
             definitions_folder,
             venv_python_exec,
-            solution_root_dir,
-            solution_module_name,
-            "Test Solution",
+            SolutionInfo(solution_root_dir),
             mock_installer_config,
             "3.11.14",
         )

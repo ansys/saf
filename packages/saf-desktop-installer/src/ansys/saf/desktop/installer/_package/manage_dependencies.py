@@ -50,9 +50,8 @@ from ansys.saf.desktop.installer._package.backend_detection import SolutionBacke
 from ansys.saf.desktop.installer._package.config import InstallerConfig
 from ansys.saf.desktop.installer._package.download_python import PythonManager
 from ansys.saf.desktop.installer._package.solution import (
+    SolutionInfo,
     create_poetry_requirements_txt,
-    get_solution_package_name,
-    get_solution_version,
 )
 
 logging.basicConfig(level=logging.INFO)
@@ -1382,14 +1381,13 @@ def copy_files(source_dir: Path, target_dir: Path, files_file_path: Path):
 def build_and_stage_solution_packages(
     definitions_folder: Path,
     venv_python_exec: Path,
-    solution_root_dir: Path,
-    solution_module_name: str,
-    solution_display_name: str,
+    solution_info: SolutionInfo,
     installer_config: InstallerConfig,
     python_version: str,
     backend: SolutionBackend | None = None,
 ) -> None:
     logger.info("Building and staging solution packages, optionally obfuscating them.")
+    solution_root_dir = solution_info.solution_root_dir
     if installer_config.encrypt:
         with tempfile.TemporaryDirectory() as tmpdirname:
             tmp_dir_path = Path(tmpdirname)
@@ -1423,16 +1421,16 @@ def build_and_stage_solution_packages(
         )
         _stage_poetry_internal_dependencies(
             solution_root_dir,
-            solution_module_name,
-            solution_display_name,
+            solution_info.solution_module_name,
+            solution_info.solution_display_name,
             installer_config.pyproject_location,
             venv_python_exec,
             github_token=installer_config.github_token,
         )
         modify_solution_wheel_metadata(
             definitions_folder,
-            get_solution_package_name(solution_root_dir),
-            get_solution_version(solution_root_dir),
+            solution_info.solution_package_name,
+            solution_info.solution_version,
         )
     else:
         create_uv_installation_project(

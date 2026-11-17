@@ -274,3 +274,7 @@ my_solution/
 # CodeQL
 saf-python-db/
 
+# Technology radar (doc/radar)
+doc/radar/node_modules/
+doc/radar/.techradar/
+

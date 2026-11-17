@@ -487,7 +487,6 @@ class TestInstaller:
     @pytest.mark.parametrize(
         "python_version",
         [None, "3.11.8", "3.12.4", "3.12.12", "3.13.0", "3.14.0"],
-        ids=["default", "python_3_11_8", "python_3_12_4", "python_3_12_12", "python_3_13_0", "python_3_14_0"],
     )
     def test_installer_with_offline_package_with_different_python_versions(
         self,
@@ -738,7 +737,6 @@ class TestInstaller:
     @pytest.mark.parametrize(
         "python_version",
         ["3.11.15", "3.12.9"],
-        ids=["python_3_11_15", "python_3_12_9"],
     )
     def test_installer_with_force_python_from_source(
         self,
@@ -794,7 +792,7 @@ class TestInstaller:
             session_selenium_webdriver,
         )
 
-    @pytest.mark.parametrize("with_key", [True, False], ids=["with_key", "without_key"])
+    @pytest.mark.parametrize("with_key", [True, False])
     def test_installer_with_encrypt(
         self,
         solution_root_dir: Path,

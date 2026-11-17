@@ -18,6 +18,7 @@
 import { expect } from 'chai';
 import * as sinon from 'sinon';
 import { EnvironmentService } from '../../../src/services/EnvironmentService';
+import { ENVIRONMENT_VARIABLE_DEFINITIONS } from '../../../src/services/environmentVariables';
 import { MockExtensionContext } from '../../mocks/vscode.mock';
 
 describe('EnvironmentService', () => {
@@ -31,6 +32,38 @@ describe('EnvironmentService', () => {
 
     afterEach(() => {
         sinon.restore();
+    });
+
+    describe('project migration variable', () => {
+        it('should define GLOW_ENABLE_AUTOMATIC_PROJECT_MIGRATION disabled by default', () => {
+            const definition = ENVIRONMENT_VARIABLE_DEFINITIONS.find(
+                d => d.name === 'GLOW_ENABLE_AUTOMATIC_PROJECT_MIGRATION'
+            );
+
+            expect(definition).to.not.be.undefined;
+            expect(definition?.defaultValue).to.equal(false);
+            expect(definition?.category).to.equal('Project Migration');
+        });
+
+        it('should not define the legacy GLOW_ENABLE_PROJECT_MIGRATION variable', () => {
+            const names = ENVIRONMENT_VARIABLE_DEFINITIONS.map(d => d.name);
+
+            expect(names).to.not.include('GLOW_ENABLE_PROJECT_MIGRATION');
+        });
+
+        it('should ignore a value saved under the legacy name', async () => {
+            mockContext.workspaceState.get.returns([
+                { name: 'GLOW_ENABLE_PROJECT_MIGRATION', enabled: true, value: true }
+            ]);
+
+            await service.loadForSolution('/test/solution');
+
+            const variables = service.getVariables();
+            expect(variables.find(v => v.name === 'GLOW_ENABLE_PROJECT_MIGRATION')).to.be.undefined;
+            const renamed = variables.find(v => v.name === 'GLOW_ENABLE_AUTOMATIC_PROJECT_MIGRATION');
+            expect(renamed?.enabled).to.be.false;
+            expect(renamed?.value).to.equal(false);
+        });
     });
 
     describe('getStorageKey', () => {

@@ -85,7 +85,7 @@ Build the installer
 
        a. Select the solution you want to build.
 
-       b. Enter the Python version to use for the solution (for example, ``3.11.12``).
+       b. Enter the Python version to use for the solution (for example, ``3.11.14``).
 
        c. If you want to exclude the Python interpreter from the installer, select **Exclude Python interpreter**.
 

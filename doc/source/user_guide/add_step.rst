@@ -80,9 +80,7 @@ You can add a step to your solution using either SAF CLI or Solutions Manager.
 
             You can add steps without a UI framework by selecting ``none`` for any solution, regardless of its UI framework.
 
-       d. Enter the namespace to use for the solution.
-
-       e. Enter the target directory where the solution will be saved.
+       d. Select the step template.
 
     #. Create the step.
 

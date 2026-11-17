@@ -90,7 +90,8 @@ export class SolutionCommands {
     private async getSolutionConfig() {
         const solutionName = await vscode.window.showInputBox({
             prompt: 'Enter solution name',
-            placeHolder: 'my-solution',
+            placeHolder: 'my_solution',
+            value: 'my_solution',
             validateInput: (value) => {
                 if (!value) {
                     return 'Solution name is required';
@@ -120,6 +121,7 @@ export class SolutionCommands {
         const namespace = await vscode.window.showInputBox({
             prompt: 'Enter solution namespace',
             placeHolder: 'saf.solutions',
+            value: 'saf.solutions',
             validateInput: (value) => {
                 if (!value) {
                     return 'Namespace is required';

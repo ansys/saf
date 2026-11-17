@@ -67,6 +67,19 @@ describe('CreateSolutionViewProvider Integration Tests', () => {
     } as any;
   }
 
+  it('pre-fills the CLI defaults in the form', async function () {
+    const provider = new CreateSolutionViewProvider(vscode.Uri.file(mockExtensionContext.extensionPath));
+    const mockWebviewView = createMockWebviewView();
+
+    provider.resolveWebviewView(mockWebviewView, {} as any, {} as any);
+
+    const html = (mockWebviewView.webview as any).html as string;
+    expect(html).to.match(/id="solution-name"[^>]*value="my_solution"/);
+    expect(html).to.match(/id="display-name"[^>]*value="My Solution"/);
+    expect(html).to.match(/id="namespace"[^>]*value="saf\.solutions"/);
+    expect(html).to.include('<option value="dash" selected>dash</option>');
+  });
+
   it('creates a solution with dash UI and user selects "Don\'t open"', async function () {
     const tempDir = createTempTestDir();
     const solutionName = generateUniqueSolutionName('webview-dash');

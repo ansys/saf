@@ -1315,14 +1315,14 @@ files = [
 
 [[package]]
 name = "ansys-solutions-dash-super-components"
-version = "0.2.dev7"
+version = "0.2.dev8"
 description = "A collection of pre-assembled, high-level Dash UI components built on Dash Mantine Components for simulation web applications."
 optional = false
 python-versions = "<4,>=3.10"
 groups = ["ui"]
 files = [
-    {file = "ansys_solutions_dash_super_components-0.2.dev7-py3-none-any.whl", hash = "sha256:823573b8b887fde15c99432474b5db318ba6702131b855d9ad809649745dfa3e"},
-    {file = "ansys_solutions_dash_super_components-0.2.dev7.tar.gz", hash = "sha256:74392ebdb811c13316c04d52cfdcae71cb90a7ee6b65829992f02fc056a0c81a"},
+    {file = "ansys_solutions_dash_super_components-0.2.dev8-py3-none-any.whl", hash = "sha256:af05f7327b0413acfda66757e4e3d09a0f8b22709b02f767d934631784cfbfc1"},
+    {file = "ansys_solutions_dash_super_components-0.2.dev8.tar.gz", hash = "sha256:4d976f888aa0dca5af2c51cb27a562520be1a395d822d4b43e559070527c085b"},
 ]
 
 [package.dependencies]
@@ -3458,14 +3458,14 @@ devel = ["colorama", "json-spec", "jsonschema", "pylint", "pytest", "pytest-benc
 
 [[package]]
 name = "filelock"
-version = "4.2.9"
+version = "4.2.10"
 description = "A platform independent file lock."
 optional = false
 python-versions = ">=3.11"
 groups = ["main", "tests"]
 files = [
-    {file = "filelock-4.2.9-py3-none-any.whl", hash = "sha256:a379c50a729e5b68c8519a4d26489f755d9769960a236ecd838190e2a78db2e9"},
-    {file = "filelock-4.2.9.tar.gz", hash = "sha256:96530b7c538d4ea08493ab067247aab7948c54d8cd622cce711c97cccc5d9896"},
+    {file = "filelock-4.2.10-py3-none-any.whl", hash = "sha256:9479aaeb4db20b5a53e3da28493edd24720b66b8a0b84030aa56ccdf243d6857"},
+    {file = "filelock-4.2.10.tar.gz", hash = "sha256:fcc3c0cb8bfe7f4b3bb0e231c04b15dbad068cb3c2515f343d8fde4dce93bd5d"},
 ]
 
 [[package]]
@@ -11446,4 +11446,4 @@ test = ["pytest"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.11,<3.13"
-content-hash = "e92dab88a3d68a8b5f3dd3d8d07b60f501a774a0f3fdc9c12ba64d6717b56eb4"
+content-hash = "e4934fc1a1de46ef07d53f9ce5c61f024d9e8f94bddf1a5074f79d5dc3854efd"

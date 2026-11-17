@@ -31,14 +31,15 @@ import subprocess
 import sys
 import zipfile
 
+from ansys.saf.desktop.installer._package.backend_detection import SolutionBackend, detect_solution_backend
 from ansys.saf.desktop.installer._package.config import InstallerConfig
 from ansys.saf.desktop.installer._package.manage_dependencies import (
-    add_poetry_project,
-    add_tools_requirements,
-    add_wheels,
+    build_and_stage_solution_packages,
+    create_poetry_installation_project,
     create_venv_in_definitions_folder,
     download_embeddable_python,
     get_definitions_folder,
+    write_backend_tool_requirements,
 )
 from ansys.saf.desktop.installer._package.solution import (
     SolutionInfo,
@@ -53,11 +54,6 @@ from ansys.saf.desktop.installer._package.solution import (
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-########################################################################################################################
-# Variables
-########################################################################################################################
-WHL_CONSTANT = "*.whl"
-REQ_FILE = "requirements.txt"
 
 ########################################################################################################################
 # Functions
@@ -124,26 +120,36 @@ def setup_solution_folder(
     # version of the dependencies. This is particularly important when using the offline packaging option,
     # but can also be necessary even if this option is not used, as the internal dependencies, which are always
     # downloaded, have different versions for different Python versions.
-    definitions_venv, venv_python_exec = create_venv_in_definitions_folder(definitions_folder, downloaded_python_exec)
-
-    add_tools_requirements(solution_info.solution_root_dir, solution_info.solution_module_name, venv_python_exec)
-
-    add_wheels(
+    backend = detect_solution_backend(solution_info.solution_root_dir)
+    definitions_venv, venv_python_exec = create_venv_in_definitions_folder(
         definitions_folder,
-        venv_python_exec,
+        downloaded_python_exec,
+        backend,
+    )
+
+    write_backend_tool_requirements(
         solution_info.solution_root_dir,
         solution_info.solution_module_name,
-        solution_info.solution_display_name,
-        installer_config,
-        python_version,
+        venv_python_exec,
+        backend,
     )
 
-    add_poetry_project(
-        venv_python_exec,
-        installer_config.pyproject_location,
+    build_and_stage_solution_packages(
         definitions_folder,
+        venv_python_exec,
+        solution_info,
+        installer_config,
         python_version,
+        backend,
     )
+
+    if backend is SolutionBackend.POETRY:
+        create_poetry_installation_project(
+            venv_python_exec,
+            installer_config.pyproject_location,
+            definitions_folder,
+            python_version,
+        )
 
     create_env_file(solution_info.solution_root_dir, solution_info.solution_module_name)
 

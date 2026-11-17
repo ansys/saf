@@ -19,6 +19,7 @@
    api/index
    release_notes/index
    contribute/index
+   technology_radar/index
 
 
 .. Top section

@@ -21,11 +21,13 @@ import os
 from datetime import datetime
 from pathlib import Path
 import re
+import shutil
 
 import toml
 from ansys_sphinx_theme import ansys_favicon, get_version_match  # pyright: ignore[reportMissingImports]
 from docutils.parsers.rst import Directive
 from docutils import nodes
+from sphinx.util import logging as sphinx_logging
 
 
 BRANCH = "main"
@@ -154,7 +156,7 @@ html_theme_options = {
     "show_source_button": False,
     "use_edit_page_button": False,
     "check_switcher": False,
-    "header_links_before_dropdown": 8,
+    "header_links_before_dropdown": 7,
     # "additional_breadcrumbs": [
     #     ("PyAnsys", "https://docs.pyansys.com/"),
     # ],
@@ -193,6 +195,7 @@ html_theme_options = {
         "user_guide/migration/index": [],
         "blog/index": [],
         "api/index": [],
+        "technology_radar/index": [],
     },
 }
 
@@ -429,6 +432,27 @@ def build_rst_epilog():
     return "\n".join(lines)
 
 
+# The technology radar is a standalone static site (AOE Technology Radar) built from doc/radar
+# by `moon run root:build-radar`. Copy its output into the HTML build so that it is deployed
+# at /version/stable/radar/. A missing build only logs a warning to keep plain sphinx-build
+# runs working without Node.js.
+RADAR_BUILD_DIR = root_path / "doc" / "radar" / "build"
+radar_logger = sphinx_logging.getLogger(__name__)
+
+
+def copy_technology_radar(app, exception):
+    if exception is not None or app.builder.format != "html":
+        return
+    target = Path(app.outdir) / "radar"
+    shutil.rmtree(target, ignore_errors=True)
+    if not RADAR_BUILD_DIR.is_dir():
+        radar_logger.warning(
+            "Technology radar not built; run 'moon run root:build-radar'. Skipping radar copy."
+        )
+        return
+    shutil.copytree(RADAR_BUILD_DIR, target, dirs_exist_ok=True)
+
+
 def setup(app):
     app.add_directive("theory", TheoryAdmonition)
     app.add_directive("practice", PracticeAdmonition)
@@ -440,6 +464,7 @@ def setup(app):
     app.connect("source-read", process_substitutions_in_directives)
     app.connect("source-read", include_all_release_notes)
     app.connect("source-read", retitle_generated_gallery_index)
+    app.connect("build-finished", copy_technology_radar)
 
 
 # ---------------------------------------------------------------------------

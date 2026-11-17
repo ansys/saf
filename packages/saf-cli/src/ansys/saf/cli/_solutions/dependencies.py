@@ -29,6 +29,7 @@ from tomlkit.toml_document import TOMLDocument
 
 from ansys.saf.cli._solutions.backend_detection import SolutionBackend, parse_solution_backend
 from ansys.saf.cli._solutions.plugins import SafTemplate
+from ansys.saf.cli._utilities.conversion import poetry_constraint_to_pep440
 
 
 class ManualDependency(BaseModel):
@@ -83,7 +84,7 @@ class DependencyManager:
         self,
         step_dependency_name: str,
         step_dependency_spec: str | dict[str, Any],
-        solution_dependencies: dict[str, Any],
+        solution_dependencies: MutableMapping[str, Any],
     ) -> None:
         if isinstance(step_dependency_spec, str):
             # Dependencies in the format dependency_name: "dependency_specification"
@@ -167,39 +168,52 @@ class DependencyManager:
         return manual_deps
 
     @staticmethod
-    def _format_uv_requirement(name: str, specification: str | dict[str, Any]) -> tuple[str, bool | None]:
-        """Format a SAF dependency for UV, leaving dependency syntax validation to uv lock."""
+    def _format_project_requirement(name: str, specification: str | dict[str, Any]) -> tuple[str, bool | None]:
+        """Format a SAF template dependency as a validated PEP 508 requirement."""
         if isinstance(specification, str):
             specification = {"version": specification}
+        if not isinstance(specification, dict):
+            raise ValueError(f"Dependency specification for '{name}' must be a string or table.")
         unsupported = specification.keys() - {"version", "extras", "markers", "allow-prereleases"}
         if unsupported:
-            raise ValueError(f"Unsupported UV dependency fields for '{name}': {', '.join(sorted(unsupported))}.")
+            raise ValueError(f"Unsupported PEP 621 dependency fields for '{name}': {', '.join(sorted(unsupported))}.")
 
         extras = specification.get("extras", [])
+        if not isinstance(extras, list) or not all(isinstance(extra, str) for extra in extras):
+            raise ValueError(f"Dependency extras for '{name}' must be a list of strings.")
         requirement = name + (f"[{','.join(extras)}]" if extras else "")
         version = specification.get("version", "")
+        if not isinstance(version, str):
+            raise ValueError(f"Dependency version for '{name}' must be a string.")
+        version = poetry_constraint_to_pep440(version)
         if version:
             requirement += f" {version}"
         markers = specification.get("markers", "")
+        if not isinstance(markers, str):
+            raise ValueError(f"Dependency markers for '{name}' must be a string.")
         if markers:
             requirement += f"; {markers}"
-        return requirement, specification.get("allow-prereleases")
+        prereleases = specification.get("allow-prereleases")
+        if prereleases is not None and not isinstance(prereleases, bool):
+            raise ValueError(f"'allow-prereleases' for '{name}' must be a boolean.")
+        Requirement(requirement)
+        return requirement, prereleases
 
-    def _get_or_create_uv_table(self, parent: MutableMapping[str, Any], key: str) -> MutableMapping[str, Any]:
-        """Get or create a UV configuration table, rejecting non-table values."""
+    def _get_or_create_table(self, parent: MutableMapping[str, Any], key: str) -> MutableMapping[str, Any]:
+        """Get or create a configuration table, rejecting non-table values."""
         value = parent.setdefault(key, tomlkit.table())
         if not isinstance(value, MutableMapping):
             raise ValueError(f"'{key}' must be a table in '{self._pyproject_path}'.")
         return cast("MutableMapping[str, Any]", value)
 
-    def _get_or_create_uv_array(self, parent: MutableMapping[str, Any], key: str) -> Array:
-        """Get or create a UV dependency array, rejecting non-array values."""
+    def _get_or_create_array(self, parent: MutableMapping[str, Any], key: str) -> Array:
+        """Get or create a dependency array, rejecting non-array values."""
         value = parent.setdefault(key, tomlkit.array())
         if not isinstance(value, Array):
             raise ValueError(f"'{key}' must be an array in '{self._pyproject_path}'.")
         return value
 
-    def _collect_uv_dependency_names(self, dependencies: Array, *, allow_includes: bool = False) -> set[str]:
+    def _collect_dependency_names(self, dependencies: Array, *, allow_includes: bool = False) -> set[str]:
         """Collect normalized package names, allowing group references where appropriate."""
         names: set[str] = set()
         for dependency in dependencies:
@@ -217,16 +231,20 @@ class DependencyManager:
                 raise ValueError(f"Invalid dependency entry in '{self._pyproject_path}': {dependency!r}.")
         return names
 
-    def _merge_uv_dependencies(self, pyproject_content: TOMLDocument) -> list[ManualDependency]:
-        """Merge new UV requirements and prerelease settings, returning overlaps for manual review."""
-        project = self._get_or_create_uv_table(pyproject_content, "project")
-        main_dependencies = self._get_or_create_uv_array(project, "dependencies")
-        dependency_groups = self._get_or_create_uv_table(pyproject_content, "dependency-groups")
-        existing_names = self._collect_uv_dependency_names(main_dependencies)
+    def _merge_project_dependencies(
+        self,
+        pyproject_content: TOMLDocument,
+        backend: SolutionBackend,
+    ) -> list[ManualDependency]:
+        """Merge PEP 621 dependencies, returning overlaps for manual review."""
+        project = self._get_or_create_table(pyproject_content, "project")
+        main_dependencies = self._get_or_create_array(project, "dependencies")
+        dependency_groups = self._get_or_create_table(pyproject_content, "dependency-groups")
+        existing_names = self._collect_dependency_names(main_dependencies)
         for group in dependency_groups:
             existing_names.update(
-                self._collect_uv_dependency_names(
-                    self._get_or_create_uv_array(dependency_groups, group),
+                self._collect_dependency_names(
+                    self._get_or_create_array(dependency_groups, group),
                     allow_includes=True,
                 ),
             )
@@ -236,54 +254,101 @@ class DependencyManager:
         for extra, dependencies in optional_dependencies.items():
             if not isinstance(dependencies, Array):
                 raise ValueError(f"Optional dependencies '{extra}' must be an array in '{self._pyproject_path}'.")
-            existing_names.update(self._collect_uv_dependency_names(dependencies))
+            existing_names.update(self._collect_dependency_names(dependencies))
+        if backend is SolutionBackend.POETRY:
+            poetry = pyproject_content.get("tool", {}).get("poetry", {})
+            existing_names.update(
+                canonicalize_name(name) for name in poetry.get("dependencies", {}) if name != "python"
+            )
+            for group in poetry.get("group", {}).values():
+                existing_names.update(canonicalize_name(name) for name in group.get("dependencies", {}))
 
-        return self._add_uv_template_dependencies(
+        return self._add_project_template_dependencies(
             pyproject_content,
             main_dependencies,
             dependency_groups,
             existing_names,
+            backend,
         )
 
-    def _add_uv_template_dependencies(
+    def _get_project_dependency_target(
+        self,
+        pyproject_content: TOMLDocument,
+        main_dependencies: Array,
+        dependency_groups: MutableMapping[str, Any],
+        group: str,
+        backend: SolutionBackend,
+    ) -> Array | MutableMapping[str, Any]:
+        if group == "main":
+            return main_dependencies
+        if backend is SolutionBackend.POETRY and group not in dependency_groups:
+            tool = self._get_or_create_table(pyproject_content, "tool")
+            poetry = self._get_or_create_table(tool, "poetry")
+            groups = self._get_or_create_table(poetry, "group")
+            if group not in groups:
+                groups[group] = self._create_new_poetry_dependency_group()
+            return self._get_or_create_table(self._get_or_create_table(groups, group), "dependencies")
+        return self._get_or_create_array(dependency_groups, group)
+
+    def _add_project_template_dependencies(
         self,
         pyproject_content: TOMLDocument,
         main_dependencies: Array,
         dependency_groups: MutableMapping[str, Any],
         existing_names: set[str],
+        backend: SolutionBackend,
     ) -> list[ManualDependency]:
-        """Add template requirements and prerelease settings, returning overlaps for manual review."""
+        """Add template requirements and backend-specific prerelease settings."""
         manual_deps: list[ManualDependency] = []
         for group, dependencies in self._saf_template.dependencies.items():
             if not isinstance(dependencies, dict):
                 raise ValueError(f"Template dependency group '{group}' must be a mapping.")
-            target = main_dependencies if group == "main" else self._get_or_create_uv_array(dependency_groups, group)
+            target = self._get_project_dependency_target(
+                pyproject_content, main_dependencies, dependency_groups, group, backend,
+            )
             for name, specification in dependencies.items():
                 normalized_name = canonicalize_name(name)
                 if normalized_name in existing_names:
                     manual_deps.append(ManualDependency(name=name, specification=specification, group=group))
                     continue
-                requirement, prereleases = self._format_uv_requirement(name, specification)
+                if not isinstance(target, Array):
+                    self._add_poetry_dependency_to_solution(name, specification, target)
+                    existing_names.add(normalized_name)
+                    continue
+                requirement, prereleases = self._format_project_requirement(name, specification)
                 target.append(requirement)
                 existing_names.add(normalized_name)
                 if prereleases is not None:
-                    tool = self._get_or_create_uv_table(pyproject_content, "tool")
-                    uv = self._get_or_create_uv_table(tool, "uv")
-                    package_prereleases = self._get_or_create_uv_table(uv, "prerelease-package")
-                    package_prereleases[normalized_name] = {True: "allow", False: "disallow"}[prereleases]
+                    tool = self._get_or_create_table(pyproject_content, "tool")
+                    if backend is SolutionBackend.UV:
+                        uv = self._get_or_create_table(tool, "uv")
+                        package_prereleases = self._get_or_create_table(uv, "prerelease-package")
+                        package_prereleases[normalized_name] = {True: "allow", False: "disallow"}[prereleases]
+                    else:
+                        poetry = self._get_or_create_table(tool, "poetry")
+                        if group != "main":
+                            groups = self._get_or_create_table(poetry, "group")
+                            poetry = self._get_or_create_table(groups, group)
+                        poetry_dependencies = self._get_or_create_table(poetry, "dependencies")
+                        poetry_dependencies[normalized_name] = {"allow-prereleases": prereleases}
         return manual_deps
 
     def update_solution_dependencies(self, executable: Path, solution_env: dict[str, str]) -> None:
         """Detect the backend, save merged dependencies, and install them or warn about overlaps."""
         backend = parse_solution_backend(self._solution_root_dir).backend
         pyproject_content = tomlkit.loads(self._pyproject_path.read_bytes())
+        project = pyproject_content.get("project", {})
+        poetry_dependencies = pyproject_content.get("tool", {}).get("poetry", {}).get("dependencies", {})
+        if backend is SolutionBackend.UV or (
+            "project" in pyproject_content and ("dependencies" in project or not poetry_dependencies)
+        ):
+            manual_deps = self._merge_project_dependencies(pyproject_content, backend)
+        else:
+            manual_deps = self._merge_poetry_dependencies(pyproject_content)
         if backend is SolutionBackend.UV:
-            manual_deps = self._merge_uv_dependencies(pyproject_content)
             solution_env = solution_env.copy()
             solution_env.pop("VIRTUAL_ENV", None)
             solution_env["UV_PROJECT_ENVIRONMENT"] = str((self._solution_root_dir / ".venv").resolve())
-        else:
-            manual_deps = self._merge_poetry_dependencies(pyproject_content)
 
         self._pyproject_path.write_text(tomlkit.dumps(pyproject_content), newline="")  # type: ignore
 

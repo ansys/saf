@@ -136,7 +136,13 @@ def test_create_solution(tmp_path: Path, ui_framework: str, namespace: str):
     assert "[project]" in pyproject_content
     assert "[tool.poetry]" not in pyproject_content
     assert "[tool.uv]" in pyproject_content
-    assert f'[saf-cli-version]\nsaf-cli-version = "{expected_saf_cli_version}"'
+    assert f'[saf-cli-version]\nsaf-cli-version = "{expected_saf_cli_version}"' in pyproject_content
+
+    dockerfile_content = (tmp_path / solution_name / "deployments" / "Dockerfile").read_text()
+    assert "uv==0.13.4" in dockerfile_content
+    assert "COPY ../../pyproject.toml ../../uv.lock /app/" in dockerfile_content
+    assert "RUN uv sync --frozen --no-default-groups" in dockerfile_content
+    assert "poetry" not in dockerfile_content.lower()
 
     lock = tomllib.loads((tmp_path / solution_name / "uv.lock").read_text(encoding="utf-8"))
     solution_packages = [package for package in lock["package"] if package["source"] == {"editable": "."}]
@@ -161,6 +167,11 @@ def test_create_solution(tmp_path: Path, ui_framework: str, namespace: str):
         docker_compose_content = (deployment_dir / "compose.yaml").read_text()
         # compose project name uses the APP_NAME env var
         assert "name: ${APP_NAME}" in docker_compose_content
+        if configuration == "external":
+            assert "build:" not in docker_compose_content
+            assert "pull_policy: never" in docker_compose_content
+        else:
+            assert "dockerfile: deployments/Dockerfile" in docker_compose_content
         # service names are now generic (no docker-name prefix)
         if configuration != "distributed-deployment-template":
             assert "postgresql:" in docker_compose_content

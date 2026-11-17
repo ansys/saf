@@ -27,6 +27,7 @@ import pytest_mock
 import requests
 
 from ansys.saf.cli._solutions import environment
+from ansys.saf.cli._solutions.backend_detection import SolutionBackend
 from ansys.saf.cli._solutions.environment import (
     InstallError,
     _check_poetry_private_sources,  # pyright: ignore[reportPrivateUsage]
@@ -1266,3 +1267,147 @@ def test_uv_no_optional_groups(uv_solution: Path, mocker: pytest_mock.MockFixtur
     run = mocker.patch("ansys.saf.cli._solutions.environment.subprocess.run")
     environment.setup_environment(uv_solution, "solution.main")
     assert "--group" not in run.call_args.args[0]
+
+
+@pytest.mark.parametrize(("pin", "expected"), [(None, "2.5.1"), ("2.1.0", "2.1.0")])
+@pytest.mark.parametrize("legacy_python", [False, True])
+def test_poetry_pep621_install_uses_project_metadata(
+    tmp_path: Path,
+    mocker: pytest_mock.MockFixture,
+    pin: str | None,
+    expected: str,
+    legacy_python: bool,
+):
+    content = (
+        '[project]\nname = "pep621-solution"\nversion = "0.1.0"\n'
+        'requires-python = ">=3.11,<4"\ndependencies = []\n'
+        '[build-system]\nrequires = ["poetry-core>=2"]\nbuild-backend = "poetry.core.masonry.api"\n'
+    )
+    if pin is not None:
+        content += f'[build-system-requirements]\nbuild-system-version = "{pin}"\n'
+    if legacy_python:
+        content = content.replace('requires-python = ">=3.11,<4"\n', "")
+        content += '[tool.poetry.dependencies]\npython = ">=3.11,<4"\n'
+    (tmp_path / "pyproject.toml").write_text(content)
+    for name in (
+        "_create_virtual_environment",
+        "_configure_poetry",
+        "_install_poetry_dependencies",
+        "_install_dotnet_linux_dependencies",
+        "_preload_solution_main_module",
+    ):
+        mocker.patch.object(environment, name)
+    install_poetry = mocker.patch.object(environment, "_install_poetry")
+    mocker.patch.object(environment, "get_exec_from_solution_venv", return_value=tmp_path / ".venv" / "python")
+
+    environment.setup_environment(tmp_path, "solution.main")
+
+    install_poetry.assert_called_once_with(False, None, expected)
+
+
+@pytest.mark.parametrize("pin", ['""', "42"])
+def test_poetry_invalid_version_pin_does_not_clear_workspace(
+    tmp_path: Path,
+    mocker: pytest_mock.MockFixture,
+    pin: str,
+):
+    (tmp_path / "pyproject.toml").write_text(
+        '[project]\nname = "pep621-solution"\nversion = "0.1.0"\nrequires-python = ">=3.11,<4"\n'
+        '[build-system]\nrequires = ["poetry-core>=2"]\nbuild-backend = "poetry.core.masonry.api"\n'
+        f"[build-system-requirements]\nbuild-system-version = {pin}\n",
+    )
+    clear = mocker.patch.object(environment, "_clear_workspace")
+    install = mocker.patch.object(environment, "_install_poetry")
+
+    with pytest.raises(InstallError, match="must be a non-empty Poetry version string"):
+        environment.setup_environment(tmp_path, "solution.main", workspace_clear="hard")
+
+    clear.assert_not_called()
+    install.assert_not_called()
+
+
+@pytest.mark.parametrize(
+    ("requires_python", "message"),
+    [
+        (None, "Python requirement not specified"),
+        ("not-a-version", "Invalid Python requirement"),
+        (">=99", "does not satisfy"),
+    ],
+)
+def test_uv_install_rejects_python_requirement_before_clearing(
+    uv_solution: Path,
+    mocker: pytest_mock.MockFixture,
+    requires_python: str | None,
+    message: str,
+):
+    content = UV_PROJECT_EXAMPLE.replace(
+        'requires-python = ">=3.11,<3.15"',
+        f'requires-python = "{requires_python}"' if requires_python is not None else "",
+    )
+    (uv_solution / "pyproject.toml").write_text(content)
+    run = mocker.patch.object(environment.subprocess, "run")
+    clear = mocker.patch.object(environment, "_clear_workspace")
+
+    with pytest.raises(InstallError, match=message):
+        setup_environment(uv_solution, "solution.main", workspace_clear="hard")
+
+    clear.assert_not_called()
+    run.assert_not_called()
+
+
+def test_uv_install_requires_uv_before_clearing(uv_solution: Path, mocker: pytest_mock.MockFixture):
+    mocker.patch.object(environment.shutil, "which", return_value=None)
+    run = mocker.patch.object(environment.subprocess, "run")
+    clear = mocker.patch.object(environment, "_clear_workspace")
+
+    with pytest.raises(InstallError, match="UV executable not found"):
+        setup_environment(uv_solution, "solution.main", workspace_clear="hard")
+
+    clear.assert_not_called()
+    run.assert_not_called()
+
+
+def test_uv_install_reports_sync_failure(
+    uv_solution: Path,
+    mocker: pytest_mock.MockFixture,
+    capsys: pytest.CaptureFixture[str],
+):
+    original_cwd = Path.cwd()
+    mocker.patch.object(
+        environment.subprocess,
+        "run",
+        side_effect=subprocess.CalledProcessError(1, ["uv", "sync"], stderr="No matching distribution"),
+    )
+
+    with pytest.raises(InstallError, match="UV install failed") as error:
+        setup_environment(uv_solution, "solution.main")
+
+    assert "No matching distribution" in str(error.value)
+    output = capsys.readouterr().out
+    assert "You are all set!" not in output
+    assert Path.cwd() == original_cwd
+
+
+@pytest.mark.usefixtures("tmp_path_as_working_dir")
+@pytest.mark.parametrize("clear", ["soft", "hard"])
+@pytest.mark.parametrize("preexisting_lock", [True, False])
+def test_uv_workspace_clear_preserves_only_the_requested_artifacts(
+    tmp_path: Path,
+    clear: str,
+    preexisting_lock: bool,
+):
+    (tmp_path / ".venv").mkdir()
+    poetry_sentinel = tmp_path / ".poetry" / ".venv" / "keep.txt"
+    poetry_sentinel.parent.mkdir(parents=True)
+    poetry_sentinel.write_text("unrelated Poetry environment")
+    lock = tmp_path / "uv.lock"
+    if preexisting_lock:
+        lock.write_text("original lock")
+
+    environment._clear_workspace(clear, SolutionBackend.UV)  # pyright: ignore[reportPrivateUsage]
+
+    assert not (tmp_path / ".venv").exists()
+    assert poetry_sentinel.read_text() == "unrelated Poetry environment"
+    assert lock.exists() is (preexisting_lock and clear == "soft")
+    if lock.exists():
+        assert lock.read_text() == "original lock"

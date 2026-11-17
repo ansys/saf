@@ -19,13 +19,12 @@ from pathlib import Path
 import platform
 import shutil
 
-from packaging.utils import canonicalize_name
 import pytest
-import tomlkit
 
 from ansys.saf.cli._config.const import DEFAULT_SOLUTION_NAME, DEFAULT_SOLUTION_NAMESPACE
 from ansys.saf.cli._solutions.backend_detection import SolutionBackend, parse_solution_backend
 from ansys.saf.cli._utilities.conversion import namespace_to_pkg_name
+from tests.conftest import prepare_poetry_solution
 from tests.e2e.conftest import InstallSolution, ListSolutions, NewSolution, is_solution_registered
 from tests.e2e.saf_process import SAFProcess
 from tests.outcome_checks import verify_installation
@@ -53,57 +52,12 @@ def new_solution(
         cwd = cwd or tmp_path
         process = new_solution(args, cwd, input_str, expected_return_code)
         solution_path = cwd / DEFAULT_SOLUTION_NAME
-        assert parse_solution_backend(solution_path).backend is SolutionBackend.POETRY
-        if installation_backend is SolutionBackend.UV:
-            _prepare_uv_solution(solution_path)
+        assert parse_solution_backend(solution_path).backend is SolutionBackend.UV
+        if installation_backend is SolutionBackend.POETRY:
+            prepare_poetry_solution(solution_path)
         return process
 
     return _new_solution
-
-
-def _prepare_uv_solution(solution_path: Path) -> None:
-    # Reuse the scaffold's source and locked direct dependencies without changing the production template.
-    pyproject_path = solution_path / "pyproject.toml"
-    configuration = tomlkit.loads(pyproject_path.read_bytes()).unwrap()
-    poetry = configuration["tool"]["poetry"]
-    lock_path = solution_path / "poetry.lock"
-    lock = tomlkit.loads(lock_path.read_bytes()).unwrap()
-
-    def requirements(dependencies: dict) -> list[str]:
-        result = []
-        for name, dependency in dependencies.items():
-            if name == "python":
-                continue
-            versions = {
-                package["version"]
-                for package in lock["package"]
-                if canonicalize_name(package["name"]) == canonicalize_name(name)
-            }
-            assert len(versions) == 1, f"Expected one locked version for {name}, got {versions}"
-            extras = dependency.get("extras", []) if isinstance(dependency, dict) else []
-            extras_spec = f"[{','.join(extras)}]" if extras else ""
-            result.append(f"{name}{extras_spec}=={versions.pop()}")
-        return result
-
-    configuration["project"] = {
-        "name": poetry["name"],
-        "version": poetry["version"],
-        "requires-python": poetry["dependencies"]["python"],
-        "dependencies": requirements(poetry["dependencies"]),
-    }
-    configuration["dependency-groups"] = {
-        name: requirements(group["dependencies"]) for name, group in poetry["group"].items()
-    }
-    configuration["build-system"] = {
-        "requires": ["setuptools>=67.0"],
-        "build-backend": "setuptools.build_meta",
-    }
-    del configuration["tool"]["poetry"]
-    del configuration["build-system-requirements"]
-    # A configured default group must not override SAF's explicit group selection.
-    configuration["tool"]["uv"] = {"default-groups": ["tests"]}
-    pyproject_path.write_text(tomlkit.dumps(configuration), encoding="utf-8")
-    lock_path.unlink()
 
 
 @pytest.fixture(params=[True, False])

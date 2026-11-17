@@ -20,9 +20,13 @@ from pathlib import Path
 import platform
 import shutil
 import sys
+from typing import Any
 
+from packaging.requirements import Requirement
 import pytest
+import tomlkit
 
+from ansys.saf.cli._utilities.solution_modules import resolve_solution_main_file
 from ansys.saf.templates import get_plugin_path
 
 
@@ -63,6 +67,52 @@ def get_templates_toml_path(module_name: str) -> Path:
 
 def get_template_path(module_name: str, step_name: str) -> Path:
     return get_template_plugin_path(module_name) / "steps" / step_name
+
+
+def prepare_poetry_solution(solution_dir: Path, poetry_version: str = "2.5.1") -> None:
+    """Keep legacy Poetry coverage independent of the production UV template."""
+    pyproject = solution_dir / "pyproject.toml"
+    configuration = tomlkit.loads(pyproject.read_bytes()).unwrap()
+    project = configuration.pop("project")
+
+    def dependencies(requirements: list[str]) -> dict[str, Any]:
+        result: dict[str, Any] = {}
+        for value in requirements:
+            requirement = Requirement(value)
+            specification: dict[str, Any] = {"version": str(requirement.specifier) or "*"}
+            if requirement.extras:
+                specification["extras"] = sorted(requirement.extras)
+            if requirement.marker is not None:
+                specification["markers"] = str(requirement.marker)
+            result[requirement.name] = specification
+        return result
+
+    namespace_root = resolve_solution_main_file(solution_dir).relative_to(solution_dir / "src").parts[0]
+    tool = configuration.setdefault("tool", {})
+    tool.pop("uv", None)
+    tool.pop("setuptools", None)
+    tool["poetry"] = {
+        "name": project["name"],
+        "version": project["version"],
+        "description": project.get("description", ""),
+        "authors": ["SAF CLI Tests <saf-cli-tests@example.com>"],
+        "packages": [{"include": namespace_root, "from": "src"}],
+        "dependencies": {
+            "python": project["requires-python"],
+            **dependencies(project.get("dependencies", [])),
+        },
+        "group": {
+            name: {"optional": True, "dependencies": dependencies(requirements)}
+            for name, requirements in configuration.pop("dependency-groups", {}).items()
+        },
+    }
+    configuration["build-system"] = {
+        "requires": ["poetry-core>=1.8"],
+        "build-backend": "poetry.core.masonry.api",
+    }
+    configuration["build-system-requirements"] = {"build-system-version": poetry_version}
+    pyproject.write_text(tomlkit.dumps(configuration))
+    (solution_dir / "uv.lock").unlink(missing_ok=True)
 
 
 def _generate_plugin(module_name: str) -> tuple[Path, Path]:
@@ -107,6 +157,7 @@ def clean_custom_template_plugins() -> None:
         "test_custom_templates_with_glow_in_different_group",
         "test_custom_templates_with_new_dep_group",
         "test_custom_templates_with_invalid_dependency",
+        "test_custom_templates_with_unresolvable_dependency",
     ]
     for module_name in plugin_module_names:
         plugin_destination_dir = get_template_plugin_path(module_name)
@@ -285,5 +336,19 @@ def install_custom_template_plugin_with_invalid_dependency() -> Generator[Path, 
     templates_content += """\n\n[templates.second-step.dependencies.main]\nfake_package = '^0.-5.abc'"""
     templates_content = templates_content.replace("second-step", "third-step")
     templates_toml.write_text(templates_content)
+    yield plugin_destination_dir
+    _clean_plugin(plugin_destination_dir, plugin_distribution_dir)
+
+
+@pytest.fixture
+def install_custom_template_plugin_with_unresolvable_dependency() -> Generator[Path, None, None]:
+    plugin_destination_dir, plugin_distribution_dir = _generate_plugin(
+        "test_custom_templates_with_unresolvable_dependency",
+    )
+    templates_toml = plugin_destination_dir / "templates.toml"
+    templates_toml.write_text(
+        templates_toml.read_text()
+        + '\n\n[templates.second-step.dependencies.main]\nhumanize = "==999999999.0"\n',
+    )
     yield plugin_destination_dir
     _clean_plugin(plugin_destination_dir, plugin_distribution_dir)

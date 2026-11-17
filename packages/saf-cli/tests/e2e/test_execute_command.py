@@ -22,6 +22,7 @@ import uuid
 import pytest
 
 from ansys.saf.cli._database.models import SolutionRegistry
+from ansys.saf.cli._solutions.backend_detection import SolutionBackend, parse_solution_backend
 from ansys.saf.cli._utilities.conversion import namespace_to_pkg_name, to_package_name
 from ansys.saf.testing.common import find_exec_in_venv
 from tests.e2e.conftest import ExecuteCommand, ListSolutions, is_solution_registered
@@ -277,17 +278,17 @@ def test_saf_execute_external_binary(session_solution: SolutionRegistry, execute
 @pytest.mark.use_session_solution
 @pytest.mark.usefixtures(
     "cleanup_solution_pyproject",
-    "cleanup_solution_poetry_lock",
+    "cleanup_solution_lock",
     "cleanup_solution_venv",
     "cleanup_solution_wheels_dir",
 )
 @pytest.mark.parametrize("session_solution_ui_framework", ["dash"], indirect=True)
-def test_saf_execute_poetry_add_local_wheel_with_path(
+def test_saf_execute_add_local_wheel_with_path(
     session_solution: SolutionRegistry,
     execute_command: ExecuteCommand,
 ):
     """
-    Test ``saf execute`` with a poetry add command pointing to a local wheel.
+    Test ``saf execute`` with a backend command pointing to a local wheel.
     """
     wheel_file = Path(__file__).resolve().parents[1] / "mocks" / "wheels" / "mock_no_deps-0.0.1-py3-none-any.whl"
     assert wheel_file.is_file(), f"Mock wheel file not found: {wheel_file}"
@@ -296,18 +297,18 @@ def test_saf_execute_poetry_add_local_wheel_with_path(
     wheels_dir.mkdir(exist_ok=True)
     shutil.copyfile(wheel_file, wheels_dir / wheel_file.name)
 
-    command = "poetry show mock-no-deps"
+    command = "python -c \"from importlib.metadata import version; print(version('mock-no-deps'))\""
     process_output = execute_command([session_solution.name, command], expected_return_code=1)
-    assert any("Package mock-no-deps not found" in line for line in process_output)
+    assert any("mock-no-deps" in line for line in process_output)
 
-    command = f"poetry add '{(wheels_dir / wheel_file.name).as_posix()}'"
-    execute_command([session_solution.name, command])
+    backend = parse_solution_backend(session_solution.root_dir).backend
+    add_command = "uv add --no-sync" if backend is SolutionBackend.UV else "poetry add"
+    execute_command([session_solution.name, f'{add_command} "{(wheels_dir / wheel_file.name).as_posix()}"'])
+    if backend is SolutionBackend.UV:
+        execute_command([session_solution.name, "uv sync --locked --all-groups --inexact"])
 
-    command = "poetry show mock-no-deps"
     process_output = execute_command([session_solution.name, command])
-    assert any("mock-no-deps" in line for line in process_output), (
-        "The mock-no-deps package was not found in poetry show output."
-    )
+    assert any("0.0.1" in line for line in process_output)
 
 
 @pytest.mark.use_session_solution

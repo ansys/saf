@@ -39,6 +39,7 @@ DEFAULT_SOLUTION_NAMESPACE = "saf.solutions"
 
 # Env vars for solution installation
 WORKSPACE_CLEAR_OPTIONS = ["hard", "soft"]
+DEFAULT_POETRY_VERSION = "2.5.1"
 
 # Others
 SAF_CLI_EXTERNAL_URL = "https://ansys.github.io/saf-cli-documentation"

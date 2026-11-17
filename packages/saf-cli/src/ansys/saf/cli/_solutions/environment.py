@@ -35,6 +35,7 @@ from requests.auth import HTTPBasicAuth
 import tomlkit
 
 from ansys.saf.cli._config.const import (
+    DEFAULT_POETRY_VERSION,
     WORKSPACE_CLEAR_OPTIONS,
 )
 from ansys.saf.cli._solutions.backend_detection import (
@@ -451,7 +452,7 @@ def _can_use_credentials_from_environment_variables_or_netrc(
 
 def _check_poetry_private_sources(configuration: dict[str, Any]) -> None:
     """Check and interactively manage credentials and certificates for Poetry's private PyPI sources."""
-    private_sources = configuration["tool"]["poetry"].get("source", [])
+    private_sources = configuration.get("tool", {}).get("poetry", {}).get("source", [])
     credentials_updated, certificate_updated = False, False
 
     for source in private_sources:
@@ -1006,7 +1007,7 @@ def _install_poetry_dependencies(dependency_groups: list[str]) -> None:
     print()
 
 
-def _check_uv_python_version(backend_info: SolutionBackendInfo) -> None:
+def _check_project_python_version(backend_info: SolutionBackendInfo) -> None:
     if not backend_info.requires_python:
         raise InstallError("Python requirement not specified in [project].requires-python.")
     try:
@@ -1098,6 +1099,17 @@ def _preload_solution_main_module(
     print()
 
 
+def _get_poetry_version(configuration: dict[str, Any]) -> str:
+    version = configuration.get("build-system-requirements", {}).get("build-system-version")
+    if version is not None:
+        if not isinstance(version, str) or not version.strip():
+            raise InstallError("'build-system-version' must be a non-empty Poetry version string.")
+        return version
+    if "project" in configuration:
+        return DEFAULT_POETRY_VERSION
+    raise RuntimeError("No build system version found in the configuration file.")
+
+
 def setup_environment(
     solution_root_dir: Path,
     solution_main_module_name: str,
@@ -1128,17 +1140,18 @@ def setup_environment(
         optional_dependency_groups = list(backend_info.dependency_groups)
         uv_exec: str | None = None
         if backend_info.backend is SolutionBackend.UV:
-            _check_uv_python_version(backend_info)
+            _check_project_python_version(backend_info)
             uv_exec = shutil.which("uv")
             if uv_exec is None:
                 raise InstallError("UV executable not found. Install UV and ensure it is available on PATH.")
             build_system_version = subprocess.check_output([uv_exec, "--version"], text=True).strip()
         else:
             _check_poetry_private_sources(configuration)
-            _check_poetry_python_version(configuration)
-            build_system_version = configuration.get("build-system-requirements", {}).get("build-system-version", None)
-            if not build_system_version:
-                raise RuntimeError("No build system version found in the configuration file.")
+            if configuration.get("project", {}).get("requires-python") is not None:
+                _check_project_python_version(backend_info)
+            else:
+                _check_poetry_python_version(configuration)
+            build_system_version = _get_poetry_version(configuration)
 
         virtual_environment_exists = _check_virtual_environment_exists()
 

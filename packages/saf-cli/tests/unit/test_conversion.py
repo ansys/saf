@@ -14,9 +14,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from packaging.specifiers import SpecifierSet
 import pytest
 
-from ansys.saf.cli._utilities.conversion import namespace_to_pkg_name
+from ansys.saf.cli._utilities.conversion import namespace_to_pkg_name, poetry_constraint_to_pep440
 
 
 @pytest.mark.parametrize(
@@ -29,3 +30,32 @@ from ansys.saf.cli._utilities.conversion import namespace_to_pkg_name
 )
 def test_namespace_to_pkg_name(namespace: str, expected_pkg_name: str):
     assert namespace_to_pkg_name(namespace) == expected_pkg_name
+
+
+@pytest.mark.parametrize(
+    ("constraint", "allowed", "rejected"),
+    [
+        ("^1.2.3", ["1.2.3", "1.99"], ["1.2.2", "2.0"]),
+        ("^0.2.3", ["0.2.3", "0.2.99"], ["0.2.2", "0.3"]),
+        ("^0.0.3", ["0.0.3"], ["0.0.2", "0.0.4"]),
+        ("^0.0", ["0.0", "0.0.99"], ["0.1"]),
+        ("^0", ["0.0", "0.99"], ["1.0"]),
+        ("^1!1.2.3", ["1!1.2.3", "1!1.99"], ["1.99", "1!2.0"]),
+        ("~1", ["1.0", "1.99"], ["2.0"]),
+        ("~1.2.3", ["1.2.3", "1.2.99"], ["1.2.2", "1.3"]),
+        ("~2!1.2", ["2!1.2", "2!1.2.99"], ["1!1.2", "2!1.3"]),
+        ("1.2.3", ["1.2.3"], ["1.2.2", "1.2.4"]),
+        ("1.2.*", ["1.2", "1.2.99"], ["1.1", "1.3"]),
+        (">=1.2,!=1.3,<2", ["1.2", "1.4"], ["1.1", "1.3", "2"]),
+        ("*", ["0.0", "999"], []),
+    ],
+)
+def test_poetry_constraint_preserves_version_bounds(constraint: str, allowed: list[str], rejected: list[str]):
+    specifier = SpecifierSet(poetry_constraint_to_pep440(constraint))
+    assert all(specifier.contains(version) for version in allowed)
+    assert not any(specifier.contains(version) for version in rejected)
+
+
+def test_poetry_union_constraint_is_not_silently_broadened():
+    with pytest.raises(ValueError, match="Unsupported dependency version constraint"):
+        poetry_constraint_to_pep440("^1.0 || ^3.0")

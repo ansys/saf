@@ -64,6 +64,14 @@
         "runner-name": "public-ubuntu-latest-16-cores"
     },
     {
+        "test-report-artifact-name-suffix": "saf_cli_uv_solution_compose_variants",
+        "download-extra-packages": "true",
+        "pytest-additional-arguments": "--docker -n 0 tests/e2e/test_solution_deployment.py::test_uv_solution_compose_variants_build_and_start",
+        "upgrade-docker": "true",
+        "runner-name": "public-ubuntu-latest-16-cores",
+        "_comment": "Builds and starts all generated Compose variants from a UV-locked solution."
+    },
+    {
         "test-report-artifact-name-suffix": "saf_cli_solution_standalone_deployment_using_get_data_with_url_substitution",
         "download-extra-packages": "true",
         "pytest-additional-arguments": " --docker  tests/e2e/test_solution_deployment.py::test_solution_standalone_deployment_using_get_data_with_url_substitution",

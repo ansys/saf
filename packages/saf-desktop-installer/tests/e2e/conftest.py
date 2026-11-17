@@ -953,11 +953,14 @@ def _get_expected_poetry_package_versions(solution_root_dir: Path, python_versio
 def _get_expected_uv_package_versions(solution_root_dir: Path, python_version: str, tmp_path: Path) -> dict[str, str]:
     pylock_path = tmp_path / "pylock.expected.toml"
     cmd = ["uv", "export", "--frozen", "--format", "pylock.toml", "--no-default-groups", "--no-emit-project"]
-    groups = load_toml(solution_root_dir / "pyproject.toml").get("dependency-groups", {})
+    definitions_dir = (
+        solution_root_dir / "dist" / "solution" / "definitions" / _get_solution_module_name(solution_root_dir)
+    )
+    groups = load_toml(definitions_dir / "pyproject.toml").get("dependency-groups", {})
     for group in ("desktop", "ui", "doc"):
         if group in groups:
             cmd += ["--group", group]
-    subprocess.run([*cmd, "--output-file", str(pylock_path)], cwd=solution_root_dir, check=True, capture_output=True)
+    subprocess.run([*cmd, "--output-file", str(pylock_path)], cwd=definitions_dir, check=True, capture_output=True)
     expected_package_versions: dict[str, str] = {}
     for package in load_toml(pylock_path)["packages"]:
         package_name = package["name"].replace("_", "-").lower()

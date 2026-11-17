@@ -685,6 +685,44 @@ def test_poetry_staging_uses_supplied_solution_metadata(
     modify_metadata.assert_called_once_with(definitions, "example-solution", "1.2.3")
 
 
+def test_uv_stages_external_dependencies_after_obfuscation(
+    tmp_path: Path,
+    mocker: pytest_mock.MockerFixture,
+) -> None:
+    solution_info = mocker.Mock(spec=SolutionInfo)
+    solution_info.solution_root_dir = tmp_path
+    installer_config = InstallerConfig(
+        pyproject_location=tmp_path / "pyproject.toml",
+        obfuscate=True,
+        offline_package=True,
+    )
+    events: list[str] = []
+    mocker.patch.object(manage_dependencies, "build_solution_wheel")
+    mocker.patch.object(
+        manage_dependencies,
+        "create_uv_installation_project",
+        side_effect=lambda *args: (events.append("stage internal"), ([], []))[1],
+    )
+    mocker.patch.object(manage_dependencies, "obfuscate_solution", side_effect=lambda *args: events.append("obfuscate"))
+    mocker.patch.object(
+        manage_dependencies,
+        "finalize_uv_installation_project",
+        side_effect=lambda *args: events.append("stage external and lock"),
+    )
+    mocker.patch.object(manage_dependencies, "refresh_uv_project_lock")
+
+    build_and_stage_solution_packages(
+        tmp_path / "definitions",
+        tmp_path / "python",
+        solution_info,
+        installer_config,
+        "3.12",
+        backend=SolutionBackend.UV,
+    )
+
+    assert events == ["stage internal", "obfuscate", "stage external and lock"]
+
+
 @pytest.mark.parametrize(
     ("backend", "configuration", "poetry_requirements"),
     [

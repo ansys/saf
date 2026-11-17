@@ -765,8 +765,8 @@ def create_uv_installation_project(
     python_exec: Path,
     github_token: str | None = None,
     offline_package: bool = False,
-) -> None:
-    """Create a portable UV project and stage the locked local dependencies."""
+) -> tuple[list[dict[str, Any]], list[str]]:
+    """Prepare a portable UV project and stage the locked local dependencies."""
     project_file = solution_root_dir / "pyproject.toml"
     lock_file = solution_root_dir / "uv.lock"
     groups = ["desktop", "ui", "doc"]
@@ -797,11 +797,6 @@ def create_uv_installation_project(
         lock_packages = _selected_uv_lock_packages(solution_root_dir, requirements_path, python_exec)
         stage_uv_selected_local_dependencies(solution_root_dir, lock_packages, wheelhouse, python_exec, github_token)
         _stage_uv_private_dependencies(solution_root_dir, lock_packages, wheelhouse, python_exec)
-        if offline_package:
-            logger.info(
-                f"Downloading solution's external dependencies with python version {target['python_full_version']}"
-            )
-            stage_uv_external_dependencies(solution_root_dir, definitions_folder, python_exec, lock_packages)
         _pin_staged_wheel_url_dependencies(wheelhouse)
         _rewrite_uv_local_sources(
             project,
@@ -815,6 +810,28 @@ def create_uv_installation_project(
     project_path.write_text(tomlkit.dumps(project), encoding="utf-8")
     shutil.copy2(lock_file, definitions_folder / "uv.lock")
     (definitions_folder / "uv-groups.txt").write_text("\n".join(selected_groups), encoding="utf-8")
+
+
+    return lock_packages, selected_groups
+
+
+def finalize_uv_installation_project(
+    solution_root_dir: Path,
+    definitions_folder: Path,
+    python_exec: Path,
+    lock_packages: list[dict[str, Any]],
+    selected_groups: list[str],
+    offline_package: bool,
+) -> None:
+    """Stage external dependencies and generate the portable UV lock and installer files."""
+    wheelhouse = definitions_folder / "wheelhouse"
+    if offline_package:
+        target = _uv_target_marker_environment(python_exec)
+        logger.info(
+            f"Downloading solution's external dependencies with python version {target['python_full_version']}"
+        )
+        stage_uv_external_dependencies(solution_root_dir, definitions_folder, python_exec, lock_packages)
+    _pin_staged_wheel_url_dependencies(wheelhouse)
 
     uv_executable = shutil.which("uv")
     if uv_executable is None:
@@ -1431,7 +1448,6 @@ def build_and_stage_solution_packages(
         logger.info("building solution wheel")
         build_solution_wheel(definitions_folder, solution_root_dir)
     backend = backend or detect_solution_backend(solution_root_dir)
-    poetry_packages_with_wheel_url_dependencies: list[tuple[str, str]] = []
     if backend is SolutionBackend.POETRY:
         poetry_packages_with_wheel_url_dependencies = _get_poetry_packages_with_wheel_url_dependencies(
             installer_config.pyproject_location.with_name("poetry.lock"),
@@ -1449,30 +1465,41 @@ def build_and_stage_solution_packages(
             solution_info.solution_package_name,
             solution_info.solution_version,
         )
-    else:
-        create_uv_installation_project(
-            solution_root_dir,
-            definitions_folder,
-            venv_python_exec,
-            installer_config.github_token,
-            installer_config.offline_package,
-        )
+        if installer_config.obfuscate:
+            obfuscate_solution(definitions_folder, venv_python_exec)
+        if installer_config.offline_package:
+            _download_poetry_external_dependencies(
+                definitions_folder,
+                installer_config.pyproject_location,
+                venv_python_exec,
+                python_version,
+            )
+            _convert_poetry_archives_to_wheels(definitions_folder, venv_python_exec)
+            _simplify_poetry_wheel_url_dependencies(
+                poetry_packages_with_wheel_url_dependencies,
+                definitions_folder,
+            )
+        return
+
+    lock_packages, selected_groups = create_uv_installation_project(
+        solution_root_dir,
+        definitions_folder,
+        venv_python_exec,
+        installer_config.github_token,
+        installer_config.offline_package,
+    )
     if installer_config.obfuscate:
         obfuscate_solution(definitions_folder, venv_python_exec)
-        if backend is SolutionBackend.UV:
-            refresh_uv_project_lock(definitions_folder)
-    if installer_config.offline_package and backend is SolutionBackend.POETRY:
-        _download_poetry_external_dependencies(
-            definitions_folder,
-            installer_config.pyproject_location,
-            venv_python_exec,
-            python_version,
-        )
-        _convert_poetry_archives_to_wheels(definitions_folder, venv_python_exec)
-        _simplify_poetry_wheel_url_dependencies(
-            poetry_packages_with_wheel_url_dependencies,
-            definitions_folder,
-        )
+    finalize_uv_installation_project(
+        solution_root_dir,
+        definitions_folder,
+        venv_python_exec,
+        lock_packages,
+        selected_groups,
+        installer_config.offline_package,
+    )
+    if installer_config.obfuscate:
+        refresh_uv_project_lock(definitions_folder)
 
 
 def _convert_poetry_archives_to_wheels(definitions_folder: Path, venv_python_exec: Path) -> None:

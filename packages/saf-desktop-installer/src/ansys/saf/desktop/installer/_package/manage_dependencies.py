@@ -811,7 +811,6 @@ def create_uv_installation_project(
     shutil.copy2(lock_file, definitions_folder / "uv.lock")
     (definitions_folder / "uv-groups.txt").write_text("\n".join(selected_groups), encoding="utf-8")
 
-
     return lock_packages, selected_groups
 
 
@@ -827,9 +826,7 @@ def finalize_uv_installation_project(
     wheelhouse = definitions_folder / "wheelhouse"
     if offline_package:
         target = _uv_target_marker_environment(python_exec)
-        logger.info(
-            f"Downloading solution's external dependencies with python version {target['python_full_version']}"
-        )
+        logger.info(f"Downloading solution's external dependencies with python version {target['python_full_version']}")
         stage_uv_external_dependencies(solution_root_dir, definitions_folder, python_exec, lock_packages)
     _pin_staged_wheel_url_dependencies(wheelhouse)
 

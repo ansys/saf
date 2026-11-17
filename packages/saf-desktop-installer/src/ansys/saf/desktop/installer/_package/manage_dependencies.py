@@ -234,7 +234,8 @@ def download_build_tool_with_pip(tool: str, definitions_folder: Path, venv_pytho
 def _github_url_with_token(url: str, github_token: str | None) -> str:
     if not github_token:
         return url
-    if url.startswith("https://"):
+    parsed_url = urlsplit(url)
+    if parsed_url.scheme == "https" and parsed_url.hostname == "github.com":
         return url.replace("https://", f"https://{quote(github_token, safe='')}@", 1)
     return url
 
@@ -1106,8 +1107,6 @@ def _build_private_uv_wheels(
             "wheel",
             "--disable-pip-version-check",
             "--no-deps",
-            "--extra-index-url",
-            "https://pypi.org/simple",
             "--wheel-dir",
             str(wheelhouse),
             "-r",

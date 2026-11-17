@@ -442,6 +442,20 @@ def test_uv_git_requirement_uses_locked_revision_and_subdirectory() -> None:
     )
 
 
+def test_uv_git_requirement_does_not_send_github_token_to_other_hosts() -> None:
+    package = {
+        "name": "git-package",
+        "source": {"git": "https://git.example.com/org/repo.git#abcdef"},
+    }
+
+    requirement = manage_dependencies._uv_git_requirement(  # pyright: ignore[reportPrivateUsage]
+        package,
+        "ghp+test",
+    )
+
+    assert requirement == "git-package @ git+https://git.example.com/org/repo.git@abcdef"
+
+
 @pytest.mark.parametrize("query", ["", "?rev=main", "?tag=v1.0", "?branch=main"])
 def test_uv_public_git_requirement_does_not_require_token(query: str) -> None:
     package = {

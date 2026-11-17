@@ -124,10 +124,19 @@ def test_download_pypi_package_with_pip_does_not_log_url_without_pat(
 
 
 @pytest.mark.parametrize(
-    ("token", "expected_url"),
+    ("token", "source_url", "expected_url"),
     [
-        (None, "https://github.com/org/repo.git"),
-        ("test/token", "https://test%2Ftoken@github.com/org/repo.git"),
+        (None, "https://github.com/org/repo.git", "https://github.com/org/repo.git"),
+        (
+            "test/token",
+            "https://github.com/org/repo.git",
+            "https://test%2Ftoken@github.com/org/repo.git",
+        ),
+        (
+            "test/token",
+            "https://git.example.com/org/repo.git",
+            "https://git.example.com/org/repo.git",
+        ),
     ],
 )
 @pytest.mark.parametrize("resolved_reference", [None, "abcdef123456"])
@@ -136,10 +145,11 @@ def test_download_poetry_git_source_uses_direct_requirement(
     mocker: pytest_mock.MockerFixture,
     caplog: pytest.LogCaptureFixture,
     token: str | None,
+    source_url: str,
     expected_url: str,
     resolved_reference: str | None,
 ) -> None:
-    source = {"type": "git", "url": "https://github.com/org/repo.git", "reference": "main"}
+    source = {"type": "git", "url": source_url, "reference": "main"}
     if resolved_reference is not None:
         source["resolved_reference"] = resolved_reference
     package = {"name": "example-package", "version": "1.2.3", "source": source}

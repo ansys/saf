@@ -168,12 +168,9 @@ tasks:
 
   build-radar:
     description: "Build the technology radar static site into doc/radar/build"
-    command: "npm"
-    args:
-      - "--prefix"
-      - "doc/radar"
-      - "run"
-      - "build"
+    # Run from doc/radar rather than with "npm --prefix": the prefix leaks to the
+    # generator's nested "npm install" in .techradar and breaks it on Linux.
+    script: "cd doc/radar && npm run build"
     deps:
       - "~:radar-install"
     inputs:

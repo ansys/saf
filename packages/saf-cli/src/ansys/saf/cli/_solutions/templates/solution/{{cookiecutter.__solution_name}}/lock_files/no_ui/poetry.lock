@@ -5283,7 +5283,7 @@ description = "A modern CSS selector implementation for Beautiful Soup."
 optional = false
 python-versions = ">=3.10"
 groups = ["doc"]
-markers = "python_version == \"3.11\""
+markers = "python_full_version < \"3.11.5\""
 files = [
     {file = "soupsieve-2.10-py3-none-any.whl", hash = "sha256:8596eb8967d744174820280fa62b4542a2e955bfaccca73ed8a13c6eb8e9b502"},
     {file = "soupsieve-2.10.tar.gz", hash = "sha256:49e9380d7d2905463583bafe285e818c7366a9ed7b3aee221c1ac79c905d8bc0"},
@@ -5296,7 +5296,7 @@ description = "A modern CSS selector implementation for Beautiful Soup."
 optional = false
 python-versions = ">=3.11.5"
 groups = ["doc"]
-markers = "python_version >= \"3.12\""
+markers = "python_full_version >= \"3.11.5\""
 files = [
     {file = "soupsieve-4.1-py3-none-any.whl", hash = "sha256:e4d667b3974ce6e038e7390486b8093369854a1d345ffdd4c121dfc4a782e809"},
     {file = "soupsieve-4.1.tar.gz", hash = "sha256:ca9abf7126667010d8f6e9b39bfc1bc3b23c8aed9bcb0f54a754dde969bb8aab"},
@@ -6467,4 +6467,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.11,<3.15"
-content-hash = "c504901c3476c1b73434cb67c2c8c3d8d07be187847a0ecc916e3e6e48d3cbd0"
+content-hash = "c058679d089eeccd8558c1dd2c128e48e5a3c5edc66e860b21f5149c7a5e4e45"

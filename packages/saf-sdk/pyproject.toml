@@ -7,103 +7,101 @@ name = "ansys-saf-sdk"
 version = "0.7.0"
 description = "SAF SDK Bundle"
 readme = "README.md"
-requires-python = ">=3.11,<3.15"
 license = "Apache-2.0"
-authors = [
-    { name = "ANSYS, Inc.", email = "pyansys-core@synopsys.com" },
-]
 maintainers = [
-    { name = "ANSYS, Inc.", email = "pyansys-core@synopsys.com" },
+  { name = "ANSYS, Inc.", email = "pyansys-core@synopsys.com" },
 ]
+authors = [
+  { name = "ANSYS, Inc.", email = "pyansys-core@synopsys.com" },
+]
+requires-python = ">=3.11,<3.15"
 classifiers = [
-    "Development Status :: 3 - Alpha",
-    "Intended Audience :: Science/Research",
-    "Natural Language :: English",
-    "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12",
-    "Programming Language :: Python :: 3.13",
-    "Programming Language :: Python :: 3.14",
-    "Topic :: Scientific/Engineering",
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Science/Research",
+  "Natural Language :: English",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
+  "Topic :: Scientific/Engineering",
 ]
 dependencies = [
   "ansys-bdm-api==0.5.0",
   "ansys-bdm-shared-volume==0.4.0",
-  "ansys-saf-glow-engine==2.5.0",
   "ansys-iam-oidc==0.9.0",
+  "ansys-saf-glow-engine==2.5.0",
   "ansys-saf-product-configuration==0.26.0",
   "ansys-saf-product-manager==0.6.0",
 ]
-
-[project.optional-dependencies]
-core-dash = [
-  "ansys-saf-glow-engine[dash]==2.5.0",
-]
-core-pim = [
-  "ansys-saf-glow-engine[pim]==2.5.0",
-]
-core-hps = [
-  "ansys-saf-glow-engine[hps]==2.5.0",
-]
-core-test = [
-  "ansys-saf-glow-engine[test]==2.5.0",
-]
-core-mcp = [
-  "ansys-saf-glow-engine[mcp]==2.5.0",
-]
-core-all = [
+optional-dependencies.all = [
+  "ansys-saf-desktop-installer==1.19.0",
+  "ansys-saf-desktop-orchestrator==1.14.0",
   "ansys-saf-glow-engine[all]==2.5.0",
   "ansys-saf-product-configuration[all]==0.26.0",
   "ansys-saf-product-manager[all]==0.6.0",
 ]
-instance-management = [
+optional-dependencies.build = [
+  "ansys-saf-desktop-installer==1.19.0",
+]
+optional-dependencies.core-all = [
+  "ansys-saf-glow-engine[all]==2.5.0",
+  "ansys-saf-product-configuration[all]==0.26.0",
+  "ansys-saf-product-manager[all]==0.6.0",
+]
+optional-dependencies.core-dash = [
+  "ansys-saf-glow-engine[dash]==2.5.0",
+]
+optional-dependencies.core-hps = [
+  "ansys-saf-glow-engine[hps]==2.5.0",
+]
+optional-dependencies.core-mcp = [
+  "ansys-saf-glow-engine[mcp]==2.5.0",
+]
+optional-dependencies.core-pim = [
+  "ansys-saf-glow-engine[pim]==2.5.0",
+]
+optional-dependencies.core-test = [
+  "ansys-saf-glow-engine[test]==2.5.0",
+]
+optional-dependencies.desktop = [
+  "ansys-saf-desktop-orchestrator==1.14.0",
+]
+optional-dependencies.instance-management = [
   "ansys-saf-product-configuration==0.26.0",
   "ansys-saf-product-manager==0.6.0",
 ]
-instance-management-fluent = [
-  "ansys-saf-product-configuration[fluent]==0.26.0",
-  "ansys-saf-product-manager[fluent]==0.6.0",
-]
-instance-management-aedt = [
+optional-dependencies.instance-management-aedt = [
   "ansys-saf-product-configuration[aedt]==0.26.0",
   "ansys-saf-product-manager[aedt]==0.6.0",
 ]
-instance-management-optislang = [
+optional-dependencies.instance-management-all = [
+  "ansys-saf-product-configuration[all]==0.26.0",
+  "ansys-saf-product-manager[all]==0.6.0",
+]
+optional-dependencies.instance-management-fluent = [
+  "ansys-saf-product-configuration[fluent]==0.26.0",
+  "ansys-saf-product-manager[fluent]==0.6.0",
+]
+optional-dependencies.instance-management-geometry = [
+  "ansys-saf-product-manager[geometry]==0.6.0",
+]
+optional-dependencies.instance-management-mapdl = [
+  "ansys-saf-product-manager[mapdl]==0.6.0",
+]
+optional-dependencies.instance-management-mechanical = [
+  "ansys-saf-product-manager[mechanical]==0.6.0",
+]
+optional-dependencies.instance-management-optislang = [
   "ansys-saf-product-configuration[optislang]==0.26.0",
   "ansys-saf-product-manager[optislang-wrapper]==0.6.0",
 ]
-instance-management-geometry = [
-  "ansys-saf-product-manager[geometry]==0.6.0",
-]
-instance-management-mapdl = [
-  "ansys-saf-product-manager[mapdl]==0.6.0",
-]
-instance-management-mechanical = [
-  "ansys-saf-product-manager[mechanical]==0.6.0",
-]
-instance-management-visor = [
+optional-dependencies.instance-management-visor = [
   "ansys-saf-product-manager[visor]==0.6.0",
 ]
-instance-management-all = [
-  "ansys-saf-product-configuration[all]==0.26.0",
-  "ansys-saf-product-manager[all]==0.6.0",
-]
-desktop = [
-  "ansys-saf-desktop-orchestrator==1.14.0",
-]
-ui = [
-   "ansys-saf-projects-dashboard==0.2.0",
-]
-build = [
-  "ansys-saf-desktop-installer==1.19.0",
-]
-all = [
-  "ansys-saf-glow-engine[all]==2.5.0",
-  "ansys-saf-product-configuration[all]==0.26.0",
-  "ansys-saf-product-manager[all]==0.6.0",
-  "ansys-saf-desktop-installer==1.19.0",
-  "ansys-saf-desktop-orchestrator==1.14.0",
+optional-dependencies.ui = [
+  "ansys-saf-projects-dashboard==0.2.0",
 ]
 
 [tool.setuptools]
-py-modules = [ ]
+py-modules = []

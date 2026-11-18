@@ -23,7 +23,7 @@ repos:
         pass_filenames: true
 
   - repo: https://github.com/zizmorcore/zizmor-pre-commit
-    rev: 451b56af716f9f0d0c2b816503a3fd0cf8b036fa # 1.29.0
+    rev: 06a39750ec31860bb44f2acf67182c40016cd1e7 # 1.32.0
     hooks:
       - id: zizmor
         args: ["--pedantic"]

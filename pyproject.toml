@@ -44,7 +44,6 @@ doc = [
   "autodoc-pydantic>=2.2.0; python_version>='3.12'",
   "click>=8.3.2; python_version>='3.12'",
   "docutils>=0.21; python_version>='3.12' and python_version<'4.0'",
-  "linkchecker>=10.6.0; python_version>='3.12'",
   "nbsphinx>=0.9.8; python_version>='3.12'",
   "numpydoc>=1.10.0; python_version>='3.12'",
   "rst2html>=2020.7.4; python_version>='3.12'",

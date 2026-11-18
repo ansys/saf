@@ -153,6 +153,7 @@ tasks:
       - "--prefix"
       - "doc/radar"
       - "ci"
+      - "--ignore-scripts"
       - "--no-audit"
       - "--no-fund"
     inputs:

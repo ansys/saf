@@ -75,16 +75,14 @@ def _group_dependencies(solution_dir: Path, group: str) -> dict[str, str]:
     configuration = tomlkit.loads((solution_dir / "pyproject.toml").read_bytes()).unwrap()
     if parse_solution_backend(solution_dir).backend is SolutionBackend.UV:
         values = (
-            configuration["project"]["dependencies"]
-            if group == "main"
-            else configuration["dependency-groups"][group]
+            configuration["project"]["dependencies"] if group == "main" else configuration["dependency-groups"][group]
         )
         requirements = [Requirement(value) for value in values]
         return {requirement.name: str(requirement.specifier) for requirement in requirements}
     poetry = configuration["tool"]["poetry"]
     dependencies = poetry["dependencies"] if group == "main" else poetry["group"][group]["dependencies"]
     return {
-        name: specification["version"] if isinstance(specification, dict) else specification
+        name: specification.get("version", "*") if isinstance(specification, dict) else specification
         for name, specification in dependencies.items()
     }
 
@@ -97,6 +95,17 @@ def _package_is_installed(solution_dir: Path, name: str) -> bool:
         text=True,
     )
     return result.returncode == 0
+
+
+def test_group_dependencies_handles_poetry_dependency_without_version(tmp_path: Path):
+    (tmp_path / "pyproject.toml").write_text(
+        "[tool.poetry]\n"
+        "name = 'test-solution'\n\n"
+        "[tool.poetry.dependencies]\n"
+        "source-dependency = { path = '../source' }\n",
+    )
+
+    assert _group_dependencies(tmp_path, "main") == {"source-dependency": "*"}
 
 
 def _check_step_available_on_api(step_name: str, solution_proc: SAFProcess) -> None:

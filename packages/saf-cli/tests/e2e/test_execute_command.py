@@ -178,6 +178,9 @@ def test_saf_execute_pip(
     """
     Test ``saf execute`` with the default option values and a pip command.
     """
+    if parse_solution_backend(session_solution.root_dir).backend is SolutionBackend.UV:
+        pytest.skip("pip is not guaranteed to be installed in UV-managed solution environments.")
+
     command = "pip list"
     process_output = execute_command([session_solution.name, command])
     expected_pkg = f"{namespace_to_pkg_name(session_solution_namespace)}-{to_package_name(session_solution.name)}"
@@ -191,6 +194,9 @@ def test_saf_execute_poetry(session_solution: SolutionRegistry, execute_command:
     """
     Test ``saf execute`` with the default option values and a poetry command.
     """
+    if parse_solution_backend(session_solution.root_dir).backend is SolutionBackend.UV:
+        pytest.skip("Poetry is not installed in UV-managed solution environments.")
+
     if platform.system() == "Windows":
         command = "poetry run where poetry"
     elif platform.system() == "Linux":

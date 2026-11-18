@@ -25,6 +25,7 @@ import sys
 import time
 from typing import Any
 from urllib.parse import urlparse
+import warnings
 
 import click
 from dotenv import load_dotenv
@@ -1152,10 +1153,10 @@ def setup_environment(
         _print_main_header("Setup Environment")
 
         if backend_info.uses_deprecated_backend:
-            click.secho(
-                "Warning: Poetry-based solutions are deprecated. Installation will continue using Poetry.",
-                fg="yellow",
-                err=True,
+            warnings.warn(
+                "Poetry-based solutions are deprecated. Installation will continue using Poetry.",
+                DeprecationWarning,
+                stacklevel=2,
             )
         _print_inputs_summary(
             selected_dependency_groups,

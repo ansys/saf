@@ -20,8 +20,10 @@ from pathlib import Path
 import platform
 import shutil
 import sys
+import tempfile
 from typing import Any
 
+from filelock import FileLock
 from packaging.requirements import Requirement
 import pytest
 import tomlkit
@@ -139,8 +141,7 @@ def _clean_plugin(plugin_destination_dir: Path, plugin_distribution_dir: Path) -
         shutil.rmtree(plugin_distribution_dir)
 
 
-@pytest.fixture(scope="session", autouse=True)
-def clean_custom_template_plugins() -> None:
+def _clean_custom_template_plugins() -> None:
     plugin_module_names = [
         "test_custom_templates",
         "test_custom_templates_empty_toml",
@@ -172,6 +173,21 @@ def clean_custom_template_plugins() -> None:
             / f"ansys_saf_{module_name}-0.1.dev0.dist-info"
         )
         _clean_plugin(plugin_destination_dir, plugin_distribution_dir)
+
+
+@pytest.fixture(autouse=True)
+def serialize_custom_template_plugin_access(request: pytest.FixtureRequest) -> Generator[None, None, None]:
+    uses_custom_plugin = request.node.get_closest_marker("use_custom_plugins") or any(
+        name.startswith("install_custom_template_plugin") for name in request.fixturenames
+    )
+    if not uses_custom_plugin:
+        yield
+        return
+
+    lock_path = Path(tempfile.gettempdir()) / "ansys-saf-cli-custom-template-plugins.lock"
+    with FileLock(lock_path):
+        _clean_custom_template_plugins()
+        yield
 
 
 @pytest.fixture
@@ -347,8 +363,7 @@ def install_custom_template_plugin_with_unresolvable_dependency() -> Generator[P
     )
     templates_toml = plugin_destination_dir / "templates.toml"
     templates_toml.write_text(
-        templates_toml.read_text()
-        + '\n\n[templates.second-step.dependencies.main]\nhumanize = "==999999999.0"\n',
+        templates_toml.read_text() + '\n\n[templates.second-step.dependencies.main]\nhumanize = "==999999999.0"\n',
     )
     yield plugin_destination_dir
     _clean_plugin(plugin_destination_dir, plugin_distribution_dir)

@@ -153,7 +153,6 @@ def test_saf_install(
             f"{DEFAULT_SOLUTION_NAME.replace('_', '-')} (0.0.0)"
         )
         assert p.find_msg_in_output(expected_package_install_msg)
-        assert p.find_msg_in_output("Poetry-based solutions are deprecated")
     assert p.find_msg_in_output("Preload solution package")
 
     verify_installation(solution_path)

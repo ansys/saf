@@ -370,10 +370,10 @@ def test_setup_environment_default_params(
     pyproject_file.write_text(PYPROJECT_CONTENT)
 
     working_dir = Path.cwd()
-    setup_environment(tmp_path, SOLUTION_MAIN_MODULE_NAME)
+    with pytest.warns(DeprecationWarning, match="Poetry-based solutions are deprecated"):
+        setup_environment(tmp_path, SOLUTION_MAIN_MODULE_NAME)
     captured = capsys.readouterr()
     printed_msgs = captured.out
-    assert "Poetry-based solutions are deprecated" in captured.err
     assert "You are all set!" in printed_msgs
     expected_calls.append(
         mock.call(

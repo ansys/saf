@@ -20,8 +20,29 @@ import getpass
 import os
 from pathlib import Path
 import platform
+import shutil
 import subprocess
 import sys
+
+from ansys.saf.desktop.installer._package.backend_detection import SolutionBackend
+
+
+def copy_mock_solution(source: Path, destination: Path, backend: SolutionBackend) -> Path:
+    """Copy shared mock files with only the selected backend's configuration and lock."""
+    shutil.copytree(
+        source,
+        destination,
+        ignore=shutil.ignore_patterns(
+            "pyproject.toml",
+            "pyproject.poetry.toml",
+            "pyproject.uv.toml",
+            "poetry.lock",
+            "uv.lock",
+        ),
+    )
+    shutil.copy2(source / f"pyproject.{backend.value}.toml", destination / "pyproject.toml")
+    shutil.copy2(source / f"{backend.value}.lock", destination / f"{backend.value}.lock")
+    return destination
 
 
 def get_appdata_directory() -> str:

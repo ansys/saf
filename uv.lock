@@ -6406,17 +6406,16 @@ wheels = [
 
 [[package]]
 name = "pkg-about"
-version = "1.2.11"
+version = "2.5.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "docutils" },
-    { name = "importlib-metadata" },
+    { name = "build" },
     { name = "packaging" },
-    { name = "setuptools" },
+    { name = "typing-extensions" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/e6/17/2592f5b269be175bb924f7a9e5da1136f3d84e6f4d0627503ec0d99dd668/pkg_about-1.2.11.tar.gz", hash = "sha256:7e6fdbe159bb6064eaf815d596dc11cf8daa5d850b5cbf4a04220d07c98cb962", size = 13536, upload-time = "2025-03-21T10:07:15.634Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/42/b4/a77a5e4903cc626e549fdaea718f756c2309db8e609692625d1f8b51817a/pkg_about-2.5.1.tar.gz", hash = "sha256:4efb55ea9dbe176bd631d6884493079bcacfb247b585768fd616841b9b9f2c10", size = 16125, upload-time = "2026-10-16T09:45:23.511Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/01/2e/f3b5b00d9bfc9898fb91a40e53ab85019bc81ca2975a10b302fdad91fa0e/pkg_about-1.2.11-py3-none-any.whl", hash = "sha256:68781d1091442a06aaec510293555f34ef3a1e8b03a2cde03fd79c1d6fcf6b2e", size = 6604, upload-time = "2025-03-21T10:07:14.087Z" },
+    { url = "https://files.pythonhosted.org/packages/17/17/e33bcb99a93e4a343585b99cce91f324903c8d0ce6ddd7c5dffe6309a967/pkg_about-2.5.1-py3-none-any.whl", hash = "sha256:28b11bd64e9d9c6111bc1a49c6ab194b26307b77e57620b5474a04a9a3114617", size = 6201, upload-time = "2026-10-16T09:45:22.458Z" },
 ]
 
 [[package]]
@@ -6861,15 +6860,15 @@ wheels = [
 
 [[package]]
 name = "pyc-wheel"
-version = "1.3.0"
+version = "1.5.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "pkg-about" },
     { name = "setuptools" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/60/ab/6d374a5388359e60709c35e701c3d70412bbf657f481c7d27d02cb2a313c/pyc_wheel-1.3.0.tar.gz", hash = "sha256:b6a3db74c5da80aa811f69d7541b09d83582ed8fcea2d1e94ac46ca19adda4d3", size = 15216, upload-time = "2025-02-13T10:51:05.858Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/26/0c/d57919ba0fc5f8ddde8ef93795d8ef9efd359042d811e97a30a5120cb6c5/pyc_wheel-1.5.0.tar.gz", hash = "sha256:1c7d0225e693c0dc6bfd3785f1879f868697bdefeb7539a59272d10e02420949", size = 132770, upload-time = "2025-09-02T12:36:01.964Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/b9/33/7af3e901c6687a5c50672aec579d04431b28ac5be6d9ce66066d9f868d5d/pyc_wheel-1.3.0-py3-none-any.whl", hash = "sha256:ed5b6cc298966d5192eb905cdf0a5c2be8dc2979bfe991830b25cffab8f93da2", size = 8605, upload-time = "2025-02-13T10:51:04.462Z" },
+    { url = "https://files.pythonhosted.org/packages/b3/c2/4b9ad5723d171958be5374068f8be181a173f7dedde7b943b21fb4580d99/pyc_wheel-1.5.0-py3-none-any.whl", hash = "sha256:d7d41c00ae6df9d78fefe684da7362cf338c90be439587de8e1c285c4afd9542", size = 9632, upload-time = "2025-09-02T12:36:00.364Z" },
 ]
 
 [[package]]

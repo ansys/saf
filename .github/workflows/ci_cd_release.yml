@@ -246,8 +246,6 @@ jobs:
         shell: bash
         env:
           LIBRARY: ${{ inputs.library }}
-          RELEASE_VERSION: ${{ needs.release-information.outputs.version-to-release
-            }}
         run: |
           VEX_PATH="VEX/${LIBRARY}.openvex.json"
           if [[ -f "$VEX_PATH" ]]; then
@@ -279,6 +277,7 @@ jobs:
         if: steps.package-vex.outputs.vex_path != ''
         shell: bash
         env:
+          LIBRARY: ${{ inputs.library }}
           RELEASE_VERSION: ${{ needs.release-information.outputs.version-to-release
             }}
         run: |

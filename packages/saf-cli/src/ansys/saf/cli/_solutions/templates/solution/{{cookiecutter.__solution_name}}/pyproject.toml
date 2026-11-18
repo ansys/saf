@@ -114,6 +114,7 @@ namespaces = true
 [tool.uv]
 package = true
 prerelease = "if-necessary"
+override-dependencies = ["ansys-saf-desktop-installer==1.20.dev0"]
 
 [tool.black]
 line-length = 120

@@ -51,8 +51,16 @@ Key capabilities include:
   operating system where the build is executed (Windows ``.exe`` or Linux
   executable).
 - **Online and offline modes**: By default, installers download dependencies at
-  install time; the ``--offline-package`` option bundles everything for
-  environments without internet access.
+  install time, while local, Git, private, and direct-URL dependencies are
+  bundled. The ``--offline-package`` option bundles the remaining dependencies
+  for environments without internet access. The lockfile packaged with a UV
+  solution is scoped to the build operating system; for offline packages it is
+  also scoped to the selected Python minor version. Installers are not
+  cross-platform dependency bundles.
+- **UV and Poetry solutions**: UV is used for UV-based solutions. Existing
+  Poetry-based solutions remain supported, but Poetry support is deprecated.
+  UV solutions can declare ``dynamic = ["version"]``; the version computed by
+  the build backend is read from a wheel built in a temporary folder.
 - **Customizable build options**: Supports encryption, code obfuscation, custom
   entry points, and configurable Python versions.
 - **Documentation embedding**: Automatically builds and embeds Sphinx
@@ -106,6 +114,19 @@ Contribute
 Contributions are welcome!
 If you would like to contribute, please follow the guidelines provided in the `Contribute`_
 section of the official documentation.
+
+Test mock solutions
+-------------------
+
+The four solutions under ``tests/mocks/`` share their source code, documentation
+and assets between backends. Each contains ``pyproject.poetry.toml``,
+``pyproject.uv.toml``, ``poetry.lock`` and ``uv.lock``.
+
+The test fixtures select ``solution_backend`` and copy the matching configuration
+as ``pyproject.toml``, together with only its lockfile, into an isolated temporary
+directory. The stored mocks are templates, not projects to build directly: both
+lockfiles must never reach backend detection together. Poetry-specific tests
+explicitly select the Poetry backend; other tests keep the existing UV default.
 
 
 License

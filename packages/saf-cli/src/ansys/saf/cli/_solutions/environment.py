@@ -35,7 +35,6 @@ from requests.auth import HTTPBasicAuth
 import tomlkit
 
 from ansys.saf.cli._config.const import (
-    DEFAULT_POETRY_VERSION,
     WORKSPACE_CLEAR_OPTIONS,
 )
 from ansys.saf.cli._solutions.backend_detection import (
@@ -1101,13 +1100,9 @@ def _preload_solution_main_module(
 
 def _get_poetry_version(configuration: dict[str, Any]) -> str:
     version = configuration.get("build-system-requirements", {}).get("build-system-version")
-    if version is not None:
-        if not isinstance(version, str) or not version.strip():
-            raise InstallError("'build-system-version' must be a non-empty Poetry version string.")
-        return version
-    if "project" in configuration:
-        return DEFAULT_POETRY_VERSION
-    raise RuntimeError("No build system version found in the configuration file.")
+    if not version:
+        raise RuntimeError("No build system version found in the configuration file.")
+    return version
 
 
 def setup_environment(
@@ -1147,10 +1142,7 @@ def setup_environment(
             build_system_version = subprocess.check_output([uv_exec, "--version"], text=True).strip()
         else:
             _check_poetry_private_sources(configuration)
-            if configuration.get("project", {}).get("requires-python") is not None:
-                _check_project_python_version(backend_info)
-            else:
-                _check_poetry_python_version(configuration)
+            _check_poetry_python_version(configuration)
             build_system_version = _get_poetry_version(configuration)
 
         virtual_environment_exists = _check_virtual_environment_exists()

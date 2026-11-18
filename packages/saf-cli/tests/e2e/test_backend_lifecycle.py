@@ -32,8 +32,15 @@ def _new_solution(runner: CliRunner, ui: str, namespace: str) -> Path:
     result = runner.invoke(
         saf,
         [
-            "new", "--solution-name", "backend_solution", "--solution-display-name", "Backend Solution",
-            "--ui-framework", ui, "--namespace", namespace,
+            "new",
+            "--solution-name",
+            "backend_solution",
+            "--solution-display-name",
+            "Backend Solution",
+            "--ui-framework",
+            ui,
+            "--namespace",
+            namespace,
         ],
     )
     assert result.exit_code == 0, result.output
@@ -67,8 +74,6 @@ def test_generated_uv_lockfile_is_current(ui: str, namespace: str, uv_executable
         pytest.param("uv", None, "none", "mycompany.apps", id="uv-no-ui-custom-namespace"),
         pytest.param("poetry", "1.7.1", "none", "saf.solutions", id="poetry-1.7"),
         pytest.param("poetry", "2.1.0", "dash", "mycompany.apps", id="poetry-2.1"),
-        pytest.param("poetry-pep621", None, "none", "saf.solutions", id="poetry-pep621-default"),
-        pytest.param("poetry-pep621", "2.1.0", "dash", "mycompany.apps", id="poetry-pep621-pinned"),
     ],
 )
 def test_real_backend_install_and_add_step(
@@ -86,10 +91,9 @@ def test_real_backend_install_and_add_step(
     monkeypatch.setattr(environment, "_install_dotnet_linux_dependencies", lambda: None)
     template_metadata = install_custom_template_plugin / "templates.toml"
     template_metadata.write_text(
-        template_metadata.read_text()
-        + '\n[templates.group-dependency-step]\nlocation = "steps/second_step"\n'
+        template_metadata.read_text() + '\n[templates.group-dependency-step]\nlocation = "steps/second_step"\n'
         'type = "step"\ndescription = "Group dependency regression"\n'
-        '[templates.group-dependency-step.dependencies.regression]\n'
+        "[templates.group-dependency-step.dependencies.regression]\n"
         'colorama = {version = "^0.4.6", allow-prereleases = true}\n',
     )
     runner = CliRunner()
@@ -105,28 +109,14 @@ def test_real_backend_install_and_add_step(
     if backend == "poetry":
         assert version is not None
         prepare_poetry_solution(root, version)
-    elif backend == "poetry-pep621":
-        configuration["tool"].pop("uv")
-        configuration["tool"].pop("setuptools")
-        configuration["tool"]["poetry"] = {
-            "packages": [{"include": namespace.split(".")[0], "from": "src"}],
-        }
-        configuration.pop("dependency-groups")
-        configuration["build-system"] = {
-            "requires": ["poetry-core>=2"],
-            "build-backend": "poetry.core.masonry.api",
-        }
-        if version is not None:
-            configuration["build-system-requirements"] = {"build-system-version": version}
-        pyproject.write_text(tomlkit.dumps(configuration))
 
     result = runner.invoke(saf, ["install", str(root)])
     assert result.exit_code == 0, result.output
     python = get_exec_from_solution_venv(root, "python")
-    if backend != "uv":
+    if backend == "poetry":
         poetry = get_exec_from_solution_venv(root, "poetry")
         installed_version = subprocess.check_output([str(poetry), "--version"], text=True)
-        assert f"(version {version or '2.5.1'})" in installed_version
+        assert f"(version {version})" in installed_version
 
     for step, template in (
         ("calculator_regression", "calculator-step"),

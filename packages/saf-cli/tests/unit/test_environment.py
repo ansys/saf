@@ -1269,57 +1269,23 @@ def test_uv_no_optional_groups(uv_solution: Path, mocker: pytest_mock.MockFixtur
     assert "--group" not in run.call_args.args[0]
 
 
-@pytest.mark.parametrize(("pin", "expected"), [(None, "2.5.1"), ("2.1.0", "2.1.0")])
-@pytest.mark.parametrize("legacy_python", [False, True])
-def test_poetry_pep621_install_uses_project_metadata(
+def test_poetry_pep621_does_not_supply_default_version(
     tmp_path: Path,
     mocker: pytest_mock.MockFixture,
-    pin: str | None,
-    expected: str,
-    legacy_python: bool,
 ):
     content = (
         '[project]\nname = "pep621-solution"\nversion = "0.1.0"\n'
         'requires-python = ">=3.11,<4"\ndependencies = []\n'
+        '[tool.poetry.dependencies]\npython = ">=3.11,<4"\n'
         '[build-system]\nrequires = ["poetry-core>=2"]\nbuild-backend = "poetry.core.masonry.api"\n'
     )
-    if pin is not None:
-        content += f'[build-system-requirements]\nbuild-system-version = "{pin}"\n'
-    if legacy_python:
-        content = content.replace('requires-python = ">=3.11,<4"\n', "")
-        content += '[tool.poetry.dependencies]\npython = ">=3.11,<4"\n'
     (tmp_path / "pyproject.toml").write_text(content)
-    for name in (
-        "_create_virtual_environment",
-        "_configure_poetry",
-        "_install_poetry_dependencies",
-        "_install_dotnet_linux_dependencies",
-        "_preload_solution_main_module",
-    ):
-        mocker.patch.object(environment, name)
-    install_poetry = mocker.patch.object(environment, "_install_poetry")
-    mocker.patch.object(environment, "get_exec_from_solution_venv", return_value=tmp_path / ".venv" / "python")
-
-    environment.setup_environment(tmp_path, "solution.main")
-
-    install_poetry.assert_called_once_with(False, None, expected)
-
-
-@pytest.mark.parametrize("pin", ['""', "42"])
-def test_poetry_invalid_version_pin_does_not_clear_workspace(
-    tmp_path: Path,
-    mocker: pytest_mock.MockFixture,
-    pin: str,
-):
-    (tmp_path / "pyproject.toml").write_text(
-        '[project]\nname = "pep621-solution"\nversion = "0.1.0"\nrequires-python = ">=3.11,<4"\n'
-        '[build-system]\nrequires = ["poetry-core>=2"]\nbuild-backend = "poetry.core.masonry.api"\n'
-        f"[build-system-requirements]\nbuild-system-version = {pin}\n",
-    )
+    mocker.patch.object(environment, "_check_poetry_private_sources")
+    mocker.patch.object(environment, "_check_poetry_python_version")
     clear = mocker.patch.object(environment, "_clear_workspace")
     install = mocker.patch.object(environment, "_install_poetry")
 
-    with pytest.raises(InstallError, match="must be a non-empty Poetry version string"):
+    with pytest.raises(RuntimeError, match="No build system version found"):
         environment.setup_environment(tmp_path, "solution.main", workspace_clear="hard")
 
     clear.assert_not_called()

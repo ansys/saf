@@ -231,11 +231,7 @@ class DependencyManager:
                 raise ValueError(f"Invalid dependency entry in '{self._pyproject_path}': {dependency!r}.")
         return names
 
-    def _merge_project_dependencies(
-        self,
-        pyproject_content: TOMLDocument,
-        backend: SolutionBackend,
-    ) -> list[ManualDependency]:
+    def _merge_project_dependencies(self, pyproject_content: TOMLDocument) -> list[ManualDependency]:
         """Merge PEP 621 dependencies, returning overlaps for manual review."""
         project = self._get_or_create_table(pyproject_content, "project")
         main_dependencies = self._get_or_create_array(project, "dependencies")
@@ -255,39 +251,21 @@ class DependencyManager:
             if not isinstance(dependencies, Array):
                 raise ValueError(f"Optional dependencies '{extra}' must be an array in '{self._pyproject_path}'.")
             existing_names.update(self._collect_dependency_names(dependencies))
-        if backend is SolutionBackend.POETRY:
-            poetry = pyproject_content.get("tool", {}).get("poetry", {})
-            existing_names.update(
-                canonicalize_name(name) for name in poetry.get("dependencies", {}) if name != "python"
-            )
-            for group in poetry.get("group", {}).values():
-                existing_names.update(canonicalize_name(name) for name in group.get("dependencies", {}))
-
         return self._add_project_template_dependencies(
             pyproject_content,
             main_dependencies,
             dependency_groups,
             existing_names,
-            backend,
         )
 
     def _get_project_dependency_target(
         self,
-        pyproject_content: TOMLDocument,
         main_dependencies: Array,
         dependency_groups: MutableMapping[str, Any],
         group: str,
-        backend: SolutionBackend,
-    ) -> Array | MutableMapping[str, Any]:
+    ) -> Array:
         if group == "main":
             return main_dependencies
-        if backend is SolutionBackend.POETRY and group not in dependency_groups:
-            tool = self._get_or_create_table(pyproject_content, "tool")
-            poetry = self._get_or_create_table(tool, "poetry")
-            groups = self._get_or_create_table(poetry, "group")
-            if group not in groups:
-                groups[group] = self._create_new_poetry_dependency_group()
-            return self._get_or_create_table(self._get_or_create_table(groups, group), "dependencies")
         return self._get_or_create_array(dependency_groups, group)
 
     def _add_project_template_dependencies(
@@ -296,53 +274,34 @@ class DependencyManager:
         main_dependencies: Array,
         dependency_groups: MutableMapping[str, Any],
         existing_names: set[str],
-        backend: SolutionBackend,
     ) -> list[ManualDependency]:
         """Add template requirements and backend-specific prerelease settings."""
         manual_deps: list[ManualDependency] = []
         for group, dependencies in self._saf_template.dependencies.items():
             if not isinstance(dependencies, dict):
                 raise ValueError(f"Template dependency group '{group}' must be a mapping.")
-            target = self._get_project_dependency_target(
-                pyproject_content, main_dependencies, dependency_groups, group, backend,
-            )
+            target = self._get_project_dependency_target(main_dependencies, dependency_groups, group)
             for name, specification in dependencies.items():
                 normalized_name = canonicalize_name(name)
                 if normalized_name in existing_names:
                     manual_deps.append(ManualDependency(name=name, specification=specification, group=group))
-                    continue
-                if not isinstance(target, Array):
-                    self._add_poetry_dependency_to_solution(name, specification, target)
-                    existing_names.add(normalized_name)
                     continue
                 requirement, prereleases = self._format_project_requirement(name, specification)
                 target.append(requirement)
                 existing_names.add(normalized_name)
                 if prereleases is not None:
                     tool = self._get_or_create_table(pyproject_content, "tool")
-                    if backend is SolutionBackend.UV:
-                        uv = self._get_or_create_table(tool, "uv")
-                        package_prereleases = self._get_or_create_table(uv, "prerelease-package")
-                        package_prereleases[normalized_name] = {True: "allow", False: "disallow"}[prereleases]
-                    else:
-                        poetry = self._get_or_create_table(tool, "poetry")
-                        if group != "main":
-                            groups = self._get_or_create_table(poetry, "group")
-                            poetry = self._get_or_create_table(groups, group)
-                        poetry_dependencies = self._get_or_create_table(poetry, "dependencies")
-                        poetry_dependencies[normalized_name] = {"allow-prereleases": prereleases}
+                    uv = self._get_or_create_table(tool, "uv")
+                    package_prereleases = self._get_or_create_table(uv, "prerelease-package")
+                    package_prereleases[normalized_name] = {True: "allow", False: "disallow"}[prereleases]
         return manual_deps
 
     def update_solution_dependencies(self, executable: Path, solution_env: dict[str, str]) -> None:
         """Detect the backend, save merged dependencies, and install them or warn about overlaps."""
         backend = parse_solution_backend(self._solution_root_dir).backend
         pyproject_content = tomlkit.loads(self._pyproject_path.read_bytes())
-        project = pyproject_content.get("project", {})
-        poetry_dependencies = pyproject_content.get("tool", {}).get("poetry", {}).get("dependencies", {})
-        if backend is SolutionBackend.UV or (
-            "project" in pyproject_content and ("dependencies" in project or not poetry_dependencies)
-        ):
-            manual_deps = self._merge_project_dependencies(pyproject_content, backend)
+        if backend is SolutionBackend.UV:
+            manual_deps = self._merge_project_dependencies(pyproject_content)
         else:
             manual_deps = self._merge_poetry_dependencies(pyproject_content)
         if backend is SolutionBackend.UV:

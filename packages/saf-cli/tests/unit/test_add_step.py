@@ -1343,12 +1343,10 @@ def test_update_solution_dependencies_with_uv_requirement_options(
 
 
 @pytest.mark.parametrize("solution_name", ["solution_with_dash_ui"], indirect=True)
-@pytest.mark.parametrize("group", ["main", "ui"])
-def test_update_poetry_pep621_dependencies(
+def test_update_poetry_pep621_dependencies_requires_legacy_metadata(
     root_solution_dir: Path,
     default_saf_step_template: SafTemplate,
     mocker: MockerFixture,
-    group: str,
 ):
     pyproject_path = root_solution_dir / "pyproject.toml"
     pyproject_path.write_text(
@@ -1356,26 +1354,17 @@ def test_update_poetry_pep621_dependencies(
         'requires-python = ">=3.11,<4"\ndependencies = []\n'
         '[build-system]\nrequires = ["poetry-core>=2"]\nbuild-backend = "poetry.core.masonry.api"\n',
     )
-    default_saf_step_template.dependencies = {
-        group: {"requests": {"version": "^2.0", "extras": ["socks"], "allow-prereleases": True}},
-    }
+    original = pyproject_path.read_text()
     run = mocker.patch("ansys.saf.cli._solutions.dependencies.subprocess.run")
 
-    DependencyManager(default_saf_step_template, root_solution_dir).update_solution_dependencies(Path("poetry"), {})
+    with pytest.raises(ValueError, match=r"No \[tool\.poetry\] section"):
+        DependencyManager(default_saf_step_template, root_solution_dir).update_solution_dependencies(
+            Path("poetry"),
+            {},
+        )
 
-    content = tomlkit.loads(pyproject_path.read_bytes()).unwrap()
-    if group == "main":
-        assert content["project"]["dependencies"] == ["requests[socks] >=2.0,<3.0.0"]
-        assert content["tool"]["poetry"]["dependencies"]["requests"]["allow-prereleases"] is True
-    else:
-        assert content["tool"]["poetry"]["group"]["ui"]["dependencies"]["requests"] == {
-            "version": "^2.0",
-            "extras": ["socks"],
-            "allow-prereleases": True,
-        }
-    assert "uv" not in content.get("tool", {})
-    expected_install = ["poetry", "install"] + (["--with", "ui"] if group == "ui" else [])
-    assert [call.args[0] for call in run.call_args_list] == [["poetry", "lock"], expected_install]
+    assert pyproject_path.read_text() == original
+    run.assert_not_called()
 
 
 @pytest.mark.parametrize("solution_name", ["solution_without_ui"], indirect=True)
@@ -1416,7 +1405,12 @@ def test_uv_add_step_restores_source_metadata_and_lock_on_failure(
         BackupManager(root, solution_name, solution_namespace),
     ):
         add_step_to_solution(
-            solution_name, root, solution_name, "rollback_dependency", "none", default_saf_step_template,
+            solution_name,
+            root,
+            solution_name,
+            "rollback_dependency",
+            "none",
+            default_saf_step_template,
         )
 
     after = {path.relative_to(root): path.read_bytes() for path in root.rglob("*") if path.is_file()}

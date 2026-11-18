@@ -1204,7 +1204,7 @@ requires-dist = [
     { name = "ansys-saf-product-manager", extras = ["visor"], marker = "extra == 'instance-management-visor'", specifier = "==0.6.0" },
     { name = "ansys-saf-projects-dashboard", marker = "extra == 'ui'", specifier = "==0.2.0" },
 ]
-provides-extras = ["all", "build", "core-all", "core-dash", "core-hps", "core-mcp", "core-pim", "core-test", "desktop", "instance-management", "instance-management-aedt", "instance-management-all", "instance-management-fluent", "instance-management-geometry", "instance-management-mapdl", "instance-management-mechanical", "instance-management-optislang", "instance-management-visor", "ui"]
+provides-extras = ["core-dash", "core-pim", "core-hps", "core-test", "core-mcp", "core-all", "instance-management", "instance-management-fluent", "instance-management-aedt", "instance-management-optislang", "instance-management-geometry", "instance-management-mapdl", "instance-management-mechanical", "instance-management-visor", "instance-management-all", "desktop", "ui", "build", "all"]
 
 [[package]]
 name = "ansys-tools-common"

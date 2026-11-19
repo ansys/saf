@@ -1,0 +1,162 @@
+
+
+
+
+
+
+:class:`HpsProduct`
+===================
+
+
+.. py:class:: ansys.saf.glow.hps_execution.HpsProduct
+
+   Bases: :py:obj:`abc.ABC`
+
+
+   
+   A product accessible to a HPS job or design point evaluation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: HpsProduct
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~name`
+            - HPS name of the product.
+          * - :py:attr:`~version`
+            - Version of the product (Ansys products use the form '<year> R<release>').
+          * - :py:attr:`~executable`
+            - The path to the executable of the product.
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.saf.glow.hps_execution import HpsProduct
+
+Property detail
+---------------
+
+.. py:property:: name
+   :type: str
+
+   :abstractmethod:
+
+
+   
+   HPS name of the product.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: version
+   :type: str
+
+   :abstractmethod:
+
+
+   
+   Version of the product (Ansys products use the form '<year> R<release>').
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: executable
+   :type: pathlib.Path
+
+   :abstractmethod:
+
+
+   
+   The path to the executable of the product.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+
+

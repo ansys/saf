@@ -1,0 +1,49 @@
+
+
+
+
+
+
+:class:`EntityNotFoundInBlobStorageError`
+=========================================
+
+
+.. py:exception:: ansys.bdm.api.storage_exceptions.EntityNotFoundInBlobStorageError
+
+   Bases: :py:obj:`Exception`
+
+
+   
+   Exception raised when attempting to access entity using handle where the referenced entity does not exist.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.bdm.api.storage_exceptions import EntityNotFoundInBlobStorageError
+
+
+
+
+

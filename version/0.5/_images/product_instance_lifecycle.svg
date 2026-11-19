@@ -1,0 +1,128 @@
+<svg viewBox="0 0 760 380" xmlns="http://www.w3.org/2000/svg" role="img" font-family="ui-monospace, 'Cascadia Code', 'Fira Mono', monospace" font-size="13">
+  <title>Product instance lifecycle</title>
+  <desc>Three-phase lifecycle: create, use (repeated), and shutdown of a product instance</desc>
+
+  <defs>
+    <marker id="arr-life" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#818cf8"/>
+    </marker>
+    <marker id="arr-use" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#34d399"/>
+    </marker>
+    <marker id="arr-stop" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#f97316"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="760" height="380" fill="#0f172a" rx="12"/>
+
+  <!-- Title -->
+  <text x="380" y="32" text-anchor="middle" fill="#f1f5f9" font-size="16" font-weight="700" letter-spacing="0.5">Product Instance Lifecycle</text>
+
+  <!-- Phase 1: CREATE -->
+  <rect x="30" y="60" width="200" height="290" rx="10" fill="#1e293b" stroke="#818cf8" stroke-width="1.5"/>
+  <rect x="30" y="60" width="200" height="28" rx="10" fill="#312e81"/>
+  <rect x="30" y="78" width="200" height="10" fill="#312e81"/>
+  <text x="130" y="80" text-anchor="middle" fill="#c7d2fe" font-size="12" font-weight="700">1 · CREATE</text>
+
+  <text x="130" y="110" text-anchor="middle" fill="#94a3b8" font-size="9">@create_instance</text>
+
+  <rect x="55" y="122" width="150" height="22" rx="5" fill="#312e81" stroke="#818cf8" stroke-width="1"/>
+  <text x="130" y="137" text-anchor="middle" fill="#c7d2fe" font-size="9">PIM allocates process</text>
+
+  <line x1="130" y1="144" x2="130" y2="158" stroke="#818cf8" stroke-width="1.5" marker-end="url(#arr-life)"/>
+
+  <rect x="55" y="158" width="150" height="22" rx="5" fill="#312e81" stroke="#818cf8" stroke-width="1"/>
+  <text x="130" y="173" text-anchor="middle" fill="#c7d2fe" font-size="9">manager.initialize()</text>
+
+  <line x1="130" y1="180" x2="130" y2="194" stroke="#818cf8" stroke-width="1.5" marker-end="url(#arr-life)"/>
+
+  <rect x="55" y="194" width="150" height="22" rx="5" fill="#312e81" stroke="#818cf8" stroke-width="1"/>
+  <text x="130" y="209" text-anchor="middle" fill="#c7d2fe" font-size="9">Health check passes</text>
+
+  <line x1="130" y1="216" x2="130" y2="230" stroke="#818cf8" stroke-width="1.5" marker-end="url(#arr-life)"/>
+
+  <rect x="50" y="230" width="160" height="30" rx="6" fill="#064e3b" stroke="#34d399" stroke-width="1.5"/>
+  <text x="130" y="249" text-anchor="middle" fill="#34d399" font-size="10" font-weight="600">Instance RUNNING</text>
+
+  <!-- Decorators -->
+  <text x="55" y="282" fill="#94a3b8" font-size="8">Decorators:</text>
+  <text x="55" y="296" fill="#818cf8" font-size="8">@transaction</text>
+  <text x="55" y="308" fill="#818cf8" font-size="8">@create_instance</text>
+  <text x="55" y="320" fill="#818cf8" font-size="8">@long_running</text>
+
+  <!-- Arrow CREATE → USE -->
+  <line x1="230" y1="245" x2="272" y2="245" stroke="#34d399" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arr-use)"/>
+
+  <!-- Phase 2: USE (repeated) -->
+  <rect x="278" y="60" width="200" height="290" rx="10" fill="#1e293b" stroke="#34d399" stroke-width="1.5"/>
+  <rect x="278" y="60" width="200" height="28" rx="10" fill="#064e3b"/>
+  <rect x="278" y="78" width="200" height="10" fill="#064e3b"/>
+  <text x="378" y="80" text-anchor="middle" fill="#6ee7b7" font-size="12" font-weight="700">2 · USE (repeat N×)</text>
+
+  <text x="378" y="110" text-anchor="middle" fill="#94a3b8" font-size="9">@instance</text>
+
+  <rect x="303" y="122" width="150" height="22" rx="5" fill="#064e3b" stroke="#34d399" stroke-width="1"/>
+  <text x="378" y="137" text-anchor="middle" fill="#6ee7b7" font-size="9">Reconnect to process</text>
+
+  <line x1="378" y1="144" x2="378" y2="158" stroke="#34d399" stroke-width="1.5" marker-end="url(#arr-use)"/>
+
+  <rect x="303" y="158" width="150" height="22" rx="5" fill="#064e3b" stroke="#34d399" stroke-width="1"/>
+  <text x="378" y="173" text-anchor="middle" fill="#6ee7b7" font-size="9">Execute operations</text>
+
+  <line x1="378" y1="180" x2="378" y2="194" stroke="#34d399" stroke-width="1.5" marker-end="url(#arr-use)"/>
+
+  <rect x="303" y="194" width="150" height="22" rx="5" fill="#064e3b" stroke="#34d399" stroke-width="1"/>
+  <text x="378" y="209" text-anchor="middle" fill="#6ee7b7" font-size="9">Read / write results</text>
+
+  <!-- Repeat loop -->
+  <path d="M453 209 Q470 209 470 190 Q470 122 453 122" fill="none" stroke="#34d399" stroke-width="1.5" stroke-dasharray="4,2" marker-end="url(#arr-use)"/>
+  <text x="482" y="170" fill="#34d399" font-size="8" font-weight="600">repeat</text>
+
+  <!-- Decorators -->
+  <text x="303" y="250" fill="#94a3b8" font-size="8">Decorators:</text>
+  <text x="303" y="264" fill="#34d399" font-size="8">@transaction</text>
+  <text x="303" y="276" fill="#34d399" font-size="8">@instance</text>
+  <text x="303" y="288" fill="#34d399" font-size="8">@long_running (optional)</text>
+
+  <!-- Note -->
+  <rect x="298" y="302" width="160" height="36" rx="5" fill="#0f172a" stroke="#475569" stroke-width="1"/>
+  <text x="378" y="318" text-anchor="middle" fill="#94a3b8" font-size="8">Same process reused</text>
+  <text x="378" y="330" text-anchor="middle" fill="#94a3b8" font-size="8">across all @instance calls</text>
+
+  <!-- Arrow USE → SHUTDOWN -->
+  <line x1="478" y1="245" x2="520" y2="245" stroke="#f97316" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arr-stop)"/>
+
+  <!-- Phase 3: SHUTDOWN -->
+  <rect x="526" y="60" width="200" height="290" rx="10" fill="#1e293b" stroke="#f97316" stroke-width="1.5"/>
+  <rect x="526" y="60" width="200" height="28" rx="10" fill="#7c2d12"/>
+  <rect x="526" y="78" width="200" height="10" fill="#7c2d12"/>
+  <text x="626" y="80" text-anchor="middle" fill="#fed7aa" font-size="12" font-weight="700">3 · SHUTDOWN</text>
+
+  <text x="626" y="110" text-anchor="middle" fill="#94a3b8" font-size="9">@instance</text>
+
+  <rect x="551" y="122" width="150" height="22" rx="5" fill="#7c2d12" stroke="#f97316" stroke-width="1"/>
+  <text x="626" y="137" text-anchor="middle" fill="#fed7aa" font-size="9">Reconnect to process</text>
+
+  <line x1="626" y1="144" x2="626" y2="158" stroke="#f97316" stroke-width="1.5" marker-end="url(#arr-stop)"/>
+
+  <rect x="551" y="158" width="150" height="22" rx="5" fill="#7c2d12" stroke="#f97316" stroke-width="1"/>
+  <text x="626" y="173" text-anchor="middle" fill="#fed7aa" font-size="9">instance.exit()</text>
+
+  <line x1="626" y1="180" x2="626" y2="194" stroke="#f97316" stroke-width="1.5" marker-end="url(#arr-stop)"/>
+
+  <rect x="551" y="194" width="150" height="22" rx="5" fill="#7c2d12" stroke="#f97316" stroke-width="1"/>
+  <text x="626" y="209" text-anchor="middle" fill="#fed7aa" font-size="9">PIM frees resources</text>
+
+  <line x1="626" y1="216" x2="626" y2="230" stroke="#f97316" stroke-width="1.5" marker-end="url(#arr-stop)"/>
+
+  <rect x="546" y="230" width="160" height="30" rx="6" fill="#1c1917" stroke="#f97316" stroke-width="1.5"/>
+  <text x="626" y="249" text-anchor="middle" fill="#fb923c" font-size="10" font-weight="600">Instance STOPPED</text>
+
+  <!-- Decorators -->
+  <text x="551" y="282" fill="#94a3b8" font-size="8">Decorators:</text>
+  <text x="551" y="296" fill="#fb923c" font-size="8">@transaction</text>
+  <text x="551" y="308" fill="#fb923c" font-size="8">@instance</text>
+  <text x="551" y="320" fill="#fb923c" font-size="8">@long_running</text>
+</svg>

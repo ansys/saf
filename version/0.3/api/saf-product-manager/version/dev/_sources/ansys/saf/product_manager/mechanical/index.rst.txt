@@ -1,0 +1,80 @@
+
+
+
+
+
+
+The ``mechanical`` package
+==============================
+
+.. py:module:: ansys.saf.product_manager.mechanical
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: mechanical
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.saf.product_manager.mechanical.InternalMechanicalManager`
+            - A private class to manage a Mechanical instance with secure gRPC connections.
+
+
+          * - :py:obj:`~ansys.saf.product_manager.mechanical.MechanicalManager`
+            - A manager of a `Mechanical <https://www.ansys.com/en-gb/products/structures/ansys-mechanical>`_
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> InternalMechanicalManager</ansys/saf/product_manager/mechanical/InternalMechanicalManager>
+    <span class="nf nf-cod-symbol_class"></span> MechanicalManager</ansys/saf/product_manager/mechanical/MechanicalManager>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

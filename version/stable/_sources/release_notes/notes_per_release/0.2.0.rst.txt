@@ -1,0 +1,54 @@
+`0.2.0 <https://github.com/ansys/saf/releases/tag/v0.2.0-saf-sdk>`_ — September 17, 2026
+=====================================================================================================
+
+.. dropdown::
+  :class-container: dropdown
+  :chevron: down-up
+
+  .. note::
+     Installing ``ansys-saf-sdk`` requires pip 26.0 or higher.
+
+  .. rubric:: Dependency versions
+
+  The public package versions below were resolved for this version of ``ansys-saf-sdk``.
+
+  .. dropdown:: ansys-bdm-api 0.5.0
+
+    No changes
+
+  .. dropdown:: ansys-bdm-shared-volume 0.4.0
+
+    No changes
+
+  .. dropdown:: ansys-saf-glow-engine 2.3.0
+
+    No changes
+
+  .. dropdown:: ansys-saf-desktop-installer 1.17.0
+    :open:
+
+    .. list-table::
+      :header-rows: 1
+      :stub-columns: 1
+      :widths: 80 20
+
+      * - ✨ Feature
+        - Pull Request
+      * - Add installer support for repeated dependencies across groups
+        - `#25 <https://github.com/ansys/saf/pull/25>`_
+
+  .. dropdown:: ansys-saf-desktop-orchestrator 1.14.0
+
+    No changes
+
+  .. dropdown:: ansys-iam-oidc 0.9.0
+
+    No changes
+
+  .. dropdown:: ansys-saf-product-configuration 0.26.0
+
+    No changes
+
+  .. dropdown:: ansys-saf-product-manager 0.5.0
+
+    No changes

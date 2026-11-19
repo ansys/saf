@@ -1,0 +1,107 @@
+
+
+
+
+
+
+:class:`MechanicalManager`
+==========================
+
+
+.. py:class:: ansys.saf.product_manager.mechanical.MechanicalManager(**kwargs: Any)
+
+   Bases: :py:obj:`ansys.saf.glow.solution.ProductInstanceManager`\ [\ :py:obj:`ansys.mechanical.core.Mechanical`\ , :py:obj:`MechanicalStateInfo`\ ]
+
+
+   
+   A manager of a `Mechanical <https://www.ansys.com/en-gb/products/structures/ansys-mechanical>`_
+   product instance with secure gRPC connections.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: MechanicalManager
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~initialize`
+            - Initialize and start a Mechanical instance with secure gRPC connections.
+
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.saf.product_manager.mechanical import MechanicalManager
+
+
+
+Method detail
+-------------
+
+.. py:method:: initialize(version: str | None = None)
+
+   
+   Initialize and start a Mechanical instance with secure gRPC connections.
+
+
+   :Parameters:
+
+       **version** : str, optional
+           The version of the Mechanical instance that must be used. The format is 3 decimal digits where
+           the first two digits indicate the year of release in the 21st century and the third digit indicates
+           the release within that year.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

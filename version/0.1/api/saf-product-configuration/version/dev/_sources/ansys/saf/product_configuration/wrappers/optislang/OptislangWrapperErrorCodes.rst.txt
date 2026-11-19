@@ -1,0 +1,63 @@
+
+
+
+
+
+
+:class:`OptislangWrapperErrorCodes`
+===================================
+
+
+.. py:class:: ansys.saf.product_configuration.wrappers.optislang.OptislangWrapperErrorCodes
+
+
+.. py:currentmodule:: OptislangWrapperErrorCodes
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~LICENSE_ERROR`
+            - 
+          * - :py:attr:`~SERVER_START_ERROR`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.saf.product_configuration.wrappers.optislang import OptislangWrapperErrorCodes
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: LICENSE_ERROR
+   :value: 1
+
+
+.. py:attribute:: SERVER_START_ERROR
+   :value: 2
+
+
+
+
+
+

@@ -1,0 +1,221 @@
+`0.7.0 <https://github.com/ansys/saf/releases/tag/v0.7.0-saf-sdk>`_ — November 12, 2026
+=======================================================================================
+
+.. dropdown::
+  :class-container: dropdown
+  :open:
+  :chevron: down-up
+
+  .. note::
+     Installing ``ansys-saf-sdk`` requires pip 26.2.2 or higher.
+
+  .. rubric:: Dependency versions
+
+  The public package versions below were resolved for this version of ``ansys-saf-sdk``.
+
+
+  .. dropdown:: ansys-bdm-api 0.5.0
+
+    No changes
+
+
+  .. dropdown:: ansys-bdm-shared-volume 0.4.0
+
+    No changes
+
+
+  .. dropdown:: ansys-saf-glow-engine 2.5.0
+
+    No changes
+
+
+  .. dropdown:: ansys-saf-desktop-installer 1.19.0
+
+    No changes
+
+
+  .. dropdown:: ansys-saf-desktop-orchestrator 1.14.0
+
+    No changes
+
+
+  .. dropdown:: ansys-iam-oidc 0.9.0
+
+    No changes
+
+
+  .. dropdown:: ansys-saf-product-configuration 0.26.0
+
+    No changes
+
+
+  .. dropdown:: ansys-saf-product-manager 0.6.0
+    :open:
+
+    .. list-table::
+      :header-rows: 1
+      :stub-columns: 1
+      :widths: 80 20
+
+      * - 🛡️ Security fixes
+        - Pull Request
+      * - 🔴 **Critical** - Upgraded **Pillow** Pillow: Heap buffer overflow in ImagingJpegDecode _Closure reason:_ Fixed (
+        - `#364 <https://github.com/ansys/saf/security/dependabot/364>`_
+      * - 🟠 **High** - Upgraded **tornado** Tornado: Urlencoded body parsing omits max\_num\_fields, so one request can stall the event loop _Closure reason:_ Fixed (
+        - `#15 <https://github.com/ansys/saf/security/dependabot/15>`_
+      * - 🟠 **High** - Upgraded **aiohttp** aiohttp server lacks an initial request/header timeout _Closure reason:_ Fixed (
+        - `#298 <https://github.com/ansys/saf/security/dependabot/298>`_
+      * - 🟠 **High** - Upgraded **aiohttp** aiohttp: Multiple instances of excessive or unbounded memory/CPU use _Closure reason:_ Fixed (
+        - `#299 <https://github.com/ansys/saf/security/dependabot/299>`_
+      * - 🟠 **High** - Upgraded **Pillow** Pillow: OOB read in TiffDecode.c tile and RGBA paths leaks heap memory into pixels _Closure reason:_ Fixed (
+        - `#365 <https://github.com/ansys/saf/security/dependabot/365>`_
+      * - 🟠 **High** - Upgraded **pillow** Pillow: Unbounded recursion parsing a PDF page tree or trailer chain (incomplete fix for CVE-2026-42310) _Closure reason:_ Fixed (
+        - `#367 <https://github.com/ansys/saf/security/dependabot/367>`_
+      * - 🟠 **High** - Upgraded **Pillow** Pillow: TIFF encoder ColorMap plane-size mismatch causes a heap out-of-bounds read _Closure reason:_ Fixed (
+        - `#368 <https://github.com/ansys/saf/security/dependabot/368>`_
+      * - 🟠 **High** - Upgraded **Pillow** Pillow: TiffDecode returns uninitialized memory as pixels for short JPEG strips _Closure reason:_ Fixed (
+        - `#369 <https://github.com/ansys/saf/security/dependabot/369>`_
+      * - 🟠 **High** - Upgraded **Pillow** Pillow: GIF seek keeps rejected size after DecompressionBombError, allowing DoS _Closure reason:_ Fixed (
+        - `#371 <https://github.com/ansys/saf/security/dependabot/371>`_
+      * - 🟠 **High** - Upgraded **Pillow** Pillow: Out-of-bounds access in \_imagingmorph on a zero-width image _Closure reason:_ Fixed (
+        - `#372 <https://github.com/ansys/saf/security/dependabot/372>`_
+      * - 🟠 **High** - Upgraded **graphql-core** GraphQL-core: Denial of service via quadratic complexity in the OverlappingFieldsCanBeMerged validation rule _Closure reason:_ Fixed (
+        - `#457 <https://github.com/ansys/saf/security/dependabot/457>`_
+      * - 🟠 **High** - Upgraded **graphql-core** GraphQL-core: Denial of service via comment tokens bypassing the parser's max\_tokens limit _Closure reason:_ Fixed (
+        - `#458 <https://github.com/ansys/saf/security/dependabot/458>`_
+      * - 🟠 **High** - Upgraded **nbconvert** nbconvert: Arbitrary file write through path traversal in cell output filenames when exporting to md, latex, rst and asciidoc _Closure reason:_ Fixed (
+        - `#456 <https://github.com/ansys/saf/security/dependabot/456>`_
+      * - 🟠 **High** - Upgraded **msgpack** MessagePack: Unbounded memory leak in msgpack C extension on strict\_map\_key validation failure _Closure reason:_ Fixed (
+        - `#543 <https://github.com/ansys/saf/security/dependabot/543>`_
+      * - 🟠 **High** - Upgraded **oauthlib** OAuthLib: Bearer token can be retrieved as long as client knows a valid client ID for device workflow _Closure reason:_ Fixed (
+        - `#591 <https://github.com/ansys/saf/security/dependabot/591>`_
+      * - 🟡 **Moderate** - Upgraded **tornado** tornado: multipart split() creates huge temp list before max\_parts check -&gt; memory amplification DoS (httputil.py:34) _Closure reason:_ Fixed (
+        - `#14 <https://github.com/ansys/saf/security/dependabot/14>`_
+      * - 🟡 **Moderate** - Upgraded **aiohttp** AIOHTTP: Secure attribute not enforced for shared cookie _Closure reason:_ Fixed (
+        - `#297 <https://github.com/ansys/saf/security/dependabot/297>`_
+      * - 🟡 **Moderate** - Upgraded **pillow** Pillow tiled-TIFF decoder reads past tile buffer in copy4 (Unpack.c:1290) _Closure reason:_ Fixed (
+        - `#366 <https://github.com/ansys/saf/security/dependabot/366>`_
+      * - 🟡 **Moderate** - Upgraded **Pillow** Pillow: EPS load(scale) lets Ghostscript render past the decompression bomb limit _Closure reason:_ Fixed (
+        - `#370 <https://github.com/ansys/saf/security/dependabot/370>`_
+      * - 🟡 **Moderate** - Upgraded **opentelemetry-api** OpenTelemetry Python: Unbounded tracestate parsing in opentelemetry-api _Closure reason:_ Fixed (
+        - `#455 <https://github.com/ansys/saf/security/dependabot/455>`_
+      * - 🟡 **Moderate** - Upgraded **tornado** Tornado: Quadratic CPU usage when parsing HTTP headers with line folding _Closure reason:_ Fixed (
+        - `#574 <https://github.com/ansys/saf/security/dependabot/574>`_
+      * - 🟡 **Moderate** - Upgraded **tornado** Tornado: Event loop blocking and excess memory use from chunked bodies with many small chunks _Closure reason:_ Fixed (
+        - `#576 <https://github.com/ansys/saf/security/dependabot/576>`_
+      * - 🟡 **Moderate** - Upgraded **joserfc** joserfc: Compact JWS size guard allocates attacker-controlled segments before rejection _Closure reason:_ Fixed (
+        - `#589 <https://github.com/ansys/saf/security/dependabot/589>`_
+      * - ⚪ **Low** - Upgraded **tornado** Tornado: Incomplete fix for CVE-2026-35536: cookie attribute injection re-opened via the legacy case-insensitive \``\*\*kwargs\`` path in \``set\_cookie\`` _Closure reason:_ Fixed (
+        - `#13 <https://github.com/ansys/saf/security/dependabot/13>`_
+      * - ⚪ **Low** - Upgraded **ipython** IPython vulnerable to command injection via set\_term\_title _Closure reason:_ Fixed (
+        - `#279 <https://github.com/ansys/saf/security/dependabot/279>`_
+      * - ⚪ **Low** - Upgraded **tornado** Tornado: Open redirect in RedirectHandler via protocol-relative URLs _Closure reason:_ Fixed (
+        - `#575 <https://github.com/ansys/saf/security/dependabot/575>`_
+
+    .. list-table::
+      :header-rows: 1
+      :stub-columns: 1
+      :widths: 80 20
+
+      * - ✨ Features
+        - Pull Request
+      * - feat: update the visor client end points in
+        - `#472 <https://github.com/ansys/saf/pull/472>`_
+      * - feat: Add visor end points for access from PIM visor client in
+        - `#405 <https://github.com/ansys/saf/pull/405>`_
+
+    .. list-table::
+      :header-rows: 1
+      :stub-columns: 1
+      :widths: 80 20
+
+      * - 📚 Documentation
+        - Pull Request
+      * - docs: Update contributor section in
+        - `#238 <https://github.com/ansys/saf/pull/238>`_
+      * - docs: set default theme to dark in
+        - `#67 <https://github.com/ansys/saf/pull/67>`_
+      * - docs: Fix API reference docs in
+        - `#63 <https://github.com/ansys/saf/pull/63>`_
+      * - docs: update corporate logo in centralized and package api documentation in
+        - `#55 <https://github.com/ansys/saf/pull/55>`_
+
+    .. list-table::
+      :header-rows: 1
+      :stub-columns: 1
+      :widths: 80 20
+
+      * - 🏗️ Build
+        - Pull Request
+      * - build(deps): upgrade pyjwt,authlib,urllib3,virtualenv in
+        - `#184 <https://github.com/ansys/saf/pull/184>`_
+      * - build(deps): Upgrade anyio >= 4.15 in
+        - `#76 <https://github.com/ansys/saf/pull/76>`_
+
+    .. list-table::
+      :header-rows: 1
+      :stub-columns: 1
+      :widths: 80 20
+
+      * - ♾️ CI
+        - Pull Request
+      * - ci(feat): enable Codecov Test Analytics in
+        - `#454 <https://github.com/ansys/saf/pull/454>`_
+      * - ci(refactor): improve ci for documentation in
+        - `#255 <https://github.com/ansys/saf/pull/255>`_
+      * - ci(feat): convert saf-cli to moon in
+        - `#234 <https://github.com/ansys/saf/pull/234>`_
+      * - ci(feat): convert glow-engine to moon in
+        - `#214 <https://github.com/ansys/saf/pull/214>`_
+      * - ci(feat): convert saf product manager in
+        - `#179 <https://github.com/ansys/saf/pull/179>`_
+
+    .. list-table::
+      :header-rows: 1
+      :stub-columns: 1
+      :widths: 80 20
+
+      * - 🧹 Chores
+        - Pull Request
+      * - chore: update joserfc in
+        - `#411 <https://github.com/ansys/saf/pull/411>`_
+      * - chore: update authlib msgpack dnspython fastmcp mcp in
+        - `#386 <https://github.com/ansys/saf/pull/386>`_
+      * - chore: update ipython in
+        - `#372 <https://github.com/ansys/saf/pull/372>`_
+
+
+
+  .. dropdown:: ansys-saf-projects-dashboard 0.2.0
+
+    No changes
+
+  The private-package versions were fetched separately as the latest available versions
+
+    .. list-table::
+        :header-rows: 1
+        :stub-columns: 1
+        :widths: 80 20
+
+        * - Private package
+          - Version
+        * - ``ansys-saf-pim-light-server``
+          - ``0.3.13``
+        * - ``ansys-translation-utilities``
+          - ``0.4.1``
+        * - ``ansys-saf-desktop-portal``
+          - ``0.3.1``
+        * - ``ansys-saf-web-portal``
+          - ``0.1.0``
+        * - ``ansys-minerva-python-client``
+          - ``0.5.0``
+        * - ``ansys-datarepository-python-client``
+          - ``0.1.dev12``
+        * - ``ansys-saf-hermes``
+          - ``0.1.dev13``
+        * - ``ansys-saf-aspire``
+          - ``9.1.6``
+
+  .. note::
+     The compatibility of this release has been tested with PyAnsys for the commit `23472db <https://github.com/ansys/pyansys/commit/23472dbb4a7411ba255dc368b6bb8032002a9d52>`_, from Python 3.12 to 3.14.
+     Please be aware that on Windows with Python 3.14, it is required to set the ``GRPC_PYTHON_CFLAGS`` environment variable to ``/std:c++17 /MT`` before installing the packages.

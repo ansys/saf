@@ -1,0 +1,301 @@
+
+
+
+
+
+
+:class:`InternalGeometryManager`
+================================
+
+
+.. py:class:: ansys.saf.product_manager.geometry.InternalGeometryManager(**kwargs: Any)
+
+   Bases: :py:obj:`ansys.saf.glow.solution.InstanceManager`\ [\ :py:obj:`ansys.geometry.core.modeler.Modeler`\ , :py:obj:`GeometryStateInfo`\ ]
+
+
+   
+   A private class to manage a Geometry instance with secure gRPC connections.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:currentmodule:: InternalGeometryManager
+
+Overview
+--------
+
+.. tab-set::
+
+
+   .. tab-item:: Constructors
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~get_product_name_implement`
+            - Return the name of Geometry in the PIM environment.
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~initialize`
+            - Initialize and start the Geometry server.
+          * - :py:attr:`~get_client_object_implement`
+            - Connect to the Geometry instance and provides an API to control it.
+          * - :py:attr:`~close_client_object_implement`
+            - Close the Modeler client.
+          * - :py:attr:`~save_state_implement`
+            - Save changes to the project data and settings.
+          * - :py:attr:`~load_state_implement`
+            - Load the state of the product instance.
+          * - :py:attr:`~shutdown_implement`
+            - Let GLOW shutdown the instance.
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~project_file_path_for_product`
+            - 
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~PRODUCT_NAME`
+            - 
+          * - :py:attr:`~SERVICE_NAME`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.saf.product_manager.geometry import InternalGeometryManager
+
+Property detail
+---------------
+
+.. py:property:: project_file_path_for_product
+   :type: str
+
+
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: PRODUCT_NAME
+   :value: 'geometry-secure'
+
+
+.. py:attribute:: SERVICE_NAME
+   :value: 'grpc'
+
+
+
+
+Method detail
+-------------
+
+.. py:method:: initialize(version: str | None = None)
+
+   
+   Initialize and start the Geometry server.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_product_name_implement() -> str
+   :classmethod:
+
+
+   
+   Return the name of Geometry in the PIM environment.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_client_object_implement(hostname: str, port: int) -> ansys.geometry.core.modeler.Modeler
+
+   
+   Connect to the Geometry instance and provides an API to control it.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: close_client_object_implement() -> None
+
+   
+   Close the Modeler client.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: save_state_implement() -> None
+
+   
+   Save changes to the project data and settings.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: load_state_implement() -> None
+
+   
+   Load the state of the product instance.
+
+   Subclasses must implement the logic required to restore the state of the product instance.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: shutdown_implement() -> None
+
+   
+   Let GLOW shutdown the instance.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

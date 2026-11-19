@@ -1,0 +1,120 @@
+
+
+
+
+
+
+:class:`OidcWebSocketDependency`
+================================
+
+
+.. py:class:: ansys.iam.oidc.OidcWebSocketDependency(oidc_issuer: str | None = None, audience: str | None = None, subprotocol_prefix: str = DEFAULT_SUBPROTOCOL_PREFIX, *, auto_error: bool = True)
+
+   Bases: :py:obj:`OidcDependency`
+
+
+   
+   FastAPI dependency class for OpenID Connect (OIDC) access token validation for WebSocket connections.
+
+   It's expected that the token is found, base64-encoded, as a subprotocol of the WebSocket, followed by a given
+   prefix. For example, if the prefix is `saf.auth.bearer.`, the subprotocol should be
+   `saf.auth.bearer.<base64-encoded-token>`. Use ``ansys.iam.oidc.encode_base64_token`` to encode the token.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:currentmodule:: OidcWebSocketDependency
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+
+
+
+   .. tab-item:: Special methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~__call__`
+            - Extract and validate the access token from the WebSocket subprotocol.
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.iam.oidc import OidcWebSocketDependency
+
+
+
+Method detail
+-------------
+
+.. py:method:: __call__(websocket: fastapi.WebSocket) -> str | None
+   :async:
+
+
+   
+   Extract and validate the access token from the WebSocket subprotocol.
+
+
+   :Parameters:
+
+       **websocket** : :obj:`WebSocket`
+           The WebSocket connection object.
+
+
+
+   :Returns:
+
+       :class:`python:str` | :data:`python:None`
+           If authentication is mandatory, the access token if present and valid.
+           If authentication is optional, the access token if present, otherwise None.
+
+
+
+
+   :Raises:
+
+       :obj:`WebSocketException`
+           If `auto_error` is True and authentication fails (missing token, invalid encoding,
+           or token validation fails).
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

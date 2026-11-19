@@ -1,0 +1,70 @@
+
+
+
+
+
+
+The ``__main__.py`` module
+==========================
+
+.. py:module:: ansys.saf.glow.cli.__main__
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+.. py:currentmodule:: __main__
+.. tab-set::
+
+
+
+
+
+
+
+    .. tab-item:: Functions
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~entry_point`
+            - 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Module detail
+-------------
+
+.. py:function:: entry_point()
+
+
+

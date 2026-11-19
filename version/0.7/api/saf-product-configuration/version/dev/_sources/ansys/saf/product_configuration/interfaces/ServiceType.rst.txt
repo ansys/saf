@@ -1,0 +1,93 @@
+
+
+
+
+
+
+:class:`ServiceType`
+====================
+
+
+.. py:class:: ansys.saf.product_configuration.interfaces.ServiceType(*args, **kwds)
+
+   Bases: :py:obj:`enum.Enum`
+
+
+   
+   Define the type of API the service is using.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: ServiceType
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~GRPC`
+            - 
+          * - :py:attr:`~HTTP`
+            - 
+          * - :py:attr:`~TCP`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.saf.product_configuration.interfaces import ServiceType
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: GRPC
+   :value: 'grpc'
+
+
+.. py:attribute:: HTTP
+   :value: 'http'
+
+
+.. py:attribute:: TCP
+   :value: 'tcp'
+
+
+
+
+
+

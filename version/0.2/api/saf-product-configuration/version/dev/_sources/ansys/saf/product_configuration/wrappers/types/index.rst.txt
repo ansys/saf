@@ -1,0 +1,73 @@
+
+
+
+
+
+
+The ``types.py`` module
+=======================
+
+.. py:module:: ansys.saf.product_configuration.wrappers.types
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: types
+.. tab-set::
+
+
+
+
+
+    .. tab-item:: Enums
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.saf.product_configuration.wrappers.types.TransportMode`
+            - Enum containing supported transport-mode values for wrapper CLI compatibility.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_enum"></span> TransportMode</ansys/saf/product_configuration/wrappers/types/TransportMode>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

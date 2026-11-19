@@ -1,0 +1,263 @@
+
+
+
+
+
+
+:class:`InternalMapdlManager`
+=============================
+
+
+.. py:class:: ansys.saf.product_manager.mapdl.InternalMapdlManager(**kwargs: Any)
+
+   Bases: :py:obj:`ansys.saf.glow.solution.InstanceManager`\ [\ :py:obj:`ansys.mapdl.core.Mapdl`\ , :py:obj:`MapdlStateInfo`\ ]
+
+
+   
+   A private class to manage a Mapdl instance with secure gRPC connection.
+
+   Mapdl implements its own project directory, and we configure it to be GLOW's product space
+   so we don't need to synchronize files between both directories and all files are automatically
+   preserved between reinitializations.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:currentmodule:: InternalMapdlManager
+
+Overview
+--------
+
+.. tab-set::
+
+
+   .. tab-item:: Constructors
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~get_product_name_implement`
+            - Return the name of Mapdl in the PIM environment.
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~initialize`
+            - Initialize and start the Mapdl server.
+          * - :py:attr:`~get_client_object_implement`
+            - Return an instance of Mapdl's client given the host and port of the shared product instance.
+          * - :py:attr:`~save_state_implement`
+            - Save the state of the product instance.
+          * - :py:attr:`~load_state_implement`
+            - Load the state of the product instance.
+          * - :py:attr:`~shutdown_implement`
+            - Gracefully terminates Mapdl instance process.
+
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~PRODUCT_NAME`
+            - 
+          * - :py:attr:`~SERVICE_NAME`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.saf.product_manager.mapdl import InternalMapdlManager
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: PRODUCT_NAME
+   :value: 'mapdl-secure'
+
+
+.. py:attribute:: SERVICE_NAME
+   :value: 'grpc'
+
+
+
+
+Method detail
+-------------
+
+.. py:method:: initialize(version: str | None = None)
+
+   
+   Initialize and start the Mapdl server.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_product_name_implement() -> str
+   :classmethod:
+
+
+   
+   Return the name of Mapdl in the PIM environment.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_client_object_implement(hostname: str, port: int) -> ansys.mapdl.core.Mapdl
+
+   
+   Return an instance of Mapdl's client given the host and port of the shared product instance.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: save_state_implement() -> None
+
+   
+   Save the state of the product instance.
+
+   Subclasses must implement the logic required to store the state of the product instance.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: load_state_implement() -> None
+
+   
+   Load the state of the product instance.
+
+   Subclasses must implement the logic required to restore the state of the product instance.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: shutdown_implement() -> None
+
+   
+   Gracefully terminates Mapdl instance process.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

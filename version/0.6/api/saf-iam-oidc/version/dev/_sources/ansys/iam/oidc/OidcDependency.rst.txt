@@ -1,0 +1,190 @@
+
+
+
+
+
+
+:class:`OidcDependency`
+=======================
+
+
+.. py:class:: ansys.iam.oidc.OidcDependency(oidc_issuer: str | None = None, audience: str | None = None, *, auto_error: bool = True)
+
+   Bases: :py:obj:`fastapi.security.OpenIdConnect`
+
+
+   
+   FastAPI dependency class for OpenID Connect (OIDC) access token validation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:currentmodule:: OidcDependency
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~async_client`
+            - Get the asynchronous OIDC client.
+          * - :py:attr:`~client`
+            - Get a synchronous OIDC client.
+
+
+
+
+   .. tab-item:: Special methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~__call__`
+            - Extract and validate the access token from the HTTP request.
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.iam.oidc import OidcDependency
+
+Property detail
+---------------
+
+.. py:property:: async_client
+   :type: ansys.iam.oidc._client.AsyncOidcClient
+
+
+   
+   Get the asynchronous OIDC client.
+
+
+
+
+
+   :Returns:
+
+       :obj:`AsyncOidcClient`
+           The asynchronous OIDC client instance.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: client
+   :type: ansys.iam.oidc._client.OidcClient
+
+
+   
+   Get a synchronous OIDC client.
+
+
+
+
+
+   :Returns:
+
+       :obj:`OidcClient`
+           A new synchronous OIDC client instance.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+Method detail
+-------------
+
+.. py:method:: __call__(request: starlette.requests.Request) -> str | None
+   :async:
+
+
+   
+   Extract and validate the access token from the HTTP request.
+
+
+   :Parameters:
+
+       **request** : :obj:`Request`
+           The incoming HTTP request.
+
+
+
+   :Returns:
+
+       :class:`python:str` | :data:`python:None`
+           If authentication is mandatory, the access token if present and valid.
+           If authentication is optional, the access token if present, otherwise None.
+
+
+
+
+   :Raises:
+
+       :obj:`HTTPException`
+           If `auto_error` is True and authentication fails (missing token, invalid scheme,
+           or token validation fails).
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

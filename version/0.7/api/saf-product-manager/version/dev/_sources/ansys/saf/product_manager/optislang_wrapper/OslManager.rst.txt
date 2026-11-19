@@ -1,0 +1,101 @@
+
+
+
+
+
+
+:class:`OslManager`
+===================
+
+
+.. py:class:: ansys.saf.product_manager.optislang_wrapper.OslManager(**kwargs: Any)
+
+   Bases: :py:obj:`ansys.saf.glow.solution.ProductInstanceManager`\ [\ :py:obj:`OslClient`\ , :py:obj:`OptislangStateInfo`\ ]
+
+
+   
+   A manager of an `OptiSLang <https://www.ansys.com/en-gb/products/connect/ansys-optislang>`_ product instance.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: OslManager
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~initialize`
+            - Initialize an optiSLang product instance. OptiSLang is not started here.
+
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.saf.product_manager.optislang_wrapper import OslManager
+
+
+
+Method detail
+-------------
+
+.. py:method:: initialize(version: str | None = None)
+
+   
+   Initialize an optiSLang product instance. OptiSLang is not started here.
+   To start it, call the start method on the instance after initialization.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

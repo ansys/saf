@@ -4,9 +4,10 @@ Migrate a Poetry-based solution to UV
 ########################################
 
 This guide describes how to migrate an existing SAF solution from Poetry to
-UV. During the transition period, SAF supports both backends, but each solution
-must use only one backend. Poetry support is expected to be discontinued in a
-future SAF release. Check the SAF release notes for current support and
+UV. During the transition period, SAF supports solutions managed by either
+Poetry or UV, but each solution must use only one dependency manager. Poetry
+support is expected to be discontinued in a future SAF release. Check the SAF
+release notes for current support and
 deprecation timelines.
 
 UV must be installed before you can follow the commands in this guide. See the
@@ -19,7 +20,7 @@ and installation methods. For example:
    # Windows with WinGet
    winget install --id=astral-sh.uv -e
 
-   # macOS or Linux
+   # Linux
    curl -LsSf https://astral.sh/uv/install.sh | sh
 
 Open a new terminal if needed, then confirm UV is available:
@@ -66,7 +67,7 @@ settings. ``uv.lock`` is a separate file beside ``pyproject.toml``. Use this
 order as a guide while translating the Poetry project:
 
 #. Replace the Poetry build backend in ``[build-system]`` with a suitable
-   non-Poetry backend; see :ref:`Build system and package contents
+   non-Poetry build backend; see :ref:`Build system and package contents
    <poetry_to_uv_build_system>`.
 #. Map project metadata and runtime dependencies to ``[project]``; see
    :ref:`Project metadata and version constraints
@@ -93,13 +94,14 @@ Build system and package contents
    ``poetry.core.masonry.api``, replace it with a suitable non-Poetry build
    backend as part of the migration.
 
-Replace Poetry's build backend with a suitable non-Poetry backend, and move
-package discovery and data-file rules to that backend's configuration. The UV
+Replace Poetry's build backend with a suitable non-Poetry build backend, and
+move package discovery and data-file rules to that build backend's
+configuration. The UV
 example omits ``[build-system]`` because the right choice depends on how the
 solution is packaged. The `Python Packaging
-User Guide's backend recommendations
+User Guide's build-backend recommendations
 <https://packaging.python.org/en/latest/guides/tool-recommendations/#build-backends>`_
-and the backend documentation are good places to compare options.
+and the build backend documentation are good places to compare options.
 
 Examples include:
 
@@ -107,7 +109,7 @@ Examples include:
    :header-rows: 1
    :widths: 20 42 38
 
-   * - Backend
+   * - Build backend
      - May fit when
      - Documentation and considerations
    * - `setuptools <https://setuptools.pypa.io/en/latest/userguide/pyproject_config.html>`_
@@ -121,7 +123,8 @@ Examples include:
      - Your package follows a conventional Python package layout.
      - Confirm that its packaging model fits your project structure.
    * - ``uv_build``
-     - Your project contains pure Python code and you want UV's native backend.
+     - Your project contains pure Python code and you want UV's native build
+       backend.
      - `UV build backend documentation
        <https://docs.astral.sh/uv/concepts/build-backend/>`_. It currently
        does not build native extension modules.
@@ -645,8 +648,8 @@ configuration.
 
 #. Finish converting ``pyproject.toml`` using the mappings in Step 2. Remove
    active Poetry configuration, including ``[tool.poetry]``, the Poetry build
-   backend, and Poetry-only manager settings. Add the selected non-Poetry build
-   backend and any UV-specific settings the project requires.
+   backend, and Poetry-only dependency-manager settings. Add the selected
+   non-Poetry build backend and any UV-specific settings the project requires.
 #. Remove ``poetry.lock`` from the solution root. Do not rename it to
    ``uv.lock``; keep the original lockfile only in the backup outside the
    solution root.
@@ -686,7 +689,7 @@ project uses pytest:
 
 Replace ``pytest`` with the test command used by your project.
 
-Build the distribution to check the new non-Poetry backend:
+Build the distribution to check the new non-Poetry build backend:
 
 .. code-block:: console
 
@@ -738,11 +741,11 @@ solution:
 
    saf install <solution-name>
 
-During this installation, SAF reports the detected dependency-management
-backend and its version in the input summary. For a UV-managed solution, expect
-the backend to be reported as ``uv``. This confirms which backend SAF detected
-for that solution; it does not replace the remaining installation, test, and
-packaging checks below.
+During this installation, SAF reports the detected dependency manager and its
+version in the input summary. For a UV-managed solution, expect the dependency
+manager to be reported as ``uv``. This confirms which dependency manager SAF
+detected for that solution; it does not replace the remaining installation,
+test, and packaging checks below.
 
 If you specify dependency groups explicitly, use the syntax supported by your
 installed SAF CLI and select the groups your application requires. Verify that
@@ -775,8 +778,8 @@ Before considering the migration complete, verify that:
   installation work with the migrated solution.
 * CI, scripts, containers, and developer instructions no longer depend on
   Poetry for this solution.
-* The solution contains no Poetry lockfile or Poetry backend metadata that
-  could make SAF identify it as a mixed-backend project.
+* The solution contains no Poetry lockfile or Poetry-specific metadata that
+  could make SAF identify it as a mixed dependency-manager project.
 
-During the transition period, different solutions may use different backends,
-but each individual solution must use exactly one.
+During the transition period, different solutions may use different dependency
+managers, but each individual solution must use exactly one.

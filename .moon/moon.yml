@@ -79,8 +79,16 @@ tasks:
       packages run their own task)"
     deps:
       - '~:gitleaks'
-    script: 'uv run pre-commit run --files $(git ls-files -- ":(top,glob)*" ":(top).github/**"
-      ":(top)doc/**" ":(top)extension/**")'
+    command: 'uv'
+    args:
+      - 'run'
+      - 'python'
+      - '-c'
+      - >-
+        import subprocess, sys; from pre_commit.main import main; files = subprocess.check_output(
+        ['git', 'ls-files', '-z', '--', ':(top,glob)*', ':(top).github/**', ':(top)doc/**',
+        ':(top)extension/**'], text=True, encoding='utf-8', errors='surrogateescape').split(chr(0))[:-1];
+        sys.exit(main(['run', '--files', *files]))
     inputs:
       - '/.pre-commit-config.yaml'
       - '/pyproject.toml'
@@ -94,6 +102,7 @@ tasks:
       - '!/doc/radar/build/**/*'
       - '/extension/**/*'
     options:
+      shell: false
       runFromWorkspaceRoot: true
       # Shared pre-commit hook envs aren't safe for concurrent invocation across projects.
       mutex: 'pre-commit'

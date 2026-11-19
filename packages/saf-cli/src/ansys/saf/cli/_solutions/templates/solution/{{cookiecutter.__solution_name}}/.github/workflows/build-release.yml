@@ -51,7 +51,7 @@ jobs:
         run: git config --global core.longpaths true
 
       - name: Build
-        uses: ansys/saf-devops/saf-build@v1
+        uses: ansys/saf-devops/saf-build@main
         with:
           python-version: {{ "${{ env.MAIN_PYTHON_VERSION }}" }}
           use-uv: true

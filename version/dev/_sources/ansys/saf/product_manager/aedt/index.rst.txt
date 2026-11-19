@@ -1,0 +1,122 @@
+
+
+
+
+
+
+The ``aedt`` package
+========================
+
+.. py:module:: ansys.saf.product_manager.aedt
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: aedt
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.saf.product_manager.aedt.HfssManager`
+            - A manager of a `AEDT HFSS <https://www.ansys.com/products/electronics/ansys-hfss>`_ product instance.
+
+
+          * - :py:obj:`~ansys.saf.product_manager.aedt.IcepakManager`
+            - A manager of a `AEDT Icepak <https://www.ansys.com/en-gb/products/electronics/ansys-icepak>`_
+
+
+          * - :py:obj:`~ansys.saf.product_manager.aedt.InternalHfssManagerImpl`
+            - A manager of a `AEDT HFSS <https://www.ansys.com/products/electronics/ansys-hfss>`_ product instance.
+
+
+          * - :py:obj:`~ansys.saf.product_manager.aedt.InternalIcepakManagerImpl`
+            - A manager of a `AEDT Icepak <https://www.ansys.com/en-gb/products/electronics/ansys-icepak>`_
+
+
+          * - :py:obj:`~ansys.saf.product_manager.aedt.InternalMaxwell2DManagerImpl`
+            - A manager of a shared `AEDT Maxwell <https://www.ansys.com/en-gb/products/electronics/ansys-maxwell>`_ 2D
+
+
+          * - :py:obj:`~ansys.saf.product_manager.aedt.InternalMaxwell3DManagerImpl`
+            - A manager of a `AEDT Maxwell <https://www.ansys.com/en-gb/products/electronics/ansys-maxwell>`_ 3D product instance.
+
+
+          * - :py:obj:`~ansys.saf.product_manager.aedt.Maxwell2DManager`
+            - A manager of a `AEDT Maxwell <https://www.ansys.com/en-gb/products/electronics/ansys-maxwell>`_ 2D product instance.
+
+
+          * - :py:obj:`~ansys.saf.product_manager.aedt.Maxwell3DManager`
+            - A manager of a `AEDT Maxwell <https://www.ansys.com/en-gb/products/electronics/ansys-maxwell>`_ 3D product instance.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> HfssManager</ansys/saf/product_manager/aedt/HfssManager>
+    <span class="nf nf-cod-symbol_class"></span> IcepakManager</ansys/saf/product_manager/aedt/IcepakManager>
+    <span class="nf nf-cod-symbol_class"></span> InternalHfssManagerImpl</ansys/saf/product_manager/aedt/InternalHfssManagerImpl>
+    <span class="nf nf-cod-symbol_class"></span> InternalIcepakManagerImpl</ansys/saf/product_manager/aedt/InternalIcepakManagerImpl>
+    <span class="nf nf-cod-symbol_class"></span> InternalMaxwell2DManagerImpl</ansys/saf/product_manager/aedt/InternalMaxwell2DManagerImpl>
+    <span class="nf nf-cod-symbol_class"></span> InternalMaxwell3DManagerImpl</ansys/saf/product_manager/aedt/InternalMaxwell3DManagerImpl>
+    <span class="nf nf-cod-symbol_class"></span> Maxwell2DManager</ansys/saf/product_manager/aedt/Maxwell2DManager>
+    <span class="nf nf-cod-symbol_class"></span> Maxwell3DManager</ansys/saf/product_manager/aedt/Maxwell3DManager>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -60,6 +60,7 @@ saf/
 │   ├── saf-templates/
 │   └── saf-testing/
 ├── scripts/
+├── VEX/                              # Vulnerability Exploitability eXchange
 ├── .gitleaks.toml                    # Gitleaks custom rules and narrow test-fixture allowlists
 ├── .pre-commit-config.yaml           # Repository-wide governance hooks
 ├── pyproject.toml                    # Root uv workspace and shared tooling

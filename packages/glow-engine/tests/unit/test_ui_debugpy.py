@@ -45,11 +45,11 @@ def test_ui_server_debug_port(monkeypatch: pytest.MonkeyPatch, debug: bool, ui_d
     ):
         # calling run_ui is going to set env vars, mock os.environ to leave it clean
         # WHEN - invoking the UI
-        run_ui("127.0.0.1", 50000, tests.mocks.solutions.minimal_solution, tests.mocks.mock_ui, "", "")
+        run_ui("127.0.0.1", 50000, tests.mocks.solutions.minimal_solution, tests.mocks.mock_ui, "", "")  # pyright: ignore[reportAttributeAccessIssue]
 
         # THEN - the Dash/Flask UI features are enabled as expected
         #        (python debugging is not compatible with the debug features)
-        assert tests.mocks.mock_ui.app.debug == (debug and not ui_debug)
+        assert tests.mocks.mock_ui.app.debug == (debug and not ui_debug)  # pyright: ignore[reportAttributeAccessIssue]
 
         if ui_debug:
             # THEN - if the ui debug is enabled debugpy.listen is called with the correct port

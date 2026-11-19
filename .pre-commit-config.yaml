@@ -23,11 +23,11 @@ repos:
         pass_filenames: true
 
   - repo: https://github.com/zizmorcore/zizmor-pre-commit
-    rev: 451b56af716f9f0d0c2b816503a3fd0cf8b036fa # 1.29.0
+    rev: 06a39750ec31860bb44f2acf67182c40016cd1e7 # 1.32.0
     hooks:
       - id: zizmor
         args: ["--pedantic"]
-        exclude: ^packages/saf-cli/src/ansys/saf/cli/_solutions/templates/solution/\{\{cookiecutter\.__solution_name\}\}/\.github/.*$
+        exclude: ^packages/saf-cli/src/ansys/saf/cli/_solutions/templates/solution/\{\{cookiecutter\.__solution_name\}\}/(?:\.github/.*|\.pre-commit-config\.yaml)$
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: 3e8a8703264a2f4a69428a0aa4dcb512790b2c8c # frozen: v6.0.0

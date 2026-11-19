@@ -1,0 +1,91 @@
+{
+  "@context": "https://openvex.dev/ns/v0.2.0",
+  "@id": "https://github.com/ansys/saf/blob/main/VEX/saf-cli.openvex.json",
+  "author": "ANSYS, Inc.",
+  "role": "Product supplier",
+  "timestamp": "2026-11-18T09:46:00Z",
+  "version": 2,
+  "statements": [
+    {
+      "vulnerability": {
+        "name": "CVE-2026-126190",
+        "aliases": [
+          "GHSA-mmhr-3c5m-f64f"
+        ],
+        "description": "Soup Sieve versions before 4.0.0 can exhibit polynomial-time denial of service while matching descendant combinators against deeply nested attacker-influenced HTML or XML."
+      },
+      "products": [
+        {
+          "identifiers": {
+            "purl": "pkg:pypi/ansys-saf-cli@4.5.dev0"
+          },
+          "subcomponents": [
+            {
+              "identifiers": {
+                "purl": "pkg:pypi/soupsieve@2.10"
+              }
+            }
+          ]
+        }
+      ],
+      "status": "under_investigation",
+      "status_notes": "This finding is limited to the generated solution template's optional doc dependency group in both dash and no_ui Poetry lockfiles. Those locks resolve SoupSieve 2.10 for Python versions below 3.11.5. It does not describe the SAF CLI runtime dependencies. Assess generated solution products separately."
+    },
+    {
+      "vulnerability": {
+        "name": "CVE-2026-126190",
+        "aliases": [
+          "GHSA-mmhr-3c5m-f64f"
+        ],
+        "description": "Soup Sieve versions before 4.0.0 can exhibit polynomial-time denial of service while matching descendant combinators against deeply nested attacker-influenced HTML or XML."
+      },
+      "products": [
+        {
+          "identifiers": {
+            "purl": "pkg:pypi/ansys-saf-cli@4.5.dev0"
+          },
+          "subcomponents": [
+            {
+              "identifiers": {
+                "purl": "pkg:pypi/soupsieve@4.1"
+              }
+            }
+          ]
+        }
+      ],
+      "status": "fixed",
+      "status_notes": "In the generated solution template's optional doc dependency group, Python 3.11.5 and later resolve SoupSieve 4.1, which is beyond the first patched version 4.0.0."
+    },
+    {
+      "vulnerability": {
+        "name": "CVE-2026-126192",
+        "aliases": [
+          "GHSA-4j63-6c4x-wfg4"
+        ],
+        "description": "Soup Sieve versions before 2.10 can perform excessive work for certain :has() selectors containing the general sibling combinator."
+      },
+      "products": [
+        {
+          "identifiers": {
+            "purl": "pkg:pypi/ansys-saf-cli@4.5.dev0"
+          },
+          "subcomponents": [
+            {
+              "identifiers": {
+                "purl": "pkg:pypi/soupsieve@2.10"
+              }
+            },
+            {
+              "identifiers": {
+                "purl": "pkg:pypi/soupsieve@4.1"
+              }
+            }
+          ]
+        }
+      ],
+      "status": "fixed",
+      "status_notes": "The generated template lockfiles resolve SoupSieve 2.10 for Python below 3.11.5 and 4.1 from Python 3.11.5 onward. Both are at or above the first patched version 2.10."
+    }
+  ],
+  "last_updated": "2026-11-18T13:43:44.291131Z"
+}

@@ -1,0 +1,189 @@
+{
+  "@context": "https://openvex.dev/ns/v0.2.0",
+  "@id": "https://github.com/ansys/saf/blob/main/VEX/saf-product-manager.openvex.json",
+  "author": "ANSYS, Inc.",
+  "role": "Product supplier",
+  "timestamp": "2026-11-18T14:10:39.183770Z",
+  "version": 1,
+  "tooling": "Manually prepared from the SoupSieve Dependabot report and repository lockfiles.",
+  "statements": [
+    {
+      "vulnerability": {
+        "@id": "https://github.com/advisories/GHSA-mmhr-3c5m-f64f",
+        "name": "CVE-2026-126190",
+        "aliases": [
+          "GHSA-mmhr-3c5m-f64f"
+        ],
+        "description": "Soup Sieve versions before 4.0.0 can exhibit polynomial-time denial of service while matching descendant combinators against deeply nested attacker-influenced HTML or XML."
+      },
+      "products": [
+        {
+          "identifiers": {
+            "purl": "pkg:pypi/ansys-saf-product-manager@0.7.dev0"
+          },
+          "subcomponents": [
+            {
+              "identifiers": {
+                "purl": "pkg:pypi/soupsieve@2.10"
+              }
+            }
+          ]
+        }
+      ],
+      "status": "under_investigation",
+      "status_notes": "The aedt and all extras include JupyterLab, which brings in SoupSieve transitively. The lock resolves SoupSieve 2.10 when python_full_version is below 3.11.5; this is within the advisory's affected range. This confirms dependency exposure, but not exploitability. Repository and deployment evidence has not established that deeply nested attacker-influenced HTML or XML reaches descendant-combinator matching.",
+      "action_statement": "Determine whether untrusted HTML or XML reaches SoupSieve through the aedt or all extras. If it does, assess a Python-compatible backport, runtime support change, or other mitigation; update this statement with the evidence."
+    },
+    {
+      "vulnerability": {
+        "@id": "https://github.com/advisories/GHSA-mmhr-3c5m-f64f",
+        "name": "CVE-2026-126190",
+        "aliases": [
+          "GHSA-mmhr-3c5m-f64f"
+        ],
+        "description": "Soup Sieve versions before 4.0.0 can exhibit polynomial-time denial of service while matching descendant combinators against deeply nested attacker-influenced HTML or XML."
+      },
+      "products": [
+        {
+          "identifiers": {
+            "purl": "pkg:pypi/ansys-saf-product-manager@0.7.dev0"
+          },
+          "subcomponents": [
+            {
+              "identifiers": {
+                "purl": "pkg:pypi/soupsieve@4.1"
+              }
+            }
+          ]
+        }
+      ],
+      "status": "fixed",
+      "status_notes": "For python_full_version 3.11.5 and later, the lock resolves SoupSieve 4.1, beyond the first patched version 4.0.0. This statement covers the aedt and all extras represented by the lock."
+    },
+    {
+      "vulnerability": {
+        "@id": "https://github.com/advisories/GHSA-6655-6qjp-jx7x",
+        "name": "GHSA-6655-6qjp-jx7x",
+        "description": "Soup Sieve versions through 2.10 are affected by exponential regular-expression backtracking during selector compilation when processing a CSS escape sequence."
+      },
+      "products": [
+        {
+          "identifiers": {
+            "purl": "pkg:pypi/ansys-saf-product-manager@0.7.dev0"
+          },
+          "subcomponents": [
+            {
+              "identifiers": {
+                "purl": "pkg:pypi/soupsieve@2.10"
+              }
+            }
+          ]
+        }
+      ],
+      "status": "under_investigation",
+      "status_notes": "The aedt and all extras include JupyterLab, which brings in SoupSieve transitively. The lock resolves SoupSieve 2.10 when python_full_version is below 3.11.5; this version is within the reported affected range (<=2.10). Exploitability depends on whether an attacker-controlled selector reaches selector compilation, which has not been established for this product.",
+      "action_statement": "Determine whether attacker-controlled CSS selectors can reach SoupSieve through the aedt or all extras. If so, assess a Python-compatible backport, runtime support change, or other mitigation; update this statement with the evidence."
+    },
+    {
+      "vulnerability": {
+        "@id": "https://github.com/advisories/GHSA-6655-6qjp-jx7x",
+        "name": "GHSA-6655-6qjp-jx7x",
+        "description": "Soup Sieve versions through 2.10 are affected by exponential regular-expression backtracking during selector compilation when processing a CSS escape sequence."
+      },
+      "products": [
+        {
+          "identifiers": {
+            "purl": "pkg:pypi/ansys-saf-product-manager@0.7.dev0"
+          },
+          "subcomponents": [
+            {
+              "identifiers": {
+                "purl": "pkg:pypi/soupsieve@4.1"
+              }
+            }
+          ]
+        }
+      ],
+      "status": "fixed",
+      "status_notes": "For python_full_version 3.11.5 and later, the lock resolves SoupSieve 4.1, beyond the first patched version 3.0.2. This statement covers the aedt and all extras represented by the lock."
+    },
+    {
+      "vulnerability": {
+        "@id": "https://github.com/advisories/GHSA-7g44-g9rc-x53w",
+        "name": "GHSA-7g44-g9rc-x53w",
+        "description": "Soup Sieve versions 0.4 through 2.10 are affected by uncontrolled recursion in the CSS parser, which can exhaust the Python call stack when parsing nested pseudo-class selectors."
+      },
+      "products": [
+        {
+          "identifiers": {
+            "purl": "pkg:pypi/ansys-saf-product-manager@0.7.dev0"
+          },
+          "subcomponents": [
+            {
+              "identifiers": {
+                "purl": "pkg:pypi/soupsieve@2.10"
+              }
+            }
+          ]
+        }
+      ],
+      "status": "under_investigation",
+      "status_notes": "The aedt and all extras include JupyterLab, which brings in SoupSieve transitively. The lock resolves SoupSieve 2.10 when python_full_version is below 3.11.5; this version is within the reported affected range (>=0.4, <=2.10). Exploitability depends on whether an attacker-controlled nested selector reaches the CSS parser, which has not been established for this product.",
+      "action_statement": "Determine whether attacker-controlled nested CSS selectors can reach SoupSieve through the aedt or all extras. If so, assess a Python-compatible backport, runtime support change, or other mitigation; update this statement with the evidence."
+    },
+    {
+      "vulnerability": {
+        "@id": "https://github.com/advisories/GHSA-7g44-g9rc-x53w",
+        "name": "GHSA-7g44-g9rc-x53w",
+        "description": "Soup Sieve versions 0.4 through 2.10 are affected by uncontrolled recursion in the CSS parser, which can exhaust the Python call stack when parsing nested pseudo-class selectors."
+      },
+      "products": [
+        {
+          "identifiers": {
+            "purl": "pkg:pypi/ansys-saf-product-manager@0.7.dev0"
+          },
+          "subcomponents": [
+            {
+              "identifiers": {
+                "purl": "pkg:pypi/soupsieve@4.1"
+              }
+            }
+          ]
+        }
+      ],
+      "status": "fixed",
+      "status_notes": "For python_full_version 3.11.5 and later, the lock resolves SoupSieve 4.1, beyond the first patched version 3.0.2. This statement covers the aedt and all extras represented by the lock."
+    },
+    {
+      "vulnerability": {
+        "@id": "https://github.com/advisories/GHSA-4j63-6c4x-wfg4",
+        "name": "CVE-2026-126192",
+        "aliases": [
+          "GHSA-4j63-6c4x-wfg4"
+        ],
+        "description": "Soup Sieve versions before 2.10 can perform excessive work for certain :has() selectors containing the general sibling combinator."
+      },
+      "products": [
+        {
+          "identifiers": {
+            "purl": "pkg:pypi/ansys-saf-product-manager@0.7.dev0"
+          },
+          "subcomponents": [
+            {
+              "identifiers": {
+                "purl": "pkg:pypi/soupsieve@2.10"
+              }
+            },
+            {
+              "identifiers": {
+                "purl": "pkg:pypi/soupsieve@4.1"
+              }
+            }
+          ]
+        }
+      ],
+      "status": "fixed",
+      "status_notes": "The recorded lock resolutions are SoupSieve 2.10 when python_full_version is below 3.11.5 and 4.1 from 3.11.5 onward. Both are at or above the first patched version 2.10."
+    }
+  ]
+}

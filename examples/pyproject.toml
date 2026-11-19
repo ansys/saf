@@ -46,6 +46,13 @@ numpy = "^1.26.4"
 pillow = "^13.0.0"
 scipy = "^1.15"
 vtk = "^9.6.1"
+# Mitigate descendant-combinator DoS (GHSA-mmhr-3c5m-f64f
+# and exponential ReDoS in selector compilation (GHSA-6655-6qjp-jx7x).
+# Version 4.x requires Python >=3.11.5; older interpreters retain the vulnerable 2.x fallback.
+soupsieve = [
+    { version = "^2.10", python = "<3.11.5" },
+    { version = "^4.0", python = ">=3.11.5" },
+]
 
 [tool.poetry.group.desktop]
 optional = true

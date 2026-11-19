@@ -68,6 +68,11 @@ doc = [
     "sphinxemoji>=0.3.1,<0.4.0",
     "toml>=0.10.2,<0.11.0",
     "vale>=3.13.0.0,<4.0.0",
+    # Mitigate descendant-combinator DoS (GHSA-mmhr-3c5m-f64f; Dependabot #607, #609)
+    # and exponential ReDoS in selector compilation (GHSA-6655-6qjp-jx7x; Dependabot #620, #621).
+    # Version 4.x requires Python >=3.11.5; older interpreters retain the vulnerable 2.x fallback.
+    "soupsieve>=2.10,<3.0; python_full_version < '3.11.5'",
+    "soupsieve>=4.0,<5.0; python_full_version >= '3.11.5'",
 ]
 
 tests = [

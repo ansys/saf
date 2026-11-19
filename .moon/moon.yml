@@ -13,13 +13,12 @@ tasks:
       - "python"
       - '-c'
       - >-
-        import os, sys;
-        names = sys.argv[1:];
-        missing = next((name for name in names if not os.environ.get(name)), None);
-        message = "Error: Specify at least one environment variable name" if not names else
-        f"Error: Required environment variable is not set: {missing}" if missing is not None else None;
-        print(message, file=sys.stderr) if message is not None else None;
-        sys.exit(1 if message is not None else 0)
+        import os, sys; names = sys.argv[1:]; missing = next((name for name in names
+        if not os.environ.get(name)), None); message = "Error: Specify at least one
+        environment variable name" if not names else f"Error: Required environment
+        variable is not set: {missing}" if missing is not None else None; print(message,
+        file=sys.stderr) if message is not None else None; sys.exit(1 if message is
+        not None else 0)
     options:
       cache: false
 
@@ -54,20 +53,16 @@ tasks:
       - "python"
       - "-c"
       - >-
-        import os, subprocess, sys;
-        from pre_commit.main import main;
-        base_ref = os.environ.get("GITLEAKS_BASE_REF", "origin/main");
-        base = subprocess.check_output(["git", "merge-base", "HEAD", base_ref], text=True).strip();
-        os.environ["GITLEAKS_LOG_OPTS"] = base + "..HEAD";
+        import os, subprocess, sys; from pre_commit.main import main; base_ref = os.environ.get("GITLEAKS_BASE_REF",
+        "origin/main"); base = subprocess.check_output(["git", "merge-base", "HEAD",
+        base_ref], text=True).strip(); os.environ["GITLEAKS_LOG_OPTS"] = base + "..HEAD";
         print(f"Gitleaks: scanning commit history from {base_ref} to HEAD", flush=True);
-        history_result = main(["run", "gitleaks", "--files", ".gitleaks.toml"]);
-        os.environ.pop("GITLEAKS_LOG_OPTS");
-        files = subprocess.check_output(
-        ["git", "diff", "--name-only", "--diff-filter=ACMRT", "-z", base, "--"],
-        text=True, encoding="utf-8", errors="surrogateescape").split(chr(0))[:-1];
-        print(f"Gitleaks: scanning current contents of {len(files)} changed tracked files", flush=True);
-        working_tree_result = main(["run", "gitleaks", "--files", *files]) if files else 0;
-        sys.exit(max(history_result, working_tree_result))
+        history_result = main(["run", "gitleaks", "--files", ".gitleaks.toml"]); os.environ.pop("GITLEAKS_LOG_OPTS");
+        files = subprocess.check_output( ["git", "diff", "--name-only", "--diff-filter=ACMRT",
+        "-z", base, "--"], text=True, encoding="utf-8", errors="surrogateescape").split(chr(0))[:-1];
+        print(f"Gitleaks: scanning current contents of {len(files)} changed tracked
+        files", flush=True); working_tree_result = main(["run", "gitleaks", "--files",
+        *files]) if files else 0; sys.exit(max(history_result, working_tree_result))
     inputs:
       - '/.pre-commit-config.yaml'
       - '/.gitleaks.toml'
@@ -80,11 +75,20 @@ tasks:
       mutex: 'pre-commit'
 
   pre-commit:
-    description: "Run pre-commit against root files and extension sources (Python packages run their own task)"
+    description: "Run pre-commit against root files and extension sources (Python
+      packages run their own task)"
     deps:
       - '~:gitleaks'
-    script: 'uv run pre-commit run --files $(git ls-files -- ":(top,glob)*" ":(top).github/**"
-      ":(top)doc/**" ":(top)extension/**")'
+    command: 'uv'
+    args:
+      - 'run'
+      - 'python'
+      - '-c'
+      - >-
+        import subprocess, sys; from pre_commit.main import main; files = subprocess.check_output(
+        ['git', 'ls-files', '-z', '--', ':(top,glob)*', ':(top).github/**', ':(top)doc/**',
+        ':(top)extension/**'], text=True, encoding='utf-8', errors='surrogateescape').split(chr(0))[:-1];
+        sys.exit(main(['run', '--files', *files]))
     inputs:
       - '/.pre-commit-config.yaml'
       - '/pyproject.toml'
@@ -93,8 +97,12 @@ tasks:
       - '/.gitleaks.toml'
       - '/.moon/**/*'
       - '/doc/**/*'
+      - '!/doc/radar/node_modules/**/*'
+      - '!/doc/radar/.techradar/**/*'
+      - '!/doc/radar/build/**/*'
       - '/extension/**/*'
     options:
+      shell: false
       runFromWorkspaceRoot: true
       # Shared pre-commit hook envs aren't safe for concurrent invocation across projects.
       mutex: 'pre-commit'
@@ -138,16 +146,61 @@ tasks:
       - '~:vale-sync'
     inputs:
       - "/doc/**/*"
+      - "!/doc/radar/node_modules/**/*"
+      - "!/doc/radar/.techradar/**/*"
+      - "!/doc/radar/build/**/*"
       - "/pyproject.toml"
       - "/uv.lock"
       - "/doc/.vale.ini"
     options:
       runFromWorkspaceRoot: true
 
+  radar-install:
+    description: "Install technology radar dependencies"
+    command: "npm"
+    args:
+      - "--prefix"
+      - "doc/radar"
+      - "ci"
+      - "--ignore-scripts"
+      - "--no-audit"
+      - "--no-fund"
+    inputs:
+      - "/doc/radar/package.json"
+      - "/doc/radar/package-lock.json"
+    outputs:
+      - "/doc/radar/node_modules"
+    toolchains:
+      - "node"
+    options:
+      runFromWorkspaceRoot: true
+
+  build-radar:
+    description: "Build the technology radar static site into doc/radar/build"
+    # Run from doc/radar rather than with "npm --prefix": the prefix leaks to the
+    # generator's nested "npm install" in .techradar and breaks it on Linux.
+    script: "cd doc/radar && npm run build"
+    deps:
+      - "~:radar-install"
+    inputs:
+      - "/doc/radar/**/*"
+      - "!/doc/radar/node_modules/**/*"
+      - "!/doc/radar/.techradar/**/*"
+      - "!/doc/radar/build/**/*"
+    outputs:
+      - "/doc/radar/build"
+    toolchains:
+      - "node"
+    options:
+      runFromWorkspaceRoot: true
+      # The Next.js build downloads web fonts; retry once on transient network failures.
+      retryCount: 1
+
   build-doc:
     description: "Build general documentation"
     deps:
       - target: "~:vale"
+      - target: "~:build-radar"
     command: 'uv'
     args:
       - "run"
@@ -164,9 +217,24 @@ tasks:
       DISABLE_INTERSPHINX: 'true'
     inputs:
       - "/doc/**/*"
+      - "!/doc/radar/node_modules/**/*"
+      - "!/doc/radar/.techradar/**/*"
+      - "!/doc/radar/build/**/*"
       - "/pyproject.toml"
       - "/uv.lock"
     options:
+      runFromWorkspaceRoot: true
+
+  serve-doc:
+    description: "Serve the built documentation at http://127.0.0.1:8000/version/stable/"
+    command: "uv"
+    args:
+      - "run"
+      - "python"
+      - "doc/serve.py"
+    options:
+      cache: false
+      persistent: true
       runFromWorkspaceRoot: true
 
   download-wheel-for-e2e-tests:

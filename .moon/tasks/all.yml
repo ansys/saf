@@ -7,13 +7,12 @@ tasks:
       - "python"
       - '-c'
       - >-
-        import os, sys;
-        names = sys.argv[1:];
-        missing = next((name for name in names if not os.environ.get(name)), None);
-        message = "Error: Specify at least one environment variable name" if not names else
-        f"Error: Required environment variable is not set: {missing}" if missing is not None else None;
-        print(message, file=sys.stderr) if message is not None else None;
-        sys.exit(1 if message is not None else 0)
+        import os, sys; names = sys.argv[1:]; missing = next((name for name in names
+        if not os.environ.get(name)), None); message = "Error: Specify at least one
+        environment variable name" if not names else f"Error: Required environment
+        variable is not set: {missing}" if missing is not None else None; print(message,
+        file=sys.stderr) if message is not None else None; sys.exit(1 if message is
+        not None else 0)
     options:
       cache: false
 
@@ -91,12 +90,10 @@ tasks:
       - 'python'
       - '-c'
       - >-
-        import subprocess, sys;
-        from pre_commit.main import main;
-        files = subprocess.check_output(
-        ['git', 'ls-files', '-z', '--', f':(top,glob){sys.argv[1]}/**'],
-        text=True, encoding='utf-8', errors='surrogateescape').split(chr(0))[:-1];
-        sys.exit(main(['run', '--files', *files]))
+        import subprocess, sys; from pre_commit.main import main; files = subprocess.check_output(
+        ['git', 'ls-files', '-z', '--', f':(top,glob){sys.argv[1]}/**'], text=True,
+        encoding='utf-8', errors='surrogateescape').split(chr(0))[:-1]; sys.exit(main(['run',
+        '--files', *files]))
       - '$projectSource'
     deps:
       - '~:pyright'
@@ -104,7 +101,7 @@ tasks:
       - '~:ruff-format'
       - '~:bandit'
       - target: "~:check-env-var"
-        args: 
+        args:
           - "UV_PYTHON"
           - "MOON_PYTHON_VERSION"
     inputs:
@@ -124,7 +121,7 @@ tasks:
     description: "Run pyright"
     deps:
       - target: "~:check-env-var"
-        args: 
+        args:
           - "UV_PYTHON"
           - "MOON_PYTHON_VERSION"
     command: "uv"
@@ -146,7 +143,7 @@ tasks:
     description: "Run ruff check"
     deps:
       - target: "~:check-env-var"
-        args: 
+        args:
           - "UV_PYTHON"
           - "MOON_PYTHON_VERSION"
     command:
@@ -169,7 +166,7 @@ tasks:
     description: "Run ruff fix"
     deps:
       - target: "~:check-env-var"
-        args: 
+        args:
           - "UV_PYTHON"
           - "MOON_PYTHON_VERSION"
     command:
@@ -192,7 +189,7 @@ tasks:
   ruff-format:
     deps:
       - target: "~:check-env-var"
-        args: 
+        args:
           - "UV_PYTHON"
           - "MOON_PYTHON_VERSION"
     description: "Run ruff format"
@@ -216,7 +213,7 @@ tasks:
   bandit:
     deps:
       - target: "~:check-env-var"
-        args: 
+        args:
           - "UV_PYTHON"
           - "MOON_PYTHON_VERSION"
     description: "Run bandit"
@@ -243,7 +240,7 @@ tasks:
     description: "Build wheel"
     deps:
       - target: "~:check-env-var"
-        args: 
+        args:
           - "UV_PYTHON"
           - "MOON_PYTHON_VERSION"
     command:
@@ -265,7 +262,7 @@ tasks:
     description: "Check distribution with twine"
     deps:
       - target: "~:check-env-var"
-        args: 
+        args:
           - "UV_PYTHON"
           - "MOON_PYTHON_VERSION"
     command: "uvx"
@@ -287,12 +284,9 @@ tasks:
       - "python"
       - '-c'
       - >-
-        import glob, subprocess, sys;
-        wheels = glob.glob("dist/*.whl");
-        cmd = ["uvx"];
-        [cmd.extend(["--with", wheel]) for wheel in wheels];
-        cmd.extend(["pip-licenses@5.5.5", "--packages", "$projectAlias", "--allow-only=Apache-2.0"]);
-        sys.exit(subprocess.run(cmd).returncode)
+        import glob, subprocess, sys; wheels = glob.glob("dist/*.whl"); cmd = ["uvx"];
+        [cmd.extend(["--with", wheel]) for wheel in wheels]; cmd.extend(["pip-licenses@5.5.5",
+        "--packages", "$projectAlias", "--allow-only=Apache-2.0"]); sys.exit(subprocess.run(cmd).returncode)
     deps:
       - '~:build'
     inputs:
@@ -303,7 +297,7 @@ tasks:
   test:
     deps:
       - target: "~:check-env-var"
-        args: 
+        args:
           - "UV_PYTHON"
           - "MOON_PYTHON_VERSION"
     description: "Run pytest"
@@ -355,7 +349,7 @@ tasks:
     description: "Export the project"
     deps:
       - target: "~:check-env-var"
-        args: 
+        args:
           - "UV_PYTHON"
           - "MOON_PYTHON_VERSION"
     command: 'uv'
@@ -383,7 +377,7 @@ tasks:
     description: "Export sbom"
     deps:
       - target: "~:check-env-var"
-        args: 
+        args:
           - "UV_PYTHON"
           - "MOON_PYTHON_VERSION"
     command: 'uv'
@@ -412,7 +406,7 @@ tasks:
     deps:
       - '~:export'
       - target: "~:check-env-var"
-        args: 
+        args:
           - "UV_PYTHON"
           - "MOON_PYTHON_VERSION"
     command: 'uvx'
@@ -443,7 +437,7 @@ tasks:
     description: "Bump the project version"
     deps:
       - target: "~:check-env-var"
-        args: 
+        args:
           - "UV_PYTHON"
           - "MOON_PYTHON_VERSION"
     command: 'uv'

@@ -874,7 +874,7 @@ requires-dist = [
 
 [[package]]
 name = "ansys-saf-desktop-installer"
-version = "1.20.dev0"
+version = "1.20.dev1"
 source = { editable = "packages/saf-desktop-installer" }
 dependencies = [
     { name = "click" },
@@ -1533,7 +1533,6 @@ dev = [
     { name = "docutils", marker = "python_full_version >= '3.12'" },
     { name = "filelock" },
     { name = "httpx2-pytest" },
-    { name = "linkchecker", marker = "python_full_version >= '3.12'" },
     { name = "mock" },
     { name = "nbsphinx", marker = "python_full_version >= '3.12'" },
     { name = "numpydoc", marker = "python_full_version >= '3.12'" },
@@ -1578,7 +1577,6 @@ doc = [
     { name = "autodoc-pydantic", marker = "python_full_version >= '3.12'" },
     { name = "click", marker = "python_full_version >= '3.12'" },
     { name = "docutils", marker = "python_full_version >= '3.12'" },
-    { name = "linkchecker", marker = "python_full_version >= '3.12'" },
     { name = "nbsphinx", marker = "python_full_version >= '3.12'" },
     { name = "numpydoc", marker = "python_full_version >= '3.12'" },
     { name = "rst2html", marker = "python_full_version >= '3.12'" },
@@ -1707,7 +1705,6 @@ dev = [
     { name = "docutils", marker = "python_full_version >= '3.12' and python_full_version < '4'", specifier = ">=0.21" },
     { name = "filelock", specifier = ">=4.2.1,<5" },
     { name = "httpx2-pytest", specifier = ">=1.0,<2" },
-    { name = "linkchecker", marker = "python_full_version >= '3.12'", specifier = ">=10.6.0" },
     { name = "mock", specifier = ">=4.0.3,<5" },
     { name = "nbsphinx", marker = "python_full_version >= '3.12'", specifier = ">=0.9.8" },
     { name = "numpydoc", marker = "python_full_version >= '3.12'", specifier = ">=1.10.0" },
@@ -1752,7 +1749,6 @@ doc = [
     { name = "autodoc-pydantic", marker = "python_full_version >= '3.12'", specifier = ">=2.2.0" },
     { name = "click", marker = "python_full_version >= '3.12'", specifier = ">=8.3.2" },
     { name = "docutils", marker = "python_full_version >= '3.12' and python_full_version < '4'", specifier = ">=0.21" },
-    { name = "linkchecker", marker = "python_full_version >= '3.12'", specifier = ">=10.6.0" },
     { name = "nbsphinx", marker = "python_full_version >= '3.12'", specifier = ">=0.9.8" },
     { name = "numpydoc", marker = "python_full_version >= '3.12'", specifier = ">=1.10.0" },
     { name = "rst2html", marker = "python_full_version >= '3.12'", specifier = ">=2020.7.4" },
@@ -2765,11 +2761,11 @@ wheels = [
 
 [[package]]
 name = "click"
-version = "8.5.0"
+version = "8.5.1"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/c7/0e/7fa0ef50764b67090eca4114772a2abf8b6148198475e54c660b97caeee6/click-8.5.0.tar.gz", hash = "sha256:ba0d2089de75ea0310e2dde03160e6ca10009947fb95a182f9b54021bb272e34", size = 382235, upload-time = "2026-08-26T13:33:14.56Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/45/37/edbf1b0707709013c0cf2e8317e03d97ed29bf4cac709fe328904ae92a38/click-8.5.1.tar.gz", hash = "sha256:9bbfada76703fd1d784b83eea012e3e8c6a001a876543ef104fa56aaaeb072b4", size = 399151, upload-time = "2026-11-06T17:37:01.021Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/58/50/6c0d534c5f134586a8e1ba4e330569e32f057e33372ae556463212fb4cd3/click-8.5.0-py3-none-any.whl", hash = "sha256:255bc9599cf7748b4b1a446ccc735421bd08a2ae529a8b88597d3de5664ee360", size = 125251, upload-time = "2026-08-26T13:33:12.928Z" },
+    { url = "https://files.pythonhosted.org/packages/31/7d/164b7ffc8624fe9efb4221bf9af485d5c1e41b9ae118045d2b6dc5457d8b/click-8.5.1-py3-none-any.whl", hash = "sha256:8bb5376d2006950386f8c6427613334a2acadc5f559cb80e638d00b4df957e37", size = 126163, upload-time = "2026-11-06T17:36:59.287Z" },
 ]
 
 [[package]]
@@ -4926,20 +4922,6 @@ wheels = [
 ]
 
 [[package]]
-name = "linkchecker"
-version = "10.6.0"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "beautifulsoup4" },
-    { name = "dnspython" },
-    { name = "requests" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/6e/60/1ad47dd9db638546c4e70b49b5adfddfaadb2c6669a1a9b06a4dcf140d7b/LinkChecker-10.6.0.tar.gz", hash = "sha256:fb7e8facda7749c2fa5fa5dc241c0adc302da3d31d588964a2570db501aa49e5", size = 547746, upload-time = "2025-07-28T18:43:50.884Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/d2/07/ff8a29330fa35483a19221fd89e102e7ebf700acda8f0ba0b66ef14bcd48/LinkChecker-10.6.0-py3-none-any.whl", hash = "sha256:5268587ed0b0f7e7521b75905128c96856f30f67dad49f66e2c963bc174ca92d", size = 280937, upload-time = "2025-07-28T18:43:48.932Z" },
-]
-
-[[package]]
 name = "macholib"
 version = "1.16.4"
 source = { registry = "https://pypi.org/simple" }
@@ -6406,17 +6388,16 @@ wheels = [
 
 [[package]]
 name = "pkg-about"
-version = "1.2.11"
+version = "2.5.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "docutils" },
-    { name = "importlib-metadata" },
+    { name = "build" },
     { name = "packaging" },
-    { name = "setuptools" },
+    { name = "typing-extensions" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/e6/17/2592f5b269be175bb924f7a9e5da1136f3d84e6f4d0627503ec0d99dd668/pkg_about-1.2.11.tar.gz", hash = "sha256:7e6fdbe159bb6064eaf815d596dc11cf8daa5d850b5cbf4a04220d07c98cb962", size = 13536, upload-time = "2025-03-21T10:07:15.634Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/42/b4/a77a5e4903cc626e549fdaea718f756c2309db8e609692625d1f8b51817a/pkg_about-2.5.1.tar.gz", hash = "sha256:4efb55ea9dbe176bd631d6884493079bcacfb247b585768fd616841b9b9f2c10", size = 16125, upload-time = "2026-10-16T09:45:23.511Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/01/2e/f3b5b00d9bfc9898fb91a40e53ab85019bc81ca2975a10b302fdad91fa0e/pkg_about-1.2.11-py3-none-any.whl", hash = "sha256:68781d1091442a06aaec510293555f34ef3a1e8b03a2cde03fd79c1d6fcf6b2e", size = 6604, upload-time = "2025-03-21T10:07:14.087Z" },
+    { url = "https://files.pythonhosted.org/packages/17/17/e33bcb99a93e4a343585b99cce91f324903c8d0ce6ddd7c5dffe6309a967/pkg_about-2.5.1-py3-none-any.whl", hash = "sha256:28b11bd64e9d9c6111bc1a49c6ab194b26307b77e57620b5474a04a9a3114617", size = 6201, upload-time = "2026-10-16T09:45:22.458Z" },
 ]
 
 [[package]]
@@ -6861,15 +6842,15 @@ wheels = [
 
 [[package]]
 name = "pyc-wheel"
-version = "1.3.0"
+version = "1.5.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "pkg-about" },
     { name = "setuptools" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/60/ab/6d374a5388359e60709c35e701c3d70412bbf657f481c7d27d02cb2a313c/pyc_wheel-1.3.0.tar.gz", hash = "sha256:b6a3db74c5da80aa811f69d7541b09d83582ed8fcea2d1e94ac46ca19adda4d3", size = 15216, upload-time = "2025-02-13T10:51:05.858Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/26/0c/d57919ba0fc5f8ddde8ef93795d8ef9efd359042d811e97a30a5120cb6c5/pyc_wheel-1.5.0.tar.gz", hash = "sha256:1c7d0225e693c0dc6bfd3785f1879f868697bdefeb7539a59272d10e02420949", size = 132770, upload-time = "2025-09-02T12:36:01.964Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/b9/33/7af3e901c6687a5c50672aec579d04431b28ac5be6d9ce66066d9f868d5d/pyc_wheel-1.3.0-py3-none-any.whl", hash = "sha256:ed5b6cc298966d5192eb905cdf0a5c2be8dc2979bfe991830b25cffab8f93da2", size = 8605, upload-time = "2025-02-13T10:51:04.462Z" },
+    { url = "https://files.pythonhosted.org/packages/b3/c2/4b9ad5723d171958be5374068f8be181a173f7dedde7b943b21fb4580d99/pyc_wheel-1.5.0-py3-none-any.whl", hash = "sha256:d7d41c00ae6df9d78fefe684da7362cf338c90be439587de8e1c285c4afd9542", size = 9632, upload-time = "2025-09-02T12:36:00.364Z" },
 ]
 
 [[package]]

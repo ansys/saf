@@ -148,7 +148,7 @@ def test_saf_install(
     assert p.find_msg_in_output(f"Dependency management system         : {installation_backend.value}")
     if installation_backend is SolutionBackend.POETRY:
         assert p.find_msg_in_output(
-            "Poetry-based solutions are deprecated. Please migrate this solution to UV.",
+            "Poetry-based solutions are deprecated. Please migrate this solution to UV using the migration guide:",
         )
         expected_package_install_msg = (
             "Installing the current project: "

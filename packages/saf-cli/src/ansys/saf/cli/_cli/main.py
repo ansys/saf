@@ -25,7 +25,6 @@ import shutil
 import subprocess
 import sys
 import traceback
-from typing import TextIO
 import warnings
 import webbrowser
 

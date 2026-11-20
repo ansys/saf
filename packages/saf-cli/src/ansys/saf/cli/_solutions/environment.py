@@ -1180,7 +1180,7 @@ def setup_environment(
         if backend_info.uses_deprecated_backend:
             warnings.warn(
                 "Poetry-based solutions are deprecated. Please migrate this solution to UV using the migration guide: "
-                "https://saf.ansys.com/version/stable/user_guide/migration/poetry-to-uv.html.\n"
+                "https://saf.ansys.com/version/stable/user_guide/migration/poetry-to-uv.html."
                 "Installation will continue using Poetry for now, but support for Poetry-based solutions will end "
                 "after May 2027.",
                 DeprecationWarning,

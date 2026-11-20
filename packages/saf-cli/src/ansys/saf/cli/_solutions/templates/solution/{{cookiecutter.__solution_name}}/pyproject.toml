@@ -105,6 +105,14 @@ style = [
     "tox>=4.4.0,<5.0.0",
 ]
 
+[[tool.uv.index]]
+name = "public-pypi"
+url = "https://pypi.org/simple"
+explicit = true
+
+[tool.uv.sources]
+ansys-saf-sdk = { index = "public-pypi" }
+
 [tool.setuptools]
 include-package-data = true
 
@@ -120,6 +128,7 @@ namespaces = true
 package = true
 prerelease = "if-necessary"
 override-dependencies = ["ansys-saf-desktop-installer==1.20.dev0"]
+
 
 [tool.black]
 line-length = 120

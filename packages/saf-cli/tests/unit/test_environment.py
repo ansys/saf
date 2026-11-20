@@ -26,9 +26,11 @@ import pytest
 import pytest_mock
 import requests
 
+from ansys.saf.cli._solutions import environment
+from ansys.saf.cli._solutions.backend_detection import SolutionBackend
 from ansys.saf.cli._solutions.environment import (
     InstallError,
-    _check_private_sources,  # pyright: ignore[reportPrivateUsage]
+    _check_poetry_private_sources,  # pyright: ignore[reportPrivateUsage]
     _run_poetry_install,  # pyright: ignore[reportPrivateUsage]
     setup_environment,
 )
@@ -108,6 +110,34 @@ PYPROJECT_CONTENT_WITH_POETRY_2X = PYPROJECT_CONTENT.replace(
 
 SOLUTION_MAIN_MODULE_NAME = "ansys.solutions.fake_solution.main"
 
+UV_PROJECT_EXAMPLE = """
+[project]
+name = "uv-solution"
+version = "0.0.0"
+requires-python = ">=3.11,<3.15"
+[tool.uv]
+default-groups = ["tests"]
+[dependency-groups]
+desktop = []
+ui = []
+doc = []
+build = []
+tests = []
+style = []
+"""
+
+
+@pytest.fixture
+def uv_solution(tmp_path: Path, mocker: pytest_mock.MockFixture) -> Path:
+    # Keep command-selection tests independent of real installs and system setup.
+    (tmp_path / "pyproject.toml").write_text(UV_PROJECT_EXAMPLE, encoding="utf-8")
+    mocker.patch("ansys.saf.cli._solutions.environment.shutil.which", return_value=str(tmp_path / "uv"))
+    mocker.patch("ansys.saf.cli._solutions.environment.subprocess.check_output", return_value="uv test-version")
+    mocker.patch.object(environment, "_install_dotnet_linux_dependencies")
+    mocker.patch.object(environment, "_preload_solution_main_module")
+    mocker.patch.object(environment, "get_exec_from_solution_venv", return_value=tmp_path / ".venv" / "python")
+    return tmp_path
+
 
 def _patch_http_get_to_return_404(monkeypatch: pytest.MonkeyPatch) -> None:
     def mock_get(*args: object, **kwargs: object) -> requests.Response:
@@ -127,8 +157,9 @@ def subprocess_mock(mocker: pytest_mock.MockFixture) -> pytest_mock.MockType:
 
 @pytest.fixture
 def mock_is_file(mocker: pytest_mock.MockFixture) -> None:
-    mock_is_file = mocker.patch("pathlib.Path.is_file")
-    mock_is_file.return_value = True
+    # Poetry fixtures must not appear to contain both backend lockfiles.
+    mock_is_file = mocker.patch("pathlib.Path.is_file", autospec=True)
+    mock_is_file.side_effect = lambda path: path.name != "uv.lock"
 
 
 @pytest.fixture
@@ -339,8 +370,16 @@ def test_setup_environment_default_params(
     pyproject_file.write_text(PYPROJECT_CONTENT)
 
     working_dir = Path.cwd()
-    setup_environment(tmp_path, SOLUTION_MAIN_MODULE_NAME)
-    printed_msgs = capsys.readouterr().out
+    with pytest.warns(
+        DeprecationWarning,
+        match=r"Please migrate this solution to UV using the migration guide: "
+        r"https://saf\.ansys\.com/version/stable/user_guide/migration/poetry-to-uv\.html\.\n"
+        r"Installation will continue using Poetry for now, but support for Poetry-based solutions will end after "
+        r"May 2027\.",
+    ):
+        setup_environment(tmp_path, SOLUTION_MAIN_MODULE_NAME)
+    captured = capsys.readouterr()
+    printed_msgs = captured.out
     assert "You are all set!" in printed_msgs
     expected_calls.append(
         mock.call(
@@ -787,7 +826,7 @@ def test_setup_environment_outside_virtual_environment(
     assert "VIRTUAL_ENV" not in os.environ
 
 
-def test_check_private_sources_missing_credentials(
+def test_check_poetry_private_sources_missing_credentials(
     mocker: pytest_mock.MockFixture,
     capsys: pytest.CaptureFixture[str],
 ) -> None:
@@ -820,7 +859,7 @@ def test_check_private_sources_missing_credentials(
     mock_set_env = mocker.patch("ansys.saf.cli._solutions.environment.set_user_level_environment_variable")
 
     with pytest.raises(SystemExit, match="0"):
-        _check_private_sources(configuration)
+        _check_poetry_private_sources(configuration)
 
     mock_set_env.assert_any_call("POETRY_HTTP_BASIC_MY_PRIVATE_PYPI_USERNAME", "test-user")
     mock_set_env.assert_any_call("POETRY_HTTP_BASIC_MY_PRIVATE_PYPI_PASSWORD", "test-token")
@@ -840,7 +879,7 @@ def test_check_private_sources_missing_credentials(
     assert "Then run the install command again to continue with the setup." in printed_msgs
 
 
-def test_check_private_sources_updates_invalid_credentials_with_valid_input(
+def test_check_poetry_private_sources_updates_invalid_credentials_with_valid_input(
     mocker: pytest_mock.MockFixture,
     capsys: pytest.CaptureFixture[str],
 ) -> None:
@@ -876,7 +915,7 @@ def test_check_private_sources_updates_invalid_credentials_with_valid_input(
     mock_set_env = mocker.patch("ansys.saf.cli._solutions.environment.set_user_level_environment_variable")
 
     with pytest.raises(SystemExit, match="0"):
-        _check_private_sources(configuration)
+        _check_poetry_private_sources(configuration)
 
     assert mock_validate.call_count == 2
 
@@ -895,7 +934,7 @@ def test_check_private_sources_updates_invalid_credentials_with_valid_input(
     assert "Then run the install command again to continue with the setup." in stdout_output
 
 
-def test_check_private_sources_valid_existing_credentials(
+def test_check_poetry_private_sources_valid_existing_credentials(
     mocker: pytest_mock.MockFixture,
     capsys: pytest.CaptureFixture[str],
 ) -> None:
@@ -936,7 +975,7 @@ def test_check_private_sources_valid_existing_credentials(
     mock_set_env = mocker.patch("ansys.saf.cli._solutions.environment.set_user_level_environment_variable")
 
     # Call the function directly
-    _check_private_sources(configuration)
+    _check_poetry_private_sources(configuration)
 
     # Verify that prompt was not called (credentials already exist and are valid)
     mock_prompt.assert_not_called()
@@ -961,7 +1000,7 @@ def test_check_private_sources_valid_existing_credentials(
     assert "Missing credentials for private PyPI source: my-private-pypi" not in printed_msgs
 
 
-def test_check_private_sources_user_cancellation(
+def test_check_poetry_private_sources_user_cancellation(
     mocker: pytest_mock.MockFixture,
     capsys: pytest.CaptureFixture[str],
 ) -> None:
@@ -1019,7 +1058,7 @@ def test_check_private_sources_user_cancellation(
         InstallError,
         match="Setup cancelled\\. Install will fail without valid credentials for my\\-private\\-pypi",
     ):
-        _check_private_sources(configuration)
+        _check_poetry_private_sources(configuration)
 
     assert mock_validate.call_count == 2, "Should have validated credentials twice before cancellation"
 
@@ -1054,7 +1093,7 @@ def test_check_private_sources_user_cancellation(
     assert stderr_output.count("Invalid credentials. Please check your username and password/token and try again.") == 2
 
 
-def test_check_private_sources_loop_exit_paths(
+def test_check_poetry_private_sources_loop_exit_paths(
     mocker: pytest_mock.MockFixture,
     capsys: pytest.CaptureFixture[str],
 ) -> None:
@@ -1089,7 +1128,7 @@ def test_check_private_sources_loop_exit_paths(
     mock_set_env = mocker.patch("ansys.saf.cli._solutions.environment.set_user_level_environment_variable")
 
     # Should exit immediately without prompting
-    _check_private_sources(configuration)
+    _check_poetry_private_sources(configuration)
 
     assert mock_validate.call_count == 1
     assert mock_prompt.call_count == 0  # No prompting needed
@@ -1111,7 +1150,7 @@ def test_check_private_sources_loop_exit_paths(
     mock_prompt.side_effect = ["user1", "token1", "user2", "token2"]
 
     with pytest.raises(SystemExit, match="0"):
-        _check_private_sources(configuration)
+        _check_poetry_private_sources(configuration)
 
     assert mock_validate.call_count == 2  # Two validation attempts
     assert mock_prompt.call_count == 4  # Two sets of username/password prompts
@@ -1135,7 +1174,7 @@ def test_check_private_sources_loop_exit_paths(
     mock_prompt.side_effect = [click.Abort()]  # User cancels immediately
 
     with pytest.raises((SystemExit, InstallError)):
-        _check_private_sources(configuration)
+        _check_poetry_private_sources(configuration)
 
     assert mock_validate.call_count == 0  # No validation (user canceled before providing credentials)
     assert mock_set_env.call_count == 0  # No env setting (user canceled)
@@ -1151,7 +1190,7 @@ def test_check_private_sources_loop_exit_paths(
     mock_prompt.side_effect = ["invalid-user", "invalid-token", click.Abort()]  # Provide invalid creds, then cancel
 
     with pytest.raises((SystemExit, InstallError)):
-        _check_private_sources(configuration)
+        _check_poetry_private_sources(configuration)
 
     assert mock_validate.call_count == 1  # One validation attempt
     assert mock_prompt.call_count == 3  # Username, password, then cancellation
@@ -1187,3 +1226,228 @@ def test_authorization_error_captured_and_set_to_stderr(
 
     with pytest.raises(Exception, match=expected_match):
         _run_poetry_install([str(fake_poetry)])
+
+
+@pytest.mark.parametrize(
+    ("requested", "expected"),
+    [
+        (None, ["desktop", "ui", "doc", "build"]),
+        (["all"], ["desktop", "ui", "doc", "build", "tests", "style"]),
+        (["tests"], ["tests"]),
+        (["tests", "style"], ["tests", "style"]),
+    ],
+)
+def test_uv_install_groups(
+    uv_solution: Path,
+    mocker: pytest_mock.MockFixture,
+    requested: list[str] | None,
+    expected: list[str],
+):
+    run = mocker.patch("ansys.saf.cli._solutions.environment.subprocess.run")
+    poetry_setup = mocker.patch.object(environment, "_install_poetry")
+    poetry_auth = mocker.patch.object(environment, "_check_poetry_private_sources")
+    environment.setup_environment(uv_solution, "solution.main", requested)
+
+    run.assert_called_once()
+    command = run.call_args.args[0]
+    assert command[:2] == [str(uv_solution / "uv"), "sync"]
+    assert command[command.index("--project") + 1] == str(uv_solution)
+    assert command[command.index("--python") + 1] == sys.executable
+    # SAF's group selection must override UV's configured default groups.
+    assert "--no-default-groups" in command
+    assert "--inexact" in command
+    assert "--no-python-downloads" in command
+    assert command[command.index("--inexact") + 1 :] == [
+        argument for group in expected for argument in ("--group", group)
+    ]
+    child_environment = run.call_args.kwargs["env"]
+    assert "VIRTUAL_ENV" not in child_environment
+    assert child_environment["UV_PROJECT_ENVIRONMENT"] == str(uv_solution / ".venv")
+    # UV solutions must bypass Poetry setup and credential handling.
+    poetry_setup.assert_not_called()
+    poetry_auth.assert_not_called()
+
+
+@pytest.mark.parametrize(
+    ("credentials", "expected_username", "expected_password"),
+    [
+        (
+            {
+                "UV_INDEX_MY_PRIVATE_PYPI_USERNAME": "uv-user",
+                "UV_INDEX_MY_PRIVATE_PYPI_PASSWORD": "uv-token",
+            },
+            "uv-user",
+            "uv-token",
+        ),
+        (
+            {
+                "UV_INDEX_MY_PRIVATE_PYPI_USERNAME": "uv-user",
+                "UV_INDEX_MY_PRIVATE_PYPI_PASSWORD": "uv-token",
+                "POETRY_HTTP_BASIC_MY_PRIVATE_PYPI_USERNAME": "legacy-user",
+                "POETRY_HTTP_BASIC_MY_PRIVATE_PYPI_PASSWORD": "legacy-token",
+            },
+            "uv-user",
+            "uv-token",
+        ),
+        (
+            {
+                "POETRY_HTTP_BASIC_MY_PRIVATE_PYPI_USERNAME": "legacy-user",
+                "POETRY_HTTP_BASIC_MY_PRIVATE_PYPI_PASSWORD": "legacy-token",
+            },
+            "legacy-user",
+            "legacy-token",
+        ),
+    ],
+    ids=["uv-credentials", "uv-credentials-preferred", "legacy-poetry-fallback"],
+)
+def test_uv_install_forwards_named_index_credentials(
+    uv_solution: Path,
+    mocker: pytest_mock.MockFixture,
+    monkeypatch: pytest.MonkeyPatch,
+    credentials: dict[str, str],
+    expected_username: str,
+    expected_password: str,
+) -> None:
+    (uv_solution / "pyproject.toml").write_text(
+        UV_PROJECT_EXAMPLE
+        + """
+[[tool.uv.index]]
+name = "my-private-pypi"
+url = "https://url-for-my-private-pypi"
+explicit = true
+""",
+        encoding="utf-8",
+    )
+    for name in (
+        "UV_INDEX_MY_PRIVATE_PYPI_USERNAME",
+        "UV_INDEX_MY_PRIVATE_PYPI_PASSWORD",
+        "POETRY_HTTP_BASIC_MY_PRIVATE_PYPI_USERNAME",
+        "POETRY_HTTP_BASIC_MY_PRIVATE_PYPI_PASSWORD",
+    ):
+        monkeypatch.delenv(name, raising=False)
+    for name, value in credentials.items():
+        monkeypatch.setenv(name, value)
+    run = mocker.patch.object(environment.subprocess, "run")
+
+    environment.setup_environment(uv_solution, "solution.main")
+
+    child_environment = run.call_args.kwargs["env"]
+    assert child_environment["UV_INDEX_MY_PRIVATE_PYPI_USERNAME"] == expected_username
+    assert child_environment["UV_INDEX_MY_PRIVATE_PYPI_PASSWORD"] == expected_password
+
+
+def test_uv_no_optional_groups(uv_solution: Path, mocker: pytest_mock.MockFixture):
+    (uv_solution / "pyproject.toml").write_text(UV_PROJECT_EXAMPLE.split("[dependency-groups]")[0], encoding="utf-8")
+    run = mocker.patch("ansys.saf.cli._solutions.environment.subprocess.run")
+    environment.setup_environment(uv_solution, "solution.main")
+    assert "--group" not in run.call_args.args[0]
+
+
+def test_poetry_pep621_does_not_supply_default_version(
+    tmp_path: Path,
+    mocker: pytest_mock.MockFixture,
+):
+    content = (
+        '[project]\nname = "pep621-solution"\nversion = "0.1.0"\n'
+        'requires-python = ">=3.11,<4"\ndependencies = []\n'
+        '[tool.poetry.dependencies]\npython = ">=3.11,<4"\n'
+        '[build-system]\nrequires = ["poetry-core>=2"]\nbuild-backend = "poetry.core.masonry.api"\n'
+    )
+    (tmp_path / "pyproject.toml").write_text(content)
+    mocker.patch.object(environment, "_check_poetry_private_sources")
+    mocker.patch.object(environment, "_check_poetry_python_version")
+    clear = mocker.patch.object(environment, "_clear_workspace")
+    install = mocker.patch.object(environment, "_install_poetry")
+
+    with pytest.raises(RuntimeError, match="No build system version found"):
+        environment.setup_environment(tmp_path, "solution.main", workspace_clear="hard")
+
+    clear.assert_not_called()
+    install.assert_not_called()
+
+
+@pytest.mark.parametrize(
+    ("requires_python", "message"),
+    [
+        (None, "Python requirement not specified"),
+        ("not-a-version", "Invalid Python requirement"),
+        (">=99", "does not satisfy"),
+    ],
+)
+def test_uv_install_rejects_python_requirement_before_clearing(
+    uv_solution: Path,
+    mocker: pytest_mock.MockFixture,
+    requires_python: str | None,
+    message: str,
+):
+    content = UV_PROJECT_EXAMPLE.replace(
+        'requires-python = ">=3.11,<3.15"',
+        f'requires-python = "{requires_python}"' if requires_python is not None else "",
+    )
+    (uv_solution / "pyproject.toml").write_text(content)
+    run = mocker.patch.object(environment.subprocess, "run")
+    clear = mocker.patch.object(environment, "_clear_workspace")
+
+    with pytest.raises(InstallError, match=message):
+        setup_environment(uv_solution, "solution.main", workspace_clear="hard")
+
+    clear.assert_not_called()
+    run.assert_not_called()
+
+
+def test_uv_install_requires_uv_before_clearing(uv_solution: Path, mocker: pytest_mock.MockFixture):
+    mocker.patch.object(environment.shutil, "which", return_value=None)
+    run = mocker.patch.object(environment.subprocess, "run")
+    clear = mocker.patch.object(environment, "_clear_workspace")
+
+    with pytest.raises(InstallError, match="UV executable not found"):
+        setup_environment(uv_solution, "solution.main", workspace_clear="hard")
+
+    clear.assert_not_called()
+    run.assert_not_called()
+
+
+def test_uv_install_reports_sync_failure(
+    uv_solution: Path,
+    mocker: pytest_mock.MockFixture,
+    capsys: pytest.CaptureFixture[str],
+):
+    original_cwd = Path.cwd()
+    mocker.patch.object(
+        environment.subprocess,
+        "run",
+        side_effect=subprocess.CalledProcessError(1, ["uv", "sync"], stderr="No matching distribution"),
+    )
+
+    with pytest.raises(InstallError, match="UV install failed") as error:
+        setup_environment(uv_solution, "solution.main")
+
+    assert "No matching distribution" in str(error.value)
+    output = capsys.readouterr().out
+    assert "You are all set!" not in output
+    assert Path.cwd() == original_cwd
+
+
+@pytest.mark.usefixtures("tmp_path_as_working_dir")
+@pytest.mark.parametrize("clear", ["soft", "hard"])
+@pytest.mark.parametrize("preexisting_lock", [True, False])
+def test_uv_workspace_clear_preserves_only_the_requested_artifacts(
+    tmp_path: Path,
+    clear: str,
+    preexisting_lock: bool,
+):
+    (tmp_path / ".venv").mkdir()
+    poetry_sentinel = tmp_path / ".poetry" / ".venv" / "keep.txt"
+    poetry_sentinel.parent.mkdir(parents=True)
+    poetry_sentinel.write_text("unrelated Poetry environment")
+    lock = tmp_path / "uv.lock"
+    if preexisting_lock:
+        lock.write_text("original lock")
+
+    environment._clear_workspace(clear, SolutionBackend.UV)  # pyright: ignore[reportPrivateUsage]
+
+    assert not (tmp_path / ".venv").exists()
+    assert poetry_sentinel.read_text() == "unrelated Poetry environment"
+    assert lock.exists() is (preexisting_lock and clear == "soft")
+    if lock.exists():
+        assert lock.read_text() == "original lock"

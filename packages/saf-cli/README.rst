@@ -84,6 +84,24 @@ Documentation
 Visit the `official documentation`_ for detailed information on how to use SAF CLI.
 
 
+Dependency backends
+===================
+
+``saf new`` creates UV-based solutions with a ``uv.lock`` file. UV must be available on ``PATH``.
+``saf install`` and ``saf add-step`` also support existing Poetry solutions without migrating them.
+Keep only the lockfile belonging to the solution's backend; conflicting UV and Poetry metadata is rejected.
+
+Existing Poetry version pins in ``[build-system-requirements]`` are preserved. Poetry projects using
+``[project]`` metadata without a SAF-specific Poetry version pin use Poetry 2.5.1. Legacy projects using
+``[tool.poetry]`` metadata still require their existing version pin.
+
+Step templates may use ordinary version ranges, bare versions, wildcards, caret constraints, or tilde constraints.
+When updating PEP 621 dependencies, SAF translates these constraints to PEP 508 requirements while preserving
+their version bounds, extras, markers, and prerelease settings. Unsupported unions and direct Git/path template
+dependencies fail explicitly rather than producing an invalid manifest. Legacy Poetry dependency declarations
+keep their existing syntax.
+
+
 Troubleshooting
 ===============
 

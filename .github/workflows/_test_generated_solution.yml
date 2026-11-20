@@ -172,6 +172,7 @@ jobs:
           tmpfile=$(mktemp)
           cat > "$tmpfile" << 'CONTENT'
                   env:
+                    UV_INDEX: https://PAT:${{'${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}'}}@${{'${{ secrets.PYANSYS_PYPI_PRIVATE_URL }}'}}
                     PIP_EXTRA_INDEX_URL: https://PAT:${{'${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}'}}@${{'${{ secrets.PYANSYS_PYPI_PRIVATE_URL }}'}}
                     PIP_QUIET: 1
           CONTENT
@@ -189,7 +190,13 @@ jobs:
         run: | # zizmor: ignore[template-injection]
           tmpfile=$(mktemp)
           echo '          whitelist-license-check: ansys-minerva-python-client ansys-translation-utilities saf-solutions-${{ env.SOLUTION_NAME }}' > "$tmpfile"
-          sed -i '/use-uv: false/r '"$tmpfile" "${SOLUTION_NAME}/.github/workflows/${BUILD_WORKFLOW}"
+          workflow_path="${SOLUTION_NAME}/.github/workflows/${BUILD_WORKFLOW}"
+          anchor_count=$(grep -Fxc '          skip-install: true' "$workflow_path" || true)
+          if [[ "$anchor_count" != "1" ]]; then
+            echo "Expected exactly one check-licenses insertion point in ${workflow_path}; found ${anchor_count:-0}." >&2
+            exit 1
+          fi
+          sed -i '/^          skip-install: true$/r '"$tmpfile" "$workflow_path"
           rm "$tmpfile"
 
       - name: Publish solution

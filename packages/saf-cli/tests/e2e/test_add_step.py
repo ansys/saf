@@ -20,6 +20,8 @@ import shutil
 import subprocess
 
 import httpx2
+from packaging.requirements import Requirement
+from packaging.specifiers import SpecifierSet
 import pytest
 from selenium.webdriver.chrome.webdriver import WebDriver
 from selenium.webdriver.common.by import By
@@ -34,6 +36,7 @@ from ansys.saf.cli._config.const import (
     UI_FRAMEWORKS,
 )
 from ansys.saf.cli._database.models import SolutionRegistry
+from ansys.saf.cli._solutions.backend_detection import SolutionBackend, parse_solution_backend
 from ansys.saf.cli._utilities.conversion import namespace_to_path
 from ansys.saf.testing.common import find_exec_in_venv
 from ansys.saf.testing.selenium import (
@@ -51,6 +54,58 @@ from tests.e2e.conftest import (
     is_solution_registered,
 )
 from tests.e2e.saf_process import SAFProcess
+
+
+@pytest.fixture(scope="session", params=[SolutionBackend.UV, SolutionBackend.POETRY], ids=["uv", "poetry"])
+def session_solution_backend(request: pytest.FixtureRequest) -> SolutionBackend:
+    return SolutionBackend(request.param)
+
+
+def _dependency_commands(solution_dir: Path, groups: list[str]) -> tuple[str, str]:
+    if parse_solution_backend(solution_dir).backend is SolutionBackend.POETRY:
+        return "poetry lock", f"poetry install --with {','.join(sorted(groups))}"
+    group_options = "".join(f" --group {group}" for group in sorted(groups))
+    return (
+        "uv lock --no-python-downloads",
+        "uv sync --locked --no-default-groups --inexact --no-python-downloads" + group_options,
+    )
+
+
+def _group_dependencies(solution_dir: Path, group: str) -> dict[str, str]:
+    configuration = tomlkit.loads((solution_dir / "pyproject.toml").read_bytes()).unwrap()
+    if parse_solution_backend(solution_dir).backend is SolutionBackend.UV:
+        values = (
+            configuration["project"]["dependencies"] if group == "main" else configuration["dependency-groups"][group]
+        )
+        requirements = [Requirement(value) for value in values]
+        return {requirement.name: str(requirement.specifier) for requirement in requirements}
+    poetry = configuration["tool"]["poetry"]
+    dependencies = poetry["dependencies"] if group == "main" else poetry["group"][group]["dependencies"]
+    return {
+        name: specification.get("version", "*") if isinstance(specification, dict) else specification
+        for name, specification in dependencies.items()
+    }
+
+
+def _package_is_installed(solution_dir: Path, name: str) -> bool:
+    result = subprocess.run(
+        [find_exec_in_venv(solution_dir, "python"), "-c", f"from importlib.metadata import version; version({name!r})"],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    return result.returncode == 0
+
+
+def test_group_dependencies_handles_poetry_dependency_without_version(tmp_path: Path):
+    (tmp_path / "pyproject.toml").write_text(
+        "[tool.poetry]\n"
+        "name = 'test-solution'\n\n"
+        "[tool.poetry.dependencies]\n"
+        "source-dependency = { path = '../source' }\n",
+    )
+
+    assert _group_dependencies(tmp_path, "main") == {"source-dependency": "*"}
 
 
 def _check_step_available_on_api(step_name: str, solution_proc: SAFProcess) -> None:
@@ -247,7 +302,7 @@ def test_add_step_in_solution_with_package_name_different_from_solution_name(
 @pytest.mark.usefixtures(
     "cleanup_solution_src",
     "cleanup_solution_pyproject",
-    "cleanup_solution_poetry_lock",
+    "cleanup_solution_lock",
     "cleanup_solution_venv",
     "install_custom_template_plugin",
 )
@@ -286,17 +341,16 @@ def test_add_step_with_custom_step_with_several_dependencies(
     )
 
     expected_dependencies = ["humanize", "msgpack"]
-    solution_pyproject_path = session_solution.root_dir / "pyproject.toml"
-    solution_pyproject_content = tomlkit.loads(solution_pyproject_path.read_bytes()).unwrap()
-    solution_venv_python_exec = find_exec_in_venv(session_solution.root_dir, "python")
+    dependencies = _group_dependencies(session_solution.root_dir, "main")
     for dependency in expected_dependencies:
-        assert dependency in solution_pyproject_content["tool"]["poetry"]["dependencies"]
-        assert subprocess.run([solution_venv_python_exec.as_posix(), "-m", "pip", "show", dependency]).returncode == 0
-    expected_dependencies_text = (
-        'humanize = "^4.15.0"\nmsgpack = {version = "^1.0.0", allow-prereleases = true}\n\n[tool.poetry.group.desktop]'
-    )
-    solution_pyproject_content_text = solution_pyproject_path.read_text()
-    assert expected_dependencies_text in solution_pyproject_content_text
+        assert dependency in dependencies
+        assert _package_is_installed(session_solution.root_dir, dependency)
+    if parse_solution_backend(session_solution.root_dir).backend is SolutionBackend.UV:
+        assert dependencies["humanize"] == str(SpecifierSet(">=4.15.0,<5.0.0"))
+        assert dependencies["msgpack"] == str(SpecifierSet(">=1.0.0,<2.0.0"))
+    else:
+        assert dependencies["humanize"] == "^4.15.0"
+        assert dependencies["msgpack"] == "^1.0.0"
 
 
 @pytest.mark.use_session_solution
@@ -304,7 +358,7 @@ def test_add_step_with_custom_step_with_several_dependencies(
 @pytest.mark.usefixtures(
     "cleanup_solution_src",
     "cleanup_solution_pyproject",
-    "cleanup_solution_poetry_lock",
+    "cleanup_solution_lock",
     "cleanup_solution_venv",
     "install_custom_template_plugin_with_glow_and_ui_deps",
 )
@@ -332,6 +386,7 @@ def test_add_step_with_custom_step_with_several_dependencies_one_conflicting_one
         ],
     ) in "\n".join(p.output)
     assert "Updating solution dependencies. Do not modify solution files until completion." in "\n".join(p.output)
+    lock_command, install_command = _dependency_commands(session_solution.root_dir, ["ui"])
     dependency_warning_content = (
         f"WARNING: the step template 'second-step' has some dependencies in common with the "
         f"solution's pyproject.toml at {session_solution.root_dir / 'pyproject.toml'}. Review the solution's "
@@ -340,22 +395,23 @@ def test_add_step_with_custom_step_with_several_dependencies_one_conflicting_one
         f"Step specification of the common dependencies:\n"
         "  - ansys-saf-sdk (main): {'version': '^0.2.0', 'allow-prereleases': True, 'extras': ['core-hps']}\n\n"
         f"After reviewing the dependencies, please run:\n"
-        f'  - saf execute {session_solution.name} "poetry lock"\n'
-        f'  - saf execute {session_solution.name} "poetry install --with ui"'
+        f'  - saf execute {session_solution.name} "{lock_command}"\n'
+        f'  - saf execute {session_solution.name} "{install_command}"'
     )
     assert dependency_warning_content in "\n".join(p.output)
 
-    solution_venv_python_exec = find_exec_in_venv(session_solution.root_dir, "python")
+    assert not _package_is_installed(session_solution.root_dir, "streamlit")
 
-    assert subprocess.run([solution_venv_python_exec.as_posix(), "-m", "pip", "show", "streamlit"]).returncode == 1
+    ui_deps = _group_dependencies(session_solution.root_dir, "ui")
+    expected = (
+        str(SpecifierSet(">=1.58.0,<2.0.0"))
+        if parse_solution_backend(session_solution.root_dir).backend is SolutionBackend.UV
+        else "^1.58.0"
+    )
+    assert ui_deps["streamlit"] == expected
 
-    pyproject_content = tomlkit.loads((session_solution.root_dir / "pyproject.toml").read_bytes()).unwrap()
-    ui_deps = pyproject_content["tool"]["poetry"]["group"]["ui"]["dependencies"]
-    assert "streamlit" in ui_deps
-    assert ui_deps["streamlit"] == "^1.58.0"
-
-    execute_command([session_solution.name, "poetry lock"])
-    execute_command([session_solution.name, "poetry install --with ui"])
+    execute_command([session_solution.name, lock_command])
+    execute_command([session_solution.name, install_command])
 
     solution_module_dir = (
         session_solution.root_dir / "src" / namespace_to_path(session_solution_namespace) / session_solution.name
@@ -370,7 +426,7 @@ def test_add_step_with_custom_step_with_several_dependencies_one_conflicting_one
         DEFAULT_UI_FRAMEWORK,
     )
 
-    assert subprocess.run([solution_venv_python_exec.as_posix(), "-m", "pip", "show", "streamlit"]).returncode == 0
+    assert _package_is_installed(session_solution.root_dir, "streamlit")
 
 
 @pytest.mark.use_session_solution
@@ -378,7 +434,7 @@ def test_add_step_with_custom_step_with_several_dependencies_one_conflicting_one
 @pytest.mark.usefixtures(
     "cleanup_solution_src",
     "cleanup_solution_pyproject",
-    "cleanup_solution_poetry_lock",
+    "cleanup_solution_lock",
     "cleanup_solution_venv",
     "install_custom_template_plugin_with_new_dep_group",
 )
@@ -405,10 +461,13 @@ def test_add_step_with_custom_step_with_new_dependency_group(
     ) in "\n".join(p.output)
     assert "Updating solution dependencies. Do not modify solution files until completion." in "\n".join(p.output)
 
-    pyproject_content = tomlkit.loads((session_solution.root_dir / "pyproject.toml").read_bytes()).unwrap()
-    new_group_deps = pyproject_content["tool"]["poetry"]["group"]["new_group"]["dependencies"]
-    assert "humanize" in new_group_deps
-    assert new_group_deps["humanize"] == "^4.15.0"
+    new_group_deps = _group_dependencies(session_solution.root_dir, "new_group")
+    expected = (
+        str(SpecifierSet(">=4.15.0,<5.0.0"))
+        if parse_solution_backend(session_solution.root_dir).backend is SolutionBackend.UV
+        else "^4.15.0"
+    )
+    assert new_group_deps["humanize"] == expected
 
     solution_module_dir = (
         session_solution.root_dir / "src" / namespace_to_path(session_solution_namespace) / session_solution.name
@@ -423,9 +482,7 @@ def test_add_step_with_custom_step_with_new_dependency_group(
         DEFAULT_UI_FRAMEWORK,
     )
 
-    solution_venv_python_exec = find_exec_in_venv(session_solution.root_dir, "python")
-
-    assert subprocess.run([solution_venv_python_exec.as_posix(), "-m", "pip", "show", "humanize"]).returncode == 0
+    assert _package_is_installed(session_solution.root_dir, "humanize")
 
 
 @pytest.mark.use_session_solution
@@ -433,7 +490,7 @@ def test_add_step_with_custom_step_with_new_dependency_group(
 @pytest.mark.usefixtures(
     "cleanup_solution_src",
     "cleanup_solution_pyproject",
-    "cleanup_solution_poetry_lock",
+    "cleanup_solution_lock",
     "cleanup_solution_venv",
     "install_custom_template_plugin_with_glow_in_different_group",
 )
@@ -461,6 +518,7 @@ def test_add_step_with_custom_step_with_several_dependencies_one_conflicting_in_
         ],
     ) in "\n".join(p.output)
     assert "Updating solution dependencies. Do not modify solution files until completion." in "\n".join(p.output)
+    lock_command, install_command = _dependency_commands(session_solution.root_dir, ["another_group", "ui"])
     dependency_warning_content = (
         f"WARNING: the step template 'second-step' has some dependencies in common with the "
         f"solution's pyproject.toml at {session_solution.root_dir / 'pyproject.toml'}. Review the solution's "
@@ -470,24 +528,24 @@ def test_add_step_with_custom_step_with_several_dependencies_one_conflicting_in_
         "  - ansys-saf-sdk (another_group group): {'version': '^0.2.0', 'allow-prereleases': True, "
         "'extras': ['core-hps']}\n\n"
         f"After reviewing the dependencies, please run:\n"
-        f'  - saf execute {session_solution.name} "poetry lock"\n'
-        f'  - saf execute {session_solution.name} "poetry install --with another_group,ui"'
+        f'  - saf execute {session_solution.name} "{lock_command}"\n'
+        f'  - saf execute {session_solution.name} "{install_command}"'
     )
     assert dependency_warning_content in "\n".join(p.output)
 
-    solution_venv_python_exec = find_exec_in_venv(session_solution.root_dir, "python")
+    assert not _package_is_installed(session_solution.root_dir, "streamlit")
 
-    assert subprocess.run([solution_venv_python_exec.as_posix(), "-m", "pip", "show", "streamlit"]).returncode == 1
+    assert not _group_dependencies(session_solution.root_dir, "another_group")
+    ui_deps = _group_dependencies(session_solution.root_dir, "ui")
+    expected = (
+        str(SpecifierSet(">=1.58.0,<2.0.0"))
+        if parse_solution_backend(session_solution.root_dir).backend is SolutionBackend.UV
+        else "^1.58.0"
+    )
+    assert ui_deps["streamlit"] == expected
 
-    pyproject_content = tomlkit.loads((session_solution.root_dir / "pyproject.toml").read_bytes()).unwrap()
-    assert "another_group" in pyproject_content["tool"]["poetry"]["group"]
-    assert not pyproject_content["tool"]["poetry"]["group"]["another_group"]["dependencies"]
-    ui_deps = pyproject_content["tool"]["poetry"]["group"]["ui"]["dependencies"]
-    assert "streamlit" in ui_deps
-    assert ui_deps["streamlit"] == "^1.58.0"
-
-    execute_command([session_solution.name, "poetry lock"])
-    execute_command([session_solution.name, "poetry install --with another_group,ui"])
+    execute_command([session_solution.name, lock_command])
+    execute_command([session_solution.name, install_command])
 
     solution_module_dir = (
         session_solution.root_dir / "src" / namespace_to_path(session_solution_namespace) / session_solution.name
@@ -502,7 +560,7 @@ def test_add_step_with_custom_step_with_several_dependencies_one_conflicting_in_
         DEFAULT_UI_FRAMEWORK,
     )
 
-    assert subprocess.run([solution_venv_python_exec.as_posix(), "-m", "pip", "show", "streamlit"]).returncode == 0
+    assert _package_is_installed(session_solution.root_dir, "streamlit")
 
 
 @pytest.mark.use_session_solution
@@ -1138,23 +1196,23 @@ def test_add_step_template_has_invalid_compatibility_range(session_solution: Sol
 def _verify_successful_rollback(
     solution_root_dir: Path,
     solution_module_dir: Path,
-    poetry_lock_exists_before_failure: bool,
+    lock_exists_before_failure: bool,
 ):
     main_page = solution_module_dir / "ui" / "pages" / "page.py"
     definition = solution_module_dir / "solution" / "definition.py"
 
     pyproject_path = solution_root_dir / "pyproject.toml"
-    poetry_lock_path = solution_root_dir / "poetry.lock"
+    lock_path = parse_solution_backend(solution_root_dir).lockfile_path
 
-    if not poetry_lock_exists_before_failure and poetry_lock_path.is_file():
-        poetry_lock_path.unlink()
+    if not lock_exists_before_failure and lock_path.is_file():
+        lock_path.unlink()
 
     snapshot_before = set(solution_module_dir.rglob("*"))
 
     original_main_page = main_page.read_bytes()
     original_definition = definition.read_bytes()
     original_pyproject = pyproject_path.read_bytes()
-    original_lock = poetry_lock_path.read_bytes() if poetry_lock_path.exists() else None
+    original_lock = lock_path.read_bytes() if lock_path.exists() else None
     yield
     assert set(solution_module_dir.rglob("*")) == snapshot_before
     assert main_page.read_bytes() == original_main_page
@@ -1162,9 +1220,9 @@ def _verify_successful_rollback(
     assert pyproject_path.read_bytes() == original_pyproject
 
     if original_lock is not None:
-        assert poetry_lock_path.read_bytes() == original_lock
+        assert lock_path.read_bytes() == original_lock
     else:
-        assert not poetry_lock_path.exists()
+        assert not lock_path.exists()
 
     _verify_step_not_added(solution_module_dir, DEFAULT_STEP_NAME)
 
@@ -1174,16 +1232,16 @@ def _verify_successful_rollback(
 @pytest.mark.usefixtures(
     "cleanup_solution_src",
     "cleanup_solution_pyproject",
-    "cleanup_solution_poetry_lock",
+    "cleanup_solution_lock",
     "install_custom_template_plugin_fails_on_post_hook",
     "install_custom_template_plugin_with_invalid_dependency",
 )
 @pytest.mark.parametrize("session_solution_ui_framework", ["dash"], indirect=True)
-@pytest.mark.parametrize("poetry_lock_exists_before_failure", [True, False])
+@pytest.mark.parametrize("lock_exists_before_failure", [True, False])
 def test_add_step_rollback_on_failure(
     session_solution: SolutionRegistry,
     add_step: AddStep,
-    poetry_lock_exists_before_failure: bool,
+    lock_exists_before_failure: bool,
     session_solution_namespace: str,
 ):
     """
@@ -1196,7 +1254,7 @@ def test_add_step_rollback_on_failure(
     with _verify_successful_rollback(
         session_solution.root_dir,
         solution_module_dir,
-        poetry_lock_exists_before_failure,
+        lock_exists_before_failure,
     ):
         p = add_step(
             [session_solution.name],
@@ -1209,7 +1267,7 @@ def test_add_step_rollback_on_failure(
     with _verify_successful_rollback(
         session_solution.root_dir,
         solution_module_dir,
-        poetry_lock_exists_before_failure,
+        lock_exists_before_failure,
     ):
         p = add_step(
             [session_solution.name],
@@ -1217,10 +1275,15 @@ def test_add_step_rollback_on_failure(
             expected_return_code=1,
         )
 
-    assert "Could not parse version constraint: ^0.-5.abc" in "\n".join(p.output)
+    expected = (
+        "Unsupported dependency version constraint"
+        if parse_solution_backend(session_solution.root_dir).backend is SolutionBackend.UV
+        else "Could not parse version constraint: ^0.-5.abc"
+    )
+    assert expected in "\n".join(p.output)
 
     # The same solution should remain healthy after rollback and allow subsequent add-step.
-    next_step_name = f"rollback_success_{str(poetry_lock_exists_before_failure).lower()}_step"
+    next_step_name = f"rollback_success_{str(lock_exists_before_failure).lower()}_step"
     p = add_step(
         [
             session_solution.name,
@@ -1242,15 +1305,15 @@ def test_add_step_rollback_on_failure(
 @pytest.mark.usefixtures(
     "cleanup_solution_src",
     "cleanup_solution_pyproject",
-    "cleanup_solution_poetry_lock",
-    "install_custom_template_plugin_fails_on_post_hook",
+    "cleanup_solution_lock",
+    "install_custom_template_plugin_with_unresolvable_dependency",
 )
 @pytest.mark.parametrize("session_solution_ui_framework", ["dash"], indirect=True)
-@pytest.mark.parametrize("poetry_lock_exists_before_failure", [True, False])
+@pytest.mark.parametrize("lock_exists_before_failure", [True, False])
 def test_add_step_rollback_on_dependency_update_failure(
     session_solution: SolutionRegistry,
     add_step: AddStep,
-    poetry_lock_exists_before_failure: bool,
+    lock_exists_before_failure: bool,
     session_solution_namespace: str,
 ):
     """
@@ -1264,38 +1327,38 @@ def test_add_step_rollback_on_dependency_update_failure(
     definition = solution_module_dir / "solution" / "definition.py"
 
     pyproject_path = session_solution.root_dir / "pyproject.toml"
-    poetry_lock_path = session_solution.root_dir / "poetry.lock"
+    lock_path = parse_solution_backend(session_solution.root_dir).lockfile_path
 
-    if not poetry_lock_exists_before_failure:
-        poetry_lock_path.unlink()
+    if not lock_exists_before_failure:
+        lock_path.unlink()
 
     snapshot_before = set(solution_module_dir.rglob("*"))
 
     original_main_page = main_page.read_bytes()
     original_definition = definition.read_bytes()
     original_pyproject = pyproject_path.read_bytes()
-    original_lock = poetry_lock_path.read_bytes() if poetry_lock_path.exists() else None
+    original_lock = lock_path.read_bytes() if lock_path.exists() else None
     p = add_step(
         [session_solution.name],
-        input_str="\n\nseveral-deps-step\n",
+        input_str="\n\nsecond-step\n",
         expected_return_code=1,
     )
 
-    assert "simulated hook failure" in "\n".join(p.output)
+    assert "999999999.0" in "\n".join(p.output)
     assert set(solution_module_dir.rglob("*")) == snapshot_before
     assert main_page.read_bytes() == original_main_page
     assert definition.read_bytes() == original_definition
     assert pyproject_path.read_bytes() == original_pyproject
 
     if original_lock is not None:
-        assert poetry_lock_path.read_bytes() == original_lock
+        assert lock_path.read_bytes() == original_lock
     else:
-        assert not poetry_lock_path.exists()
+        assert not lock_path.exists()
 
     _verify_step_not_added(solution_module_dir, DEFAULT_STEP_NAME)
 
     # The same solution should remain healthy after rollback and allow subsequent add-step.
-    next_step_name = f"dep_rollback_success_{str(poetry_lock_exists_before_failure).lower()}_step"
+    next_step_name = f"dep_rollback_success_{str(lock_exists_before_failure).lower()}_step"
     p = add_step(
         [
             session_solution.name,

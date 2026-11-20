@@ -21,6 +21,7 @@ from pathlib import Path
 import pytest
 
 from ansys.saf.cli._database.models import SolutionRegistry
+from ansys.saf.cli._solutions.backend_detection import parse_solution_backend
 from ansys.saf.cli._utilities.backup import BackupManager
 from ansys.saf.cli._utilities.conversion import namespace_to_path
 
@@ -124,33 +125,31 @@ def test_backup_manager_context_manager_cleans_backup_on_success(
 
 
 @pytest.mark.use_session_solution
-@pytest.mark.usefixtures("cleanup_solution_src", "cleanup_solution_pyproject")
+@pytest.mark.usefixtures("cleanup_solution_src", "cleanup_solution_pyproject", "cleanup_solution_lock")
 @pytest.mark.parametrize("session_solution_ui_framework", ["dash"], indirect=True)
 def test_backup_manager_context_manager_restores_dependency_files(
     session_solution: SolutionRegistry,
     session_solution_namespace: str,
 ):
-    """Verify context manager can rollback pyproject.toml and poetry.lock."""
+    """Verify rollback preserves the solution's own dependency lockfile."""
     solution_root = session_solution.root_dir
     solution_package_name = session_solution.name
     pyproject_path = solution_root / "pyproject.toml"
-    poetry_lock_path = solution_root / "poetry.lock"
-    if not poetry_lock_path.exists():
-        poetry_lock_path.write_text("# Lock file for rollback test")
+    lock_path = parse_solution_backend(solution_root).lockfile_path
     original_pyproject = pyproject_path.read_bytes()
-    original_lock = poetry_lock_path.read_bytes()
+    original_lock = lock_path.read_bytes()
 
     try:
         with BackupManager(solution_root, solution_package_name, session_solution_namespace):
             pyproject_path.write_bytes(b"UPDATED_PYPROJECT")
-            poetry_lock_path.write_bytes(b"UPDATED_LOCK")
+            lock_path.write_bytes(b"UPDATED_LOCK")
             raise RuntimeError("simulated dependency update failure")
     except RuntimeError:
         pass
 
     # Verify restoration
     assert pyproject_path.read_bytes() == original_pyproject
-    assert poetry_lock_path.read_bytes() == original_lock
+    assert lock_path.read_bytes() == original_lock
 
 
 @pytest.mark.use_session_solution

@@ -16,6 +16,9 @@
 
 from pathlib import Path
 import re
+import subprocess
+from typing import Any
+from unittest.mock import call
 
 from cookiecutter.exceptions import FailedHookException  # pyright: ignore[reportMissingTypeStubs]
 from packaging.specifiers import SpecifierSet
@@ -29,6 +32,7 @@ from ansys.saf.cli._solutions.add_step import (
     check_template_cli_compatibility,
     step_name_exists,
 )
+from ansys.saf.cli._solutions.backend_detection import SolutionBackend
 from ansys.saf.cli._solutions.dependencies import DependencyManager
 from ansys.saf.cli._solutions.plugins import SafTemplate
 from ansys.saf.cli._utilities.backup import BackupManager
@@ -719,7 +723,7 @@ def test_add_step_rollback_on_definition_failure(
 
 @pytest.mark.usefixtures("tmp_path_as_working_dir")
 @pytest.mark.parametrize(
-    ("solution_name", "ui_type", "step_name", "dependencies", "failure_patch_target", "error_message"),
+    ("solution_name", "ui_type", "step_name", "dependencies", "failure_patch_target", "error_message", "backend"),
     [
         pytest.param(
             "solution_without_ui",
@@ -728,7 +732,8 @@ def test_add_step_rollback_on_definition_failure(
             {"requests": "^2.0"},
             None,
             None,
-            id="dependencies_success",
+            SolutionBackend.POETRY,
+            id="poetry_dependencies_success",
         ),
         pytest.param(
             "solution_without_ui",
@@ -737,7 +742,8 @@ def test_add_step_rollback_on_definition_failure(
             {"requests": "^2.0"},
             "ansys.saf.cli._solutions.dependencies.DependencyManager.update_solution_dependencies",
             "dependency failure",
-            id="dependency_failure_rollback",
+            SolutionBackend.POETRY,
+            id="poetry_dependency_failure_rollback",
         ),
         pytest.param(
             "solution_without_ui",
@@ -746,7 +752,8 @@ def test_add_step_rollback_on_definition_failure(
             None,
             "ansys.saf.cli._solutions.add_step.cookiecutter",
             "cookiecutter failure",
-            id="cookiecutter_failure_rollback_and_propagation",
+            SolutionBackend.POETRY,
+            id="poetry_cookiecutter_failure_rollback_and_propagation",
         ),
         pytest.param(
             "solution_with_dash_ui",
@@ -755,7 +762,28 @@ def test_add_step_rollback_on_definition_failure(
             None,
             "ansys.saf.cli._solutions.add_step._validate_multi_page_dash_solution",
             "ui failure",
-            id="ui_update_failure_rollback",
+            SolutionBackend.POETRY,
+            id="poetry_ui_update_failure_rollback",
+        ),
+        pytest.param(
+            "solution_without_ui",
+            "none",
+            "dep_step",
+            {"requests": ">=2.0"},
+            None,
+            None,
+            SolutionBackend.UV,
+            id="uv_dependencies_success",
+        ),
+        pytest.param(
+            "solution_without_ui",
+            "none",
+            "fail_step",
+            {"requests": ">=2.0"},
+            "ansys.saf.cli._solutions.dependencies.DependencyManager.update_solution_dependencies",
+            "dependency failure",
+            SolutionBackend.UV,
+            id="uv_dependency_failure_rollback",
         ),
     ],
     indirect=["solution_name"],
@@ -773,15 +801,24 @@ def test_add_step_workflow_success_and_rollback(
     error_message: str | None,
     default_saf_step_template: SafTemplate,
     mocker: MockerFixture,
+    backend: SolutionBackend,
 ):
     """Validate success and rollback workflows for add-step in a single parameterized test."""
 
+    mock_which = None
     if dependencies is not None:
         default_saf_step_template.dependencies = dependencies
+        mock_backend = mocker.patch("ansys.saf.cli._solutions.add_step.parse_solution_backend")
+        mock_backend.return_value.backend = backend
         mock_get_exec = mocker.patch(
             "ansys.saf.cli._solutions.add_step.get_exec_from_solution_venv",
             return_value=Path("fake"),
         )
+        if backend is SolutionBackend.UV:
+            mock_which = mocker.patch(
+                "ansys.saf.cli._solutions.add_step.shutil.which",
+                return_value=str(Path("fake_uv")),
+            )
         mock_env = mocker.patch(
             "ansys.saf.cli._solutions.add_step.create_solution_environment",
             return_value={},
@@ -825,7 +862,8 @@ def test_add_step_workflow_success_and_rollback(
         assert mock_get_exec is not None
         assert mock_env is not None
         assert mock_update is not None
-        mock_get_exec.assert_called_once()
+        if backend is SolutionBackend.POETRY:
+            mock_get_exec.assert_called_once()
         mock_env.assert_called_once()
         mock_update.assert_called_once()
     else:
@@ -846,6 +884,14 @@ def test_add_step_workflow_success_and_rollback(
             BackupManager(root_solution_dir, solution_name, solution_namespace)._snapshot_directory_paths()  # pyright: ignore[reportPrivateUsage]
             == snapshot_before
         )  # pyright: ignore[reportPrivateUsage]
+
+    if backend is SolutionBackend.UV:
+        assert mock_get_exec is not None
+        assert mock_which is not None
+        assert mock_update is not None
+        mock_get_exec.assert_not_called()
+        mock_which.assert_called_once_with("uv")
+        mock_update.assert_called_once_with(Path("fake_uv"), {})
 
 
 @pytest.mark.parametrize("solution_name", ["solution_with_dash_ui"], indirect=True)
@@ -886,44 +932,121 @@ def test_update_solution_dependencies_with_no_main_dependencies_fails(
 @pytest.mark.usefixtures("install_custom_template_plugin_with_main_dep")
 @pytest.mark.parametrize("solution_name", ["solution_with_dash_ui"], indirect=True)
 @pytest.mark.parametrize("custom_saf_step_template", ["test_custom_templates_with_main_dep"], indirect=True)
-@pytest.mark.parametrize("root_solution_dir_with_pyproject_and_lock", [{"main_dependencies": True}], indirect=True)
+@pytest.mark.parametrize(
+    ("root_solution_dir_with_pyproject_and_lock", "template_dependencies", "backend"),
+    [
+        pytest.param({"main_dependencies": True}, None, SolutionBackend.POETRY, id="poetry"),
+        pytest.param(
+            {"backend": "uv", "main_dependencies": True},
+            {"main": {"humanize": ">=4.15.0,<5.0.0"}},
+            SolutionBackend.UV,
+            id="uv",
+        ),
+    ],
+    indirect=["root_solution_dir_with_pyproject_and_lock"],
+)
 def test_update_solution_dependencies_with_main_non_conflicting_dependency(
     root_solution_dir_with_pyproject_and_lock: Path,
     custom_saf_step_template: SafTemplate,
     mocker: MockerFixture,
+    template_dependencies: dict[str, Any] | None,
+    backend: SolutionBackend,
 ):
+    if template_dependencies is not None:
+        custom_saf_step_template.dependencies = template_dependencies
     dependency_manager = DependencyManager(
         saf_template=custom_saf_step_template,
         solution_root_dir=root_solution_dir_with_pyproject_and_lock,
     )
     mock_subprocess = mocker.patch("ansys.saf.cli._solutions.dependencies.subprocess.run")
 
-    dependency_manager.update_solution_dependencies(Path("fake_executable"), {})
+    solution_env = {"VIRTUAL_ENV": "unrelated_environment", "UV_PROJECT_ENVIRONMENT": "unrelated_environment"}
+    dependency_manager.update_solution_dependencies(
+        Path("fake_executable"),
+        solution_env if backend is SolutionBackend.UV else {},
+    )
 
     assert mock_subprocess.call_count == 2
 
     pyproject_content = tomlkit.loads((root_solution_dir_with_pyproject_and_lock / "pyproject.toml").read_bytes())
-    assert "humanize" in pyproject_content["tool"]["poetry"]["dependencies"]  # type: ignore
-    assert pyproject_content["tool"]["poetry"]["dependencies"]["humanize"] == "^4.15.0"  # type: ignore
+    if backend is SolutionBackend.POETRY:
+        assert "humanize" in pyproject_content["tool"]["poetry"]["dependencies"]  # type: ignore
+        assert pyproject_content["tool"]["poetry"]["dependencies"]["humanize"] == "^4.15.0"  # type: ignore
+    else:
+        uv_content = pyproject_content.unwrap()
+        assert uv_content["project"]["dependencies"] == ["ansys-saf-sdk==0.2.0", "humanize >=4.15.0,<5.0.0"]
+        assert uv_content["dependency-groups"] == {}
+        assert "poetry" not in uv_content["tool"]
+        expected_env = {"UV_PROJECT_ENVIRONMENT": str((root_solution_dir_with_pyproject_and_lock / ".venv").resolve())}
+        mock_subprocess.assert_has_calls(
+            [
+                call(
+                    ["fake_executable", "lock", "--no-python-downloads"],
+                    env=expected_env,
+                    cwd=root_solution_dir_with_pyproject_and_lock,
+                    check=True,
+                ),
+                call(
+                    [
+                        "fake_executable",
+                        "sync",
+                        "--locked",
+                        "--no-default-groups",
+                        "--inexact",
+                        "--no-python-downloads",
+                    ],
+                    env=expected_env,
+                    cwd=root_solution_dir_with_pyproject_and_lock,
+                    check=True,
+                ),
+            ],
+        )
+        assert solution_env == {
+            "VIRTUAL_ENV": "unrelated_environment",
+            "UV_PROJECT_ENVIRONMENT": "unrelated_environment",
+        }
 
 
 @pytest.mark.usefixtures("install_custom_template_plugin_with_ui_dep")
 @pytest.mark.parametrize("solution_name", ["solution_with_dash_ui"], indirect=True)
 @pytest.mark.parametrize("custom_saf_step_template", ["test_custom_templates_with_ui_dep"], indirect=True)
 @pytest.mark.parametrize(
-    "root_solution_dir_with_pyproject_and_lock",
+    ("root_solution_dir_with_pyproject_and_lock", "template_dependencies", "backend"),
     [
-        {"main_dependencies": True, "ui_dependencies": True},
-        {"main_dependencies": True},
+        pytest.param(
+            {"main_dependencies": True, "ui_dependencies": True},
+            None,
+            SolutionBackend.POETRY,
+            id="poetry_existing_group",
+        ),
+        pytest.param({"main_dependencies": True}, None, SolutionBackend.POETRY, id="poetry_new_group"),
+        pytest.param(
+            {"backend": "uv", "main_dependencies": True, "ui_dependencies": True},
+            {"ui": {"streamlit": ">=1.58.0,<2.0.0"}},
+            SolutionBackend.UV,
+            id="uv_existing_group",
+        ),
+        pytest.param(
+            {"backend": "uv", "main_dependencies": True},
+            {"ui": {"streamlit": ">=1.58.0,<2.0.0"}},
+            SolutionBackend.UV,
+            id="uv_new_group",
+        ),
     ],
-    indirect=True,
-    ids=["existing_group", "new_group"],
+    indirect=["root_solution_dir_with_pyproject_and_lock"],
 )
 def test_update_solution_dependencies_with_ui_non_conflicting_dependency(
     root_solution_dir_with_pyproject_and_lock: Path,
     custom_saf_step_template: SafTemplate,
     mocker: MockerFixture,
+    template_dependencies: dict[str, Any] | None,
+    backend: SolutionBackend,
 ):
+    if template_dependencies is not None:
+        custom_saf_step_template.dependencies = template_dependencies
+    original_content = tomlkit.loads(
+        (root_solution_dir_with_pyproject_and_lock / "pyproject.toml").read_bytes(),
+    ).unwrap()
     dependency_manager = DependencyManager(
         saf_template=custom_saf_step_template,
         solution_root_dir=root_solution_dir_with_pyproject_and_lock,
@@ -935,28 +1058,87 @@ def test_update_solution_dependencies_with_ui_non_conflicting_dependency(
     assert mock_subprocess.call_count == 2
 
     pyproject_content = tomlkit.loads((root_solution_dir_with_pyproject_and_lock / "pyproject.toml").read_bytes())
-    assert "streamlit" in pyproject_content["tool"]["poetry"]["group"]["ui"]["dependencies"]  # type: ignore
-    assert pyproject_content["tool"]["poetry"]["group"]["ui"]["dependencies"]["streamlit"] == "^1.58.0"  # type: ignore
+    if backend is SolutionBackend.POETRY:
+        assert "streamlit" in pyproject_content["tool"]["poetry"]["group"]["ui"]["dependencies"]  # type: ignore
+        assert pyproject_content["tool"]["poetry"]["group"]["ui"]["dependencies"]["streamlit"] == "^1.58.0"  # type: ignore
+    else:
+        uv_content = pyproject_content.unwrap()
+        existing_ui = original_content.get("dependency-groups", {}).get("ui", [])
+        assert uv_content["project"]["dependencies"] == ["ansys-saf-sdk==0.2.0"]
+        assert uv_content["dependency-groups"]["ui"] == [*existing_ui, "streamlit >=1.58.0,<2.0.0"]
+        assert "poetry" not in uv_content["tool"]
+        assert mock_subprocess.call_args_list[0].args[0] == ["fake_executable", "lock", "--no-python-downloads"]
+        assert mock_subprocess.call_args_list[1].args[0] == [
+            "fake_executable",
+            "sync",
+            "--locked",
+            "--no-default-groups",
+            "--inexact",
+            "--no-python-downloads",
+            "--group",
+            "ui",
+        ]
 
 
 @pytest.mark.usefixtures("install_custom_template_plugin_with_glow_and_ui_deps")
 @pytest.mark.parametrize("solution_name", ["solution_with_dash_ui"], indirect=True)
 @pytest.mark.parametrize("custom_saf_step_template", ["test_custom_templates_with_glow_and_ui_deps"], indirect=True)
 @pytest.mark.parametrize(
-    "root_solution_dir_with_pyproject_and_lock",
+    ("root_solution_dir_with_pyproject_and_lock", "template_dependencies", "backend"),
     [
-        {"main_dependencies": True, "ui_dependencies": True},
-        {"main_dependencies": True},
+        pytest.param(
+            {"main_dependencies": True, "ui_dependencies": True},
+            None,
+            SolutionBackend.POETRY,
+            id="poetry_existing_group",
+        ),
+        pytest.param({"main_dependencies": True}, None, SolutionBackend.POETRY, id="poetry_new_group"),
+        pytest.param(
+            {"backend": "uv", "main_dependencies": True, "ui_dependencies": True},
+            {
+                "main": {
+                    "ansys-saf-sdk": {
+                        "version": ">=0.2.0,<0.3.0",
+                        "allow-prereleases": True,
+                        "extras": ["core-hps"],
+                    },
+                },
+                "ui": {"streamlit": ">=1.58.0,<2.0.0"},
+            },
+            SolutionBackend.UV,
+            id="uv_existing_group",
+        ),
+        pytest.param(
+            {"backend": "uv", "main_dependencies": True},
+            {
+                "main": {
+                    "ansys-saf-sdk": {
+                        "version": ">=0.2.0,<0.3.0",
+                        "allow-prereleases": True,
+                        "extras": ["core-hps"],
+                    },
+                },
+                "ui": {"streamlit": ">=1.58.0,<2.0.0"},
+            },
+            SolutionBackend.UV,
+            id="uv_new_group",
+        ),
     ],
-    indirect=True,
-    ids=["existing_group", "new_group"],
+    indirect=["root_solution_dir_with_pyproject_and_lock"],
 )
 def test_update_solution_dependencies_with_conflicting_dependencies(
     root_solution_dir_with_pyproject_and_lock: Path,
     custom_saf_step_template: SafTemplate,
     mocker: MockerFixture,
     capsys: pytest.CaptureFixture[str],
+    template_dependencies: dict[str, Any] | None,
+    backend: SolutionBackend,
 ):
+    if template_dependencies is not None:
+        custom_saf_step_template.dependencies = template_dependencies
+    original_content = tomlkit.loads(
+        (root_solution_dir_with_pyproject_and_lock / "pyproject.toml").read_bytes(),
+    ).unwrap()
     dependency_manager = DependencyManager(
         saf_template=custom_saf_step_template,
         solution_root_dir=root_solution_dir_with_pyproject_and_lock,
@@ -968,23 +1150,45 @@ def test_update_solution_dependencies_with_conflicting_dependencies(
     mock_subprocess.assert_not_called()
 
     pyproject_content = tomlkit.loads((root_solution_dir_with_pyproject_and_lock / "pyproject.toml").read_bytes())
-    assert "streamlit" in pyproject_content["tool"]["poetry"]["group"]["ui"]["dependencies"]  # type: ignore
-    assert pyproject_content["tool"]["poetry"]["group"]["ui"]["dependencies"]["streamlit"] == "^1.58.0"  # type: ignore
+    if backend is SolutionBackend.POETRY:
+        assert "streamlit" in pyproject_content["tool"]["poetry"]["group"]["ui"]["dependencies"]  # type: ignore
+        assert pyproject_content["tool"]["poetry"]["group"]["ui"]["dependencies"]["streamlit"] == "^1.58.0"  # type: ignore
+    else:
+        uv_content = pyproject_content.unwrap()
+        existing_ui = original_content.get("dependency-groups", {}).get("ui", [])
+        assert uv_content["project"]["dependencies"] == ["ansys-saf-sdk==0.2.0"]
+        assert uv_content["dependency-groups"]["ui"] == [*existing_ui, "streamlit >=1.58.0,<2.0.0"]
+        assert uv_content["tool"]["uv"] == {}
+        assert "poetry" not in uv_content["tool"]
 
     # Check that the warning in dependencies.py is printed to stdout
     captured = capsys.readouterr()
     pyproject_path = root_solution_dir_with_pyproject_and_lock / "pyproject.toml"
-    expected_warning = (
-        f"WARNING: the step template 'second-step' has some dependencies in common with the solution's "
-        f"pyproject.toml at {pyproject_path}. Review the solution's pyproject.toml and manually update it if "
-        f"necessary, to ensure that it is compatible with the step template's dependencies.\n\n"
-        f"Step specification of the common dependencies:\n"
-        f"  - ansys-saf-sdk (main): {{'version': '^0.2.0', 'allow-prereleases': True, "
-        f"'extras': ['core-hps']}}\n\n"
-        f"After reviewing the dependencies, please run:\n"
-        f'  - saf execute solution_with_dash_ui "poetry lock"\n'
-        f'  - saf execute solution_with_dash_ui "poetry install --with ui"\n'
-    )
+    if backend is SolutionBackend.POETRY:
+        expected_warning = (
+            f"WARNING: the step template 'second-step' has some dependencies in common with the solution's "
+            f"pyproject.toml at {pyproject_path}. Review the solution's pyproject.toml and manually update it if "
+            f"necessary, to ensure that it is compatible with the step template's dependencies.\n\n"
+            f"Step specification of the common dependencies:\n"
+            f"  - ansys-saf-sdk (main): {{'version': '^0.2.0', 'allow-prereleases': True, "
+            f"'extras': ['core-hps']}}\n\n"
+            f"After reviewing the dependencies, please run:\n"
+            f'  - saf execute solution_with_dash_ui "poetry lock"\n'
+            f'  - saf execute solution_with_dash_ui "poetry install --with ui"\n'
+        )
+    else:
+        expected_warning = (
+            f"WARNING: the step template 'second-step' has some dependencies in common with the solution's "
+            f"pyproject.toml at {pyproject_path}. Review the solution's pyproject.toml and manually update it if "
+            f"necessary, to ensure that it is compatible with the step template's dependencies.\n\n"
+            f"Step specification of the common dependencies:\n"
+            f"  - ansys-saf-sdk (main): {{'version': '>=0.2.0,<0.3.0', 'allow-prereleases': True, "
+            f"'extras': ['core-hps']}}\n\n"
+            f"After reviewing the dependencies, please run:\n"
+            f'  - saf execute solution_with_dash_ui "uv lock --no-python-downloads"\n'
+            f'  - saf execute solution_with_dash_ui "uv sync --locked --no-default-groups --inexact '
+            f'--no-python-downloads --group ui"\n'
+        )
     assert expected_warning in captured.out
 
 
@@ -995,13 +1199,38 @@ def test_update_solution_dependencies_with_conflicting_dependencies(
     ["test_custom_templates_with_glow_in_different_group"],
     indirect=True,
 )
-@pytest.mark.parametrize("root_solution_dir_with_pyproject_and_lock", [{"main_dependencies": True}], indirect=True)
+@pytest.mark.parametrize(
+    ("root_solution_dir_with_pyproject_and_lock", "template_dependencies", "backend"),
+    [
+        pytest.param({"main_dependencies": True}, None, SolutionBackend.POETRY, id="poetry"),
+        pytest.param(
+            {"backend": "uv", "main_dependencies": True},
+            {
+                "another_group": {
+                    "ansys-saf-sdk": {
+                        "version": ">=0.2.0,<0.3.0",
+                        "allow-prereleases": True,
+                        "extras": ["core-hps"],
+                    },
+                },
+                "ui": {"streamlit": ">=1.58.0,<2.0.0"},
+            },
+            SolutionBackend.UV,
+            id="uv",
+        ),
+    ],
+    indirect=["root_solution_dir_with_pyproject_and_lock"],
+)
 def test_update_solution_dependencies_with_conflicting_dependency_in_different_group(
     root_solution_dir_with_pyproject_and_lock: Path,
     custom_saf_step_template: SafTemplate,
     mocker: MockerFixture,
     capsys: pytest.CaptureFixture[str],
+    template_dependencies: dict[str, Any] | None,
+    backend: SolutionBackend,
 ):
+    if template_dependencies is not None:
+        custom_saf_step_template.dependencies = template_dependencies
     dependency_manager = DependencyManager(
         saf_template=custom_saf_step_template,
         solution_root_dir=root_solution_dir_with_pyproject_and_lock,
@@ -1013,23 +1242,283 @@ def test_update_solution_dependencies_with_conflicting_dependency_in_different_g
     mock_subprocess.assert_not_called()
 
     pyproject_content = tomlkit.loads((root_solution_dir_with_pyproject_and_lock / "pyproject.toml").read_bytes())
-    assert "another_group" in pyproject_content["tool"]["poetry"]["group"]  # type: ignore
-    assert not pyproject_content["tool"]["poetry"]["group"]["another_group"]["dependencies"]  # type: ignore
-    assert "streamlit" in pyproject_content["tool"]["poetry"]["group"]["ui"]["dependencies"]  # type: ignore
-    assert pyproject_content["tool"]["poetry"]["group"]["ui"]["dependencies"]["streamlit"] == "^1.58.0"  # type: ignore
+    if backend is SolutionBackend.POETRY:
+        assert "another_group" in pyproject_content["tool"]["poetry"]["group"]  # type: ignore
+        assert not pyproject_content["tool"]["poetry"]["group"]["another_group"]["dependencies"]  # type: ignore
+        assert "streamlit" in pyproject_content["tool"]["poetry"]["group"]["ui"]["dependencies"]  # type: ignore
+        assert pyproject_content["tool"]["poetry"]["group"]["ui"]["dependencies"]["streamlit"] == "^1.58.0"  # type: ignore
+    else:
+        uv_content = pyproject_content.unwrap()
+        assert uv_content["project"]["dependencies"] == ["ansys-saf-sdk==0.2.0"]
+        assert uv_content["dependency-groups"] == {"another_group": [], "ui": ["streamlit >=1.58.0,<2.0.0"]}
+        assert uv_content["tool"]["uv"] == {}
+        assert "poetry" not in uv_content["tool"]
 
     # Check that the warning in dependencies.py is printed to stdout
     captured = capsys.readouterr()
     pyproject_path = root_solution_dir_with_pyproject_and_lock / "pyproject.toml"
-    expected_warning = (
-        f"WARNING: the step template 'second-step' has some dependencies in common with the solution's "
-        f"pyproject.toml at {pyproject_path}. Review the solution's pyproject.toml and manually update it if "
-        f"necessary, to ensure that it is compatible with the step template's dependencies.\n\n"
-        f"Step specification of the common dependencies:\n"
-        f"  - ansys-saf-sdk (another_group group): {{'version': '^0.2.0', 'allow-prereleases': True, "
-        f"'extras': ['core-hps']}}\n\n"
-        f"After reviewing the dependencies, please run:\n"
-        f'  - saf execute solution_with_dash_ui "poetry lock"\n'
-        f'  - saf execute solution_with_dash_ui "poetry install --with another_group,ui"\n'
-    )
+    if backend is SolutionBackend.POETRY:
+        expected_warning = (
+            f"WARNING: the step template 'second-step' has some dependencies in common with the solution's "
+            f"pyproject.toml at {pyproject_path}. Review the solution's pyproject.toml and manually update it if "
+            f"necessary, to ensure that it is compatible with the step template's dependencies.\n\n"
+            f"Step specification of the common dependencies:\n"
+            f"  - ansys-saf-sdk (another_group group): {{'version': '^0.2.0', 'allow-prereleases': True, "
+            f"'extras': ['core-hps']}}\n\n"
+            f"After reviewing the dependencies, please run:\n"
+            f'  - saf execute solution_with_dash_ui "poetry lock"\n'
+            f'  - saf execute solution_with_dash_ui "poetry install --with another_group,ui"\n'
+        )
+    else:
+        expected_warning = (
+            f"WARNING: the step template 'second-step' has some dependencies in common with the solution's "
+            f"pyproject.toml at {pyproject_path}. Review the solution's pyproject.toml and manually update it if "
+            f"necessary, to ensure that it is compatible with the step template's dependencies.\n\n"
+            f"Step specification of the common dependencies:\n"
+            f"  - ansys-saf-sdk (another_group group): {{'version': '>=0.2.0,<0.3.0', 'allow-prereleases': True, "
+            f"'extras': ['core-hps']}}\n\n"
+            f"After reviewing the dependencies, please run:\n"
+            f'  - saf execute solution_with_dash_ui "uv lock --no-python-downloads"\n'
+            f'  - saf execute solution_with_dash_ui "uv sync --locked --no-default-groups --inexact '
+            f'--no-python-downloads --group another_group --group ui"\n'
+        )
     assert expected_warning in captured.out
+
+
+@pytest.mark.parametrize("solution_name", ["solution_with_dash_ui"], indirect=True)
+@pytest.mark.parametrize("root_solution_dir_with_pyproject_and_lock", [{"backend": "uv"}], indirect=True)
+@pytest.mark.parametrize(
+    ("specification", "expected_requirement", "expected_prereleases"),
+    [
+        pytest.param(">=2.0,<3.0", "requests >=2.0,<3.0", {}, id="version_string"),
+        pytest.param("^2.0", "requests >=2.0,<3.0.0", {}, id="poetry_caret"),
+        pytest.param("~2.0", "requests >=2.0,<2.1.0", {}, id="poetry_tilde"),
+        pytest.param("*", "requests", {}, id="poetry_unconstrained"),
+        pytest.param("2.0", "requests ==2.0", {}, id="poetry_exact_version"),
+        pytest.param(
+            {
+                "version": ">=2.0,<3.0",
+                "extras": ["socks"],
+                "markers": "python_version >= '3.12'",
+                "allow-prereleases": True,
+            },
+            "requests[socks] >=2.0,<3.0; python_version >= '3.12'",
+            {"requests": "allow"},
+            id="extras_markers_prereleases_allowed",
+        ),
+        pytest.param(
+            {"version": ">=2.0,<3.0", "allow-prereleases": False},
+            "requests >=2.0,<3.0",
+            {"requests": "disallow"},
+            id="prereleases_disallowed",
+        ),
+    ],
+)
+def test_update_solution_dependencies_with_uv_requirement_options(
+    root_solution_dir_with_pyproject_and_lock: Path,
+    default_saf_step_template: SafTemplate,
+    mocker: MockerFixture,
+    specification: str | dict[str, Any],
+    expected_requirement: str,
+    expected_prereleases: dict[str, str],
+):
+    """Write UV requirement options without changing the SAF template declaration."""
+    default_saf_step_template.dependencies = {"main": {"requests": specification}}
+    dependency_manager = DependencyManager(
+        saf_template=default_saf_step_template,
+        solution_root_dir=root_solution_dir_with_pyproject_and_lock,
+    )
+    mock_subprocess = mocker.patch("ansys.saf.cli._solutions.dependencies.subprocess.run")
+
+    dependency_manager.update_solution_dependencies(Path("fake_executable"), {})
+
+    pyproject_content = tomlkit.loads(
+        (root_solution_dir_with_pyproject_and_lock / "pyproject.toml").read_bytes(),
+    ).unwrap()
+    assert pyproject_content["project"]["dependencies"] == [expected_requirement]
+    assert pyproject_content["tool"]["uv"].get("prerelease-package", {}) == expected_prereleases
+    assert "poetry" not in pyproject_content["tool"]
+    assert default_saf_step_template.dependencies == {"main": {"requests": specification}}
+    assert mock_subprocess.call_count == 2
+
+
+@pytest.mark.parametrize("solution_name", ["solution_with_dash_ui"], indirect=True)
+def test_update_poetry_pep621_dependencies_requires_legacy_metadata(
+    root_solution_dir: Path,
+    default_saf_step_template: SafTemplate,
+    mocker: MockerFixture,
+):
+    pyproject_path = root_solution_dir / "pyproject.toml"
+    pyproject_path.write_text(
+        '[project]\nname = "pep621-solution"\nversion = "0.1.0"\n'
+        'requires-python = ">=3.11,<4"\ndependencies = []\n'
+        '[build-system]\nrequires = ["poetry-core>=2"]\nbuild-backend = "poetry.core.masonry.api"\n',
+    )
+    original = pyproject_path.read_text()
+    run = mocker.patch("ansys.saf.cli._solutions.dependencies.subprocess.run")
+
+    with pytest.raises(ValueError, match=r"No \[tool\.poetry\] section"):
+        DependencyManager(default_saf_step_template, root_solution_dir).update_solution_dependencies(
+            Path("poetry"),
+            {},
+        )
+
+    assert pyproject_path.read_text() == original
+    run.assert_not_called()
+
+
+@pytest.mark.parametrize("solution_name", ["solution_without_ui"], indirect=True)
+@pytest.mark.parametrize("root_solution_dir_with_pyproject_and_lock", [{"backend": "uv"}], indirect=True)
+@pytest.mark.parametrize("failure", ["missing_uv", "lock", "sync"])
+@pytest.mark.parametrize("preexisting_lock", [True, False])
+def test_uv_add_step_restores_source_metadata_and_lock_on_failure(
+    root_solution_dir_with_pyproject_and_lock: Path,
+    solution_name: str,
+    solution_namespace: str,
+    default_saf_step_template: SafTemplate,
+    mocker: MockerFixture,
+    failure: str,
+    preexisting_lock: bool,
+):
+    root = root_solution_dir_with_pyproject_and_lock
+    lock = root / "uv.lock"
+    if preexisting_lock:
+        lock.write_text("original lock")
+    else:
+        lock.unlink()
+    before = {path.relative_to(root): path.read_bytes() for path in root.rglob("*") if path.is_file()}
+    default_saf_step_template.dependencies = {"main": {"humanize": "^4.15.0"}}
+    mocker.patch(
+        "ansys.saf.cli._solutions.add_step.shutil.which",
+        return_value=None if failure == "missing_uv" else "uv",
+    )
+
+    def run(command: list[str], **kwargs: Any) -> None:
+        lock.write_text("updated lock")
+        if command[1] == failure:
+            raise subprocess.CalledProcessError(1, command, stderr="dependency update failed")
+
+    process = mocker.patch("ansys.saf.cli._solutions.dependencies.subprocess.run", side_effect=run)
+    expected_error = FileNotFoundError if failure == "missing_uv" else subprocess.CalledProcessError
+    with (
+        pytest.raises(expected_error),
+        BackupManager(root, solution_name, solution_namespace),
+    ):
+        add_step_to_solution(
+            solution_name,
+            root,
+            solution_name,
+            "rollback_dependency",
+            "none",
+            default_saf_step_template,
+        )
+
+    after = {path.relative_to(root): path.read_bytes() for path in root.rglob("*") if path.is_file()}
+    assert after == before
+    assert process.call_count == {"missing_uv": 0, "lock": 1, "sync": 2}[failure]
+
+
+@pytest.mark.parametrize("solution_name", ["solution_without_ui"], indirect=True)
+@pytest.mark.parametrize("root_solution_dir_with_pyproject_and_lock", [{"backend": "uv"}], indirect=True)
+@pytest.mark.parametrize("existing_location", ["main", "optional", "included_group"])
+def test_uv_dependency_overlap_uses_normalized_names_across_all_groups(
+    root_solution_dir_with_pyproject_and_lock: Path,
+    default_saf_step_template: SafTemplate,
+    mocker: MockerFixture,
+    capsys: pytest.CaptureFixture[str],
+    existing_location: str,
+):
+    root = root_solution_dir_with_pyproject_and_lock
+    pyproject = root / "pyproject.toml"
+    content = tomlkit.loads(pyproject.read_bytes()).unwrap()
+    if existing_location == "main":
+        content["project"]["dependencies"] = ["My_Package==1.0"]
+    elif existing_location == "optional":
+        content["project"]["optional-dependencies"] = {"extra": ["My_Package==1.0"]}
+    else:
+        include = tomlkit.inline_table()
+        include["include-group"] = "base"
+        includes = tomlkit.array()
+        includes.append(include)
+        content["dependency-groups"] = {
+            "base": ["My_Package==1.0"],
+            "ui": includes,
+        }
+    pyproject.write_text(tomlkit.dumps(content))
+    default_saf_step_template.dependencies = {"main": {"my-package": "^2.0"}}
+    run = mocker.patch("ansys.saf.cli._solutions.dependencies.subprocess.run")
+
+    DependencyManager(default_saf_step_template, root).update_solution_dependencies(Path("uv"), {})
+
+    updated = tomlkit.loads(pyproject.read_bytes()).unwrap()
+    assert updated["project"]["dependencies"] == content["project"]["dependencies"]
+    assert updated.get("dependency-groups", {}) == content.get("dependency-groups", {})
+    assert updated["project"].get("optional-dependencies", {}) == content["project"].get("optional-dependencies", {})
+    assert "my-package (main)" in capsys.readouterr().out
+    run.assert_not_called()
+
+
+@pytest.mark.parametrize("solution_name", ["solution_without_ui"], indirect=True)
+@pytest.mark.parametrize("root_solution_dir_with_pyproject_and_lock", [{"backend": "uv"}], indirect=True)
+@pytest.mark.parametrize(
+    "specification",
+    [
+        {"git": "https://example.invalid/dependency.git"},
+        {"version": "^1 || ^3"},
+        {"version": ">=1", "extras": "not-a-list"},
+        {"version": ">=1", "allow-prereleases": "yes"},
+    ],
+)
+def test_uv_invalid_template_dependency_does_not_modify_project(
+    root_solution_dir_with_pyproject_and_lock: Path,
+    default_saf_step_template: SafTemplate,
+    mocker: MockerFixture,
+    specification: dict[str, Any],
+):
+    root = root_solution_dir_with_pyproject_and_lock
+    pyproject = root / "pyproject.toml"
+    before = pyproject.read_bytes()
+    default_saf_step_template.dependencies = {"main": {"humanize": specification}}
+    run = mocker.patch("ansys.saf.cli._solutions.dependencies.subprocess.run")
+
+    with pytest.raises(ValueError, match="Unsupported|must be"):
+        DependencyManager(default_saf_step_template, root).update_solution_dependencies(Path("uv"), {})
+
+    assert pyproject.read_bytes() == before
+    run.assert_not_called()
+
+
+@pytest.mark.parametrize("solution_name", ["solution_without_ui"], indirect=True)
+@pytest.mark.parametrize("root_solution_dir_with_pyproject_and_lock", [{"backend": "uv"}], indirect=True)
+@pytest.mark.parametrize("malformed", ["main", "group", "optional", "include"])
+def test_uv_malformed_dependency_tables_do_not_modify_project(
+    root_solution_dir_with_pyproject_and_lock: Path,
+    default_saf_step_template: SafTemplate,
+    mocker: MockerFixture,
+    malformed: str,
+):
+    root = root_solution_dir_with_pyproject_and_lock
+    pyproject = root / "pyproject.toml"
+    content = tomlkit.loads(pyproject.read_bytes()).unwrap()
+    if malformed == "main":
+        content["project"]["dependencies"] = "humanize>=1"
+    elif malformed == "group":
+        content["dependency-groups"] = {"ui": "humanize>=1"}
+    elif malformed == "optional":
+        content["project"]["optional-dependencies"] = {"extra": "humanize>=1"}
+    else:
+        include = tomlkit.inline_table()
+        include["include-group"] = 42
+        includes = tomlkit.array()
+        includes.append(include)
+        content["dependency-groups"] = {"ui": includes}
+    pyproject.write_text(tomlkit.dumps(content))
+    before = pyproject.read_bytes()
+    default_saf_step_template.dependencies = {"main": {"humanize": "^4.15.0"}}
+    run = mocker.patch("ansys.saf.cli._solutions.dependencies.subprocess.run")
+
+    with pytest.raises(ValueError, match="must be an array|Invalid dependency entry"):
+        DependencyManager(default_saf_step_template, root).update_solution_dependencies(Path("uv"), {})
+
+    assert pyproject.read_bytes() == before
+    run.assert_not_called()

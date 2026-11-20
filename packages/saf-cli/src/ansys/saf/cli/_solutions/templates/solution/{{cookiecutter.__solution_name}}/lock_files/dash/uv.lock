@@ -2160,140 +2160,6 @@ wheels = [
 ]
 
 [[package]]
-name = "{{ cookiecutter.__pkg_name }}"
-version = "{{ cookiecutter.__version }}"
-source = { editable = "." }
-dependencies = [
-    { name = "ansys-saf-sdk" },
-]
-
-[package.dev-dependencies]
-build = [
-    { name = "ansys-saf-sdk", extra = ["build"] },
-    { name = "build" },
-    { name = "pkginfo" },
-    { name = "pyc-wheel" },
-    { name = "pyinstaller" },
-    { name = "toml" },
-    { name = "twine" },
-]
-desktop = [
-    { name = "ansys-saf-sdk", extra = ["desktop"] },
-]
-doc = [
-    { name = "ansys-sphinx-theme", version = "1.9.0", source = { registry = "https://pypi.org/simple" }, extra = ["autoapi"], marker = "python_full_version < '3.12'" },
-    { name = "ansys-sphinx-theme", version = "1.11.0", source = { registry = "https://pypi.org/simple" }, extra = ["autoapi"], marker = "python_full_version >= '3.12'" },
-    { name = "autodoc-pydantic" },
-    { name = "nbsphinx" },
-    { name = "numpydoc" },
-    { name = "soupsieve", version = "2.10", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11.5'" },
-    { name = "soupsieve", version = "4.1.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11.5'" },
-    { name = "sphinx" },
-    { name = "sphinx-autodoc-typehints" },
-    { name = "sphinx-code-tabs" },
-    { name = "sphinx-copybutton" },
-    { name = "sphinx-design" },
-    { name = "sphinx-gallery" },
-    { name = "sphinx-jinja" },
-    { name = "sphinx-markdown-builder" },
-    { name = "sphinx-tabs" },
-    { name = "sphinx-toolbox" },
-    { name = "sphinxcontrib-mermaid" },
-    { name = "sphinxcontrib-video" },
-    { name = "sphinxemoji" },
-    { name = "toml" },
-    { name = "vale" },
-]
-style = [
-    { name = "black" },
-    { name = "codespell" },
-    { name = "flake8" },
-    { name = "isort" },
-    { name = "pydocstyle" },
-    { name = "tox" },
-]
-tests = [
-    { name = "coverage" },
-    { name = "filelock" },
-    { name = "httpx2" },
-    { name = "mock" },
-    { name = "pytest" },
-    { name = "pytest-cov" },
-    { name = "pytest-mock" },
-    { name = "tox" },
-]
-ui = [
-    { name = "ansys-solutions-dash-super-components" },
-    { name = "dash" },
-    { name = "dash-bootstrap-components" },
-    { name = "dash-extensions" },
-    { name = "dash-mantine-components" },
-]
-
-[package.metadata]
-requires-dist = [{ name = "ansys-saf-sdk", specifier = ">=0.4.0,<1.0.0" }]
-
-[package.metadata.requires-dev]
-build = [
-    { name = "ansys-saf-sdk", extras = ["build"], specifier = ">=0.4.0,<1.0.0" },
-    { name = "build", specifier = ">=0.8.0,<0.9.0" },
-    { name = "pkginfo", specifier = ">=1.12.1.2,<2.0.0" },
-    { name = "pyc-wheel", specifier = ">=1.2.7,<2.0.0" },
-    { name = "pyinstaller", marker = "python_full_version < '3.15'", specifier = ">=6.16,<7.0.0" },
-    { name = "toml", specifier = ">=0.10.2,<0.11.0" },
-    { name = "twine", specifier = "==6.0.1" },
-]
-desktop = [{ name = "ansys-saf-sdk", extras = ["desktop"], specifier = ">=0.4.0,<1.0.0" }]
-doc = [
-    { name = "ansys-sphinx-theme", extras = ["autoapi"], specifier = ">=1.7.0,<2.0.0" },
-    { name = "autodoc-pydantic", specifier = ">=2.2.0,<3.0.0" },
-    { name = "nbsphinx", specifier = ">=0.9.8,<0.10.0" },
-    { name = "numpydoc", specifier = ">=1.10.0,<2.0.0" },
-    { name = "soupsieve", marker = "python_full_version < '3.11.5'", specifier = ">=2.10,<3.0" },
-    { name = "soupsieve", marker = "python_full_version >= '3.11.5'", specifier = ">=4.0,<5.0" },
-    { name = "sphinx", specifier = ">=8.1.3,<9.0.0" },
-    { name = "sphinx-autodoc-typehints", specifier = ">=2.2.0,<3.0.0" },
-    { name = "sphinx-code-tabs", specifier = ">=0.5.5,<0.6.0" },
-    { name = "sphinx-copybutton", specifier = ">=0.5.2,<0.6.0" },
-    { name = "sphinx-design", specifier = ">=0.6.1,<0.7.0" },
-    { name = "sphinx-gallery", specifier = ">=0.20,<0.21" },
-    { name = "sphinx-jinja", specifier = ">=2.0.0,<3.0.0" },
-    { name = "sphinx-markdown-builder", specifier = ">=0.6.9,<0.7.0" },
-    { name = "sphinx-tabs", specifier = ">=1.2.1,<3.5.0" },
-    { name = "sphinx-toolbox", specifier = ">=4.1.0,<5.0.0" },
-    { name = "sphinxcontrib-mermaid", specifier = ">=1.2.3,<2.0.0" },
-    { name = "sphinxcontrib-video", specifier = ">=0.4.1,<0.5.0" },
-    { name = "sphinxemoji", specifier = ">=0.3.1,<0.4.0" },
-    { name = "toml", specifier = ">=0.10.2,<0.11.0" },
-    { name = "vale", specifier = ">=3.13.0.0,<4.0.0" },
-]
-style = [
-    { name = "black", specifier = ">=26.10.1,<27.0.0" },
-    { name = "codespell", specifier = ">=2.4.1,<3.0.0" },
-    { name = "flake8", specifier = ">=7.3.0,<8.0.0" },
-    { name = "isort", specifier = ">=7.0.0,<8.0.0" },
-    { name = "pydocstyle", specifier = ">=6.3.0,<7.0.0" },
-    { name = "tox", specifier = ">=4.4.0,<5.0.0" },
-]
-tests = [
-    { name = "coverage", specifier = ">=7.0.0,<8.0.0" },
-    { name = "filelock", specifier = ">=4.2.1,<5.0.0" },
-    { name = "httpx2", specifier = ">=2.5.0,<3.0.0" },
-    { name = "mock", specifier = ">=4.0.3,<5.0.0" },
-    { name = "pytest", specifier = ">=9.0.3,<10.0.0" },
-    { name = "pytest-cov", specifier = ">=7.0.0,<8.0.0" },
-    { name = "pytest-mock", specifier = ">=3.12,<4.0.0" },
-    { name = "tox", specifier = ">=4.4.0,<5.0.0" },
-]
-ui = [
-    { name = "ansys-solutions-dash-super-components", specifier = ">=1.0.0,<2.0.0" },
-    { name = "dash", specifier = ">=3.0.0,<4.0.0" },
-    { name = "dash-bootstrap-components", specifier = ">=1.2,<2.0" },
-    { name = "dash-extensions", specifier = ">=2.0.5,<3.0.0" },
-    { name = "dash-mantine-components", specifier = ">=2.6.0,<3.0.0" },
-]
-
-[[package]]
 name = "mypy-extensions"
 version = "1.1.0"
 source = { registry = "https://pypi.org/simple" }
@@ -4114,6 +3980,140 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/c7/3b/ebda527b56beb90cb7652cb1c7e4f91f48649fbcd8d2eb2fb6e77cd3329b/ruamel_yaml-0.19.1.tar.gz", hash = "sha256:53eb66cd27849eff968ebf8f0bf61f46cdac2da1d1f3576dd4ccee9b25c31993", size = 142709, upload-time = "2026-01-02T16:50:31.84Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/b8/0c/51f6841f1d84f404f92463fc2b1ba0da357ca1e3db6b7fbda26956c3b82a/ruamel_yaml-0.19.1-py3-none-any.whl", hash = "sha256:27592957fedf6e0b62f281e96effd28043345e0e66001f97683aa9a40c667c93", size = 118102, upload-time = "2026-01-02T16:50:29.201Z" },
+]
+
+[[package]]
+name = "{{ cookiecutter.__pkg_name }}"
+version = "{{ cookiecutter.__version }}"
+source = { editable = "." }
+dependencies = [
+    { name = "ansys-saf-sdk" },
+]
+
+[package.dev-dependencies]
+build = [
+    { name = "ansys-saf-sdk", extra = ["build"] },
+    { name = "build" },
+    { name = "pkginfo" },
+    { name = "pyc-wheel" },
+    { name = "pyinstaller" },
+    { name = "toml" },
+    { name = "twine" },
+]
+desktop = [
+    { name = "ansys-saf-sdk", extra = ["desktop"] },
+]
+doc = [
+    { name = "ansys-sphinx-theme", version = "1.9.0", source = { registry = "https://pypi.org/simple" }, extra = ["autoapi"], marker = "python_full_version < '3.12'" },
+    { name = "ansys-sphinx-theme", version = "1.11.0", source = { registry = "https://pypi.org/simple" }, extra = ["autoapi"], marker = "python_full_version >= '3.12'" },
+    { name = "autodoc-pydantic" },
+    { name = "nbsphinx" },
+    { name = "numpydoc" },
+    { name = "soupsieve", version = "2.10", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11.5'" },
+    { name = "soupsieve", version = "4.1.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11.5'" },
+    { name = "sphinx" },
+    { name = "sphinx-autodoc-typehints" },
+    { name = "sphinx-code-tabs" },
+    { name = "sphinx-copybutton" },
+    { name = "sphinx-design" },
+    { name = "sphinx-gallery" },
+    { name = "sphinx-jinja" },
+    { name = "sphinx-markdown-builder" },
+    { name = "sphinx-tabs" },
+    { name = "sphinx-toolbox" },
+    { name = "sphinxcontrib-mermaid" },
+    { name = "sphinxcontrib-video" },
+    { name = "sphinxemoji" },
+    { name = "toml" },
+    { name = "vale" },
+]
+style = [
+    { name = "black" },
+    { name = "codespell" },
+    { name = "flake8" },
+    { name = "isort" },
+    { name = "pydocstyle" },
+    { name = "tox" },
+]
+tests = [
+    { name = "coverage" },
+    { name = "filelock" },
+    { name = "httpx2" },
+    { name = "mock" },
+    { name = "pytest" },
+    { name = "pytest-cov" },
+    { name = "pytest-mock" },
+    { name = "tox" },
+]
+ui = [
+    { name = "ansys-solutions-dash-super-components" },
+    { name = "dash" },
+    { name = "dash-bootstrap-components" },
+    { name = "dash-extensions" },
+    { name = "dash-mantine-components" },
+]
+
+[package.metadata]
+requires-dist = [{ name = "ansys-saf-sdk", specifier = ">=0.4.0,<1.0.0", index = "https://pypi.org/simple" }]
+
+[package.metadata.requires-dev]
+build = [
+    { name = "ansys-saf-sdk", extras = ["build"], specifier = ">=0.4.0,<1.0.0", index = "https://pypi.org/simple" },
+    { name = "build", specifier = ">=0.8.0,<0.9.0" },
+    { name = "pkginfo", specifier = ">=1.12.1.2,<2.0.0" },
+    { name = "pyc-wheel", specifier = ">=1.2.7,<2.0.0" },
+    { name = "pyinstaller", marker = "python_full_version < '3.15'", specifier = ">=6.16,<7.0.0" },
+    { name = "toml", specifier = ">=0.10.2,<0.11.0" },
+    { name = "twine", specifier = "==6.0.1" },
+]
+desktop = [{ name = "ansys-saf-sdk", extras = ["desktop"], specifier = ">=0.4.0,<1.0.0", index = "https://pypi.org/simple" }]
+doc = [
+    { name = "ansys-sphinx-theme", extras = ["autoapi"], specifier = ">=1.7.0,<2.0.0" },
+    { name = "autodoc-pydantic", specifier = ">=2.2.0,<3.0.0" },
+    { name = "nbsphinx", specifier = ">=0.9.8,<0.10.0" },
+    { name = "numpydoc", specifier = ">=1.10.0,<2.0.0" },
+    { name = "soupsieve", marker = "python_full_version < '3.11.5'", specifier = ">=2.10,<3.0" },
+    { name = "soupsieve", marker = "python_full_version >= '3.11.5'", specifier = ">=4.0,<5.0" },
+    { name = "sphinx", specifier = ">=8.1.3,<9.0.0" },
+    { name = "sphinx-autodoc-typehints", specifier = ">=2.2.0,<3.0.0" },
+    { name = "sphinx-code-tabs", specifier = ">=0.5.5,<0.6.0" },
+    { name = "sphinx-copybutton", specifier = ">=0.5.2,<0.6.0" },
+    { name = "sphinx-design", specifier = ">=0.6.1,<0.7.0" },
+    { name = "sphinx-gallery", specifier = ">=0.20,<0.21" },
+    { name = "sphinx-jinja", specifier = ">=2.0.0,<3.0.0" },
+    { name = "sphinx-markdown-builder", specifier = ">=0.6.9,<0.7.0" },
+    { name = "sphinx-tabs", specifier = ">=1.2.1,<3.5.0" },
+    { name = "sphinx-toolbox", specifier = ">=4.1.0,<5.0.0" },
+    { name = "sphinxcontrib-mermaid", specifier = ">=1.2.3,<2.0.0" },
+    { name = "sphinxcontrib-video", specifier = ">=0.4.1,<0.5.0" },
+    { name = "sphinxemoji", specifier = ">=0.3.1,<0.4.0" },
+    { name = "toml", specifier = ">=0.10.2,<0.11.0" },
+    { name = "vale", specifier = ">=3.13.0.0,<4.0.0" },
+]
+style = [
+    { name = "black", specifier = ">=26.10.1,<27.0.0" },
+    { name = "codespell", specifier = ">=2.4.1,<3.0.0" },
+    { name = "flake8", specifier = ">=7.3.0,<8.0.0" },
+    { name = "isort", specifier = ">=7.0.0,<8.0.0" },
+    { name = "pydocstyle", specifier = ">=6.3.0,<7.0.0" },
+    { name = "tox", specifier = ">=4.4.0,<5.0.0" },
+]
+tests = [
+    { name = "coverage", specifier = ">=7.0.0,<8.0.0" },
+    { name = "filelock", specifier = ">=4.2.1,<5.0.0" },
+    { name = "httpx2", specifier = ">=2.5.0,<3.0.0" },
+    { name = "mock", specifier = ">=4.0.3,<5.0.0" },
+    { name = "pytest", specifier = ">=9.0.3,<10.0.0" },
+    { name = "pytest-cov", specifier = ">=7.0.0,<8.0.0" },
+    { name = "pytest-mock", specifier = ">=3.12,<4.0.0" },
+    { name = "tox", specifier = ">=4.4.0,<5.0.0" },
+]
+ui = [
+    { name = "ansys-solutions-dash-super-components", specifier = ">=1.0.0,<2.0.0" },
+    { name = "dash", specifier = ">=3.0.0,<4.0.0" },
+    { name = "dash-bootstrap-components", specifier = ">=1.2,<2.0" },
+    { name = "dash-extensions", specifier = ">=2.0.5,<3.0.0" },
+    { name = "dash-mantine-components", specifier = ">=2.6.0,<3.0.0" },
 ]
 
 [[package]]

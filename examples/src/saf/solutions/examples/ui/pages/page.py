@@ -311,6 +311,7 @@ layout = dmc.MantineProvider(
                 navbar,
                 main_layout,
             ],
+            id="app-shell",
             header={"height": 70},
             navbar={
                 "width": 300,
@@ -331,6 +332,9 @@ layout = dmc.MantineProvider(
         ),
         dcc.Store(id="active-page-index", data=None),
         dcc.Store(id="active-project-id", data=None),
+        dcc.Store(id="active-non-solution-page-index", data=None),
+        dcc.Store(id="project-scoped-pathname", data=None),
+        dcc.Store(id="project-layout-generation", data=0),
         html.Div(id="aedt-instance-event-listeners-container"),
         html.Div(id="fluent-instance-event-listeners-container"),
         html.Div(id="long-transaction-event-listeners-container"),
@@ -378,12 +382,69 @@ def _get_404_layout() -> Any:
     return html.H1("404 - Page not found")
 
 
+def _is_404_page(page: dict[str, Any]) -> bool:
+    return page["module"].split(".")[-1] == "not_found_404"
+
+
+def _is_project_scoped(page: dict[str, Any]) -> bool:
+    """Pages registered with ``project_scoped=False``, such as the projects dashboard, have no project."""
+    return page.get("project_scoped", True)
+
+
+def _get_relative_pathname(pathname: str | None) -> str:
+    """Return the pathname without the GLOW_UI_PATH_PREFIX part and the surrounding slashes."""
+    if not pathname:
+        return ""
+    return dash.strip_relative_path(pathname) or ""
+
+
+def _match_solution_page(pathname: str | None) -> tuple[str, dict[str, Any], str | None] | None:
+    """Return the index, the page, and the project ID of the project page matching the pathname."""
+    relative_pathname = _get_relative_pathname(pathname)
+    path_parts = relative_pathname.split("/") if relative_pathname else []
+
+    # Keep legacy behavior: opening /projects/<project_id> lands on process logs page
+    if len(path_parts) == 2 and path_parts[0] == "projects":
+        for i, page in enumerate(dash.page_registry.values()):
+            if page["module"].split(".")[-1] == "process_logs_page":
+                return str(i), page, path_parts[1]
+
+    for i, page in enumerate(dash.page_registry.values()):
+        if _is_404_page(page) or not _is_project_scoped(page) or not page.get("path_template"):
+            continue
+        template_parts = page["path_template"].strip("/").split("/")
+        if len(path_parts) != len(template_parts):
+            continue
+        project_id = None
+        matched = True
+        for template_part, path_part in zip(template_parts, path_parts, strict=True):
+            if template_part == "<project_id>":
+                project_id = path_part
+            elif template_part != path_part:
+                matched = False
+                break
+        if matched:
+            return str(i), page, project_id
+    return None
+
+
+def _match_non_solution_page(pathname: str | None) -> str | None:
+    """Return the index of the page displayed without a project that matches the pathname."""
+    relative_pathname = _get_relative_pathname(pathname)
+    for i, page in enumerate(dash.page_registry.values()):
+        if _is_404_page(page) or _is_project_scoped(page):
+            continue
+        if relative_pathname == page["path"].strip("/"):
+            return str(i)
+    return None
+
+
 @callback(
     Output("return-to-portal", "children"),
     Input("url", "pathname"),
     Input("color-scheme-switch", "checked"),
 )
-def return_to_portal(project: ExamplesSolution, switch_on: bool) -> list[html.A]:
+def return_to_portal(pathname: str, switch_on: bool) -> list[html.A]:
     """Display a back-to-portal button when portal URL is available."""
     portal_ui_url = DashClient.get_portal_ui_url()
     icon_color = "#E6EDF5" if switch_on else "#1A1B1E"
@@ -406,15 +467,6 @@ def return_to_portal(project: ExamplesSolution, switch_on: bool) -> list[html.A]
             href=portal_ui_url,
         )
     ]
-
-
-@callback(
-    Output("project-name", "children"),
-    Input("url", "pathname"),
-)
-def display_project_name(project: ExamplesSolution) -> str:
-    """Display current project name."""
-    return f"Project name: {project.project_display_name}"
 
 
 @callback(
@@ -444,50 +496,63 @@ def resolve_active_page_and_project_information(
     pathname: str,
 ) -> tuple[str | None, str | None]:
     """Resolve active page index and project ID based on current URL."""
-    # Remove the GLOW_UI_PATH_PREFIX part from pathname
-    relative_pathname = dash.strip_relative_path(pathname) or ""
-    path_parts = relative_pathname.split("/") if relative_pathname else []
+    solution_page = _match_solution_page(pathname)
+    if solution_page is None:
+        return None, None
+    index, _, project_id = solution_page
+    return index, project_id
 
-    # Keep legacy behavior: opening /projects/<project_id> lands on process logs page
-    if len(path_parts) == 2 and path_parts[0] == "projects":
-        project_id = path_parts[1]
-        for i, page in enumerate(dash.page_registry.values()):
-            if page["module"].split(".")[-1] == "process_logs_page":
-                return str(i), project_id
 
-    for i, page in enumerate(dash.page_registry.values()):
-        if page["module"].split(".")[-1] == "not_found_404":
-            continue
-        template_parts = page["path_template"].strip("/").split("/")
-        if len(path_parts) != len(template_parts):
-            continue
-        project_id = None
-        matched = True
-        for template_part, path_part in zip(template_parts, path_parts, strict=True):
-            if template_part == "<project_id>":
-                project_id = path_part
-            elif template_part != path_part:
-                matched = False
-                break
-        if matched:
-            return str(i), project_id
-    project_id = path_parts[1] if len(path_parts) >= 2 and path_parts[0] == "projects" else None
-    return None, project_id
+@callback(
+    Output("active-non-solution-page-index", "data"),
+    Input("url", "pathname"),
+)
+def resolve_active_non_solution_page(pathname: str) -> str | None:
+    """Resolve the index of the active page displayed without a project, such as the projects dashboard."""
+    return _match_non_solution_page(pathname)
+
+
+@callback(
+    Output("project-scoped-pathname", "data"),
+    Output("project-layout-generation", "data"),
+    Input("url", "pathname"),
+    State("project-scoped-pathname", "data"),
+    State("project-layout-generation", "data"),
+)
+def resolve_project_scoped_pathname(pathname: str, current_pathname: str | None, generation: int) -> tuple[Any, Any]:
+    """Store the pathname of the project page and bump the generation that triggers its rendering."""
+    if _match_solution_page(pathname) is None:
+        return (None if current_pathname is not None else no_update), no_update
+    if pathname == current_pathname:
+        return no_update, no_update
+    return pathname, generation + 1
 
 
 @callback(
     Output("navbar-content", "children"),
+    Output("app-shell", "navbar"),
     Input("active-page-index", "data"),
+    Input("active-non-solution-page-index", "data"),
     Input("color-scheme-switch", "checked"),
+    State("app-shell", "navbar"),
     prevent_initial_call=True,
 )
-def render_nav_tree(active_index: str | None, switch_on: bool) -> Tree:
-    """Render nav tree based on page registry and active index."""
+def render_nav_tree(
+    active_index: str | None, active_non_solution_page_index: str | None, switch_on: bool, navbar: dict[str, Any]
+) -> tuple[Any, dict[str, Any]]:
+    """Render nav tree on project pages and collapse the navbar on the other pages."""
+    show_navbar = active_index is not None and active_non_solution_page_index is None
+    navbar = {**navbar, "collapsed": {"mobile": True, "desktop": not show_navbar}}
+    if not show_navbar:
+        return html.Div(), navbar
     theme = "dark" if switch_on else "light"
-    return Tree(
-        aio_id="navigation_tree",
-        items=get_page_list(theme, active_index),
-        selected_item=active_index,
+    return (
+        Tree(
+            aio_id="navigation_tree",
+            items=get_page_list(theme, active_index),
+            selected_item=active_index,
+        ),
+        navbar,
     )
 
 
@@ -500,24 +565,32 @@ def _display_404_page() -> Any:
 
 @callback(
     Output("page-content", "children"),
-    Input("url", "pathname"),
-    Input("active-page-index", "data"),
+    Output("project-name", "children"),
+    Input("project-layout-generation", "data"),
+    State("project-scoped-pathname", "data"),
+    State("project-scoped-pathname", "data"),
     prevent_initial_call=True,
 )
-def display_page(project: ExamplesSolution, active_page_index: str | None) -> Any:
-    """Return the selected page layout, injecting project or step as needed."""
-    if active_page_index is None:
-        return no_update
+def display_solution_page(
+    _generation: int, project: ExamplesSolution, project_scoped_pathname: str | None
+) -> tuple[Any, Any]:
+    """Return the selected project page layout, injecting project or step as needed.
+
+    ``project-scoped-pathname`` is passed twice: GLOW injects the project from the first one, and the second one
+    gives the raw pathname that selects the page.
+    """
+    solution_page = _match_solution_page(project_scoped_pathname)
+    if solution_page is None:
+        return no_update, no_update
 
     try:
-        _ = project.project_display_name
+        project_display_name = project.project_display_name
     except NotFoundException:
-        return _get_404_layout()
+        return _get_404_layout(), ""
 
-    pages = list(dash.page_registry.values())
-    index = int(active_page_index)
-    page = pages[index]
+    _, page, _ = solution_page
     layout_func = page["layout"]
+    project_name = f"Project name: {project_display_name}"
 
     if callable(layout_func):
         params = inspect.signature(layout_func).parameters
@@ -535,22 +608,47 @@ def display_page(project: ExamplesSolution, active_page_index: str | None) -> An
                 kwargs[param_name] = getattr(project.steps, param_name)
 
         if kwargs:
-            return layout_func(**kwargs)
-        return layout_func()
+            return layout_func(**kwargs), project_name
+        return layout_func(), project_name
 
-    return layout_func
+    return layout_func, project_name
 
 
 @callback(
     Output("page-content", "children"),
-    Input("active-page-index", "data"),
+    Output("project-name", "children"),
+    Input("active-non-solution-page-index", "data"),
+    State("color-scheme-switch", "checked"),
     prevent_initial_call=True,
 )
-def display_404_page(active_page_index: str | None) -> Any:
-    """Return the 404 page layout when the active page index is None."""
-    if active_page_index is None:
-        return _display_404_page()
-    return no_update
+def display_non_solution_page(active_non_solution_page_index: str | None, switch_on: bool) -> tuple[Any, Any]:
+    """Return the layout of a page displayed without a project, such as the projects dashboard.
+
+    The theme is a State: toggling it must not draw the dashboard again, which would reload its project list.
+    """
+    if active_non_solution_page_index is None:
+        return no_update, no_update
+    page = list(dash.page_registry.values())[int(active_non_solution_page_index)]
+    layout_func = page["layout"]
+    if not callable(layout_func):
+        return layout_func, ""
+    theme = "dark" if switch_on else "light"
+    kwargs = {"theme": theme} if "theme" in inspect.signature(layout_func).parameters else {}
+    return layout_func(**kwargs), ""
+
+
+@callback(
+    Output("page-content", "children"),
+    Output("project-name", "children"),
+    Input("active-page-index", "data"),
+    Input("active-non-solution-page-index", "data"),
+    prevent_initial_call=True,
+)
+def display_404_page(active_page_index: str | None, active_non_solution_page_index: str | None) -> tuple[Any, Any]:
+    """Return the 404 page layout when the URL matches no page."""
+    if active_page_index is None and active_non_solution_page_index is None:
+        return _display_404_page(), ""
+    return no_update, no_update
 
 
 @callback(
@@ -584,6 +682,8 @@ def open_new_page(value, project_id: str | None, pathname: str) -> str | None:
         return no_update
 
     page = pages[item_index]
+    if not page.get("path_template"):
+        return no_update
     # Add GLOW_UI_PATH_PREFIX to the path returned to the browser
     target_path = dash.get_relative_path(page["path_template"].replace("<project_id>", project_id))
     if target_path == pathname:
@@ -633,4 +733,19 @@ clientside_callback(
     """,
     Output("navbar-content", "style"),
     Input("color-scheme-switch", "checked"),
+)
+
+
+clientside_callback(
+    """
+    (switchOn) => {
+        if (!document.getElementById('projects-dashboard')) {
+            return window.dash_clientside.no_update;
+        }
+        return switchOn ? 'dark' : 'light';
+    }
+    """,
+    Output("projects-dashboard", "themeMode"),
+    Input("color-scheme-switch", "checked"),
+    prevent_initial_call=True,
 )

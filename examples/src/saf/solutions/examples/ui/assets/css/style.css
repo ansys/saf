@@ -24,6 +24,13 @@ body {
     padding-top: 0px !important;
 }
 
+/* The projects dashboard styles html and body with theme variables that only exist while it is displayed
+   (light or dark class on the root element). Keep the Mantine colors on the other pages. */
+:root:not(.light):not(.dark) body {
+    background-color: var(--mantine-color-body);
+    color: var(--mantine-color-text);
+}
+
 .back-link {
     text-align: right;
 }

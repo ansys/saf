@@ -104,34 +104,32 @@ def listeners_slot() -> html.Div:
 @callback(
     Output(LISTENERS_CONTAINER_ID, "children"),
     Output(MOUNTED_PROJECT_STORE_ID, "data"),
-    Input("active-project-id", "data"),
+    Input("project-layout-generation", "data"),
     State(MOUNTED_PROJECT_STORE_ID, "data"),
-    State("url", "pathname"),
+    State("project-scoped-pathname", "data"),
     prevent_initial_call=True,
 )
 def mount_termination_listeners(
-    project_id: str | None, mounted_project_id: str | None, project: ExamplesSolution
+    _generation: int, mounted_project_id: str | None, project: ExamplesSolution
 ) -> tuple[Any, str | None]:
     """Listen for the end of the build, the solve and the scene conversions of the open project.
 
     The listeners need step proxies, which do not exist at import time, so they are mounted
-    once a project is open. Navigating within the same project leaves them in place: a fresh
+    once a project page is displayed. Navigating within the same project leaves them in place: a fresh
     set would reconnect, and a termination published during the reconnection would be lost
     along with the chance to close its toast.
 
     Parameters
     ----------
-    project_id : str or None
-        Identifier resolved from the URL, ``None`` when the URL names no project.
+    _generation : int
+        Counter bumped every time a project page is displayed.
     mounted_project_id : str or None
         Project the current listeners belong to.
     project : ExamplesSolution
-        Injected by the SAF callback wrapper in place of the URL path.
+        Injected by the SAF callback wrapper in place of the URL path of the project page.
     """
-    if project_id == mounted_project_id:
+    if project.project_id == mounted_project_id:
         raise PreventUpdate
-    if project_id is None:
-        return [], None
     setup_step = project.steps.pump_model_setup_step
     solve_step = project.steps.pump_solve_step
     return [
@@ -141,7 +139,23 @@ def mount_termination_listeners(
         DashClient.create_event_listener(
             solve_step, stream_name=PREPARE_SOLVED_SCENE_STREAM, id=PREPARE_SOLVED_SCENE_LISTENER_ID
         ),
-    ], project_id
+    ], project.project_id
+
+
+@callback(
+    Output(LISTENERS_CONTAINER_ID, "children"),
+    Output(MOUNTED_PROJECT_STORE_ID, "data"),
+    Input("active-page-index", "data"),
+    prevent_initial_call=True,
+)
+def unmount_termination_listeners(active_page_index: str | None) -> tuple[Any, str | None]:
+    """Remove the listeners when no project page is displayed, for example on the projects dashboard.
+
+    The callbacks of these listeners read the project from the URL, which names no project there.
+    """
+    if active_page_index is not None:
+        raise PreventUpdate
+    return [], None
 
 
 def _start_scene_preparation(step: Any, method_name: str) -> None:

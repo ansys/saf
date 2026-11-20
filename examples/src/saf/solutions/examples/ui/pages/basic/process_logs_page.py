@@ -140,16 +140,18 @@ def layout(project: ExamplesSolution) -> html.Div:
 
 @callback(
     Output("process-logs-event-listeners-container", "children"),
-    Input("url", "pathname"),
+    Input("project-layout-generation", "data"),
+    State("project-scoped-pathname", "data"),
+    prevent_initial_call=True,
 )
-def mount_event_listeners(project: ExamplesSolution) -> list[dict[str, Any]] | Any:
+def mount_event_listeners(_generation: int, project: ExamplesSolution) -> list[dict[str, Any]] | Any:
     """Mount the backend event listeners used by this page.
 
     Creates two listeners bound to the ``basic_step``: one for the
     ``generate-process-logs-update`` stream that carries incremental log
     lines while the transaction is running, and one for the
     ``generate-process-logs`` stream that carries the transaction's
-    termination event. Listeners are (re)mounted whenever the URL changes.
+    termination event. Listeners are (re)mounted whenever a project page is displayed.
     """
     step = project.steps.basic_step
     return [

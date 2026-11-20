@@ -23,7 +23,7 @@ from ansys.dynamicreporting.core.serverless import ADR
 from ansys.saf.glow.client import callback
 from ansys.saf.glow.solution import MethodStatus
 import dash
-from dash_extensions.enrich import Input, Output, dcc, html
+from dash_extensions.enrich import Input, Output, State, dcc, html
 from dash_iconify import DashIconify
 import dash_mantine_components as dmc
 
@@ -198,12 +198,12 @@ def layout() -> html.Div:
 @callback(
     Output("report-content", "children"),
     Input("load-report", "n_clicks"),
-    Input("url", "pathname"),
+    State("url", "pathname"),
 )
 def render_report_content(n_clicks: int, project: ExamplesSolution) -> dmc.Center | html.Div:
     """Initialize ADR and render the report UI.
 
-    This combined callback ensures ADR setup (which happens on URL load)
+    This combined callback ensures ADR setup (which happens when the page is displayed)
     completes before report rendering, avoiding race conditions.
     """
     report_step = project.steps.beam_bending_report_step

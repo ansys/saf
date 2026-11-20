@@ -127,9 +127,11 @@ def _to_percentage(completed_increments: int, number_of_increments: int) -> int:
 
 @callback(
     Output("long-transaction-event-listeners-container", "children"),
-    Input("url", "pathname"),
+    Input("project-layout-generation", "data"),
+    State("project-scoped-pathname", "data"),
+    prevent_initial_call=True,
 )
-def mount_event_listeners(project: ExamplesSolution) -> list[dict[str, Any]] | Any:
+def mount_event_listeners(_generation: int, project: ExamplesSolution) -> list[dict[str, Any]] | Any:
     """Mount the application scoped backend event listeners used by this page.
 
     Creates two listeners bound to the ``long_transaction_step``: one for the

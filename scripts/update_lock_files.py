@@ -15,7 +15,8 @@
 # limitations under the License.
 
 import argparse
-from collections.abc import Callable, Sequence
+from collections.abc import Callable, Iterator, Sequence
+from contextlib import contextmanager
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 import json
@@ -72,6 +73,43 @@ class LockFileUpdate:
     lock_file: Path
     package_updates: list[PackageUpdate] = field(default_factory=list)
     error: str | None = None
+
+
+@contextmanager
+def manager_pyproject(project_dir: Path, manager: str) -> Iterator[None]:
+    """Temporarily expose ``pyproject.<manager>.toml`` as ``pyproject.toml``.
+
+    Projects that support both Poetry and uv keep one project file per manager, but both tools only
+    read ``pyproject.toml``. The original ``pyproject.toml`` (if any) is restored on exit.
+    """
+    manager_file = project_dir / f"pyproject.{manager}.toml"
+    pyproject = project_dir / "pyproject.toml"
+    if not manager_file.is_file():
+        yield
+        return
+
+    original = pyproject.read_bytes() if pyproject.exists() else None
+    pyproject.write_bytes(manager_file.read_bytes())
+    try:
+        yield
+    finally:
+        if original is None:
+            pyproject.unlink(missing_ok=True)
+        else:
+            pyproject.write_bytes(original)
+
+
+def _with_manager_pyproject(
+    run: Callable[..., subprocess.CompletedProcess[str]],
+    manager: str,
+) -> Callable[..., subprocess.CompletedProcess[str]]:
+    """Wrap a subprocess runner so it executes with the manager-specific pyproject file in place."""
+
+    def wrapped(command: Sequence[str], *args: object, cwd: Path, **kwargs: object) -> subprocess.CompletedProcess[str]:
+        with manager_pyproject(Path(cwd), manager):
+            return run(command, *args, cwd=cwd, **kwargs)
+
+    return wrapped
 
 
 def parse_packages(packages: str) -> list[str]:
@@ -208,6 +246,7 @@ def update_poetry_locks(
 ) -> list[LockFileUpdate]:
     """Run Poetry's lock-only package update in each project directory."""
     results: list[LockFileUpdate] = []
+    run = _with_manager_pyproject(run, "poetry")
     base_command = ["uvx", "--with", "poetry==2.5.1", "poetry", "update"]
 
     for project_dir in project_dirs:
@@ -277,6 +316,7 @@ def update_uv_locks(
 ) -> list[LockFileUpdate]:
     """Run uv's lock-only package update in each project directory."""
     results: list[LockFileUpdate] = []
+    run = _with_manager_pyproject(run, "uv")
 
     for project_dir in project_dirs:
         lock_file = project_dir / "uv.lock"

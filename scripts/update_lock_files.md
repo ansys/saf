@@ -66,6 +66,10 @@ uv run scripts/update_lock_files.py requests --root-dir ./packages
 1. **Discovery**: Recursively walks the directory tree to find all `package-lock.json` files
 2. **npm projects**: Runs `npm update <packages>` in each directory
 
+### Projects supporting both Poetry and uv
+
+Some projects keep one project file per manager (`pyproject.poetry.toml` and `pyproject.uv.toml`) next to both `poetry.lock` and `uv.lock`. Because both tools only read `pyproject.toml`, the script temporarily copies `pyproject.<manager>.toml` to `pyproject.toml` while running that manager's update, then restores the original `pyproject.toml` (or removes it if none existed). Directories without a manager-specific file are processed as usual.
+
 ### Error handling
 
 If an update fails (e.g., package not found), the script prints a warning with the error details and continues to the next lock file.

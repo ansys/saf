@@ -20,6 +20,7 @@ uv run scripts/update_lock_files.py <packages> [--root-dir <path>] [--one-by-one
 | `--root-dir` | Optional. Root directory to search for lock files. Defaults to the repository root. |
 | `--one-by-one` | Optional. Update packages individually instead of all at once. Useful when not all packages exist in every project. |
 | `--npm` | Optional. Update npm `package-lock.json` files instead of Python lock files. |
+| `--system-certs` | Optional. Pass `--system-certs` to `uv`/`uvx` to use the OS certificate store. Fixes `invalid peer certificate: UnknownIssuer` errors behind corporate proxies. |
 
 ### Examples
 

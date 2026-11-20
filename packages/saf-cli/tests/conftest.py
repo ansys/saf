@@ -86,7 +86,13 @@ def prepare_poetry_solution(solution_dir: Path, poetry_version: str = "2.5.1") -
                 specification["extras"] = sorted(requirement.extras)
             if requirement.marker is not None:
                 specification["markers"] = str(requirement.marker)
-            result[requirement.name] = specification
+            existing = result.get(requirement.name)
+            if existing is None:
+                result[requirement.name] = specification
+            elif isinstance(existing, list):
+                existing.append(specification)
+            else:
+                result[requirement.name] = [existing, specification]
         return result
 
     namespace_root = resolve_solution_main_file(solution_dir).relative_to(solution_dir / "src").parts[0]

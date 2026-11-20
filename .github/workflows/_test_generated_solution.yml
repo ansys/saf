@@ -172,10 +172,10 @@ jobs:
           tmpfile=$(mktemp)
           cat > "$tmpfile" << 'CONTENT'
                   env:
-                    PIP_EXTRA_INDEX_URL: https://PAT:${{'${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}'}}@${{'${{ secrets.PYANSYS_PYPI_PRIVATE_URL }}'}}
-                    PIP_QUIET: 1
+                    UV_EXTRA_INDEX_URL: https://PAT:${{'${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}'}}@${{'${{ secrets.PYANSYS_PYPI_PRIVATE_URL }}'}}
+                    UV_QUIET: 1
           CONTENT
-          sed -i '/uses: ansys\/saf-devops\/saf-build@v1/r '"$tmpfile" "${SOLUTION_NAME}/.github/workflows/${BUILD_WORKFLOW}"
+          sed -i '/uses: ansys\/saf-devops\/saf-build@/r '"$tmpfile" "${SOLUTION_NAME}/.github/workflows/${BUILD_WORKFLOW}"
           rm "$tmpfile"
 
           mkdir -p ${SOLUTION_NAME}/requirements

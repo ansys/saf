@@ -370,7 +370,13 @@ def test_setup_environment_default_params(
     pyproject_file.write_text(PYPROJECT_CONTENT)
 
     working_dir = Path.cwd()
-    with pytest.warns(DeprecationWarning, match="Poetry-based solutions are deprecated"):
+    with pytest.warns(
+        DeprecationWarning,
+        match=r"Please migrate this solution to UV using the migration guide: "
+        r"https://saf\.ansys\.com/version/stable/user_guide/migration/poetry-to-uv\.html\.\n"
+        r"Installation will continue using Poetry for now, but support for Poetry-based solutions will end after "
+        r"May 2027\.",
+    ):
         setup_environment(tmp_path, SOLUTION_MAIN_MODULE_NAME)
     captured = capsys.readouterr()
     printed_msgs = captured.out
@@ -1260,6 +1266,74 @@ def test_uv_install_groups(
     # UV solutions must bypass Poetry setup and credential handling.
     poetry_setup.assert_not_called()
     poetry_auth.assert_not_called()
+
+
+@pytest.mark.parametrize(
+    ("credentials", "expected_username", "expected_password"),
+    [
+        (
+            {
+                "UV_INDEX_MY_PRIVATE_PYPI_USERNAME": "uv-user",
+                "UV_INDEX_MY_PRIVATE_PYPI_PASSWORD": "uv-token",
+            },
+            "uv-user",
+            "uv-token",
+        ),
+        (
+            {
+                "UV_INDEX_MY_PRIVATE_PYPI_USERNAME": "uv-user",
+                "UV_INDEX_MY_PRIVATE_PYPI_PASSWORD": "uv-token",
+                "POETRY_HTTP_BASIC_MY_PRIVATE_PYPI_USERNAME": "legacy-user",
+                "POETRY_HTTP_BASIC_MY_PRIVATE_PYPI_PASSWORD": "legacy-token",
+            },
+            "uv-user",
+            "uv-token",
+        ),
+        (
+            {
+                "POETRY_HTTP_BASIC_MY_PRIVATE_PYPI_USERNAME": "legacy-user",
+                "POETRY_HTTP_BASIC_MY_PRIVATE_PYPI_PASSWORD": "legacy-token",
+            },
+            "legacy-user",
+            "legacy-token",
+        ),
+    ],
+    ids=["uv-credentials", "uv-credentials-preferred", "legacy-poetry-fallback"],
+)
+def test_uv_install_forwards_named_index_credentials(
+    uv_solution: Path,
+    mocker: pytest_mock.MockFixture,
+    monkeypatch: pytest.MonkeyPatch,
+    credentials: dict[str, str],
+    expected_username: str,
+    expected_password: str,
+) -> None:
+    (uv_solution / "pyproject.toml").write_text(
+        UV_PROJECT_EXAMPLE
+        + """
+[[tool.uv.index]]
+name = "my-private-pypi"
+url = "https://url-for-my-private-pypi"
+explicit = true
+""",
+        encoding="utf-8",
+    )
+    for name in (
+        "UV_INDEX_MY_PRIVATE_PYPI_USERNAME",
+        "UV_INDEX_MY_PRIVATE_PYPI_PASSWORD",
+        "POETRY_HTTP_BASIC_MY_PRIVATE_PYPI_USERNAME",
+        "POETRY_HTTP_BASIC_MY_PRIVATE_PYPI_PASSWORD",
+    ):
+        monkeypatch.delenv(name, raising=False)
+    for name, value in credentials.items():
+        monkeypatch.setenv(name, value)
+    run = mocker.patch.object(environment.subprocess, "run")
+
+    environment.setup_environment(uv_solution, "solution.main")
+
+    child_environment = run.call_args.kwargs["env"]
+    assert child_environment["UV_INDEX_MY_PRIVATE_PYPI_USERNAME"] == expected_username
+    assert child_environment["UV_INDEX_MY_PRIVATE_PYPI_PASSWORD"] == expected_password
 
 
 def test_uv_no_optional_groups(uv_solution: Path, mocker: pytest_mock.MockFixture):

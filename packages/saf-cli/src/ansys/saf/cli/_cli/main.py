@@ -25,6 +25,8 @@ import shutil
 import subprocess
 import sys
 import traceback
+from typing import TextIO
+import warnings
 import webbrowser
 
 import click
@@ -72,6 +74,8 @@ from ansys.saf.cli._utilities.solution_modules import (
 )
 
 LIST_UI_FRAMEWORKS = "\n- ".join(UI_FRAMEWORKS)
+
+
 UI_PROMPT = f"""What is the UI framework of the Solution?\n- {LIST_UI_FRAMEWORKS}\nChoose UI framework"""
 
 
@@ -186,6 +190,11 @@ def _generic_exception_handler(e: Exception):
 @click.pass_context
 def saf(ctx: click.Context, version: bool):
     """Utility script for solutions."""
+    warnings.filterwarnings(
+        "default",
+        message=r"^Poetry-based solutions are deprecated \.",
+        category=DeprecationWarning,
+    )
     try:
         if version:
             click.secho(importlib.metadata.version("ansys-saf-cli"), fg="cyan")

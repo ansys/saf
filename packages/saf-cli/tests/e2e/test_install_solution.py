@@ -147,12 +147,17 @@ def test_saf_install(
     assert p.find_msg_in_output(f"Environment variables loaded from {(solution_path / '.env').resolve()}")
     assert p.find_msg_in_output(f"Dependency management system         : {installation_backend.value}")
     if installation_backend is SolutionBackend.POETRY:
+        assert p.find_msg_in_output(
+            "Poetry-based solutions are deprecated. Please migrate this solution to UV.",
+        )
         expected_package_install_msg = (
             "Installing the current project: "
             f"{namespace_to_pkg_name(DEFAULT_SOLUTION_NAMESPACE)}-"
             f"{DEFAULT_SOLUTION_NAME.replace('_', '-')} (0.0.0)"
         )
         assert p.find_msg_in_output(expected_package_install_msg)
+    else:
+        assert not p.find_msg_in_output("Poetry-based solutions are deprecated.")
     assert p.find_msg_in_output("Preload solution package")
 
     verify_installation(solution_path)

@@ -546,7 +546,8 @@ def check_built_solution_files(
 
     expected_files = _get_common_built_solution_files(solution_module_name, solution_package_name, backend)
     assert all((solution.root_dir / path).is_file() for path in expected_files)
-    wheels_dir = solution.root_dir / "dist" / "solution" / "definitions" / solution_module_name
+    definitions_folder = solution.root_dir / "dist" / "solution" / "definitions" / solution_module_name
+    wheels_dir = definitions_folder if backend is SolutionBackend.POETRY else definitions_folder / "wheelhouse"
     private_wheels = list(wheels_dir.glob("ansys_*.whl"))
     assert bool(private_wheels) == expect_private_wheels
     third_party_dir = solution.root_dir / "dist" / "solution" / "third_party"

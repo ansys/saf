@@ -1018,12 +1018,37 @@ def _check_project_python_version(backend_info: SolutionBackendInfo) -> None:
         raise InstallError(f"Python {platform.python_version()} does not satisfy {backend_info.requires_python}.")
 
 
-def _install_uv_dependencies(uv_exec: str, dependency_groups: list[str]) -> None:
+def _copy_legacy_poetry_credentials_to_uv(
+    configuration: dict[str, Any],
+    environment: dict[str, str],
+) -> None:
+    """Use matching legacy Poetry credentials when named UV index credentials are unset."""
+    indexes = configuration.get("tool", {}).get("uv", {}).get("index", [])
+    if not isinstance(indexes, list):
+        return
+
+    for index in indexes:
+        if not isinstance(index, dict) or not isinstance(index.get("name"), str):
+            continue
+        index_slug = re.sub(r"[^A-Za-z0-9]", "_", index["name"]).upper()
+        for credential in ("USERNAME", "PASSWORD"):
+            uv_variable = f"UV_INDEX_{index_slug}_{credential}"
+            poetry_variable = f"POETRY_HTTP_BASIC_{index_slug}_{credential}"
+            if not environment.get(uv_variable) and environment.get(poetry_variable):
+                environment[uv_variable] = environment[poetry_variable]
+
+
+def _install_uv_dependencies(
+    uv_exec: str,
+    dependency_groups: list[str],
+    configuration: dict[str, Any],
+) -> None:
     """Install the solution and its main dependencies plus selected dependency groups using UV."""
     environment = os.environ.copy()
     environment.pop("VIRTUAL_ENV", None)
     # UV sync creates the solution's .venv if needed; no separate creation step is required.
     environment["UV_PROJECT_ENVIRONMENT"] = str(VENV_DIR.resolve())
+    _copy_legacy_poetry_credentials_to_uv(configuration, environment)
     command = [
         uv_exec,
         "sync",
@@ -1154,7 +1179,10 @@ def setup_environment(
 
         if backend_info.uses_deprecated_backend:
             warnings.warn(
-                "Poetry-based solutions are deprecated. Installation will continue using Poetry.",
+                "Poetry-based solutions are deprecated. Please migrate this solution to UV using the migration guide: "
+                "https://saf.ansys.com/version/stable/user_guide/migration/poetry-to-uv.html.\n"
+                "Installation will continue using Poetry for now, but support for Poetry-based solutions will end "
+                "after May 2027.",
                 DeprecationWarning,
                 stacklevel=2,
             )
@@ -1198,7 +1226,7 @@ def setup_environment(
         _print_section_header("Install dependencies", max_length=100)
 
         if uv_exec is not None:
-            _install_uv_dependencies(uv_exec, selected_dependency_groups)
+            _install_uv_dependencies(uv_exec, selected_dependency_groups, configuration)
         else:
             _install_poetry_dependencies(selected_dependency_groups)
 

@@ -825,7 +825,7 @@ def session_solution_namespace(request: pytest.FixtureRequest) -> str:
     return param if param is not None else DEFAULT_SOLUTION_NAMESPACE
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture
 def session_solution(
     mock_session_appdata: Path,
     session_solution_ui_framework: str,
@@ -872,7 +872,16 @@ def session_solution(
             display_name=solution_display_name,
         )
 
-    return SESSION_SOLUTIONS[session_key]
+    solution = SESSION_SOLUTIONS[session_key]
+    if not is_solution_registered(
+        _list_solutions(),
+        solution.root_dir,
+        solution_name=solution.name,
+        solution_display_name=solution.display_name,
+    ):
+        _execute_command([solution.root_dir.as_posix(), "python -c 'pass'"])
+
+    return solution
 
 
 @pytest.fixture

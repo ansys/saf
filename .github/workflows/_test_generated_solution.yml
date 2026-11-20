@@ -171,38 +171,16 @@ jobs:
 
           tmpfile=$(mktemp)
           cat > "$tmpfile" << 'CONTENT'
-              - name: Set up Python for private build dependency
-                uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
-                with:
-                  python-version: ${{'${{ env.MAIN_PYTHON_VERSION }}'}}
-              - name: Download private build dependency
-                shell: bash
-                env:
-                  PIP_INDEX_URL: https://PAT:${{'${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}'}}@${{'${{ secrets.PYANSYS_PYPI_PRIVATE_URL }}'}}
-                  PIP_QUIET: 1
-                  PIP_DISABLE_PIP_VERSION_CHECK: 1
-                run: |
-                  mkdir -p requirements/private-wheels
-                  python -m pip download --no-deps --dest requirements/private-wheels ansys-translation-utilities==0.4.dev0
-                  private_dependency=$(find requirements/private-wheels -maxdepth 1 -type f -print -quit)
-                  if [[ -z "$private_dependency" ]]; then
-                    echo "Failed to download ansys-translation-utilities from the private index." >&2
-                    exit 1
-                  fi
-                  echo "$private_dependency" >> requirements/requirements_build.txt
-          CONTENT
-          sed -i '/run: git config --global core.longpaths true/r '"$tmpfile" "${SOLUTION_NAME}/.github/workflows/${BUILD_WORKFLOW}"
-          rm "$tmpfile"
-
-          tmpfile=$(mktemp)
-          cat > "$tmpfile" << 'CONTENT'
                   env:
-                    UV_QUIET: 1
+                    UV_INDEX: https://PAT:${{'${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}'}}@${{'${{ secrets.PYANSYS_PYPI_PRIVATE_URL }}'}}
+                    PIP_EXTRA_INDEX_URL: https://PAT:${{'${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}'}}@${{'${{ secrets.PYANSYS_PYPI_PRIVATE_URL }}'}}
+                    PIP_QUIET: 1
           CONTENT
-          sed -i '/uses: ansys\/saf-devops\/saf-build@/r '"$tmpfile" "${SOLUTION_NAME}/.github/workflows/${BUILD_WORKFLOW}"
+          sed -i '/uses: ansys\/saf-devops\/saf-build@v1/r '"$tmpfile" "${SOLUTION_NAME}/.github/workflows/${BUILD_WORKFLOW}"
           rm "$tmpfile"
 
           mkdir -p ${SOLUTION_NAME}/requirements
+          echo "ansys-translation-utilities==0.4.dev0" >> ${SOLUTION_NAME}/requirements/requirements_build.txt
           echo "cffi==2.0.0" >> ${SOLUTION_NAME}/requirements/requirements_build.txt
           echo "cryptography==46.0.7" >> ${SOLUTION_NAME}/requirements/requirements_build.txt
           echo "pycparser==3.0" >> ${SOLUTION_NAME}/requirements/requirements_build.txt
@@ -212,7 +190,13 @@ jobs:
         run: | # zizmor: ignore[template-injection]
           tmpfile=$(mktemp)
           echo '          whitelist-license-check: ansys-minerva-python-client ansys-translation-utilities saf-solutions-${{ env.SOLUTION_NAME }}' > "$tmpfile"
-          sed -i '/use-uv: false/r '"$tmpfile" "${SOLUTION_NAME}/.github/workflows/${BUILD_WORKFLOW}"
+          workflow_path="${SOLUTION_NAME}/.github/workflows/${BUILD_WORKFLOW}"
+          anchor_count=$(grep -Fxc '          skip-install: true' "$workflow_path" || true)
+          if [[ "$anchor_count" != "1" ]]; then
+            echo "Expected exactly one check-licenses insertion point in ${workflow_path}; found ${anchor_count:-0}." >&2
+            exit 1
+          fi
+          sed -i '/^          skip-install: true$/r '"$tmpfile" "$workflow_path"
           rm "$tmpfile"
 
       - name: Publish solution

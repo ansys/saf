@@ -962,24 +962,34 @@ def _resolve_dependency_groups(
 
 def _run_poetry_install(args: list[str]) -> None:
     with _exit_virtual_environment():
-        try:
-            subprocess.run(
-                [POETRY_POETRY_EXEC.absolute().as_posix()] + args,
-                check=True,
-                text=True,
-                stderr=subprocess.PIPE,
-            )
+        # Poetry reports errors on stdout and noisy warnings on stderr, so both are merged, echoed and captured.
+        output_lines: list[str] = []
+        # Poetry's default 15 s request timeout is too short for large wheels on slow networks.
+        env = {"POETRY_REQUESTS_TIMEOUT": "120", **os.environ}
+        with subprocess.Popen(
+            [POETRY_POETRY_EXEC.absolute().as_posix()] + args,
+            env=env,
+            text=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+        ) as process:
+            assert process.stdout is not None  # noqa: S101
+            for line in process.stdout:
+                print(line, end="", flush=True)
+                output_lines.append(line)
+        if process.returncode == 0:
+            return
 
-        except subprocess.CalledProcessError as e:
-            if "Authorization error" in e.stderr or "401 Client Error:" in e.stderr:
-                raise Exception(
-                    "Poetry install failed due to authorization issues with a private PyPI source. "
-                    "Please verify each username and password/token for private PyPI sources. ",
-                ) from e
-            else:
-                raise Exception(
-                    f"Poetry install failed with an unexpected error. {e.stderr}",
-                ) from e
+        output = "".join(output_lines)
+        if "Authorization error" in output or "401 Client Error:" in output:
+            raise Exception(
+                "Poetry install failed due to authorization issues with a private PyPI source. "
+                "Please verify each username and password/token for private PyPI sources. ",
+            )
+        # Skip "over existing file" warnings, which are harmless and hide the actual error.
+        relevant_lines = [line for line in output_lines if "over existing file" not in line]
+        details = "".join(relevant_lines[-50:]).strip()
+        raise Exception(f"Poetry install failed with an unexpected error. {details}")
 
 
 def _get_optional_dependency_groups(configuration: dict[str, Any]) -> list[str]:

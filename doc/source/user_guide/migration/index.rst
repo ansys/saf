@@ -33,6 +33,14 @@ This section provides migration guides for upgrading SAF solutions across major 
 
     Migrate the solution from using legacy portal to using Projects Dashboard component.
 
+   .. grid-item-card:: :material-outlined:`upgrade;1.75em` :ref:`poetry_to_uv_migration`
+    :class-card: highlight-card
+    :link-type: doc
+    :link: poetry-to-uv
+    :shadow: lg
+
+    Migrate a Poetry-based SAF solution to UV.
+
 .. toctree::
    :maxdepth: 2
    :hidden:
@@ -40,3 +48,4 @@ This section provides migration guides for upgrading SAF solutions across major 
    glow
    cli
    projects-dashboard
+   poetry-to-uv

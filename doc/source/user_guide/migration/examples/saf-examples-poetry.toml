@@ -1,0 +1,137 @@
+[build-system]
+requires = ["poetry-core>=2.0.0", "setuptools>=65.0"]
+build-backend = "poetry.core.masonry.api"
+
+[build-system-requirements]
+build-system-version = "2.5.1"
+
+[tool.poetry]
+name = "saf-solutions-examples"
+version = "0.2.dev0"
+description = "Collection of simple SAF/Dash usage examples."
+license = "Apache-2.0"
+authors = ["ANSYS, Inc. <pyansys-core@synopsys.com>"]
+maintainers = ["ANSYS, Inc. <pyansys-core@synopsys.com>"]
+readme = "README.md"
+keywords = ["Ansys Solutions"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Other Audience",
+    "License :: OSI Approved :: Apache Software License",
+    "Natural Language :: English",
+    "Operating System :: Microsoft :: Windows",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering",
+]
+packages = [{ include = "saf", from = "src" }]
+
+[[tool.poetry.source]]
+name = "PyPI"
+priority = "primary"
+
+[tool.poetry.dependencies]
+python = ">=3.11,<3.13"
+ansys-dynamicreporting-core = "^0.10.6"
+ansys-saf-sdk = { version = "^0.5.0", extras = ["core-pim", "instance-management-all", "core-hps"], allow-prereleases = true }
+ansys-tools-visualization-interface = "^0.12.1"
+ansys-visor-viewer = "^1.0.1"
+h5py = "^3.12"
+numpy = "^1.26.4"
+pillow = "^13.0.0"
+scipy = "^1.15"
+vtk = "^9.6.1"
+soupsieve = [
+    { version = "^2.10", python = "<3.11.5" },
+    { version = "^4.0", python = ">=3.11.5" },
+]
+
+[tool.poetry.group.desktop]
+optional = true
+
+[tool.poetry.group.desktop.dependencies]
+ansys-saf-sdk = { version = "^0.5.0", extras = ["desktop"], allow-prereleases = true }
+
+[tool.poetry.group.ui]
+optional = true
+
+[tool.poetry.group.ui.dependencies]
+ansys-solutions-dash-super-components = { version = "0.2.dev8", allow-prereleases = true }
+dash = "^3.0.0"
+dash_bootstrap_components = { version = "^1.2" }
+dash-extensions = ">=0.1.13"
+dash-iconify = "^0.1"
+dash-mantine-components = "^2.6"
+dash-uploader = "^0.6"
+pandas = "^2.2.2"
+
+[tool.poetry.group.tests]
+optional = true
+
+[tool.poetry.group.tests.dependencies]
+ansys-saf-cli = { path = "../packages/saf-cli", develop = true }
+coverage = "^7.2.6"
+filelock = "^4.2.1"
+mock = "^4.0.3"
+pytest = "^9.1.1"
+pytest-cov = "^7.0.0"
+pytest-html = "^4.1.1"
+pytest-md = "^0.2.0"
+pytest-dependency = "^0.5.1"
+pytest-flakes = "^4.0.5"
+pytest-pycodestyle = "^2.5.0"
+pytest-pythonpath = "^0.7"
+pytest-xdist = "^3.0.2"
+pytest-mock = "^3.12"
+selenium = "^4.0"
+
+[tool.poetry.group.build]
+optional = true
+
+[tool.poetry.group.build.dependencies]
+build = "^0.8.0"
+twine = "6.0.1"
+pkginfo = "^1.12.1.2"
+pyinstaller = { version = "^6.16", python = "<3.15" }
+toml = "^0.10.2"
+pyc-wheel = "^1.2.7"
+ansys-saf-sdk = { version = "^0.5.0", extras = ["build"], allow-prereleases = true }
+
+[tool.poetry.group.style]
+optional = true
+
+[tool.poetry.group.style.dependencies]
+black = ">24"
+isort = "5.13.2"
+flake8 = { version = "7.0.0", python = ">=3.8.1,<3.11" }
+codespell = "2.2.6"
+pydocstyle = "6.3.0"
+
+[tool.poetry.plugins."console_scripts"]
+examples_main = "ansys.solutions.examples.main:main"
+
+[tool.black]
+line-length = 120
+
+[tool.isort]
+profile = "black"
+force_sort_within_sections = true
+line_length = 120
+default_section = "THIRDPARTY"
+src_paths = ["doc", "src", "tests"]
+
+[tool.codespell]
+skip = '.github,.venv,.tox,requirements,CODEOWNERS,*.tmp,CHANGELOG.md,poetry.lock,*.vtu'
+count = ""
+quiet-level = 3
+check-hidden = ""
+ignore-words = ".codespell.ignore"
+
+[tool.pydocstyle]
+select = ["D107"]
+
+[tool.coverage.run]
+source = ["ansys.solutions"]
+
+[tool.coverage.report]
+show_missing = true

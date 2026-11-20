@@ -3,11 +3,17 @@
 Migrate a Poetry-based solution to UV
 ########################################
 
+Introduction
+============
+
 This guide describes how to migrate an existing SAF solution from Poetry to
-UV. During the transition period, SAF supports solutions managed by either
-Poetry or UV, but each solution must use only one dependency manager. Poetry
-support is expected to be discontinued in a future SAF release. Check the SAF
-release notes for current support and
+UV.
+Current SAF solution templates generate UV-based solutions. During the
+transition period, SAF CLI and desktop installer commands support both
+UV-managed and Poetry-managed solutions, provided you use versions that
+support UV. Each solution must use only one dependency manager. Poetry is
+deprecated for SAF solutions, and support is expected to be discontinued in a
+future SAF release. Check the SAF release notes for current support and
 deprecation timelines.
 
 UV must be installed before you can follow the commands in this guide. See the
@@ -29,19 +35,484 @@ Open a new terminal if needed, then confirm UV is available:
 
    uv --version
 
-Before migrating, confirm that the SAF CLI and desktop installer versions in
-use support UV. Check the CLI version with:
+Before migrating, use SAF CLI version ``4.5.0`` or later, which supports UV.
+Check the CLI version with:
 
 .. code-block:: console
 
    saf --version
 
-Step 1: Prepare the migration
-=============================
+If you also build desktop installers for the migrated solution, use SAF
+desktop installer version ``1.20.0`` or later. Check the SAF release notes for
+any updated minimum-version requirements.
 
-Keep an unchanged copy of the original Poetry-based files until the UV solution
-has passed validation, and store it outside the solution root. Before editing
-the project, inventory:
+Before choosing an automated or manual approach, keep unchanged backups
+outside the solution root until the migrated solution passes validation. Back
+up each applicable file:
+
+* ``pyproject.toml``
+* ``poetry.lock``, if the project has one
+* ``poetry.toml``, if the project has one
+
+You can try either of two third-party tools to automate the conversion.
+Choose one tool; you do not need to run both. If neither produces a suitable
+result, use the manual migration steps below. Complete the validation steps at
+the end of this guide whichever approach you use.
+
+Automated migration
+===================
+
+Option 1: ``migrate-to-uv``
+---------------------------
+
+Try the community-maintained `migrate-to-uv
+<https://osprey-oss.github.io/migrate-to-uv/>`_ first. It supports Poetry and
+converts project metadata, dependencies, groups, package sources, and other
+settings. Its `source repository
+<https://github.com/osprey-oss/migrate-to-uv>`_ contains the code and issue
+tracker. It is not an Ansys or SAF tool, so review its changes rather than
+assuming the result is correct for your solution.
+
+The commands below pin ``migrate-to-uv`` to version ``0.12.0`` so the same command does not silently use a newer release
+if the tool changes. This is the version referenced when this guide was
+updated, not a permanent recommendation. Before changing the pin, review the
+project's documentation and release history, and verify the release's
+`PyPI provenance <https://pypi.org/project/migrate-to-uv/>`_.
+
+#. Work in a branch or copy of your solution.
+#. Install UV as described above, then open a terminal in the solution root.
+#. Preview the changes:
+
+   .. code-block:: console
+
+      uvx migrate-to-uv@0.12.0 --package-manager poetry --dry-run
+
+#. If the preview looks reasonable, run the migration:
+
+   .. code-block:: console
+
+      uvx migrate-to-uv@0.12.0 --package-manager poetry
+
+#. Review the output and the resulting ``pyproject.toml`` and ``uv.lock``.
+   Check SAF-specific settings, dependency groups, private package sources,
+   selected build backend, and packaged files. The tool attempts to preserve
+   locked versions when it finds the original lockfile, but verify the result.
+
+If the tool reports an error and aborts, read the reported field or feature.
+When the message suggests a safe equivalent, correct the source configuration
+and retry from a clean copy. If locking fails after conversion, restore the
+original files from your backup and remove any generated ``uv.lock`` before
+rerunning the migration without asking the tool to create the lockfile:
+
+.. code-block:: console
+
+   uvx migrate-to-uv@0.12.0 --package-manager poetry --skip-lock
+
+Then review the converted project and generate the lockfile yourself:
+
+.. code-block:: console
+
+   uv lock
+
+The documented option is ``--skip-lock`` (not ``--no-lock``). If the tool still
+cannot complete the conversion, leaves an unsuitable result, or reports an
+issue you cannot resolve confidently, use the manual migration below. Do not
+use ``--ignore-errors`` for a routine migration; it allows a partial migration.
+
+If the tool completes with warnings, review and address each warning before
+continuing. If locking fails because of a private package index, configure UV
+index credentials as described in the tool's `private-index instructions
+<https://osprey-oss.github.io/migrate-to-uv/usage/#authentication-for-private-indexes>`_.
+If you selected ``uv_build`` and the tool reports unsupported package
+metadata, try ``--build-backend hatch`` only if Hatchling fits your project;
+otherwise use the manual route.
+
+Option 2: ``convert-poetry2uv``
+-------------------------------
+
+As an alternative to ``migrate-to-uv``, `convert-poetry2uv
+<https://github.com/bartdorlandt/convert_poetry2uv>`_ converts
+``pyproject.toml`` but does not create ``uv.lock``. Its GitHub README is its
+usage documentation; the package is also published on `PyPI
+<https://pypi.org/project/convert-poetry2uv/>`_. Pin the version when running
+it as a tool. For version ``0.3.14``, preview the conversion with:
+
+.. code-block:: console
+
+   uvx convert-poetry2uv@0.3.14 pyproject.toml -n
+
+This writes a preview to ``pyproject_temp_uv.toml``. Review it, then run the
+conversion on a clean copy without ``-n``:
+
+.. code-block:: console
+
+   uvx convert-poetry2uv@0.3.14 pyproject.toml
+
+The converter saves the original as ``pyproject.toml.org`` when it writes the
+converted file; move that backup outside the solution root. It does not convert
+the lockfile or remove every Poetry-specific file. Before creating ``uv.lock``,
+follow Step 3 below to remove ``poetry.lock`` and check that no active Poetry
+metadata remains. Do not rename ``poetry.lock`` to ``uv.lock``.
+
+The converter's README warns that it removes Poetry's build-system
+configuration and does not preserve optional dependency-group behavior as-is.
+Inspect the version constraints carefully as well. Choose and configure a
+replacement build backend, correct any conversion issues, then run ``uv lock``
+and the validation steps below. If the preview is not suitable, use the manual
+migration instead.
+
+If an automated migration succeeds, continue with Steps 4–6 below to verify
+the environment, update workflows, and complete the migration. If neither
+automated option produces a suitable result, follow Steps 1–3 of the manual
+route:
+
+Manual migration
+================
+
+Follow this section if you are migrating by hand. If an automated option
+produced a suitable UV configuration, skip Steps 1–3 and continue with Steps
+4–6 to validate the migration and update project workflows.
+
+.. _poetry_to_uv_examples:
+
+Examples: see how pyproject.toml changes
+----------------------------------------
+
+The diagram focuses on selected sections moving from a Poetry-based
+``pyproject.toml`` to a UV-based ``pyproject.toml``. It is not a complete
+migration map; review each field's meaning and destination for your solution.
+
+.. container:: poetry-uv-light-mode
+
+   .. figure:: /_static/images/poetry_to_uv_migration.svg
+      :alt: Selected Poetry pyproject.toml sections mapped to UV pyproject.toml sections
+      :align: center
+
+      Selected changes from a Poetry-based to a UV-based ``pyproject.toml``.
+
+.. container:: poetry-uv-dark-mode
+
+   .. figure:: /_static/images/poetry_to_uv_migration_dark.svg
+      :alt: Selected Poetry pyproject.toml sections mapped to UV pyproject.toml sections
+      :align: center
+
+      Selected changes from a Poetry-based to a UV-based ``pyproject.toml``.
+
+Complete example: SAF Solution Examples
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This complete example is based on the real SAF Solution Examples
+configuration. The two files, shown side by side are the Poetry
+copy that preserves the source configuration, and the UV copy that
+shows one possible migration using Hatchling.
+
+.. grid:: 2
+   :gutter: 3
+
+   .. grid-item-card:: Poetry pyproject.toml
+
+      .. literalinclude:: examples/saf-examples-poetry.toml
+         :language: toml
+
+   .. grid-item-card:: UV pyproject.toml
+
+      .. literalinclude:: examples/saf-examples-uv.toml
+         :language: toml
+
+The migration choices in this example are specific to this project:
+
+* The Poetry ``[build-system-requirements]`` table pins Poetry for SAF's Poetry
+  setup flow. It is not needed for a UV project and is omitted.
+* The Poetry source declares PyPI as the primary source. UV uses PyPI by
+  default, so no index table is needed here.
+* Poetry's ``packages`` entry becomes Hatchling's wheel package selection.
+  Verify the built wheel includes the package data your solution needs.
+* Poetry's console script becomes ``[project.scripts]``. The original file has
+  no ``[tool.poetry.extras]`` table, so this example has no
+  ``[project.optional-dependencies]`` table.
+* The local editable ``ansys-saf-cli`` dependency is listed in the ``tests``
+  group and mapped to its path under ``[tool.uv.sources]``. UV dependency
+  groups are not installed unless selected; the path mapping is illustrated in
+  :ref:`poetry_to_uv_path_dependency_example`.
+* Poetry allows prereleases for selected ``ansys-saf-sdk`` dependencies. UV
+  does not offer a directly equivalent per-dependency setting. If preserving
+  prerelease selection matters, use explicit prerelease constraints or decide
+  whether the broader ``prerelease = "allow"`` setting is appropriate.
+* The Codespell skip list is updated from ``poetry.lock`` to ``uv.lock``.
+
+Focused examples
+^^^^^^^^^^^^^^^^
+
+The complete example above shows a real SAF solution. The focused examples
+below show a minimal project and several cases that may need separate
+handling: local paths, private indexes, Git and direct URLs, package extras and
+environment markers, and project URLs. Use only the examples relevant to your
+solution; they are not steps to apply in sequence. UV-specific settings are
+optional and are covered in :ref:`UV configuration
+<poetry_to_uv_uv_settings>`. Step 2 contains the field-by-field migration
+tables.
+
+Minimal project
+"""""""""""""""
+
+.. grid:: 2
+   :gutter: 3
+
+   .. grid-item-card:: Poetry
+
+      .. code-block:: toml
+
+         [build-system]
+         requires = ["poetry-core>=2.0.0"]
+         build-backend = "poetry.core.masonry.api"
+
+         [tool.poetry]
+         name = "my-solution"
+         version = "0.1.0"
+         description = "An example SAF solution"
+         authors = ["Example Author <author@example.com>"]
+
+         [tool.poetry.dependencies]
+         python = ">=3.10,<3.14"
+         ansys-saf-glow-engine = "^1.0"
+
+         [tool.poetry.group.ui]
+         optional = true
+
+         [tool.poetry.group.ui.dependencies]
+         dash = "^2.0"
+
+         [tool.poetry.group.tests]
+         optional = true
+
+         [tool.poetry.group.tests.dependencies]
+         pytest = "^8.0"
+
+   .. grid-item-card:: UV
+
+      .. code-block:: toml
+
+         [build-system]
+         requires = ["hatchling"]
+         build-backend = "hatchling.build"
+
+         [project]
+         name = "my-solution"
+         version = "0.1.0"
+         description = "An example SAF solution"
+         authors = [{ name = "Example Author", email = "author@example.com" }]
+         requires-python = ">=3.10,<3.14"
+         dependencies = [
+             "ansys-saf-glow-engine>=1.0,<2.0",
+         ]
+
+         [dependency-groups]
+         ui = [
+             "dash>=2.0,<3.0",
+         ]
+         tests = [
+             "pytest>=8.0,<9.0",
+         ]
+
+         [tool.uv]
+         package = true
+
+.. _poetry_to_uv_path_dependency_example:
+
+
+Additional dependency and metadata cases
+""""""""""""""""""""""""""""""""""""""""
+
+Local path dependency
+~~~~~~~~~~~~~~~~~~~~~
+
+Declare a local package as a dependency, then map its name to a path in
+``[tool.uv.sources]``. Paths are relative to the directory containing
+``pyproject.toml``. Use ``develop = true`` in Poetry and ``editable = true`` in
+UV when the package should be installed in editable mode; omit those options
+for a regular local install.
+
+.. grid:: 2
+   :gutter: 3
+
+   .. grid-item-card:: Poetry
+
+      .. code-block:: toml
+
+         [tool.poetry.dependencies]
+         my-local-package = { path = "../my-local-package", develop = true }
+
+   .. grid-item-card:: UV
+
+      .. code-block:: toml
+
+         [project]
+         dependencies = [
+             "my-local-package",
+         ]
+
+         [tool.uv.sources]
+         my-local-package = { path = "../my-local-package", editable = true }
+
+Private index and package routing
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Keep credentials out of both files. Configure them with an approved credential
+store or environment mechanism. An explicit index makes the intended source
+clear for the private package.
+
+.. grid:: 2
+   :gutter: 3
+
+   .. grid-item-card:: Poetry
+
+      .. code-block:: toml
+
+         [[tool.poetry.source]]
+         name = "private"
+         url = "https://packages.example.com/simple/"
+         priority = "explicit"
+
+         [tool.poetry.dependencies]
+         private-lib = { version = "^2.4", source = "private" }
+
+   .. grid-item-card:: UV
+
+      .. code-block:: toml
+
+         [project]
+         dependencies = ["private-lib>=2.4,<3.0"]
+
+         [[tool.uv.index]]
+         name = "private"
+         url = "https://packages.example.com/simple/"
+         explicit = true
+
+         [tool.uv.sources]
+         private-lib = { index = "private" }
+
+Git and direct URL dependencies
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Preserve the exact Git revision. A direct archive URL belongs in the PEP 508
+requirement; verify the URL and artifact integrity policy for your project.
+
+.. grid:: 2
+   :gutter: 3
+
+   .. grid-item-card:: Poetry
+
+      .. code-block:: toml
+
+         [tool.poetry.dependencies]
+         shared-lib = { git = "https://github.com/example/shared-lib.git", rev = "0123456789abcdef0123456789abcdef01234567" }
+         wheel-lib = { url = "https://packages.example.com/files/wheel_lib-1.2.3-py3-none-any.whl" }
+
+   .. grid-item-card:: UV
+
+      .. code-block:: toml
+
+         [project]
+         dependencies = [
+             "shared-lib",
+             "wheel-lib @ https://packages.example.com/files/wheel_lib-1.2.3-py3-none-any.whl",
+         ]
+
+         [tool.uv.sources]
+         shared-lib = { git = "https://github.com/example/shared-lib.git", rev = "0123456789abcdef0123456789abcdef01234567" }
+
+Extras and environment markers
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Keep package extras (in brackets after the name) distinct from Poetry optional
+groups, and preserve each Python or platform marker.
+
+.. grid:: 2
+   :gutter: 3
+
+   .. grid-item-card:: Poetry
+
+      .. code-block:: toml
+
+         [tool.poetry.dependencies]
+         ansys-saf-sdk = { version = "^0.5.0", extras = ["desktop"], python = ">=3.11,<3.13" }
+         windows-only = { version = "^2.0", markers = "sys_platform == 'win32'" }
+
+   .. grid-item-card:: UV
+
+      .. code-block:: toml
+
+         [project]
+         dependencies = [
+             "ansys-saf-sdk[desktop]>=0.5.0,<0.6.0; python_version >= '3.11' and python_version < '3.13'",
+             "windows-only>=2.0,<3.0; sys_platform == 'win32'",
+         ]
+
+Published optional features
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Use ``[project.optional-dependencies]`` for published extras. This is different
+from ``[dependency-groups]``, which is for development and workflow
+dependencies.
+
+.. grid:: 2
+   :gutter: 3
+
+   .. grid-item-card:: Poetry
+
+      .. code-block:: toml
+
+         [tool.poetry.dependencies]
+         reports-lib = { version = "^2.0", optional = true }
+
+         [tool.poetry.extras]
+         reports = ["reports-lib"]
+
+   .. grid-item-card:: UV
+
+      .. code-block:: toml
+
+         [project.optional-dependencies]
+         reports = [
+             "reports-lib>=2.0,<3.0",
+         ]
+
+Project URLs
+~~~~~~~~~~~~
+
+These are informational links in package metadata, not dependency download
+URLs.
+
+.. grid:: 2
+   :gutter: 3
+
+   .. grid-item-card:: Poetry
+
+      .. code-block:: toml
+
+         [tool.poetry.urls]
+         Homepage = "https://example.com"
+         Repository = "https://github.com/example/project"
+         Documentation = "https://docs.example.com"
+
+   .. grid-item-card:: UV
+
+      .. code-block:: toml
+
+         [project.urls]
+         Homepage = "https://example.com"
+         Repository = "https://github.com/example/project"
+         Documentation = "https://docs.example.com"
+
+The dependency constraints in the complete example illustrate equivalent
+ranges for the source project's Poetry caret constraints. Verify version
+ranges, markers, source routing, resolved versions, and group selection for
+your own solution.
+
+Step 1: Prepare the migration
+-----------------------------
+
+Before editing the project, inventory:
 
 * Runtime dependencies and all Poetry dependency groups, including which groups
   SAF installs by default and which are selected explicitly.
@@ -57,7 +528,7 @@ Do not assume that generating a UV lockfile preserves the exact versions in
 your solution's tests after migration.
 
 Step 2: Translate project metadata
-==================================
+----------------------------------
 
 Update ``pyproject.toml`` to use standard project metadata and UV configuration.
 TOML does not require tables to appear in a particular order, but a readable
@@ -85,7 +556,7 @@ For complete before-and-after examples, see :ref:`Examples
 .. _poetry_to_uv_build_system:
 
 Build system and package contents
----------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. important::
 
@@ -96,9 +567,9 @@ Build system and package contents
 
 Replace Poetry's build backend with a suitable non-Poetry build backend, and
 move package discovery and data-file rules to that build backend's
-configuration. The UV
-example omits ``[build-system]`` because the right choice depends on how the
-solution is packaged. The `Python Packaging
+configuration. The complete example uses Hatchling to illustrate one
+possible choice; select a backend that fits how your solution is packaged.
+The `Python Packaging
 User Guide's build-backend recommendations
 <https://packaging.python.org/en/latest/guides/tool-recommendations/#build-backends>`_
 and the build backend documentation are good places to compare options.
@@ -125,7 +596,7 @@ Examples include:
    * - ``uv_build``
      - Your project contains pure Python code and you want UV's native build
        backend.
-     - `UV build backend documentation
+     - `uv_build backend documentation
        <https://docs.astral.sh/uv/concepts/build-backend/>`_. It currently
        does not build native extension modules.
 
@@ -137,61 +608,82 @@ remaining metadata and make the solution UV-only first.
 .. _poetry_to_uv_project_metadata:
 
 Project metadata and version constraints
-----------------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The standard ``[project]`` table uses metadata fields defined by PEP 621.
 Preserve the fields present in your Poetry project and translate their meaning,
 not just their spelling. See the `PEP 621 specification
 <https://peps.python.org/pep-0621/>`_ for the complete metadata format.
 
-In the following table, ``section → key`` means the key is inside that TOML
-section. For example, ``[tool.poetry] → name`` means the ``name`` key under
-``[tool.poetry]``.
+Translate the Poetry tables one block at a time:
 
-.. list-table:: Common project metadata mappings
+.. list-table:: Migration of ``[tool.poetry]`` metadata
    :header-rows: 1
-   :widths: 30 30 40
+   :widths: 38 32 30
 
-   * - Poetry section → key
-     - UV section → key
+   * - Poetry field or key
+     - Destination(s) in ``pyproject.toml``
      - Purpose
-   * - ``[tool.poetry]`` → ``name``
-     - ``[project]`` → ``name``
+   * - ``name``
+     - ``[project].name``
      - Distribution name of the solution
-   * - ``[tool.poetry]`` → ``version``
-     - ``[project]`` → ``version``
+   * - ``version``
+     - ``[project].version``
      - Solution package version; this is not the Python version
-   * - ``[tool.poetry]`` → ``description``
-     - ``[project]`` → ``description``
+   * - ``description``
+     - ``[project].description``
      - Short project summary
-   * - ``[tool.poetry]`` → ``readme``
-     - ``[project]`` → ``readme``
+   * - ``readme``
+     - ``[project].readme``
      - Path to the project README
-   * - ``[tool.poetry.dependencies]`` → ``python``
-     - ``[project]`` → ``requires-python``
-     - Python versions supported by the project
-   * - ``[tool.poetry]`` → ``authors`` and ``maintainers``
-     - ``[project]`` → ``authors`` and ``maintainers``
+   * - ``authors`` and ``maintainers``
+     - ``[project].authors`` and ``[project].maintainers``
      - People or organizations responsible for the project; PEP 621 uses
        tables with ``name`` and optional ``email`` fields
-   * - ``[tool.poetry]`` → ``license``
-     - ``[project]`` → ``license``
+   * - ``license``
+     - ``[project].license``
      - License metadata; check that the new expression preserves its meaning
-   * - ``[tool.poetry]`` → ``keywords`` and ``classifiers``
-     - ``[project]`` → ``keywords`` and ``classifiers``
+   * - ``keywords`` and ``classifiers``
+     - ``[project].keywords`` and ``[project].classifiers``
      - Search terms and package index classifiers
-   * - ``[tool.poetry.urls]`` → ``homepage``, ``repository``, and
-       ``documentation``
-     - ``[project.urls]`` → named URLs
-     - Named project links
-   * - ``[tool.poetry.scripts]`` → command entries
-     - ``[project]`` → ``scripts``
-     - Command-line entry points
-   * - ``[tool.poetry.dependencies]`` → package entries
-     - ``[project]`` → ``dependencies``
+
+.. list-table:: Migration of ``[tool.poetry.dependencies]``
+   :header-rows: 1
+   :widths: 38 32 30
+
+   * - Poetry field or key
+     - Destination(s) in ``pyproject.toml``
+     - Purpose
+   * - ``python``
+     - ``[project].requires-python``
+     - Python versions supported by the project
+   * - Package entries
+     - ``[project].dependencies``
      - Runtime requirements installed with the project
-   * - ``[tool.poetry.extras]`` → extra names
-     - ``[project.optional-dependencies]`` → extra names
+
+.. list-table:: Migration of Poetry URL and script tables
+   :header-rows: 1
+   :widths: 38 32 30
+
+   * - Poetry field or key
+     - Destination(s) in ``pyproject.toml``
+     - Purpose
+   * - ``[tool.poetry.urls]``
+     - ``[project.urls]``
+     - Named project links
+   * - ``[tool.poetry.scripts]``
+     - ``[project.scripts]``
+     - Command-line entry points
+
+.. list-table:: Migration of ``[tool.poetry.extras]``
+   :header-rows: 1
+   :widths: 38 32 30
+
+   * - Poetry field or key
+     - Destination(s) in ``pyproject.toml``
+     - Purpose
+   * - Extra names in ``[tool.poetry.extras]``
+     - ``[project.optional-dependencies]``
      - Optional, user-selectable package features
 
 PEP 621 also supports ``project.gui-scripts``, ``project.entry-points``,
@@ -264,7 +756,7 @@ and `PEP 440 <https://peps.python.org/pep-0440/>`_.
 .. _poetry_to_uv_dependency_groups:
 
 Dependency groups and extras
-----------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Use ``[dependency-groups]`` for dependencies needed by development or specific
 SAF workflows. A group is a named list of requirements; it is not automatically
@@ -307,11 +799,10 @@ changing its table name alone can change how it is installed. See `PEP 735
 <https://peps.python.org/pep-0735/>`_ for the dependency-group format and the
 `UV dependency groups guide
 <https://docs.astral.sh/uv/concepts/projects/dependencies/>`_ for how UV
-installs them. For a complete Poetry-to-UV conversion of an optional test group
-with a local editable dependency, see :ref:`poetry_to_uv_test_group_example`.
+installs them.
 
 Poetry dependency options
-^^^^^^^^^^^^^^^^^^^^^^^^^
+"""""""""""""""""""""""""
 
 Poetry dependency tables can include options in addition to a version. In UV,
 most dependency requirements are strings using the standard PEP 508 format:
@@ -383,7 +874,7 @@ bracket pair:
 .. _poetry_to_uv_uv_settings:
 
 UV configuration: ``[tool.uv]``
--------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The ``[tool.uv]`` table contains UV-specific settings. It is separate from the
 standard ``[project]`` metadata, and most projects need only a few of these
@@ -461,158 +952,14 @@ complete setting list and current syntax, see the `UV project settings
 reference <https://docs.astral.sh/uv/reference/settings/>`_ and the
 `UV package indexes guide <https://docs.astral.sh/uv/concepts/indexes/>`_.
 
-.. _poetry_to_uv_examples:
-
-Examples
-========
-
-These examples illustrate common Poetry-to-UV conversions. They are starting
-points, not complete configurations to copy unchanged. Preserve the actual
-project's metadata, dependency constraints, sources, and package configuration.
-
-Project files
---------------------------
-
-The two examples show the same small project before and after migration. The UV
-example omits ``[build-system]`` because the replacement build backend depends
-on the solution's packaging needs.
-
-.. grid:: 2
-   :gutter: 3
-
-   .. grid-item-card:: Poetry
-
-      .. code-block:: toml
-
-         [tool.poetry]
-         name = "my-solution"
-         version = "0.1.0"
-         description = "An example SAF solution"
-         authors = ["Example Author <author@example.com>"]
-
-         [tool.poetry.dependencies]
-         python = ">=3.10,<3.14"
-         ansys-saf-glow-engine = "^1.0"
-
-         [tool.poetry.group.ui]
-         optional = true
-
-         [tool.poetry.group.ui.dependencies]
-         dash = "^2.0"
-
-         [tool.poetry.group.tests]
-         optional = true
-
-         [tool.poetry.group.tests.dependencies]
-         pytest = "^8.0"
-
-         [build-system]
-         requires = ["poetry-core>=1.0.0"]
-         build-backend = "poetry.core.masonry.api"
-
-   .. grid-item-card:: UV
-
-      .. code-block:: toml
-
-         [project]
-         name = "my-solution"
-         version = "0.1.0"
-         description = "An example SAF solution"
-         requires-python = ">=3.10,<3.14"
-         dependencies = [
-             "ansys-saf-glow-engine>=1.0,<2.0",
-         ]
-
-         [dependency-groups]
-         ui = [
-             "dash>=2.0,<3.0",
-         ]
-         tests = [
-             "pytest>=8.0,<9.0",
-         ]
-
-         [tool.uv]
-
-.. _poetry_to_uv_test_group_example:
-
-Optional test group with a local editable dependency
-----------------------------------------------------
-
-In this example, the Poetry ``tests`` group is optional and contains
-``ansys-saf-cli`` as an editable local dependency. In UV, list the package as a
-requirement in ``[dependency-groups]`` and define its local source separately in
-``[tool.uv.sources]``. The source mapping is keyed by the package's distribution
-name.
-
-.. grid:: 2
-   :gutter: 3
-
-   .. grid-item-card:: Poetry
-
-      .. code-block:: toml
-
-         [tool.poetry.group.tests]
-         optional = true
-
-         [tool.poetry.group.tests.dependencies]
-         ansys-saf-cli = { path = "../packages/saf-cli", develop = true }
-         coverage = "^7.2.6"
-         filelock = "^4.2.1"
-         mock = "^4.0.3"
-         pytest = "^9.1.1"
-         pytest-cov = "^7.0.0"
-         pytest-html = "^4.1.1"
-         pytest-md = "^0.2.0"
-         pytest-dependency = "^0.5.1"
-         pytest-flakes = "^4.0.5"
-         pytest-pycodestyle = "^2.5.0"
-         pytest-pythonpath = "^0.7"
-         pytest-xdist = "^3.0.2"
-         pytest-mock = "^3.12"
-         selenium = "^4.0"
-
-   .. grid-item-card:: UV
-
-      .. code-block:: toml
-
-         [dependency-groups]
-         tests = [
-             "ansys-saf-cli",
-             "coverage>=7.2.6,<8.0.0",
-             "filelock>=4.2.1,<5.0.0",
-             "mock>=4.0.3,<5.0.0",
-             "pytest>=9.1.1,<10.0.0",
-             "pytest-cov>=7.0.0,<8.0.0",
-             "pytest-html>=4.1.1,<5.0.0",
-             "pytest-md>=0.2.0,<0.3.0",
-             "pytest-dependency>=0.5.1,<0.6.0",
-             "pytest-flakes>=4.0.5,<5.0.0",
-             "pytest-pycodestyle>=2.5.0,<3.0.0",
-             "pytest-pythonpath>=0.7,<0.8.0",
-             "pytest-xdist>=3.0.2,<4.0.0",
-             "pytest-mock>=3.12,<4.0.0",
-             "selenium>=4.0,<5.0",
-         ]
-
-         [tool.uv.sources]
-         ansys-saf-cli = { path = "../packages/saf-cli", editable = true }
-
-There is no ``optional = true`` field for a UV dependency group. A group named
-``tests`` is not installed unless it is selected (or configured as a default).
-For example, ``uv sync --group tests`` selects it. The source path is relative
-to the directory containing ``pyproject.toml``; keep the Poetry path only if it
-resolves to the intended package from that directory. See the `UV sources
-documentation <https://docs.astral.sh/uv/concepts/projects/dependencies/#dependency-sources>`_
-for other local, Git, and index source forms.
-
 .. _poetry_to_uv_lockfile:
 
 Step 3: Switch the active project to UV and create the lockfile
-===============================================================
+---------------------------------------------------------------
 
 Before running SAF commands on the migrated project, make the solution root
-UV-only. Use the backup from Step 1 for comparison; do not leave backup files
-inside the solution.
+UV-only. Use the backup made before migration for comparison; do not leave
+backup files inside the solution.
 
 .. important::
 
@@ -621,7 +968,7 @@ inside the solution.
    the metadata and lockfile switch first.
 
 Lockfile layout
----------------
+^^^^^^^^^^^^^^^
 
 A lockfile records resolved dependency versions and sources. It is generated
 by its package manager; it is not just a renamed copy of the project
@@ -669,7 +1016,7 @@ prove that the old and new environments are equivalent. Resolve unexpected
 changes before proceeding rather than accepting them without review.
 
 Step 4: Verify the UV environment
-=================================
+---------------------------------
 
 Install the solution and its intended dependency groups in a clean environment.
 For example:
@@ -699,7 +1046,7 @@ The resulting wheel and source distribution are written to ``dist/``. Check
 that they include the modules and non-Python files your solution requires.
 
 Step 5: Update SAF and project workflows
-========================================
+----------------------------------------
 
 #. Replace Poetry commands in context rather than doing a global text
    substitution. The following common commands are starting points:
@@ -725,11 +1072,12 @@ Step 5: Update SAF and project workflows
       * - ``poetry add --group ui <package>``
         - ``uv add --group ui <package>``
 
-   These commands are not always exact equivalents. In particular, choose UV
-   groups to match the groups installed by the Poetry command. The
-   ``--no-default-groups`` option prevents UV's configured default groups from
-   being added implicitly in the second example. Review lock, publish, and
-   source-management commands separately.
+   These are starting points, not exact command substitutions.
+   ``poetry install --with ui,tests`` also installs Poetry's non-optional groups.
+   The UV example suppresses UV's default groups and adds only ``ui`` and
+   ``tests`` (in addition to the project's main dependencies). If Poetry installs
+   other groups by default, add them to the UV command or configure the same UV
+   defaults. Review lock, publish, and source-management commands separately.
 #. If present, update CI, scripts, containers, and onboarding instructions to
    use the selected UV workflows. Ensure they install the same dependency
    groups and use the same Python versions as before.
@@ -766,7 +1114,7 @@ If you distribute an offline installer, test that path as well:
    saf build <solution-name> --offline-package
 
 Step 6: Complete the migration
-==============================
+------------------------------
 
 Before considering the migration complete, verify that:
 

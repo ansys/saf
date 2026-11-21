@@ -15,7 +15,8 @@
 # limitations under the License.
 
 import argparse
-from collections.abc import Callable, Sequence
+from collections.abc import Callable, Iterator, Sequence
+from contextlib import contextmanager
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 import json
@@ -72,6 +73,43 @@ class LockFileUpdate:
     lock_file: Path
     package_updates: list[PackageUpdate] = field(default_factory=list)
     error: str | None = None
+
+
+@contextmanager
+def manager_pyproject(project_dir: Path, manager: str) -> Iterator[None]:
+    """Temporarily expose ``pyproject.<manager>.toml`` as ``pyproject.toml``.
+
+    Projects that support both Poetry and uv keep one project file per manager, but both tools only
+    read ``pyproject.toml``. The original ``pyproject.toml`` (if any) is restored on exit.
+    """
+    manager_file = project_dir / f"pyproject.{manager}.toml"
+    pyproject = project_dir / "pyproject.toml"
+    if not manager_file.is_file():
+        yield
+        return
+
+    original = pyproject.read_bytes() if pyproject.exists() else None
+    pyproject.write_bytes(manager_file.read_bytes())
+    try:
+        yield
+    finally:
+        if original is None:
+            pyproject.unlink(missing_ok=True)
+        else:
+            pyproject.write_bytes(original)
+
+
+def _with_manager_pyproject(
+    run: Callable[..., subprocess.CompletedProcess[str]],
+    manager: str,
+) -> Callable[..., subprocess.CompletedProcess[str]]:
+    """Wrap a subprocess runner so it executes with the manager-specific pyproject file in place."""
+
+    def wrapped(command: Sequence[str], *args: object, cwd: Path, **kwargs: object) -> subprocess.CompletedProcess[str]:
+        with manager_pyproject(Path(cwd), manager):
+            return run(command, *args, cwd=cwd, **kwargs)
+
+    return wrapped
 
 
 def parse_packages(packages: str) -> list[str]:
@@ -204,11 +242,13 @@ def update_poetry_locks(
     packages: Sequence[str],
     *,
     one_by_one: bool = False,
+    uv_options: Sequence[str] = (),
     run: Callable[..., subprocess.CompletedProcess[str]] = subprocess.run,
 ) -> list[LockFileUpdate]:
     """Run Poetry's lock-only package update in each project directory."""
     results: list[LockFileUpdate] = []
-    base_command = ["uvx", "--with", "poetry==2.5.1", "poetry", "update"]
+    run = _with_manager_pyproject(run, "poetry")
+    base_command = ["uvx", *uv_options, "--with", "poetry==2.5.1", "poetry", "update"]
 
     for project_dir in project_dirs:
         lock_file = project_dir / "poetry.lock"
@@ -273,10 +313,12 @@ def update_uv_locks(
     packages: Sequence[str],
     *,
     one_by_one: bool = False,
+    uv_options: Sequence[str] = (),
     run: Callable[..., subprocess.CompletedProcess[str]] = subprocess.run,
 ) -> list[LockFileUpdate]:
     """Run uv's lock-only package update in each project directory."""
     results: list[LockFileUpdate] = []
+    run = _with_manager_pyproject(run, "uv")
 
     for project_dir in project_dirs:
         lock_file = project_dir / "uv.lock"
@@ -287,7 +329,7 @@ def update_uv_locks(
 
         if one_by_one:
             for package in packages:
-                command = ["uv", "lock", "--upgrade-package", package]
+                command = ["uv", "lock", *uv_options, "--upgrade-package", package]
                 error = None
                 try:
                     run(command, cwd=project_dir, check=True, capture_output=True, text=True)
@@ -308,7 +350,7 @@ def update_uv_locks(
                     )
                 )
         else:
-            command = ["uv", "lock"]
+            command = ["uv", "lock", *uv_options]
             for package in packages:
                 command += ["--upgrade-package", package]
             error = None
@@ -510,6 +552,12 @@ def _build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="Update npm package-lock.json files instead of Python lock files.",
     )
+    parser.add_argument(
+        "--system-certs",
+        action="store_true",
+        help="Pass --system-certs to uv/uvx so the operating system's TLS certificate store is used "
+        "(needed behind corporate proxies with custom CA certificates).",
+    )
     return parser
 
 
@@ -537,11 +585,14 @@ def main(argv: Sequence[str] | None = None) -> int:
         if not poetry_project_dirs and not uv_project_dirs:
             print(f"No poetry.lock or uv.lock files found below {args.root_dir}.")
             return 0
+        uv_options = ["--system-certs"] if args.system_certs else []
         results.extend(
-            update_poetry_locks(poetry_project_dirs, packages, one_by_one=args.one_by_one)
+            update_poetry_locks(
+                poetry_project_dirs, packages, one_by_one=args.one_by_one, uv_options=uv_options
+            )
         )
         results.extend(
-            update_uv_locks(uv_project_dirs, packages, one_by_one=args.one_by_one)
+            update_uv_locks(uv_project_dirs, packages, one_by_one=args.one_by_one, uv_options=uv_options)
         )
 
     # Generate and write report

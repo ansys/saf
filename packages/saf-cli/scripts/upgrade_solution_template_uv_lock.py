@@ -18,8 +18,9 @@
 # requires-python = ">=3.11"
 # dependencies = [
 #     "ansys-saf-cli",
-#     "poetry==2.5.1",
+#     "packaging>=24.2",
 #     "python-dotenv>=1.0.0,<2",
+#     "tomlkit>=0.14.0,<1.0.0",
 # ]
 #
 # [tool.uv.sources]
@@ -27,10 +28,12 @@
 # ///
 
 import argparse
+from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import UTC, datetime
 import html
 import json
+import operator
 import os
 from pathlib import Path
 import re
@@ -42,7 +45,9 @@ import tomllib
 from typing import cast
 
 from dotenv import dotenv_values
-from poetry.core.constraints.version import Version, parse_constraint  # pyright: ignore[reportMissingImports]
+from packaging.requirements import Requirement
+from packaging.version import Version
+import tomlkit
 
 from ansys.saf.cli._config.const import SOLUTION_TEMPLATE_PATH, UI_FRAMEWORKS
 
@@ -51,7 +56,17 @@ REPOSITORY_DIR = CLI_DIR.parent.parent
 TEMPLATE_DIR = CLI_DIR / "src" / "ansys" / "saf" / "cli" / "_solutions" / "templates" / "solution"
 LOCK_DIR = TEMPLATE_DIR / "{{cookiecutter.__solution_name}}" / "lock_files"
 VARIANTS = {"dash": "dash", "awc-dash": "awc", "none": "no_ui"}
-POETRY_COMMAND = [sys.executable, "-m", "poetry"]
+LOCK_NAME = "uv.lock"
+PKG_NAME_PLACEHOLDER = "{{ cookiecutter.__pkg_name }}"
+VERSION_PLACEHOLDER = "{{ cookiecutter.__version }}"
+OPERATORS: dict[str, Callable[[Version, Version], bool]] = {
+    ">=": operator.ge,
+    "<=": operator.le,
+    "==": operator.eq,
+    "!=": operator.ne,
+    ">": operator.gt,
+    "<": operator.lt,
+}
 
 
 def normalize_name(name: str) -> str:
@@ -116,7 +131,7 @@ def fetch_alerts(repository: str) -> list[Alert]:
                 fields.get("state") != "open"
                 or package.get("ecosystem") != "pip"
                 or not manifest.startswith(prefix)
-                or not manifest.endswith("/poetry.lock")
+                or not manifest.endswith(f"/{LOCK_NAME}")
             ):
                 continue
             advisory = object_fields(fields.get("security_advisory"))
@@ -145,24 +160,60 @@ def locked_versions(lockfile: Path) -> dict[str, list[str]]:
         lock = tomllib.load(stream)
     versions: dict[str, list[str]] = {}
     for package in lock["package"]:
-        versions.setdefault(normalize_name(package["name"]), []).append(package["version"])
+        if "version" in package:
+            versions.setdefault(normalize_name(package["name"]), []).append(package["version"])
     return versions
 
 
+def parse_affected_range(affected: str) -> list[list[tuple[Callable[[Version, Version], bool], Version]]]:
+    """Parse a Dependabot vulnerable range such as ``>= 1.0, < 2.0 || >= 3.0, < 3.2``.
+
+    Comparisons are made directly on versions rather than through PEP 440 specifiers, which would not treat
+    pre-releases of the upper bound (for example ``2.0rc1`` for ``< 2.0``) as affected.
+    """
+    alternatives: list[list[tuple[Callable[[Version, Version], bool], Version]]] = []
+    for alternative in affected.split("||"):
+        clauses: list[tuple[Callable[[Version, Version], bool], Version]] = []
+        for clause in alternative.split(","):
+            match = re.fullmatch(r"\s*(>=|<=|==|!=|=|>|<)\s*(\S+)\s*", clause)
+            if match is None:
+                raise ValueError(f"Unsupported vulnerable version range: {affected!r}")
+            clauses.append((OPERATORS["==" if match[1] == "=" else match[1]], Version(match[2])))
+        alternatives.append(clauses)
+    return alternatives
+
+
 def is_affected(alert: Alert, versions: list[str]) -> bool:
-    constraint = parse_constraint(alert.affected)
-    return any(constraint.allows(Version.parse(version)) for version in versions)
+    alternatives = parse_affected_range(alert.affected)
+    return any(
+        all(compare(Version(version), bound) for compare, bound in clauses)
+        for version in versions
+        for clauses in alternatives
+    )
 
 
 def direct_dependencies(manifest: Path) -> set[str]:
     with manifest.open("rb") as stream:
-        project = tomllib.load(stream)
-    poetry = project["tool"]["poetry"]
-    names = set(poetry.get("dependencies", {}))
-    for group in poetry.get("group", {}).values():
-        names.update(group.get("dependencies", {}))
-    names.update(poetry.get("dev-dependencies", {}))
-    return {normalize_name(name) for name in names if name != "python"}
+        pyproject = tomllib.load(stream)
+    project = pyproject.get("project", {})
+    requirements: list[str] = list(project.get("dependencies", []))
+    for extra in project.get("optional-dependencies", {}).values():
+        requirements.extend(extra)
+    for group in pyproject.get("dependency-groups", {}).values():
+        # Entries can also be {include-group = "..."} tables, which only reference other groups.
+        requirements.extend(entry for entry in group if isinstance(entry, str))
+    return {normalize_name(Requirement(requirement).name) for requirement in requirements}
+
+
+def to_template_lock(lockfile: Path) -> str:
+    """Return the lockfile content with the solution's own package name and version templated."""
+    lock = tomlkit.parse(lockfile.read_text(encoding="utf-8"))
+    solution_packages = [package for package in lock["package"] if package.get("source") == {"editable": "."}]  # pyright: ignore[reportAttributeAccessIssue, reportGeneralTypeIssues]
+    if len(solution_packages) != 1:
+        raise RuntimeError(f"Expected exactly one editable solution package in {lockfile}.")
+    solution_packages[0]["name"] = PKG_NAME_PLACEHOLDER
+    solution_packages[0]["version"] = VERSION_PLACEHOLDER
+    return tomlkit.dumps(lock)
 
 
 def generate_solution(directory: Path, framework: str) -> Path:
@@ -186,10 +237,9 @@ def generate_solution(directory: Path, framework: str) -> Path:
         check=True,
     )
     solution = directory / name
-    source = LOCK_DIR / VARIANTS[framework] / "poetry.lock"
-    shutil.copyfile(source, solution / "poetry.lock")
-    if (solution / "poetry.lock").read_bytes() != source.read_bytes():
-        raise RuntimeError(f"Generated lockfile differs from {source}.")
+    # The generated solution starts from the template lockfile, copied by the post-generation hook.
+    if not (solution / LOCK_NAME).is_file():
+        raise RuntimeError(f"Generated solution {name} has no {LOCK_NAME}.")
     return solution
 
 
@@ -201,10 +251,13 @@ def solution_environment(solution: Path) -> dict[str, str]:
     return env
 
 
-def run_poetry(solution: Path, *arguments: str) -> None:
-    print(f"{solution.name}: poetry {' '.join(arguments)}", flush=True)
+def run_uv(solution: Path, *arguments: str) -> None:
+    uv = shutil.which("uv")
+    if uv is None:
+        raise RuntimeError("uv is missing. Install uv from https://docs.astral.sh/uv/.")
+    print(f"{solution.name}: uv {' '.join(arguments)}", flush=True)
     subprocess.run(
-        [*POETRY_COMMAND, *arguments],
+        [uv, *arguments],
         cwd=solution,
         env=solution_environment(solution),
         check=True,
@@ -220,7 +273,7 @@ def plan_updates(
     for alert in alerts:
         manifest = Path(alert.manifest)
         variant = manifest.parent.name
-        expected = LOCK_DIR / variant / "poetry.lock"
+        expected = LOCK_DIR / variant / LOCK_NAME
         if alert.manifest != expected.relative_to(REPOSITORY_DIR).as_posix() or variant not in solutions:
             statuses[alert.number] = "BLOCKED: unsupported lockfile variant"
             continue
@@ -255,7 +308,7 @@ def report_alerts(
     if not alerts:
         lines.extend(["No matching open Dependabot alerts in the solution-template lockfiles.", ""])
     if any(status.startswith("FAILED:") for status in statuses.values()):
-        lines.extend(["No lockfiles copied: Poetry resolution or validation failed.", ""])
+        lines.extend(["No lockfiles copied: uv resolution or validation failed.", ""])
     elif any(status.startswith("UNRESOLVED") for status in statuses.values()):
         lines.extend(["No staged lockfiles will be copied: targeted alerts remain vulnerable.", ""])
     elif staged:
@@ -305,11 +358,11 @@ def stage_lockfiles(solutions: dict[str, Path], updates: dict[str, set[str]]) ->
     staged: dict[str, Path] = {}
     for variant, selected in updates.items():
         solution = solutions[variant]
-        run_poetry(solution, "lock")
+        run_uv(solution, "lock")
         if selected:
-            run_poetry(solution, "update", "--lock", *sorted(selected))
-        run_poetry(solution, "check", "--lock")
-        staged[variant] = solution / "poetry.lock"
+            run_uv(solution, "lock", *(arg for package in sorted(selected) for arg in ("--upgrade-package", package)))
+        run_uv(solution, "lock", "--check")
+        staged[variant] = solution / LOCK_NAME
     return staged
 
 
@@ -334,14 +387,14 @@ def update_lockfiles(packages: list[str], dependabot: bool, repository: str, dry
             updates = {variant: set(packages) for variant in solutions}
         if dry_run:
             report_alerts(alerts, statuses, {}, dry_run=True)
-            print("\nDry run: no Poetry updates or lockfile writes performed.")
+            print("\nDry run: no uv updates or lockfile writes performed.")
             return int(any(status.startswith("BLOCKED") for status in statuses.values()))
 
         try:
             staged = stage_lockfiles(solutions, updates)
         except subprocess.CalledProcessError as error:
             if dependabot:
-                failure_status = f"FAILED: Poetry command exited with code {error.returncode}"
+                failure_status = f"FAILED: uv command exited with code {error.returncode}"
                 statuses = {
                     number: failure_status if status == "PLANNED" else status for number, status in statuses.items()
                 }
@@ -353,16 +406,18 @@ def update_lockfiles(packages: list[str], dependabot: bool, repository: str, dry
         if not verified:
             print("\nNo lockfiles copied: targeted alerts remain vulnerable.")
             return 1
-        for variant, staged_lock in staged.items():
-            destination = LOCK_DIR / variant / "poetry.lock"
+        # Render every template first so that an invalid lockfile does not leave a partial update behind.
+        rendered = {variant: to_template_lock(staged_lock) for variant, staged_lock in staged.items()}
+        for variant, content in rendered.items():
+            destination = LOCK_DIR / variant / LOCK_NAME
             print(f"Copying validated lockfile to {destination}")
-            shutil.copyfile(staged_lock, destination)
+            destination.write_text(content, encoding="utf-8", newline="\n")
         return int(any(status.startswith("BLOCKED") for status in statuses.values()))
 
 
 def main() -> int:
     parser = argparse.ArgumentParser(
-        description="Upgrade poetry.lock files for solution templates",
+        description="Upgrade uv.lock files for solution templates",
     )
     parser.add_argument(
         "-p",

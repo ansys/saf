@@ -22,10 +22,12 @@ import subprocess
 import sys
 
 import httpx2
+from packaging.requirements import Requirement
 import tomlkit
 
 from ansys.saf.cli._config.const import DEFAULT_SOLUTION_NAME, DEFAULT_SOLUTION_NAMESPACE, SOLUTION_TEMPLATE_PATH
 from ansys.saf.cli._database.models import SolutionRegistry
+from ansys.saf.cli._solutions.backend_detection import SolutionBackend, parse_solution_backend
 from ansys.saf.cli._utilities.conversion import namespace_to_path
 from ansys.saf.testing.common import find_exec_in_venv
 
@@ -44,11 +46,11 @@ def _get_expected_scaffolded_solution_files(
         if x.is_file():
             expected_scaffolded_files.append(x.relative_to(solution_template_dir).as_posix())
 
-    # replace lock_files with a single one
+    # replace lock_files with a single UV lockfile
     expected_scaffolded_files = [
         file_str for file_str in expected_scaffolded_files if not file_str.startswith("lock_files")
     ]
-    expected_scaffolded_files.append("poetry.lock")
+    expected_scaffolded_files.append("uv.lock")
 
     # filter ui files if needed
     if ui_framework == "none":
@@ -119,7 +121,7 @@ EXPECTED_SOLUTION_TEMPLATE_STRUCTURE = [
     ".pre-commit-config.yaml",
     "AGENTS.md",
     "CHANGELOG.md",
-    "poetry.lock",
+    "uv.lock",
     "pyproject.toml",
     "README.md",
     # .github
@@ -251,7 +253,7 @@ def check_scaffolded_solution_structure(
     actual_files = {
         file.relative_to(scaffolded_solution_dir).as_posix()
         for file in scaffolded_solution_dir.rglob("*")
-        if file.is_file()
+        if file.is_file() and "__pycache__" not in file.parts and file.suffix != ".pyc"
     }
     assert expected_files == actual_files
 
@@ -291,16 +293,26 @@ def _normalize_package_name(string: str) -> str:
 
 def _get_expected_packages(solution_path: Path, dependency_groups: list[str]) -> dict[str, list[dict[str, str]]]:
     pyproject_data = tomlkit.loads((solution_path / "pyproject.toml").read_bytes()).unwrap()
-    lock_data = tomlkit.loads((solution_path / "poetry.lock").read_bytes()).unwrap()
-
-    dependencies = [
-        dep
-        for dep, value in dict(pyproject_data["tool"]["poetry"]["dependencies"]).items()
-        if dep != "python" and (not isinstance(value, dict) or not value.get("optional", False))  # type: ignore[reportUnknownMemberType]
-    ]
-
-    for dependency_group in dependency_groups:
-        dependencies += list(pyproject_data["tool"]["poetry"]["group"][dependency_group]["dependencies"])
+    backend_info = parse_solution_backend(solution_path)
+    lock_data = tomlkit.loads(backend_info.lockfile_path.read_bytes()).unwrap()
+    if backend_info.backend is SolutionBackend.UV:
+        requirements = list(pyproject_data["project"].get("dependencies", []))
+        for dependency_group in dependency_groups:
+            requirements += pyproject_data["dependency-groups"][dependency_group]
+        parsed_requirements = [Requirement(requirement) for requirement in requirements]
+        dependencies = [
+            requirement.name
+            for requirement in parsed_requirements
+            if requirement.marker is None or requirement.marker.evaluate()
+        ]
+    else:
+        dependencies = [
+            dep
+            for dep, value in dict(pyproject_data["tool"]["poetry"]["dependencies"]).items()
+            if dep != "python" and (not isinstance(value, dict) or not value.get("optional", False))  # type: ignore[reportUnknownMemberType]
+        ]
+        for dependency_group in dependency_groups:
+            dependencies += list(pyproject_data["tool"]["poetry"]["group"][dependency_group]["dependencies"])
 
     expected_installed_packages: dict[str, list[dict[str, str]]] = {}
     for dependency in dependencies:
@@ -338,8 +350,18 @@ def _check_solution_installed_packages(
     installed_groups: list[str],
     not_installed_groups: list[str] | None = None,
 ) -> None:
-    pip_executable_path = find_exec_in_venv(solution_path, "pip")
-    cmd = [pip_executable_path, "list", "--format", "json"]
+    if parse_solution_backend(solution_path).backend is SolutionBackend.UV:
+        # UV environments do not require pip; inspect installed distribution metadata directly.
+        cmd = [
+            find_exec_in_venv(solution_path, "python"),
+            "-c",
+            "import importlib.metadata, json; "
+            "print(json.dumps([{'name': d.metadata['Name'], 'version': d.version} "
+            "for d in importlib.metadata.distributions()]))",
+        ]
+    else:
+        pip_executable_path = find_exec_in_venv(solution_path, "pip")
+        cmd = [pip_executable_path, "list", "--format", "json"]
     installed_packages = subprocess.check_output(cmd, text=True)
     installed_packages = json.loads(_normalize_package_name(installed_packages.replace("\\", "\\\\")))
     expected_installed_packages = _get_expected_packages(solution_path, installed_groups)
@@ -416,16 +438,23 @@ def verify_installation(
     skip_preload: bool = False,
     solution_name: str | None = None,
 ) -> None:
-    _check_solution_executables(solution_path)
-    _check_poetry_structure(solution_path, check_poetry_cache)
-    _check_poetry_version(solution_path)
+    backend = parse_solution_backend(solution_path).backend
+    if backend is SolutionBackend.POETRY:
+        _check_solution_executables(solution_path)
+        _check_poetry_structure(solution_path, check_poetry_cache)
+        _check_poetry_version(solution_path)
+        _check_poetry_plugin_export_is_installed(solution_path)
+    else:
+        find_exec_in_venv(solution_path, "python")
+        assert (solution_path / "uv.lock").is_file()
+        assert not (solution_path / ".poetry").exists()
+        assert not (solution_path / "poetry.lock").exists()
     _check_saf_cli_version(solution_path)
     _check_solution_installed_packages(
         solution_path,
         installed_groups=installed_groups or ["desktop", "ui", "doc", "build"],
         not_installed_groups=not_installed_groups,
     )
-    _check_poetry_plugin_export_is_installed(solution_path)
     if not skip_preload:
         _check_solution_module_preload_is_executed(solution_path, solution_namespace, solution_name)
 
@@ -433,7 +462,11 @@ def verify_installation(
 ################################################ Solution Build ################################################
 
 
-def _get_common_built_solution_files(solution_module_name: str, solution_package_name: str) -> list[Path]:
+def _get_common_built_solution_files(
+    solution_module_name: str,
+    solution_package_name: str,
+    backend: SolutionBackend,
+) -> list[Path]:
     dist_dir = Path("dist")
     platform_suffix = ".ico" if platform.system() == "Windows" else ".png"
     expected_solution_files = [
@@ -446,11 +479,25 @@ def _get_common_built_solution_files(solution_module_name: str, solution_package
         dist_dir / "solution" / "assets" / f"shortcut{platform_suffix}",
         dist_dir / "solution" / "assets" / "installer_ui_logo.png",
         dist_dir / "solution" / "definitions" / solution_module_name / ".env",
-        dist_dir / "solution" / "definitions" / solution_module_name / "poetry.lock",
         dist_dir / "solution" / "definitions" / solution_module_name / "pyproject.toml",
         dist_dir / "solution" / "definitions" / solution_module_name / "tools" / "pip_requirements.txt",
-        dist_dir / "solution" / "definitions" / solution_module_name / "tools" / "poetry_requirements.txt",
     ]
+    definitions_dir = dist_dir / "solution" / "definitions" / solution_module_name
+    if backend is SolutionBackend.POETRY:
+        expected_solution_files.extend(
+            [
+                definitions_dir / "poetry.lock",
+                definitions_dir / "tools" / "poetry_requirements.txt",
+            ],
+        )
+    else:
+        expected_solution_files.extend(
+            [
+                definitions_dir / "uv.lock",
+                definitions_dir / "uv-requirements.txt",
+                definitions_dir / "tools" / ("uv.exe" if platform.system() == "Windows" else "uv"),
+            ],
+        )
     return expected_solution_files
 
 
@@ -491,11 +538,16 @@ def check_built_solution_files(
     solution_module_name = solution_module_path.name
 
     pyproject_data = tomlkit.loads((solution.root_dir / "pyproject.toml").read_bytes()).unwrap()
-    solution_package_name = pyproject_data["tool"]["poetry"]["name"].replace("-", "_")
+    backend = parse_solution_backend(solution.root_dir).backend
+    project_metadata = (
+        pyproject_data["tool"]["poetry"] if backend is SolutionBackend.POETRY else pyproject_data["project"]
+    )
+    solution_package_name = project_metadata["name"].replace("-", "_")
 
-    expected_files = _get_common_built_solution_files(solution_module_name, solution_package_name)
+    expected_files = _get_common_built_solution_files(solution_module_name, solution_package_name, backend)
     assert all((solution.root_dir / path).is_file() for path in expected_files)
-    wheels_dir = solution.root_dir / "dist" / "solution" / "definitions" / solution_module_name
+    definitions_folder = solution.root_dir / "dist" / "solution" / "definitions" / solution_module_name
+    wheels_dir = definitions_folder if backend is SolutionBackend.POETRY else definitions_folder / "wheelhouse"
     private_wheels = list(wheels_dir.glob("ansys_*.whl"))
     assert bool(private_wheels) == expect_private_wheels
     third_party_dir = solution.root_dir / "dist" / "solution" / "third_party"

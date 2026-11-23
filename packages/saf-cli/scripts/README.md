@@ -17,7 +17,7 @@ limitations under the License.
 
 # Solution-template lockfile maintenance
 
-[upgrade_solution_template_poetry_lock.py](upgrade_solution_template_poetry_lock.py)
+[upgrade_solution_template_uv_lock.py](upgrade_solution_template_uv_lock.py)
 runs locally with `uv`.
 
 ## Prerequisites
@@ -33,28 +33,28 @@ alert lists. Configure private registry credentials locally, never in source.
 From the repository root on Windows, preview open alerts and planned updates:
 
 ```powershell
-uv run --script packages\saf-cli\scripts\upgrade_solution_template_poetry_lock.py --dependabot --dry-run
+uv run --script packages\saf-cli\scripts\upgrade_solution_template_uv_lock.py --dependabot --dry-run
 ```
 
 Apply targeted transitive updates for those alerts:
 
 ```powershell
-uv run --script packages\saf-cli\scripts\upgrade_solution_template_poetry_lock.py --dependabot
+uv run --script packages\saf-cli\scripts\upgrade_solution_template_uv_lock.py --dependabot
 ```
 
 Restrict alert processing to a particular package:
 
 ```powershell
-uv run --script packages\saf-cli\scripts\upgrade_solution_template_poetry_lock.py --dependabot --packages nbconvert
+uv run --script packages\saf-cli\scripts\upgrade_solution_template_uv_lock.py --dependabot --packages nbconvert
 ```
 
 The existing manual mode is also supported:
 
 ```powershell
-uv run --script packages\saf-cli\scripts\upgrade_solution_template_poetry_lock.py --packages nbconvert
+uv run --script packages\saf-cli\scripts\upgrade_solution_template_uv_lock.py --packages nbconvert
 ```
 
-From `packages\saf-cli`, use `scripts\upgrade_solution_template_poetry_lock.py`
+From `packages\saf-cli`, use `scripts\upgrade_solution_template_uv_lock.py`
 instead. Use native path separators on other operating systems.
 `--repository owner/repo` selects an alternative GitHub repository for alerts.
 
@@ -65,19 +65,22 @@ instead. Use native path separators on other operating systems.
 - Uses current-checkout templates through an editable local CLI dependency.
 - In Dependabot mode, skips already-safe packages and reports direct dependencies,
   unsupported variants, and advisories without a patched version as blocked.
-  All Poetry dependency groups are considered when identifying direct dependencies.
-- Targets eligible packages per UI variant, using `poetry update --lock`, and
+  All `[project]` dependencies, optional dependencies, and `[dependency-groups]`
+  are considered when identifying direct dependencies.
+- Targets eligible packages per UI variant, using `uv lock --upgrade-package`, and
   checks every locked version against each advisory's vulnerable version range.
 - Validates staged lockfiles in temporary generated solutions with
-  `poetry check --lock` before copying them to the repository. No solution
+  `uv lock --check` before copying them to the repository. No solution
   dependencies are installed. Temporary solutions are cleaned up automatically.
+  The solution's own package name and version are restored to their cookiecutter
+  placeholders when a lockfile is copied back.
 - Does not copy any staged lockfiles if a command fails or a targeted alert is
   still vulnerable. Blocked alerts are reported with a nonzero exit status;
   independent eligible updates can still be saved when validation succeeds.
 - Saves alert URLs, advisories, before/after versions, and outcomes to
   `dist/solution-template-dependabot-report.md` at the repository root, in UTF-8.
   Each Dependabot inventory run that successfully fetches alerts replaces the
-  previous report, including dry runs, runs with no matching alerts, and Poetry
+  previous report, including dry runs, runs with no matching alerts, and uv
   resolution or validation failures. Failed remediation statuses are recorded;
   repository lockfiles remain unchanged on command failure. Alert retrieval
   failures do not replace the report. The terminal shows the report path,
@@ -85,7 +88,7 @@ instead. Use native path separators on other operating systems.
   open until the default branch is updated and rescanned.
 
 Dry runs generate temporary manifests to classify dependencies but do not run
-Poetry or write repository lockfiles; they still save the Markdown report.
+uv or write repository lockfiles; they still save the Markdown report.
 Review `git diff` before committing; the
 script does not commit, push, dismiss alerts, or open pull requests.
 
@@ -94,12 +97,12 @@ script does not commit, push, dismiss alerts, or open pull requests.
 From the repository root:
 
 ```powershell
-uv run --script packages\saf-cli\scripts\test_upgrade_solution_template_poetry_lock.py
+uv run --script packages\saf-cli\scripts\test_upgrade_solution_template_uv_lock.py
 ```
 
 The test file uses pytest fixtures and `monkeypatch` and declares its own
 dependencies in inline script metadata. Extra pytest options such as `-q` or
 `-k dry_run` can be passed after the script path. From
-`packages\saf-cli`, use `scripts\test_upgrade_solution_template_poetry_lock.py`.
+`packages\saf-cli`, use `scripts\test_upgrade_solution_template_uv_lock.py`.
 These tests mock GitHub and dependency resolution; they do not require alert
 permissions or modify repository lockfiles.

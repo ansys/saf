@@ -16,6 +16,7 @@
 
 from pathlib import Path
 import re
+import shutil
 import tempfile
 
 import click
@@ -23,6 +24,7 @@ from cookiecutter.main import cookiecutter  # pyright: ignore[reportMissingTypeS
 from packaging.version import Version
 import tomlkit
 
+from ansys.saf.cli._solutions.backend_detection import SolutionBackend, parse_solution_backend
 from ansys.saf.cli._solutions.dependencies import DependencyManager
 from ansys.saf.cli._solutions.plugins import SafTemplate
 from ansys.saf.cli._utilities.conversion import namespace_to_path, to_class_name, to_module_name
@@ -246,7 +248,14 @@ def add_step_to_solution(
             bold=True,
         )
 
-        executable = get_exec_from_solution_venv(solution_root_dir, "poetry")
+        backend = parse_solution_backend(solution_root_dir).backend
+        if backend is SolutionBackend.UV:
+            uv_executable = shutil.which("uv")
+            if uv_executable is None:
+                raise FileNotFoundError("UV executable not found. Install UV and ensure it is available on PATH.")
+            executable = Path(uv_executable)
+        else:
+            executable = get_exec_from_solution_venv(solution_root_dir, "poetry")
         solution_env = create_solution_environment(solution_root_dir)
 
         dependency_manager = DependencyManager(

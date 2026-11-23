@@ -91,9 +91,11 @@ Dependency backends
 ``saf install`` and ``saf add-step`` also support existing Poetry solutions without migrating them.
 Keep only the lockfile belonging to the solution's backend; conflicting UV and Poetry metadata is rejected.
 
-Existing Poetry version pins in ``[build-system-requirements]`` are preserved. Poetry projects using
-``[project]`` metadata without a SAF-specific Poetry version pin use Poetry 2.5.1. Legacy projects using
-``[tool.poetry]`` metadata still require their existing version pin.
+Poetry solutions must keep their ``[tool.poetry]`` metadata and their Poetry version pin in
+``[build-system-requirements]``.
+
+UV environments don't include ``pip``. To inspect or change packages in a UV solution, use ``uv pip``,
+for example ``saf execute my_solution "uv pip show ansys-saf-sdk"``.
 
 Step templates may use ordinary version ranges, bare versions, wildcards, caret constraints, or tilde constraints.
 When updating PEP 621 dependencies, SAF translates these constraints to PEP 508 requirements while preserving

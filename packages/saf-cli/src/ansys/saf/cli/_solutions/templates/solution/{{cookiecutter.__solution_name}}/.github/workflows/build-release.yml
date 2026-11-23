@@ -58,7 +58,6 @@ jobs:
           dependencies-source: "build-system"
           artifact-name: {{ "${{ env.WHEEL }}-${{ runner.os }}" }}
           build-result: executable
-          solution-ui-framework: {{ cookiecutter.__ui_framework }}
 {% endif %}
 
   build-images:

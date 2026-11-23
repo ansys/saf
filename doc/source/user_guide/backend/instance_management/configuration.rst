@@ -264,27 +264,44 @@ Install extra dependencies
 To use the Product Instance Management functionality, you need to install the appropriate extras from ``ansys-saf-sdk``.
 This can be done by editing the ``ansys-saf-sdk`` dependency declaration in the ``pyproject.toml`` file of your solution as follows:
 
+The examples show only the SDK entry. Keep your existing SDK version constraint,
+any other extras, and the rest of the dependencies in the list.
+
 .. tab-set::
 
   .. tab-item:: Using PIM Light Server
 
     .. code-block:: toml
+      :caption: Poetry
 
       [tool.poetry.dependencies]
       ansys-saf-sdk = {version = "^0.2.0", extras = ["core-pim"]}
 
-    The ``extras`` field specifies that you want to include the PIM-related dependencies.
+    .. code-block:: toml
+      :caption: UV
+
+      [project]
+      dependencies = ["ansys-saf-sdk[core-pim]>=0.4.0,<1.0.0"]
+
+    The ``core-pim`` extra includes the PIM-related dependencies.
 
   .. tab-item:: Using HPS
 
     .. code-block:: toml
+      :caption: Poetry
 
       [tool.poetry.dependencies]
       ansys-saf-sdk = {version = "^0.2.0", extras = ["core-hps"]}
 
-    The ``extras`` field specifies that you want to include the HPS-related dependencies.
+    .. code-block:: toml
+      :caption: UV
 
-Once you have updated the dependency, run the following command to install the extra dependencies:
+      [project]
+      dependencies = ["ansys-saf-sdk[core-hps]>=0.4.0,<1.0.0"]
+
+    The ``core-hps`` extra includes the HPS-related dependencies.
+
+For Poetry-based solutions, refresh the lock file with one of these commands:
 
 .. tab-set::
 
@@ -300,6 +317,14 @@ Once you have updated the dependency, run the following command to install the e
 
         saf execute <solution-name> "poetry lock --no-update"
 
+Then run ``saf install``. For UV-based solutions, refresh the lock file and install
+the dependencies from the solution root:
+
+.. code-block:: bash
+
+    uv lock
+    saf install
+
 In addition, you also need to install the SDK (PyAnsys package) for the Ansys product you want to use with GLOW.
 Click on the tab corresponding to the product you want to use to see the required extra dependencies.
 
@@ -310,9 +335,16 @@ Click on the tab corresponding to the product you want to use to see the require
     For AEDT add the ``aedt`` extra as follows:
 
     .. code-block:: toml
+      :caption: Poetry
 
       [tool.poetry.dependencies]
       ansys-saf-sdk = {version = "^0.2.0", extras = ["core-pim", "instance-management-aedt"]}
+
+    .. code-block:: toml
+      :caption: UV
+
+      [project]
+      dependencies = ["ansys-saf-sdk[core-pim,instance-management-aedt]>=0.4.0,<1.0.0"]
 
     This will install the supported version of ``pyaedt`` to control the AEDT product instances. Note that in the above example,
     the ``core-pim`` extra is specified, but if you are using HPS, you must use the ``core-hps`` extra instead.
@@ -322,9 +354,16 @@ Click on the tab corresponding to the product you want to use to see the require
     For Fluent add the ``fluent`` extra as follows:
 
     .. code-block:: toml
+      :caption: Poetry
 
       [tool.poetry.dependencies]
       ansys-saf-sdk = {version = "^0.2.0", extras = ["core-pim", "instance-management-fluent"]}
+
+    .. code-block:: toml
+      :caption: UV
+
+      [project]
+      dependencies = ["ansys-saf-sdk[core-pim,instance-management-fluent]>=0.4.0,<1.0.0"]
 
     This will install the supported version of ``ansys-fluent-core`` to control the Fluent product instances. Note that in the above example,
     the ``core-pim`` extra is specified, but if you are using HPS, you must use the ``core-hps`` extra instead.
@@ -334,9 +373,16 @@ Click on the tab corresponding to the product you want to use to see the require
     For Geometry add the ``geometry`` extra as follows:
 
     .. code-block:: toml
+      :caption: Poetry
 
       [tool.poetry.dependencies]
       ansys-saf-sdk = {version = "^0.2.0", extras = ["core-pim", "instance-management-geometry"]}
+
+    .. code-block:: toml
+      :caption: UV
+
+      [project]
+      dependencies = ["ansys-saf-sdk[core-pim,instance-management-geometry]>=0.4.0,<1.0.0"]
 
     This will install the supported version of ``ansys-geometry-core`` to control the Geometry product instances. Note that in the above example,
     the ``core-pim`` extra is specified, but if you are using HPS, you must use the ``core-hps`` extra instead.
@@ -346,9 +392,16 @@ Click on the tab corresponding to the product you want to use to see the require
     For MAPDL add the ``mapdl`` extra as follows:
 
     .. code-block:: toml
+      :caption: Poetry
 
       [tool.poetry.dependencies]
       ansys-saf-sdk = {version = "^0.2.0", extras = ["core-pim", "instance-management-mapdl"]}
+
+    .. code-block:: toml
+      :caption: UV
+
+      [project]
+      dependencies = ["ansys-saf-sdk[core-pim,instance-management-mapdl]>=0.4.0,<1.0.0"]
 
     This will install the supported version of ``ansys-mapdl-core`` to control the MAPDL product instances. Note that in the above example,
     the ``core-pim`` extra is specified, but if you are using HPS, you must use the ``core-hps`` extra instead.
@@ -358,9 +411,16 @@ Click on the tab corresponding to the product you want to use to see the require
     For Mechanical add the ``mechanical`` extra as follows:
 
     .. code-block:: toml
+      :caption: Poetry
 
       [tool.poetry.dependencies]
       ansys-saf-sdk = {version = "^0.2.0", extras = ["core-pim", "instance-management-mechanical"]}
+
+    .. code-block:: toml
+      :caption: UV
+
+      [project]
+      dependencies = ["ansys-saf-sdk[core-pim,instance-management-mechanical]>=0.4.0,<1.0.0"]
 
     This will install the supported version of ``ansys-mechanical-core`` to control the Mechanical product instances. Note that in the above example,
     the ``core-pim`` extra is specified, but if you are using HPS, you must use the ``core-hps`` extra instead.
@@ -370,9 +430,16 @@ Click on the tab corresponding to the product you want to use to see the require
     For optiSLang add the ``optislang`` extra as follows:
 
     .. code-block:: toml
+      :caption: Poetry
 
       [tool.poetry.dependencies]
       ansys-saf-sdk = {version = "^0.2.0", extras = ["core-pim", "instance-management-optislang"]}
+
+    .. code-block:: toml
+      :caption: UV
+
+      [project]
+      dependencies = ["ansys-saf-sdk[core-pim,instance-management-optislang]>=0.4.0,<1.0.0"]
 
     This will install the supported version of ``ansys-optislang-core`` to control the optiSLang product instances. Note that in the above example,
     the ``core-pim`` extra is specified, but if you are using HPS, you must use the ``core-hps`` extra instead.

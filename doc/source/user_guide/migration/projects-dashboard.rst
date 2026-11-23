@@ -30,11 +30,17 @@ Replace ``my_solution`` with your registered solution name.
 Check whether the package is already there
 ------------------------------------------
 
-From your solution project directory:
+From your solution project directory, for Poetry-based solutions:
 
 .. code-block:: console
 
     saf execute my_solution "python -m pip show ansys-saf-projects-dashboard"
+
+For UV-based solutions:
+
+.. code-block:: console
+
+    uv pip show ansys-saf-projects-dashboard
 
 If this prints a version, the package is already installed — go to
 :ref:`projects_dashboard_register_page`. If the command fails, open ``pyproject.toml``. If it contains
@@ -42,20 +48,21 @@ If this prints a version, the package is already installed — go to
 
 .. important::
 
-   The ``ansys-saf-sdk`` ``all`` extra does **not** install Projects Dashboard. You need the ``desktop`` extra on
-   the SDK entry in your ``desktop`` Poetry group, or you must add ``ansys-saf-projects-dashboard`` explicitly.
+   The ``ansys-saf-sdk`` ``all`` extra does **not** install Projects Dashboard. Use the SDK extra
+   that provides it for your SDK version, or add ``ansys-saf-projects-dashboard`` explicitly.
 
 Case A — Solution uses ``ansys-saf-sdk`` (SAF CLI template layout)
 ------------------------------------------------------------------
 
-Open ``pyproject.toml``. In ``[tool.poetry.group.desktop.dependencies]``, the SDK line should request the
+For Poetry-based solutions, open ``pyproject.toml``. In ``[tool.poetry.group.desktop.dependencies]``, the SDK line should request the
 ``desktop`` extra, for example:
 
 .. code-block:: toml
 
     ansys-saf-sdk = { version = ">=0.4.0,<1.0.0", extras = ["desktop"] }
 
-SDK ``0.4.0`` and later pull in Projects Dashboard through that extra. If your constraint is lower, raise it. Use
+SDK ``0.4.0`` includes Projects Dashboard through that extra. For SDK versions that expose a separate
+``ui`` extra, request both ``desktop`` and ``ui``. Use
 the same SDK version constraint in every Poetry group that declares ``ansys-saf-sdk``. If a group lists other
 extras (for example ``core-hps``), keep those extras on that group's line.
 
@@ -67,16 +74,39 @@ uses):
     saf execute my_solution "poetry lock"
     saf execute my_solution "poetry install --with desktop,ui"
 
+For UV-based solutions, edit the SDK entry in the ``desktop`` list under
+``[dependency-groups]``. Keep its version constraint, any existing extras, and
+other entries in that group. For example, with an SDK version that provides
+Projects Dashboard through the ``ui`` extra:
+
+.. code-block:: toml
+
+    [dependency-groups]
+    desktop = ["ansys-saf-sdk[desktop,ui]>=0.7.0,<1.0.0"]
+
+From the solution root, update the lock file and install the groups you need:
+
+.. code-block:: console
+
+    uv lock
+    saf install -d desktop,ui
+
 Run the check command again. It must succeed before you change the UI.
 
 Case B — Solution does not use ``ansys-saf-sdk``
 ------------------------------------------------
 
-Add Projects Dashboard to your ``desktop`` group. This command updates ``pyproject.toml`` and ``poetry.lock``:
+Add Projects Dashboard to your ``desktop`` group. For Poetry, this command updates ``pyproject.toml`` and ``poetry.lock``:
 
 .. code-block:: console
 
     saf execute my_solution "poetry add ansys-saf-projects-dashboard --group desktop"
+
+For UV, run this from the solution root to update ``pyproject.toml`` and ``uv.lock``:
+
+.. code-block:: console
+
+    uv add --no-sync --group desktop ansys-saf-projects-dashboard
 
 If your solution has no ``desktop`` group, replace ``desktop`` with the group that declares
 ``ansys-saf-desktop-orchestrator``.
@@ -86,6 +116,12 @@ Run the check command again. If it still fails, install the groups:
 .. code-block:: console
 
     saf execute my_solution "poetry install --with desktop,ui"
+
+For UV, install the groups with:
+
+.. code-block:: console
+
+    saf install -d desktop,ui
 
 .. _projects_dashboard_register_page:
 
@@ -552,3 +588,12 @@ If your solution declares ``ansys-saf-desktop-portal`` as a dependency, remove i
 .. code-block:: console
 
     saf execute my_solution "poetry remove ansys-saf-desktop-portal --group desktop"
+
+For UV, run this from the solution root. Recreate the environment so that packages
+no longer required by the solution are removed, and include any additional groups
+you still need in the ``-d`` list:
+
+.. code-block:: console
+
+    uv remove --no-sync --group desktop ansys-saf-desktop-portal
+    saf install -f -d desktop,ui

@@ -167,6 +167,8 @@ Product managers depend on specific PyAnsys SDK versions that are tested and
 validated with the current SAF release. Always install them through the
 ``ansys-saf-sdk`` extras — never pin an arbitrary PyAnsys SDK version manually.
 
+For Poetry-based solutions:
+
 .. code-block:: bash
    :caption: Install a specific product manager extra
 
@@ -175,6 +177,15 @@ validated with the current SAF release. Always install them through the
 
    # Or install interactively:
    poetry add "ansys-saf-sdk[core-pim,instance-management-mechanical]"
+
+For UV-based solutions, run these commands from the solution root. If the SDK is
+already declared, keep its version constraint and any other extras in the requirement.
+
+.. code-block:: bash
+   :caption: Install the Mechanical product manager extra with UV
+
+   uv add --no-sync "ansys-saf-sdk[core-pim,instance-management-mechanical]"
+   saf install
 
 Available extras match the supported product managers:
 

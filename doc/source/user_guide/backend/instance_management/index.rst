@@ -51,17 +51,44 @@ The PIM light server can be installed using one of the following methods:
 Add the PIM Light Server package repository as a source for your solution
 -------------------------------------------------------------------------
 
-Run the following command by replacing the placeholder ``<pim-package-repo-url>`` with the value communicated by the SAF SDK team.
+Replace ``<pim-package-repo-url>`` with the value communicated by the SAF SDK team.
+
+For Poetry-based solutions, run:
 
 .. code-block:: bash
 
     saf execute <solution-name> "poetry source add --priority=supplemental solutions-private-pypi <pim-package-repo-url>"
 
+For UV-based solutions, add the index and package mapping to ``pyproject.toml``.
+If ``[tool.uv.sources]`` already exists, add the mapping to that table:
+
+.. code-block:: toml
+
+    [[tool.uv.index]]
+    name = "solutions-private-pypi"
+    url = "<pim-package-repo-url>"
+    explicit = true
+
+    [tool.uv.sources]
+    ansys-saf-pim-light-server = { index = "solutions-private-pypi" }
+
 
 Enable access to the new source for your solution
 --------------------------------------------------
 
-Run the following command supplying the package repository password when prompted
+Both backends accept credentials through environment variables. Set the pair for your
+solution's backend before adding the package:
+
+* **Poetry:** ``POETRY_HTTP_BASIC_SOLUTIONS_PRIVATE_PYPI_USERNAME`` and
+  ``POETRY_HTTP_BASIC_SOLUTIONS_PRIVATE_PYPI_PASSWORD``.
+* **UV:** ``UV_INDEX_SOLUTIONS_PRIVATE_PYPI_USERNAME`` and
+  ``UV_INDEX_SOLUTIONS_PRIVATE_PYPI_PASSWORD``.
+
+Set these variables in the shell where you run the dependency command below. See
+:ref:`user_guide_install_manage_private_sources`.
+
+If you haven't preconfigured credentials, ``saf install`` can prompt for them for
+Poetry-based solutions. It does not provide that prompt for UV. To use the Poetry prompt, run:
 
 .. code-block:: bash
 
@@ -70,11 +97,18 @@ Run the following command supplying the package repository password when prompte
 Add the PIM Light Server package as a dependency for your solution
 ------------------------------------------------------------------
 
-Run the following command
+For Poetry-based solutions, run:
 
 .. code-block:: bash
 
     saf execute <solution-name> "poetry add --source solutions-private-pypi ansys-saf-pim-light-server"
+
+For UV-based solutions, run the following from the solution root:
+
+.. code-block:: bash
+
+    uv add --no-sync ansys-saf-pim-light-server
+    saf install
 
 This may take a few minutes to complete.
 

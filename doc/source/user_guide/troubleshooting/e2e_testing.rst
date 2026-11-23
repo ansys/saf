@@ -20,8 +20,11 @@ suite of a solution. See :ref:`test_e2e` for a description of the suite itself.
   the Linux launcher with the solution's supported mechanism.
 * **Chrome startup failure:** inspect the ChromeDriver log named in the pytest
   error. The fixture uses a fresh temporary Chrome profile for each retry.
-* **Dependency verification failure:** compare the ``saf install`` dependency
-  groups with the groups reported by ``poetry show`` and check that the
-  solution's lock file is current.
+* **Dependency verification failure:** for the Poetry reference example, compare the
+  ``saf install`` dependency groups with the groups reported by ``poetry show`` and
+  check that the lock file is current. For a UV-based solution, verify that the
+  lockfile is current by ``uv lock --check``and that the correct groups are 
+  passed to ``saf install`` by ``uv pip list``.
+
 * **Processes remain after pytest:** verify that the launcher cleanup stops the
   parent and all child processes.

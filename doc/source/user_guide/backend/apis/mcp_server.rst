@@ -29,6 +29,8 @@ The following steps assume you are using SAF CLI to manage your solution. For di
 
 1. Add the ``core-mcp`` extra to the ``ansys-saf-sdk`` dependency in your solution's ``pyproject.toml``. Afterwards, update your lock file and install the new dependencies:
 
+   For Poetry-based solutions:
+
    .. code-block:: toml
 
     ansys-saf-sdk = {version = "^0.2.0", extras = ["core-mcp"]}
@@ -37,6 +39,23 @@ The following steps assume you are using SAF CLI to manage your solution. For di
 
     saf execute my_solution "poetry lock"
     saf install my_solution
+
+   For UV-based solutions, update the existing SDK entry in ``[project].dependencies``.
+   Keep its version constraint and any other extras. For example:
+
+   .. code-block:: toml
+
+    [project]
+    dependencies = [
+        "ansys-saf-sdk[core-mcp]>=0.4.0,<1.0.0",
+    ]
+
+   From the solution root, run:
+
+   .. code-block:: console
+
+    uv lock
+    saf install
 
 2. In your solution's ``.env`` file, enable MCP by setting:
 

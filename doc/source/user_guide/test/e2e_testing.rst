@@ -35,13 +35,15 @@ environment must provide:
 * the solution's desktop and UI dependencies. The fixture installs the build
   dependencies in the temporary solution workspace.
 
-For the examples solution, run these commands from the ``examples`` directory
+For the Poetry-based examples solution, run these commands from the ``examples`` directory
 to create the lock file and install the test environment:
 
 .. code-block:: console
 
    saf execute "poetry lock"
    saf execute "poetry install --with tests,desktop,ui"
+
+There is no UV-based reference implementation for E2E tests at this time.
 
 The E2E fixture copies the solution to a temporary workspace and explicitly
 installs its ``desktop``, ``ui``, and ``build`` groups with:

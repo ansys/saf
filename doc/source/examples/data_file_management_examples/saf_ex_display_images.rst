@@ -46,11 +46,18 @@ When you complete this example, you can expect the following output in the solut
 :material-outlined:`task;1.25em;sd-text-primary` Prerequisites
 =========================================================================
 
-To mimic the creation of files, you need the `pillow <https://pypi.org/project/pillow/>`_ Python imaging library. Install the library using the following command:
+To mimic the creation of files, you need the `pillow <https://pypi.org/project/pillow/>`_ Python imaging library. For a Poetry-based solution, install it with:
 
 .. code-block:: bash
 
    poetry add pillow
+
+For a UV-based solution, run these commands from the solution root:
+
+.. code-block:: bash
+
+   uv add --no-sync pillow
+   saf install
 
 
 

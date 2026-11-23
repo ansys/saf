@@ -30,6 +30,8 @@ Install HPS extra dependencies
 To use the HPS functionality, you need to install the ``core-hps`` extra from ``ansys-saf-sdk``.
 This can be done by editing the ``ansys-saf-sdk`` dependency declaration in the ``pyproject.toml`` file of your solution as follows:
 
+.. rubric:: Poetry-based solutions
+
 .. code-block:: toml
 
   [tool.poetry.dependencies]
@@ -61,6 +63,34 @@ Once you have updated the dependency, run the following command to install the e
       .. code-block:: bash
 
         saf execute <solution-name> "poetry install"
+
+.. rubric:: UV-based solutions
+
+Add ``core-hps`` to the existing SDK requirement in the ``dependencies`` list under
+``[project]``. Keep its version constraint, any other extras, and the other entries
+in the list. For example:
+
+.. code-block:: toml
+
+    [project]
+    dependencies = ["ansys-saf-sdk[core-hps]>=0.4.0,<1.0.0"]
+
+From the solution root, refresh the lock file and install the dependencies:
+
+.. code-block:: bash
+
+    uv lock
+    saf install
+
+To include the ``tests`` group, pass it along with the other groups you need. For example,
+for a Dash solution with all the groups shown below:
+
+.. code-block:: bash
+
+    saf install -d desktop,ui,doc,build,tests
+
+The ``-d`` option replaces the default group selection. Omit any groups that your solution
+does not define, such as ``ui`` in a solution with no UI.
 
 Environment variables for HPS
 -----------------------------

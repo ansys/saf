@@ -1,0 +1,46 @@
+<svg viewBox="0 0 760 460" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title description" font-family="ui-monospace, 'Cascadia Code', 'Fira Mono', monospace" font-size="13">
+  <title id="title">saf install - UV architecture</title>
+  <desc id="description">SAF runs uv sync using UV from PATH. UV reads pyproject.toml and uv.lock, updates the lock file if needed, and installs the solution, runtime dependencies, and selected dependency groups into .venv.</desc>
+
+  <defs>
+    <marker id="arrow-purple" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#4338ca"/>
+    </marker>
+    <marker id="arrow-green" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#047857"/>
+    </marker>
+  </defs>
+
+  <rect width="760" height="460" fill="#f8fafc" rx="12"/>
+  <text x="380" y="36" text-anchor="middle" fill="#0f172a" font-size="16" font-weight="700" letter-spacing="0.5">saf install &#8212; UV architecture</text>
+
+  <rect x="280" y="58" width="200" height="44" rx="8" fill="#ffffff" stroke="#4338ca" stroke-width="2"/>
+  <text x="380" y="85" text-anchor="middle" fill="#312e81" font-weight="700">$ saf install</text>
+  <path d="M 380 102 V 147" stroke="#4338ca" stroke-width="1.5" marker-end="url(#arrow-purple)"/>
+  <text x="392" y="129" fill="#3730a3" font-size="11">runs</text>
+
+  <rect x="240" y="150" width="280" height="64" rx="8" fill="#e0e7ff" stroke="#4338ca" stroke-width="1.5"/>
+  <text x="380" y="175" text-anchor="middle" fill="#312e81" font-weight="700">uv sync</text>
+  <text x="380" y="197" text-anchor="middle" fill="#312e81" font-size="11">Uses the UV executable on PATH</text>
+
+  <path d="M 170 278 V 182 H 237" fill="none" stroke="#4338ca" stroke-width="1.5" marker-end="url(#arrow-purple)"/>
+  <text x="182" y="244" fill="#3730a3" font-size="11">reads project files</text>
+  <path d="M 520 182 H 590 V 275" fill="none" stroke="#047857" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+  <text x="578" y="244" text-anchor="end" fill="#065f46" font-size="11">creates or reuses .venv</text>
+
+  <rect x="20" y="278" width="300" height="128" rx="10" fill="#ffffff" stroke="#4338ca" stroke-width="1.5"/>
+  <rect x="32" y="290" width="276" height="30" rx="6" fill="#e0e7ff"/>
+  <text x="170" y="309" text-anchor="middle" fill="#312e81" font-weight="700">Solution project files</text>
+  <text x="170" y="343" text-anchor="middle" fill="#0f172a">pyproject.toml + uv.lock</text>
+  <text x="170" y="366" text-anchor="middle" fill="#334155" font-size="11">Manifest and locked dependencies</text>
+  <text x="170" y="385" text-anchor="middle" fill="#334155" font-size="11">UV updates the lock file if needed</text>
+
+  <rect x="440" y="278" width="300" height="128" rx="10" fill="#ffffff" stroke="#047857" stroke-width="1.5"/>
+  <rect x="452" y="290" width="276" height="30" rx="6" fill="#d1fae5"/>
+  <text x="590" y="309" text-anchor="middle" fill="#064e3b" font-weight="700">.venv</text>
+  <text x="590" y="343" text-anchor="middle" fill="#0f172a">Solution virtual environment</text>
+  <text x="590" y="366" text-anchor="middle" fill="#334155" font-size="11">Solution and runtime dependencies</text>
+  <text x="590" y="385" text-anchor="middle" fill="#334155" font-size="11">Plus selected dependency groups</text>
+
+  <text x="380" y="438" text-anchor="middle" fill="#475569" font-size="11">SAF does not create a separate environment for UV.</text>
+</svg>

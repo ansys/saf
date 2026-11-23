@@ -23,7 +23,7 @@ suite of a solution. See :ref:`test_e2e` for a description of the suite itself.
 * **Dependency verification failure:** for the Poetry reference example, compare the
   ``saf install`` dependency groups with the groups reported by ``poetry show`` and
   check that the lock file is current. For a UV-based solution, verify that the
-  lockfile is current by ``uv lock --check``and that the correct groups are 
+  lockfile is current by ``uv lock --check``and that the correct groups are
   passed to ``saf install`` by ``uv pip list``.
 
 * **Processes remain after pytest:** verify that the launcher cleanup stops the

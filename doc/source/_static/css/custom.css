@@ -1741,3 +1741,18 @@ a.saf-cta--secondary {
   fill: #3A2450 !important;
   stroke: #a97ccd !important;
 }
+
+
+/* =========================================== Poetry-to-UV specific =========================================== */
+
+div.poetry-uv-dark-mode {
+  display: none;
+}
+
+html[data-theme="dark"] div.poetry-uv-light-mode {
+  display: none;
+}
+
+html[data-theme="dark"] div.poetry-uv-dark-mode {
+  display: block;
+}

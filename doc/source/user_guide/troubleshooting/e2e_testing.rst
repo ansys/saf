@@ -22,9 +22,10 @@ suite of a solution. See :ref:`test_e2e` for a description of the suite itself.
   error. The fixture uses a fresh temporary Chrome profile for each retry.
 * **Dependency verification failure:** for the Poetry reference example, compare the
   ``saf install`` dependency groups with the groups reported by ``poetry show`` and
-  check that the lock file is current. For a UV-based solution, verify that the
-  lockfile is current by ``uv lock --check``and that the correct groups are
-  passed to ``saf install`` by ``uv pip list``.
+  check that the lock file is current. For a UV-based solution, check that you
+  passed the intended groups to ``saf install``. From the solution root, run
+  ``uv lock --check`` to verify the lock file and ``uv pip list`` to inspect
+  installed packages.
 
 * **Processes remain after pytest:** verify that the launcher cleanup stops the
   parent and all child processes.

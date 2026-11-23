@@ -372,10 +372,9 @@ def test_setup_environment_default_params(
     working_dir = Path.cwd()
     with pytest.warns(
         DeprecationWarning,
-        match=r"Please migrate this solution to UV using the migration guide: "
-        r"https://saf\.ansys\.com/version/stable/user_guide/migration/poetry-to-uv\.html\.\n"
-        r"Installation will continue using Poetry for now, but support for Poetry-based solutions will end after "
-        r"May 2027\.",
+        match=r"^Poetry-based solutions are deprecated\. Support will end on May 31st\.\n"
+        r"Please migrate your solution to UV following the migration guide: "
+        r"https://saf\.ansys\.com/version/stable/user_guide/migration/poetry-to-uv\.html\.$",
     ):
         setup_environment(tmp_path, SOLUTION_MAIN_MODULE_NAME)
     captured = capsys.readouterr()

@@ -1183,7 +1183,7 @@ def setup_environment(
                     "Poetry-based solutions are deprecated. Support will end on May 31st.\n"
                     "Please migrate your solution to UV following the migration guide: "
                     "https://saf.ansys.com/version/stable/user_guide/migration/poetry-to-uv.html.",
-                    fg="yellow"
+                    fg="yellow",
                 )
                 warnings.warn(message, DeprecationWarning, stacklevel=2)
             else:

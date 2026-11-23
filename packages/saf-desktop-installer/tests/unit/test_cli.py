@@ -21,7 +21,7 @@ import subprocess
 import pytest
 import pytest_mock
 
-from ansys.saf.desktop.installer.__main__ import _load_filtered_dotenv, _prepare_poetry_backend, package_solution
+from ansys.saf.desktop.installer.__main__ import _load_filtered_dotenv, package_solution
 from ansys.saf.desktop.installer._package.config import InstallerConfig
 from ansys.saf.desktop.installer._package.solution import SolutionInfo
 from tests.conftest import use_poetry_mock_solution

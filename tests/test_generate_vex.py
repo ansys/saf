@@ -169,6 +169,20 @@ class TestGenerateVex:
         assert statement["justification"] == "component_not_present"
         assert statement["impact_statement"] == "The affected component is absent."
 
+    def test_examples_project_metadata_is_read_from_poetry_table(self) -> None:
+        examples = self.root / "examples"
+        examples.mkdir()
+        (examples / "pyproject.toml").write_text(
+            '[tool.poetry]\nname = "saf-solutions-examples"\nversion = "0.2.dev0"\n', encoding="utf-8"
+        )
+        args = generate_vex.parser_for_cli().parse_args(
+            ["examples", "--vulnerability", "CVE-example", "--status", "fixed"]
+        )
+        path = generate_vex.generate(args, self.root)
+        assert path == self.root / "VEX" / "examples.openvex.json"
+        product = json.loads(path.read_text())["statements"][0]["products"][0]
+        assert product["identifiers"]["purl"] == "pkg:pypi/saf-solutions-examples@0.2.dev0"
+
     def test_standalone_cli_uses_its_repository_not_working_directory(self) -> None:
         script = self.root / "scripts" / "generate_vex.py"
         script.parent.mkdir()

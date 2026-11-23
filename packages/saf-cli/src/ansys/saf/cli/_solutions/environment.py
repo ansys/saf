@@ -1180,19 +1180,17 @@ def setup_environment(
         if backend_info.uses_deprecated_backend:
             if sys.stderr.isatty() and not os.getenv("NO_COLOR"):
                 message = click.style(
-                    "Poetry-based solutions are deprecated. Please migrate this solution to UV using the migration guide: "
-                    "https://saf.ansys.com/version/stable/user_guide/migration/poetry-to-uv.html.\n"
-                    "Installation will continue using Poetry for now, but support for Poetry-based solutions will end "
-                    "after May 2027.",
+                    "Poetry-based solutions are deprecated. Support will end on May 31st.\n"
+                    "Please migrate your solution to UV following the migration guide: "
+                    "https://saf.ansys.com/version/stable/user_guide/migration/poetry-to-uv.html.",
                     fg="yellow"
                 )
                 warnings.warn(message, DeprecationWarning, stacklevel=2)
             else:
                 warnings.warn(
-                    "Poetry-based solutions are deprecated. Please migrate this solution to UV using the migration guide: "
-                    "https://saf.ansys.com/version/stable/user_guide/migration/poetry-to-uv.html.\n"
-                    "Installation will continue using Poetry for now, but support for Poetry-based solutions will end "
-                    "after May 2027.",
+                    "Poetry-based solutions are deprecated. Support will end on May 31st.\n"
+                    "Please migrate your solution to UV following the migration guide: "
+                    "https://saf.ansys.com/version/stable/user_guide/migration/poetry-to-uv.html.",
                     DeprecationWarning,
                     stacklevel=2,
                 )

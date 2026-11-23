@@ -191,7 +191,7 @@ def saf(ctx: click.Context, version: bool):
     """Utility script for solutions."""
     warnings.filterwarnings(
         "default",
-        message=r"^Poetry-based solutions are deprecated\.",
+        message=r"^(?:\x1b\[[0-9;]*m)?Poetry-based solutions are deprecated\.",
         category=DeprecationWarning,
     )
     try:

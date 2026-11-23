@@ -925,14 +925,26 @@ def env_file_with_mock_value(session_solution: SolutionRegistry) -> YieldFixture
     backup_env_file.unlink()
 
 
+@retry(stop=stop_after_attempt(12), wait=wait_fixed(5))
+def _remove_tree_with_retry(directory: Path) -> None:
+    # Windows may keep files locked briefly after the solution processes are terminated.
+    try:
+        shutil.rmtree(directory)
+    except Exception:
+        raise TryAgain from None
+
+
 @pytest.fixture
 def cleanup_solution_src(tmp_path: Path, session_solution: SolutionRegistry) -> YieldFixture[None]:
     solution_src_dir = session_solution.root_dir / "src"
     backup_src_dir = tmp_path / "solution_src_backup"
     shutil.copytree(solution_src_dir, backup_src_dir)
     yield
-    shutil.rmtree(solution_src_dir)
-    shutil.copytree(backup_src_dir, solution_src_dir)
+    try:
+        _remove_tree_with_retry(solution_src_dir)
+    finally:
+        # Always restore the shared solution so a failed cleanup doesn't break the following tests.
+        shutil.copytree(backup_src_dir, solution_src_dir, dirs_exist_ok=True)
 
 
 @pytest.fixture
@@ -958,13 +970,6 @@ def cleanup_solution_lock(session_solution: SolutionRegistry) -> YieldFixture[No
 
 @pytest.fixture
 def cleanup_solution_venv(tmp_path: Path, session_solution: SolutionRegistry) -> YieldFixture[None]:
-    @retry(stop=stop_after_attempt(12), wait=wait_fixed(5))
-    def _remove_tree_with_retry(solution_venv_dir: Path) -> None:
-        try:
-            shutil.rmtree(solution_venv_dir)
-        except Exception:
-            raise TryAgain from None
-
     solution_venv_dir = session_solution.root_dir / ".venv"
     backup_venv_dir = tmp_path / "venv_backup"
     shutil.copytree(solution_venv_dir, backup_venv_dir)

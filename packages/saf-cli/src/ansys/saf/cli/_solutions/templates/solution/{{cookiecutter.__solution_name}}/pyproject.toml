@@ -112,7 +112,6 @@ explicit = true
 
 [tool.uv.sources]
 ansys-saf-sdk = { index = "public-pypi" }
-ansys-bdm-api = { index = "public-pypi" }
 
 [tool.setuptools]
 include-package-data = true

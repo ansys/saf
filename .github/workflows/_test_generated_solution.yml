@@ -169,10 +169,12 @@ jobs:
 
           sed -i 's|dependencies-source: "build-system"|dependencies-source: build-system,requirements-file|g' "${SOLUTION_NAME}/.github/workflows/${BUILD_WORKFLOW}"
 
+          # The private feed also hosts older public ansys-* packages; best-match mirrors pip's extra-index behavior.
           tmpfile=$(mktemp)
           cat > "$tmpfile" << 'CONTENT'
                   env:
                     UV_INDEX: https://PAT:${{'${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}'}}@${{'${{ secrets.PYANSYS_PYPI_PRIVATE_URL }}'}}
+                    UV_INDEX_STRATEGY: unsafe-best-match
                     PIP_EXTRA_INDEX_URL: https://PAT:${{'${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}'}}@${{'${{ secrets.PYANSYS_PYPI_PRIVATE_URL }}'}}
                     PIP_QUIET: 1
           CONTENT

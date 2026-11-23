@@ -52,13 +52,11 @@ To mimic the creation of files, you need the `pillow <https://pypi.org/project/p
 
    poetry add pillow
 
-For a UV-based solution, run these commands from the solution root:
+For a UV-based solution, run this command from the solution root:
 
 .. code-block:: bash
 
-   uv add --no-sync pillow
-   saf install
-
+   uv add pillow
 
 
 .. _saf-ex-display-images-solution:

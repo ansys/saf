@@ -593,12 +593,11 @@ without ``--pre`` the resolution fails reporting that no matching distribution w
 
     .. tab-item:: UV
 
-        From the root of a UV-based solution, add the meta-package and install the dependencies:
+        From the root of a UV-based solution, add the meta-package:
 
         .. code-block:: bash
 
-            uv add --no-sync "ansys-saf-sdk[core-dash,instance-management-fluent,desktop]"
-            saf install
+            uv add "ansys-saf-sdk[core-dash,instance-management-fluent,desktop]"
 
         Alternatively, declare it in the solution's ``pyproject.toml`` file and run
         ``saf install``. If the SDK is already listed, add the extras to the existing

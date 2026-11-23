@@ -103,12 +103,12 @@ For Poetry-based solutions, run:
 
     saf execute <solution-name> "poetry add --source solutions-private-pypi ansys-saf-pim-light-server"
 
-For UV-based solutions, run the following from the solution root:
+For UV-based solutions, run the following from the solution root. UV updates
+the project and lock file, then syncs the environment:
 
 .. code-block:: bash
 
-    uv add --no-sync ansys-saf-pim-light-server
-    saf install
+    uv add ansys-saf-pim-light-server
 
 This may take a few minutes to complete.
 

@@ -178,14 +178,13 @@ For Poetry-based solutions:
    # Or install interactively:
    poetry add "ansys-saf-sdk[core-pim,instance-management-mechanical]"
 
-For UV-based solutions, run these commands from the solution root. If the SDK is
+For UV-based solutions, run this command from the solution root. If the SDK is
 already declared, keep its version constraint and any other extras in the requirement.
 
 .. code-block:: bash
    :caption: Install the Mechanical product manager extra with UV
 
-   uv add --no-sync "ansys-saf-sdk[core-pim,instance-management-mechanical]"
-   saf install
+   uv add "ansys-saf-sdk[core-pim,instance-management-mechanical]"
 
 Available extras match the supported product managers:
 

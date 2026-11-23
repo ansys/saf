@@ -80,14 +80,14 @@ From the solution root, refresh the lock file and install the dependencies:
 .. code-block:: bash
 
     uv lock
-    saf install
+    saf install <solution-name>
 
 To include the ``tests`` group, pass it along with the other groups you need. For example,
 for a Dash solution with all the groups shown below:
 
 .. code-block:: bash
 
-    saf install -d desktop,ui,doc,build,tests
+    saf install <solution-name> -d desktop,ui,doc,build,tests
 
 The ``-d`` option replaces the default group selection. Omit any groups that your solution
 does not define, such as ``ui`` in a solution with no UI.

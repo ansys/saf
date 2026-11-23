@@ -317,13 +317,13 @@ For Poetry-based solutions, refresh the lock file with one of these commands:
 
         saf execute <solution-name> "poetry lock --no-update"
 
-Then run ``saf install``. For UV-based solutions, refresh the lock file and install
-the dependencies from the solution root:
+Then run ``saf install <solution-name>``. For UV-based solutions, refresh the
+lock file and install the dependencies:
 
 .. code-block:: bash
 
     uv lock
-    saf install
+    saf install <solution-name>
 
 In addition, you also need to install the SDK (PyAnsys package) for the Ansys product you want to use with GLOW.
 Click on the tab corresponding to the product you want to use to see the required extra dependencies.

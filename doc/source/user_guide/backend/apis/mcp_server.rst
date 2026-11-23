@@ -55,7 +55,7 @@ The following steps assume you are using SAF CLI to manage your solution. For di
    .. code-block:: console
 
     uv lock
-    saf install
+    saf install my_solution
 
 2. In your solution's ``.env`` file, enable MCP by setting:
 

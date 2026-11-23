@@ -34,8 +34,7 @@ For a UV-based solution, run this from the solution root:
 
 .. code-block:: bash
 
-   uv add --no-sync ansys-solutions-dash-super-components
-   saf install
+   uv add ansys-solutions-dash-super-components
 
 
 Requirements

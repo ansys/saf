@@ -317,16 +317,20 @@ Add a dependency
 
         To add a dependency using Poetry, run ``poetry add`` inside the solution's environment.
 
-        For UV, add the dependency to the project and lock it, then use SAF to install it:
+        For UV, use ``uv add`` to update the project and lock file and sync the environment:
 
         .. code-block:: bash
 
-            uv add --no-sync <package-name>
-            saf install
+            uv add <package-name>
 
-        To add it to a dependency group, pass ``--group <group>`` to ``uv add``.
-        If the group is not installed by default, pass the full list of groups you want
-        to install to ``saf install`` with ``-d``.
+        To add a dependency to a group and let SAF install it, use ``--no-sync`` and then
+        run ``saf install`` with the full list of groups you want. This is useful when the
+        group is not included in the default selection:
+
+        .. code-block:: bash
+
+            uv add --no-sync --group <group> <package-name>
+            saf install -d <group-1>,<group-2>
 
         .. seealso::
             For the full set of ``poetry add`` options, see the official Poetry `add <https://python-poetry.org/docs/cli/#add>`_ command documentation.
@@ -468,7 +472,7 @@ which versions are acceptable. For UV, use standard Python requirement syntax:
 
 .. code-block:: bash
 
-    uv add --no-sync "numpy>=2,<3"
+    uv add "numpy>=2,<3"
 
 Commonly used formats for Poetry include:
 

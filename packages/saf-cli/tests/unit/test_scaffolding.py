@@ -21,6 +21,7 @@ import sys
 import tomllib
 from typing import Any
 
+from packaging.requirements import Requirement
 import pytest
 import pytest_mock
 
@@ -132,7 +133,23 @@ def test_create_solution(tmp_path: Path, ui_framework: str, namespace: str):
     pyproject_content = pyproject_file.read_text()
     assert f'name = "{namespace_to_pkg_name(namespace)}-{expected_solution_package_name}"' in pyproject_content
     assert f'version = "{expected_version}"' in pyproject_content
-    assert f'[saf-cli-version]\nsaf-cli-version = "{expected_saf_cli_version}"'
+    assert "[project]" in pyproject_content
+    assert "[tool.poetry]" not in pyproject_content
+    assert "[tool.uv]" in pyproject_content
+    assert f'[saf-cli-version]\nsaf-cli-version = "{expected_saf_cli_version}"' in pyproject_content
+
+    dockerfile_content = (tmp_path / solution_name / "deployments" / "Dockerfile").read_text()
+    assert "uv==0.13.4" in dockerfile_content
+    assert "COPY ../../pyproject.toml ../../uv.lock /app/" in dockerfile_content
+    assert "RUN uv sync --frozen --no-default-groups" in dockerfile_content
+    assert "poetry" not in dockerfile_content.lower()
+
+    lock = tomllib.loads((tmp_path / solution_name / "uv.lock").read_text(encoding="utf-8"))
+    solution_packages = [package for package in lock["package"] if package["source"] == {"editable": "."}]
+    assert len(solution_packages) == 1
+    assert solution_packages[0]["name"] == f"{namespace_to_pkg_name(namespace)}-{expected_solution_package_name}"
+    assert solution_packages[0]["version"] == expected_version
+    assert solution_packages[0]["dependencies"] == [{"name": "ansys-saf-sdk"}]
 
     # Check content of docker-compose.yaml and .env
     for configuration in [
@@ -150,6 +167,11 @@ def test_create_solution(tmp_path: Path, ui_framework: str, namespace: str):
         docker_compose_content = (deployment_dir / "compose.yaml").read_text()
         # compose project name uses the APP_NAME env var
         assert "name: ${APP_NAME}" in docker_compose_content
+        if configuration == "external":
+            assert "build:" not in docker_compose_content
+            assert "pull_policy: never" in docker_compose_content
+        else:
+            assert "dockerfile: deployments/Dockerfile" in docker_compose_content
         # service names are now generic (no docker-name prefix)
         if configuration != "distributed-deployment-template":
             assert "postgresql:" in docker_compose_content
@@ -173,9 +195,12 @@ def test_solution_gets_projects_dashboard_from_sdk_desktop_extra(tmp_path: Path,
 
     The solution does not depend on the projects dashboard directly: ``ansys-saf-sdk[desktop]`` brings it.
     """
-    poetry = _scaffold_pyproject(tmp_path, ui_framework)["tool"]["poetry"]
-    groups: dict[str, Any] = poetry.get("group", {})
-    for group in groups.values():
-        assert "ansys-saf-projects-dashboard" not in group.get("dependencies", {})
-    assert "desktop" in groups["desktop"]["dependencies"]["ansys-saf-sdk"]["extras"]
-    assert "solutions-private-pypi" not in {source["name"] for source in poetry["source"]}
+    pyproject = _scaffold_pyproject(tmp_path, ui_framework)
+    groups: dict[str, list[str]] = pyproject["dependency-groups"]
+    requirements = [Requirement(entry) for group in groups.values() for entry in group if isinstance(entry, str)]
+    requirements.extend(Requirement(entry) for entry in pyproject["project"]["dependencies"])
+    assert "ansys-saf-projects-dashboard" not in {requirement.name for requirement in requirements}
+    desktop = [Requirement(entry) for entry in groups["desktop"]]
+    assert [requirement.extras for requirement in desktop if requirement.name == "ansys-saf-sdk"] == [{"desktop"}]
+    indexes: list[dict[str, Any]] = pyproject.get("tool", {}).get("uv", {}).get("index", [])
+    assert "solutions-private-pypi" not in {index.get("name") for index in indexes}

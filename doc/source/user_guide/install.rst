@@ -75,10 +75,15 @@ The installation installs all necessary dependencies. You can monitor its progre
 The ``saf install`` command
 ----------------------------
 
-The ``saf install`` command sets up the solution's virtual environment within the application root directory and installs the dependencies defined in the application's ``pyproject.toml`` file.
+The ``saf install`` command detects whether the solution uses UV or Poetry and installs
+the solution and its dependencies into ``.venv`` within the application root directory.
+Existing Poetry solutions retain their installation behavior and display a deprecation
+notice. Installing a solution does not convert it to another backend.
 
-* **For Poetry-based solutions:** SAF installs Poetry and uses it to install the solution's dependencies from ``poetry.lock``.
-* **For UV-based solutions:** SAF uses UV to install the solution's dependencies from ``uv.lock``. Install `UV <https://docs.astral.sh/uv/getting-started/installation/>`_ and make it available on :envvar:`PATH` before running ``saf install``.
+For UV solutions, install UV and make its executable available on ``PATH`` before
+running ``saf install``. SAF uses its current Python interpreter, which must satisfy
+the solution's ``[project].requires-python`` requirement. UV creates or updates
+``uv.lock`` as necessary; an up-to-date lock retains its resolved versions.
 
 
 .. _ug-install-saf-command-options:
@@ -105,13 +110,13 @@ The following ``saf install`` options are available:
      - Default value
 
    * - ``-F``, ``--force-clear-all``
-     - For Poetry, deletes ``.venv``, ``.poetry/.venv``, ``.poetry/.cache``, and ``poetry.lock``.
-       For UV, deletes ``.venv`` and ``uv.lock``.
+     - Cleans up the workspace by deleting the existing ``.venv`` and the solution's lockfile (``uv.lock`` or ``poetry.lock``).
+       For Poetry, also deletes ``.poetry/.venv`` and ``.poetry/.cache``.
      - Disabled
 
    * - ``-f``, ``--force-clear``
-     - For Poetry, deletes ``.venv``, ``.poetry/.venv``, and ``.poetry/.cache``.
-       For UV, deletes ``.venv`` and keeps ``uv.lock``.
+     - Cleans up the workspace by deleting the existing ``.venv`` while preserving the lockfile.
+       For Poetry, also deletes ``.poetry/.venv`` and ``.poetry/.cache``.
      - Disabled
 
    * - ``--env-file``
@@ -128,6 +133,10 @@ The following ``saf install`` options are available:
 
 Virtual environment installation
 --------------------------------
+
+For UV solutions, UV creates and manages the solution's ``.venv`` directly.
+SAF explicitly targets this environment even when another environment is active.
+It does not create a Poetry environment or configure Poetry sources for a UV solution.
 
 **For Poetry-based solutions**, ``saf install`` creates two isolated virtual environments:
 
@@ -158,7 +167,7 @@ if the lock file no longer matches ``pyproject.toml``.
 
 .. attention::
 
-    **Private sources:** For **Poetry-based solutions**, if your application's ``pyproject.toml`` file declares a private source, SAF can prompt for credentials during installation.
+    **Poetry private sources:** If your application's ``pyproject.toml`` file declares a private Poetry source, you are prompted to provide credentials during installation.
 
     The system validates your credentials and securely stores them as user-level environment variables for future use. If invalid credentials are provided, you are prompted to re-enter them. You can cancel the credential prompt at any time by pressing :kbd:`Ctrl+C`.
 
@@ -166,12 +175,37 @@ if the lock file no longer matches ``pyproject.toml``.
 
     For more detailed information, see :ref:`user_guide_install_manage_private_sources`.
 
+UV private indexes
+~~~~~~~~~~~~~~~~~~
+
+UV solutions use UV's native index and authentication configuration, not Poetry's
+credential prompts or ``POETRY_HTTP_BASIC_*`` variables. For example:
+
+.. code-block:: toml
+
+    [[tool.uv.index]]
+    name = "private"
+    url = "https://packages.example.com/simple"
+    authenticate = "always"
+
+Provide ``UV_INDEX_PRIVATE_USERNAME`` and ``UV_INDEX_PRIVATE_PASSWORD`` through the
+environment or the solution's ``.env`` file (or the file selected with ``--env-file``).
+Do not commit credentials. UV also supports its native credential store, netrc,
+and configured keyring authentication. SAF passes this configuration to UV rather
+than translating Poetry credentials.
+
+See the `UV authentication documentation <https://docs.astral.sh/uv/concepts/authentication/>`_
+for the supported mechanisms and their precedence.
+
 
 .. _ug-install-dependency-groups:
 
 Solution dependency groups
 ---------------------------
-Poetry and UV support dependency groups, which are sets of packages that can be installed together. This allows you to install only the dependencies you need for a particular use case, such as development, testing, or documentation.
+
+Both backends support dependency groups, which allow installing dependencies for a
+particular use case, such as development, testing, or documentation. UV groups are
+defined in ``[dependency-groups]``; Poetry groups are defined in ``[tool.poetry.group]``.
 
 Solution dependencies defined in the ``pyproject.toml`` file are organized into groups that can be installed selectively using the ``-d/--dependencies`` option of the ``saf install`` command.
 
@@ -192,6 +226,10 @@ Additional optional groups
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Other optional groups may be defined for a project. In the solution template, ``tests`` and ``style`` are available but are not installed by default.
+
+For UV, SAF disables UV's default group selection and requests only the groups
+selected by SAF. A configured UV default group, such as ``dev``, is not implicitly
+installed. ``-d all`` requests every group declared in ``[dependency-groups]``.
 
 Control which groups are installed
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -692,4 +730,3 @@ If you have both user session variables and a ``.env`` file for the ``my-private
     If the installation fails, see :ref:`troubleshooting_installation` for common problems and their workarounds.
     On machines behind a corporate proxy or a TLS-inspecting firewall, see also
     :ref:`troubleshooting_corporate_environment`.
-

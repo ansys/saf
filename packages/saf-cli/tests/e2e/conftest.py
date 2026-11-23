@@ -27,6 +27,7 @@ from typing import Protocol
 import uuid
 
 import httpx2
+from packaging.requirements import Requirement
 import psutil
 import pytest
 from selenium.webdriver.chrome.webdriver import WebDriver
@@ -36,6 +37,7 @@ import tomlkit
 
 from ansys.saf.cli._config.const import DEFAULT_SOLUTION_DISPLAY_NAME, DEFAULT_SOLUTION_NAME, DEFAULT_SOLUTION_NAMESPACE
 from ansys.saf.cli._database.models import SolutionRegistry
+from ansys.saf.cli._solutions.backend_detection import SolutionBackend, parse_solution_backend
 from ansys.saf.cli._utilities.conversion import namespace_to_path
 from ansys.saf.testing.common import YieldFixture, find_exec_in_venv
 from ansys.saf.testing.selenium import (
@@ -44,6 +46,7 @@ from ansys.saf.testing.selenium import (
     wait_for_element_and_send_text,
     wait_for_expected_property,
 )
+from tests.conftest import prepare_poetry_solution
 from tests.e2e.app_starter_process import SolutionAppStarter
 from tests.e2e.saf_process import SAFProcess
 from tests.e2e.solution_process import (
@@ -192,8 +195,13 @@ def _stage_extra_packages_in_solution_dir(solution_dir: Path) -> list[Path]:
 
 def add_extra_packages_to_solution(solution_name: str, solution_dir: Path) -> None:
     """Add staged extra wheel files to an installed local solution."""
-    for staged_whl_file in _stage_extra_packages_in_solution_dir(solution_dir):
-        _execute_command([solution_name, f"poetry add {staged_whl_file.as_posix()}"])
+    wheels = _stage_extra_packages_in_solution_dir(solution_dir)
+    backend = parse_solution_backend(solution_dir).backend
+    for wheel in wheels:
+        command = "uv add --no-sync" if backend is SolutionBackend.UV else "poetry add"
+        _execute_command([solution_name, f'{command} "{wheel.as_posix()}"'])
+    if wheels and backend is SolutionBackend.UV:
+        _execute_command([solution_name, "uv sync --locked --all-groups --inexact"])
 
 
 def configure_docker_extra_packages(solution_dir: Path) -> None:
@@ -204,10 +212,20 @@ def configure_docker_extra_packages(solution_dir: Path) -> None:
 
     dockerfile_path = solution_dir / "deployments" / "Dockerfile"
     dockerfile_content = dockerfile_path.read_text()
-    dockerfile_snippet = "RUN poetry install\n"
+    backend = parse_solution_backend(solution_dir).backend
+    if backend is SolutionBackend.UV:
+        dockerfile_snippet = "RUN uv sync --frozen --no-default-groups\n"
+        command = "uv add --no-sync"
+    else:
+        dockerfile_snippet = "RUN poetry install\n"
+        command = "poetry add"
+    if dockerfile_snippet not in dockerfile_content:
+        raise ValueError(f"Dependency installation instruction not found in {dockerfile_path}.")
     extra_packages_install_lines = "".join(
-        f"RUN poetry add /tmp/saf-extra-packages/{staged_whl_file.name}\n" for staged_whl_file in staged_wheel_files
+        f"RUN {command} /tmp/saf-extra-packages/{wheel.name}\n" for wheel in staged_wheel_files
     )
+    if backend is SolutionBackend.UV:
+        extra_packages_install_lines += "RUN uv lock\n"
     dockerfile_content = dockerfile_content.replace(
         dockerfile_snippet,
         f"COPY .saf-extra-packages /tmp/saf-extra-packages\n{extra_packages_install_lines}{dockerfile_snippet}",
@@ -742,16 +760,22 @@ def lint_scaffolded_solution(solution_root_dir: Path, solution_name: str, soluti
         solution_main_file.read_text().replace("def main():\n", 'def main():\n    """Entry point."""\n'),
     )
 
-    out = _run_linting_tool(solution_root_dir, "poetry", ["check"])
-    assert out.strip() == "All set!"
-    # introduce an error on purpose to verify that the process works
-    # NOTE: with the current saf install implementation, if there is an issue in poetry.lock,
-    # it will fail in the saf install and this will not be reached. Leaving it for future-proof.
+    backend = parse_solution_backend(solution_root_dir).backend
+    if backend is SolutionBackend.UV:
+        uv = shutil.which("uv")
+        assert uv is not None
+        check_command = [uv, "lock", "--check", "--no-python-downloads"]
+    else:
+        check_command = [find_exec_in_venv(solution_root_dir, "poetry"), "check"]
+    subprocess.run(check_command, cwd=solution_root_dir, check=True, capture_output=True, text=True)
     original = pyproject_file.read_text()
-    pyproject_file.write_text(original.replace('python = ">=3.11,<3.15"', 'python = "test"'))
-    with pytest.raises(subprocess.CalledProcessError):
-        _run_linting_tool(solution_root_dir, "poetry", ["check"])
-    pyproject_file.write_text(original)
+    key = "requires-python" if backend is SolutionBackend.UV else "python"
+    pyproject_file.write_text(original.replace(f'{key} = ">=3.11,<3.15"', f'{key} = "test"'))
+    try:
+        with pytest.raises(subprocess.CalledProcessError):
+            subprocess.run(check_command, cwd=solution_root_dir, check=True, capture_output=True, text=True)
+    finally:
+        pyproject_file.write_text(original)
 
 
 def is_lint_dot_github_workflow_folder_successful(root_path: Path, solution_name: str) -> bool:
@@ -778,7 +802,12 @@ def is_lint_dot_github_workflow_folder_successful(root_path: Path, solution_name
 # frameworks that are parametrized in one of the selected tests. We could optimize it further by selectively copying to
 # the workers based on the parameters of their selected tests.
 
-SESSION_SOLUTIONS: dict[tuple[str, str], SolutionRegistry] = {}
+SESSION_SOLUTIONS: dict[tuple[str, str, SolutionBackend], SolutionRegistry] = {}
+
+
+@pytest.fixture(scope="session")
+def session_solution_backend(request: pytest.FixtureRequest) -> SolutionBackend:
+    return SolutionBackend(getattr(request, "param", SolutionBackend.UV))
 
 
 @pytest.fixture(scope="session")
@@ -796,16 +825,17 @@ def session_solution_namespace(request: pytest.FixtureRequest) -> str:
     return param if param is not None else DEFAULT_SOLUTION_NAMESPACE
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture
 def session_solution(
     mock_session_appdata: Path,
     session_solution_ui_framework: str,
     session_solution_namespace: str,
+    session_solution_backend: SolutionBackend,
 ) -> SolutionRegistry:
     session_solutions_dir = mock_session_appdata / "solutions"
     session_solutions_dir.mkdir(exist_ok=True)
 
-    session_key = (session_solution_ui_framework, session_solution_namespace)
+    session_key = (session_solution_ui_framework, session_solution_namespace, session_solution_backend)
     if session_key not in SESSION_SOLUTIONS:
         random_id = str(random.randint(0, 10000)).zfill(5)
         solution_name = f"test_solution_{random_id}"
@@ -819,6 +849,8 @@ def session_solution(
             cwd=session_solutions_dir,
             input_str=f"{solution_name}\n{solution_display_name}\n{session_solution_ui_framework}\n\n",
         )
+        if session_solution_backend is SolutionBackend.POETRY:
+            prepare_poetry_solution(session_solutions_dir / solution_name)
         assert is_solution_registered(
             _list_solutions(),
             session_solutions_dir / solution_name,
@@ -840,7 +872,16 @@ def session_solution(
             display_name=solution_display_name,
         )
 
-    return SESSION_SOLUTIONS[session_key]
+    solution = SESSION_SOLUTIONS[session_key]
+    if not is_solution_registered(
+        _list_solutions(),
+        solution.root_dir,
+        solution_name=solution.name,
+        solution_display_name=solution.display_name,
+    ):
+        _execute_command([solution.root_dir.as_posix(), "python -c 'pass'"])
+
+    return solution
 
 
 @pytest.fixture
@@ -884,14 +925,26 @@ def env_file_with_mock_value(session_solution: SolutionRegistry) -> YieldFixture
     backup_env_file.unlink()
 
 
+@retry(stop=stop_after_attempt(12), wait=wait_fixed(5))
+def _remove_tree_with_retry(directory: Path) -> None:
+    # Windows may keep files locked briefly after the solution processes are terminated.
+    try:
+        shutil.rmtree(directory)
+    except Exception:
+        raise TryAgain from None
+
+
 @pytest.fixture
 def cleanup_solution_src(tmp_path: Path, session_solution: SolutionRegistry) -> YieldFixture[None]:
     solution_src_dir = session_solution.root_dir / "src"
     backup_src_dir = tmp_path / "solution_src_backup"
     shutil.copytree(solution_src_dir, backup_src_dir)
     yield
-    shutil.rmtree(solution_src_dir)
-    shutil.copytree(backup_src_dir, solution_src_dir)
+    try:
+        _remove_tree_with_retry(solution_src_dir)
+    finally:
+        # Always restore the shared solution so a failed cleanup doesn't break the following tests.
+        shutil.copytree(backup_src_dir, solution_src_dir, dirs_exist_ok=True)
 
 
 @pytest.fixture
@@ -905,24 +958,18 @@ def cleanup_solution_pyproject(tmp_path: Path, session_solution: SolutionRegistr
 
 
 @pytest.fixture
-def cleanup_solution_poetry_lock(tmp_path: Path, session_solution: SolutionRegistry) -> YieldFixture[None]:
-    solution_poetry_lock_file = session_solution.root_dir / "poetry.lock"
-    backup_poetry_lock_file = tmp_path / "poetry_lock_backup.lock"
-    shutil.copyfile(solution_poetry_lock_file, backup_poetry_lock_file)
+def cleanup_solution_lock(session_solution: SolutionRegistry) -> YieldFixture[None]:
+    lock = parse_solution_backend(session_solution.root_dir).lockfile_path
+    original = lock.read_bytes() if lock.is_file() else None
     yield
-    solution_poetry_lock_file.unlink(missing_ok=True)
-    shutil.copyfile(backup_poetry_lock_file, solution_poetry_lock_file)
+    if original is None:
+        lock.unlink(missing_ok=True)
+    else:
+        lock.write_bytes(original)
 
 
 @pytest.fixture
 def cleanup_solution_venv(tmp_path: Path, session_solution: SolutionRegistry) -> YieldFixture[None]:
-    @retry(stop=stop_after_attempt(12), wait=wait_fixed(5))
-    def _remove_tree_with_retry(solution_venv_dir: Path) -> None:
-        try:
-            shutil.rmtree(solution_venv_dir)
-        except Exception:
-            raise TryAgain from None
-
     solution_venv_dir = session_solution.root_dir / ".venv"
     backup_venv_dir = tmp_path / "venv_backup"
     shutil.copytree(solution_venv_dir, backup_venv_dir)
@@ -974,9 +1021,19 @@ def restore_glow_env_vars(session_solution: SolutionRegistry) -> Generator[None,
 
 
 def _add_saf_sdk_extra_to_main_group(solution_dir: Path, extra: str) -> None:
-    """Add an extra to the ansys-saf-sdk dependency of the main poetry group, whether it's a string or a table."""
+    """Add an SDK extra without changing the solution's dependency backend."""
     pyproject_file = solution_dir / "pyproject.toml"
     pyproject = tomlkit.parse(pyproject_file.read_text())
+    if parse_solution_backend(solution_dir).backend is SolutionBackend.UV:
+        dependencies = pyproject["project"]["dependencies"]  # type: ignore[index]
+        for index, value in enumerate(dependencies):  # type: ignore[arg-type]
+            requirement = Requirement(str(value))
+            if requirement.name == "ansys-saf-sdk":
+                requirement.extras.add(extra)
+                dependencies[index] = str(requirement)  # type: ignore[index]
+                pyproject_file.write_text(tomlkit.dumps(pyproject))
+                return
+        raise ValueError("The solution does not declare ansys-saf-sdk.")
     saf_sdk_dependency = pyproject["tool"]["poetry"]["dependencies"]["ansys-saf-sdk"]  # type: ignore[index]
     if isinstance(saf_sdk_dependency, str):
         pyproject["tool"]["poetry"]["dependencies"]["ansys-saf-sdk"] = {  # type: ignore[index]
@@ -992,7 +1049,8 @@ def _add_saf_sdk_extra_to_main_group(solution_dir: Path, extra: str) -> None:
 
 def add_hps_extra_to_solution(solution_dir: Path, solution_name: str) -> None:
     _add_saf_sdk_extra_to_main_group(solution_dir, "core-hps")
-    _execute_command([solution_name, "poetry lock"])
+    backend = parse_solution_backend(solution_dir).backend
+    _execute_command([solution_name, f"{backend.value} lock"])
 
 
 def configure_hps_solution(solution_dir: Path, solution_name: str, solution_namespace: str) -> None:

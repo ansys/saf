@@ -23,24 +23,35 @@ Update the dependencies
 Projects Dashboard is delivered as the Python package ``ansys-saf-projects-dashboard``. The desktop orchestrator
 uses it only when that package is installed in the solution environment where you run ``saf run``.
 
-Replace ``my_solution`` with your registered solution name.
+Run all the commands of this section from the root directory of your solution, the directory that contains
+``pyproject.toml``. ``saf execute`` then uses that solution, so you don't have to pass the solution name:
+
+.. code-block:: console
+
+    cd path/to/my_solution
+
+The commands call your dependency manager directly.
 
 .. _projects_dashboard_check_package:
 
 Check whether the package is already there
 ------------------------------------------
 
-From your solution project directory, for Poetry-based solutions:
+From your solution project directory:
 
-.. code-block:: console
+.. tab-set::
 
-    saf execute my_solution "python -m pip show ansys-saf-projects-dashboard"
+    .. tab-item:: UV
 
-For UV-based solutions:
+        .. code-block:: console
 
-.. code-block:: console
+            saf execute "uv pip show ansys-saf-projects-dashboard"
 
-    uv pip show ansys-saf-projects-dashboard
+    .. tab-item:: Poetry
+
+        .. code-block:: console
+
+            saf execute "python -m pip show ansys-saf-projects-dashboard"
 
 If this prints a version, the package is already installed — go to
 :ref:`projects_dashboard_register_page`. If the command fails, open ``pyproject.toml``. If it contains
@@ -54,74 +65,103 @@ If this prints a version, the package is already installed — go to
 Case A — Solution uses ``ansys-saf-sdk`` (SAF CLI template layout)
 ------------------------------------------------------------------
 
-For Poetry-based solutions, open ``pyproject.toml``. In ``[tool.poetry.group.desktop.dependencies]``, the SDK line should request the
-``desktop`` extra, for example:
+.. tab-set::
 
-.. code-block:: toml
+    .. tab-item:: UV
 
-    ansys-saf-sdk = { version = ">=0.4.0,<1.0.0", extras = ["desktop"] }
+        Open ``pyproject.toml`` and edit the SDK entry in the ``desktop`` list under ``[dependency-groups]``. Keep
+        its version constraint, any existing extras, and other entries in that group. For example, with an SDK
+        version that provides Projects Dashboard through the ``ui`` extra:
 
-SDK ``0.4.0`` includes Projects Dashboard through that extra. For SDK versions that expose a separate
-``ui`` extra, request both ``desktop`` and ``ui``. Use
-the same SDK version constraint in every Poetry group that declares ``ansys-saf-sdk``. If a group lists other
-extras (for example ``core-hps``), keep those extras on that group's line.
+        .. code-block:: toml
 
-Lock the dependencies, then install them (adjust the ``--with`` list to match the optional groups your solution
-uses):
+            [dependency-groups]
+            desktop = ["ansys-saf-sdk[desktop,ui]>=0.7.0,<1.0.0"]
 
-.. code-block:: console
+        Use the same SDK version constraint in every group that declares ``ansys-saf-sdk``.
 
-    saf execute my_solution "poetry lock"
-    saf execute my_solution "poetry install --with desktop,ui"
+        Update the lock file, then install the groups you need (adjust the ``--group`` list to match the optional
+        groups your solution uses):
 
-For UV-based solutions, edit the SDK entry in the ``desktop`` list under
-``[dependency-groups]``. Keep its version constraint, any existing extras, and
-other entries in that group. For example, with an SDK version that provides
-Projects Dashboard through the ``ui`` extra:
+        .. code-block:: console
 
-.. code-block:: toml
+            saf execute "uv lock"
+            saf execute "uv sync --no-default-groups --inexact --group desktop --group ui"
 
-    [dependency-groups]
-    desktop = ["ansys-saf-sdk[desktop,ui]>=0.7.0,<1.0.0"]
+        Keep ``--no-default-groups`` and ``--inexact``. Without ``--inexact``, ``uv sync`` uninstalls the packages
+        of the groups you don't list.
 
-From the solution root, update the lock file and install the groups you need:
+    .. tab-item:: Poetry
 
-.. code-block:: console
+        Open ``pyproject.toml``. In ``[tool.poetry.group.desktop.dependencies]``, the SDK line should request the
+        ``desktop`` extra, for example:
 
-    uv lock
-    saf install -d desktop,ui
+        .. code-block:: toml
+
+            ansys-saf-sdk = { version = ">=0.4.0,<1.0.0", extras = ["desktop"] }
+
+        SDK ``0.4.0`` includes Projects Dashboard through that extra. For SDK versions that expose a separate
+        ``ui`` extra, request both ``desktop`` and ``ui``. Use the same SDK version constraint in every Poetry
+        group that declares ``ansys-saf-sdk``. If a group lists other extras (for example ``core-hps``), keep
+        those extras on that group's line.
+
+        Lock the dependencies, then install them (adjust the ``--with`` list to match the optional groups your
+        solution uses):
+
+        .. code-block:: console
+
+            saf execute "poetry lock"
+            saf execute "poetry install --with desktop,ui"
 
 Run the check command again. It must succeed before you change the UI.
 
 Case B — Solution does not use ``ansys-saf-sdk``
 ------------------------------------------------
 
-Add Projects Dashboard to your ``desktop`` group. For Poetry, this command updates ``pyproject.toml`` and ``poetry.lock``:
+Add Projects Dashboard to your ``desktop`` group:
 
-.. code-block:: console
+.. tab-set::
 
-    saf execute my_solution "poetry add ansys-saf-projects-dashboard --group desktop"
+    .. tab-item:: UV
 
-For UV, run this from the solution root to update ``pyproject.toml`` and ``uv.lock``:
+        This command updates ``pyproject.toml`` and ``uv.lock``, and installs the package in the solution
+        environment:
 
-.. code-block:: console
+        .. code-block:: console
 
-    uv add --no-sync --group desktop ansys-saf-projects-dashboard
+            saf execute "uv add --group desktop ansys-saf-projects-dashboard"
+
+    .. tab-item:: Poetry
+
+        This command updates ``pyproject.toml`` and ``poetry.lock``:
+
+        .. code-block:: console
+
+            saf execute "poetry add ansys-saf-projects-dashboard --group desktop"
 
 If your solution has no ``desktop`` group, replace ``desktop`` with the group that declares
 ``ansys-saf-desktop-orchestrator``.
 
 Run the check command again. If it still fails, install the groups:
 
-.. code-block:: console
+.. tab-set::
 
-    saf execute my_solution "poetry install --with desktop,ui"
+    .. tab-item:: UV
 
-For UV, install the groups with:
+        Adjust the ``--group`` list to match the optional groups your solution uses:
 
-.. code-block:: console
+        .. code-block:: console
 
-    saf install -d desktop,ui
+            saf execute "uv sync --no-default-groups --inexact --group desktop --group ui"
+
+        Keep ``--no-default-groups`` and ``--inexact``. Without ``--inexact``, ``uv sync`` uninstalls the packages
+        of the groups you don't list.
+
+    .. tab-item:: Poetry
+
+        .. code-block:: console
+
+            saf execute "poetry install --with desktop,ui"
 
 .. _projects_dashboard_register_page:
 
@@ -583,17 +623,26 @@ If the log still mentions SAF Portal Desktop, or ``/projects`` does not load, ru
 Remove the SAF Portal Desktop dependency
 ========================================
 
-If your solution declares ``ansys-saf-desktop-portal`` as a dependency, remove it:
+If your solution declares ``ansys-saf-desktop-portal`` as a dependency, remove it. Run the commands from the root
+directory of your solution:
 
-.. code-block:: console
+.. tab-set::
 
-    saf execute my_solution "poetry remove ansys-saf-desktop-portal --group desktop"
+    .. tab-item:: UV
 
-For UV, run this from the solution root. Recreate the environment so that packages
-no longer required by the solution are removed, and include any additional groups
-you still need in the ``-d`` list:
+        Remove the dependency, then synchronize the environment so that packages no longer required by the
+        solution are removed. Include every group you still need in the ``--group`` list:
 
-.. code-block:: console
+        .. code-block:: console
 
-    uv remove --no-sync --group desktop ansys-saf-desktop-portal
-    saf install -f -d desktop,ui
+            saf execute "uv remove --no-sync --group desktop ansys-saf-desktop-portal"
+            saf execute "uv sync --no-default-groups --group desktop --group ui"
+
+        This ``uv sync`` has no ``--inexact`` on purpose: it removes the packages no longer required, and also the
+        packages of the groups you don't list.
+
+    .. tab-item:: Poetry
+
+        .. code-block:: console
+
+            saf execute "poetry remove ansys-saf-desktop-portal --group desktop"

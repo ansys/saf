@@ -82,18 +82,26 @@ jobs:
         env:
           PACKAGES: ${{ steps.packages.outputs.names }}
           UV_DEFAULT_INDEX: https://pypi.org/simple
-          UV_INDEX: https://PAT:${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}@${{ secrets.PYANSYS_PYPI_PRIVATE_URL }}
         run: |
           : > dist/update_results.md
           for package in ${PACKAGES}; do
-            echo "::group::Updating ${package}"
-            if uv run packages/saf-cli/scripts/upgrade_solution_template_uv_lock.py --packages "${package}"; then
+            echo "Updating ${package}"
+            log_file="dist/update_${package}.log"
+            set +e
+            uv run packages/saf-cli/scripts/upgrade_solution_template_uv_lock.py --packages "${package}" 2>&1 | tee "${log_file}"
+            exit_code=${PIPESTATUS[0]}
+            set -e
+            if [[ "${exit_code}" -eq 0 ]]; then
               echo "- \`${package}\`: processed" >> dist/update_results.md
             else
-              echo "::warning::Could not update ${package} (blocked or failed, see logs)"
-              echo "- \`${package}\`: blocked or failed" >> dist/update_results.md
+              {
+                echo "- \`${package}\`: blocked or failed (exit code ${exit_code})"
+                echo
+                echo '  ```text'
+                tail -n 50 "${log_file}" | sed 's/^/  /'
+                echo '  ```'
+              } >> dist/update_results.md
             fi
-            echo "::endgroup::"
           done
 
       - name: Check for lock file changes
@@ -185,4 +193,5 @@ jobs:
             dist/dependabot_alerts_*.md
             dist/solution-template-dependabot-report.md
             dist/update_results.md
+            dist/update_*.log          
           if-no-files-found: ignore

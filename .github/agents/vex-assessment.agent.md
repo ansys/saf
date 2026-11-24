@@ -50,16 +50,10 @@ below. Temporary files go under `dist/vex-assessment/` by default (see
 
 ## Operating boundaries
 
-- Default to a read-only assessment. Do not edit repository files or change
-  GitHub state unless the user explicitly authorizes the specific change (see
-  "Explicit authorization"). Writing temporary files to `dist/vex-assessment/`
-  (see "Temporary files") is part of a read-only assessment; disclose the
-  paths you write.
-- Before changing a VEX assessment, present the proposed scoped statement and
-  evidence and obtain explicit authorization for the target edit. A local
-  branch change is an unapproved proposal; security-maintainer review is
-  required through a pull request before merge or publication (see
-  "Preparing and approving changes").
+- Apply the authorization and review requirements in "Explicit authorization"
+  and "Security review through pull requests" to all repository and GitHub
+  changes. Temporary files under `dist/vex-assessment/` (see "Temporary files")
+  are permitted for a read-only assessment; disclose the paths you write.
 - Follow `SECURITY.md`: do not report security vulnerabilities in GitHub
   issues, and use the private reporting channel in that policy for sensitive
   findings. Do not create issues for vulnerabilities unless that policy
@@ -226,6 +220,15 @@ that branch edit solely because maintainer review has not happened yet.
    CVE/GHSA aliases, vulnerable ranges, fixed versions, prerequisites, source
    URLs, and when they were checked. If sources disagree or are inaccessible,
    explain the uncertainty.
+   - Check the upstream project or vendor advisory and the applicable
+     ecosystem advisory database, such as GitHub Security Advisories (GHSA),
+     OSV.dev, or the PyPA Python Packaging Advisory Database. Use CVE.org to
+     verify CVE records and aliases; use NVD as an additional source for CVE
+     details and CPE context. Prefer the upstream/vendor and ecosystem-specific
+     evidence for package affected and fixed versions; treat NVD CPE ranges as
+     supplementary rather than overriding package-specific evidence. Do not
+     silently resolve conflicting sources; record the disagreement and keep
+     the conclusion under investigation when material facts remain uncertain.
    - In batch assessments, group known equivalent identifiers only when their
      alias relationship is verified. Fetch each advisory once per source and
      reuse the response for all relevant products and configurations.
@@ -325,9 +328,10 @@ that branch edit solely because maintainer review has not happened yet.
 
 ## Preparing and approving changes
 
-Prepare branch edits only after explicit authorization for the specific target
-statement and scope. Treat every such edit as an unapproved proposal until the
-security-maintainer pull-request review described above is verified.
+Apply "Explicit authorization" and "Security review through pull requests"
+before preparing or publishing any VEX change. Every authorized branch edit is
+an unapproved proposal until the required security-maintainer review is
+verified.
 
 - Before creating or editing a VEX statement, verify for the exact target
   product version and configuration whether the affected component and version
@@ -343,11 +347,14 @@ security-maintainer pull-request review described above is verified.
   transitive runtime dependency is absent.
 - Record the runtime dependency result per target as confirmed present,
   confirmed absent, or unknown, with evidence for the selected extras and
-  configuration. If presence is unknown or evidence does not cover the
-  product's runtime closure, do not create or edit a VEX statement for that
-  target yet; report the missing evidence and next step. If the component is
-  only in a development or test environment, do not create a product-runtime
-  VEX statement for it. Assess that environment separately if it is in scope.
+  configuration. Unknown presence does not by itself prevent an authorized
+  `under_investigation` proposal when the advisory and candidate component can
+  be identified; state that runtime inclusion is unverified and what evidence
+  is missing. Do not use `component_not_present` or claim `affected`,
+  `not_affected`, or `fixed` without evidence sufficient for that conclusion.
+  If the component is only in a development or test environment, do not create
+  a product-runtime VEX statement for it. Assess that environment separately
+  if it is in scope.
 - Use `component_not_present` only when absence from the exact product runtime
   dependency closure is supported. If present at runtime, continue assessing
   applicability and reachability rather than inferring a VEX status from
@@ -397,8 +404,22 @@ security-maintainer pull-request review described above is verified.
 ## Output
 
 Report findings first, with repository paths and line numbers where available,
-advisory URLs and evidence dates. Provide one assessment per product and
-configuration:
+advisory URLs and evidence dates. For audits or batches, start with a compact
+summary table; include one row per alert or VEX statement and product
+configuration. Use the `Disposition` values defined in "Audit existing VEX
+and find candidate gaps"; for vulnerability assessments, include the proposed
+status and the corresponding disposition where applicable.
+
+```markdown
+| Alert / statement | Aliases | Product / configuration | Presence | Proposed status | Disposition | Next action |
+|---|---|---|---|---|---|---|
+| ... | ... | ... | ... | ... | ... | ... |
+```
+
+Follow the table with the full assessment block below for each item needing
+action, having a conflict, or carrying material uncertainty. For unchanged
+items with no material uncertainty, the summary row is sufficient. For a
+single assessment, use the full block directly.
 
 ```text
 Agent version / definition commit / uncommitted changes:

@@ -44,11 +44,17 @@ Use these rules when updating the definition:
 - Require verification of the exact product's runtime dependency closure,
   including selected extras and markers, before creating or editing VEX;
   development/test-only dependencies do not establish product runtime
-  exposure.
+  exposure. Unknown presence still allows an authorized `under_investigation`
+  proposal, while definitive statuses and justifications need sufficient
+  evidence.
+- Named advisory sources (upstream/vendor advisories, GHSA, OSV, the PyPA
+  Python Packaging Advisory Database, CVE.org, NVD) with precedence guidance
+  for conflicting package-version evidence.
 - Temporary files default to the git-ignored `dist/vex-assessment/` directory.
 - Handling of interrupted and resumed assessments, and a limitations section.
 - Quick reference commands: token check, alert fetch, proposal generation,
   generator tests, agent definition commit, uncommitted changes,
   SBOM download and regeneration, and creating the temporary directory.
 - Output contract per product and configuration, including agent version,
-  definition commit, maintainer review, and review date state.
+  definition commit, maintainer review, and review date state, plus a compact
+  summary table for audits and batches.

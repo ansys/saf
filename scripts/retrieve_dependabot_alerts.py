@@ -7,9 +7,12 @@
 The script queries the GitHub GraphQL API (``repository.vulnerabilityAlerts``),
 optionally filters alerts by package name and/or manifest file, and writes a
 Markdown table with the severity, manifest file, package name and patched
-version. It also traces package dependency paths from local uv and Poetry lock
-files when those manifests are available. Omit either filter to include all
-packages or manifests, respectively; omit both to include all alerts.
+version. It also reports potential dependency paths from local uv and Poetry
+lock files when those manifests are available. The paths combine runtime,
+optional-extra and development dependencies; they do not prove that a
+component is installed for a particular product configuration. Omit either
+filter to include all packages or manifests, respectively; omit both to include
+all alerts.
 
 Requirements:
   - Set the GITHUB_TOKEN environment variable with a token that can read
@@ -516,7 +519,14 @@ def _render_markdown(
     if dependency_records:
         package_label = "package" if len(dependency_records) == 1 else "packages"
         lines += [
-            "### Dependency traces",
+            "### Potential dependency traces",
+            "",
+            "These paths are candidate relationships from lock metadata. The graph "
+            "combines runtime, optional-extra and development dependencies without "
+            "resolving which extras, groups or environment markers are selected. "
+            "A listed path does not prove that the component is installed in a "
+            "specific product or runtime configuration; verify the relevant "
+            "manifest, extras and environment.",
             "",
             "<details>",
             f"<summary>Show dependency traces for {len(dependency_records)} {package_label}</summary>",
@@ -531,7 +541,7 @@ def _render_markdown(
                 if trace["manifest_file"]:
                     lines.append(f"    - Project manifest: `{trace['manifest_file']}`")
                 if trace["dependency_paths"]:
-                    lines.append("    - Dependency tree:")
+                    lines.append("    - Potential dependency tree:")
                     _append_dependency_tree(lines, trace["dependency_paths"])
                 elif trace.get("status"):
                     lines.append(f"    - Trace unavailable: {trace['status']}")

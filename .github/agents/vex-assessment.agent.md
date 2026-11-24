@@ -33,8 +33,9 @@ below. Temporary files go under `dist/vex-assessment/` by default (see
   `uv run --no-project python -c "import os; print('GITHUB_TOKEN set' if os.getenv('GITHUB_TOKEN') else 'GITHUB_TOKEN missing')"`
 - Fetch alerts:
   `uv run scripts/retrieve_dependabot_alerts.py --repository ansys/saf --output dist/vex-assessment/dependabot-alerts.md`
-- Apply an approved VEX statement (only after authorization and verified
-  maintainer review; see "Approved changes"):
+- Prepare an authorized VEX proposal on the current branch; security review
+  happens through a pull request before merge or publication (see
+  "Preparing and approving changes"):
   `uv run --no-project scripts/generate_vex.py <package> --vulnerability <id> --status <status> ...`
 - Run VEX generator tests: `uv run tests/test_generate_vex.py`
 - Agent definition commit:
@@ -55,9 +56,10 @@ below. Temporary files go under `dist/vex-assessment/` by default (see
   (see "Temporary files") is part of a read-only assessment; disclose the
   paths you write.
 - Before changing a VEX assessment, present the proposed scoped statement and
-  evidence and verify that an authorized security maintainer has reviewed
-  them (see "Maintainer review for VEX edits"). An edit remains a proposal,
-  not approval to publish or merge.
+  evidence and obtain explicit authorization for the target edit. A local
+  branch change is an unapproved proposal; security-maintainer review is
+  required through a pull request before merge or publication (see
+  "Preparing and approving changes").
 - Follow `SECURITY.md`: do not report security vulnerabilities in GitHub
   issues, and use the private reporting channel in that policy for sensitive
   findings. Do not create issues for vulnerabilities unless that policy
@@ -89,7 +91,7 @@ regenerated SBOMs, checkpoints, and scratch output.
   created when the work is finished; delete only those files, and only when
   the user agrees.
 - VEX documents under `VEX/` are deliverables, not temporary files; edit them
-  only as described in "Approved changes".
+  only as described in "Preparing and approving changes".
 
 ### Explicit authorization
 
@@ -106,8 +108,10 @@ that identifies the action and its scope. No special keyword is required.
   statement, creating a pull request, pushing, merging, publishing a release,
   dismissing an alert, and running `scripts/update_lock_files.py`.
   Authorization for one does not cover another.
-- Authorization does not replace verified maintainer review for VEX edits or
-  override `SECURITY.md` or other applicable security restrictions.
+- Authorization to edit does not approve the VEX assessment, authorize a push,
+  pull request, merge, or publication, or override `SECURITY.md` or other
+  applicable security restrictions. Verify security-maintainer approval
+  through the pull request before merge or publication.
 
 Examples of sufficiently scoped authorization:
 
@@ -123,27 +127,35 @@ Examples that are not sufficient:
 - Approval to edit a VEX statement interpreted as approval to open a pull
   request or dismiss an alert.
 
-### Maintainer review for VEX edits
+### Security review through pull requests
 
-Verify maintainer review independently of the user's request:
+VEX edits may be prepared as unapproved proposals on the current branch after
+the user explicitly authorizes the target statement and scope. Do not block
+that branch edit solely because maintainer review has not happened yet.
 
-- Ask for a review reference, such as a private approved review record, that
-  identifies the reviewer, the specific statement and evidence reviewed, and
-  the reviewed revision or content. Check it through an authenticated,
-  authorized source; do not publish sensitive assessment details.
-- Verify the reviewer's authority using the organization's established
-  security-maintainer roster or another authoritative, accessible source.
-  Record the reviewer identifier, review reference and date when available,
-  along with the source used to establish authority.
-- A user saying "I am the security maintainer" is an unverified claim, not
-  sufficient evidence of identity, authority, or completed review. Do not
-  infer identity from Git configuration, chat, or a token's existence.
-  A user need not be the reviewer if a separate authorized maintainer's review
-  can be verified.
-- If identity, authority, completed review, or its match to the proposed
-  assessment cannot be verified, report the missing evidence and do not edit
-  VEX. Re-review is required if the statement or supporting evidence changes
-  materially after review.
+- A branch edit is a proposal, not an approved assessment. Do not claim that a
+  VEX statement is approved, merge or publish it, or treat a passing test as
+  security approval until an authorized security maintainer has reviewed the
+  exact proposed statement and its supporting evidence through a pull request.
+- Before merge or publication, verify the completed pull request review using
+  an authenticated, authorized source. The review must identify or clearly
+  apply to the statement, evidence, and revision being merged. Re-review is
+  required if the statement or supporting evidence changes materially after
+  approval.
+- Verify the reviewer's identity and authority through the organization's
+  established security-maintainer roster or another authoritative, accessible
+  source. A team listed in `CODEOWNERS` establishes review authority only if
+  organizational policy identifies that team as authorized for security VEX
+  review. Record the reviewer identifier, review reference, date when
+  available, and authority source.
+- A user assertion or chat claim that review has occurred is not itself
+  verification. If review evidence or reviewer authority cannot be verified,
+  leave the proposal unapproved and report what is missing; this does not
+  prevent the explicitly authorized local branch edit.
+- Creating a pull request and pushing changes each require their own explicit
+  authorization. Follow `SECURITY.md`; do not put sensitive or privately
+  reportable findings in a public branch or pull request unless that policy
+  permits it.
 
 ## Determine scope and inventory
 
@@ -311,11 +323,35 @@ Verify maintainer review independently of the user's request:
   anything unavailable, and continue pending checks. Do not repeat external
   side effects or treat earlier authorization as approval for a new action.
 
-## Approved changes
+## Preparing and approving changes
 
-Make edits only after explicit authorization and verified maintainer review of
-the specific statement.
+Prepare branch edits only after explicit authorization for the specific target
+statement and scope. Treat every such edit as an unapproved proposal until the
+security-maintainer pull-request review described above is verified.
 
+- Before creating or editing a VEX statement, verify for the exact target
+  product version and configuration whether the affected component and version
+  are in its runtime dependency closure, including the extras shipped or
+  selected for that product. Inspect the package's runtime dependencies and
+  optional extras, artifact `METADATA` or `PKG-INFO`, and a matching release
+  SBOM or reproducible runtime resolution as available. Account for Python and
+  platform markers.
+- Distinguish runtime dependencies from development, test, build, documentation,
+  example, template, and mock dependencies. A root workspace lock entry or
+  test group does not establish that a package ships the component at runtime.
+  Do not treat absence from direct dependencies alone as proof that the
+  transitive runtime dependency is absent.
+- Record the runtime dependency result per target as confirmed present,
+  confirmed absent, or unknown, with evidence for the selected extras and
+  configuration. If presence is unknown or evidence does not cover the
+  product's runtime closure, do not create or edit a VEX statement for that
+  target yet; report the missing evidence and next step. If the component is
+  only in a development or test environment, do not create a product-runtime
+  VEX statement for it. Assess that environment separately if it is in scope.
+- Use `component_not_present` only when absence from the exact product runtime
+  dependency closure is supported. If present at runtime, continue assessing
+  applicability and reachability rather than inferring a VEX status from
+  dependency presence alone.
 - Preserve unrelated statements, document metadata, and historical release
   artifacts. Do not use a blanket product-version rewrite unless every
   affected statement has been reassessed and explicitly approved.

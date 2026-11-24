@@ -36,13 +36,19 @@ Use these rules when updating the definition:
 - Advisory handling: batch deduplication, session caching, and rate-limit
   (HTTP 429) handling.
 - Safeguards: scoped explicit authorization with examples, separate
-  authorization for each external or bulk action, verified security-maintainer
-  review before any VEX edit, `SECURITY.md` compliance, untrusted-input
-  handling, and defined behavior when the user does not respond.
+  authorization for each external or bulk action, branch edits as unapproved
+  VEX proposals with verified security-maintainer review through a pull
+  request before merge or publication, `SECURITY.md` compliance,
+  untrusted-input handling, and defined behavior when the user does not
+  respond.
+- Require verification of the exact product's runtime dependency closure,
+  including selected extras and markers, before creating or editing VEX;
+  development/test-only dependencies do not establish product runtime
+  exposure.
 - Temporary files default to the git-ignored `dist/vex-assessment/` directory.
 - Handling of interrupted and resumed assessments, and a limitations section.
-- Quick reference commands: token check, alert fetch, approved statement
-  generation, generator tests, agent definition commit, uncommitted changes,
+- Quick reference commands: token check, alert fetch, proposal generation,
+  generator tests, agent definition commit, uncommitted changes,
   SBOM download and regeneration, and creating the temporary directory.
 - Output contract per product and configuration, including agent version,
   definition commit, maintainer review, and review date state.

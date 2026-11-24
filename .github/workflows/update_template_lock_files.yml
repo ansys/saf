@@ -81,7 +81,6 @@ jobs:
         shell: bash
         env:
           PACKAGES: ${{ steps.packages.outputs.names }}
-          UV_DEFAULT_INDEX: https://pypi.org/simple
         run: |
           : > dist/update_results.md
           for package in ${PACKAGES}; do

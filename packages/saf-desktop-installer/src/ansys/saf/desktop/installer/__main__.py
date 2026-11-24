@@ -21,6 +21,7 @@ import platform
 import subprocess
 import sys
 
+import click
 from dotenv import dotenv_values
 
 from ansys.saf.desktop.installer._common.utils import check_poetry_plugin_export_is_required
@@ -75,7 +76,16 @@ def _get_poetry_venv_python_exec() -> Path:
 
 
 def _prepare_poetry_backend(offline_package: bool) -> None:
-    logger.warning("Poetry-based solutions are deprecated. Packaging will continue using Poetry.")
+    message = (
+        "Poetry-based solutions are deprecated. Support will end on May 31st.\n"
+        "Please migrate your solution to UV following the migration guide: "
+        "https://saf.ansys.com/version/stable/user_guide/migration/poetry-to-uv.html.\n"
+        "Packaging will continue using Poetry for now."
+    )
+    # Color only interactive terminals so CI logs and redirected output stay plain.
+    if sys.stderr.isatty() and not os.getenv("NO_COLOR"):
+        message = click.style(message, fg="yellow")
+    logger.warning(message)
     if not offline_package or not check_poetry_plugin_export_is_required(offline_package):
         return
 

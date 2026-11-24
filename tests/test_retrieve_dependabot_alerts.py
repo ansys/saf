@@ -75,8 +75,39 @@ def test_main_returns_overall_suggested_patches(tmp_path: Path, monkeypatch: pyt
 
     assert suggestions == [("PIP", "mcp", "1.10.0")]
     report = (tmp_path / "dist" / "dependabot_alerts_owner_repo_all.md").read_text(encoding="utf-8")
-    assert "### Dependency traces" in report
+    assert "### Potential dependency traces" in report
+    assert "combines runtime, optional-extra and development dependencies" in report
+    assert "does not prove that the component is installed" in report
     assert "Trace unavailable: lock file not found" in report
+
+
+def test_main_writes_github_output_when_available(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    github_output = tmp_path / "github_output"
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setenv("GITHUB_OUTPUT", str(github_output))
+    monkeypatch.setattr(sys, "argv", ["retrieve_dependabot_alerts.py", "--output", "report.md"])
+    monkeypatch.setattr(retrieve_dependabot_alerts, "_get_github_token", lambda: "token")
+    monkeypatch.setattr(
+        retrieve_dependabot_alerts,
+        "_list_alerts",
+        lambda *_args: [_alert(1, "MCP", "1.9.0"), _alert(2, "mcp", "1.10.0"), _alert(3, "other", None)],
+    )
+
+    retrieve_dependabot_alerts.main()
+
+    assert github_output.read_text(encoding="utf-8") == "packages=mcp\npatches=mcp>=1.10.0\n"
+
+
+def test_main_skips_github_output_without_env(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.delenv("GITHUB_OUTPUT", raising=False)
+    monkeypatch.setattr(sys, "argv", ["retrieve_dependabot_alerts.py", "--output", "report.md"])
+    monkeypatch.setattr(retrieve_dependabot_alerts, "_get_github_token", lambda: "token")
+    monkeypatch.setattr(retrieve_dependabot_alerts, "_list_alerts", lambda *_args: [_alert(1, "mcp", "1.9.0")])
+
+    retrieve_dependabot_alerts.main()
+
+    assert [path.name for path in tmp_path.iterdir()] == ["report.md"]
 
 
 def test_root_uv_workspace_traces_affected_member_and_dependency_path(tmp_path: Path) -> None:
@@ -248,13 +279,13 @@ def test_render_markdown_includes_workspace_dependency_trace() -> None:
         ],
     )
 
-    assert "### Dependency traces" in report
+    assert "### Potential dependency traces" in report
     assert "<details>" in report
     assert "<summary>Show dependency traces for 1 package</summary>" in report
     assert "</details>" in report
     assert "Workspace member: `member-package`" in report
     assert "Project manifest: `packages/member/pyproject.toml`" in report
-    assert "Dependency tree:" in report
+    assert "Potential dependency tree:" in report
     assert "      - `member-package`" in report
     assert "        - `middle`" in report
     assert "          - `mcp`" in report

@@ -75,7 +75,8 @@ def test_poetry_packaging_warns_and_checks_plugin_only_offline(
         InstallerConfig(offline_package=offline_package, no_executable=True),
     )
 
-    assert "Poetry-based solutions are deprecated" in caplog.text
+    assert "Poetry-based solutions are deprecated. Support will end on May 31st." in caplog.text
+    assert "https://saf.ansys.com/version/stable/user_guide/migration/poetry-to-uv.html" in caplog.text
     if offline_package:
         check_plugin.assert_called_once_with(True)
     else:

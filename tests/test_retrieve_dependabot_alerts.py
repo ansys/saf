@@ -75,7 +75,9 @@ def test_main_returns_overall_suggested_patches(tmp_path: Path, monkeypatch: pyt
 
     assert suggestions == [("PIP", "mcp", "1.10.0")]
     report = (tmp_path / "dist" / "dependabot_alerts_owner_repo_all.md").read_text(encoding="utf-8")
-    assert "### Dependency traces" in report
+    assert "### Potential dependency traces" in report
+    assert "combines runtime, optional-extra and development dependencies" in report
+    assert "does not prove that the component is installed" in report
     assert "Trace unavailable: lock file not found" in report
 
 
@@ -248,13 +250,13 @@ def test_render_markdown_includes_workspace_dependency_trace() -> None:
         ],
     )
 
-    assert "### Dependency traces" in report
+    assert "### Potential dependency traces" in report
     assert "<details>" in report
     assert "<summary>Show dependency traces for 1 package</summary>" in report
     assert "</details>" in report
     assert "Workspace member: `member-package`" in report
     assert "Project manifest: `packages/member/pyproject.toml`" in report
-    assert "Dependency tree:" in report
+    assert "Potential dependency tree:" in report
     assert "      - `member-package`" in report
     assert "        - `middle`" in report
     assert "          - `mcp`" in report

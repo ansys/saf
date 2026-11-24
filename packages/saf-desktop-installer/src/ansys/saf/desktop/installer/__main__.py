@@ -20,6 +20,7 @@ from pathlib import Path
 import platform
 import subprocess
 import sys
+import warnings
 
 import click
 from dotenv import dotenv_values
@@ -85,7 +86,7 @@ def _prepare_poetry_backend(offline_package: bool) -> None:
     # Color only interactive terminals so CI logs and redirected output stay plain.
     if sys.stderr.isatty() and not os.getenv("NO_COLOR"):
         message = click.style(message, fg="yellow")
-    logger.warning(message)
+    warnings.warn(message, DeprecationWarning, stacklevel=2)
     if not offline_package or not check_poetry_plugin_export_is_required(offline_package):
         return
 
@@ -128,6 +129,12 @@ def package_solution(solution_info: SolutionInfo, installer_config: InstallerCon
 
 if __name__ == "__main__":
     import argparse
+
+    warnings.filterwarnings(
+        "default",
+        message=r"^(?:\x1b\[[0-9;]*m)?Poetry-based solutions are deprecated\.",
+        category=DeprecationWarning,
+    )
 
     parser = argparse.ArgumentParser(description="CLI for packaging a solution into a standalone desktop installer.")
     parser.add_argument(

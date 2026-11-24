@@ -192,22 +192,16 @@ def test_pin_staged_wheel_url_dependencies(tmp_path: Path) -> None:
 
 
 def test_stage_uv_selected_local_dependencies(tmp_path: Path, mocker: pytest_mock.MockerFixture) -> None:
-    """Build wheels for native UV local, Git, and URL lock sources."""
+    """Build wheels for native UV local archive, Git, and URL lock sources."""
     wheel = tmp_path / "example-1.0-py3-none-any.whl"
     wheel.write_bytes(b"wheel")
     digest = hashlib.sha256(wheel.read_bytes()).hexdigest()
-    project = tmp_path / "local-project"
-    project.mkdir()
     packages = [
-        {
-            "name": "local",
-            "source": {"path": "local-project"},
-            "resolution-markers": ["python_full_version < '3.13'"],
-        },
         {
             "name": "example",
             "source": {"path": wheel.name},
             "wheels": [{"filename": wheel.name, "hash": f"sha256:{digest}"}],
+            "resolution-markers": ["python_full_version < '3.13'"],
         },
         {"name": "git", "source": {"git": "https://github.com/org/repo.git#abcdef"}},
         {"name": "remote", "source": {"url": "https://example.invalid/a.whl"}},
@@ -218,8 +212,7 @@ def test_stage_uv_selected_local_dependencies(tmp_path: Path, mocker: pytest_moc
     def run(command: list[str], **kwargs: Any) -> subprocess.CompletedProcess[str]:
         requirements = Path(command[-1]).read_text(encoding="utf-8").splitlines()
         assert requirements == [
-            f"local @ {project.resolve().as_uri()} ; (python_full_version < '3.13')",
-            f"example @ {wheel.resolve().as_uri()}",
+            f"example @ {wheel.resolve().as_uri()} ; (python_full_version < '3.13')",
             "git @ git+https://github.com/org/repo.git@abcdef",
             "remote @ https://example.invalid/a.whl",
         ]
@@ -340,15 +333,22 @@ def test_uv_installation_dependency_groups_exclude_build_tools() -> None:
 
 
 def test_rewrite_uv_local_sources_points_at_staged_wheels(tmp_path: Path) -> None:
-    """Rewrite local project sources to portable wheelhouse paths."""
+    """Rewrite local archive sources to portable wheelhouse paths."""
     project_root = tmp_path / "source"
-    local_source = project_root / "local-dependency"
-    local_source.mkdir(parents=True)
+    project_root.mkdir()
+    local_archive = project_root / "local_dependency-1.0-py3-none-any.whl"
+    local_archive.write_bytes(b"local wheel")
     packages = [
         {
             "name": "local-dependency",
             "version": "1.0",
-            "source": {"path": "local-dependency"},
+            "source": {"path": local_archive.name},
+            "wheels": [
+                {
+                    "filename": local_archive.name,
+                    "hash": f"sha256:{hashlib.sha256(local_archive.read_bytes()).hexdigest()}",
+                },
+            ],
             "resolution-markers": ["sys_platform == 'win32'"],
         },
         {
@@ -506,10 +506,10 @@ def test_stage_uv_selected_local_dependencies_reports_pip_failure(
     tmp_path: Path,
     mocker: pytest_mock.MockerFixture,
 ) -> None:
-    """Surface local source build failures from the target Python's pip."""
-    project = tmp_path / "project"
-    project.mkdir()
-    packages = [{"name": "local", "source": {"path": "project"}}]
+    """Surface local archive build failures from the target Python's pip."""
+    archive = tmp_path / "local-1.0.tar.gz"
+    archive.write_bytes(b"sdist")
+    packages = [{"name": "local", "source": {"path": archive.name}}]
     error = subprocess.CalledProcessError(1, ["python", "-m", "pip", "wheel"], stderr="wheel build failed")
     mocker.patch.object(manage_dependencies.subprocess, "run", side_effect=error)
 

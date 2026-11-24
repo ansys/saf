@@ -1,0 +1,189 @@
+name: Update solution template lock files
+
+on:
+  schedule:
+    - cron: "0 6 * * *"
+  workflow_dispatch:
+    inputs:
+      dry-run:
+        description: "Dry run: update the lock files and report the diff, but do not push a branch or create a PR"
+        type: boolean
+        default: true
+
+concurrency:
+  group: update-template-lock-files
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+env:
+  LOCK_FILES_DIR: packages/saf-cli/src/ansys/saf/cli/_solutions/templates/solution/{{cookiecutter.__solution_name}}/lock_files
+  UPDATE_BRANCH: ${{ github.run_id }}/update-solution-template-lock-files
+  UV_PYTHON: "3.12"
+
+jobs:
+  update-lock-files:
+    name: Update lock files from Dependabot alerts
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: main
+          token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
+          fetch-depth: 0
+          persist-credentials: true # required for pushing the update branch
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
+        with:
+          python-version: "3.12"
+          enable-cache: false
+
+      - name: Retrieve Dependabot alerts (dash)
+        id: alerts_dash
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
+        run: |
+          mkdir -p dist
+          uv run scripts/retrieve_dependabot_alerts.py \
+            --manifest "${LOCK_FILES_DIR}/dash/uv.lock" \
+            --output dist/dependabot_alerts_dash.md
+
+      - name: Retrieve Dependabot alerts (no_ui)
+        id: alerts_no_ui
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
+        run: |
+          uv run scripts/retrieve_dependabot_alerts.py \
+            --manifest "${LOCK_FILES_DIR}/no_ui/uv.lock" \
+            --output dist/dependabot_alerts_no_ui.md
+
+      - name: Merge packages to update
+        id: packages
+        shell: bash
+        env:
+          DASH_PACKAGES: ${{ steps.alerts-dash.outputs.packages }}
+          NO_UI_PACKAGES: ${{ steps.alerts_no_ui.outputs.packages }}
+          DASH_PATCHES: ${{ steps.alerts-dash.outputs.patches }}
+          NO_UI_PATCHES: ${{ steps.alerts_no_ui.outputs.patches }}
+        run: |
+          names=$(echo "${DASH_PACKAGES} ${NO_UI_PACKAGES}" | tr ' ' '\n' | sed '/^$/d' | sort -u | tr '\n' ' ' | xargs)
+          echo "names=${names}" >> "$GITHUB_OUTPUT"
+          echo "Packages with a suggested patch: ${names:-none}"
+          echo "${DASH_PATCHES} ${NO_UI_PATCHES}" | tr ' ' '\n' | sed '/^$/d' | sort -u > dist/packages_to_update.txt
+
+      - name: Update lock files
+        id: update
+        if: steps.packages.outputs.names != ''
+        shell: bash
+        env:
+          PACKAGES: ${{ steps.packages.outputs.names }}
+          UV_DEFAULT_INDEX: https://pypi.org/simple
+          UV_INDEX: https://PAT:${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}@${{ secrets.PYANSYS_PYPI_PRIVATE_URL }}
+        run: |
+          : > dist/update_results.md
+          for package in ${PACKAGES}; do
+            echo "::group::Updating ${package}"
+            if uv run packages/saf-cli/scripts/upgrade_solution_template_uv_lock.py --packages "${package}"; then
+              echo "- \`${package}\`: processed" >> dist/update_results.md
+            else
+              echo "::warning::Could not update ${package} (blocked or failed, see logs)"
+              echo "- \`${package}\`: blocked or failed" >> dist/update_results.md
+            fi
+            echo "::endgroup::"
+          done
+
+      - name: Check for lock file changes
+        id: changes
+        if: steps.packages.outputs.names != ''
+        shell: bash
+        run: |
+          if [[ -n "$(git status --porcelain -- "${LOCK_FILES_DIR}")" ]]; then
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "No lock file was updated, no pull request is needed."
+          fi
+
+      - name: Show lock file diff (dry run)
+        if: steps.changes.outputs.changed == 'true' && inputs.dry-run
+        shell: bash
+        run: |
+          git diff --stat -- "${LOCK_FILES_DIR}" | tee dist/lock_files_diff.txt
+          {
+            echo "## Dry run: lock file changes (no branch pushed, no PR created)"
+            echo
+            echo '```'
+            cat dist/lock_files_diff.txt
+            echo '```'
+            echo
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Create or update pull request
+        if: steps.changes.outputs.changed == 'true' && !inputs.dry-run
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
+          EMAIL: ${{ secrets.PYANSYS_CI_BOT_EMAIL != '' && secrets.PYANSYS_CI_BOT_EMAIL || 'actions@github.com' }}
+          USERNAME: ${{ secrets.PYANSYS_CI_BOT_USERNAME != '' && secrets.PYANSYS_CI_BOT_USERNAME || 'actions' }}
+        run: |
+          git config user.email "${EMAIL}"
+          git config user.name "${USERNAME}"
+          git switch --create "${UPDATE_BRANCH}"
+          git add -- "${LOCK_FILES_DIR}"
+          git commit -m "chore(deps): update solution template lock files for Dependabot alerts"
+          git push --force origin "HEAD:${UPDATE_BRANCH}"
+
+          {
+            echo "Automated update of the solution template \`uv.lock\` files to resolve open Dependabot alerts."
+            echo
+            echo "### Packages with a suggested patch"
+            cat dist/packages_to_update.txt | sed 's/^/- /'
+            echo
+            echo "### Update results"
+            cat dist/update_results.md
+            echo
+            echo "Generated by the [${GITHUB_WORKFLOW}](${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}) workflow."
+          } > dist/pr_body.md
+
+          existing_pr=$(gh pr list --head "${UPDATE_BRANCH}" --base main --state open --json number --jq '.[0].number')
+          if [[ -n "${existing_pr}" ]]; then
+            gh pr edit "${existing_pr}" --body-file dist/pr_body.md
+            echo "Updated existing pull request #${existing_pr}"
+          else
+            gh pr create \
+              --base main \
+              --head "${UPDATE_BRANCH}" \
+              --title "chore(deps): update solution template lock files" \
+              --body-file dist/pr_body.md
+          fi
+
+      - name: Publish job summary
+        if: always()
+        shell: bash
+        run: |
+          for report in dist/dependabot_alerts_dash.md dist/dependabot_alerts_no_ui.md \
+                        dist/solution-template-dependabot-report.md dist/update_results.md; do
+            if [[ -f "${report}" ]]; then
+              {
+                echo "## $(basename "${report}")"
+                echo
+                cat "${report}"
+                echo
+              } >> "$GITHUB_STEP_SUMMARY"
+            fi
+          done
+
+      - name: Upload reports
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: template-lock-files-reports
+          path: |
+            dist/dependabot_alerts_*.md
+            dist/solution-template-dependabot-report.md
+            dist/update_results.md
+          if-no-files-found: ignore

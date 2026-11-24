@@ -30,7 +30,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          ref: main
           token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
           fetch-depth: 0
           persist-credentials: true # required for pushing the update branch
@@ -42,7 +41,7 @@ jobs:
           enable-cache: false
 
       - name: Retrieve Dependabot alerts (dash)
-        id: alerts_dash
+        id: alerts-dash
         shell: bash
         env:
           GITHUB_TOKEN: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
@@ -53,7 +52,7 @@ jobs:
             --output dist/dependabot_alerts_dash.md
 
       - name: Retrieve Dependabot alerts (no_ui)
-        id: alerts_no_ui
+        id: alerts-no-ui
         shell: bash
         env:
           GITHUB_TOKEN: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
@@ -67,9 +66,9 @@ jobs:
         shell: bash
         env:
           DASH_PACKAGES: ${{ steps.alerts-dash.outputs.packages }}
-          NO_UI_PACKAGES: ${{ steps.alerts_no_ui.outputs.packages }}
+          NO_UI_PACKAGES: ${{ steps.alerts-no-ui.outputs.packages }}
           DASH_PATCHES: ${{ steps.alerts-dash.outputs.patches }}
-          NO_UI_PATCHES: ${{ steps.alerts_no_ui.outputs.patches }}
+          NO_UI_PATCHES: ${{ steps.alerts-no-ui.outputs.patches }}
         run: |
           names=$(echo "${DASH_PACKAGES} ${NO_UI_PACKAGES}" | tr ' ' '\n' | sed '/^$/d' | sort -u | tr '\n' ' ' | xargs)
           echo "names=${names}" >> "$GITHUB_OUTPUT"

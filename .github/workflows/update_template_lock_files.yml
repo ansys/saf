@@ -2,7 +2,7 @@ name: Update solution template lock files
 run-name: >-
   ${{ github.event_name == 'workflow_dispatch' && format('Manual run triggered by
   {0}', github.actor) || 'Scheduled run' }} ${{ (github.event_name == 'workflow_dispatch'
-  &&  inputs.dry-run) && format('Dry run: {0}', inputs.dry-run) || '' }} #magic___^_^___line
+  &&  inputs.dry-run) && format('Dry run: {0}', inputs.dry-run) || '' }}
 on:
   schedule:
     - cron: "0 6 * * *"

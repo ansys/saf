@@ -116,6 +116,20 @@ def _filter_metadata(metadata):
     return metadata
 
 
+def _unquote_proptypes_enum_values(proptypes_path):
+    """Remove the extra quotes Dash puts around the values of TypeScript string literal unions.
+
+    The metadata keeps each literal with its quotes (``'create'``) and Dash writes their Python repr
+    in ``pt.oneOf``, so the browser would only accept the string ``'create'`` with the quotes.
+    """
+    import re
+
+    content = proptypes_path.read_text(encoding="utf-8")
+    patched = re.sub(r"\"'([^'\"\\]*)'\"", r"'\1'", content)
+    if patched != content:
+        proptypes_path.write_text(patched, encoding="utf-8", newline="\n")
+
+
 def main():  # noqa: C901
     """Run component generation with Windows path fix."""
     parser = argparse.ArgumentParser(description="Generate Dash component Python wrappers")
@@ -208,6 +222,8 @@ def main():  # noqa: C901
                             "Verify Dash generator output format hasn't changed.",
                             file=sys.stderr,
                         )
+
+        _unquote_proptypes_enum_values(output_dir / "proptypes.js")
 
         _add_license_headers(generated_python_files)
 

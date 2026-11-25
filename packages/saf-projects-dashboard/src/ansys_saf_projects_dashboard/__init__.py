@@ -49,11 +49,15 @@ _js_dist.extend(
     [
         {"relative_package_path": "ansys_saf_projects_dashboard.js", "namespace": _dash_namespace},
         {"relative_package_path": "ansys_saf_projects_dashboard.js.map", "namespace": _dash_namespace, "dynamic": True},
+        # Fonts loaded by the bundle styles. Dynamic resources are served on request, without a script tag.
+        {"relative_package_path": "assets/fonts/SourceSans3.ttf", "namespace": _dash_namespace, "dynamic": True},
+        {"relative_package_path": "assets/fonts/SourceCodePro.ttf", "namespace": _dash_namespace, "dynamic": True},
     ],
 )
 
-# Add proptypes.js for runtime prop types validation with tsx components
-_js_dist.append({"relative_package_path": "proptypes.js", "dev_only": True, "namespace": _dash_namespace})
+# Add proptypes.js for runtime prop types validation with tsx components.
+# Dash only drops development resources declared with dev_package_path, so it is served in debug mode only.
+_js_dist.append({"dev_package_path": "proptypes.js", "dev_only": True, "namespace": _dash_namespace})
 
 _css_dist = []
 

@@ -1,7 +1,7 @@
 name: CI-CD for Release
 run-name: >-
   Release: ${{ inputs.library }} (${{ inputs.dev-release && 'dev' || 'stable' }})
-  by ${{ github.actor }}
+  by ${{ github.actor }} ${{ inputs.dry-run && '(dry run)' || '' }}
 on:
   workflow_dispatch:
     inputs:

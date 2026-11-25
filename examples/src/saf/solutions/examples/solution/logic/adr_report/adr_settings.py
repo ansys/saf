@@ -45,7 +45,7 @@ MEDIA_URL = "/media/"
 STATIC_URL = "/static_assets/"
 """URL prefix used by ADR to reference static files (CSS, JavaScript, fonts) in rendered reports."""
 
-_SOLUTION_ENV_FILE = Path(__file__).resolve().parents[3] / ".env"
+_SOLUTION_ENV_FILE = Path.cwd() / ".env"
 
 
 class AdrNotAvailableError(RuntimeError):

@@ -106,12 +106,10 @@ def layout() -> html.Div:
             dmc.Alert(
                 dmc.Text(
                     [
-                        "⚠️ This example requires an Ansys Dynamic Reporting installation. The solution's .env file "
-                        "is checked first for ADR_INSTALLATION_DIRECTORY; if it is missing or invalid, the system "
-                        "environment variable is checked. For example, set "
-                        "C:\\Program Files\\ANSYS Inc\\v271\\ADR.\n",
-                        "⚠️ With ansys-dynamicreporting-core 0.10, the PDF export relies on WeasyPrint, which "
-                        "requires the GTK3 runtime. If it is not installed, the PDF export stays disabled.",
+                        "⚠️ This example requires an Ansys Dynamic Reporting installation. Set the "
+                        "ADR_INSTALLATION_DIRECTORY environment variable in the .env file of this solution, "
+                        "or in the system environment. For example, set "
+                        "ADR_INSTALLATION_DIRECTORY=C:\\Program Files\\ANSYS Inc\\v271\\ADR.\n",
                     ],
                     style={"whiteSpace": "pre-line"},
                     size="md",

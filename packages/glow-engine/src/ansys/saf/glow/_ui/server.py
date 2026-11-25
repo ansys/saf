@@ -26,12 +26,10 @@ from urllib.parse import urljoin, urlparse
 from ansys.iam.oidc import OidcClient
 from ansys.saf.glow._config.const import (
     AUTH_SCRIPT_MARKER,
-    DEFAULT_GLOW_AUTH_DISABLED,
     DEFAULT_SOLUTION_API_URL,
     GLOW_API_URL,
     GLOW_AUTH_BYPASS_ROLES,
     GLOW_AUTH_CLIENT_ID,
-    GLOW_AUTH_DISABLED,
     GLOW_AUTH_ISSUER_URL,
     GLOW_AUTH_REQUIRED_ROLES,
     GLOW_EXTERNAL_API_URL,
@@ -171,7 +169,7 @@ def create_app(settings: Settings) -> Any:
     audience = os.environ.get(GLOW_AUTH_CLIENT_ID)
     # After saf-portal is fixed, enable auth validation by default for
     # DockerCompose deployments. Leave it disabled for Desktop ones, though.
-    disable_auth = os.environ.get(GLOW_AUTH_DISABLED, DEFAULT_GLOW_AUTH_DISABLED) != "False"
+    disable_auth = settings.glow_auth_disabled
     required_roles = parse_required_roles(os.environ.get(GLOW_AUTH_REQUIRED_ROLES))
     bypass_roles = parse_required_roles(os.environ.get(GLOW_AUTH_BYPASS_ROLES))
     oidc_client = OidcClient(oidc_issuer_url, audience)

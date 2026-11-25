@@ -14,3 +14,5 @@ ignore=
   https://developer.ansys.com/
   https://developer.ansys.com/docs
   https://developer.ansys.com/knowledge-base
+  # Technology radar: remove once the radar is deployed for the first time.
+  https://saf.ansys.com/version/stable/radar/*

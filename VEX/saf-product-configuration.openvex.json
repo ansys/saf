@@ -1,0 +1,90 @@
+{
+  "@context": "https://openvex.dev/ns/v0.2.0",
+  "@id": "https://github.com/ansys/saf/blob/main/VEX/saf-product-configuration.openvex.json",
+  "author": "ANSYS, Inc.",
+  "role": "Product supplier",
+  "timestamp": "2026-11-14T09:46:00Z",
+  "version": 1,
+  "statements": [
+    {
+      "vulnerability": {
+        "name": "CVE-2026-126190",
+        "aliases": [
+          "GHSA-mmhr-3c5m-f64f"
+        ],
+        "description": "Soup Sieve versions before 4.0.0 can exhibit polynomial-time denial of service while matching descendant combinators against deeply nested attacker-influenced HTML or XML."
+      },
+      "products": [
+        {
+          "identifiers": {
+            "purl": "pkg:pypi/ansys-saf-product-configuration@0.27.dev0"
+          },
+          "subcomponents": [
+            {
+              "identifiers": {
+                "purl": "pkg:pypi/soupsieve@2.10"
+              }
+            }
+          ]
+        }
+      ],
+      "status": "under_investigation",
+      "status_notes": "The aedt and all extras include JupyterLab, which brings in SoupSieve transitively. The lock resolves SoupSieve 2.10 for Python versions below 3.11.5; that version is within the advisory's affected range. Reachability of the vulnerable behavior in product use has not yet been assessed."
+    },
+    {
+      "vulnerability": {
+        "name": "CVE-2026-126190",
+        "aliases": [
+          "GHSA-mmhr-3c5m-f64f"
+        ],
+        "description": "Soup Sieve versions before 4.0.0 can exhibit polynomial-time denial of service while matching descendant combinators against deeply nested attacker-influenced HTML or XML."
+      },
+      "products": [
+        {
+          "identifiers": {
+            "purl": "pkg:pypi/ansys-saf-product-configuration@0.27.dev0"
+          },
+          "subcomponents": [
+            {
+              "identifiers": {
+                "purl": "pkg:pypi/soupsieve@4.1"
+              }
+            }
+          ]
+        }
+      ],
+      "status": "fixed",
+      "status_notes": "For Python 3.11.5 and later, the lock resolves SoupSieve 4.1, which is beyond the first patched version 4.0.0."
+    },
+    {
+      "vulnerability": {
+        "name": "CVE-2026-126192",
+        "aliases": [
+          "GHSA-4j63-6c4x-wfg4"
+        ],
+        "description": "Soup Sieve versions before 2.10 can perform excessive work for certain :has() selectors containing the general sibling combinator."
+      },
+      "products": [
+        {
+          "identifiers": {
+            "purl": "pkg:pypi/ansys-saf-product-configuration@0.27.dev0"
+          },
+          "subcomponents": [
+            {
+              "identifiers": {
+                "purl": "pkg:pypi/soupsieve@2.10"
+              }
+            },
+            {
+              "identifiers": {
+                "purl": "pkg:pypi/soupsieve@4.1"
+              }
+            }
+          ]
+        }
+      ],
+      "status": "fixed",
+      "status_notes": "The recorded lock resolutions are SoupSieve 2.10 for Python below 3.11.5 and 4.1 from Python 3.11.5 onward. Both are at or above the first patched version 2.10."
+    }
+  ]
+}

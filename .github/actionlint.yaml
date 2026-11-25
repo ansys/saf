@@ -15,15 +15,9 @@
 # limitations under the License.
 
 paths:
-  .github/workflows/ci_cd_pr.yml:
+  '**/*':
     ignore:
-      - 'specifying action "\$/\.github/actions/[^\"]+" in invalid format because
-        ref is missing'
-  .github/workflows/_test.yml:
-    ignore:
-      - 'specifying action "\$/\.github/actions/[^\"]+" in invalid format because
-        ref is missing'
-  .github/workflows/ci_cd_release.yml:
-    ignore:
-      - 'specifying action "\$/\.github/actions/[^\"]+" in invalid format because
-        ref is missing'
+      - 'specifying action "\$/\.github/actions/[^"]+" in invalid format because ref
+        is missing'
+      - 'reusable workflow call "\$/\.github/workflows/[^"]+" at "uses" is not following
+        the format'

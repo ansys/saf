@@ -1,0 +1,61 @@
+/*
+ * Copyright (C) 2026 ANSYS, Inc. and/or its affiliates.
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/* Use this file to optionally override global css styles and use with caution. */
+/* See README.md for hints and examples: https://github.com/AOEpeople/aoe_technology_radar/ */
+
+#glow-1,
+#glow-4 {
+    stop:first-of-type {
+        stop-color: #373A36;
+    }
+
+    stop:last-of-type {
+        stop-color: #373A36;
+    }
+
+    path {
+        stroke: #373A36
+    }
+}
+
+#glow-2,
+#glow-3 {
+    stop:first-of-type {
+        stop-color: #898A8D;
+    }
+
+    stop:last-of-type {
+        stop-color: #898A8D;
+    }
+}
+
+g[data-quadrant] path {
+    stroke: #979797;
+}
+
+/* Hide the logo in the header and footer, and always show the radar title instead. */
+img[class*="Logo_src"],
+img[class*="Footer_logo"] {
+    display: none;
+}
+
+a[class*="Logo_logo"] span[class*="Logo_subline"] {
+    display: inline;
+    opacity: 0.8;
+}

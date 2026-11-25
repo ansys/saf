@@ -29,8 +29,10 @@ from packaging.version import parse
 from PIL import Image
 import pytest
 from selenium.webdriver.chrome.webdriver import WebDriver
-import toml
+import tomlkit
 
+from ansys.saf.desktop.installer._common.utils import load_toml
+from ansys.saf.desktop.installer._package.backend_detection import SolutionBackend
 from ansys.saf.desktop.installer._package.config import (
     DESKTOP_ORCHESTRATOR_MODULE_NAME,
     DESKTOP_ORCHESTRATOR_PACKAGE_NAME,
@@ -85,7 +87,6 @@ def _block_internet_access():
 
 @pytest.mark.usefixtures("check_gtk_launch_and_xvfb_are_installed")
 class TestInstaller:
-    @pytest.mark.usefixtures("disable_global_poetry_virtualenvs_creation")
     @pytest.mark.parametrize(
         "as_standard_user",
         [pytest.param(False, id="current_user"), pytest.param(True, id="standard_user", marks=windows_only())],
@@ -94,6 +95,7 @@ class TestInstaller:
         self,
         tmp_path: Path,
         solution_root_dir: Path,
+        solution_backend: SolutionBackend,
         setup_solution: SetupSolution,
         build_solution: BuildSolution,
         install_solution: InstallSolution,
@@ -125,10 +127,7 @@ class TestInstaller:
         assert env_file.is_file()
         env_file_content = env_file.read_text()
         # write fake credentials to env file and ensure that file is loaded
-        env_file_content += (
-            "\nPOETRY_HTTP_BASIC_MY_PRIVATE_PYPI_USERNAME=my_user\n"
-            "POETRY_HTTP_BASIC_MY_PRIVATE_PYPI_PASSWORD=my_password"
-        )
+        env_file_content += "\nUV_INDEX_MY_PRIVATE_PYPI_USERNAME=my_user\nUV_INDEX_MY_PRIVATE_PYPI_PASSWORD=my_password"
         env_file.write_text(env_file_content)
 
         output = build_solution([], solution_venv_python_exec, solution_root_dir)
@@ -321,13 +320,14 @@ class TestInstaller:
         self,
         tmp_path: Path,
         solution_root_dir: Path,
+        solution_backend: SolutionBackend,
         setup_solution: SetupSolution,
         build_solution: BuildSolution,
         install_solution: InstallSolution,
         cleanup_shortcut: list[Path],
     ):
         """
-        Test that the packaged poetry.lock has no build-machine path dependencies (issue #216).
+        Test that the packaged lock file has no build-machine path dependencies (issue #216).
 
         The build folder is made unreadable before installing, as on the affected customer machine.
         """
@@ -339,14 +339,19 @@ class TestInstaller:
         check_built_solution_files(solution_root_dir, python_version=python_version)
 
         definitions_dir = solution_root_dir / "dist" / "solution" / "definitions"
-        packaged_lock = definitions_dir / _get_solution_module_name(solution_root_dir) / "poetry.lock"
-        lock_paths = re.findall(r'\bpath\s*=\s*"([^"]+)"', packaged_lock.read_text(encoding="utf-8"))
+        lock_name = "poetry.lock" if solution_backend is SolutionBackend.POETRY else "uv.lock"
+        packaged_lock = definitions_dir / _get_solution_module_name(solution_root_dir) / lock_name
+        lock_text = packaged_lock.read_text(encoding="utf-8")
+        if solution_backend is SolutionBackend.POETRY:
+            path_pattern = r'\burl\s*=\s*"([^"]+)"'
+        else:
+            path_pattern = r'\bpath\s*=\s*"([^"]+)"'
+        lock_paths = re.findall(path_pattern, lock_text)
         assert any("custom_package_for_test_2" in path for path in lock_paths)
         assert not any(Path(path).is_absolute() for path in lock_paths), lock_paths
 
         with deny_directory_access(definitions_dir):
             installation_output = install_solution(solution_root_dir, tmp_path)
-        # The installer falls back to pip when every `poetry install` attempt fails, hiding the error.
         assert not find_msg_in_output("installing using pip", installation_output)
         shortcut_path = check_installed_solution_files(tmp_path, solution_root_dir)
         cleanup_shortcut.append(shortcut_path)
@@ -479,11 +484,15 @@ class TestInstaller:
             session_selenium_webdriver,
         )
 
-    @pytest.mark.parametrize("python_version", [None, "3.11.8", "3.12.4", "3.12.12", "3.13.0", "3.14.0"])
+    @pytest.mark.parametrize(
+        "python_version",
+        [None, "3.11.8", "3.12.4", "3.12.12", "3.13.0", "3.14.0"],
+    )
     def test_installer_with_offline_package_with_different_python_versions(
         self,
         tmp_path: Path,
         solution_root_dir: Path,
+        solution_backend: SolutionBackend,
         setup_solution: SetupSolution,
         build_solution: BuildSolution,
         install_solution: InstallSolution,
@@ -500,17 +509,35 @@ class TestInstaller:
 
         # Adding an extra dependency that has a package name that is different as a .tar.gz than as a .whl:
         # python-pptx-0.6.19.tar.gz becomes python_pptx-0.6.19-py3-none-any.whl (first dash becomes and underscore)
-        poetry_exec_name = "poetry.exe" if platform.system() == "Windows" else "poetry"
-        solution_venv_poetry_exec = solution_venv_python_exec.parent / poetry_exec_name
-        solution_venv_dir = solution_root_dir / ".venv"
         solution_env = os.environ.copy()
-        # For poetry to install dependencies in the right venv
-        solution_env["VIRTUAL_ENV"] = solution_venv_dir.as_posix()
-        cmd = [solution_venv_poetry_exec, "add", "python-pptx=0.6.19"]
-        subprocess.check_output(cmd, env=solution_env, cwd=solution_root_dir)
+        solution_env.pop("VIRTUAL_ENV", None)
+        if solution_backend is SolutionBackend.UV:
+            subprocess.check_output(
+                ["uv", "add", "--no-sync", "python-pptx==0.6.19"], env=solution_env, cwd=solution_root_dir
+            )
+            subprocess.check_output(
+                ["uv", "sync", "--all-groups", "--python", sys.executable],
+                env=solution_env,
+                cwd=solution_root_dir,
+            )
+        else:
+            solution_env["VIRTUAL_ENV"] = str(solution_venv_python_exec.parent.parent)
+            poetry_executable = solution_venv_python_exec.with_name(
+                "poetry.exe" if sys.platform == "win32" else "poetry"
+            )
+            subprocess.check_output(
+                [poetry_executable, "add", "--no-interaction", "python-pptx==0.6.19"],
+                env=solution_env,
+                cwd=solution_root_dir,
+            )
+            subprocess.check_output(
+                [poetry_executable, "install", "--all-groups"],
+                env=solution_env,
+                cwd=solution_root_dir,
+            )
         # Check that the extra dependency is installed in the solution environment
         result = subprocess.run(
-            [solution_venv_python_exec, "-m", "pip", "show", "python-pptx"],
+            ["uv", "pip", "show", "--python", solution_venv_python_exec, "python-pptx"],
             capture_output=True,
         )
         assert result.returncode == 0
@@ -707,7 +734,10 @@ class TestInstaller:
             session_selenium_webdriver,
         )
 
-    @pytest.mark.parametrize("python_version", ["3.11.15", "3.12.9"])
+    @pytest.mark.parametrize(
+        "python_version",
+        ["3.11.15", "3.12.9"],
+    )
     def test_installer_with_force_python_from_source(
         self,
         tmp_path: Path,
@@ -1007,6 +1037,7 @@ class TestInstaller:
         self,
         tmp_path: Path,
         solution_root_dir: Path,
+        solution_backend: SolutionBackend,
         setup_solution: SetupSolution,
         build_solution: BuildSolution,
         install_solution: InstallSolution,
@@ -1016,33 +1047,49 @@ class TestInstaller:
     ):
         """Build a solution with SAF SDK extras distributed across dependency groups."""
         pyproject_path = solution_root_dir / "pyproject.toml"
-        pyproject = toml.load(pyproject_path)
-        poetry = pyproject["tool"]["poetry"]
-        dependencies = poetry["dependencies"]
-        dependencies.pop("ansys-saf-glow-engine")
-        dependencies["ansys-saf-sdk"] = "^0.1.0"
+        pyproject = load_toml(pyproject_path)
+        if solution_backend is SolutionBackend.POETRY:
+            poetry = pyproject["tool"]["poetry"]
+            dependencies = poetry["dependencies"]
+            dependencies.pop("ansys-saf-glow-engine")
+            dependencies["ansys-saf-sdk"] = {"version": ">=0.1.0,<0.2.0"}
+            desktop_dependencies = poetry["group"]["desktop"]["dependencies"]
+            desktop_dependencies.pop("ansys-saf-desktop-orchestrator")
+            desktop_dependencies["ansys-saf-sdk"] = {
+                "version": ">=0.1.0,<0.2.0",
+                "extras": ["desktop"],
+            }
+        else:
+            project = pyproject["project"]
+            project["dependencies"] = [
+                dependency
+                for dependency in project["dependencies"]
+                if not dependency.startswith("ansys-saf-glow-engine")
+            ] + ["ansys-saf-sdk>=0.1.0,<0.2.0"]
+            desktop_dependencies = pyproject["dependency-groups"]["desktop"]
+            pyproject["dependency-groups"]["desktop"] = [
+                dependency
+                for dependency in desktop_dependencies
+                if not dependency.startswith("ansys-saf-desktop-orchestrator")
+            ] + ["ansys-saf-sdk[desktop]>=0.1.0,<0.2.0"]
 
-        desktop_dependencies = poetry["group"]["desktop"]["dependencies"]
-        desktop_dependencies.pop("ansys-saf-desktop-orchestrator")
-        desktop_dependencies["ansys-saf-sdk"] = {"version": "^0.1.0", "extras": ["desktop"]}
-
-        with pyproject_path.open("w") as pyproject_file:
-            toml.dump(pyproject, pyproject_file)
+        pyproject_path.write_text(tomlkit.dumps(pyproject), encoding="utf-8")
 
         solution_venv_python_exec, glow_api_port, glow_ui_port, portal_ui_port = setup_solution(solution_root_dir)
-        poetry_executable = solution_venv_python_exec.with_name(
-            "poetry.exe" if platform.system() == "Windows" else "poetry",
-        )
-        subprocess.run([poetry_executable, "lock"], cwd=solution_root_dir, check=True)
 
         build_solution([], solution_venv_python_exec, solution_root_dir)
         check_built_solution_files(solution_root_dir)
 
-        definitions_pyproject = toml.load(
+        definitions_pyproject = load_toml(
             solution_root_dir / "dist" / "solution" / "definitions" / "my_solution_dash" / "pyproject.toml",
         )
-        sdk_dependency = definitions_pyproject["tool"]["poetry"]["dependencies"]["ansys-saf-sdk"]
-        assert sdk_dependency == {"version": "^0.1.0", "extras": ["desktop"]}
+        if solution_backend is SolutionBackend.POETRY:
+            sdk_dependency = definitions_pyproject["tool"]["poetry"]["dependencies"]["ansys-saf-sdk"]
+            assert sdk_dependency["version"] == ">=0.1.0,<0.2.0"
+            assert sdk_dependency["extras"] == ["desktop"]
+        else:
+            assert "ansys-saf-sdk>=0.1.0,<0.2.0" in definitions_pyproject["project"]["dependencies"]
+            assert "ansys-saf-sdk[desktop]>=0.1.0,<0.2.0" in definitions_pyproject["dependency-groups"]["desktop"]
 
         installation_output = install_solution(solution_root_dir, tmp_path)
         assert find_msg_in_output("Preload application", installation_output)
@@ -1130,8 +1177,7 @@ class TestInstaller:
         """
         solution_venv_python_exec, glow_api_port, glow_ui_port, portal_ui_port = setup_solution(solution_root_dir)
 
-        args = ["--offline-package"]
-        build_solution(args, solution_venv_python_exec, solution_root_dir)
+        build_solution(["--offline-package"], solution_venv_python_exec, solution_root_dir)
         check_built_solution_files(
             solution_root_dir,
             with_documentation=False,
@@ -1211,6 +1257,7 @@ class TestInstaller:
                 session_selenium_webdriver,
             )
 
+    @pytest.mark.parametrize("solution_backend", [SolutionBackend.POETRY], indirect=True)
     def test_installer_with_offline_package_and_no_export_plugin(
         self,
         tmp_path: Path,
@@ -1376,11 +1423,11 @@ class TestInstallerCustomNamespace:
         [None, "synopsys.custom_ns_solution.solution.definition"],
         ids=["without_env_var", "with_env_var"],
     )
-    @pytest.mark.usefixtures("disable_global_poetry_virtualenvs_creation")
     def test_install_and_launch_with_synopsys_namespace(
         self,
         tmp_path: Path,
         solution_root_dir: Path,
+        solution_backend: SolutionBackend,
         glow_solution_definition: str | None,
         setup_solution: SetupSolution,
         build_solution: BuildSolution,
@@ -1401,7 +1448,12 @@ class TestInstallerCustomNamespace:
             solution_root_dir,
         )
         build_solution([], solution_venv_python_exec, solution_root_dir)
-        check_built_solution_files(solution_root_dir, with_documentation=False, with_method_assets=False)
+        check_built_solution_files(
+            solution_root_dir,
+            with_documentation=False,
+            with_method_assets=False,
+            expected_non_ansys_wheels=1 if solution_backend is SolutionBackend.POETRY else 0,
+        )
 
         metadata_path = solution_root_dir / "dist" / "solution" / "solution-metadata.json"
         assert metadata_path.is_file(), "solution-metadata.json was not generated"

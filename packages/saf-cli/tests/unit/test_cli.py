@@ -31,7 +31,7 @@ import pytest
 import pytest_mock
 import tomlkit
 
-from ansys.saf.cli._cli.main import saf
+from ansys.saf.cli._cli.main import _get_executable_absolute_path, saf
 from ansys.saf.cli._config.const import (
     DEFAULT_SOLUTION_DISPLAY_NAME,
     DEFAULT_SOLUTION_NAME,
@@ -55,6 +55,35 @@ from ansys.saf.cli._utilities.solution_modules import get_solution_venv_bin_dir
 from tests.conftest import _generate_plugin, get_template_path, get_template_plugin_path
 
 CLI_COMMANDS_FOR_A_SOLUTION = ["add-step", "archive", "build", "execute", "install", "run"]
+
+
+@pytest.mark.parametrize("location", ["solution", "system", "missing"])
+def test_execute_resolves_uv(
+    tmp_path: Path,
+    mocker: pytest_mock.MockFixture,
+    location: str,
+):
+    executable_name = "uv.exe" if platform.system() == "Windows" else "uv"
+    local_executable = get_solution_venv_bin_dir(tmp_path) / executable_name
+    system_executable = tmp_path / "system" / executable_name
+    which = mocker.patch(
+        "ansys.saf.cli._cli.main.shutil.which",
+        return_value=str(system_executable) if location != "missing" else None,
+    )
+    if location == "solution":
+        local_executable.parent.mkdir(parents=True)
+        local_executable.touch()
+
+    if location == "missing":
+        with pytest.raises(FileNotFoundError):
+            _get_executable_absolute_path("uv", tmp_path)
+    else:
+        expected = local_executable if location == "solution" else system_executable
+        assert _get_executable_absolute_path("uv", tmp_path) == expected
+    if location == "solution":
+        which.assert_not_called()
+    else:
+        which.assert_called_once_with("uv")
 
 
 @pytest.fixture

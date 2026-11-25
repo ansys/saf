@@ -47,7 +47,7 @@ jobs:
       pull-requests: read # Read PR title and metadata for validation
     runs-on: ubuntu-latest
     steps:
-      - uses: amannn/action-semantic-pull-request@48f256284bd46cdaab1048c3721360e808335d50 # v6.1.1
+      - uses: amannn/action-semantic-pull-request@2252a14e810aa9b85c2d560bd7070c802206ecf6 # v6.1.2
         env:
           GITHUB_TOKEN: ${{ github.token }}
 
@@ -215,7 +215,7 @@ jobs:
       contents: read
       actions: read # Required for CodeQL analysis
       security-events: write # Required to upload results of CodeQL analysis
-    uses: ./.github/workflows/codeql.yml
+    uses: $/.github/workflows/codeql.yml
     secrets:
       PYANSYS_CI_BOT_TOKEN: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
 
@@ -338,7 +338,7 @@ jobs:
     if: ${{ github.event_name == 'push' || (github.event_name == 'pull_request' &&
       github.event.action != 'closed' && github.event.pull_request.draft == false)
       }}
-    uses: ./.github/workflows/_doc.yml
+    uses: $/.github/workflows/_doc.yml
     secrets:
       PYANSYS_CI_BOT_TOKEN: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
 
@@ -353,7 +353,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.ci-cd-config.outputs.packages-matrix) }}
-    uses: ./.github/workflows/_build.yml
+    uses: $/.github/workflows/_build.yml
     with:
       library-name: ${{ matrix.library-name }}
       python-version: ${{ vars.PYTHON_VERSION }}
@@ -423,7 +423,7 @@ jobs:
     permissions:
       contents: read
       packages: write # Allows this job to publish packages
-    uses: ./.github/workflows/_test.yml
+    uses: $/.github/workflows/_test.yml
     with:
       python-version: ${{ vars.PYTHON_VERSION }}
       tests-groups-file-path: ${{ matrix.tests-groups-file-path }}
@@ -453,7 +453,7 @@ jobs:
         ui-framework:
           - "dash"
           - "none"
-    uses: ./.github/workflows/_test_generated_solution.yml
+    uses: $/.github/workflows/_test_generated_solution.yml
     with:
       use-encryption: ${{ matrix.use-encryption }}
       ui-framework: ${{ matrix.ui-framework }}
@@ -520,7 +520,7 @@ jobs:
     if: ${{ contains(needs.ci-cd-config.outputs.pr-changes, 'extension') }}
     permissions:
       contents: write # Required by the tagging and release jobs of the called workflow (skipped in PRs)
-    uses: ./.github/workflows/ci_cd_solutions_manager.yml
+    uses: $/.github/workflows/ci_cd_solutions_manager.yml
     secrets:
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
@@ -528,7 +528,7 @@ jobs:
     name: "SAF SDK Meta Package"
     needs: ci-cd-config
     if: ${{ contains(needs.ci-cd-config.outputs.pr-changes, 'saf-sdk') }}
-    uses: ./.github/workflows/ci_cd_meta_package.yml
+    uses: $/.github/workflows/ci_cd_meta_package.yml
     permissions:
       attestations: write # Write attestation for uploaded distribution artifacts
       contents: write # Write access to the repository contents

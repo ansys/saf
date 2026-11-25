@@ -19,6 +19,7 @@ from pathlib import Path
 import re
 import subprocess
 from typing import cast
+import uuid
 
 from dotenv import dotenv_values
 import pytest
@@ -62,6 +63,27 @@ def get_solution_container_ports(env_path: Path) -> tuple[str | None, str | None
             "GLOW_API_CONTAINER_PORT and GLOW_UI_CONTAINER_PORT must be set in the .env file of the solution.",
         )
     return api_port, ui_port
+
+
+def _update_compose_environment(env_path: Path, values: dict[str, str]) -> None:
+    lines = env_path.read_text().splitlines()
+    updated: set[str] = set()
+    for index, line in enumerate(lines):
+        key, separator, _ = line.partition("=")
+        if separator and key in values:
+            lines[index] = f"{key}={values[key]}"
+            updated.add(key)
+    lines.extend(f"{key}={value}" for key, value in values.items() if key not in updated)
+    env_path.write_text("\n".join(lines) + "\n")
+
+
+def _run_docker_command(command: list[str], cwd: Path) -> None:
+    result = subprocess.run(command, cwd=cwd, capture_output=True, text=True, check=False)
+    if result.returncode:
+        raise RuntimeError(
+            f"Command failed ({result.returncode}): {' '.join(command)}\n"
+            f"stdout:\n{result.stdout}\nstderr:\n{result.stderr}",
+        )
 
 
 @pytest.fixture
@@ -113,13 +135,13 @@ def setup_deployment(
         monkeypatch.setenv("MACHINE_IP", "host.docker.internal")
         configure_solution_to_store_result_in_file(solution_dir, solution_name, session_solution_namespace)
         if deployment_type == "standalone-with-hps":
-            # to have poetry installed for adding HPS extra. overkill, but no option to only install venv + poetry.
+            # Install the selected groups before adding the HPS extra.
             install_solution([solution_name, "-d", "desktop"])
             add_hps_extra_to_solution(solution_dir, solution_name)
     elif deployment_type == "standalone-with-hps":
         # ensure that HPS hostname is reachable from the solution container
         monkeypatch.setenv("MACHINE_IP", "host.docker.internal")
-        # to have poetry installed for adding HPS extra. overkill, but no option to only install venv + poetry.
+        # Install the selected groups before configuring HPS.
         install_solution([solution_name, "-d", "desktop"])
         configure_hps_solution(solution_dir, solution_name, session_solution_namespace)
 
@@ -140,15 +162,139 @@ def setup_deployment(
 def test_solution_standalone_deployment(
     setup_deployment: tuple[str, str],
     selenium_webdriver: WebDriver,
+    tmp_path: Path,
 ):
     """
     Test that the containerized deployment is working correctly and the solution produces expected results.
     """
 
     api_port, ui_port = setup_deployment
+    compose = tmp_path / "my_solution" / "deployments" / "standalone" / "compose.yaml"
+    for service in ("api", "ui"):
+        subprocess.run(
+            ["docker", "compose", "-f", str(compose), "exec", "-T", service, "uv", "lock", "--check", "--offline"],
+            check=True,
+            capture_output=True,
+            text=True,
+        )
     project_ui_url = check_solution_launched_correctly(api_port, ui_port)
     check_ui_is_functional(selenium_webdriver, project_ui_url=project_ui_url)
     check_otel(selenium_webdriver)
+
+
+@pytest.mark.parametrize("deployment_type", ["DockerCompose"], indirect=True)
+@pytest.mark.usefixtures("deployment_type")
+def test_uv_solution_compose_variants_build_and_start(
+    new_solution: NewSolution,
+    tmp_path: Path,
+):
+    """Build and start every generated Compose variant from the same UV-locked solution."""
+    solution_name = "uv_compose_smoke"
+    new_solution(
+        ["--solution-name", solution_name, "--namespace", "saf.solutions"],
+        input_str="\n\n",
+        cwd=tmp_path,
+    )
+    solution_root = tmp_path / solution_name
+    configure_docker_extra_packages(solution_root)
+
+    standalone_dir = solution_root / "deployments" / "standalone"
+    standalone_env = standalone_dir / ".env"
+    app_name = str(dotenv_values(standalone_env)["APP_NAME"])
+    app_image_version = str(dotenv_values(standalone_env)["APP_IMAGE_VERSION"])
+    api_port = "18080"
+    ui_port = "18081"
+
+    variants = [
+        ("standalone", False, False),
+        ("standalone-with-hps", True, False),
+        ("distributed-deployment-template", True, True),
+        ("external", False, False),
+    ]
+    for variant, needs_external_network, needs_database_override in variants:
+        deployment_dir = solution_root / "deployments" / variant
+        compose_file = deployment_dir / "compose.yaml"
+        external_network = f"{app_name}-{uuid.uuid4().hex[:8]}"
+        env_values = {
+            "GLOW_API_CONTAINER_PORT": api_port,
+            "GLOW_UI_CONTAINER_PORT": ui_port,
+            "EXT_NETWORK_NAME": external_network,
+            "DOMAIN_NAME": "example.invalid",
+            "TRAEFIK_PORT": "443",
+            "PG_HOST": "postgresql",
+            "PG_PORT": "5432",
+            "PG_USER": "glow",
+            "PG_PASSWORD": "glow",
+            "APPDATA": "/tmp",
+            "GLOW_HPS_HOST": "127.0.0.1",
+            "GLOW_HPS_PORT": "8443",
+            "GLOW_HPS_USERNAME": "glow",
+            "GLOW_HPS_PASSWORD": "glow",
+        }
+        _update_compose_environment(deployment_dir / ".env", env_values)
+
+        compose_command = ["docker", "compose", "-f", str(compose_file)]
+        if needs_database_override:
+            override_file = deployment_dir / "compose.smoke-override.yaml"
+            override_file.write_text(
+                "services:\n"
+                "  postgresql:\n"
+                "    image: postgres:16.0\n"
+                "    environment:\n"
+                "      POSTGRES_USER: glow\n"
+                "      POSTGRES_PASSWORD: glow\n"
+                f"      POSTGRES_DB: db_{app_name}\n"
+                "    healthcheck:\n"
+                '      test: ["CMD-SHELL", "pg_isready -U glow"]\n'
+                "      interval: 5s\n"
+                "      retries: 20\n"
+                "    networks:\n"
+                "      - external-network\n"
+                "  api:\n"
+                "    depends_on:\n"
+                "      postgresql:\n"
+                "        condition: service_healthy\n",
+            )
+            compose_command.extend(["-f", str(override_file)])
+
+        network_created = False
+        try:
+            if variant == "external":
+                for service in ("api", "ui"):
+                    image = f"{app_name}-{service}"
+                    _run_docker_command(
+                        ["docker", "image", "tag", image, f"{image}:{app_image_version}"],
+                        deployment_dir,
+                    )
+                up_command = [*compose_command, "up", "--detach", "--wait", "--wait-timeout", "300"]
+            else:
+                up_command = [*compose_command, "up", "--detach", "--build", "--wait", "--wait-timeout", "300"]
+            if needs_external_network:
+                _run_docker_command(["docker", "network", "create", external_network], deployment_dir)
+                network_created = True
+            _run_docker_command(up_command, deployment_dir)
+
+            for service in ("api", "ui"):
+                _run_docker_command(
+                    [
+                        *compose_command,
+                        "exec",
+                        "--no-TTY",
+                        service,
+                        "uv",
+                        "lock",
+                        "--check",
+                        "--offline",
+                    ],
+                    deployment_dir,
+                )
+        finally:
+            _run_docker_command(
+                [*compose_command, "down", "--volumes", "--remove-orphans"],
+                deployment_dir,
+            )
+            if network_created:
+                _run_docker_command(["docker", "network", "rm", external_network], deployment_dir)
 
 
 @pytest.mark.parametrize("deployment_type", ["DockerCompose"], indirect=True)

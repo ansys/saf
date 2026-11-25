@@ -117,7 +117,7 @@ jobs:
       checks: write # Required by nested certification doc build workflow
       pull-requests: write # Required by nested certification doc build workflow
       actions: write # Required to trigger the workflow
-    uses: ./.github/workflows/certification.yml
+    uses: $/.github/workflows/certification.yml
     with:
       library-name: ${{ inputs.library }}
     secrets:
@@ -241,6 +241,18 @@ jobs:
         with:
           persist-credentials: true
 
+      - name: Check package VEX data
+        id: package-vex
+        shell: bash
+        env:
+          LIBRARY: ${{ inputs.library }}
+        run: |
+          VEX_PATH="VEX/${LIBRARY}.openvex.json"
+          if [[ -f "$VEX_PATH" ]]; then
+            echo "Found package VEX data: $VEX_PATH"
+            echo "vex_path=$VEX_PATH" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Create release branch
         if: needs.release-information.outputs.version-type == 'dev' && !inputs.dev-release
         run: |
@@ -253,6 +265,23 @@ jobs:
           pyproject-path: packages/${{ inputs.library }}/pyproject.toml
           version: ${{ needs.release-information.outputs.version-to-release }}
           checkout-repo: 'false'
+
+      - name: Install uv
+        if: steps.package-vex.outputs.vex_path != ''
+        uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
+        with:
+          python-version: 3.12
+          enable-cache: false
+
+      - name: Update package VEX data
+        if: steps.package-vex.outputs.vex_path != ''
+        shell: bash
+        env:
+          LIBRARY: ${{ inputs.library }}
+          RELEASE_VERSION: ${{ needs.release-information.outputs.version-to-release
+            }}
+        run: |
+          uv run scripts/generate_vex.py "${LIBRARY}" --product-version "$RELEASE_VERSION"
 
       - name: Commit changes
         if: needs.release-information.outputs.version-type == 'dev' && !inputs.dev-release
@@ -278,8 +307,13 @@ jobs:
       - name: Create release
         id: create-release
         run: |
-          gh release create ${RELEASE_NAME} --title ${RELEASE_NAME} --notes-file release-notes/release_notes.md ${RELEASE_LABEL} --target ${BRANCH_NAME} ${SBOM_PATH}
+          VEX_ARGS=()
+          if [[ -n "$VEX_PATH" ]]; then
+            VEX_ARGS+=("$VEX_PATH")
+          fi
+          gh release create ${RELEASE_NAME} --title ${RELEASE_NAME} --notes-file release-notes/release_notes.md ${RELEASE_LABEL} --target ${BRANCH_NAME} ${SBOM_PATH} "${VEX_ARGS[@]}"
         env:
+          VEX_PATH: ${{ steps.package-vex.outputs.vex_path }}
           GH_TOKEN: ${{ github.token }}
           RELEASE_NAME: ${{ needs.release-information.outputs.release-name }}-${{
             inputs.library }}
@@ -295,7 +329,7 @@ jobs:
     permissions:
       contents: write # Required to push to gh-pages branch
       pull-requests: read # Required to detect doc changes
-    uses: ./.github/workflows/_doc.yml
+    uses: $/.github/workflows/_doc.yml
     with:
       ref: ${{ needs.release-information.outputs.release-branch-name }}
     secrets:
@@ -312,7 +346,7 @@ jobs:
       attestations: write # Write attestation for uploaded distribution artifacts
       contents: read # Read the source code of the project
       id-token: write # Write access to a temporary token for signing attestations
-    uses: ./.github/workflows/_build.yml
+    uses: $/.github/workflows/_build.yml
     with:
       library-name: ${{ inputs.library }}
       python-version: ${{ vars.PYTHON_VERSION }}

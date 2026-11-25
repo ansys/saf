@@ -313,7 +313,7 @@ jobs:
           - "3.12"
           - "3.13"
           - "3.14"
-    uses: ./.github/workflows/_test.yml
+    uses: $/.github/workflows/_test.yml
     with:
       python-version: ${{ matrix.python-version }}
       tests-groups-file-path: .github/workflows/tests_groups_definitions/${{ needs.pre-certification.outputs.library-name
@@ -351,7 +351,7 @@ jobs:
           - "3.12"
           - "3.13"
           - "3.14"
-    uses: ./.github/workflows/_test.yml
+    uses: $/.github/workflows/_test.yml
     with:
       python-version: ${{ matrix.python-version }}
       tests-groups-file-path: .github/workflows/tests_groups_definitions/${{ needs.pre-certification.outputs.library-name
@@ -394,7 +394,7 @@ jobs:
           - mechanical
           - optislang
           - visor
-    uses: ./.github/workflows/_test.yml
+    uses: $/.github/workflows/_test.yml
     with:
       python-version: ${{ matrix.python-version }}
       tests-groups-file-path: .github/workflows/tests_groups_definitions/${{ needs.pre-certification.outputs.library-name
@@ -436,7 +436,7 @@ jobs:
         ui-framework:
           - "dash"
           - "none"
-    uses: ./.github/workflows/_test_generated_solution.yml
+    uses: $/.github/workflows/_test_generated_solution.yml
     with:
       use-encryption: ${{ matrix.use-encryption }}
       ui-framework: ${{ matrix.ui-framework }}
@@ -461,7 +461,7 @@ jobs:
           - "3.12"
           - "3.13"
           - "3.14"
-    uses: ./.github/workflows/_build.yml
+    uses: $/.github/workflows/_build.yml
     with:
       library-name: ${{ needs.pre-certification.outputs.library-name }}
       python-version: ${{ matrix.python-version }}

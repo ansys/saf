@@ -1,0 +1,36 @@
+{
+  "@context": "https://openvex.dev/ns/v0.2.0",
+  "@id": "https://github.com/ansys/saf/blob/main/VEX/glow-engine.openvex.json",
+  "author": "ANSYS, Inc.",
+  "role": "Product supplier",
+  "timestamp": "2026-11-24T07:36:11.772724Z",
+  "version": 1,
+  "statements": [
+    {
+      "vulnerability": {
+        "name": "CVE-2025-69872",
+        "aliases": [
+          "GHSA-w8v5-vhqr-4h9v"
+        ],
+        "description": "DiskCache through 5.6.3 uses pickle serialization by default; an attacker with write access to the cache directory can execute code when an application reads the cache."
+      },
+      "products": [
+        {
+          "identifiers": {
+            "purl": "pkg:pypi/ansys-saf-glow-engine@2.6.dev0"
+          },
+          "subcomponents": [
+            {
+              "identifiers": {
+                "purl": "pkg:pypi/diskcache@5.6.3"
+              }
+            }
+          ]
+        }
+      ],
+      "status": "not_affected",
+      "status_notes": "Scope: ansys-saf-glow-engine 2.6.dev0 package runtime. DiskCache is resolved only through the root workspace's tests-glow-engine development group via dash[diskcache], not through the Glow Engine package's runtime or optional dependencies; the current CycloneDX 1.5 package SBOM contains no diskcache component. The only repository code use is packages/glow-engine/tests/mocks/solution_end_to_end/ui/first_page.py, a test mock. That fixture is conditionally vulnerable if an attacker can write to ./cache and the test app reads that cache. This statement covers only the package runtime; it does not cover test/development executions, generated customer applications, or deployments that independently install DiskCache.",
+      "justification": "component_not_present"
+    }
+  ]
+}

@@ -35,8 +35,8 @@ if configuration_file.exists():
 else:
     raise FileNotFoundError("No configuration file at project's root.")
 
-project_name = project = configuration.get("tool", {}).get("poetry", {}).get("name", None)
-package_version = configuration.get("tool", {}).get("poetry", {}).get("version", None)
+project_name = project = configuration.get("project", {}).get("name", None)
+package_version = configuration.get("project", {}).get("version", None)
 cname = os.getenv("DOCUMENTATION_CNAME")
 repository_name = os.getenv("REPOSITORY_NAME")
 

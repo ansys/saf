@@ -426,6 +426,7 @@ def main() -> int:
         default="",
         help=(
             "Comma-separated list of packages to explicitly update (e.g., 'package1,package2'). "
+            "Use 'package==version' to lock a specific version. "
             "Use it for packages that weren't modified in the pyproject.toml."
         ),
     )
@@ -446,8 +447,8 @@ def main() -> int:
     if not re.fullmatch(r"[\w.-]+/[\w.-]+", args.repository):
         parser.error("--repository must be owner/repo")
     packages = [pkg.strip() for pkg in args.packages.split(",") if pkg.strip()]
-    if any(not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._-]*", package) for package in packages):
-        parser.error("--packages must contain comma-separated Python package names")
+    if any(not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._-]*(==[A-Za-z0-9._+!-]+)?", package) for package in packages):
+        parser.error("--packages must contain comma-separated Python package names, optionally as name==version")
     try:
         return update_lockfiles(packages, args.dependabot, args.repository, args.dry_run)
     except subprocess.CalledProcessError as error:

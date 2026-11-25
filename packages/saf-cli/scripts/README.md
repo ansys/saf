@@ -54,6 +54,9 @@ The existing manual mode is also supported:
 uv run --script packages\saf-cli\scripts\upgrade_solution_template_uv_lock.py --packages nbconvert
 ```
 
+Lock a specific version with `name==version`, for example
+`--packages gql==3.5.0,graphql-core`.
+
 From `packages\saf-cli`, use `scripts\upgrade_solution_template_uv_lock.py`
 instead. Use native path separators on other operating systems.
 `--repository owner/repo` selects an alternative GitHub repository for alerts.

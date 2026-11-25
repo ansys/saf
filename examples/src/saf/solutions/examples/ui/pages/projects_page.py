@@ -30,15 +30,14 @@ from ansys_saf_projects_dashboard import ProjectsDashboard
 # Keep in sync with the desktop orchestrator, which opens this path when ``--portal`` uses the projects dashboard.
 PROJECTS_DASHBOARD_PATH = os.getenv("SAF_DESKTOP_PROJECTS_DASHBOARD_PATH", "/projects")
 
-if ProjectsDashboard is not None:
-    dash.register_page(
-        __name__,
-        name="Projects",
-        path=PROJECTS_DASHBOARD_PATH,
-        order=-1,
-        project_scoped=False,  # displayed without a project, outside the navigation tree of the steps
-        projects_dashboard=True,  # identifies this page in the page registry without importing this module
-    )
+dash.register_page(
+    __name__,
+    name="Projects",
+    path=PROJECTS_DASHBOARD_PATH,
+    order=-1,
+    project_scoped=False,  # displayed without a project, outside the navigation tree of the steps
+    projects_dashboard=True,  # identifies this page in the page registry without importing this module
+)
 
 
 def layout(theme: str = "light"):

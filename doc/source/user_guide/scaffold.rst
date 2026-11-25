@@ -156,6 +156,10 @@ Project structure
 
 The following diagram illustrates the structure of a scaffolded solution:
 
+The generated UV-based solution has a ``uv.lock`` file at its root. Existing Poetry-based
+solutions use ``poetry.lock`` instead. The template's internal ``lock_files/`` directory
+is not retained in the generated solution.
+
 .. code:: text
 
   minimal-solution/
@@ -197,8 +201,6 @@ The following diagram illustrates the structure of a scaffolded solution:
   │   └── styles/                 # Vale vocabulary and style rules
   │
   ├── examples/                   # Usage examples and demo scripts
-  │
-  ├── lock_files/                 # Pre-generated Poetry lock files per UI framework variant
   │
   ├── minerva/                    # Minerva integration configuration (CLI auth, OAuth certificates)
   │
@@ -249,9 +251,10 @@ The following diagram illustrates the structure of a scaffolded solution:
   ├── CONTRIBUTING.md             # Contribution guidelines
   ├── CONTRIBUTORS.md             # List of contributors
   ├── LICENSE.rst                 # License file
-  ├── pyproject.toml              # Poetry project configuration (dependencies, build, tools)
+  ├── pyproject.toml              # Project configuration (dependencies, build, tools)
   ├── README.md                   # Project overview and quick start
-  └── tox.ini                     # Tox environments for testing, linting, and doc builds
+  ├── tox.ini                     # Tox environments for testing, linting, and doc builds
+  └── uv.lock                     # Resolved dependencies for the UV-based solution
 
 
 

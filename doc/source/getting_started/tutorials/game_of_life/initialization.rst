@@ -130,7 +130,7 @@ Take a minute to look around. Almost everything you will touch in this tutorial 
 
     game-of-life/
     ├── pyproject.toml                 # Dependencies and packaging metadata
-    ├── poetry.lock                    # Exact resolved versions of every dependency
+    ├── uv.lock                        # Exact resolved versions of every dependency
     ├── tests/                         # Pytest suite scaffolding
     └── src/saf/solutions/game_of_life/
         ├── solution/
@@ -173,21 +173,20 @@ Three ideas are baked into this layout, and they hold for every SAF solution:
     day one is what makes a SAF solution deployable on a laptop, in Docker, or on an on-prem
     cluster without changing a line of code.
 
-The two files at the root of the folder drive the packaging and the environment. A SAF solution
-is a `Poetry <https://python-poetry.org/docs/>`_ project, so they follow the standard Poetry
-contract.
+The two files at the root of the folder drive the packaging and the environment. A solution
+created for this tutorial uses UV and ``uv.lock``. Existing Poetry-based solutions use
+``poetry.lock`` instead.
 
-Poetry is a **dependency manager**: the tool that decides which third-party packages end up in
-your environment, and in which version. Given the list of packages your project needs, it
-resolves the whole graph, including the dependencies of your dependencies, into a single set
+UV and Poetry are **dependency managers**: they decide which third-party packages end up in
+your environment, and in which version. Given the list of packages your project needs,
+each resolves the whole graph, including the dependencies of your dependencies, into a single set
 of versions that are mutually compatible, installs them into a dedicated virtual environment,
-and records the result so the exact same set can be reproduced later. It also handles the
-packaging side: building the wheel that is shipped in the final installer. The ``saf install``,
-``saf execute`` and ``saf build`` commands all delegate to Poetry under the hood.
+and records the result so the exact same set can be reproduced later. ``saf install`` and
+``saf build`` use the solution's dependency backend.
 
 That contract is split across two files:
 
-.. list-table::  Poetry files and their roles
+.. list-table:: Dependency files and their roles
    :header-rows: 1
    :stub-columns: 1
    :widths: 20 80
@@ -197,24 +196,27 @@ That contract is split across two files:
    * - ``pyproject.toml``
      - The **manifest** that you edit. It declares the solution metadata (name, version, and
        display name), packaging configuration, and dependencies with *version constraints*, such
-       as ``numpy = "^2.0"``. It specifies what the solution needs, not the exact build it gets.
-   * - ``poetry.lock``
+       as ``"numpy>=2,<3"`` for UV or ``numpy = "^2.0"`` for Poetry. It specifies what the
+       solution needs, not the exact build it gets.
+   * - ``uv.lock`` or ``poetry.lock``
      - The generated **resolution** file. Do not edit it manually. It pins the exact version and
        hash of every direct and transitive dependency that satisfies the constraints in
        ``pyproject.toml``. It ensures that your machine, your colleague's machine, the CI
        pipeline, and the final installer select dependencies from the same locked resolution.
 
-The two files must stay consistent. The ``saf install`` command installs from ``poetry.lock``, and Poetry refuses to do so if the lock file no longer matches the manifest. This is why every dependency change goes through ``poetry lock``, as shown in
+Keep the two files consistent. After editing the manifest, refresh the lock file for your
+backend, as shown in
 :ref:`Declare the dependencies <game_of_life_declare_dependencies>`.
 
 .. important::
 
     Commit both files to version control. ``pyproject.toml`` alone is not enough to reproduce an
-    environment; without ``poetry.lock``, a fresh install can silently pick up a newer patch
+    environment; without the lock file, a fresh install can silently pick up a newer patch
     release of a transitive dependency and break the solution.
 
 .. seealso::
 
+    - The `UV dependency guide <https://docs.astral.sh/uv/concepts/projects/dependencies/>`_.
     - The official `Poetry documentation <https://python-poetry.org/docs/>`_.
     - `Dependency specification <https://python-poetry.org/docs/dependency-specification/>`_ for
       the syntax of version constraints such as ``^2.0``.
@@ -235,12 +237,13 @@ every dependency declared in ``pyproject.toml``.
 
         saf install -f
 
-    The ``-f`` flag forces a fresh environment. Use it whenever the dependency resolution needs
-    to start from scratch; plain ``saf install`` is enough the rest of the time.
+    The ``-f`` flag forces a fresh environment without deleting the lock file.
+    Plain ``saf install`` is enough when you don't need a clean environment.
 
 .. note::
 
-    Never activate that environment by hand. The ``saf run`` and ``saf execute`` commands do it for you, which is why every command in this tutorial is prefixed with ``saf``.
+    You don't need to activate the solution environment to use ``saf run`` or ``saf execute``.
+    Run the ``uv lock`` command from the solution root.
 
 .. _game_of_life_declare_dependencies:
 
@@ -250,7 +253,36 @@ Declare the dependencies
 The template ships with the SAF runtime only. The Game of Life engine you will add in
 :ref:`phase 2 <game_of_life_business_logic>` relies on ``numpy``, so declare it now.
 
-Adding a dependency is always a three-step move: edit ``pyproject.toml``, refresh
+.. rubric:: UV-based solutions
+
+.. practice::
+
+    #. Add the NumPy requirement to the existing ``dependencies`` list under
+       ``[project]`` in ``pyproject.toml``:
+
+       .. code-block:: toml
+
+           [project]
+           dependencies = [
+               # ... existing entries ...
+               "numpy>=2,<3",
+           ]
+
+    #. Refresh the lock file from the solution root:
+
+       .. code-block:: bash
+
+           uv lock
+
+    #. Install the new dependency:
+
+       .. code-block:: bash
+
+           saf install
+
+.. rubric:: Poetry-based solutions
+
+Adding a dependency is a three-step move: edit ``pyproject.toml``, refresh
 ``poetry.lock``, and reinstall. Skipping the lock refresh makes ``saf install`` fail with an
 outdated lock file error, because Poetry refuses to install from a lock file that no longer
 matches the manifest.
@@ -357,8 +389,8 @@ Key takeaways
       (frontend: one page per step). The split is what makes the solution deployable anywhere.
     - Dependencies are declared in ``pyproject.toml`` and installed into a dedicated virtual
       environment with ``saf install``. After editing ``pyproject.toml``, always refresh
-      ``poetry.lock`` with ``saf execute "poetry lock"`` before reinstalling, otherwise
-      ``saf install`` fails on an outdated lock file.
+      the lock file before reinstalling: use ``uv lock`` for UV-based solutions or
+      ``saf execute "poetry lock"`` for Poetry-based solutions.
     - The ``saf run --debug`` command starts the application with the Dash dev tools enabled — the default
       way to run a solution while developing. ``--browser`` and ``--no-ui`` change how it is
       served.

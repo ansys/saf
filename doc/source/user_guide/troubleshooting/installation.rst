@@ -32,15 +32,20 @@ Installation fails due to authentication issues
         instances and open a new one to ensure that the changes take effect. A good practice is to print the
         environment variables again in the new terminal to confirm that they are set correctly.
 
- #. **Clear the Poetry cache and configuration**:
+ #. **Check the dependency manager's cache**:
 
-    See :ref:`troubleshooting_clear_poetry_cache`.
+    For Poetry, see :ref:`troubleshooting_clear_poetry_cache`. For UV, if you suspect stale metadata
+    for a particular package, clear that package's cached data before retrying:
+
+    .. code-block:: bash
+
+        uv cache clean <package-name>
 
  #. **Verify repository configuration**:
 
     Open the ``pyproject.toml`` file in the solution directory and check which private repository is declared
-    under ``[tool.poetry.source]``. Identify which one it is from the source name and follow :ref:`user_guide_install_manage_private_sources` to properly
-    configure the required environment variables.
+    under ``[[tool.poetry.source]]`` for Poetry or ``[[tool.uv.index]]`` for UV. Identify it by name
+    and follow :ref:`user_guide_install_manage_private_sources` to configure the required environment variables.
 
  #. **Check environment variable conflicts**:
 
@@ -54,17 +59,38 @@ Installation fails due to authentication issues
  When running ``saf install``, you get a 401 client error, even if your token is valid and correctly configured.
 
 **Cause**:
- Stale credentials or cached metadata in the Poetry configuration take precedence over your current, valid token.
+ For Poetry, stale credentials or cached metadata in the Poetry configuration can interfere with authentication.
+ For UV, the credential variables might not match the index name, or values already set in the shell
+ might override the values in the solution's ``.env`` file.
 
 **Solution**:
- #. Rerun the install command with the ``-f`` flag, which removes the virtual environment and cached data:
+ .. tab-set::
 
-    .. code-block:: bash
+    .. tab-item:: Poetry-based solutions
 
-        saf install <app_name> -f
+       #. Rerun the install command with the ``-f`` flag, which removes the virtual environment and cached data:
 
- #. If the error persists, clear the Poetry configuration and cache manually as described in
-    :ref:`troubleshooting_clear_poetry_cache`, then run the command again.
+          .. code-block:: bash
+
+              saf install <app_name> -f
+
+       #. If the error persists, clear the Poetry configuration and cache manually as described in
+          :ref:`troubleshooting_clear_poetry_cache`, then run the command again.
+
+    .. tab-item:: UV-based solutions
+
+       #. Check that ``UV_INDEX_<INDEX_NAME>_USERNAME`` and ``UV_INDEX_<INDEX_NAME>_PASSWORD``
+          correspond to the name declared in ``[[tool.uv.index]]``. Update or unset stale shell values
+          if they override the solution's ``.env`` file.
+       #. Verify that the token has read access to the named index. If the index is explicit,
+          check that the package is mapped to it in ``[tool.uv.sources]``.
+       #. Retry the install. SAF does not prompt for replacement UV credentials.
+
+          .. code-block:: bash
+
+              saf install <app_name>
+
+       See :ref:`user_guide_install_manage_private_sources` for the variable naming convention.
 
 
 Network issues
@@ -78,8 +104,10 @@ Network issues
      ERROR: Could not find a version that satisfies the requirement
 
 **Solution**:
- Check your internet connection and proxy settings. For private PyAnsys packages, verify that
- :envvar:`POETRY_HTTP_BASIC_<SOURCE_NAME>_PASSWORD` is set correctly for each required source.
+ Check your internet connection and proxy settings. For private PyAnsys packages, verify that the
+ password variable is set correctly for each required source:
+ ``POETRY_HTTP_BASIC_<SOURCE_NAME>_PASSWORD`` for Poetry or
+ ``UV_INDEX_<INDEX_NAME>_PASSWORD`` for UV.
 
 
 Workspace clean-up fails with a permission error

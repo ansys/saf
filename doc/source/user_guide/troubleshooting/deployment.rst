@@ -157,9 +157,18 @@ Solution documentation not accessible
 **Solution**:
  #. Ensure the ``doc`` dependency group is installed before building the solution:
 
+    For Poetry-based solutions:
+
     .. code-block:: text
 
       saf execute <solution-name> "poetry install --with doc"
+
+    For UV-based solutions, install ``doc`` along with the other groups you need.
+    For example, for a Dash solution:
+
+    .. code-block:: bash
+
+      saf install <solution-name> -d desktop,ui,doc,build
 
  #. Rebuild the solution using the ``saf build`` command.
  #. Reinstall the solution with the newly built installer that includes the documentation.

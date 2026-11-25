@@ -40,7 +40,8 @@ Visual Studio Code
            :width: 60%
            :alt: Pylance Extension for VS Code
 
-      * Search for "Python Poetry" and install the official extension:
+      * For Poetry-based solutions, search for "Python Poetry" and install the official extension.
+        UV-based solutions don't need this extension:
 
         .. image:: /_static/images/vscode_python_poetry_extension.png
            :width: 60%

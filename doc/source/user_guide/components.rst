@@ -130,7 +130,7 @@ scaffolding to packaging.
 - **Key features**:
 
   - ``saf new``—scaffold a solution from a Cookiecutter template
-  - ``saf install``—set up the solution's Poetry-managed virtual environment
+  - ``saf install``—set up the solution's virtual environment using Poetry or UV
   - ``saf run``—launch the solution locally (API + UI + ...). Uses the ``ansys-saf-desktop-orchestrator`` package under the hood.
   - ``saf build``—generate a standalone desktop installer. Uses the ``ansys-saf-desktop-installer`` package under the hood.
   - ``saf add-step``—add a new step from a template plugin. Uses the ``ansys-saf-templates`` package under the hood.
@@ -590,6 +590,25 @@ without ``--pre`` the resolution fails reporting that no matching distribution w
                 "instance-management-fluent",
                 "desktop",
             ] }
+
+    .. tab-item:: UV
+
+        From the root of a UV-based solution, add the meta-package:
+
+        .. code-block:: bash
+
+            uv add "ansys-saf-sdk[core-dash,instance-management-fluent,desktop]"
+
+        Alternatively, declare it in the solution's ``pyproject.toml`` file and run
+        ``saf install``. If the SDK is already listed, add the extras to the existing
+        requirement, keeping its version constraint and any other extras:
+
+        .. code-block:: toml
+
+            [project]
+            dependencies = [
+                "ansys-saf-sdk[core-dash,instance-management-fluent,desktop]>=0.4.0,<1.0.0",
+            ]
 
 
 Usage

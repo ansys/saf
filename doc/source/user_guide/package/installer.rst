@@ -405,6 +405,8 @@ SAF build output
 
 When you run ``saf build`` without the ``--no-executable`` option, the following files are generated in the ``dist/`` folder:
 
+.. rubric:: Poetry-based solutions
+
 .. code-block:: text
 
     <solution-root>/dist/
@@ -433,6 +435,43 @@ When you run ``saf build`` without the ``--no-executable`` option, the following
         └───third_party
             └───python
                 └───...
+
+.. rubric:: UV-based solutions
+
+.. code-block:: text
+
+    <solution-root>/dist/
+    ├───<solution-package>-<version>-py3-none-any.whl
+    ├───<solution-package>-<version>.tar.gz
+    ├───<solution-name>-installer.exe
+    └───solution
+        ├───solution-metadata.json
+        ├───solution_desktop_deployment.py
+        ├───version.txt
+        ├───assets
+        │   └───...
+        ├───definitions
+        │   └───<solution-module-name>
+        │       ├───.env
+        │       ├───<solution-package>-<version>-py3-none-any.whl
+        │       ├───pyproject.toml
+        │       ├───uv.lock
+        │       ├───uv-groups.txt
+        │       ├───uv-requirements.txt
+        │       ├───tools
+        │       │   ├───pip_requirements.txt
+        │       │   └───uv.exe
+        │       └───wheelhouse (when dependency wheels are staged)
+        │           └───...
+        └───third_party
+            └───python
+                └───...
+
+The definitions directory contains the built solution wheel and a portable UV project.
+``uv.lock`` records the installer dependency resolution, ``uv-groups.txt`` lists the
+dependency groups to install, and ``uv-requirements.txt`` supports installation using pip.
+The installer bundles the UV executable in ``tools/`` (``uv`` on Linux).
+When the build stages dependency wheels, it stores them in ``wheelhouse/``.
 
 Embedded solution documentation
 -------------------------------

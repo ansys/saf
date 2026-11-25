@@ -1742,17 +1742,26 @@ a.saf-cta--secondary {
   stroke: #a97ccd !important;
 }
 
+/* =========================================== THEME-DEPENDENT IMAGES =========================================== */
 
-/* =========================================== Poetry-to-UV specific =========================================== */
+/* Show an element only in one color mode. Works on any directive that accepts :class:
+   (image, figure, container, ...). Provide two variants of the same content:
 
-div.poetry-uv-dark-mode {
-  display: none;
+     .. image:: /_static/images/diagram_light.svg
+        :class: saf-light-only
+
+     .. image:: /_static/images/diagram_dark.svg
+        :class: saf-dark-only
+
+   Only the hidden variant is styled, so each element keeps its natural display value
+   (inline for images, block for figures and containers). */
+html[data-theme="dark"] .saf-light-only,
+html:not([data-theme="dark"]) .saf-dark-only {
+  display: none !important;
 }
 
-html[data-theme="dark"] div.poetry-uv-light-mode {
-  display: none;
-}
-
-html[data-theme="dark"] div.poetry-uv-dark-mode {
-  display: block;
+/* Single image without a dark variant: invert it in dark mode. Use only for monochrome
+   drawings (black lines on transparent background), because it also inverts colors. */
+html[data-theme="dark"] .saf-invert-dark {
+  filter: invert(1) hue-rotate(180deg);
 }

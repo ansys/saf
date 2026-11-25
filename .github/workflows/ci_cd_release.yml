@@ -141,7 +141,8 @@ jobs:
     needs:
       - validate-release-branch
       - certification
-    if: ${{ always() && (inputs.dry-run || (needs.certification.result == 'success')) && needs.validate-release-branch.result == 'success' }}
+    if: ${{ always() && (inputs.dry-run || (needs.certification.result == 'success'))
+      && needs.validate-release-branch.result == 'success' }}
     outputs:
       release-name: ${{ steps.retrieve-release-info.outputs.release-name }}
       version-to-bump-in-triggering-branch: ${{ steps.retrieve-release-info.outputs.version-to-bump-in-triggering-branch
@@ -177,7 +178,8 @@ jobs:
     needs:
       - release-information
       - certification
-    if: ${{ always() && (inputs.dry-run || (needs.certification.result == 'success')) && needs.release-information.result == 'success' }}
+    if: ${{ always() && (inputs.dry-run || (needs.certification.result == 'success'))
+      && needs.release-information.result == 'success' }}
     runs-on: ubuntu-latest
     steps:
       - name: Generate release notes

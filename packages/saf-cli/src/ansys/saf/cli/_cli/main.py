@@ -25,6 +25,7 @@ import shutil
 import subprocess
 import sys
 import traceback
+import warnings
 import webbrowser
 
 import click
@@ -72,6 +73,8 @@ from ansys.saf.cli._utilities.solution_modules import (
 )
 
 LIST_UI_FRAMEWORKS = "\n- ".join(UI_FRAMEWORKS)
+
+
 UI_PROMPT = f"""What is the UI framework of the Solution?\n- {LIST_UI_FRAMEWORKS}\nChoose UI framework"""
 
 
@@ -168,8 +171,12 @@ def _get_executable_absolute_path(executable: str, solution_root_dir: Path) -> P
         return solution_venv_bin_dir / executable
     elif (solution_venv_bin_dir / f"{executable}.exe").is_file():
         return solution_venv_bin_dir / f"{executable}.exe"
-    else:
-        raise FileNotFoundError(f"Executable '{executable}' not found in solution '{solution_root_dir.name}'.")
+    elif executable == "uv":
+        # fallback to user/system-level UV, which is the common installation method for UV, and not per-project.
+        uv_exec = shutil.which("uv")
+        if uv_exec is not None:
+            return Path(uv_exec)
+    raise FileNotFoundError(f"Executable '{executable}' not found in solution '{solution_root_dir.name}'.")
 
 
 def _generic_exception_handler(e: Exception):
@@ -182,6 +189,11 @@ def _generic_exception_handler(e: Exception):
 @click.pass_context
 def saf(ctx: click.Context, version: bool):
     """Utility script for solutions."""
+    warnings.filterwarnings(
+        "default",
+        message=r"^(?:\x1b\[[0-9;]*m)?Poetry-based solutions are deprecated\.",
+        category=DeprecationWarning,
+    )
     try:
         if version:
             click.secho(importlib.metadata.version("ansys-saf-cli"), fg="cyan")
@@ -290,14 +302,20 @@ def new(solution_name: str, solution_display_name: str, ui_framework: str, names
     "--force-clear-all",
     is_flag=True,
     default=False,
-    help="Clean-up the workspace. Delete existing .venv, .poetry/.venv, .poetry/.cache and poetry.lock.",
+    help=(
+        "Clean-up the workspace. Delete .venv and the project's lockfile. "
+        "For Poetry, also delete .poetry/.venv and .poetry/.cache."
+    ),
 )
 @click.option(
     "-f",
     "--force-clear",
     is_flag=True,
     default=False,
-    help="Clean-up the workspace. Delete existing .venv., .poetry/.venv and .poetry/.cache.",
+    help=(
+        "Clean-up the workspace. Delete .venv but keep the lockfile. "
+        "For Poetry, also delete .poetry/.venv and .poetry/.cache."
+    ),
 )
 @click.option(
     "--env-file",

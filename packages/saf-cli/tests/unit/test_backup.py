@@ -67,10 +67,19 @@ def test_snapshot_captures_files_and_directories(tmp_path: Path, solution_namesp
 @pytest.mark.parametrize("solution_name", ["solution_with_dash_ui"], indirect=True)
 @pytest.mark.parametrize("solution_namespace", [None, "ansys.solutions", "myorg.apps"], indirect=True)
 @pytest.mark.usefixtures("root_solution_dir_with_pyproject_and_lock")
+@pytest.mark.parametrize(
+    ("root_solution_dir_with_pyproject_and_lock", "lockfile_name"),
+    [
+        pytest.param({}, "poetry.lock", id="poetry"),
+        pytest.param({"backend": "uv"}, "uv.lock", id="uv"),
+    ],
+    indirect=["root_solution_dir_with_pyproject_and_lock"],
+)
 def test_manager_initialization_and_enter_flow(
     root_solution_dir_with_pyproject_and_lock: Path,
     solution_name: str,
     solution_namespace: str,
+    lockfile_name: str,
 ):
     """Initialization and __enter__ should set base paths, take snapshot, and populate backup mapping."""
     manager = BackupManager(root_solution_dir_with_pyproject_and_lock, solution_name, solution_namespace)
@@ -83,12 +92,17 @@ def test_manager_initialization_and_enter_flow(
     assert manager._backup_dir.exists()
     assert manager._backup_dir.is_dir()
     assert len(manager._preexisting_paths) == 0
+    lockfile_path = root_solution_dir_with_pyproject_and_lock / lockfile_name
+    assert lockfile_path.is_file()
+    other_lockfile_name = "poetry.lock" if lockfile_name == "uv.lock" else "uv.lock"
+    assert not (root_solution_dir_with_pyproject_and_lock / other_lockfile_name).exists()
 
     with manager as entered:
         assert isinstance(entered, BackupManager)
         assert entered._backup_dir.exists()
         assert len(entered._preexisting_paths) > 0
         assert len(entered._backup_mapping) == 4
+        assert lockfile_path in entered._backup_mapping
 
         for original, backup_copy in entered._backup_mapping.items():
             assert isinstance(original, Path)
@@ -217,17 +231,31 @@ def test_backup_files_handles_empty_files_list(
 @pytest.mark.parametrize("solution_name", ["solution_with_dash_ui"], indirect=True)
 @pytest.mark.usefixtures("root_solution_dir_with_pyproject_and_lock")
 @pytest.mark.parametrize(
-    "files_to_modify",
+    ("root_solution_dir_with_pyproject_and_lock", "files_to_modify"),
     [
-        ["pyproject.toml"],
-        [
-            "src/saf/solutions/{solution_name}/ui/pages/page.py",
-            "src/saf/solutions/{solution_name}/solution/definition.py",
-            "pyproject.toml",
-            "poetry.lock",
-        ],
+        pytest.param({}, ["pyproject.toml"], id="single_file"),
+        pytest.param(
+            {},
+            [
+                "src/saf/solutions/{solution_name}/ui/pages/page.py",
+                "src/saf/solutions/{solution_name}/solution/definition.py",
+                "pyproject.toml",
+                "poetry.lock",
+            ],
+            id="poetry_multiple_files",
+        ),
+        pytest.param(
+            {"backend": "uv"},
+            [
+                "src/saf/solutions/{solution_name}/ui/pages/page.py",
+                "src/saf/solutions/{solution_name}/solution/definition.py",
+                "pyproject.toml",
+                "uv.lock",
+            ],
+            id="uv_multiple_files",
+        ),
     ],
-    ids=["single_file", "multiple_files"],
+    indirect=["root_solution_dir_with_pyproject_and_lock"],
 )
 def test_restore_existing_files_on_exception(
     root_solution_dir_with_pyproject_and_lock: Path,
@@ -293,26 +321,35 @@ def test_restore_only_backed_up_files(
 
 @pytest.mark.parametrize("solution_name", ["solution_with_dash_ui"], indirect=True)
 @pytest.mark.usefixtures("root_solution_dir_with_pyproject_and_lock")
+@pytest.mark.parametrize(
+    ("root_solution_dir_with_pyproject_and_lock", "lockfile_name"),
+    [
+        pytest.param({}, "poetry.lock", id="poetry"),
+        pytest.param({"backend": "uv"}, "uv.lock", id="uv"),
+    ],
+    indirect=["root_solution_dir_with_pyproject_and_lock"],
+)
 def test_rollback_removes_new_artifacts_and_restores_existing_files(
     root_solution_dir_with_pyproject_and_lock: Path,
     solution_name: str,
     solution_namespace: str,
+    lockfile_name: str,
 ):
     """Rollback should remove newly created artifacts and restore pre-existing file content."""
     base_dir = root_solution_dir_with_pyproject_and_lock / "src" / namespace_to_path(solution_namespace) / solution_name
     new_file = base_dir / "new_step.py"
     new_dir = base_dir / "new_step"
-    poetry_lock_path = root_solution_dir_with_pyproject_and_lock / "poetry.lock"
+    lockfile_path = root_solution_dir_with_pyproject_and_lock / lockfile_name
     existing_file = base_dir / "solution" / "definition.py"
     original_content = existing_file.read_text()
-    poetry_lock_path.unlink(missing_ok=True)
+    lockfile_path.unlink(missing_ok=True)
 
     def _create_artifacts_and_fail() -> None:
         with BackupManager(root_solution_dir_with_pyproject_and_lock, solution_name, solution_namespace):
             _create_file(new_file, "new content")
             new_dir.mkdir(parents=True)
             _create_file(new_dir / "file.py")
-            poetry_lock_path.write_text("NEW_LOCK")
+            lockfile_path.write_text("NEW_LOCK")
             existing_file.write_text("MODIFIED")
             raise RuntimeError("simulated failure")
 
@@ -321,27 +358,45 @@ def test_rollback_removes_new_artifacts_and_restores_existing_files(
 
     assert not new_file.exists()
     assert not new_dir.exists()
-    assert not poetry_lock_path.exists()
+    assert not lockfile_path.exists()
     assert existing_file.read_text() == original_content
 
 
 @pytest.mark.parametrize("solution_name", ["solution_with_dash_ui"], indirect=True)
 @pytest.mark.usefixtures("root_solution_dir_with_pyproject_and_lock")
+@pytest.mark.parametrize(
+    ("root_solution_dir_with_pyproject_and_lock", "lockfile_name", "preexisting_lock"),
+    [
+        pytest.param({}, None, True, id="new_file_only"),
+        pytest.param({"backend": "uv"}, "uv.lock", False, id="uv_new_lock"),
+        pytest.param({"backend": "uv"}, "uv.lock", True, id="uv_existing_lock"),
+    ],
+    indirect=["root_solution_dir_with_pyproject_and_lock"],
+)
 def test_rollback_only_on_exception(
     root_solution_dir_with_pyproject_and_lock: Path,
     solution_name: str,
     solution_namespace: str,
+    lockfile_name: str | None,
+    preexisting_lock: bool,
 ):
     """Rollback should only happen when exception occurs."""
     base_dir = root_solution_dir_with_pyproject_and_lock / "src" / namespace_to_path(solution_namespace) / solution_name
     new_file = base_dir / "new_step.py"
+    lockfile_path = root_solution_dir_with_pyproject_and_lock / lockfile_name if lockfile_name is not None else None
+    if lockfile_path is not None and not preexisting_lock:
+        lockfile_path.unlink()
 
     with BackupManager(root_solution_dir_with_pyproject_and_lock, solution_name, solution_namespace):
         _create_file(new_file, "new content")
+        if lockfile_path is not None:
+            lockfile_path.write_text("UPDATED_LOCK")
         # No exception raised
 
     # New file should NOT be removed on successful completion
     assert new_file.exists()
+    if lockfile_path is not None:
+        assert lockfile_path.read_text() == "UPDATED_LOCK"
 
 
 @pytest.mark.parametrize("solution_name", ["solution_with_dash_ui"], indirect=True)

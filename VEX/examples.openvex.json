@@ -1,0 +1,210 @@
+{
+  "@context": "https://openvex.dev/ns/v0.2.0",
+  "@id": "https://github.com/ansys/saf/blob/main/VEX/examples.openvex.json",
+  "author": "ANSYS, Inc.",
+  "role": "Product supplier",
+  "timestamp": "2026-11-23T08:43:02.143219Z",
+  "version": 1,
+  "statements": [
+    {
+      "vulnerability": {
+        "name": "CVE-2026-48587",
+        "aliases": [
+          "GHSA-923m-gv2p-w5qp"
+        ],
+        "description": "django.utils.cache.has_vary_header does not strip whitespace from Vary header values, which may expose cached responses."
+      },
+      "products": [
+        {
+          "identifiers": {
+            "purl": "pkg:pypi/saf-solutions-examples@0.2.dev0"
+          },
+          "subcomponents": [
+            {
+              "identifiers": {
+                "purl": "pkg:pypi/django@5.2.19"
+              }
+            }
+          ]
+        }
+      ],
+      "status": "fixed",
+      "status_notes": "examples/poetry.lock resolves Django 5.2.19 through ansys-dynamicreporting-core 1.0.0rc4 (django>=4.2.27,<6.0.0), which is beyond the first patched version 5.2.15. Earlier ansys-dynamicreporting-core 0.10.x required django<5.0, which locked Django 4.2.x."
+    },
+    {
+      "vulnerability": {
+        "name": "CVE-2026-8404",
+        "aliases": [
+          "GHSA-8cjm-8mp7-r2xf"
+        ],
+        "description": "UpdateCacheMiddleware matches Cache-Control directives case-sensitively, which may disclose incorrectly cached responses."
+      },
+      "products": [
+        {
+          "identifiers": {
+            "purl": "pkg:pypi/saf-solutions-examples@0.2.dev0"
+          },
+          "subcomponents": [
+            {
+              "identifiers": {
+                "purl": "pkg:pypi/django@5.2.19"
+              }
+            }
+          ]
+        }
+      ],
+      "status": "fixed",
+      "status_notes": "examples/poetry.lock resolves Django 5.2.19 through ansys-dynamicreporting-core 1.0.0rc4 (django>=4.2.27,<6.0.0), which is beyond the first patched version 5.2.15. Earlier ansys-dynamicreporting-core 0.10.x required django<5.0, which locked Django 4.2.x."
+    },
+    {
+      "vulnerability": {
+        "name": "CVE-2026-6873",
+        "aliases": [
+          "GHSA-h7pc-vwp9-298g"
+        ],
+        "description": "HttpRequest.get_signed_cookie derives its salt non-injectively, allowing signed cookies to be reused across contexts."
+      },
+      "products": [
+        {
+          "identifiers": {
+            "purl": "pkg:pypi/saf-solutions-examples@0.2.dev0"
+          },
+          "subcomponents": [
+            {
+              "identifiers": {
+                "purl": "pkg:pypi/django@5.2.19"
+              }
+            }
+          ]
+        }
+      ],
+      "status": "fixed",
+      "status_notes": "examples/poetry.lock resolves Django 5.2.19 through ansys-dynamicreporting-core 1.0.0rc4 (django>=4.2.27,<6.0.0), which is beyond the first patched version 5.2.15. Earlier ansys-dynamicreporting-core 0.10.x required django<5.0, which locked Django 4.2.x."
+    },
+    {
+      "vulnerability": {
+        "name": "CVE-2026-53878",
+        "aliases": [
+          "GHSA-8qcx-xf44-272x"
+        ],
+        "description": "DomainNameValidator permits newline characters that may enable HTTP header injection."
+      },
+      "products": [
+        {
+          "identifiers": {
+            "purl": "pkg:pypi/saf-solutions-examples@0.2.dev0"
+          },
+          "subcomponents": [
+            {
+              "identifiers": {
+                "purl": "pkg:pypi/django@5.2.19"
+              }
+            }
+          ]
+        }
+      ],
+      "status": "fixed",
+      "status_notes": "examples/poetry.lock resolves Django 5.2.19 through ansys-dynamicreporting-core 1.0.0rc4 (django>=4.2.27,<6.0.0), which is beyond the first patched version 5.2.16. Earlier ansys-dynamicreporting-core 0.10.x required django<5.0, which locked Django 4.2.x."
+    },
+    {
+      "vulnerability": {
+        "name": "CVE-2026-48588",
+        "aliases": [
+          "GHSA-3h9f-r86x-qvjx"
+        ],
+        "description": "Cache middleware may expose private responses when unrelated request cookies are present."
+      },
+      "products": [
+        {
+          "identifiers": {
+            "purl": "pkg:pypi/saf-solutions-examples@0.2.dev0"
+          },
+          "subcomponents": [
+            {
+              "identifiers": {
+                "purl": "pkg:pypi/django@5.2.19"
+              }
+            }
+          ]
+        }
+      ],
+      "status": "fixed",
+      "status_notes": "examples/poetry.lock resolves Django 5.2.19 through ansys-dynamicreporting-core 1.0.0rc4 (django>=4.2.27,<6.0.0), which is beyond the first patched version 5.2.16. Earlier ansys-dynamicreporting-core 0.10.x required django<5.0, which locked Django 4.2.x."
+    },
+    {
+      "vulnerability": {
+        "name": "CVE-2026-53877",
+        "aliases": [
+          "GHSA-crhf-3pfg-w68w"
+        ],
+        "description": "GeoDjango GDALRaster may over-read heap memory when constructed from bytes."
+      },
+      "products": [
+        {
+          "identifiers": {
+            "purl": "pkg:pypi/saf-solutions-examples@0.2.dev0"
+          },
+          "subcomponents": [
+            {
+              "identifiers": {
+                "purl": "pkg:pypi/django@5.2.19"
+              }
+            }
+          ]
+        }
+      ],
+      "status": "fixed",
+      "status_notes": "examples/poetry.lock resolves Django 5.2.19 through ansys-dynamicreporting-core 1.0.0rc4 (django>=4.2.27,<6.0.0), which is beyond the first patched version 5.2.16. Earlier ansys-dynamicreporting-core 0.10.x required django<5.0, which locked Django 4.2.x."
+    },
+    {
+      "vulnerability": {
+        "name": "CVE-2026-15830",
+        "aliases": [
+          "GHSA-q238-5cxm-5c9h"
+        ],
+        "description": "GeoDjango GEOSGeometry is vulnerable to denial of service through deeply nested geometry collections."
+      },
+      "products": [
+        {
+          "identifiers": {
+            "purl": "pkg:pypi/saf-solutions-examples@0.2.dev0"
+          },
+          "subcomponents": [
+            {
+              "identifiers": {
+                "purl": "pkg:pypi/django@5.2.19"
+              }
+            }
+          ]
+        }
+      ],
+      "status": "fixed",
+      "status_notes": "examples/poetry.lock resolves Django 5.2.19 through ansys-dynamicreporting-core 1.0.0rc4 (django>=4.2.27,<6.0.0), which is beyond the first patched version 5.2.17. Earlier ansys-dynamicreporting-core 0.10.x required django<5.0, which locked Django 4.2.x."
+    },
+    {
+      "vulnerability": {
+        "name": "CVE-2026-15307",
+        "aliases": [
+          "GHSA-wvqv-fj8w-qmhm"
+        ],
+        "description": "GeoDjango spatial lookups allow file writes and outbound requests through GDAL raster parsing."
+      },
+      "products": [
+        {
+          "identifiers": {
+            "purl": "pkg:pypi/saf-solutions-examples@0.2.dev0"
+          },
+          "subcomponents": [
+            {
+              "identifiers": {
+                "purl": "pkg:pypi/django@5.2.19"
+              }
+            }
+          ]
+        }
+      ],
+      "status": "fixed",
+      "status_notes": "examples/poetry.lock resolves Django 5.2.19 through ansys-dynamicreporting-core 1.0.0rc4 (django>=4.2.27,<6.0.0), which is beyond the first patched version 5.2.17. Earlier ansys-dynamicreporting-core 0.10.x required django<5.0, which locked Django 4.2.x."
+    }
+  ]
+}

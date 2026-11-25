@@ -18,9 +18,10 @@ r"""Create or update package OpenVEX documents.
 
 Requires Python 3.11 or newer; no additional dependencies are needed.
 The package argument is a directory name under packages, including the separate
-saf-sdk package. The distribution name and initial product version are read from
-that package's pyproject.toml. Output is VEX/<package>.openvex.json relative to
-the repository, regardless of the current working directory.
+saf-sdk package, or the top-level Poetry-based examples project. The distribution
+name and initial product version are read from that project's pyproject.toml.
+Output is VEX/<package>.openvex.json relative to the repository, regardless of
+the current working directory.
 
 Creating and updating:
     A new document starts at revision 1 with a UTC creation timestamp and author
@@ -80,6 +81,7 @@ import tomllib
 from typing import Any, TypeGuard
 
 ROOT = Path(__file__).resolve().parents[1]
+POETRY_PROJECTS = ("examples",)
 JUSTIFICATIONS = (
     "component_not_present",
     "vulnerable_code_not_present",
@@ -107,7 +109,7 @@ def version(value: str) -> str:
 def parser_for_cli() -> argparse.ArgumentParser:
     """Build the command-line interface."""
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("package", help="Directory name under packages, such as saf-cli.")
+    parser.add_argument("package", help="Directory name under packages, such as saf-cli, or examples.")
     parser.add_argument("--product-version", type=version, help="Update matching top-level product PURLs.")
     parser.add_argument("--vulnerability", type=nonempty, help="CVE or GHSA identifier.")
     parser.add_argument("--alias", action="append", default=[], type=nonempty, help="Repeat for each advisory alias.")
@@ -279,12 +281,20 @@ def write_document(path: Path, document: dict[str, Any]) -> None:
             temporary_path.unlink(missing_ok=True)
 
 
+def read_project_metadata(package: str, root: Path) -> dict[str, Any]:
+    """Read name and version from a package, or from the Poetry-based top-level examples project."""
+    if package in POETRY_PROJECTS:
+        manifest = root / package / "pyproject.toml"
+        return tomllib.loads(manifest.read_text(encoding="utf-8"))["tool"]["poetry"]
+    manifest = root / "packages" / package / "pyproject.toml"
+    return tomllib.loads(manifest.read_text(encoding="utf-8"))["project"]
+
+
 def generate(args: argparse.Namespace, root: Path = ROOT) -> Path:
     """Create a document or update it without changing unrelated assessments."""
     if not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_-]*", args.package):
         raise ValueError("Package must be a directory name under packages.")
-    manifest = root / "packages" / args.package / "pyproject.toml"
-    project = tomllib.loads(manifest.read_text(encoding="utf-8"))["project"]
+    project = read_project_metadata(args.package, root)
     package_name = re.sub(r"[-_.]+", "-", project["name"]).lower()
     path = root / "VEX" / f"{args.package}.openvex.json"
     exists = path.exists()

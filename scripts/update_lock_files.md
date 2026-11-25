@@ -20,6 +20,7 @@ uv run scripts/update_lock_files.py <packages> [--root-dir <path>] [--one-by-one
 | `--root-dir` | Optional. Root directory to search for lock files. Defaults to the repository root. |
 | `--one-by-one` | Optional. Update packages individually instead of all at once. Useful when not all packages exist in every project. |
 | `--npm` | Optional. Update npm `package-lock.json` files instead of Python lock files. |
+| `--system-certs` | Optional. Pass `--system-certs` to `uv`/`uvx` to use the OS certificate store. Fixes `invalid peer certificate: UnknownIssuer` errors behind corporate proxies. |
 
 ### Examples
 
@@ -65,6 +66,10 @@ uv run scripts/update_lock_files.py requests --root-dir ./packages
 
 1. **Discovery**: Recursively walks the directory tree to find all `package-lock.json` files
 2. **npm projects**: Runs `npm update <packages>` in each directory
+
+### Projects supporting both Poetry and uv
+
+Some projects keep one project file per manager (`pyproject.poetry.toml` and `pyproject.uv.toml`) next to both `poetry.lock` and `uv.lock`. Because both tools only read `pyproject.toml`, the script temporarily copies `pyproject.<manager>.toml` to `pyproject.toml` while running that manager's update, then restores the original `pyproject.toml` (or removes it if none existed). Directories without a manager-specific file are processed as usual.
 
 ### Error handling
 

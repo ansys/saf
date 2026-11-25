@@ -23,9 +23,8 @@ Otherwise, ``saf run --portal`` falls back to the SAF Desktop Portal, then to th
 
 import os
 
-import dash
-
 from ansys_saf_projects_dashboard import ProjectsDashboard
+import dash
 
 # Keep in sync with the desktop orchestrator, which opens this path when ``--portal`` uses the projects dashboard.
 PROJECTS_DASHBOARD_PATH = os.getenv("SAF_DESKTOP_PROJECTS_DASHBOARD_PATH", "/projects")

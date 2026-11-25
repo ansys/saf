@@ -104,6 +104,18 @@ python run_benchmarks.py --os Windows Linux --size small
 | `--fail-fast` | Stop after the first failed run. |
 | `--keep-workspace` | Keep each run's `.venv`, `dist`, and installed files. |
 | `--warm-cache` | Use the user's package caches instead of a cold cache per run. |
+| `--retries N` | Re-run a run up to N times on a fresh workspace after a transient failure (network drop, SAF's PyPI check failing, Windows temp-file lock). Default: 2. |
+| `--retry-delay SECONDS` | Wait before each retry, multiplied by the attempt number. Default: 60. |
+| `--rerun-failed` | With `--output-dir` of an existing session: re-run only the runs that did not pass, keep their old logs in `previousN/`, and rebuild the report. |
+
+Failed attempts are kept in `attemptN/` inside the run folder, and the report
+shows the number of attempts for every run. Other failures (for example a
+wrong password or a real build error) are never retried.
+
+```powershell
+# After a long session, re-run only what failed (same selection options as the original run)
+python run_benchmarks.py --os Windows Linux --output-dir results\full_20261125 --rerun-failed
+```
 
 Runs of a case alternate between Poetry and UV (`run1` Poetry, `run1` UV,
 `run2` Poetry, and so on) so that drift in machine or network speed affects

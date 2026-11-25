@@ -32,7 +32,7 @@ import sys
 import time
 from typing import Any
 
-from report import write_reports
+from report import collect_records, write_reports
 
 SCRIPT_DIRECTORY = Path(__file__).resolve().parent
 WORKER_SCRIPT = SCRIPT_DIRECTORY / "lifecycle_stage.py"
@@ -257,6 +257,19 @@ def parse_arguments(argv: list[str] | None = None) -> argparse.Namespace:
         help="Re-run a failed run up to N times on a fresh workspace when it failed with a transient error "
         "(dropped TLS connection or reset, SAF's PyPI check failing, Windows temp-file lock). "
         "Retries are listed in the report. Default: 2.",
+    )
+    control.add_argument(
+        "--retry-delay",
+        type=int,
+        default=60,
+        metavar="SECONDS",
+        help="Wait before a retry, multiplied by the attempt number (60 s, then 120 s, ...). Default: 60.",
+    )
+    control.add_argument(
+        "--rerun-failed",
+        action="store_true",
+        help="Re-run only the runs of the selection that did not pass in --output-dir (an existing result "
+        "directory). Previous logs are kept in previousN/, and report.md is rebuilt from all runs.",
     )
     return parser.parse_args(argv)
 
@@ -594,6 +607,11 @@ def run_one(
         print(f"  Network failure, retrying on a fresh workspace: {record['error']}", flush=True)
         record["retried_errors"].append(record["error"])
         archive_attempt(run_directory, attempt)
+        # Back off so a short outage does not consume every attempt within seconds.
+        delay = arguments.retry_delay * attempt
+        if delay > 0:
+            print(f"  Waiting {delay} s before attempt {attempt + 1}.", flush=True)
+            time.sleep(delay)
     record["wall_seconds"] = time.perf_counter() - started
     (run_directory / "result.json").write_text(json.dumps(record, indent=2) + "\n", encoding="utf-8")
     return record
@@ -610,6 +628,31 @@ def load_config(arguments: argparse.Namespace) -> tuple[HarnessConfig, Path | No
     return HarnessConfig.from_file(config_file), config_file
 
 
+def run_passed(run_directory: Path) -> bool:
+    """Return whether a run directory holds a passed result."""
+    result_file = run_directory / "result.json"
+    if not result_file.is_file():
+        return False
+    try:
+        return json.loads(result_file.read_text(encoding="utf-8")).get("status") == "passed"
+    except (OSError, json.JSONDecodeError):
+        return False
+
+
+def archive_previous_run(run_directory: Path) -> None:
+    """Move a previous (failed) run's files into ``previousN/`` before re-running it."""
+    if not run_directory.is_dir() or not any(run_directory.iterdir()):
+        return
+    number = 1
+    while (run_directory / f"previous{number}").exists():
+        number += 1
+    archive = run_directory / f"previous{number}"
+    archive.mkdir()
+    for path in list(run_directory.iterdir()):
+        if path != archive and not path.name.startswith("previous"):
+            path.replace(archive / path.name)
+
+
 def main(argv: list[str] | None = None) -> int:
     """Select, execute, and report the requested benchmark matrix."""
     arguments = parse_arguments(argv)
@@ -618,6 +661,13 @@ def main(argv: list[str] | None = None) -> int:
     validate(config, plan)
     output_root = resolve_output_directory(arguments.output_dir)
 
+    if arguments.rerun_failed:
+        if arguments.output_dir is None or not output_root.is_dir():
+            raise ValueError("--rerun-failed requires --output-dir pointing to an existing result directory.")
+        plan = [
+            item for item in plan if not run_passed(output_root.joinpath(*item.relative_directory.parts))
+        ]
+
     print(f"Selected {len(plan)} benchmark runs:", flush=True)
     for item in plan:
         print(f"  - {item.label}", flush=True)
@@ -625,10 +675,15 @@ def main(argv: list[str] | None = None) -> int:
     if arguments.dry_run:
         return 0
 
-    if output_root.exists() and any(output_root.iterdir()):
-        raise FileExistsError(f"Output directory is not empty: {output_root}")
-    output_root.mkdir(parents=True, exist_ok=True)
-    session = output_root.name
+    if arguments.rerun_failed:
+        for item in plan:
+            archive_previous_run(output_root.joinpath(*item.relative_directory.parts))
+        session = f"{output_root.name}-rerun"
+    else:
+        if output_root.exists() and any(output_root.iterdir()):
+            raise FileExistsError(f"Output directory is not empty: {output_root}")
+        output_root.mkdir(parents=True, exist_ok=True)
+        session = output_root.name
     settings = {
         "command": subprocess.list2cmdline([Path(sys.argv[0]).name, *(argv or sys.argv[1:])]),
         "config": str(config_file) if config_file else "defaults",
@@ -655,7 +710,19 @@ def main(argv: list[str] | None = None) -> int:
         print("\nInterrupted; writing a report for the completed runs.", flush=True)
     finally:
         settings["finished"] = datetime.now(timezone.utc).isoformat(timespec="seconds")
-        report_file = write_reports(output_root, records, len(plan), settings)
+        if arguments.rerun_failed:
+            # Rebuild the report from every run in the directory, keeping the original session settings.
+            previous = output_root / "results.json"
+            if previous.is_file():
+                original = json.loads(previous.read_text(encoding="utf-8"))
+                settings = {**original.get("settings", {}), "rerun": settings["command"],
+                            "rerun_finished": settings["finished"]}
+                planned = int(original.get("planned", len(plan)))
+            else:
+                planned = len(plan)
+            report_file = write_reports(output_root, collect_records(output_root), planned, settings)
+        else:
+            report_file = write_reports(output_root, records, len(plan), settings)
         print(f"\nReport: {report_file}", flush=True)
         if not arguments.keep_workspace:
             shutil.rmtree(config.work_root / session, ignore_errors=True)

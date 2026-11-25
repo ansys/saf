@@ -75,9 +75,11 @@ SHORTCUT_PATTERN = re.compile(r"^Shortcut created at (?P<path>.+?)\s*$")
 # - Windows file locks (antivirus/indexer) when deleting temporary folders.
 NETWORK_ERROR_PATTERN = re.compile(
     r"SSLEOFError|UNEXPECTED_EOF_WHILE_READING|ConnectionResetError|RemoteDisconnected|"
-    r"Connection aborted|Connection was reset|Connection reset|ConnectTimeout|ReadTimeout|"
+    r"Connection aborted|Connection was reset|Connection reset|ConnectTimeout|ReadTimeout|Read timed out|"
+    r"The read operation timed out|"
     r"Max retries exceeded|Temporary failure in name resolution|getaddrinfo failed|error sending request|"
     r"connection closed before message completed|operation timed out|"
+    r"All attempts to connect to [\w.-]+ failed|client error \(Connect\)|Failed to fetch: https?://|"
     r"Install will fail without a valid SSL certificate|"
     r"WinError 32\]|being used by another process",
 )

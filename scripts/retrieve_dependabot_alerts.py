@@ -7,9 +7,12 @@
 The script queries the GitHub GraphQL API (``repository.vulnerabilityAlerts``),
 optionally filters alerts by package name and/or manifest file, and writes a
 Markdown table with the severity, manifest file, package name and patched
-version. It also traces package dependency paths from local uv and Poetry lock
-files when those manifests are available. Omit either filter to include all
-packages or manifests, respectively; omit both to include all alerts.
+version. It also reports potential dependency paths from local uv and Poetry
+lock files when those manifests are available. The paths combine runtime,
+optional-extra and development dependencies; they do not prove that a
+component is installed for a particular product configuration. Omit either
+filter to include all packages or manifests, respectively; omit both to include
+all alerts.
 
 Requirements:
   - Set the GITHUB_TOKEN environment variable with a token that can read
@@ -28,6 +31,7 @@ from collections import deque
 from datetime import datetime, timezone
 import os
 from pathlib import Path
+import re
 import sys
 import tomllib
 from typing import Any, Dict, List, Optional
@@ -516,7 +520,14 @@ def _render_markdown(
     if dependency_records:
         package_label = "package" if len(dependency_records) == 1 else "packages"
         lines += [
-            "### Dependency traces",
+            "### Potential dependency traces",
+            "",
+            "These paths are candidate relationships from lock metadata. The graph "
+            "combines runtime, optional-extra and development dependencies without "
+            "resolving which extras, groups or environment markers are selected. "
+            "A listed path does not prove that the component is installed in a "
+            "specific product or runtime configuration; verify the relevant "
+            "manifest, extras and environment.",
             "",
             "<details>",
             f"<summary>Show dependency traces for {len(dependency_records)} {package_label}</summary>",
@@ -531,7 +542,7 @@ def _render_markdown(
                 if trace["manifest_file"]:
                     lines.append(f"    - Project manifest: `{trace['manifest_file']}`")
                 if trace["dependency_paths"]:
-                    lines.append("    - Dependency tree:")
+                    lines.append("    - Potential dependency tree:")
                     _append_dependency_tree(lines, trace["dependency_paths"])
                 elif trace.get("status"):
                     lines.append(f"    - Trace unavailable: {trace['status']}")
@@ -607,6 +618,22 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
+def _write_github_output(suggested_patches: List[tuple[str, str, str]]) -> None:
+    """Expose the PIP packages to update as GitHub Actions step outputs, if running in a workflow."""
+    output_path = os.getenv("GITHUB_OUTPUT")
+    if not output_path:
+        return
+    pip_patches = {
+        package.lower(): patched
+        for ecosystem, package, patched in suggested_patches
+        if ecosystem.upper() == "PIP" and re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._-]*", package)
+    }
+    packages = " ".join(sorted(pip_patches))
+    patches = " ".join(f"{package}>={patched}" for package, patched in sorted(pip_patches.items()))
+    with open(output_path, "a", encoding="utf-8") as fh:
+        fh.write(f"packages={packages}\npatches={patches}\n")
+
+
 def main() -> List[tuple[str, str, str]]:
     args = parse_args()
 
@@ -641,6 +668,8 @@ def main() -> List[tuple[str, str, str]]:
         output = dist_dir / f"dependabot_alerts_{args.repository.replace('/', '_')}_{suffix}.md"
     with open(output, "w", encoding="utf-8") as fh:
         fh.write(_render_markdown(args.repository, filters, args.state, matching, dependency_records))
+
+    _write_github_output(suggested_patches)
 
     print(f"Exported {len(matching)} alert(s) for {filters} to {output}")
     return suggested_patches

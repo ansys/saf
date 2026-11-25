@@ -1,0 +1,123 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "saf-solutions-examples"
+version = "0.2.dev0"
+description = "Collection of simple SAF/Dash usage examples."
+license = "Apache-2.0"
+authors = [{ name = "ANSYS, Inc.", email = "pyansys-core@synopsys.com" }]
+maintainers = [{ name = "ANSYS, Inc.", email = "pyansys-core@synopsys.com" }]
+readme = "README.md"
+keywords = ["Ansys Solutions"]
+requires-python = ">=3.11,<3.13"
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Other Audience",
+    "License :: OSI Approved :: Apache Software License",
+    "Natural Language :: English",
+    "Operating System :: Microsoft :: Windows",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering",
+]
+dependencies = [
+    "ansys-dynamicreporting-core>=0.10.6,<0.11.0",
+    "ansys-saf-sdk[core-pim,instance-management-all,core-hps]>=0.5.0,<0.6.0",
+    "ansys-tools-visualization-interface>=0.12.1,<0.13.0",
+    "ansys-visor-viewer>=1.0.1,<2.0.0",
+    "h5py>=3.12,<4.0",
+    "numpy>=1.26.4,<2.0.0",
+    "pillow>=13.0.0,<14.0.0",
+    "scipy>=1.15,<2.0",
+    "vtk>=9.6.1,<10.0.0",
+    "soupsieve>=2.10,<3.0; python_full_version < '3.11.5'",
+    "soupsieve>=4.0,<5.0; python_full_version >= '3.11.5'",
+]
+
+[project.scripts]
+examples_main = "ansys.solutions.examples.main:main"
+
+[dependency-groups]
+desktop = [
+    "ansys-saf-sdk[desktop]>=0.5.0,<0.6.0",
+]
+ui = [
+    "ansys-solutions-dash-super-components==0.2.dev8",
+    "dash>=3.0.0,<4.0.0",
+    "dash-bootstrap-components>=1.2,<2.0",
+    "dash-extensions>=0.1.13",
+    "dash-iconify>=0.1,<0.2",
+    "dash-mantine-components>=2.6,<3.0",
+    "dash-uploader>=0.6,<0.7",
+    "pandas>=2.2.2,<3.0.0",
+]
+tests = [
+    "ansys-saf-cli",
+    "coverage>=7.2.6,<8.0.0",
+    "filelock>=4.2.1,<5.0.0",
+    "mock>=4.0.3,<5.0.0",
+    "pytest>=9.1.1,<10.0.0",
+    "pytest-cov>=7.0.0,<8.0.0",
+    "pytest-html>=4.1.1,<5.0.0",
+    "pytest-md>=0.2.0,<0.3.0",
+    "pytest-dependency>=0.5.1,<0.6.0",
+    "pytest-flakes>=4.0.5,<5.0.0",
+    "pytest-pycodestyle>=2.5.0,<3.0.0",
+    "pytest-pythonpath>=0.7,<0.8.0",
+    "pytest-xdist>=3.0.2,<4.0.0",
+    "pytest-mock>=3.12,<4.0.0",
+    "selenium>=4.0,<5.0",
+]
+build = [
+    "build>=0.8.0,<0.9.0",
+    "twine==6.0.1",
+    "pkginfo>=1.12.1.2,<2.0.0",
+    "pyinstaller>=6.16,<7.0; python_version < '3.15'",
+    "toml>=0.10.2,<0.11.0",
+    "pyc-wheel>=1.2.7,<2.0.0",
+    "ansys-saf-sdk[build]>=0.5.0,<0.6.0",
+]
+style = [
+    "black>24",
+    "isort==5.13.2",
+    "flake8==7.0.0; python_full_version >= '3.8.1' and python_full_version < '3.11'",
+    "codespell==2.2.6",
+    "pydocstyle==6.3.0",
+]
+
+[tool.uv]
+package = true
+
+[tool.uv.sources]
+ansys-saf-cli = { path = "../packages/saf-cli", editable = true }
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/saf"]
+
+[tool.black]
+line-length = 120
+
+[tool.isort]
+profile = "black"
+force_sort_within_sections = true
+line_length = 120
+default_section = "THIRDPARTY"
+src_paths = ["doc", "src", "tests"]
+
+[tool.codespell]
+skip = '.github,.venv,.tox,requirements,CODEOWNERS,*.tmp,CHANGELOG.md,uv.lock,*.vtu'
+count = ""
+quiet-level = 3
+check-hidden = ""
+ignore-words = ".codespell.ignore"
+
+[tool.pydocstyle]
+select = ["D107"]
+
+[tool.coverage.run]
+source = ["ansys.solutions"]
+
+[tool.coverage.report]
+show_missing = true

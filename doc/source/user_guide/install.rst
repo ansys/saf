@@ -147,11 +147,11 @@ A symbolic link connects the two so that Poetry can transparently manage ``.venv
 
 .. image:: ../_static/images/saf_install_light.svg
     :alt: Diagram showing the two virtual environments created by saf install and the symbolic link between them
-    :class: saf-install-diagram-light
+    :class: saf-light-only
 
 .. image:: ../_static/images/saf_install.svg
     :alt: Diagram showing the two virtual environments created by saf install and the symbolic link between them
-    :class: saf-install-diagram-dark
+    :class: saf-dark-only
 
 **For UV-based solutions**, ``saf install`` runs ``uv sync`` to create and populate ``.venv``.
 It does not create a separate environment for the dependency manager. UV can update ``uv.lock``
@@ -159,11 +159,11 @@ if the lock file no longer matches ``pyproject.toml``.
 
 .. image:: ../_static/images/saf_install_uv_light.svg
     :alt: SAF runs uv sync using UV from PATH. UV reads pyproject.toml and uv.lock and installs the solution and selected dependencies into .venv.
-    :class: saf-install-diagram-light
+    :class: saf-light-only
 
 .. image:: ../_static/images/saf_install_uv.svg
     :alt: SAF runs uv sync using UV from PATH. UV reads pyproject.toml and uv.lock and installs the solution and selected dependencies into .venv.
-    :class: saf-install-diagram-dark
+    :class: saf-dark-only
 
 .. attention::
 
@@ -522,14 +522,26 @@ The ``saf execute`` command
 The ``saf execute`` command prepends the solution's ``.venv`` to :envvar:`PATH`, so the solution's Python
 interpreter and installed packages take precedence over any other environment on the system.
 
+.. image:: ../_static/images/saf_execute_light.svg
+   :width: 100%
+   :alt: Diagram showing how saf execute runs a command in the solution's .venv, for Poetry and UV solutions
+   :class: saf-light-only
+
 .. image:: ../_static/images/saf_execute.svg
    :width: 100%
-   :alt: Diagram showing how saf execute injects the solution environment into PATH
+   :alt: Diagram showing how saf execute runs a command in the solution's .venv, for Poetry and UV solutions
+   :class: saf-dark-only
+
+``saf execute`` works the same way for Poetry-based and UV-based solutions. It also unsets
+:envvar:`VIRTUAL_ENV` and runs ``<command>`` from the solution's root directory, so that the dependency
+manager acts on the solution's ``.venv`` rather than on another active environment.
 
 .. warning::
 
-   If the binary called in ``<command>`` is not present in the solution's environment, binaries
-   found in other environments on :envvar:`PATH` are used as a fallback.
+   The executable called in ``<command>`` must be present in the solution's environment. Otherwise,
+   ``saf execute`` fails. The only exception is ``uv``, which is installed outside the solution's
+   environment and is taken from :envvar:`PATH`. Programs that the executable starts in turn are looked up
+   on :envvar:`PATH`, where the solution's environment comes first.
 
 
 .. _ug-install-saf-execute-options:

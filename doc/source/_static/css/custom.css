@@ -1742,11 +1742,26 @@ a.saf-cta--secondary {
   stroke: #a97ccd !important;
 }
 
-img.saf-install-diagram-dark,
-html[data-theme="dark"] img.saf-install-diagram-light {
-  display: none;
+/* =========================================== THEME-DEPENDENT IMAGES =========================================== */
+
+/* Show an element only in one color mode. Works on any directive that accepts :class:
+   (image, figure, container, ...). Provide two variants of the same content:
+
+     .. image:: /_static/images/diagram_light.svg
+        :class: saf-light-only
+
+     .. image:: /_static/images/diagram_dark.svg
+        :class: saf-dark-only
+
+   Only the hidden variant is styled, so each element keeps its natural display value
+   (inline for images, block for figures and containers). */
+html[data-theme="dark"] .saf-light-only,
+html:not([data-theme="dark"]) .saf-dark-only {
+  display: none !important;
 }
 
-html[data-theme="dark"] img.saf-install-diagram-dark {
-  display: inline;
+/* Single image without a dark variant: invert it in dark mode. Use only for monochrome
+   drawings (black lines on transparent background), because it also inverts colors. */
+html[data-theme="dark"] .saf-invert-dark {
+  filter: invert(1) hue-rotate(180deg);
 }

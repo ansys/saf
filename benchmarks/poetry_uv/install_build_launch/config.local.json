@@ -1,0 +1,11 @@
+{
+  "saf_executable": "D:\\SAF\\saf\\.venv\\Scripts\\saf.exe",
+  "timeout_seconds": 3600,
+  "isolate_caches": true,
+  "wsl": {
+    "distribution": "Ubuntu-22.04",
+    "python": "python3",
+    "saf_executable": "~/.local/bin/saf",
+    "work_root": "~/.cache/saf-lifecycle-benchmark"
+  }
+}

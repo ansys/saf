@@ -25,11 +25,7 @@ import os
 
 import dash
 
-# Import the component library when the module is loaded: Dash refuses component libraries imported in a callback.
-try:
-    from ansys_saf_projects_dashboard import ProjectsDashboard
-except ImportError:
-    ProjectsDashboard = None
+from ansys_saf_projects_dashboard import ProjectsDashboard
 
 # Keep in sync with the desktop orchestrator, which opens this path when ``--portal`` uses the projects dashboard.
 PROJECTS_DASHBOARD_PATH = os.getenv("SAF_DESKTOP_PROJECTS_DASHBOARD_PATH", "/projects")

@@ -1,7 +1,7 @@
-"""Benchmark the SAF solution lifecycle with Poetry and UV.
+"""Benchmark SAF install, build, and installer launch with Poetry and UV.
 
-The harness copies prepared fixture solutions (basic, medium, advanced) and
-times each lifecycle stage for both backends:
+The harness copies prepared fixture solutions (small, medium, large) and
+times three stages for both backends:
 
 * ``dev`` mode:  ``install`` (``saf install``) and ``build`` (``saf build``,
   online or ``--offline-package``).
@@ -42,7 +42,7 @@ MODES = ("dev", "prod")
 MODE_STAGES = {"dev": ("install", "build"), "prod": ("launch",)}
 STAGES = ("install", "build", "launch")
 OPERATING_SYSTEMS = ("Windows", "Linux")
-SIZES = ("basic", "medium", "advanced")
+SIZES = ("small", "medium", "large")
 NETWORKS = ("online", "offline")
 BACKENDS = ("poetry", "uv")
 BACKEND_LABELS = {"poetry": "Poetry", "uv": "UV"}
@@ -205,7 +205,7 @@ def parse_arguments(argv: list[str] | None = None) -> argparse.Namespace:
         nargs="+",
         type=case_insensitive(SIZES),
         metavar="SIZE",
-        help="Solution size: basic, medium, advanced. Default: all.",
+        help="Solution size: small, medium, large. Default: all.",
     )
     selection.add_argument(
         "--backend",

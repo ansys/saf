@@ -1,12 +1,14 @@
-# SAF solution lifecycle benchmark
+# SAF install, build, and launch benchmark
 
-This directory automates the Poetry-versus-UV comparison of the whole SAF
-solution lifecycle, which was previously measured by hand. It runs each stage
-on three prepared solutions of increasing size, stores logs for every run, and
-writes a Markdown report with the measured numbers.
+This directory automates a Poetry-versus-UV comparison. It benchmarks three SAF steps only: `saf install`,
+`saf build`, and the launch of the generated installer. Other parts of the
+solution lifecycle are not measured.
 
-The structure follows `saf/benchmarks/poetry_uv/installation_stage` so that it
-can be moved there later.
+Each step runs on three prepared solutions of increasing size (`small`,
+`medium`, `large`). The harness stores logs for every run and writes a Markdown
+report with the measured numbers.
+
+The structure follows the sibling `installation_stage` benchmark.
 
 ## What is measured
 
@@ -23,7 +25,7 @@ Each case varies:
 | `--mode` | `dev`, `prod` | both |
 | `--stage` | `install`, `build`, `launch` (narrows `--mode`) | all stages of the selected modes |
 | `--os` | `Windows`, `Linux` (Linux runs through WSL on Windows) | current OS |
-| `--size` | `basic`, `medium`, `advanced` | all |
+| `--size` | `small`, `medium`, `large` | all |
 | `--backend` | `poetry`, `uv` | both |
 | `--network` | `online`, `offline` (build and launch only) | both |
 | `--run N` | number of runs per case | 3 |
@@ -32,9 +34,9 @@ The fixture sizes are:
 
 | Size | Dependencies |
 |---|---|
-| `basic` | `ansys-saf-sdk` only (template default). |
-| `medium` | `basic` + pinned binary wheels: `duckdb`, `orjson`, `lz4`, `xxhash`. |
-| `advanced` | `medium` + a private-index package (`ansys-dash-treeview`), a Git dependency (`sampleproject`), and a local wheel (`build_assets/saf_benchmark_local-1.0.0-py3-none-any.whl`). |
+| `small` | `ansys-saf-sdk` only (template default). |
+| `medium` | `small` + pinned binary wheels: `duckdb`, `orjson`, `lz4`, `xxhash`. |
+| `large` | `medium` + a private-index package (`ansys-dash-treeview`), a Git dependency (`sampleproject`), and a local wheel (`build_assets/saf_benchmark_local-1.0.0-py3-none-any.whl`). |
 
 The Poetry and UV fixtures declare the same dependencies.
 
@@ -44,7 +46,7 @@ The Poetry and UV fixtures declare the same dependencies.
    `saf_executable` in a configuration file. The fixtures require SAF CLI
    4.5 or later: older versions cannot install UV solutions. The report shows
    the SAF CLI version and path used on each OS.
-2. For `advanced`, provide credentials for the private index through the usual
+2. For `large`, provide credentials for the private index through the usual
    environment variables (`POETRY_HTTP_BASIC_SOLUTIONS_PRIVATE_PYPI_*` and
    `UV_INDEX_SOLUTIONS_PRIVATE_PYPI_*`). The harness forwards those variables to
    WSL; it never writes them to the fixtures or the logs.
@@ -72,7 +74,7 @@ script.
 Run from this directory or with the full path:
 
 ```powershell
-python benchmarks\solution_lifecycle\run_benchmarks.py
+python benchmarks\poetry_uv\install_build_launch\run_benchmarks.py
 ```
 
 Without options the default matrix runs on the current OS: 3 runs each of
@@ -84,14 +86,14 @@ several minutes, so check the selection with `--dry-run` first.
 # Preview the default matrix
 python run_benchmarks.py --dry-run
 
-# dev install only, basic and medium, 5 runs
-python run_benchmarks.py --mode dev --stage install --size basic medium --run 5
+# dev install only, small and medium, 5 runs
+python run_benchmarks.py --mode dev --stage install --size small medium --run 5
 
 # prod launch for UV offline on Linux (WSL)
 python run_benchmarks.py --mode prod --os Linux --backend uv --network offline
 
 # Both operating systems from Windows
-python run_benchmarks.py --os Windows Linux --size basic
+python run_benchmarks.py --os Windows Linux --size small
 ```
 
 | Option | Description |
@@ -152,7 +154,7 @@ python report.py results\<timestamp>
   harness removes the shortcut reported by the installer after each run.
 - On Windows, the installer requires WebView2 and Windows long paths enabled.
   Otherwise the `--no-ui` run fails and the reason is in `stage.log`.
-- The `advanced` fixture needs network access for the Git and private-index
+- The `large` fixture needs network access for the Git and private-index
   dependencies, including when it builds an offline package.
 
 ## Implementation

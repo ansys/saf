@@ -1,4 +1,4 @@
-"""Run and time one SAF solution lifecycle stage for one benchmark case.
+"""Run and time one benchmark stage (install, build, or launch) for one case.
 
 This worker uses only the Python standard library so that the same file can be
 executed natively on Windows and inside a WSL Linux distribution. The
@@ -38,7 +38,7 @@ from typing import Any, TextIO
 STAGES = ("install", "build", "launch")
 NETWORKS = ("online", "offline")
 BACKENDS = ("poetry", "uv")
-SIZES = ("basic", "medium", "advanced")
+SIZES = ("small", "medium", "large")
 INSTALLER_GLOB = "*-installer*"
 # Windows installers end in .exe; Linux installers have no suffix.
 INSTALLER_SUFFIXES = {".exe", ""}

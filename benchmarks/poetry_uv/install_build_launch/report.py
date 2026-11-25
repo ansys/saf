@@ -1,4 +1,4 @@
-"""Write the SAF lifecycle benchmark report in Markdown.
+"""Write the SAF install, build, and launch benchmark report in Markdown.
 
 The report can be regenerated from an existing result directory, for example
 after merging Windows and Linux results into one tree::
@@ -16,7 +16,7 @@ import statistics
 from typing import Any
 
 STAGE_ORDER = {"install": 0, "build": 1, "launch": 2}
-SIZE_ORDER = {"basic": 0, "medium": 1, "advanced": 2}
+SIZE_ORDER = {"small": 0, "medium": 1, "large": 2}
 NETWORK_ORDER = {None: 0, "online": 1, "offline": 2}
 OS_ORDER = {"Windows": 0, "Linux": 1}
 BACKEND_LABELS = {"poetry": "Poetry", "uv": "UV"}
@@ -269,7 +269,7 @@ def write_reports(
 
     passed = sum(record.get("status") == "passed" for record in records)
     lines = [
-        "# SAF solution lifecycle benchmark: Poetry versus UV",
+        "# SAF install, build, and launch benchmark: Poetry versus UV",
         "",
         f"- Command: `{settings.get('command', '-')}`",
         f"- Configuration: `{settings.get('config', '-')}`",

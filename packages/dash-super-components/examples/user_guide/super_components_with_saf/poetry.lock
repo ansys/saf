@@ -238,14 +238,14 @@ test = ["pytest (>=9.0.3,<9.1.0)", "pytest-mock (>=3.15.0,<4.0.0)"]
 
 [[package]]
 name = "ansys-saf-product-configuration"
-version = "0.25.0"
+version = "0.26.0"
 description = "A Python package for providing configuration information about Ansys products to SAF solutions."
 optional = false
 python-versions = "<4,>=3.11"
 groups = ["main", "desktop"]
 files = [
-    {file = "ansys_saf_product_configuration-0.25.0-py3-none-any.whl", hash = "sha256:2e1ba55346817c6e0d354c3bb70019c15105bd1be3cd935671b9d38cfc477b45"},
-    {file = "ansys_saf_product_configuration-0.25.0.tar.gz", hash = "sha256:ac2c3339de09a1fd966f72b7c7dd9c57025715fd3efb53c0854646a645ac6b43"},
+    {file = "ansys_saf_product_configuration-0.26.0-py3-none-any.whl", hash = "sha256:5083e575bcbfd475da1f55a83a906a962f0aaf27753ee84c508840dcf7f7cfec"},
+    {file = "ansys_saf_product_configuration-0.26.0.tar.gz", hash = "sha256:4714d05456a4c1dd8222c8cbf7c00866efe931e9e8b347debecb6ad8a6343cf9"},
 ]
 
 [package.dependencies]

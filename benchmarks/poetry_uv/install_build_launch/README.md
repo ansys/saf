@@ -6,8 +6,8 @@ solution lifecycle are not measured.
 
 Each step runs on prepared, minimal but real SAF solutions (one per backend).
 Only the `small` size is available for now; larger sizes will be added later.
-The harness stores logs for every run and writes a Markdown report with the
-measured numbers.
+The size concerns the number of dependencies. The harness stores logs for every
+run and writes a Markdown report with the measured numbers.
 
 The structure follows the sibling `installation_stage` benchmark.
 
@@ -93,8 +93,8 @@ versions; otherwise it lists the packages to pin in `dependencies.toml`.
    and the SAF CLI, then copy `config.example.json` to `config.local.json` and
    adjust the `wsl` section.
 
-`config.local.json` and `config.json` are found automatically beside the
-script.
+`config.local.json` is found automatically beside the script (use `-c` for
+another file).
 
 | Key | Description |
 |---|---|
@@ -195,11 +195,26 @@ connection affects the times. The individual runs table shows, for each run:
 | Column | Meaning |
 |---|---|
 | Download (s) | time the timed command spent receiving data from the internet |
-| Speed (MB/s) | download speed during that time |
+| Download rate (MB/s) | how fast the tool downloaded during that time |
+| Internet speed (MB/s) | speed of the connection itself, measured just before the timed command |
 
-The harness reads the machine's network counters every 0.25 s while the timed
-command runs (the downloaded MB is also kept in `result.json` and `stage.log`).
-Keep in mind:
+**Download rate is not the internet speed.** It depends on the connection *and*
+on how the tool downloads: UV fetches many packages at once, while pip (which
+installs Poetry before the solution's packages, in `saf install` and at launch)
+fetches one file at a time. On the same connection UV therefore usually shows
+a higher download rate; that is a real backend difference.
+
+**Internet speed** is measured before every timed command (not timed, about
+4 s): the harness downloads the same public file (`plotly-7.2.0`, 9.7 MB, from
+`files.pythonhosted.org`) over 4 parallel connections, once to warm up and then
+again for about 3 s. It does not depend on the backend, so compare it across
+runs and sessions: a slow run with a normal internet speed was slowed by the
+tool or the machine, not by the network. If the test fails, the column shows
+`-` and the run continues.
+
+The download time and rate come from the machine's network counters, read every
+0.25 s while the timed command runs (the downloaded MB is also kept in
+`result.json` and `stage.log`). Keep in mind:
 
 - Downloads overlap with unpacking and installing, so the download time is part
   of the stage time, not something to subtract from it.

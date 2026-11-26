@@ -37,7 +37,7 @@ from report import collect_records, write_reports
 
 SCRIPT_DIRECTORY = Path(__file__).resolve().parent
 WORKER_SCRIPT = SCRIPT_DIRECTORY / "lifecycle_stage.py"
-DEFAULT_CONFIG_NAMES = ("config.local.json", "config.json")
+DEFAULT_CONFIG_NAME = "config.local.json"
 
 MODES = ("dev", "prod")
 MODE_STAGES = {"dev": ("install", "build"), "prod": ("launch",)}
@@ -119,8 +119,6 @@ class HarnessConfig:
         base = path.parent
         if data.get("saf_executable"):
             config.saf_executable = str(data["saf_executable"])
-        if data.get("fixtures_directory"):
-            raise ValueError("'fixtures_directory' was replaced by 'fixture_directory' (the shared fixture folder).")
         if data.get("fixture_directory"):
             config.fixture_directory = (base / str(data["fixture_directory"])).resolve()
         if data.get("work_root"):
@@ -312,12 +310,9 @@ def build_plan(arguments: argparse.Namespace) -> list[PlannedRun]:
 
 
 def find_default_config() -> Path | None:
-    """Find a local configuration beside this script."""
-    for name in DEFAULT_CONFIG_NAMES:
-        candidate = SCRIPT_DIRECTORY / name
-        if candidate.is_file():
-            return candidate
-    return None
+    """Return ``config.local.json`` beside this script, if it exists."""
+    candidate = SCRIPT_DIRECTORY / DEFAULT_CONFIG_NAME
+    return candidate if candidate.is_file() else None
 
 
 def default_output_directory() -> Path:

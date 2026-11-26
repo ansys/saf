@@ -102,10 +102,44 @@ def winner(poetry: float | None, uv: float | None) -> str:
     return f"**{name}** by {seconds(difference)} s ({difference / slower * 100:.1f}%)"
 
 
-def case_title(key: CaseKey) -> str:
-    """Return a readable case description."""
-    _stage, os_name, size, network = key
-    return f"{os_name} | {size}" + (f" | {network}" if network else "")
+def legend(entries: list[tuple[str, str]]) -> list[str]:
+    """Return a short list explaining table columns, placed right under the table."""
+    return [*(f"- **{name}**: {meaning}" for name, meaning in entries), ""]
+
+
+COMPARISON_LEGEND = [
+    ("Poetry mean / UV mean", "average time of the timed command over the passed runs, in seconds"),
+    ("Faster", "the backend with the lower mean, how much faster, and by what share of the slower one"),
+    ("Poetry runs / UV runs", "passed runs / all runs of that case"),
+]
+STATISTICS_LEGEND = [
+    ("Passed", "passed runs / all runs"),
+    ("Mean, Std dev, Min, Max", "time of the timed command over the passed runs; a large Std dev means unstable runs"),
+    ("Prep mean", "un-timed preparation: workspace copy and, for build and launch, the install/build needed first"),
+    ("Installer", "size of the installer produced by the build"),
+    ("Environment", "`.venv` size after install; installed solution size after launch"),
+]
+LAUNCH_LEGEND = [
+    ("Startup", "from starting the installer until its own logic runs (unpacking, prerequisite checks)"),
+    ("Deploy + dependencies", "copying the solution and installing its packages, as printed by the installer"),
+    ("Preload", "first start of the installed solution, as printed by the installer"),
+    ("Total", "the whole timed launch"),
+]
+RUNS_LEGEND = [
+    ("Attempts", "1 + retries after a network failure"),
+    ("Stage", "time of the timed command"),
+    ("Download", "time the timed command spent receiving data"),
+    ("Download rate", "how fast the tool downloaded during that time; depends on the internet and on the tool "
+     "(UV fetches many packages at once, pip one at a time), so it differs between backends"),
+    ("Internet speed", "speed of the connection itself, from the same test file downloaded just before the timed "
+     "command (not timed); compare it across runs to see whether the internet was slow"),
+    ("Prep", "un-timed preparation before the timed command"),
+    ("Wall", "the whole run including preparation and cleanup"),
+]
+ENVIRONMENT_LEGEND = [
+    ("Platform, Python", "operating system and Python running the benchmark worker"),
+    ("SAF CLI, UV", "versions used by the runs on that OS"),
+]
 
 
 def comparison_section(groups: dict[CaseKey, dict[str, list[dict[str, Any]]]]) -> list[str]:
@@ -134,6 +168,8 @@ def comparison_section(groups: dict[CaseKey, dict[str, list[dict[str, Any]]]]) -
                 f"{len(uv_values)}/{len(by_backend.get('uv', []))} |",
             )
         lines.append("")
+    if groups:
+        lines.extend(legend(COMPARISON_LEGEND))
     return lines
 
 
@@ -161,14 +197,8 @@ def statistics_section(groups: dict[CaseKey, dict[str, list[dict[str, Any]]]]) -
                 f"{seconds(stats['stdev'])} | {seconds(stats['min'])} | {seconds(stats['max'])} | "
                 f"{seconds(preparation)} | {megabytes(installer)} | {megabytes(environment)} |",
             )
-    lines.extend(
-        [
-            "",
-            "Prep is the un-timed preparation (workspace copy and, for build and launch, the prerequisite "
-            "install/build). Environment is the `.venv` size for install and the installed solution size for launch.",
-            "",
-        ],
-    )
+    lines.append("")
+    lines.extend(legend(STATISTICS_LEGEND))
     return lines
 
 
@@ -180,9 +210,6 @@ def launch_section(groups: dict[CaseKey, dict[str, list[dict[str, Any]]]]) -> li
     header = " | ".join(f"{label} (s)" for _, label in LAUNCH_PHASES)
     lines = [
         "## Launch phases (mean)",
-        "",
-        "Startup is the executable start (unpacking and prerequisite checks) before the installer logic; "
-        "Deploy + dependencies and Preload come from the durations printed by the installer.",
         "",
         f"| OS | Size | Network | Backend | {header} | Total (s) |",
         "|---|---|---|---|" + "---:|" * (len(LAUNCH_PHASES) + 1),
@@ -199,6 +226,7 @@ def launch_section(groups: dict[CaseKey, dict[str, list[dict[str, Any]]]]) -> li
                 f"{cells} | {seconds(total)} |",
             )
     lines.append("")
+    lines.extend(legend(LAUNCH_LEGEND))
     return lines
 
 
@@ -207,11 +235,9 @@ def runs_section(records: list[dict[str, Any]]) -> list[str]:
     lines = [
         "## Individual runs",
         "",
-        "Download is the time the timed command spent receiving data from the internet; Speed is the "
-        "download speed during that time.",
-        "",
-        "| Run | Status | Attempts | Stage (s) | Download (s) | Speed (MB/s) | Prep (s) | Wall (s) | Started (UTC) |",
-        "|---|---|---:|---:|---:|---:|---:|---:|---|",
+        "| Run | Status | Attempts | Stage (s) | Download (s) | Download rate (MB/s) | Internet speed (MB/s) "
+        "| Prep (s) | Wall (s) | Started (UTC) |",
+        "|---|---|---:|---:|---:|---:|---:|---:|---:|---|",
     ]
     for record in sorted(
         records,
@@ -220,11 +246,12 @@ def runs_section(records: list[dict[str, Any]]) -> list[str]:
         lines.append(
             f"| `{record['label']}` | {record.get('status', '-')} | {record.get('attempts', 1)} | "
             f"{seconds(record.get('stage_seconds'))} | {seconds(record.get('download_seconds'))} | "
-            f"{speed(record.get('download_speed'))} | "
+            f"{speed(record.get('download_speed'))} | {speed(record.get('internet_speed'))} | "
             f"{seconds(record.get('preparation_seconds'))} | {seconds(record.get('wall_seconds'))} | "
             f"{record.get('started') or '-'} |",
         )
     lines.append("")
+    lines.extend(legend(RUNS_LEGEND))
     return lines
 
 
@@ -263,6 +290,7 @@ def tools_section(records: list[dict[str, Any]]) -> list[str]:
             f"{tools.get('saf', '-')} | {tools.get('uv', '-')} |",
         )
     lines.append("")
+    lines.extend(legend(ENVIRONMENT_LEGEND))
     return lines
 
 

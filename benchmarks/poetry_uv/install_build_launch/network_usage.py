@@ -1,33 +1,57 @@
-"""Measure the network traffic received while a benchmark command runs.
+"""Measure the network around a benchmark command.
 
-Poetry and UV download packages while they unpack and install, so the time
-spent on the network cannot be cut out of the stage time. Instead, a sampler
-reads the operating system's byte counters every ``interval`` seconds while the
-timed command runs and reports:
+Two different things are measured:
 
-* ``downloaded_bytes``     bytes received during the command;
-* ``download_seconds``     time during which the machine received faster than
-                            ``active_threshold`` bytes per second;
-* ``download_speed``       bytes per second while downloading
-                            (``downloaded_bytes`` received in active intervals
-                            divided by ``download_seconds``).
+* The **download rate of the tool**: while the timed command runs, a sampler
+  reads the operating system's byte counters every ``interval`` seconds and
+  reports ``downloaded_bytes``, ``download_seconds`` (time receiving faster than
+  ``active_threshold`` bytes per second), and ``download_speed`` (bytes received
+  in those intervals divided by ``download_seconds``). This depends on the
+  internet *and* on how the tool downloads (UV fetches many packages at once,
+  pip one file at a time), so it differs between backends on the same
+  connection.
+* The **internet speed**: :func:`measure_internet_speed` downloads the same
+  public file before every timed command (not timed), with several parallel
+  connections, and reports ``internet_speed`` in bytes per second. It does not
+  depend on the backend, so it is comparable across all runs and sessions.
 
 The counters cover the whole machine, so other downloads running at the same
 time are included. Only the standard library is used (``ctypes`` on Windows,
-``/proc/net/dev`` on Linux), so the WSL worker can import this module.
+``/proc/net/dev`` on Linux, ``urllib`` for the speed test), so the WSL worker
+can import this module.
 """
 
 from __future__ import annotations
 
+from concurrent.futures import ThreadPoolExecutor
 import ctypes
+import http.client
 from pathlib import Path
 import sys
 import threading
 import time
+import urllib.error
+import urllib.request
 
 DEFAULT_INTERVAL = 0.25
 # Below this rate the machine is considered idle (background chatter, keep-alives).
 DEFAULT_ACTIVE_THRESHOLD = 100_000
+
+# Internet speed test: always the same public, immutable file (plotly 7.2.0, 9.7 MB,
+# also in fixture/uv.lock), downloaded in byte ranges over parallel connections so the
+# result reflects the connection, not one TCP stream.
+SPEED_TEST_URL = (
+    "https://files.pythonhosted.org/packages/f8/43/86c04582164c54476d4dae5c053af82ba70b975f5babbf183ae6e51159b9/"
+    "plotly-7.2.0-py3-none-any.whl"
+)
+SPEED_TEST_CONNECTIONS = 4
+SPEED_TEST_TIMEOUT = 60.0
+# One download of the file takes well under a second on a fast line, which mostly
+# measures connection setup. The file is downloaded again until this much time has
+# passed (after one warm-up round), so the result is an average over a few seconds.
+SPEED_TEST_DURATION = 3.0
+SPEED_TEST_MAX_ROUNDS = 10
+_CHUNK = 256 * 1024
 
 # MIB_IF_ROW2 (iphlpapi GetIfTable2): 1352-byte rows with 64-bit counters.
 # Windows also lists every filter driver stacked on a network card (QoS, WFP,
@@ -148,3 +172,55 @@ class NetworkSampler:
             "download_seconds": round(self._active_seconds, 3),
             "download_speed": speed,
         }
+
+
+def _download_range(url: str, start: int, end: int, timeout: float) -> int:
+    """Download bytes ``start``-``end`` of ``url`` and return how many were received."""
+    request = urllib.request.Request(url, headers={"Range": f"bytes={start}-{end}"})
+    received = 0
+    with urllib.request.urlopen(request, timeout=timeout) as response:
+        if response.status != 206:
+            raise OSError(f"server ignored the byte range (HTTP {response.status})")
+        while chunk := response.read(_CHUNK):
+            received += len(chunk)
+    return received
+
+
+def measure_internet_speed(
+    url: str = SPEED_TEST_URL,
+    connections: int = SPEED_TEST_CONNECTIONS,
+    timeout: float = SPEED_TEST_TIMEOUT,
+    duration: float = SPEED_TEST_DURATION,
+) -> float | None:
+    """Return the internet download speed in bytes per second, or ``None`` if the test failed.
+
+    The same file is downloaded every time, split into ``connections`` byte
+    ranges fetched in parallel, so the result reflects the connection rather
+    than the behavior of Poetry, UV, or pip. After one warm-up round (connection
+    setup), the file is downloaded again until ``duration`` seconds have passed.
+    A failed test never fails a run.
+    """
+    try:
+        head = urllib.request.Request(url, method="HEAD")
+        with urllib.request.urlopen(head, timeout=timeout) as response:
+            size = int(response.headers["Content-Length"])
+        step = -(-size // connections)
+        ranges = [(start, min(start + step, size) - 1) for start in range(0, size, step)]
+        with ThreadPoolExecutor(max_workers=len(ranges)) as pool:
+
+            def one_round() -> int:
+                return sum(pool.map(lambda bounds: _download_range(url, *bounds, timeout), ranges))
+
+            if one_round() != size:  # warm-up: DNS, TLS, and TCP ramp-up are not measured
+                return None
+            received, rounds = 0, 0
+            started = time.perf_counter()
+            while rounds < SPEED_TEST_MAX_ROUNDS and (rounds == 0 or time.perf_counter() - started < duration):
+                received += one_round()
+                rounds += 1
+            elapsed = time.perf_counter() - started
+    except (OSError, ValueError, KeyError, TypeError, http.client.HTTPException, urllib.error.URLError):
+        return None
+    if received != size * rounds or elapsed <= 0:
+        return None
+    return received / elapsed

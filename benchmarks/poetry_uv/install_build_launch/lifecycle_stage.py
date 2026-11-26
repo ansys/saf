@@ -36,7 +36,7 @@ import tomllib
 from typing import Any, TextIO
 
 from fixture_builder import write_solution
-from network_usage import NetworkSampler
+from network_usage import NetworkSampler, measure_internet_speed
 
 STAGES = ("install", "build", "launch")
 NETWORKS = ("online", "offline")
@@ -113,12 +113,12 @@ def remove_tree(path: Path) -> None:
 
 
 
-def sandbox_environment(run_root: Path, isolate_caches: bool, share_profile: bool) -> dict[str, str]:
+def sandbox_environment(run_root: Path, isolate_caches: bool) -> dict[str, str]:
     """Return an environment whose caches and temporary files stay under ``run_root``.
 
     ``isolate_caches`` gives every run a cold Poetry, UV, and pip cache so the
-    backends are compared fairly. The SAF CLI solution database lives in the
-    user profile; it is only redirected when ``share_profile`` is false.
+    backends are compared fairly. The user profile (APPDATA, where the SAF CLI
+    keeps its solution database) is shared, as in normal use.
     """
     environment = os.environ.copy()
     sandbox = run_root / "environment"
@@ -134,15 +134,6 @@ def sandbox_environment(run_root: Path, isolate_caches: bool, share_profile: boo
                 "POETRY_CACHE_DIR": sandbox / "cache" / "poetry",
                 "UV_CACHE_DIR": sandbox / "cache" / "uv",
                 "XDG_CACHE_HOME": sandbox / "cache" / "xdg",
-            },
-        )
-    if not share_profile:
-        locations.update(
-            {
-                "APPDATA": sandbox / "appdata",
-                "LOCALAPPDATA": sandbox / "localappdata",
-                "XDG_DATA_HOME": sandbox / "share",
-                "XDG_CONFIG_HOME": sandbox / "config",
             },
         )
     for variable, location in locations.items():
@@ -192,6 +183,11 @@ class Recorder:
         normalized = [str(argument) for argument in command]
         self.note(f"\n[{utc_now()}] $ {command_text(normalized)}")
         self.note(f"    cwd: {cwd}")
+        if network is not None:
+            # Internet speed test (same file every run), before the timer and the counters start.
+            network["internet_speed"] = measure_internet_speed()
+            speed_text = f"{network['internet_speed'] / 1e6:.2f} MB/s" if network["internet_speed"] else "failed"
+            self.note(f"    internet speed test (not timed): {speed_text}")
         sampler = NetworkSampler() if network is not None else None
         if sampler is not None:
             sampler.__enter__()
@@ -235,7 +231,7 @@ class Recorder:
             self.note(
                 f"    network: {network['downloaded_bytes'] / 1e6:.1f} MB received, "
                 f"{network['download_seconds']:.1f} s downloading"
-                + (f", {speed / 1e6:.2f} MB/s" if speed else ""),
+                + (f", download rate {speed / 1e6:.2f} MB/s" if speed else ""),
             )
         if returncode != 0:
             tail = "\n".join(text for _, text in lines[-80:])
@@ -446,6 +442,7 @@ def run_stage(arguments: argparse.Namespace) -> dict[str, Any]:
         "downloaded_bytes": None,
         "download_seconds": None,
         "download_speed": None,
+        "internet_speed": None,
         "workspace": str(workspace),
         "error": None,
     }
@@ -457,7 +454,7 @@ def run_stage(arguments: argparse.Namespace) -> dict[str, Any]:
         print("Preparing workspace.", flush=True)
         preparation_started = time.perf_counter()
         solution = prepare_workspace(fixture, arguments.backend, workspace)
-        environment = sandbox_environment(workspace, arguments.isolate_caches, arguments.share_profile)
+        environment = sandbox_environment(workspace, arguments.isolate_caches)
         copied = copy_poetry_credentials_to_uv(solution, environment)
         if copied:
             preparation_log.note(f"Mapped Poetry credentials to UV variables: {', '.join(copied)}")
@@ -571,12 +568,6 @@ def parse_arguments(argv: list[str] | None = None) -> argparse.Namespace:
         dest="isolate_caches",
         action="store_false",
         help="Use the user's Poetry/UV/pip caches (warm-cache measurement).",
-    )
-    parser.add_argument(
-        "--isolate-profile",
-        dest="share_profile",
-        action="store_false",
-        help="Also redirect APPDATA/LOCALAPPDATA (isolates the SAF CLI solution database).",
     )
     return parser.parse_args(argv)
 

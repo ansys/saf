@@ -225,7 +225,9 @@ Deployment
      - Permitted values:
 
        -  ``Desktop`` (default)
-       -  ``DockerCompose``
+       -  ``MultiContainer``
+       -  ``SingleContainer``
+       -  ``DockerCompose`` (legacy, read as ``MultiContainer``)
 
 API server
 ----------

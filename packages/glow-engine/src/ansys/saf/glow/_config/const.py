@@ -118,8 +118,10 @@ class Deployment(Enum):
     """Categories of deployments for the GLOW server."""
 
     Desktop = "Desktop"
-    DockerCompose = "DockerCompose"
+    MultiContainer = "MultiContainer"
+    SingleContainer = "SingleContainer"
     Unknown = "Unknown"
+    DockerCompose = MultiContainer
 
 
 class LoggingLevel(Enum):

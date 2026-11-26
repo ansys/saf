@@ -739,10 +739,11 @@ def test_create_hps_authenticator_desktop_deployment_no_credentials(monkeypatch:
     assert authenticator.auth_type == HpsAuthenticationType.KEYCLOAK_INTERACTIVE
 
 
-def test_create_hps_authenticator_docker_compose_deployment(monkeypatch: pytest.MonkeyPatch):
+@pytest.mark.parametrize("deployment", ["MultiContainer", "SingleContainer", "DockerCompose"])
+def test_create_hps_authenticator_container_deployment(monkeypatch: pytest.MonkeyPatch, deployment: str):
     monkeypatch.setenv("GLOW_SOLUTION_DEFINITION", "TEST")
+    monkeypatch.setenv("GLOW_DEPLOYMENT", deployment)
     settings = Settings(
-        glow_deployment=Deployment.DockerCompose,
         glow_hps_username="test-user",
         glow_hps_password="test-pass",
     )

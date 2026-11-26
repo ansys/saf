@@ -23,6 +23,7 @@ from unittest import mock
 import uuid
 
 import httpx2
+from pydantic import ValidationError
 import pytest
 from pytest_mock.plugin import MockerFixture
 
@@ -109,7 +110,9 @@ def test_get_deployment_type_returns_desktop_if_glow_deployment_is_not_set(monke
     ("deployment_string", "deployment_value"),
     [
         ("Desktop", Deployment.Desktop),
-        ("DockerCompose", Deployment.DockerCompose),
+        ("MultiContainer", Deployment.MultiContainer),
+        ("SingleContainer", Deployment.SingleContainer),
+        ("DockerCompose", Deployment.MultiContainer),
     ],
 )
 def test_get_deployment_type_returns_deployment_if_glow_deployment_is_set(
@@ -129,7 +132,7 @@ def test_get_deployment_type_raises_exception_if_glow_deployment_is_incorrectly_
     monkeypatch.setenv("GLOW_EXTERNAL_API_URL", "http://127.0.0.1:5432")
     monkeypatch.setenv("GLOW_SOLUTION_DEFINITION", "tests.mocks.solutions.minimal_solution")
     monkeypatch.setenv("GLOW_DEPLOYMENT", "JUNK")
-    with pytest.raises(ValueError, match="'JUNK' is not a valid Deployment"):
+    with pytest.raises(ValidationError, match=", ".join(repr(deployment.value) for deployment in Deployment)):
         DashClient.get_deployment_type()
 
 

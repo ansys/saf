@@ -307,6 +307,32 @@ def test_settings_invalid_logging_level():
         )
 
 
+@pytest.mark.parametrize(
+    ("deployment", "expected_deployment"),
+    [
+        ("Desktop", Deployment.Desktop),
+        ("MultiContainer", Deployment.MultiContainer),
+        ("SingleContainer", Deployment.SingleContainer),
+        ("Unknown", Deployment.Unknown),
+        ("DockerCompose", Deployment.MultiContainer),
+    ],
+)
+def test_settings_deployment_from_env_var(
+    deployment: str,
+    expected_deployment: Deployment,
+    monkeypatch: pytest.MonkeyPatch,
+):
+    monkeypatch.setenv("GLOW_DEPLOYMENT", deployment)
+    settings = Settings(glow_solution_definition="tests.mocks.solutions.minimal_solution")
+    assert settings.glow_deployment is expected_deployment
+
+
+def test_legacy_deployment_is_an_alias_of_multi_container():
+    assert Deployment.DockerCompose is Deployment.MultiContainer
+    assert Deployment["DockerCompose"] is Deployment.MultiContainer
+    assert [d.name for d in Deployment] == ["Desktop", "MultiContainer", "SingleContainer", "Unknown"]
+
+
 def test_settings_invalid_database_type():
     expected_error = "1 validation error for Settings\nglow_database_type\n  Input should be 'sqlite' or 'postgresql'"
     with pytest.raises(ValidationError, match=expected_error):

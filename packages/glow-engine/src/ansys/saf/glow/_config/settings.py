@@ -27,6 +27,8 @@ from pydantic import (
     Field,
     PostgresDsn,
     Tag,
+    TypeAdapter,
+    ValidationError,
     ValidationInfo,
     field_validator,
     model_validator,
@@ -39,9 +41,11 @@ from ansys.saf.glow._config.const import (
     ANSYS_GRPC_CERTIFICATES,
     DEFAULT_DATABASE_FILE,
     DEFAULT_GLOW_API_NUMBER_OF_WORKERS,
+    DEFAULT_GLOW_AUTH_DISABLED,
     DEFAULT_GLOW_HPS_CLIENT_ID,
     GLOW_API_KEY,
     GLOW_API_KEY_FILE,
+    GLOW_AUTH_DISABLED,
     GLOW_PIM_SOCKET_PATH,
     GLOW_PRODUCT_INSTANCE_SYSTEM_HOST,
     GLOW_PRODUCT_INSTANCE_SYSTEM_PORT,
@@ -64,6 +68,14 @@ if TYPE_CHECKING:
     from typing import Self
 
     from ansys.saf.glow._core.solution import Solution
+
+
+def auth_disabled_from_environment() -> bool:
+    value = os.environ.get(GLOW_AUTH_DISABLED, DEFAULT_GLOW_AUTH_DISABLED)
+    try:
+        return TypeAdapter(bool).validate_python(value)
+    except ValidationError as exc:
+        raise ValueError(f"{GLOW_AUTH_DISABLED} must be a valid boolean value.") from exc
 
 
 class Settings(BaseSettings):

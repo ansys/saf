@@ -34,10 +34,8 @@ from ansys.saf.glow._bdm.datarepo import DataRepositoryType
 from ansys.saf.glow._bdm.multiplexor import SafMultiplexorStorageScopeFactory
 from ansys.saf.glow._bdm.storage_contexts import RESTAPI_CONTEXT
 from ansys.saf.glow._config.const import (
-    DEFAULT_GLOW_AUTH_DISABLED,
     GLOW_AUTH_BYPASS_ROLES,
     GLOW_AUTH_CLIENT_ID,
-    GLOW_AUTH_DISABLED,
     GLOW_AUTH_ISSUER_URL,
     GLOW_AUTH_REQUIRED_ROLES,
     LOCALHOST_HOSTS,
@@ -46,7 +44,7 @@ from ansys.saf.glow._config.const import (
     ExecutorType,
     ProductInstanceSystemType,
 )
-from ansys.saf.glow._config.settings import Settings
+from ansys.saf.glow._config.settings import Settings, auth_disabled_from_environment
 from ansys.saf.glow._core.gc import BdmLocksDb, BdmLocksNoOp, IBdmLocks
 from ansys.saf.glow._core.gql import GqlClientConnectionPool
 from ansys.saf.glow._core.instance.iinstance_system import IProductInstanceSystem, IProductInstanceSystemFactory
@@ -97,7 +95,7 @@ oidc_issuer_url = os.environ.get(GLOW_AUTH_ISSUER_URL)
 audience = os.environ.get(GLOW_AUTH_CLIENT_ID)
 # Aftersaf-portal is fixed, enable auth validation by default for
 # DockerCompose deployments. Leave it disabled for Desktop ones, though.
-disable_auth = os.environ.get(GLOW_AUTH_DISABLED, DEFAULT_GLOW_AUTH_DISABLED) != "False"
+disable_auth = auth_disabled_from_environment()
 required_roles = parse_required_roles(os.environ.get(GLOW_AUTH_REQUIRED_ROLES))
 bypass_roles = parse_required_roles(os.environ.get(GLOW_AUTH_BYPASS_ROLES))
 

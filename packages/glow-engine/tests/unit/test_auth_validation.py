@@ -18,6 +18,9 @@ import base64
 from collections.abc import Callable
 import json
 import logging
+import os
+import subprocess
+import sys
 from typing import TYPE_CHECKING
 from unittest.mock import call
 
@@ -219,6 +222,63 @@ EXPECTED_ROUTES = {
     "get /schema",
     "get /",
 }
+
+
+@pytest.mark.parametrize(
+    ("value", "http_status", "websocket_accepted"),
+    [("False", 401, False), ("false", 401, False), ("fAlSe", 401, False), ("0", 401, False), ("true", 200, True)],
+)
+def test_api_auth_setting_at_startup(value: str, http_status: int, websocket_accepted: bool):
+    script = """
+import json
+from fastapi import Depends, FastAPI, WebSocket, WebSocketDisconnect
+from fastapi.testclient import TestClient
+from starlette.testclient import WebSocketDenialResponse
+from ansys.saf.glow._server.dependencies import oidc_scheme, oidc_scheme_ws
+
+app = FastAPI()
+
+@app.get("/probe", dependencies=[Depends(oidc_scheme)])
+async def probe():
+    return {}
+
+@app.websocket("/ws", dependencies=[Depends(oidc_scheme_ws)])
+async def websocket_probe(websocket: WebSocket):
+    await websocket.accept()
+    await websocket.close()
+
+with TestClient(app) as client:
+    status = client.get("/probe").status_code
+    try:
+        with client.websocket_connect("/ws"):
+            accepted = True
+    except (WebSocketDisconnect, WebSocketDenialResponse):
+        accepted = False
+print(json.dumps({"http_status": status, "websocket_accepted": accepted}))
+"""
+    env = os.environ.copy()
+    env.update(
+        GLOW_AUTH_DISABLED=value,
+        GLOW_AUTH_ISSUER_URL="https://identity.example.invalid",
+        GLOW_AUTH_CLIENT_ID="test-client",
+    )
+    result = subprocess.run([sys.executable, "-c", script], env=env, capture_output=True, text=True, check=False)
+    assert result.returncode == 0, result.stderr
+    assert json.loads(result.stdout) == {"http_status": http_status, "websocket_accepted": websocket_accepted}
+
+
+def test_api_invalid_auth_setting_fails_startup():
+    env = os.environ.copy()
+    env["GLOW_AUTH_DISABLED"] = "invalid"
+    result = subprocess.run(
+        [sys.executable, "-c", "import ansys.saf.glow._server.dependencies"],
+        env=env,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    assert result.returncode != 0
+    assert "GLOW_AUTH_DISABLED must be a valid boolean value" in result.stderr
 
 
 async def _verify_http_routes(
@@ -524,10 +584,11 @@ def test_dash_app_requires_valid_token(monkeypatch: pytest.MonkeyPatch, mocker: 
             ).status_code not in [403, 401]
 
 
-def test_dash_app_without_token_returns_403(monkeypatch: pytest.MonkeyPatch):
+@pytest.mark.parametrize("auth_disabled", ["False", "false", "fAlSe", "0"])
+def test_dash_app_without_token_returns_403(monkeypatch: pytest.MonkeyPatch, auth_disabled: str):
     monkeypatch.setenv("GLOW_AUTH_ISSUER_URL", "https://my-issuer-url")
     monkeypatch.setenv("GLOW_AUTH_CLIENT_ID", "my-client-id")
-    monkeypatch.setenv("GLOW_AUTH_DISABLED", "False")
+    monkeypatch.setenv("GLOW_AUTH_DISABLED", auth_disabled)
 
     ui_app = build_mock_dash_app(monkeypatch)
     flask_app: Flask = ui_app.server  # type: ignore
@@ -609,8 +670,9 @@ def test_dash_app_enforces_required_roles(
                 assert r.status_code not in [403, 401]
 
 
-def test_dash_app_ignores_required_roles_when_auth_disabled(monkeypatch: pytest.MonkeyPatch):
-    monkeypatch.setenv("GLOW_AUTH_DISABLED", "True")
+@pytest.mark.parametrize("auth_disabled", ["True", "true"])
+def test_dash_app_ignores_required_roles_when_auth_disabled(monkeypatch: pytest.MonkeyPatch, auth_disabled: str):
+    monkeypatch.setenv("GLOW_AUTH_DISABLED", auth_disabled)
     monkeypatch.setenv("GLOW_AUTH_REQUIRED_ROLES", "app-role")
 
     ui_app = build_mock_dash_app(monkeypatch)
@@ -618,6 +680,12 @@ def test_dash_app_ignores_required_roles_when_auth_disabled(monkeypatch: pytest.
     with flask_app.test_client() as client:
         for method, route in DASH_TESTING_ROUTES:
             assert getattr(client, method)(route).status_code not in [403, 401]
+
+
+def test_dash_app_invalid_auth_setting_fails_startup(monkeypatch: pytest.MonkeyPatch):
+    monkeypatch.setenv("GLOW_AUTH_DISABLED", "invalid")
+    with pytest.raises(ValueError, match="glow_auth_disabled"):
+        build_mock_dash_app(monkeypatch)
 
 
 @pytest.mark.parametrize(

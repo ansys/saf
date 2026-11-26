@@ -163,12 +163,12 @@ class AdrStep(StepModel):
             raise RuntimeError(f"Failed to export the report as PowerPoint: {error}") from error
 
     def _export_pdf(self, adr: ADR, item_filter: str) -> None:
-        """Export the report as PDF. A failure is not fatal: the PDF export simply stays unavailable."""
+        """Export the report as PDF."""
         try:
             pdf_content = export_report_pdf(adr, item_filter)
             self.report_pdf = self.storage_scope.store_stream(
                 pdf_content, relative_location=Path("adr_reference_report.pdf")
             )
-        except Exception:
-            logger.warning("PDF export failed; the PDF export stays unavailable.", exc_info=True)
-            self.report_pdf = NO_ENTITY
+        except Exception as error:
+            logger.exception("Failed to export the ADR reference report as PDF.")
+            raise RuntimeError(f"Failed to export the report as PDF: {error}") from error

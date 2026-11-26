@@ -371,17 +371,9 @@ def generate_report(n_clicks: int, project: ExamplesSolution) -> tuple[Any, bool
         return _report_failed_state(error_details), True, True, True, notification
 
     pdf_disabled, pptx_disabled, html_disabled = _get_export_buttons_disabled(step)
-    if pdf_disabled:
-        notification = _notification(
-            "adr-page-generate-notification",
-            "Report generated",
-            "The report was generated, but the PDF export is not available on this machine. See the logs.",
-            "orange",
-        )
-    else:
-        notification = _notification(
-            "adr-page-generate-notification", "Success", "The report was generated successfully.", "green"
-        )
+    notification = _notification(
+        "adr-page-generate-notification", "Success", "The report was generated successfully.", "green"
+    )
     return _report_iframe(step.report_html_content), pdf_disabled, pptx_disabled, html_disabled, notification
 
 

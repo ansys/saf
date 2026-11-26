@@ -22,24 +22,60 @@ Otherwise, ``saf run --portal`` falls back to the SAF Desktop Portal, then to th
 """
 
 import os
+from types import ModuleType
 
-from ansys_saf_projects_dashboard import ProjectsDashboard
 import dash
+
+# Import the component library when the module is loaded: Dash refuses component libraries imported in a callback.
+try:
+    import ansys_saf_projects_dashboard
+    from ansys_saf_projects_dashboard import ProjectsDashboard
+except ImportError:
+    ansys_saf_projects_dashboard = None
+    ProjectsDashboard = None
 
 # Keep in sync with the desktop orchestrator, which opens this path when ``--portal`` uses the projects dashboard.
 PROJECTS_DASHBOARD_PATH = os.getenv("SAF_DESKTOP_PROJECTS_DASHBOARD_PATH", "/projects")
 
-dash.register_page(
-    __name__,
-    name="Projects",
-    path=PROJECTS_DASHBOARD_PATH,
-    order=-1,
-    project_scoped=False,  # displayed without a project, outside the navigation tree of the steps
-    projects_dashboard=True,  # identifies this page in the page registry without importing this module
-)
+_PROPTYPES_SCRIPT = "proptypes.js"
+_FONTS = ("assets/fonts/SourceSans3.ttf", "assets/fonts/SourceCodePro.ttf")
 
 
-def layout(theme: str = "light"):
+def _fix_dashboard_resources(package: ModuleType) -> None:
+    """Fix the scripts and fonts that ansys-saf-projects-dashboard 0.2.0 declares to Dash.
+
+    Dash loads the scripts of a component library on every page, not only on the dashboard:
+
+    - ``proptypes.js`` is declared as development only, but Dash still serves it, and it raises a
+      ``TypeError`` in the browser console of every page.
+    - The fonts of the dashboard styles are not declared, so Dash answers their requests with an error 500.
+
+    Both changes are skipped once the package declares its resources correctly.
+    """
+    resources = package._js_dist
+    resources[:] = [resource for resource in resources if resource.get("relative_package_path") != _PROPTYPES_SCRIPT]
+    declared_paths = {resource.get("relative_package_path") for resource in resources}
+    # Dynamic resources are served on request without adding a script tag to the pages.
+    resources.extend(
+        {"relative_package_path": font, "namespace": package._dash_namespace, "dynamic": True}
+        for font in _FONTS
+        if font not in declared_paths
+    )
+
+
+if ansys_saf_projects_dashboard is not None:
+    _fix_dashboard_resources(ansys_saf_projects_dashboard)
+    dash.register_page(
+        __name__,
+        name="Projects",
+        path=PROJECTS_DASHBOARD_PATH,
+        order=-1,
+        project_scoped=False,  # displayed without a project, outside the navigation tree of the steps
+        projects_dashboard=True,  # identifies this page in the page registry without importing this module
+    )
+
+
+def layout(theme: str = "light") -> ProjectsDashboard:
     """Layout of the projects dashboard page, whose theme follows the color scheme of the app."""
     return ProjectsDashboard(
         id="projects-dashboard",

@@ -14,9 +14,6 @@ import ProjectsTable from "./components/ProjectsTable";
 import ProjectForm from "./components/ProjectForm";
 import ImportExport from "./components/ImportExport";
 import ProjectsFilter from "./components/ProjectsFilter";
-import Pagination from "./components/Pagination";
-import ProjectInfo from "./components/ProjectInfo";
-import SolutionMetadata from "./components/SolutionMetadata";
 
 // API client
 import { projectsApi, createProjectsApi } from "./api/projectsApi";
@@ -38,16 +35,12 @@ export type { DashComponentProps } from "./props";
 // Default export is the main Dash component
 export {
   ProjectsDashboard,
-  // Sub-components: every component with a generated Python class must be exported, because
-  // Dash and proptypes.js look it up in the bundle namespace.
+  // Sub-components
   ProjectsList,
   ProjectsTable,
   ProjectForm,
   ImportExport,
   ProjectsFilter,
-  Pagination,
-  ProjectInfo,
-  SolutionMetadata,
   // API
   projectsApi,
   createProjectsApi,

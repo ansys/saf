@@ -22,7 +22,6 @@ Otherwise, ``saf run --portal`` falls back to the SAF Desktop Portal, then to th
 """
 
 import os
-from types import ModuleType
 
 import dash
 

@@ -16,7 +16,6 @@
 
 from collections.abc import Callable
 from pathlib import Path
-import tempfile
 
 from fastapi import HTTPException
 import pytest
@@ -59,8 +58,14 @@ class TestMockProductClient:
 
 
 @pytest.mark.parametrize("endpoint", [store_given_absolute_path, restore_given_absolute_path])
-def test_http_product_rejects_paths_outside_allowed_roots(endpoint: Callable[[dict[str, str]], None]) -> None:
-    outside_path = Path(tempfile.gettempdir()) / ".." / "outside"
+def test_http_product_rejects_paths_outside_allowed_roots(
+    endpoint: Callable[[dict[str, str]], None],
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    allowed_root = tmp_path / "allowed"
+    outside_path = tmp_path / "allowed-sibling" / "outside"
+    monkeypatch.setenv("GLOW_PROJECT_FILES_DIRECTORY", str(allowed_root))
 
     with pytest.raises(HTTPException, match="outside the allowed filesystem roots"):
         endpoint({"value": str(outside_path)})

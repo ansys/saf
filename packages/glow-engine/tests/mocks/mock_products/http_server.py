@@ -59,7 +59,7 @@ def _validated_path(value: str) -> Path:
     if not path.is_absolute():
         raise HTTPException(status_code=400, detail="Path must be absolute.")
 
-    resolved_path = os.path.realpath(value)
+    normalized_path = os.path.realpath(value)
     allowed_roots: list[Path] = []
     if root := os.environ.get("GLOW_PROJECT_FILES_DIRECTORY"):
         allowed_roots.append(Path(root))
@@ -71,13 +71,10 @@ def _validated_path(value: str) -> Path:
         allowed_roots.append(Path.home() / ".local" / "share" / "ansys" / "glow")
 
     for root in allowed_roots:
-        resolved_root = os.path.realpath(root)
-        try:
-            common_path = os.path.commonpath([resolved_path, resolved_root])
-        except ValueError:
-            continue
-        if os.path.normcase(common_path) == os.path.normcase(resolved_root):
-            return Path(resolved_path)
+        normalized_root = os.path.realpath(root)
+        root_prefix = os.path.normcase(normalized_root.rstrip(os.sep) + os.sep)
+        if os.path.normcase(normalized_path).startswith(root_prefix):
+            return Path(normalized_path)
 
     raise HTTPException(status_code=400, detail="Path is outside the allowed filesystem roots.")
 

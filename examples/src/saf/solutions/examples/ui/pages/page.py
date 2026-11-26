@@ -445,11 +445,11 @@ def _match_non_solution_page(pathname: str | None) -> str | None:
     Input("color-scheme-switch", "checked"),
 )
 def return_to_portal(pathname: str, switch_on: bool) -> list[html.A]:
-    """Display a back-to-portal button when portal URL is available."""
+    """Display a back-to-portal button when portal URL is available, except on the pages without a project."""
     portal_ui_url = DashClient.get_portal_ui_url()
     icon_color = "#E6EDF5" if switch_on else "#1A1B1E"
 
-    if portal_ui_url is None:
+    if portal_ui_url is None or _match_non_solution_page(pathname) is not None:
         return []
 
     popover_text = "Back to Projects" if DashClient.get_deployment_type() == Deployment.Desktop else "Back to Portal"

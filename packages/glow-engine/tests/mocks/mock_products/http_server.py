@@ -60,15 +60,15 @@ def _validated_path(value: str) -> Path:
         raise HTTPException(status_code=400, detail="Path must be absolute.")
 
     resolved_path = os.path.realpath(value)
-    allowed_roots: list[str] = []
+    allowed_roots: list[Path] = []
     if root := os.environ.get("GLOW_PROJECT_FILES_DIRECTORY"):
-        allowed_roots.append(root)
+        allowed_roots.append(Path(root))
 
     for env_var in ("APPDATA", "XDG_DATA_HOME"):
         if root := os.environ.get(env_var):
-            allowed_roots.append(os.path.join(root, "ansys", "glow"))
+            allowed_roots.append(Path(root) / "ansys" / "glow")
     if os.name != "nt" and not os.environ.get("XDG_DATA_HOME"):
-        allowed_roots.append(os.path.join(Path.home(), ".local", "share", "ansys", "glow"))
+        allowed_roots.append(Path.home() / ".local" / "share" / "ansys" / "glow")
 
     for root in allowed_roots:
         resolved_root = os.path.realpath(root)

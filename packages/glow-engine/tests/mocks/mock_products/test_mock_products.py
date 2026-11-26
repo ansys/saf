@@ -14,8 +14,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from collections.abc import Callable
 from pathlib import Path
+import tempfile
 
+from fastapi import HTTPException
 import pytest
 
 from ansys.saf.testing.platform_specific import xfail_for_ci_on_linux
@@ -25,6 +28,7 @@ from tests.mocks.mock_products.client import (
     MockTcpProductClient,
 )
 from tests.mocks.mock_products.conftest import ProductServerInfo
+from tests.mocks.mock_products.http_server import restore_given_absolute_path, store_given_absolute_path
 
 
 @xfail_for_ci_on_linux(reason="Fails with 3.12 consistently in github-hosted linux runners. OK locally.")
@@ -52,3 +56,11 @@ class TestMockProductClient:
         client = product_server_info.create_client()
         client.restore_given_absolute_path(store)
         assert client.the_property == "red"
+
+
+@pytest.mark.parametrize("endpoint", [store_given_absolute_path, restore_given_absolute_path])
+def test_http_product_rejects_paths_outside_allowed_roots(endpoint: Callable[[dict[str, str]], None]) -> None:
+    outside_path = Path(tempfile.gettempdir()) / ".." / "outside"
+
+    with pytest.raises(HTTPException, match="outside the allowed filesystem roots"):
+        endpoint({"value": str(outside_path)})

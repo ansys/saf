@@ -54,15 +54,38 @@ def set_property(data: dict[str, str]):
     app.session["property"] = data["value"]  # type: ignore
 
 
+def _validated_path(value: str) -> Path:
+    path = Path(value)
+    if not path.is_absolute():
+        raise HTTPException(status_code=400, detail="Path must be absolute.")
+
+    path = path.resolve()
+    allowed_roots = []
+    if root := os.environ.get("GLOW_PROJECT_FILES_DIRECTORY"):
+        allowed_roots.append(Path(root).resolve())
+
+    for env_var in ("APPDATA", "XDG_DATA_HOME"):
+        if root := os.environ.get(env_var):
+            allowed_roots.append((Path(root).resolve() / "ansys" / "glow").resolve())
+    if os.name != "nt" and not os.environ.get("XDG_DATA_HOME"):
+        allowed_roots.append((Path.home() / ".local" / "share" / "ansys" / "glow").resolve())
+
+    if not any(path.is_relative_to(root) for root in allowed_roots):
+        raise HTTPException(status_code=400, detail="Path is outside the allowed filesystem roots.")
+    return path
+
+
 @app.post("/property:store")
 def store_given_absolute_path(data: dict[str, str]):
-    Path(data["value"]).parent.mkdir(parents=True, exist_ok=True)
-    Path(data["value"]).write_text(app.session["property"])  # type: ignore
+    path = _validated_path(data["value"])
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(app.session["property"])  # type: ignore
 
 
 @app.post("/property:restore")
 def restore_given_absolute_path(data: dict[str, str]):
-    app.session["property"] = Path(data["value"]).read_text()  # type: ignore
+    path = _validated_path(data["value"])
+    app.session["property"] = path.read_text()  # type: ignore
 
 
 @app.get("/version", response_model=dict[str, str])

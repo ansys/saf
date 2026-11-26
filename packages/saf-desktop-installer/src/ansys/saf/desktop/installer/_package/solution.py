@@ -386,8 +386,20 @@ def create_solution_metadata(
     metadata_file.write_text(json.dumps(solution_metadata, indent=4))
 
 
+def _defined_poetry_groups(pyproject_location: Path, groups: tuple[str, ...]) -> list[str]:
+    """Return the requested Poetry dependency groups that the project defines, in the requested order."""
+    project = load_toml(pyproject_location)
+    defined_groups = project.get("tool", {}).get("poetry", {}).get("group", {})
+    if not isinstance(defined_groups, dict):
+        raise ValueError(f"'tool.poetry.group' must be a table in '{pyproject_location}'.")
+    return [group for group in groups if group in defined_groups]
+
+
 def create_poetry_requirements_txt(pyproject_location: Path, definitions_folder: Path) -> Path:
     """Create requirements.txt file using poetry.
+
+    Only the installer groups (``desktop``, ``ui``, ``doc``) that the solution defines are exported, because
+    ``poetry export --with`` fails for groups that do not exist.
 
     Args:
         pyproject_location (Path): Path to the pyproject.toml file.
@@ -395,8 +407,11 @@ def create_poetry_requirements_txt(pyproject_location: Path, definitions_folder:
     """
     requirements_txt = definitions_folder / REQ_FILE
     logger.info(f"Creating requirements.txt file to {requirements_txt} using poetry from {pyproject_location.parent}")
+    command = ["poetry", "export", "--without-hashes", "--format", REQ_FILE]
+    if groups := _defined_poetry_groups(pyproject_location, ("desktop", "ui", "doc")):
+        command.extend(["--with", ",".join(groups)])
     output = subprocess.run(
-        ["poetry", "export", "--with", "desktop,ui,doc", "--without-hashes", "--format", REQ_FILE],  # noqa: S607
+        command,
         cwd=pyproject_location.parent,
         capture_output=True,
     )

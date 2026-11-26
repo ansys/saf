@@ -27,6 +27,7 @@ from ansys.saf.desktop.installer._package.backend_detection import SolutionBacke
 from ansys.saf.desktop.installer._package.solution import (
     SolutionInfo,
     create_env_file,
+    create_poetry_requirements_txt,
     create_version_file,
     get_appdata_directory,
     get_solution_package_dir,
@@ -250,6 +251,59 @@ def test_poetry_version_rejects_invalid_output(solution_root_dir: Path, output: 
         pytest.raises(ValueError, match="[Ss]olution version"),
     ):
         _ = SolutionInfo(solution_root_dir).solution_version
+
+
+@pytest.mark.parametrize(
+    ("defined_groups", "expected_with"),
+    [
+        (["desktop", "ui", "doc", "tests"], ["--with", "desktop,ui,doc"]),
+        (["desktop", "ui", "tests", "build", "style"], ["--with", "desktop,ui"]),
+        (["doc", "desktop"], ["--with", "desktop,doc"]),
+        (["tests"], []),
+        ([], []),
+    ],
+    ids=["all-groups", "no-doc-group", "groups-in-other-order", "no-installer-group", "no-group"],
+)
+def test_create_poetry_requirements_txt_exports_only_defined_groups(
+    tmp_path: Path,
+    defined_groups: list[str],
+    expected_with: list[str],
+) -> None:
+    """Export only the installer groups the solution defines, so Poetry does not fail on missing groups (#215)."""
+    pyproject = tmp_path / "pyproject.toml"
+    pyproject.write_text(
+        '[tool.poetry]\nname = "my-solution"\n'
+        + "".join(f"\n[tool.poetry.group.{group}.dependencies]\n" for group in defined_groups),
+        encoding="utf-8",
+    )
+    definitions_folder = tmp_path / "definitions"
+    definitions_folder.mkdir()
+
+    with patch(
+        "ansys.saf.desktop.installer._package.solution.subprocess.run",
+        return_value=subprocess.CompletedProcess([], 0, b"dash==3.0.0\n", b""),
+    ) as run:
+        requirements_txt = create_poetry_requirements_txt(pyproject, definitions_folder)
+
+    run.assert_called_once_with(
+        ["poetry", "export", "--without-hashes", "--format", "requirements.txt", *expected_with],
+        cwd=tmp_path,
+        capture_output=True,
+    )
+    assert "dash==3.0.0" in requirements_txt.read_text()
+
+
+def test_create_poetry_requirements_txt_rejects_invalid_group_table(tmp_path: Path) -> None:
+    """Report a malformed ``tool.poetry.group`` instead of exporting the wrong groups."""
+    pyproject = tmp_path / "pyproject.toml"
+    pyproject.write_text('[tool.poetry]\nname = "my-solution"\ngroup = "doc"\n', encoding="utf-8")
+
+    with (
+        patch("ansys.saf.desktop.installer._package.solution.subprocess.run") as run,
+        pytest.raises(ValueError, match="tool.poetry.group"),
+    ):
+        create_poetry_requirements_txt(pyproject, tmp_path)
+    run.assert_not_called()
 
 
 @pytest.fixture

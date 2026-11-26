@@ -14,6 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
 import sys
 
 from ansys.saf.glow.solution.products.config import (
@@ -23,6 +24,8 @@ from ansys.saf.glow.solution.products.config import (
     ServiceType,
     Software,
 )
+
+GLOW_PROJECT_FILES_DIRECTORY = "GLOW_PROJECT_FILES_DIRECTORY"
 
 
 class MockHTTPInstanceVersionConfiguration(IProductInstanceVersionConfiguration):
@@ -43,7 +46,10 @@ class MockHTTPInstanceVersionConfiguration(IProductInstanceVersionConfiguration)
 
     @property
     def environment(self) -> dict[str, str]:
-        return {}
+        env: dict[str, str] = {}
+        if project_files_dir := os.environ.get(GLOW_PROJECT_FILES_DIRECTORY):
+            env[GLOW_PROJECT_FILES_DIRECTORY] = project_files_dir
+        return env
 
     @property
     def software_requirements(self) -> list[ISoftware]:

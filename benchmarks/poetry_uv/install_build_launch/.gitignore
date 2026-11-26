@@ -1,0 +1,5 @@
+results/
+.work/
+config.local.json
+config.json
+__pycache__/

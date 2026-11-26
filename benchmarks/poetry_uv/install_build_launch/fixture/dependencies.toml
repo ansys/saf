@@ -1,0 +1,48 @@
+# Dependencies of the benchmark solution, shared by both backends.
+#
+# fixture_builder.py turns this file into the Poetry or UV pyproject.toml of
+# each run, so Poetry and UV always declare exactly the same requirements.
+# After editing it, run `python fixture_builder.py --relock` to update
+# poetry.lock and uv.lock (the command refuses to write locks whose versions
+# differ between the backends).
+#
+# Requirements use the standard PEP 508 syntax: name[extras] specifier; marker
+
+[solution]
+requires-python = ">=3.11,<3.15"
+# Poetry version used by saf-cli and saf-desktop-installer for the Poetry backend.
+poetry-version = "2.5.1"
+saf-cli-version = "4.5.dev0"
+
+[dependencies]
+main = [
+    "ansys-saf-sdk>=0.4.0,<1.0.0",
+    # Poetry and UV resolve this glow-engine dependency differently on Python >= 3.12
+    # (3.6 vs 3.7). 3.6 is the newest release that supports the whole requires-python range.
+    "networkx==3.6",
+]
+desktop = [
+    "ansys-saf-sdk[desktop]>=0.4.0,<1.0.0",
+]
+ui = [
+    "ansys-solutions-dash-super-components>=1.0.0,<2.0.0",
+    "dash>=3.0.0,<4.0.0",
+    "dash-bootstrap-components>=1.2,<2.0",
+    "dash-extensions>=2.0.5,<3.0.0",
+    "dash-mantine-components>=2.6.0,<3.0.0",
+]
+# Empty on purpose: the solution has no documentation, but saf-desktop-installer
+# runs `poetry export --with desktop,ui,doc` for Poetry offline packages and fails
+# when the group does not exist.
+doc = []
+build = [
+    # Pinned directly instead of ansys-saf-sdk[build] (which pins 1.19.0) so that
+    # both backends use the same, latest released installer.
+    "ansys-saf-desktop-installer==1.20.0",
+    "build>=0.8.0,<0.9.0",
+    "pkginfo>=1.12.1.2,<2.0.0",
+    "pyc-wheel>=1.2.7,<2.0.0",
+    "pyinstaller>=6.16,<7.0.0; python_version < '3.15'",
+    "toml>=0.10.2,<0.11.0",
+    "twine==6.0.1",
+]

@@ -1,0 +1,14 @@
+{
+  "saf_executable": null,
+  "fixture_directory": "fixture",
+  "work_root": ".work",
+  "timeout_seconds": 3600,
+  "isolate_caches": true,
+  "forward_environment": [],
+  "wsl": {
+    "distribution": "Ubuntu-22.04",
+    "python": "python3",
+    "saf_executable": "~/.local/bin/saf",
+    "work_root": "~/.cache/saf-lifecycle-benchmark"
+  }
+}

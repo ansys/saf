@@ -260,6 +260,23 @@ To stop the services, run the following command from ``deployments/external/``:
 Platform-specific dependencies configuration
 ==============================================
 
+.. rubric:: UV-based solutions
+
+The generated ``deployments/Dockerfile`` installs the runtime dependencies for the API
+image and also installs the ``ui`` dependency group for the UI image. If the API needs
+an SDK extra, add it to the existing SDK requirement in the ``dependencies`` array
+under ``[project]`` in ``pyproject.toml``. The generated UV Dockerfile does not use
+the Poetry ``EXTRAS`` build argument.
+
+Refresh ``uv.lock`` from the solution root before rebuilding. The Dockerfile uses
+``uv sync --frozen``, which does not update the lock file during the build:
+
+.. code-block:: bash
+
+   uv lock
+
+.. rubric:: Poetry-based solutions
+
 The ``deployments/Dockerfile`` supports platform-specific dependencies using Poetry extras and build arguments.
 
 .. rubric:: How to use:
@@ -331,11 +348,21 @@ Compose files themselves are required.
 
    Bump the ``version`` field in your solution's ``pyproject.toml`` to the new release version:
 
+   For Poetry-based solutions:
+
    .. code-block:: toml
 
       [tool.poetry]
       name    = "my-solution"
       version = "1.1.0"   # <-- update this
+
+   For UV-based solutions, update the version under ``[project]``:
+
+   .. code-block:: toml
+
+      [project]
+      name = "my-solution"
+      version = "1.1.0"
 
 #. Update the ``.env`` file for each deployment template:
 

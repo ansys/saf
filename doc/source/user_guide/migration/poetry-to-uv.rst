@@ -182,7 +182,7 @@ The diagram focuses on selected sections moving from a Poetry-based
 ``pyproject.toml`` to a UV-based ``pyproject.toml``. It is not a complete
 migration map; review each field's meaning and destination for your solution.
 
-.. container:: poetry-uv-light-mode
+.. container:: saf-light-only
 
    .. figure:: /_static/images/poetry_to_uv_migration.svg
       :alt: Selected Poetry pyproject.toml sections mapped to UV pyproject.toml sections
@@ -190,7 +190,7 @@ migration map; review each field's meaning and destination for your solution.
 
       Selected changes from a Poetry-based to a UV-based ``pyproject.toml``.
 
-.. container:: poetry-uv-dark-mode
+.. container:: saf-dark-only
 
    .. figure:: /_static/images/poetry_to_uv_migration_dark.svg
       :alt: Selected Poetry pyproject.toml sections mapped to UV pyproject.toml sections

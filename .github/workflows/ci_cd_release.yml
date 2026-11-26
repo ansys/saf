@@ -1,13 +1,18 @@
 name: CI-CD for Release
 run-name: >-
   Release: ${{ inputs.library }} (${{ inputs.dev-release && 'dev' || 'stable' }})
-  by ${{ github.actor }}
+  by ${{ github.actor }} ${{ inputs.dry-run && '(dry run)' || '' }}
 on:
   workflow_dispatch:
     inputs:
       dev-release:
         description: 'Development release mode (true = prerelease flow, false = stable
           release flow)'
+        type: boolean
+        required: true
+        default: false
+      dry-run:
+        description: 'Dry run mode'
         type: boolean
         required: true
         default: false
@@ -108,6 +113,7 @@ jobs:
   certification:
     name: Certification
     needs: validate-release-branch
+    if: ${{ ! inputs.dry-run }}
     permissions:
       security-events: read # For Dependabot alerts
       contents: write # Required for creating/pushing tags and commits
@@ -135,6 +141,8 @@ jobs:
     needs:
       - validate-release-branch
       - certification
+    if: ${{ always() && (inputs.dry-run || (needs.certification.result == 'success'))
+      && needs.validate-release-branch.result == 'success' }}
     outputs:
       release-name: ${{ steps.retrieve-release-info.outputs.release-name }}
       version-to-bump-in-triggering-branch: ${{ steps.retrieve-release-info.outputs.version-to-bump-in-triggering-branch
@@ -170,6 +178,8 @@ jobs:
     needs:
       - release-information
       - certification
+    if: ${{ always() && (inputs.dry-run || (needs.certification.result == 'success'))
+      && needs.release-information.result == 'success' }}
     runs-on: ubuntu-latest
     steps:
       - name: Generate release notes

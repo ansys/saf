@@ -486,7 +486,10 @@ Authentication
      - ``None``
 
    * - :envvar:`GLOW_AUTH_DISABLED`
-     - Disables API authorization when set to ``True``.
+     - Disables API and UI authentication when set to ``True``. Boolean values are
+       case-insensitive. Accepted values are ``true``/``false``, ``1``/``0``,
+       ``yes``/``no``, ``on``/``off``, ``y``/``n`` and ``t``/``f``. Invalid values
+       prevent startup.
      - ``True``
 
    * - :envvar:`GLOW_AUTH_REQUIRED_ROLES`

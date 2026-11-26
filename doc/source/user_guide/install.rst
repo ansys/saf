@@ -138,21 +138,40 @@ For UV solutions, UV creates and manages the solution's ``.venv`` directly.
 SAF explicitly targets this environment even when another environment is active.
 It does not create a Poetry environment or configure Poetry sources for a UV solution.
 
-For Poetry solutions, ``saf install`` creates two isolated virtual environments:
+**For Poetry-based solutions**, ``saf install`` creates two isolated virtual environments:
 
 - ``.poetry/.venv``: Poetry's own environment, keeping the dependency manager separate from the solution.
 - ``.venv``: The solution's virtual environment, managed by Poetry and populated with all packages from ``pyproject.toml``.
 
 A symbolic link connects the two so that Poetry can transparently manage ``.venv`` without conflicts, as illustrated in the following diagram:
 
+.. image:: ../_static/images/saf_install_light.svg
+    :alt: Diagram showing the two virtual environments created by saf install and the symbolic link between them
+    :class: saf-light-only
+
 .. image:: ../_static/images/saf_install.svg
     :alt: Diagram showing the two virtual environments created by saf install and the symbolic link between them
+    :class: saf-dark-only
+
+**For UV-based solutions**, ``saf install`` runs ``uv sync`` to create and populate ``.venv``.
+It does not create a separate environment for the dependency manager. UV can update ``uv.lock``
+if the lock file no longer matches ``pyproject.toml``.
+
+.. image:: ../_static/images/saf_install_uv_light.svg
+    :alt: SAF runs uv sync using UV from PATH. UV reads pyproject.toml and uv.lock and installs the solution and selected dependencies into .venv.
+    :class: saf-light-only
+
+.. image:: ../_static/images/saf_install_uv.svg
+    :alt: SAF runs uv sync using UV from PATH. UV reads pyproject.toml and uv.lock and installs the solution and selected dependencies into .venv.
+    :class: saf-dark-only
 
 .. attention::
 
     **Poetry private sources:** If your application's ``pyproject.toml`` file declares a private Poetry source, you are prompted to provide credentials during installation.
 
     The system validates your credentials and securely stores them as user-level environment variables for future use. If invalid credentials are provided, you are prompted to re-enter them. You can cancel the credential prompt at any time by pressing :kbd:`Ctrl+C`.
+
+    For **UV-based solutions**, set the index credentials before installation; SAF does not prompt for them.
 
     For more detailed information, see :ref:`user_guide_install_manage_private_sources`.
 
@@ -183,6 +202,7 @@ for the supported mechanisms and their precedence.
 
 Solution dependency groups
 ---------------------------
+
 Both backends support dependency groups, which allow installing dependencies for a
 particular use case, such as development, testing, or documentation. UV groups are
 defined in ``[dependency-groups]``; Poetry groups are defined in ``[tool.poetry.group]``.
@@ -192,9 +212,10 @@ Solution dependencies defined in the ``pyproject.toml`` file are organized into 
 Main dependencies
 ~~~~~~~~~~~~~~~~~
 
-The packages listed in ``[project].dependencies`` for UV or
-``[tool.poetry.dependencies]`` for Poetry are always installed by ``saf install``.
-These are the project's direct runtime dependencies, not a named dependency group.
+The runtime or "main" dependencies in ``pyproject.toml`` are always installed by ``saf install``.
+Poetry lists them under ``[tool.poetry.dependencies]``; UV lists them in the ``dependencies``
+array under ``[project]``. These are not a named dependency group. UV lists named groups under
+``[dependency-groups]``.
 
 Default optional groups
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -248,13 +269,15 @@ Manage solution dependencies
 
 Managing dependencies involves adding, updating, or removing individual packages in a solution's virtual environment, and keeping the environment reproducible and consistent with the packages declared in its ``pyproject.toml`` file.
 
-Both SAF CLI and Solutions Manager manage dependencies by driving Poetry, the dependency management system used by SAF solutions. You can use either method, depending on your preference and workflow.
+Use the dependency manager that matches your solution. The SAF CLI instructions below cover both
+Poetry and UV. The Solutions Manager **Dependencies** view instructions below describe the Poetry workflow.
 
 .. tab-set::
 
     .. tab-item:: SAF CLI
 
-        To use SAF CLI to add, update, or remove individual packages, run Poetry commands inside the solution's virtual environment.
+        For Poetry, run Poetry commands inside the solution's virtual environment.
+        For UV, run the UV commands below from the solution root.
 
     .. tab-item:: Solutions Manager
 
@@ -293,6 +316,21 @@ Add a dependency
     .. tab-item:: SAF CLI
 
         To add a dependency using Poetry, run ``poetry add`` inside the solution's environment.
+
+        For UV, use ``uv add`` to update the project and lock file and sync the environment:
+
+        .. code-block:: bash
+
+            uv add <package-name>
+
+        To add a dependency to a group and let SAF install it, use ``--no-sync`` and then
+        run ``saf install`` with the full list of groups you want. This is useful when the
+        group is not included in the default selection:
+
+        .. code-block:: bash
+
+            uv add --no-sync --group <group> <package-name>
+            saf install -d <group-1>,<group-2>
 
         .. seealso::
             For the full set of ``poetry add`` options, see the official Poetry `add <https://python-poetry.org/docs/cli/#add>`_ command documentation.
@@ -353,6 +391,13 @@ Update a dependency
         .. seealso::
             For the full set of ``poetry update`` options, see the official Poetry `update <https://python-poetry.org/docs/cli/#update>`_ command documentation.
 
+        For UV, update the package within its existing version constraint, then install the result:
+
+        .. code-block:: bash
+
+            uv lock --upgrade-package <package-name>
+            saf install
+
 
     .. tab-item:: Solutions Manager
 
@@ -387,6 +432,18 @@ Remove a dependency
         .. seealso::
             For the full set of ``poetry remove`` options, see the official Poetry `remove <https://python-poetry.org/docs/cli/#remove>`_ command documentation.
 
+        For UV, remove the dependency from the project and lock file, then recreate the
+        solution environment so it no longer contains packages that are not required:
+
+        .. code-block:: bash
+
+            uv remove --no-sync <package-name>
+            saf install -f
+
+        If the dependency belongs to a group, pass ``--group <group>`` to ``uv remove``.
+        When recreating the environment, include any non-default groups you still need
+        in the full group list passed to ``saf install`` with ``-d``.
+
 
     .. tab-item:: Solutions Manager
 
@@ -410,7 +467,14 @@ Remove a dependency
 Version constraints
 --------------------
 
-When adding a dependency, you specify a version constraint that tells Poetry which versions of the package are acceptable. Commonly used formats include:
+When adding a dependency, you specify a version constraint that tells the dependency manager
+which versions are acceptable. For UV, use standard Python requirement syntax:
+
+.. code-block:: bash
+
+    uv add "numpy>=2,<3"
+
+Commonly used formats for Poetry include:
 
 * **Exact version**: ``1.0.0`` or ``1.0``
 * **Caret requirement**: ``^1.0.0`` (allows releases that don't change the leftmost non-zero version component)
@@ -458,14 +522,26 @@ The ``saf execute`` command
 The ``saf execute`` command prepends the solution's ``.venv`` to :envvar:`PATH`, so the solution's Python
 interpreter and installed packages take precedence over any other environment on the system.
 
+.. image:: ../_static/images/saf_execute_light.svg
+   :width: 100%
+   :alt: Diagram showing how saf execute runs a command in the solution's .venv, for Poetry and UV solutions
+   :class: saf-light-only
+
 .. image:: ../_static/images/saf_execute.svg
    :width: 100%
-   :alt: Diagram showing how saf execute injects the solution environment into PATH
+   :alt: Diagram showing how saf execute runs a command in the solution's .venv, for Poetry and UV solutions
+   :class: saf-dark-only
+
+``saf execute`` works the same way for Poetry-based and UV-based solutions. It also unsets
+:envvar:`VIRTUAL_ENV` and runs ``<command>`` from the solution's root directory, so that the dependency
+manager acts on the solution's ``.venv`` rather than on another active environment.
 
 .. warning::
 
-   If the binary called in ``<command>`` is not present in the solution's environment, binaries
-   found in other environments on :envvar:`PATH` are used as a fallback.
+   The executable called in ``<command>`` must be present in the solution's environment. Otherwise,
+   ``saf execute`` fails. The only exception is ``uv``, which is installed outside the solution's
+   environment and is taken from :envvar:`PATH`. Programs that the executable starts in turn are looked up
+   on :envvar:`PATH`, where the solution's environment comes first.
 
 
 .. _ug-install-saf-execute-options:
@@ -525,6 +601,27 @@ Manage private sources
 
 For applications that use private sources that require authentication, you can pre-configure credentials to avoid interactive prompts during installation.
 
+.. rubric:: UV-based solutions
+
+For a named UV index, declare the source in ``pyproject.toml``. For example, to use a
+private index only for a specific package:
+
+.. code-block:: toml
+
+    [[tool.uv.index]]
+    name = "my-private-source"
+    url = "https://packages.example.com/simple"
+    explicit = true
+
+    [tool.uv.sources]
+    my-private-package = { index = "my-private-source" }
+
+Set :envvar:`UV_INDEX_MY_PRIVATE_SOURCE_USERNAME` and :envvar:`UV_INDEX_MY_PRIVATE_SOURCE_PASSWORD`
+before installing. ``saf install`` also loads these variables from the solution's ``.env``
+file if they are not already set in the shell. Set them in the shell when running UV
+directly. Do not put credentials in the index URL or commit them to source control.
+
+.. rubric:: Poetry-based solutions
 
 .. rubric:: Credential precedence order
 

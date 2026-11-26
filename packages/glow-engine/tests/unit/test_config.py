@@ -48,7 +48,7 @@ from ansys.saf.glow._config.const import (
     ExecutorType,
     ProductInstanceSystemType,
 )
-from ansys.saf.glow._config.settings import Settings
+from ansys.saf.glow._config.settings import Settings, auth_disabled_from_environment
 from ansys.saf.glow._utilities.path_parser import parse_platform_specific_absolute_path
 from ansys.saf.testing.platform_specific import linux_only, windows_only
 from tests.mocks.solutions.minimal_solution import MinimalSolution
@@ -60,6 +60,31 @@ def clean_env():
     # Clean it up between tests
     with mock.patch.dict(os.environ, os.environ.copy()):
         yield
+
+
+@pytest.mark.parametrize(
+    ("value", "expected"),
+    [
+        ("true", True),
+        ("false", False),
+        ("1", True),
+        ("0", False),
+        ("yes", True),
+        ("no", False),
+        ("on", True),
+        ("off", False),
+        ("y", True),
+        ("n", False),
+        ("t", True),
+        ("f", False),
+    ],
+)
+@pytest.mark.parametrize("uppercase", [False, True])
+def test_auth_disabled_boolean_values(monkeypatch: pytest.MonkeyPatch, value: str, expected: bool, uppercase: bool):
+    monkeypatch.setenv("GLOW_AUTH_DISABLED", value.upper() if uppercase else value)
+    settings = Settings(glow_solution_definition="tests.mocks.solutions.minimal_solution", glow_ui_module=None)
+    assert settings.glow_auth_disabled is expected
+    assert auth_disabled_from_environment() is expected
 
 
 def test_default_settings(monkeypatch: pytest.MonkeyPatch):

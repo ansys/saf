@@ -38,10 +38,11 @@ Before starting the update process it is a good idea to first determine what ver
 Typically the latest version of the given package is chosen.
 
 The versions of a package that can be installed is determined by the constraints of other packages that depend on it as well as the
-constraints imposed on the dependency in the ``pyproject.toml`` file managed by poetry. The latest compatible version that satisfies all constraints may
+constraints imposed on the dependency in ``pyproject.toml``. The latest compatible version that satisfies all constraints may
 not be the latest version of the package.
 
-To proceed with a fix do the following in order:
+For a UV-based solution, follow the :ref:`UV steps <use-uv-update>`. For a Poetry-based
+solution, follow the steps below in order.
 
 .. _use-poetry-update:
 
@@ -219,3 +220,79 @@ Typically, you have two options to resolve the issue:
     before you can update your solution. At which point you'll need to introduce a constraint for the new package version on package A
     using ``poetry add`` as described in :ref:`the previous section <use-poetry-add>`.
     Then you can apply ``poetry update`` for package B (as described in :ref:`an earlier section <use-poetry-update>`).
+
+.. _use-uv-update:
+
+Upgrade a dependency to the latest compatible version with UV
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+From the solution root, preview the upgrade without changing ``uv.lock``:
+
+.. code-block:: bash
+
+    uv lock --dry-run --upgrade-package <package-name>
+
+If the proposed version and accompanying changes are acceptable, update the lock file and install the dependencies:
+
+.. code-block:: bash
+
+    uv lock --upgrade-package <package-name>
+    saf install
+
+To select non-default dependency groups, pass the full list of groups you want to install to ``saf install`` with ``-d``.
+Test the solution and commit the updated ``uv.lock``. If UV cannot select the version you need, check the constraints below.
+
+Correct simple constraints that are limiting a package upgrade with UV
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+#. **Find the requirement.** In ``pyproject.toml``, look in the ``dependencies`` list under
+   ``[project]`` for a runtime dependency, or in the relevant list under ``[dependency-groups]``
+   for a group dependency. If the package is not declared directly, proceed to
+   :ref:`diagnosing complex UV constraints <fix-uv-complex-constraint>`.
+
+#. **Preview the constraint change.** Edit the existing requirement in place, keeping any extras
+   and environment markers. For example, to allow versions from 2.3 up to, but not including, 3,
+   use ``"example-package>=2.3,<3"`` as the requirement in the existing list. Then preview the resolution:
+
+   .. code-block:: bash
+
+       uv lock --dry-run --upgrade-package <package-name>
+
+#. **Apply the constraint change.** If the preview is acceptable, update the lock file and install.
+   Otherwise, undo the trial edit before trying another constraint.
+
+   .. code-block:: bash
+
+       uv lock --upgrade-package <package-name>
+       saf install
+
+   Test the solution and commit both ``pyproject.toml`` and ``uv.lock``.
+
+.. _fix-uv-complex-constraint:
+
+Correct complex constraints that limit a package upgrade with UV
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+If you made a trial edit to ``pyproject.toml``, undo it first so that the manifest matches the lock file.
+Use the locked dependency tree to see which packages depend on the package you need to upgrade:
+
+.. code-block:: bash
+
+    uv tree --locked --invert --package <package-name>
+
+If another package is holding back the upgrade, find the direct dependency that brings it in.
+Adjust that direct dependency's constraint if necessary, then preview the upgrade of both packages:
+
+.. code-block:: bash
+
+    uv lock --dry-run --upgrade-package <direct-dependency> --upgrade-package <package-name>
+
+If the preview is acceptable, apply the upgrade:
+
+.. code-block:: bash
+
+    uv lock --upgrade-package <direct-dependency> --upgrade-package <package-name>
+    saf install
+
+Test the solution before committing the lock file and any manifest changes. If no available version of the
+upstream package allows the required upgrade, raise the constraint issue with that package's maintainer.

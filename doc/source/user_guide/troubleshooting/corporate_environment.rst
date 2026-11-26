@@ -31,13 +31,26 @@ SSL certificate error during installation
      SSLCertVerificationError: certificate verify failed: unable to get local issuer certificate
 
 **Cause**:
- Poetry does not use the OS certificate store. Even if ``pip`` works correctly in your environment, Poetry's
+ For Poetry-based solutions, Poetry does not use the OS certificate store. Even if ``pip`` works correctly in your environment, Poetry's
  internal download path for package files (from ``files.pythonhosted.org``) ignores the certificate configured
  via :envvar:`POETRY_CERTIFICATES_<SOURCE>_CERT`. This is a
  `known Poetry limitation <https://github.com/python-poetry/poetry/issues/1012>`_.
 
 **Solution**:
- Set the :envvar:`REQUESTS_CA_BUNDLE` environment variable to point to your corporate CA certificate bundle
+ For UV-based solutions, if your organization's CA is already trusted by the operating system,
+ enable UV's system certificate store before running ``saf install``:
+
+ .. code-block:: powershell
+
+     $env:UV_SYSTEM_CERTS = "true"
+     saf install <app_name> -f
+
+ .. code-block:: bash
+
+     export UV_SYSTEM_CERTS=true
+     saf install <app_name> -f
+
+ For Poetry-based solutions, set the :envvar:`REQUESTS_CA_BUNDLE` environment variable to point to your corporate CA certificate bundle
  **before** running ``saf install``:
 
  .. tab-set::

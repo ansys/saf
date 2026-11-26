@@ -31,6 +31,7 @@ from collections import deque
 from datetime import datetime, timezone
 import os
 from pathlib import Path
+import re
 import sys
 import tomllib
 from typing import Any, Dict, List, Optional
@@ -617,6 +618,22 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
+def _write_github_output(suggested_patches: List[tuple[str, str, str]]) -> None:
+    """Expose the PIP packages to update as GitHub Actions step outputs, if running in a workflow."""
+    output_path = os.getenv("GITHUB_OUTPUT")
+    if not output_path:
+        return
+    pip_patches = {
+        package.lower(): patched
+        for ecosystem, package, patched in suggested_patches
+        if ecosystem.upper() == "PIP" and re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._-]*", package)
+    }
+    packages = " ".join(sorted(pip_patches))
+    patches = " ".join(f"{package}>={patched}" for package, patched in sorted(pip_patches.items()))
+    with open(output_path, "a", encoding="utf-8") as fh:
+        fh.write(f"packages={packages}\npatches={patches}\n")
+
+
 def main() -> List[tuple[str, str, str]]:
     args = parse_args()
 
@@ -651,6 +668,8 @@ def main() -> List[tuple[str, str, str]]:
         output = dist_dir / f"dependabot_alerts_{args.repository.replace('/', '_')}_{suffix}.md"
     with open(output, "w", encoding="utf-8") as fh:
         fh.write(_render_markdown(args.repository, filters, args.state, matching, dependency_records))
+
+    _write_github_output(suggested_patches)
 
     print(f"Exported {len(matching)} alert(s) for {filters} to {output}")
     return suggested_patches

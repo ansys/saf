@@ -102,6 +102,8 @@ Add ``pyright`` to your solution
 
 This section describes how to add ``pyright`` to your solution's dependencies, how to configure it, and how to run it from your terminal.
 
+.. rubric:: Poetry-based solutions
+
 1. Run the ``setup_environment.py`` virtual environment installation script:
 
    .. code:: bash
@@ -186,3 +188,38 @@ This section describes how to add ``pyright`` to your solution's dependencies, h
    .. code:: bash
 
        pyright
+
+.. rubric:: UV-based solutions
+
+Run the following steps from the solution root. You don't need to run the setup script
+or activate the virtual environment manually.
+
+#. Add ``"pyright==1.1.327"`` to the ``style`` group under ``[dependency-groups]``
+   in ``pyproject.toml``. If the group already exists, append the requirement to
+   its existing list:
+
+   .. code-block:: toml
+
+      [dependency-groups]
+      style = ["pyright==1.1.327"]
+
+#. Add the same ``[tool.pyright]`` configuration shown above. In both ``include``
+   and ``strict``, use the actual path to your solution package, for example
+   ``src/saf/solutions/my_solution`` for the default namespace.
+
+#. Refresh the lock file and install the dependency groups needed for type checking.
+   For example, for a Dash solution that also checks its tests:
+
+   .. code-block:: bash
+
+      uv lock
+      saf install -d desktop,ui,doc,build,tests,style
+
+   Include only groups defined by your solution. For example, omit ``ui`` if your
+   solution has no UI group. The ``-d`` option replaces the default group selection.
+
+#. Run Pyright from the solution's virtual environment:
+
+   .. code-block:: bash
+
+      saf execute "pyright"

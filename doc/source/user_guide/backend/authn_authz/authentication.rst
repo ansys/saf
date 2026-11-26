@@ -33,6 +33,10 @@ The system relies on the presence of ``bearer`` access tokens in the incoming re
 
 The system is configurable and flexible, to the point of being able to disable any validation mechanism. Refer to the :ref:`environment_variables` section for a detailed list of configuration options regarding authentication.
 
+Set :envvar:`GLOW_AUTH_DISABLED` to ``False`` to enforce authentication. Boolean
+values are case-insensitive; for example, ``false`` has the same effect. Invalid
+values prevent startup.
+
 
 Architecture
 ============

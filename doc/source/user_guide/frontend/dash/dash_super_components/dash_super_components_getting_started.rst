@@ -30,6 +30,12 @@ the package to your project dependencies:
 
    poetry add ansys-solutions-dash-super-components
 
+For a UV-based solution, run this from the solution root:
+
+.. code-block:: bash
+
+   uv add ansys-solutions-dash-super-components
+
 
 Requirements
 ------------

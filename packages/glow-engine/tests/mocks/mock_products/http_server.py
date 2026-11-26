@@ -16,12 +16,14 @@
 
 import os
 from pathlib import Path
+import tempfile
 
 import click
 from fastapi import FastAPI, HTTPException
 import psutil
 
 DEFAULT_PROPERTY_VALUE = "blue"
+ALLOW_TEMP_DIRECTORY_ENV_VAR = "MOCK_PRODUCT_ALLOW_TEMP_DIRECTORY"
 
 app = FastAPI()
 
@@ -69,11 +71,15 @@ def _validated_path(value: str) -> Path:
             allowed_roots.append(Path(root) / "ansys" / "glow")
     if os.name != "nt" and not os.environ.get("XDG_DATA_HOME"):
         allowed_roots.append(Path.home() / ".local" / "share" / "ansys" / "glow")
+    # The project files directory of end-to-end tests is only known to the test session, whereas the product
+    # environment is fixed when the product is registered. Tests opt in to the temporary directory instead.
+    if os.environ.get(ALLOW_TEMP_DIRECTORY_ENV_VAR) == "1":
+        allowed_roots.append(Path(tempfile.gettempdir()))
 
     for root in allowed_roots:
         normalized_root = os.path.realpath(root)
-        root_prefix = normalized_root.rstrip(os.sep) + os.sep
-        if normalized_path.startswith(root_prefix):
+        root_prefix = os.path.normcase(normalized_root.rstrip(os.sep) + os.sep)
+        if os.path.normcase(normalized_path).startswith(root_prefix):
             return Path(normalized_path)
 
     raise HTTPException(status_code=400, detail="Path is outside the allowed filesystem roots.")

@@ -16,6 +16,7 @@
 
 from collections.abc import Callable
 from pathlib import Path
+import tempfile
 
 from fastapi import HTTPException
 import pytest
@@ -27,7 +28,12 @@ from tests.mocks.mock_products.client import (
     MockTcpProductClient,
 )
 from tests.mocks.mock_products.conftest import ProductServerInfo
-from tests.mocks.mock_products.http_server import restore_given_absolute_path, store_given_absolute_path
+from tests.mocks.mock_products.http_server import (
+    ALLOW_TEMP_DIRECTORY_ENV_VAR,
+    app,
+    restore_given_absolute_path,
+    store_given_absolute_path,
+)
 
 
 @xfail_for_ci_on_linux(reason="Fails with 3.12 consistently in github-hosted linux runners. OK locally.")
@@ -69,6 +75,26 @@ def test_http_product_rejects_paths_outside_allowed_roots(
 
     with pytest.raises(HTTPException, match="outside the allowed filesystem roots"):
         endpoint({"value": str(outside_path)})
+
+
+def test_http_product_allows_temp_directory_only_when_enabled(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(tempfile, "gettempdir", lambda: str(tmp_path))
+    monkeypatch.setenv("GLOW_PROJECT_FILES_DIRECTORY", str(tmp_path / "allowed"))
+    monkeypatch.delenv("APPDATA", raising=False)
+    monkeypatch.delenv("XDG_DATA_HOME", raising=False)
+    monkeypatch.delenv(ALLOW_TEMP_DIRECTORY_ENV_VAR, raising=False)
+    target = tmp_path / "state" / "file.txt"
+
+    with pytest.raises(HTTPException, match="outside the allowed filesystem roots"):
+        store_given_absolute_path({"value": str(target)})
+
+    monkeypatch.setenv(ALLOW_TEMP_DIRECTORY_ENV_VAR, "1")
+    monkeypatch.setattr(app, "session", {"property": "red"}, raising=False)
+    store_given_absolute_path({"value": str(target)})
+    assert target.read_text() == "red"
 
 
 @pytest.mark.parametrize("endpoint", [store_given_absolute_path, restore_given_absolute_path])

@@ -26,6 +26,8 @@ from ansys.saf.glow.solution.products.config import (
 )
 
 GLOW_PROJECT_FILES_DIRECTORY = "GLOW_PROJECT_FILES_DIRECTORY"
+GLOW_PRODUCT_INSTANCE_SYSTEM_PROJECT_FILES_DIRECTORY = "GLOW_PRODUCT_INSTANCE_SYSTEM_PROJECT_FILES_DIRECTORY"
+ALLOW_TEMP_DIRECTORY_ENV_VAR = "MOCK_PRODUCT_ALLOW_TEMP_DIRECTORY"
 
 
 class MockHTTPInstanceVersionConfiguration(IProductInstanceVersionConfiguration):
@@ -46,8 +48,13 @@ class MockHTTPInstanceVersionConfiguration(IProductInstanceVersionConfiguration)
 
     @property
     def environment(self) -> dict[str, str]:
-        env: dict[str, str] = {}
-        if project_files_dir := os.environ.get(GLOW_PROJECT_FILES_DIRECTORY):
+        # End-to-end tests run the product from a temporary project files directory that is not known when the
+        # product is registered, so the product is allowed to use the temporary directory.
+        env: dict[str, str] = {ALLOW_TEMP_DIRECTORY_ENV_VAR: "1"}
+        project_files_dir = os.environ.get(GLOW_PRODUCT_INSTANCE_SYSTEM_PROJECT_FILES_DIRECTORY) or os.environ.get(
+            GLOW_PROJECT_FILES_DIRECTORY,
+        )
+        if project_files_dir:
             env[GLOW_PROJECT_FILES_DIRECTORY] = project_files_dir
         return env
 

@@ -72,8 +72,8 @@ def _validated_path(value: str) -> Path:
 
     for root in allowed_roots:
         normalized_root = os.path.realpath(root)
-        root_prefix = os.path.normcase(normalized_root.rstrip(os.sep) + os.sep)
-        if os.path.normcase(normalized_path).startswith(root_prefix):
+        root_prefix = normalized_root.rstrip(os.sep) + os.sep
+        if normalized_path.startswith(root_prefix):
             return Path(normalized_path)
 
     raise HTTPException(status_code=400, detail="Path is outside the allowed filesystem roots.")

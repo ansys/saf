@@ -69,3 +69,41 @@ def test_http_product_rejects_paths_outside_allowed_roots(
 
     with pytest.raises(HTTPException, match="outside the allowed filesystem roots"):
         endpoint({"value": str(outside_path)})
+
+
+@pytest.mark.parametrize("endpoint", [store_given_absolute_path, restore_given_absolute_path])
+def test_http_product_rejects_path_traversal(
+    endpoint: Callable[[dict[str, str]], None],
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    allowed_root = tmp_path / "allowed"
+    allowed_root.mkdir()
+    monkeypatch.setenv("GLOW_PROJECT_FILES_DIRECTORY", str(allowed_root))
+    monkeypatch.delenv("APPDATA", raising=False)
+    monkeypatch.delenv("XDG_DATA_HOME", raising=False)
+
+    with pytest.raises(HTTPException, match="outside the allowed filesystem roots"):
+        endpoint({"value": str(allowed_root / ".." / "outside")})
+
+
+@pytest.mark.parametrize("endpoint", [store_given_absolute_path, restore_given_absolute_path])
+def test_http_product_rejects_symlink_outside_allowed_roots(
+    endpoint: Callable[[dict[str, str]], None],
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    allowed_root = tmp_path / "allowed"
+    allowed_root.mkdir()
+    outside = tmp_path / "outside"
+    outside.mkdir()
+    try:
+        (allowed_root / "link").symlink_to(outside, target_is_directory=True)
+    except OSError as exc:
+        pytest.skip(f"Cannot create symlink: {exc}")
+    monkeypatch.setenv("GLOW_PROJECT_FILES_DIRECTORY", str(allowed_root))
+    monkeypatch.delenv("APPDATA", raising=False)
+    monkeypatch.delenv("XDG_DATA_HOME", raising=False)
+
+    with pytest.raises(HTTPException, match="outside the allowed filesystem roots"):
+        endpoint({"value": str(allowed_root / "link" / "file")})

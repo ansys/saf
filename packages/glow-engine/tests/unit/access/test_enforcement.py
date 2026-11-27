@@ -19,7 +19,7 @@
 from collections.abc import AsyncGenerator, Callable, Iterator
 from contextlib import asynccontextmanager
 from dataclasses import dataclass
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 import re
 from typing import Any
 import uuid
@@ -288,6 +288,21 @@ async def test_super_admin_can_delete(world: World):
     assert world.client.delete(world.base, headers=world.admin).status_code == 200
 
 
+async def test_super_admin_delete_is_audited(world: World):
+    assert world.client.delete(world.base, headers=world.admin).status_code == 200
+    audit = world.client.get("/access/audit", params={"project_id": world.project_id}, headers=world.admin)
+    assert audit.status_code == 200, audit.text
+    entries = audit.json()
+    assert any(e["action"] == "project_deleted" and e["actor_id"] == "root" for e in entries)
+
+
+async def test_owner_delete_is_not_audited_as_super_admin_action(world: World):
+    assert world.client.delete(world.base, headers=world.alice).status_code == 200
+    audit = world.client.get("/access/audit", params={"project_id": world.project_id}, headers=world.admin)
+    assert audit.status_code == 200, audit.text
+    assert all(e["action"] != "project_deleted" for e in audit.json())
+
+
 async def test_list_shows_only_member_projects_with_access_summary(world: World):
     bob_project = world.create_project(world.bob, "bobs")
 
@@ -298,7 +313,13 @@ async def test_list_shows_only_member_projects_with_access_summary(world: World)
 
     alice_list = listed(world.alice)
     assert alice_list == {
-        world.project_id: {"owner_id": "alice", "holder_id": "alice", "my_role": "owner", "pending_request_count": 0},
+        world.project_id: {
+            "owner_id": "alice",
+            "holder_id": "alice",
+            "my_role": "owner",
+            "pending_request_count": 0,
+            "member_ids": ["alice", "bob"],
+        },
     }
     bob_list = listed(world.bob)
     assert set(bob_list) == {world.project_id, bob_project}
@@ -307,6 +328,7 @@ async def test_list_shows_only_member_projects_with_access_summary(world: World)
         "holder_id": "alice",
         "my_role": "viewer",
         "pending_request_count": 0,
+        "member_ids": ["alice", "bob"],
     }
     assert bob_list[bob_project]["my_role"] == "owner"
     assert listed(world.carol) == {}
@@ -319,7 +341,9 @@ async def test_super_admin_lists_all_and_orphans_only(world: World):
     projects = {p["name"].removeprefix("projects/"): p["access"] for p in response.json()["projects"]}
     assert set(projects) == {world.project_id, orphan}
     assert projects[world.project_id]["owner_id"] == "alice"
+    assert projects[world.project_id]["member_ids"] == ["alice", "bob"]
     assert projects[orphan]["owner_id"] is None
+    assert projects[orphan]["member_ids"] == []
 
     response = world.client.get("/projects", params={"orphans_only": True}, headers=world.admin)
     assert [p["name"].removeprefix("projects/") for p in response.json()["projects"]] == [orphan]
@@ -328,20 +352,34 @@ async def test_super_admin_lists_all_and_orphans_only(world: World):
     assert world.client.get(f"/projects/{orphan}", headers=world.admin).status_code == 200
 
 
-async def test_list_without_user_id_lists_nothing(world: World):
-    response = world.client.get("/projects", headers=world.headers_of(None))
-    assert response.status_code == 200
-    assert response.json()["projects"] == []
+async def test_list_shows_expired_lock_as_free(world: World):
+    # Backdate past the default idle timeout (8 h). Listing must expire the lock before building summaries.
+    past = datetime.now(UTC) - timedelta(hours=9)
+    async with world.factory.get_session(project_id=world.project_id, modification=True) as session:
+        await session.set_lock_holder(world.project_id, "alice", past)
+    listed = world.client.get("/projects", headers=world.alice)
+    assert listed.status_code == 200, listed.text
+    access = next(p["access"] for p in listed.json()["projects"] if p["name"].endswith(world.project_id))
+    assert access["holder_id"] is None
+    assert world.client.get(f"{world.base}/access", headers=world.alice).json()["holder_id"] is None
 
 
-async def test_list_without_user_id_ignores_a_member_with_an_empty_id(world: World):
-    # Defence in depth: the API refuses empty ids, but even if such a row existed, a caller without id lists nothing.
+async def test_token_without_sub_gets_403_on_project_routes(world: World):
+    headers = world.headers_of(None)
+    assert world.client.post("/projects", json={"display_name": "x"}, headers=headers).status_code == 403
+    assert world.client.get("/projects", headers=headers).status_code == 403
+    assert world.client.get(world.base, headers=headers).status_code == 403
+    assert world.client.get(f"{world.base}/steps/{STEP_URL}", headers=headers).status_code == 403
+    assert world.client.patch(world.base, json={"description": "x"}, headers=headers).status_code == 403
+    assert world.client.delete(world.base, headers=headers).status_code == 403
+
+
+async def test_token_without_sub_never_matches_empty_member_id(world: World):
+    # Defence in depth: even if a member row with an empty id existed, a token without sub still gets 403.
     async with world.factory.get_session(project_id=world.project_id, modification=True) as session:
         await session.upsert_member(world.project_id, "", ProjectRole.viewer)
-    response = world.client.get("/projects", headers=world.headers_of(None))
-    assert response.status_code == 200
-    assert response.json()["projects"] == []
-    assert response.json()["total_projects"] == 0
+    response = world.client.get(f"{world.base}/steps/{STEP_URL}", headers=world.headers_of(None))
+    assert response.status_code == 403
 
 
 async def test_super_admin_cannot_read_steps_or_export(world: World):

@@ -47,17 +47,7 @@ AUDIT_OWNER_ASSIGNED = "owner_assigned"
 AUDIT_LOCK_FORCE_RELEASED = "lock_force_released"
 AUDIT_LOCK_EXPIRED = "lock_expired"
 AUDIT_METHODS_FAILED = "methods_failed"
-
-
-class NoProjects:
-    """Type of ``NO_PROJECTS``."""
-
-    def __repr__(self) -> str:
-        return "NO_PROJECTS"
-
-
-NO_PROJECTS = NoProjects()
-"""Result of ``AccessCrud.list_scope`` for a caller without user id: no project may be listed."""
+AUDIT_PROJECT_DELETED = "project_deleted"
 
 
 def _utc_now() -> datetime:
@@ -91,6 +81,14 @@ def _not_found(project_id: str) -> NotFoundError:
 
 def _actor(principal: Principal) -> str:
     return principal.user_id or SYSTEM_ACTOR
+
+
+def _ensure_identified(principal: Principal) -> None:
+    """Tokens without a ``sub`` claim are unauthenticated for access control purposes."""
+    if not principal.user_id:
+        raise ForbiddenError(
+            "Authentication required: the access token must contain a subject (sub) claim.",
+        )
 
 
 class AccessCrud:
@@ -230,6 +228,7 @@ class AccessCrud:
         """Members only. Super admins are not members: they get 404 like anyone else."""
         if not self._enabled or _is_bypass(principal):
             return
+        _ensure_identified(principal)
         async with self._session_factory.get_session() as session:
             await self._require_member(session, project_id, principal)
 
@@ -237,6 +236,7 @@ class AccessCrud:
         """Members and super admins."""
         if not self._enabled or _is_bypass(principal):
             return
+        _ensure_identified(principal)
         async with self._session_factory.get_session() as session:
             if principal.is_super_admin:
                 await self._require_existing(session, project_id)
@@ -247,6 +247,7 @@ class AccessCrud:
         """Owner only: 404 for non-members, 403 for other members. ``allow_super_admin`` admits super admins too."""
         if not self._enabled or _is_bypass(principal):
             return
+        _ensure_identified(principal)
         async with self._session_factory.get_session() as session:
             if allow_super_admin and principal.is_super_admin:
                 await self._require_existing(session, project_id)
@@ -259,6 +260,7 @@ class AccessCrud:
         """Lock holder only: 404 for non-members, 423 (with the current holder id) for other members."""
         if not self._enabled or _is_bypass(principal):
             return
+        _ensure_identified(principal)
         async with self._modifying_session(project_id) as session:
             record, _ = await self._require_member(session, project_id, principal)
             record = await self._apply_expiry(session, record, principal)
@@ -276,24 +278,35 @@ class AccessCrud:
     # ----------------------------------------------------------------------------------------------------------------
     # Lifecycle and reads
 
+    def require_identified(self, principal: Principal) -> None:
+        """Refuse callers that cannot be identified when access control is on.
+
+        Framework internals (API key without an on-behalf-of user) are exempt. Used before creating or importing a
+        project so that an unidentified token cannot leave an ownerless project behind.
+        """
+        if not self._enabled or _is_bypass(principal):
+            return
+        _ensure_identified(principal)
+
     async def on_project_created(self, project_id: str, principal: Principal) -> None:
         """The creator becomes the owner and holds the lock."""
-        if not self._enabled or principal.user_id is None:
+        if not self._enabled or _is_bypass(principal):
             return
+        _ensure_identified(principal)
         async with self._modifying_session(project_id) as session:
+            assert principal.user_id is not None  # noqa: S101 #nosec
             await session.upsert_member(project_id, principal.user_id, ProjectRole.owner)
             await session.set_lock_holder(project_id, principal.user_id, self._now())
 
-    def list_scope(self, principal: Principal) -> str | None | NoProjects:
+    def list_scope(self, principal: Principal) -> str | None:
         """The id of the member whose projects the principal may list, or ``None`` to list every project.
 
         Super admins, framework internals and deployments without access control list everything. A caller that
-        cannot be identified gets ``NO_PROJECTS``: it lists nothing, and is never matched against a member id.
+        cannot be identified is refused (403): they must never match a member row.
         """
         if not self._enabled or principal.is_super_admin or principal.is_internal:
             return None
-        if not principal.user_id:
-            return NO_PROJECTS
+        _ensure_identified(principal)
         return principal.user_id
 
     def check_orphans_listing(self, principal: Principal) -> None:
@@ -302,9 +315,17 @@ class AccessCrud:
             raise ForbiddenError("Only a super admin can list the projects without an owner.")
 
     async def fill_access_summaries(self, projects: Sequence[ProjectInfo], principal: Principal) -> None:
-        """Set ``ProjectInfo.access`` of ``projects``. Leaves it ``None`` when access control is disabled."""
+        """Set ``ProjectInfo.access`` of ``projects``. Leaves it ``None`` when access control is disabled.
+
+        Idle write locks are expired before the summaries are built, so the list shows a free lock when the idle
+        timeout has elapsed (subject to the running-transaction rule).
+        """
         if not self._enabled or not projects:
             return
+        for project in projects:
+            async with self._modifying_session(project.project_id) as session:
+                record = await session.get_access_record(project.project_id)
+                await self._apply_expiry(session, record, principal)
         async with self._session_factory.get_session() as session:
             summaries = await session.get_access_summaries([p.project_id for p in projects], principal.user_id)
         for project in projects:
@@ -540,6 +561,22 @@ class AccessCrud:
 
     # ----------------------------------------------------------------------------------------------------------------
     # Super admin and maintenance
+
+    async def record_deletion(self, project_id: str, principal: Principal) -> None:
+        """Record that a super admin deleted the project. No-op for owners and when the feature is off.
+
+        Audit rows deliberately outlive the project (no foreign key), so this must run before the project is removed.
+        """
+        if not self._enabled or _is_bypass(principal) or not principal.is_super_admin:
+            return
+        async with self._session_factory.get_session(modification=True) as session:
+            await session.insert_audit_entry(
+                project_id,
+                _actor(principal),
+                AUDIT_PROJECT_DELETED,
+                {},
+                self._now(),
+            )
 
     async def fail_stuck_methods(self, project_id: str, principal: Principal) -> list[str]:
         """Owner or super admin: mark failed the methods running for longer than the stuck-method timeout. Audited.

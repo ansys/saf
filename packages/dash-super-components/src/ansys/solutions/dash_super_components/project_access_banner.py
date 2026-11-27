@@ -17,6 +17,7 @@
 
 """Banner that shows the write-lock state of a project and lets the user act on it."""
 
+import os
 from typing import TYPE_CHECKING, Any
 import uuid
 
@@ -232,6 +233,20 @@ def _error_message(ex: Exception) -> str:
     return str(ex) or type(ex).__name__
 
 
+def _access_control_enabled() -> bool:
+    """Whether the GLOW API has project access control on.
+
+    The banner reads the same environment variable the API uses. When it is off (or unset), no websocket is opened,
+    so the component stays empty instead of failing to connect to a route that is not mounted.
+    """
+    return os.environ.get("GLOW_PROJECT_ACCESS_CONTROL_ENABLED", "").strip().lower() in {
+        "1",
+        "true",
+        "yes",
+        "on",
+    }
+
+
 class ProjectAccessBanner(html.Div):
     """
     A Dash component that shows who may edit a project and lets the user act on the write lock.
@@ -274,14 +289,15 @@ class ProjectAccessBanner(html.Div):
 
         self.aio_id = aio_id
 
-        super().__init__(
-            [
-                DashClient.create_access_listener(project_id, id=self.ids.listener(aio_id)),
-                dcc.Store(id=self.ids.project_id(aio_id), storage_type="memory", data=project_id),
-                html.Div(id=self.ids.content(aio_id)),
-                html.Div(id=self.ids.error(aio_id), style={"color": "var(--mantine-color-red-6)"}),
-            ],
-        )
+        children: list[Component] = [
+            dcc.Store(id=self.ids.project_id(aio_id), storage_type="memory", data=project_id),
+            html.Div(id=self.ids.content(aio_id)),
+            html.Div(id=self.ids.error(aio_id), style={"color": "var(--mantine-color-red-6)"}),
+        ]
+        if _access_control_enabled():
+            children.insert(0, DashClient.create_access_listener(project_id, id=self.ids.listener(aio_id)))
+
+        super().__init__(children)
 
     @staticmethod
     @callback(

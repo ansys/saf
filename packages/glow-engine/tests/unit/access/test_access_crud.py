@@ -23,7 +23,7 @@ from typing import Any, cast
 import pytest
 from sqlalchemy import update
 
-from ansys.saf.glow._access.access_crud import NO_PROJECTS, AccessCrud
+from ansys.saf.glow._access.access_crud import AccessCrud
 from ansys.saf.glow._access.principal import Principal
 from ansys.saf.glow._access.schemas import ProjectMemberInfo, ProjectRole, WriteRequestStatus
 from ansys.saf.glow._config.const import Deployment
@@ -118,8 +118,8 @@ async def test_list_scope(env: Env):
     assert env.access.list_scope(ALICE) == "alice"
     assert env.access.list_scope(ADMIN) is None
     assert env.access.list_scope(INTERNAL) is None
-    # A caller that cannot be identified is not scoped to any member id, in particular not to the empty one.
-    assert env.access.list_scope(nobody) is NO_PROJECTS
+    with pytest.raises(ForbiddenError):
+        env.access.list_scope(nobody)
 
 
 async def test_non_member_read_is_404(env: Env):
@@ -131,11 +131,6 @@ async def test_non_member_read_is_404(env: Env):
         await env.access.get_access(env.project_id, CAROL)
     with pytest.raises(NotFoundError):
         await env.access.check_write(env.project_id, CAROL)
-    nobody = Principal(user_id=None, is_super_admin=False, is_internal=False)
-    with pytest.raises(NotFoundError):
-        await env.access.check_read(env.project_id, nobody)
-    with pytest.raises(NotFoundError):
-        await env.access.check_write(env.project_id, nobody)
     await env.access.check_read(env.project_id, ALICE)
 
 
@@ -494,6 +489,50 @@ async def test_force_release_audited(env: Env):
     with pytest.raises(ForbiddenError):
         await env.access.list_audit(env.project_id, 1, 100, ALICE)
     assert [e.action for e in await env.access.list_audit(None, 1, 100, ADMIN)] == ["lock_force_released"]
+
+
+async def test_record_deletion_audited_for_super_admin_only(env: Env):
+    await env.access.record_deletion(env.project_id, ADMIN)
+    entries = await env.access.list_audit(env.project_id, 1, 100, ADMIN)
+    assert [e.action for e in entries] == ["project_deleted"]
+    assert entries[0].actor_id == "admin"
+    other_id = await env.new_project("q")
+    await env.access.on_project_created(other_id, ALICE)
+    await env.access.record_deletion(other_id, ALICE)
+    assert await env.access.list_audit(other_id, 1, 100, ADMIN) == []
+
+
+async def test_unidentified_principal_is_forbidden(env: Env):
+    unidentified = Principal(user_id=None, is_super_admin=False, is_internal=False)
+    with pytest.raises(ForbiddenError):
+        await env.access.check_read(env.project_id, unidentified)
+    with pytest.raises(ForbiddenError):
+        await env.access.check_metadata(env.project_id, unidentified)
+    with pytest.raises(ForbiddenError):
+        await env.access.check_write(env.project_id, unidentified)
+    with pytest.raises(ForbiddenError):
+        env.access.list_scope(unidentified)
+    with pytest.raises(ForbiddenError):
+        await env.access.on_project_created(await env.new_project("q"), unidentified)
+
+
+async def test_list_summaries_apply_lock_expiry(env: Env):
+    from ansys.saf.glow._server.schemas import ProjectInfo
+
+    await _share(env, "bob")
+    env.advance(IDLE_TIMEOUT + 1)
+    project = ProjectInfo(
+        display_name="p",
+        description="",
+        date_created=env.clock[0],
+        date_modified=env.clock[0],
+        name=f"projects/{env.project_id}",
+    )
+    await env.access.fill_access_summaries([project], ALICE)
+    assert project.access is not None
+    assert project.access.holder_id is None
+    assert project.access.member_ids == ["alice", "bob"]
+    assert (await env.access.get_access(env.project_id, ALICE)).holder_id is None
 
 
 async def test_disabled_feature_checks_are_noops(env: Env):

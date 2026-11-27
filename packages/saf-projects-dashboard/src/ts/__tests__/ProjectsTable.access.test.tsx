@@ -36,6 +36,7 @@ const makeProject = (
                 holder_id: null,
                 my_role: null,
                 pending_request_count: 0,
+                member_ids: [],
                 ...access,
               },
       }),

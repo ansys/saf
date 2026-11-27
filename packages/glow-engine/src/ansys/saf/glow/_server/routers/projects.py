@@ -23,7 +23,6 @@ from fastapi.responses import FileResponse, StreamingResponse
 from pydantic import BaseModel, ValidationError
 from stream_zip import async_stream_zip
 
-from ansys.saf.glow._access.access_crud import NoProjects
 from ansys.saf.glow._access.dependencies import (
     require_project_metadata,
     require_project_owner,
@@ -93,6 +92,7 @@ async def create_project(
 ):
     """Create a project with the given display_name and optional description and return a record
     of the project."""
+    access.require_identified(principal)
     project_info = await crud.create_project(file_manager, solution_service, request)
     await access.on_project_created(project_info.project_id, principal)
     await access.fill_access_summaries([project_info], principal)
@@ -132,6 +132,7 @@ async def import_project(
 ):
     """Import the given project with the specified display_name
     and return a record of the project."""
+    access.require_identified(principal)
 
     project_id = generate_project_id()
     project_files_dir = file_manager.get_project_files_dir(project_id).parent
@@ -200,22 +201,12 @@ async def list_projects(
         except (ValueError, ValidationError) as ex:
             raise UnprocessableEntityError(str(ex)) from None
 
-    scope = access.list_scope(principal)
-    if isinstance(scope, NoProjects):
-        return ListProjectResponse(
-            projects=[],
-            current_page=1,
-            total_pages=1,
-            page_size=list_project_request.page_size,
-            total_projects=0,
-        )
-
     response = await crud.list_projects(
         page_size=list_project_request.page_size,
         page=list_project_request.page,
         order_by=list_project_request.order_by,
         filters=filters,
-        member_id=scope,
+        member_id=access.list_scope(principal),
         orphans_only=list_project_request.orphans_only,
     )
     await access.fill_access_summaries(response.projects, principal)
@@ -345,8 +336,12 @@ async def delete_project(
     product_instances_created_by_this_process: ProductInstancesTrackerDep,
     hps_authenticator: HpsAuthenticatorDep,
     settings: SettingsDep,
+    principal: PrincipalDep,
+    access: AccessCrudDep,
 ):
     """Delete the project from the database and delete its project directory."""
+    # Audit before removal: audit rows have no foreign key, but the actor and project id must still be known.
+    await access.record_deletion(project_id, principal)
     return await crud.remove_project(
         file_manager,
         project_id,

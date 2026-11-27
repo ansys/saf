@@ -42,6 +42,7 @@ const viewerProject: Project = {
     holder_id: null,
     my_role: "viewer",
     pending_request_count: 0,
+    member_ids: [OTHER, ME],
   },
 };
 

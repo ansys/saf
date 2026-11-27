@@ -174,13 +174,14 @@ class RelationalAccessMixin:
             return {}
         owners: dict[str, str] = {}
         my_roles: dict[str, ProjectRole] = {}
+        member_ids: dict[str, list[str]] = {project_id: [] for project_id in project_ids}
         members_result = await self._session.execute(
             select(ProjectMember.project_id, ProjectMember.user_id, ProjectMember.role)
             .where(ProjectMember.project_id.in_(project_ids))
-            .where((ProjectMember.role == ProjectRole.owner) | (ProjectMember.user_id == user_id))
             .order_by(ProjectMember.id),
         )
         for project_id, member_id, role in members_result.all():
+            member_ids[project_id].append(member_id)
             if role == ProjectRole.owner:
                 owners.setdefault(project_id, member_id)
             if user_id is not None and member_id == user_id:
@@ -207,6 +208,7 @@ class RelationalAccessMixin:
                 holder_id=holders.get(project_id),
                 my_role=my_roles.get(project_id),
                 pending_request_count=pending.get(project_id, 0),
+                member_ids=member_ids[project_id],
             )
             for project_id in project_ids
         }

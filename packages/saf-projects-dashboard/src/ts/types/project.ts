@@ -36,6 +36,8 @@ export interface ProjectAccessSummary {
   holder_id: string | null;
   my_role: ProjectRole | null;
   pending_request_count: number;
+  /** User ids of every member of the project (owner and viewers). */
+  member_ids: string[];
 }
 
 /** Who the calling user is, as far as project access control is concerned. */

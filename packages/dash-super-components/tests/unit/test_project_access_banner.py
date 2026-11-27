@@ -213,6 +213,7 @@ def test_unknown_user_label():
 
 def test_layout_contains_listener_and_containers(monkeypatch: pytest.MonkeyPatch):
     monkeypatch.setenv("GLOW_WS_EVENTS_ADDR", "localhost:1234")
+    monkeypatch.setenv("GLOW_PROJECT_ACCESS_CONTROL_ENABLED", "true")
 
     banner = ProjectAccessBanner("p1", aio_id=AID)
 
@@ -221,6 +222,17 @@ def test_layout_contains_listener_and_containers(monkeypatch: pytest.MonkeyPatch
     assert ProjectAccessBanner.ids.content(AID) in ids
     assert ProjectAccessBanner.ids.error(AID) in ids
     assert banner.aio_id == AID
+
+
+def test_layout_omits_listener_when_access_control_disabled(monkeypatch: pytest.MonkeyPatch):
+    monkeypatch.setenv("GLOW_WS_EVENTS_ADDR", "localhost:1234")
+    monkeypatch.delenv("GLOW_PROJECT_ACCESS_CONTROL_ENABLED", raising=False)
+
+    banner = ProjectAccessBanner("p1", aio_id=AID)
+
+    ids = [node.id for node in _walk(banner) if isinstance(node, Component) and getattr(node, "id", None)]
+    assert ProjectAccessBanner.ids.listener(AID) not in ids
+    assert ProjectAccessBanner.ids.content(AID) in ids
 
 
 def _click(action: str, request_id: str = "") -> mock.MagicMock:

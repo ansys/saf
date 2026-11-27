@@ -64,7 +64,7 @@ Ownership transfer
 - An owner can transfer ownership only to an existing member. A super admin can assign any user id, and that user becomes a member.
 - The previous owner stays on the project as a viewer. The new owner can remove them.
 - The lock and the pending write requests are unchanged. The right to approve requests follows the role, so it moves to the new owner.
-- Ownership transfers and super admin assignments are recorded in the audit log.
+- Ownership transfers, super admin assignments, and project deletions by a super admin are recorded in the audit log.
 
 Existing projects
 -----------------
@@ -237,7 +237,7 @@ The access API is available at the following routes of the API server. Each one 
 
 A WebSocket at ``/events/projects/{project_id}/access`` sends the access state when a client connects and each time it changes. Only members can connect.
 
-Projects returned by the API have an ``access`` field with a summary (owner id, holder id, role of the user, and number of pending requests). It is ``null`` when the feature is disabled.
+Projects returned by the API have an ``access`` field with a summary (owner id, holder id, member ids, role of the user, and number of pending requests). Idle locks are expired when the list is built, so the holder id is ``null`` when the idle timeout has elapsed. The field is ``null`` when the feature is disabled.
 
 
 Using project access control in a solution

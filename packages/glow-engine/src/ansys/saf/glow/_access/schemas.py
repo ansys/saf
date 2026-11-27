@@ -99,6 +99,7 @@ class ProjectAccessSummary(BaseModel):
     holder_id: str | None = None
     my_role: ProjectRole | None = None
     pending_request_count: int = 0
+    member_ids: list[str] = Field(default_factory=list)
 
 
 class AuditEntryInfo(BaseModel):

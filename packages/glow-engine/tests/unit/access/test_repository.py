@@ -207,11 +207,14 @@ async def test_access_summaries(
     assert summaries[p1].holder_id == "u1"
     assert summaries[p1].my_role == ProjectRole.viewer
     assert summaries[p1].pending_request_count == 1
+    assert summaries[p1].member_ids == ["u1", "u2"]
     assert summaries[p2].owner_id is None
     assert summaries[p2].holder_id is None
     assert summaries[p2].my_role is None
     assert summaries[p2].pending_request_count == 0
+    assert summaries[p2].member_ids == []
     assert anonymous[p1].my_role is None
+    assert anonymous[p1].member_ids == ["u1", "u2"]
 
 
 async def test_audit_entries(solution_service: SolutionService, session_factory: AbstractRepositorySessionFactory):

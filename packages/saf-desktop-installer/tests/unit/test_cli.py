@@ -17,6 +17,7 @@
 import os
 from pathlib import Path
 import subprocess
+import warnings
 
 import pytest
 import pytest_mock
@@ -39,7 +40,6 @@ def mock_installer_calls(mocker: pytest_mock.MockerFixture) -> None:
 def test_uv_packaging_skips_poetry_preparation(
     tmp_path: Path,
     mocker: pytest_mock.MockerFixture,
-    caplog: pytest.LogCaptureFixture,
     offline_package: bool,
 ) -> None:
     """UV builds do not warn about or prepare Poetry, online or offline."""
@@ -47,11 +47,13 @@ def test_uv_packaging_skips_poetry_preparation(
     check_plugin = mocker.patch("ansys.saf.desktop.installer.__main__.check_poetry_plugin_export_is_required")
     poetry_python = mocker.patch("ansys.saf.desktop.installer.__main__._get_poetry_venv_python_exec")
 
-    package_solution(SolutionInfo(tmp_path), InstallerConfig(offline_package=offline_package, no_executable=True))
+    with warnings.catch_warnings(record=True) as caught:
+        warnings.simplefilter("always")
+        package_solution(SolutionInfo(tmp_path), InstallerConfig(offline_package=offline_package, no_executable=True))
 
     check_plugin.assert_not_called()
     poetry_python.assert_not_called()
-    assert "Poetry-based solutions are deprecated" not in caplog.text
+    assert not [warning for warning in caught if "Poetry-based solutions are deprecated" in str(warning.message)]
 
 
 @pytest.mark.usefixtures("mock_installer_calls")
@@ -60,7 +62,6 @@ def test_uv_packaging_skips_poetry_preparation(
 def test_poetry_packaging_warns_and_checks_plugin_only_offline(
     solution_root_dir: Path,
     mocker: pytest_mock.MockerFixture,
-    caplog: pytest.LogCaptureFixture,
     offline_package: bool,
 ) -> None:
     """Poetry builds warn about deprecation and check the export plugin only offline."""
@@ -70,13 +71,15 @@ def test_poetry_packaging_warns_and_checks_plugin_only_offline(
     )
     install_plugin = mocker.patch("ansys.saf.desktop.installer.__main__.subprocess.check_output")
 
-    package_solution(
-        SolutionInfo(solution_root_dir),
-        InstallerConfig(offline_package=offline_package, no_executable=True),
-    )
+    with pytest.warns(
+        DeprecationWarning, match=r"Poetry-based solutions are deprecated\. Support will end on May 31st, 2027\."
+    ) as caught:
+        package_solution(
+            SolutionInfo(solution_root_dir),
+            InstallerConfig(offline_package=offline_package, no_executable=True),
+        )
 
-    assert "Poetry-based solutions are deprecated. Support will end on May 31st." in caplog.text
-    assert "https://saf.ansys.com/version/stable/user_guide/migration/poetry-to-uv.html" in caplog.text
+    assert "https://saf.ansys.com/version/stable/user_guide/migration/poetry-to-uv.html" in str(caught[0].message)
     if offline_package:
         check_plugin.assert_called_once_with(True)
     else:

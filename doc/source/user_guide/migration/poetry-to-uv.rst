@@ -326,11 +326,9 @@ Additional dependency and metadata cases
 Local path dependency
 ~~~~~~~~~~~~~~~~~~~~~
 
-Declare a local package as a dependency, then map its name to a path in
-``[tool.uv.sources]``. Paths are relative to the directory containing
-``pyproject.toml``. Use ``develop = true`` in Poetry and ``editable = true`` in
-UV when the package should be installed in editable mode; omit those options
-for a regular local install.
+Declare a local package as a dependency, then map its name to the path of its
+wheel file in ``[tool.uv.sources]``. Paths are relative to the directory
+containing ``pyproject.toml``.
 
 .. grid:: 2
    :gutter: 3
@@ -340,7 +338,7 @@ for a regular local install.
       .. code-block:: toml
 
          [tool.poetry.dependencies]
-         my-local-package = { path = "../my-local-package", develop = true }
+         my-local-package = { path = "build_assets/my_local_package-1.0.0-py3-none-any.whl" }
 
    .. grid-item-card:: UV
 
@@ -352,7 +350,7 @@ for a regular local install.
          ]
 
          [tool.uv.sources]
-         my-local-package = { path = "../my-local-package", editable = true }
+         my-local-package = { path = "build_assets/my_local_package-1.0.0-py3-none-any.whl" }
 
 Private index and package routing
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -518,8 +516,8 @@ Before editing the project, inventory:
   SAF installs by default and which are selected explicitly.
 * Python version constraints, extras, platform markers, and environment-specific
   dependencies.
-* Package sources, private indexes, Git dependencies and revisions, local
-  paths, and editable dependencies.
+* Package sources, private indexes, Git dependencies and revisions, and local
+  wheel paths.
 * Build configuration, package discovery and data files, and commands in CI,
   scripts, containers, and developer documentation.
 
@@ -828,7 +826,7 @@ marker.
    * - ``source``, ``git``, or ``path``
      - Configure the package in ``[tool.uv.sources]`` and, when needed,
        ``[[tool.uv.index]]``
-     - Preserve the selected source, Git revision, and editable/path behavior
+     - Preserve the selected source, Git revision, and local path
    * - ``allow-prereleases``
      - No per-dependency equivalent in a PEP 508 requirement
      - UV's ``tool.uv.prerelease`` setting applies to the project; see below

@@ -25,7 +25,6 @@ import shutil
 import subprocess
 import sys
 import traceback
-import warnings
 import webbrowser
 
 import click
@@ -57,6 +56,7 @@ from ansys.saf.cli._solutions.add_step import (
     check_template_cli_compatibility,
     step_name_exists,
 )
+from ansys.saf.cli._solutions.backend_detection import enable_backend_deprecation_warnings
 from ansys.saf.cli._solutions.environment import InstallError, setup_environment
 from ansys.saf.cli._solutions.plugins import list_available_templates, resolve_template
 from ansys.saf.cli._solutions.scaffolding import create_solution
@@ -189,11 +189,7 @@ def _generic_exception_handler(e: Exception):
 @click.pass_context
 def saf(ctx: click.Context, version: bool):
     """Utility script for solutions."""
-    warnings.filterwarnings(
-        "default",
-        message=r"^(?:\x1b\[[0-9;]*m)?Poetry-based solutions are deprecated\.",
-        category=DeprecationWarning,
-    )
+    enable_backend_deprecation_warnings()
     try:
         if version:
             click.secho(importlib.metadata.version("ansys-saf-cli"), fg="cyan")

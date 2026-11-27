@@ -167,19 +167,16 @@ if the lock file no longer matches ``pyproject.toml``.
 
 .. attention::
 
-    **Poetry private sources:** If your application's ``pyproject.toml`` file declares a private Poetry source, you are prompted to provide credentials during installation.
+    **Private sources:** If your application's ``pyproject.toml`` file declares a private Poetry source or UV index, you are prompted to provide credentials during installation.
 
     The system validates your credentials and securely stores them as user-level environment variables for future use. If invalid credentials are provided, you are prompted to re-enter them. You can cancel the credential prompt at any time by pressing :kbd:`Ctrl+C`.
-
-    For **UV-based solutions**, set the index credentials before installation; SAF does not prompt for them.
 
     For more detailed information, see :ref:`user_guide_install_manage_private_sources`.
 
 UV private indexes
 ~~~~~~~~~~~~~~~~~~
 
-UV solutions use UV's native index and authentication configuration, not Poetry's
-credential prompts or ``POETRY_HTTP_BASIC_*`` variables. For example:
+UV solutions declare private indexes with UV's native index configuration. For example:
 
 .. code-block:: toml
 
@@ -188,11 +185,15 @@ credential prompts or ``POETRY_HTTP_BASIC_*`` variables. For example:
     url = "https://packages.example.com/simple"
     authenticate = "always"
 
-Provide ``UV_INDEX_PRIVATE_USERNAME`` and ``UV_INDEX_PRIVATE_PASSWORD`` through the
-environment or the solution's ``.env`` file (or the file selected with ``--env-file``).
-Do not commit credentials. UV also supports its native credential store, netrc,
-and configured keyring authentication. SAF passes this configuration to UV rather
-than translating Poetry credentials.
+SAF reads ``UV_INDEX_PRIVATE_USERNAME`` and ``UV_INDEX_PRIVATE_PASSWORD`` from the
+environment or the solution's ``.env`` file (or the file selected with ``--env-file``),
+falls back to netrc, and prompts for them when they are missing or invalid.
+``POETRY_HTTP_BASIC_*`` variables are not used for UV indexes.
+Do not commit credentials.
+
+UV has no per-index certificate setting. If a certificate is required to reach the
+index, SAF prompts for it and stores it in ``SSL_CERT_FILE``, which UV uses for every
+index.
 
 See the `UV authentication documentation <https://docs.astral.sh/uv/concepts/authentication/>`_
 for the supported mechanisms and their precedence.

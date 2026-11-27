@@ -20,6 +20,7 @@ from pathlib import Path
 import platform
 import subprocess
 import sys
+import warnings
 
 import click
 from dotenv import dotenv_values
@@ -41,6 +42,41 @@ from ansys.saf.desktop.installer._package.solution_package import (
 )
 
 logger = logging.getLogger(__name__)
+
+POETRY_DEPRECATION_MESSAGE = (
+    "Poetry-based solutions are deprecated. Support will end on May 31st, 2027.\n"
+    "Please migrate your solution to UV following the migration guide: "
+    "https://saf.ansys.com/version/stable/user_guide/migration/poetry-to-uv.html.\n"
+    "Packaging will continue using Poetry for now."
+)
+
+
+class SolutionBackendDeprecationWarning(DeprecationWarning):
+    """Deprecation of a solution's dependency backend, displayed without Python's ``file:line:`` prefix."""
+
+
+_default_formatwarning = warnings.formatwarning
+
+
+def _format_backend_deprecation_warning(
+    message: Warning | str,
+    category: type[Warning],
+    filename: str,
+    lineno: int,
+    line: str | None = None,
+) -> str:
+    if not issubclass(category, SolutionBackendDeprecationWarning):
+        return _default_formatwarning(message, category, filename, lineno, line)
+    text = f"DeprecationWarning: {message}"
+    # Color only interactive terminals so CI logs and redirected output stay plain.
+    if sys.stderr is not None and sys.stderr.isatty() and not os.getenv("NO_COLOR"):
+        text = click.style(text, fg="yellow")
+    return f"{text}\n"
+
+
+def _enable_backend_deprecation_warnings() -> None:
+    warnings.formatwarning = _format_backend_deprecation_warning
+    warnings.filterwarnings("default", category=SolutionBackendDeprecationWarning)
 
 
 def _load_filtered_dotenv(dotenv_file: Path, env: dict[str, str] | None = None) -> None:
@@ -76,16 +112,7 @@ def _get_poetry_venv_python_exec() -> Path:
 
 
 def _prepare_poetry_backend(offline_package: bool) -> None:
-    message = (
-        "Poetry-based solutions are deprecated. Support will end on May 31st.\n"
-        "Please migrate your solution to UV following the migration guide: "
-        "https://saf.ansys.com/version/stable/user_guide/migration/poetry-to-uv.html.\n"
-        "Packaging will continue using Poetry for now."
-    )
-    # Color only interactive terminals so CI logs and redirected output stay plain.
-    if sys.stderr.isatty() and not os.getenv("NO_COLOR"):
-        message = click.style(message, fg="yellow")
-    logger.warning(message)
+    warnings.warn(POETRY_DEPRECATION_MESSAGE, SolutionBackendDeprecationWarning, stacklevel=2)
     if not offline_package or not check_poetry_plugin_export_is_required(offline_package):
         return
 
@@ -128,6 +155,8 @@ def package_solution(solution_info: SolutionInfo, installer_config: InstallerCon
 
 if __name__ == "__main__":
     import argparse
+
+    _enable_backend_deprecation_warnings()
 
     parser = argparse.ArgumentParser(description="CLI for packaging a solution into a standalone desktop installer.")
     parser.add_argument(

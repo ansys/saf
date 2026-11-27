@@ -20,6 +20,7 @@ import platform
 import subprocess
 import sys
 from unittest import mock
+import warnings
 
 import click
 import pytest
@@ -30,7 +31,7 @@ from ansys.saf.cli._solutions import environment
 from ansys.saf.cli._solutions.backend_detection import SolutionBackend
 from ansys.saf.cli._solutions.environment import (
     InstallError,
-    _check_poetry_private_sources,  # pyright: ignore[reportPrivateUsage]
+    _check_private_sources,  # pyright: ignore[reportPrivateUsage]
     _run_poetry_install,  # pyright: ignore[reportPrivateUsage]
     setup_environment,
 )
@@ -372,7 +373,7 @@ def test_setup_environment_default_params(
     working_dir = Path.cwd()
     with pytest.warns(
         DeprecationWarning,
-        match=r"^Poetry-based solutions are deprecated\. Support will end on May 31st\.\n"
+        match=r"^Poetry-based solutions are deprecated\. Support will end on May 31st, 2027\.\n"
         r"Please migrate your solution to UV following the migration guide: "
         r"https://saf\.ansys\.com/version/stable/user_guide/migration/poetry-to-uv\.html\.$",
     ):
@@ -858,7 +859,7 @@ def test_check_poetry_private_sources_missing_credentials(
     mock_set_env = mocker.patch("ansys.saf.cli._solutions.environment.set_user_level_environment_variable")
 
     with pytest.raises(SystemExit, match="0"):
-        _check_poetry_private_sources(configuration)
+        _check_private_sources(configuration, SolutionBackend.POETRY)
 
     mock_set_env.assert_any_call("POETRY_HTTP_BASIC_MY_PRIVATE_PYPI_USERNAME", "test-user")
     mock_set_env.assert_any_call("POETRY_HTTP_BASIC_MY_PRIVATE_PYPI_PASSWORD", "test-token")
@@ -914,7 +915,7 @@ def test_check_poetry_private_sources_updates_invalid_credentials_with_valid_inp
     mock_set_env = mocker.patch("ansys.saf.cli._solutions.environment.set_user_level_environment_variable")
 
     with pytest.raises(SystemExit, match="0"):
-        _check_poetry_private_sources(configuration)
+        _check_private_sources(configuration, SolutionBackend.POETRY)
 
     assert mock_validate.call_count == 2
 
@@ -974,7 +975,7 @@ def test_check_poetry_private_sources_valid_existing_credentials(
     mock_set_env = mocker.patch("ansys.saf.cli._solutions.environment.set_user_level_environment_variable")
 
     # Call the function directly
-    _check_poetry_private_sources(configuration)
+    _check_private_sources(configuration, SolutionBackend.POETRY)
 
     # Verify that prompt was not called (credentials already exist and are valid)
     mock_prompt.assert_not_called()
@@ -1057,7 +1058,7 @@ def test_check_poetry_private_sources_user_cancellation(
         InstallError,
         match="Setup cancelled\\. Install will fail without valid credentials for my\\-private\\-pypi",
     ):
-        _check_poetry_private_sources(configuration)
+        _check_private_sources(configuration, SolutionBackend.POETRY)
 
     assert mock_validate.call_count == 2, "Should have validated credentials twice before cancellation"
 
@@ -1127,7 +1128,7 @@ def test_check_poetry_private_sources_loop_exit_paths(
     mock_set_env = mocker.patch("ansys.saf.cli._solutions.environment.set_user_level_environment_variable")
 
     # Should exit immediately without prompting
-    _check_poetry_private_sources(configuration)
+    _check_private_sources(configuration, SolutionBackend.POETRY)
 
     assert mock_validate.call_count == 1
     assert mock_prompt.call_count == 0  # No prompting needed
@@ -1149,7 +1150,7 @@ def test_check_poetry_private_sources_loop_exit_paths(
     mock_prompt.side_effect = ["user1", "token1", "user2", "token2"]
 
     with pytest.raises(SystemExit, match="0"):
-        _check_poetry_private_sources(configuration)
+        _check_private_sources(configuration, SolutionBackend.POETRY)
 
     assert mock_validate.call_count == 2  # Two validation attempts
     assert mock_prompt.call_count == 4  # Two sets of username/password prompts
@@ -1173,7 +1174,7 @@ def test_check_poetry_private_sources_loop_exit_paths(
     mock_prompt.side_effect = [click.Abort()]  # User cancels immediately
 
     with pytest.raises((SystemExit, InstallError)):
-        _check_poetry_private_sources(configuration)
+        _check_private_sources(configuration, SolutionBackend.POETRY)
 
     assert mock_validate.call_count == 0  # No validation (user canceled before providing credentials)
     assert mock_set_env.call_count == 0  # No env setting (user canceled)
@@ -1189,7 +1190,7 @@ def test_check_poetry_private_sources_loop_exit_paths(
     mock_prompt.side_effect = ["invalid-user", "invalid-token", click.Abort()]  # Provide invalid creds, then cancel
 
     with pytest.raises((SystemExit, InstallError)):
-        _check_poetry_private_sources(configuration)
+        _check_private_sources(configuration, SolutionBackend.POETRY)
 
     assert mock_validate.call_count == 1  # One validation attempt
     assert mock_prompt.call_count == 3  # Username, password, then cancellation
@@ -1244,7 +1245,7 @@ def test_uv_install_groups(
 ):
     run = mocker.patch("ansys.saf.cli._solutions.environment.subprocess.run")
     poetry_setup = mocker.patch.object(environment, "_install_poetry")
-    poetry_auth = mocker.patch.object(environment, "_check_poetry_private_sources")
+    private_sources = mocker.patch.object(environment, "_check_private_sources")
     environment.setup_environment(uv_solution, "solution.main", requested)
 
     run.assert_called_once()
@@ -1262,9 +1263,9 @@ def test_uv_install_groups(
     child_environment = run.call_args.kwargs["env"]
     assert "VIRTUAL_ENV" not in child_environment
     assert child_environment["UV_PROJECT_ENVIRONMENT"] == str(uv_solution / ".venv")
-    # UV solutions must bypass Poetry setup and credential handling.
+    # UV solutions bypass Poetry setup and check their private sources as UV indexes.
     poetry_setup.assert_not_called()
-    poetry_auth.assert_not_called()
+    private_sources.assert_called_once_with(mock.ANY, SolutionBackend.UV)
 
 
 @pytest.mark.parametrize(
@@ -1280,32 +1281,22 @@ def test_uv_install_groups(
         ),
         (
             {
-                "UV_INDEX_MY_PRIVATE_PYPI_USERNAME": "uv-user",
-                "UV_INDEX_MY_PRIVATE_PYPI_PASSWORD": "uv-token",
-                "POETRY_HTTP_BASIC_MY_PRIVATE_PYPI_USERNAME": "legacy-user",
-                "POETRY_HTTP_BASIC_MY_PRIVATE_PYPI_PASSWORD": "legacy-token",
+                "POETRY_HTTP_BASIC_MY_PRIVATE_PYPI_USERNAME": "poetry-user",
+                "POETRY_HTTP_BASIC_MY_PRIVATE_PYPI_PASSWORD": "poetry-token",
             },
-            "uv-user",
-            "uv-token",
-        ),
-        (
-            {
-                "POETRY_HTTP_BASIC_MY_PRIVATE_PYPI_USERNAME": "legacy-user",
-                "POETRY_HTTP_BASIC_MY_PRIVATE_PYPI_PASSWORD": "legacy-token",
-            },
-            "legacy-user",
-            "legacy-token",
+            None,
+            None,
         ),
     ],
-    ids=["uv-credentials", "uv-credentials-preferred", "legacy-poetry-fallback"],
+    ids=["uv-credentials", "poetry-credentials-ignored"],
 )
 def test_uv_install_forwards_named_index_credentials(
     uv_solution: Path,
     mocker: pytest_mock.MockFixture,
     monkeypatch: pytest.MonkeyPatch,
     credentials: dict[str, str],
-    expected_username: str,
-    expected_password: str,
+    expected_username: str | None,
+    expected_password: str | None,
 ) -> None:
     (uv_solution / "pyproject.toml").write_text(
         UV_PROJECT_EXAMPLE
@@ -1327,12 +1318,13 @@ explicit = true
     for name, value in credentials.items():
         monkeypatch.setenv(name, value)
     run = mocker.patch.object(environment.subprocess, "run")
+    mocker.patch.object(environment, "_check_private_sources")
 
     environment.setup_environment(uv_solution, "solution.main")
 
     child_environment = run.call_args.kwargs["env"]
-    assert child_environment["UV_INDEX_MY_PRIVATE_PYPI_USERNAME"] == expected_username
-    assert child_environment["UV_INDEX_MY_PRIVATE_PYPI_PASSWORD"] == expected_password
+    assert child_environment.get("UV_INDEX_MY_PRIVATE_PYPI_USERNAME") == expected_username
+    assert child_environment.get("UV_INDEX_MY_PRIVATE_PYPI_PASSWORD") == expected_password
 
 
 def test_uv_no_optional_groups(uv_solution: Path, mocker: pytest_mock.MockFixture):
@@ -1353,7 +1345,7 @@ def test_poetry_pep621_does_not_supply_default_version(
         '[build-system]\nrequires = ["poetry-core>=2"]\nbuild-backend = "poetry.core.masonry.api"\n'
     )
     (tmp_path / "pyproject.toml").write_text(content)
-    mocker.patch.object(environment, "_check_poetry_private_sources")
+    mocker.patch.object(environment, "_check_private_sources")
     mocker.patch.object(environment, "_check_poetry_python_version")
     clear = mocker.patch.object(environment, "_clear_workspace")
     install = mocker.patch.object(environment, "_install_poetry")
@@ -1450,3 +1442,75 @@ def test_uv_workspace_clear_preserves_only_the_requested_artifacts(
     assert lock.exists() is (preexisting_lock and clear == "soft")
     if lock.exists():
         assert lock.read_text() == "original lock"
+
+
+UV_PRIVATE_INDEX = {"name": "my-private-pypi", "url": "https://url-for-my-private-pypi"}
+
+
+@pytest.mark.parametrize(
+    ("existing", "expected_validation"),
+    [
+        (
+            {"POETRY_HTTP_BASIC_MY_PRIVATE_PYPI_USERNAME": "old", "POETRY_HTTP_BASIC_MY_PRIVATE_PYPI_PASSWORD": "pw"},
+            None,
+        ),
+        ({"UV_INDEX_MY_PRIVATE_PYPI_USERNAME": "uv-user", "UV_INDEX_MY_PRIVATE_PYPI_PASSWORD": "pw"}, "uv-user"),
+    ],
+    ids=["ignores-poetry-variables-and-prompts", "accepts-uv-variables"],
+)
+def test_check_private_sources_uses_uv_variables_for_uv(
+    mocker: pytest_mock.MockFixture,
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+    existing: dict[str, str],
+    expected_validation: str | None,
+) -> None:
+    """UV indexes get the same checks as Poetry sources, with UV's variable names and SSL_CERT_FILE only."""
+    for name in (
+        "SSL_CERT_FILE",
+        "UV_INDEX_MY_PRIVATE_PYPI_USERNAME",
+        "UV_INDEX_MY_PRIVATE_PYPI_PASSWORD",
+        "POETRY_HTTP_BASIC_MY_PRIVATE_PYPI_USERNAME",
+        "POETRY_HTTP_BASIC_MY_PRIVATE_PYPI_PASSWORD",
+    ):
+        monkeypatch.delenv(name, raising=False)
+    monkeypatch.setenv("NETRC", str(tmp_path / "missing-netrc"))
+    for name, value in existing.items():
+        monkeypatch.setenv(name, value)
+    certificate = mocker.patch.object(environment, "_prompt_validate_and_set_certificates", return_value=False)
+    validate = mocker.patch.object(environment, "validate_credentials", return_value=True)
+    mocker.patch("click.prompt", side_effect=["new-user", "new-token"])
+    set_env = mocker.patch.object(environment, "set_user_level_environment_variable")
+
+    configuration = {"tool": {"uv": {"index": [dict(UV_PRIVATE_INDEX)]}}}
+    check = environment._check_private_sources  # pyright: ignore[reportPrivateUsage]
+    if expected_validation is None:
+        with pytest.raises(SystemExit, match="0"):
+            check(configuration, SolutionBackend.UV)
+        set_env.assert_any_call("UV_INDEX_MY_PRIVATE_PYPI_USERNAME", "new-user")
+        set_env.assert_any_call("UV_INDEX_MY_PRIVATE_PYPI_PASSWORD", "new-token")
+    else:
+        check(configuration, SolutionBackend.UV)
+        assert validate.call_args.args[1] == expected_validation
+        set_env.assert_not_called()
+
+    certificate.assert_called_once_with(UV_PRIVATE_INDEX, "SSL_CERT_FILE")
+
+
+def test_poetry_deprecation_warning_has_no_location_prefix(monkeypatch: pytest.MonkeyPatch) -> None:
+    from ansys.saf.cli._solutions import backend_detection
+
+    monkeypatch.setattr(warnings, "formatwarning", warnings.formatwarning)
+    backend_detection.enable_backend_deprecation_warnings()
+
+    with pytest.warns(DeprecationWarning, match=r"^Poetry-based solutions are deprecated\.") as caught:
+        warnings.warn(
+            backend_detection.POETRY_DEPRECATION_MESSAGE,
+            backend_detection.SolutionBackendDeprecationWarning,
+            stacklevel=1,
+        )
+
+    record = caught[0]
+    formatted = warnings.formatwarning(record.message, record.category, record.filename, record.lineno)
+    assert formatted.startswith("DeprecationWarning: Poetry-based solutions are deprecated.")
+    assert warnings.formatwarning("other", UserWarning, "f.py", 3).startswith("f.py:3: UserWarning: other")

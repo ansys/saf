@@ -23,8 +23,7 @@ from fastapi import FastAPI, HTTPException
 import psutil
 
 DEFAULT_PROPERTY_VALUE = "blue"
-# Safe root directory for file operations in tests
-SAFE_ROOT = Path(tempfile.gettempdir()).resolve()
+SAFE_ROOT = Path(os.environ.get("SAF_MOCK_PRODUCT_ALLOWED_ROOT", tempfile.gettempdir())).resolve()
 
 app = FastAPI()
 

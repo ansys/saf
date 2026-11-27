@@ -1,0 +1,80 @@
+<svg viewBox="0 0 760 460" xmlns="http://www.w3.org/2000/svg" role="img" font-family="ui-monospace, 'Cascadia Code', 'Fira Mono', monospace" font-size="13">
+  <title>saf install architecture</title>
+  <desc>Diagram showing two virtual environments created by saf install and the symbolic link between them</desc>
+
+  <defs>
+    <marker id="arr-purple" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#4338ca"/>
+    </marker>
+    <marker id="arr-orange" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#c2410c"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="760" height="460" fill="#f8fafc" rx="12"/>
+
+  <!-- Title -->
+  <text x="380" y="36" text-anchor="middle" fill="#0f172a" font-size="16" font-weight="700" letter-spacing="0.5">saf install — Architecture</text>
+
+  <!-- saf install command box -->
+  <rect x="280" y="58" width="200" height="44" rx="8" fill="#ffffff" stroke="#4338ca" stroke-width="2"/>
+  <text x="380" y="78" text-anchor="middle" fill="#3730a3" font-size="12" font-weight="600">$ saf install</text>
+  <text x="380" y="94" text-anchor="middle" fill="#475569" font-size="10">user runs this once</text>
+
+  <!-- Arrows from saf install down to two venvs -->
+  <line x1="280" y1="102" x2="175" y2="162" stroke="#4338ca" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arr-purple)"/>
+  <line x1="480" y1="102" x2="585" y2="162" stroke="#4338ca" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arr-purple)"/>
+  <text x="195" y="140" text-anchor="middle" fill="#4338ca" font-size="10">creates</text>
+  <text x="565" y="140" text-anchor="middle" fill="#4338ca" font-size="10">creates</text>
+
+  <!-- LEFT BOX: .poetry/.venv -->
+  <rect x="20" y="166" width="300" height="220" rx="10" fill="#ffffff" stroke="#4338ca" stroke-width="1.5"/>
+  <rect x="20" y="166" width="300" height="38" rx="10" fill="#e0e7ff"/>
+  <rect x="20" y="192" width="300" height="12" fill="#e0e7ff"/>
+  <text x="170" y="188" text-anchor="middle" fill="#312e81" font-size="12" font-weight="700">.poetry/.venv</text>
+  <text x="170" y="204" text-anchor="middle" fill="#4338ca" font-size="10">Poetry's own isolated environment</text>
+
+  <rect x="38" y="218" width="264" height="68" rx="6" fill="#f8fafc"/>
+  <text x="170" y="238" text-anchor="middle" fill="#3730a3" font-size="11" font-weight="600">Poetry (dependency manager)</text>
+  <text x="170" y="255" text-anchor="middle" fill="#475569" font-size="10">installed by saf install</text>
+  <text x="170" y="271" text-anchor="middle" fill="#475569" font-size="10">manages pyproject.toml / lock file</text>
+
+  <rect x="38" y="300" width="264" height="34" rx="6" fill="#dbeafe" stroke="#1d4ed8" stroke-width="1"/>
+  <text x="170" y="315" text-anchor="middle" fill="#1e3a8a" font-size="11" font-weight="600">poetry binary</text>
+  <text x="170" y="328" text-anchor="middle" fill="#1e40af" font-size="10">.poetry/.venv/bin/poetry</text>
+
+  <rect x="38" y="348" width="264" height="28" rx="6" fill="#f8fafc" stroke="#4338ca" stroke-width="1" stroke-dasharray="4,2"/>
+  <text x="170" y="366" text-anchor="middle" fill="#4338ca" font-size="10">symlinked → project root for PATH access</text>
+
+  <!-- RIGHT BOX: .venv -->
+  <rect x="440" y="166" width="300" height="220" rx="10" fill="#ffffff" stroke="#047857" stroke-width="1.5"/>
+  <rect x="440" y="166" width="300" height="38" rx="10" fill="#d1fae5"/>
+  <rect x="440" y="192" width="300" height="12" fill="#d1fae5"/>
+  <text x="590" y="188" text-anchor="middle" fill="#064e3b" font-size="12" font-weight="700">.venv</text>
+  <text x="590" y="204" text-anchor="middle" fill="#047857" font-size="10">Solution's virtual environment</text>
+
+  <rect x="458" y="218" width="264" height="68" rx="6" fill="#f8fafc"/>
+  <text x="590" y="238" text-anchor="middle" fill="#065f46" font-size="11" font-weight="600">Solution dependencies</text>
+  <text x="590" y="255" text-anchor="middle" fill="#475569" font-size="10">installed by Poetry</text>
+  <text x="590" y="271" text-anchor="middle" fill="#475569" font-size="10">all packages from pyproject.toml</text>
+
+  <rect x="458" y="300" width="264" height="34" rx="6" fill="#dcfce7" stroke="#15803d" stroke-width="1"/>
+  <text x="590" y="315" text-anchor="middle" fill="#14532d" font-size="11" font-weight="600">python + site-packages</text>
+  <text x="590" y="328" text-anchor="middle" fill="#166534" font-size="10">.venv/bin/python · .venv/lib/…</text>
+
+  <rect x="458" y="348" width="264" height="28" rx="6" fill="#f8fafc" stroke="#047857" stroke-width="1" stroke-dasharray="4,2"/>
+  <text x="590" y="366" text-anchor="middle" fill="#047857" font-size="10">managed by Poetry automatically</text>
+
+  <!-- SYMLINK BRIDGE -->
+  <path d="M 320 295 C 355 270, 405 270, 440 295" stroke="#c2410c" stroke-width="2" fill="none" stroke-dasharray="6,3" marker-end="url(#arr-orange)"/>
+  <path d="M 440 325 C 405 350, 355 350, 320 325" stroke="#c2410c" stroke-width="2" fill="none" stroke-dasharray="6,3" marker-end="url(#arr-orange)"/>
+
+  <rect x="318" y="282" width="124" height="54" rx="8" fill="#ffedd5" stroke="#c2410c" stroke-width="1.5"/>
+  <text x="380" y="301" text-anchor="middle" fill="#7c2d12" font-size="11" font-weight="700">Symbolic Link</text>
+  <text x="380" y="317" text-anchor="middle" fill="#9a3412" font-size="9">Poetry sees .venv as</text>
+  <text x="380" y="330" text-anchor="middle" fill="#9a3412" font-size="9">its managed environment</text>
+
+  <!-- Bottom caption -->
+  <text x="380" y="426" text-anchor="middle" fill="#475569" font-size="10">Poetry controls both environments — .poetry/.venv for itself, .venv for the solution</text>
+</svg>

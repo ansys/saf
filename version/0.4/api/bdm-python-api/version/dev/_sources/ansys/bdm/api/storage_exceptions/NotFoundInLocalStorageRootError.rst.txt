@@ -1,0 +1,49 @@
+
+
+
+
+
+
+:class:`NotFoundInLocalStorageRootError`
+========================================
+
+
+.. py:exception:: ansys.bdm.api.storage_exceptions.NotFoundInLocalStorageRootError
+
+   Bases: :py:obj:`Exception`
+
+
+   
+   Exception raised when attempting to access object that doesn't exist within the local storage root.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.bdm.api.storage_exceptions import NotFoundInLocalStorageRootError
+
+
+
+
+

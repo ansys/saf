@@ -1,0 +1,1617 @@
+<!--
+Copyright (C) 2026 ANSYS, Inc. and/or its affiliates.
+SPDX-License-Identifier: Apache-2.0
+
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+ <!-- ©2026, ANSYS Inc. Unauthorized use, distribution or duplication is prohibited. -->
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../../../" data-theme="dark">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Input Form &#8212; SAF Doc</title>
+  
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "dark";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "dark";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../../_static/styles/theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+<link href="../../../../../_static/styles/pydata-sphinx-theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/ansys-sphinx-theme.css?v=5ffe81b6" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/custom.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery.css?v=fd6457a4" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/ansys-sphinx-theme.css?v=5ffe81b6" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://www.nerdfonts.com/assets/css/webfont.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/code-tabs.css?v=1bc26e2f" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/css/custom.css?v=c999ad29" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/css/carousel.css?v=272b576a" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/css/landing_page_banner.css?v=57c45261" />
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../../../../_static/scripts/fontawesome.js?digest=0790524f97105ba85085"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085" />
+<link rel="preload" as="script" href="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085" />
+
+
+  <!-- Include desired assets -->
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  
+
+  
+    <link href="../../../../../_static/css/breadcrumbs.css" rel="stylesheet" />
+  
+    <script src="../../../../../_static/documentation_options.js?v=8a448e45"></script>
+    <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../../../_static/copybutton.js?v=49e1bf35"></script>
+    <script src="../../../../../_static/sg-tags.js?v=d80f6fa4"></script>
+    <script src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
+    <script src="../../../../../_static/code-tabs.js?v=c983d12e"></script>
+    <script src="../../../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'user_guide/frontend/dash/dash_super_components/dash_super_components_usage/input_form';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.18.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://saf.ansys.com/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.2';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <script src="../../../../../_static/js/sidebar-always-expanded.js?v=6b23dfe7"></script>
+    <script src="../../../../../_static/js/sdI_button_ref_tooltips.js?v=091f9e4c"></script>
+    <script src="../../../../../_static/js/primary-sidebar-sticky-offset.js?v=7ecdf44c"></script>
+    <link rel="icon" href="../../../../../_static/ansys-favicon.png"/>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" />
+    <link rel="next" title="Input Row Array" href="input_row_array.html" />
+    <link rel="prev" title="Folder Selector" href="folder_selector.html" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.2.0" />
+  
+    
+    <script src="../../../../../_static/searchtools.js"></script>
+    <script src="../../../../../_static/language_data.js"></script>
+    <script src="../../../../../searchindex.js"></script>
+  
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+
+  <link rel="canonical" href="https://saf.ansys.com/version/stable/user_guide/frontend/dash/dash_super_components/dash_super_components_usage/input_form.html" />
+  </head>
+  <body data-default-mode="dark">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+  
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+    
+    <img src="../../../../../_static/endorsed-ansys-logos-gold-white-rgb.svg" class="logo__image only-dark" alt="SAF Doc - Home"/>
+    <img src="../../../../../_static/endorsed-ansys-logos-gold-black-rgb.svg" class="logo__image only-light pst-js-only" alt="SAF Doc - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../index.html" title="SAF Doc home">Home</a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../overview/index.html">
+    Overview
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../getting_started/index.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../../../index.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../api/index.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../contribute/index.html">
+    Contribute
+  </a>
+</li>
+
+  </ul>
+</nav>
+</div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+      
+        <div class="navbar-item">
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../../../../../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+  
+</div></div>
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/saf" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+  
+    
+<!--
+  Announcement Version Loader
+  Dynamically loads the announcement.html content into the announcement_msg div.
+-->
+<div id="announcement_msg" aria-live="polite"></div>
+<script>
+  // Fetch and inject the announcement HTML content
+  fetch("announcement.html")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error: ${response.status} Announcement.html file not found, Please ignore this, if you are in dev/stable documentation`);
+      }
+      return response.text();
+    })
+    .then((text) => {
+      var msgDiv = document.getElementById("announcement_msg");
+      if (msgDiv) {
+        msgDiv.innerHTML = text;
+      }
+    })
+    .catch((error) => {
+      // Log only unexpected fetch errors
+      if (!(error.message && error.message.startsWith("HTTP error: 404"))) {
+        console.error(`Fetch problem: ${error.message} Announcement.html could not be loaded.`);
+      }
+    });
+</script>
+  
+
+  <div class="header-nav-banner d-print-none">
+    <div class="header-nav-banner__inner">
+      <div class="header-nav-banner__crumbs">
+        
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+     
+    <li class="breadcrumb-item breadcrumb-home">
+      <a
+        href="../../../../../index.html"
+        class="nav-link"
+        aria-label="Home"
+      >
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="../../../../index.html" class="nav-link">User guide</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="../../../index.html" class="nav-link">Frontend development</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="../../index.html" class="nav-link">Dash frontend</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="../index.html" class="nav-link">Dash Super Components</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="index.html" class="nav-link">Dash Super Components usage</a>
+    </li>
+      
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Input Form</span></li>
+    
+  </ul>
+</nav>
+
+      </div>
+    </div>
+  </div>
+
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../index.html" title="SAF Doc home">Home</a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../overview/index.html">
+    Overview
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../getting_started/index.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../../../index.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../api/index.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../contribute/index.html">
+    Contribute
+  </a>
+</li>
+
+  </ul>
+</nav>
+</div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../../../../../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+  
+</div></div>
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/saf" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item pst-sidebar-collapse"><button id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar"><svg class="pst-icon svg-inline--fa" role="img" aria-hidden="true" focusable="false" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="M3 15.5C2.36232 15.5 1.74874 15.2564 1.28478 14.8189C0.820828 14.3815 0.541576 13.7832 0.504167 13.1467L0.5 13L0.5 3C0.499965 2.36232 0.743605 1.74874 1.18107 1.28478C1.61854 0.820828 2.21676 0.541576 2.85333 0.504167L3 0.5L13 0.5C13.6377 0.499965 14.2513 0.743605 14.7152 1.18107C15.1792 1.61854 15.4584 2.21676 15.4958 2.85333L15.5 3L15.5 13C15.5 13.6377 15.2564 14.2513 14.8189 14.7152C14.3815 15.1792 13.7832 15.4584 13.1467 15.4958L13 15.5L3 15.5ZM3 13.8333L10.5 13.8333L10.5 2.16667L3 2.16667C2.79589 2.16669 2.59889 2.24163 2.44636 2.37726C2.29383 2.5129 2.19638 2.69979 2.1725 2.9025L2.16667 3L2.16667 13C2.16669 13.2041 2.24163 13.4011 2.37726 13.5536C2.5129 13.7062 2.69979 13.8036 2.9025 13.8275L3 13.8333ZM6.65583 10.325L6.5775 10.2558L4.91083 8.58917C4.76735 8.44567 4.68116 8.25476 4.66843 8.05223C4.65569 7.84971 4.71729 7.6495 4.84167 7.48917L4.91083 7.41083L6.5775 5.74417C6.72747 5.59471 6.9287 5.50794 7.14032 5.50148C7.35194 5.49502 7.55809 5.56935 7.7169 5.70937C7.8757 5.8494 7.97525 6.04463 7.99533 6.25539C8.01541 6.46616 7.95451 6.67667 7.825 6.84417L7.75583 6.9225L6.67917 8L7.75583 9.0775C7.89931 9.22099 7.98551 9.41191 7.99824 9.61443C8.01097 9.81695 7.94938 10.0172 7.825 10.1775L7.75583 10.2558C7.61234 10.3993 7.42142 10.4855 7.2189 10.4982C7.01638 10.511 6.81617 10.4494 6.65583 10.325Z"/>
+  </svg>
+  <span class="pst-collapse-sidebar-label">Collapse Sidebar</span>
+  <span class="pst-expand-sidebar-label">Expand Sidebar</span>
+</button></div>
+        <div class="sidebar-primary-item">
+
+
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../../scaffold.html">Scaffold</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../run_locally/index.html">Run locally</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../projects.html">Manage projects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../debug/index.html">Debug</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../test/index.html">Test</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../add_step.html">Add steps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../package/index.html">Package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../deploy/index.html">Deploy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../backend/index.html">Backend development</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../../../index.html">Frontend development</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="../../index.html">Dash frontend</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../getting_started_with_dash.html">Get started with Plotly Dash</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dash_libraries.html">Dash libraries</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dash_templates.html">Dash templates</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../client_side.html">Client-side interaction</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dash_migration.html">Migrate the solution UI to a multi-page Dash application</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../customize_ui.html">Customize the solution UI</a></li>
+<li class="toctree-l3 current active has-children"><a class="reference internal" href="../index.html">Dash Super Components</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../dash_super_components_overview.html">Overview</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../dash_super_components_getting_started.html">Getting started</a></li>
+<li class="toctree-l4 current active"><a class="reference internal" href="index.html">Dash Super Components usage</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../environment_variables.html">Environment variables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../solution_servers.html">Solution servers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../script.html">Script a solution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supported_software.html">Supported software</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../components.html">SAF components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../best_practices/index.html">Best practices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../migration/index.html">Migration guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../troubleshooting/index.html">Troubleshooting guide</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+     
+    <li class="breadcrumb-item breadcrumb-home">
+      <a
+        href="../../../../../index.html"
+        class="nav-link"
+        aria-label="Home"
+      >
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="../../../../index.html" class="nav-link">User guide</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="../../../index.html" class="nav-link">Frontend development</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="../../index.html" class="nav-link">Dash frontend</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="../index.html" class="nav-link">Dash Super Components</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="index.html" class="nav-link">Dash Super Components usage</a>
+    </li>
+      
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Input Form</span></li>
+    
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="input-form">
+<span id="user-guide-frontend-dash-super-components-usage-input-form"></span><h1>Input Form<a class="headerlink" href="#input-form" title="Link to this heading">#</a></h1>
+<p><code class="docutils literal notranslate"><span class="pre">InputForm</span></code> is a Dash All-in-One (AIO) component that helps developers quickly design input
+forms for capturing user selections. An input form is composed of one or several rows, where each
+row corresponds to a parameter. Each row can contain one or multiple input fields (for example,
+to capture a set of related values for a single parameter).</p>
+<p>Key features:</p>
+<ul>
+<li><p><strong>Multiple input types</strong>: Supports <code class="docutils literal notranslate"><span class="pre">NumberInput</span></code>, <code class="docutils literal notranslate"><span class="pre">TextInput</span></code>, <code class="docutils literal notranslate"><span class="pre">PasswordInput</span></code>,
+<code class="docutils literal notranslate"><span class="pre">Checkbox</span></code>, <code class="docutils literal notranslate"><span class="pre">Select</span></code>, <code class="docutils literal notranslate"><span class="pre">MultiSelect</span></code>, <code class="docutils literal notranslate"><span class="pre">Slider</span></code>, and <code class="docutils literal notranslate"><span class="pre">Switch</span></code> fields.</p></li>
+<li><p><strong>Flexible column layout</strong>: Configurable columns (<code class="docutils literal notranslate"><span class="pre">label</span></code>, <code class="docutils literal notranslate"><span class="pre">fields</span></code>, <code class="docutils literal notranslate"><span class="pre">unit</span></code>, <code class="docutils literal notranslate"><span class="pre">help</span></code>,
+<code class="docutils literal notranslate"><span class="pre">description</span></code>) with adjustable widths.</p></li>
+<li><p><strong>Pattern-matching callbacks</strong>: Uses Dash pattern-matching IDs for easy data retrieval.</p></li>
+<li><p><strong>Help modals</strong>: Optional help column that opens a modal with custom content.</p></li>
+<li><p><strong>Hidden fields</strong>: Fields can be hidden on initialization and toggled dynamically using
+callbacks.</p></li>
+</ul>
+<a class="reference internal image-reference" href="../../../../../_images/example_output2.png"><img alt="Input Form example output" src="../../../../../_images/example_output2.png" style="width: 80%;" />
+</a>
+<section id="usage">
+<h2>Usage<a class="headerlink" href="#usage" title="Link to this heading">#</a></h2>
+<section id="basic-usage">
+<h3>Basic usage<a class="headerlink" href="#basic-usage" title="Link to this heading">#</a></h3>
+<p>Import <code class="docutils literal notranslate"><span class="pre">InputForm</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ansys.solutions.dash_super_components</span><span class="w"> </span><span class="kn">import</span> <span class="n">InputForm</span>
+</pre></div>
+</div>
+<p>Add a simple <code class="docutils literal notranslate"><span class="pre">InputForm</span></code> with a text input field and a number input field with labels to your page
+layout:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">layout</span><span class="p">():</span>
+    <span class="n">input_form</span> <span class="o">=</span> <span class="n">InputForm</span><span class="p">(</span>
+        <span class="p">[</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="s2">&quot;Name&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;fields&quot;</span><span class="p">:</span> <span class="p">[</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;TextInput&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;name-input&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;placeholder&quot;</span><span class="p">:</span> <span class="s2">&quot;Enter a name&quot;</span><span class="p">,</span>
+                    <span class="p">}</span>
+                <span class="p">],</span>
+            <span class="p">},</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="s2">&quot;Value&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;fields&quot;</span><span class="p">:</span> <span class="p">[</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;NumberInput&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;value-input&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;min&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                        <span class="s2">&quot;max&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+                        <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mi">50</span><span class="p">,</span>
+                    <span class="p">}</span>
+                <span class="p">],</span>
+            <span class="p">},</span>
+        <span class="p">],</span>
+        <span class="n">aio_id</span><span class="o">=</span><span class="s2">&quot;basic-form&quot;</span><span class="p">,</span>
+        <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Basic Form&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">html</span><span class="o">.</span><span class="n">Div</span><span class="p">(</span><span class="n">input_form</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;width&quot;</span><span class="p">:</span> <span class="s2">&quot;900px&quot;</span><span class="p">})</span>
+
+
+</pre></div>
+</div>
+<p>The following output is expected:</p>
+<a class="reference internal image-reference" href="../../../../../_images/default_configuration3.png"><img alt="Input Form default configuration" src="../../../../../_images/default_configuration3.png" style="width: 80%;" />
+</a>
+</section>
+<section id="advanced-usage">
+<h3>Advanced usage<a class="headerlink" href="#advanced-usage" title="Link to this heading">#</a></h3>
+<p>The following example shows a complete form that exercises the constructor parameters
+<code class="docutils literal notranslate"><span class="pre">columns</span></code>, <code class="docutils literal notranslate"><span class="pre">column_widths</span></code>, <code class="docutils literal notranslate"><span class="pre">column_names</span></code>, <code class="docutils literal notranslate"><span class="pre">title</span></code>, <code class="docutils literal notranslate"><span class="pre">title_props</span></code>,
+<code class="docutils literal notranslate"><span class="pre">card_props</span></code>, and the row-level <code class="docutils literal notranslate"><span class="pre">&quot;id&quot;</span></code> key (which sets the <code class="docutils literal notranslate"><span class="pre">row_index</span></code> used in
+component IDs). It also demonstrates how a field can be hidden on initialization with
+<code class="docutils literal notranslate"><span class="pre">&quot;hidden&quot;:</span> <span class="pre">True</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">advanced_layout</span><span class="p">():</span>
+    <span class="n">input_form</span> <span class="o">=</span> <span class="n">InputForm</span><span class="p">(</span>
+        <span class="p">[</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;number-row-1&quot;</span><span class="p">,</span>  <span class="c1"># sets row_index to &quot;number-row-1&quot;</span>
+                <span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="s2">&quot;Number Input&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;fields&quot;</span><span class="p">:</span> <span class="p">[</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;NumberInput&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+                        <span class="s2">&quot;min&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                        <span class="s2">&quot;max&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+                        <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;number-input-1&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;required&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                    <span class="p">}</span>
+                <span class="p">],</span>
+                <span class="s2">&quot;help&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">html</span><span class="o">.</span><span class="n">Div</span><span class="p">(</span><span class="s2">&quot;Help content&quot;</span><span class="p">)],</span>
+                <span class="s2">&quot;unit&quot;</span><span class="p">:</span> <span class="s2">&quot;Kgm^</span><span class="si">{2}</span><span class="s2">s^{-3}A^{-1}&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;This is a number input field with a unit and a description.&quot;</span><span class="p">,</span>
+            <span class="p">},</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;number-row-2&quot;</span><span class="p">,</span>  <span class="c1"># sets row_index to &quot;number-row-2&quot;</span>
+                <span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="s2">&quot;Number Input&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;fields&quot;</span><span class="p">:</span> <span class="p">[</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;NumberInput&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mi">50</span><span class="p">,</span>
+                        <span class="s2">&quot;min&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                        <span class="s2">&quot;max&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+                        <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;number-input-2&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;required&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                    <span class="p">}</span>
+                <span class="p">],</span>
+                <span class="s2">&quot;unit&quot;</span><span class="p">:</span> <span class="s2">&quot;m&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;This is another number input field with a unit and a description.&quot;</span><span class="p">,</span>
+            <span class="p">},</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;select-row&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="s2">&quot;Select&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;fields&quot;</span><span class="p">:</span> <span class="p">[</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;Select&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;2&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;2&quot;</span><span class="p">,</span> <span class="s2">&quot;3&quot;</span><span class="p">,</span> <span class="s2">&quot;4&quot;</span><span class="p">],</span>
+                        <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;select-1&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;required&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                    <span class="p">}</span>
+                <span class="p">],</span>
+                <span class="s2">&quot;help&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">html</span><span class="o">.</span><span class="n">Div</span><span class="p">(</span><span class="s2">&quot;Dash Mantine Components | Select&quot;</span><span class="p">)],</span>
+                <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;This is a select field with a description.&quot;</span><span class="p">,</span>
+            <span class="p">},</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;checkbox-row&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="s2">&quot;Enable slider&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;fields&quot;</span><span class="p">:</span> <span class="p">[</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;Checkbox&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;checkbox-1&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;checked&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+                        <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="s2">&quot;md&quot;</span><span class="p">,</span>
+                    <span class="p">}</span>
+                <span class="p">],</span>
+                <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;Check to reveal the slider below.&quot;</span><span class="p">,</span>
+            <span class="p">},</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;slider-row&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="s2">&quot;Slider&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;fields&quot;</span><span class="p">:</span> <span class="p">[</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;Slider&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;slider-1&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;min&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                        <span class="s2">&quot;max&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+                        <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mi">50</span><span class="p">,</span>
+                        <span class="s2">&quot;hidden&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>  <span class="c1"># hidden until the checkbox above is checked</span>
+                    <span class="p">}</span>
+                <span class="p">],</span>
+                <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;This slider is hidden until enabled.&quot;</span><span class="p">,</span>
+            <span class="p">},</span>
+        <span class="p">],</span>
+        <span class="n">aio_id</span><span class="o">=</span><span class="s2">&quot;full-form&quot;</span><span class="p">,</span>
+        <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Full-Featured Form&quot;</span><span class="p">,</span>
+        <span class="n">title_props</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;style&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;fontSize&quot;</span><span class="p">:</span> <span class="s2">&quot;24px&quot;</span><span class="p">,</span> <span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="s2">&quot;blue&quot;</span><span class="p">}},</span>
+        <span class="n">card_props</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;shadow&quot;</span><span class="p">:</span> <span class="s2">&quot;none&quot;</span><span class="p">,</span> <span class="s2">&quot;withBorder&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">},</span>
+        <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">,</span> <span class="s2">&quot;fields&quot;</span><span class="p">,</span> <span class="s2">&quot;unit&quot;</span><span class="p">,</span> <span class="s2">&quot;help&quot;</span><span class="p">,</span> <span class="s2">&quot;description&quot;</span><span class="p">],</span>
+        <span class="n">column_widths</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;fields&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span> <span class="s2">&quot;unit&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;help&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">},</span>
+        <span class="n">column_names</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Parameter&quot;</span><span class="p">,</span> <span class="s2">&quot;Value&quot;</span><span class="p">,</span> <span class="s2">&quot;Unit&quot;</span><span class="p">,</span> <span class="s2">&quot;Info&quot;</span><span class="p">,</span> <span class="s2">&quot;Description&quot;</span><span class="p">],</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">html</span><span class="o">.</span><span class="n">Div</span><span class="p">(</span>
+        <span class="n">input_form</span><span class="p">,</span>
+        <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;width&quot;</span><span class="p">:</span> <span class="s2">&quot;900px&quot;</span><span class="p">},</span>
+    <span class="p">)</span>
+
+
+</pre></div>
+</div>
+<p>The following output is expected:</p>
+<a class="reference internal image-reference" href="../../../../../_images/advanced_configuration.png"><img alt="Input Form advanced configuration" src="../../../../../_images/advanced_configuration.png" style="width: 80%;" />
+</a>
+</section>
+<section id="column-layout">
+<h3>Column layout<a class="headerlink" href="#column-layout" title="Link to this heading">#</a></h3>
+<p>The columns of the form and their order are configured using the <code class="docutils literal notranslate"><span class="pre">columns</span></code> parameter. Pass a
+list containing any subset of <code class="docutils literal notranslate"><span class="pre">&quot;label&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;fields&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;unit&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;help&quot;</span></code>, and
+<code class="docutils literal notranslate"><span class="pre">&quot;description&quot;</span></code> in the expected display order. Column widths can be controlled through the
+<code class="docutils literal notranslate"><span class="pre">column_widths</span></code> parameter as a dictionary mapping column names to integer widths. The overall
+form width is then distributed proportionally based on the specified widths. For example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">InputForm</span><span class="p">(</span>
+    <span class="n">items</span><span class="o">=</span><span class="p">[</span><span class="o">...</span><span class="p">],</span>
+    <span class="n">aio_id</span><span class="o">=</span><span class="s2">&quot;my-form&quot;</span><span class="p">,</span>
+    <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">,</span> <span class="s2">&quot;fields&quot;</span><span class="p">,</span> <span class="s2">&quot;unit&quot;</span><span class="p">],</span>
+    <span class="n">column_widths</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span> <span class="s2">&quot;fields&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="s2">&quot;unit&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>If <code class="docutils literal notranslate"><span class="pre">columns</span></code> is not provided, the default is
+<code class="docutils literal notranslate"><span class="pre">[&quot;label&quot;,</span> <span class="pre">&quot;fields&quot;,</span> <span class="pre">&quot;unit&quot;,</span> <span class="pre">&quot;description&quot;,</span> <span class="pre">&quot;help&quot;]</span></code>. If <code class="docutils literal notranslate"><span class="pre">column_widths</span></code> is not provided,
+built-in defaults are used. If a particular column is not included in the <code class="docutils literal notranslate"><span class="pre">column_widths</span></code>
+dictionary, its width also defaults to the built-in value.</p>
+</section>
+<section id="retrieving-field-values-in-callbacks">
+<h3>Retrieving field values in callbacks<a class="headerlink" href="#retrieving-field-values-in-callbacks" title="Link to this heading">#</a></h3>
+<p>Use <code class="docutils literal notranslate"><span class="pre">InputForm.ids.field(aio_id,</span> <span class="pre">field_type,</span> <span class="pre">field_id,</span> <span class="pre">row_index)</span></code> to target individual
+fields in Dash callbacks. All four arguments are required (or can be pattern-matching wildcards).</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">row_index</span></code> is either the value of the <code class="docutils literal notranslate"><span class="pre">&quot;id&quot;</span></code> key on the row definition, or the
+zero-based integer position of the row in the <code class="docutils literal notranslate"><span class="pre">items</span></code> list if no <code class="docutils literal notranslate"><span class="pre">&quot;id&quot;</span></code> was set.</p>
+<section id="retrieve-a-specific-field">
+<h4>Retrieve a specific field<a class="headerlink" href="#retrieve-a-specific-field" title="Link to this heading">#</a></h4>
+<p>The following example targets specific fields by their exact <code class="docutils literal notranslate"><span class="pre">aio_id</span></code>, <code class="docutils literal notranslate"><span class="pre">field_type</span></code>,
+<code class="docutils literal notranslate"><span class="pre">field_id</span></code>, and <code class="docutils literal notranslate"><span class="pre">row_index</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@callback</span><span class="p">(</span>
+    <span class="n">Output</span><span class="p">(</span><span class="s2">&quot;output&quot;</span><span class="p">,</span> <span class="s2">&quot;children&quot;</span><span class="p">),</span>
+    <span class="n">Input</span><span class="p">(</span>
+        <span class="n">InputForm</span><span class="o">.</span><span class="n">ids</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">&quot;full-form&quot;</span><span class="p">,</span> <span class="s2">&quot;NumberInput&quot;</span><span class="p">,</span> <span class="s2">&quot;number-input-1&quot;</span><span class="p">,</span> <span class="s2">&quot;number-row-1&quot;</span><span class="p">),</span> <span class="s2">&quot;value&quot;</span>
+    <span class="p">),</span>
+    <span class="n">Input</span><span class="p">(</span>
+        <span class="n">InputForm</span><span class="o">.</span><span class="n">ids</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">&quot;full-form&quot;</span><span class="p">,</span> <span class="s2">&quot;NumberInput&quot;</span><span class="p">,</span> <span class="s2">&quot;number-input-2&quot;</span><span class="p">,</span> <span class="s2">&quot;number-row-2&quot;</span><span class="p">),</span> <span class="s2">&quot;value&quot;</span>
+    <span class="p">),</span>
+    <span class="n">Input</span><span class="p">(</span><span class="n">InputForm</span><span class="o">.</span><span class="n">ids</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">&quot;full-form&quot;</span><span class="p">,</span> <span class="s2">&quot;Select&quot;</span><span class="p">,</span> <span class="s2">&quot;select-1&quot;</span><span class="p">,</span> <span class="s2">&quot;select-row&quot;</span><span class="p">),</span> <span class="s2">&quot;value&quot;</span><span class="p">),</span>
+    <span class="n">Input</span><span class="p">(</span><span class="n">InputForm</span><span class="o">.</span><span class="n">ids</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">&quot;full-form&quot;</span><span class="p">,</span> <span class="s2">&quot;Checkbox&quot;</span><span class="p">,</span> <span class="s2">&quot;checkbox-1&quot;</span><span class="p">,</span> <span class="s2">&quot;checkbox-row&quot;</span><span class="p">),</span> <span class="s2">&quot;checked&quot;</span><span class="p">),</span>
+    <span class="n">prevent_initial_call</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">collect_inputs</span><span class="p">(</span><span class="n">number_input_1</span><span class="p">,</span> <span class="n">number_input_2</span><span class="p">,</span> <span class="n">select_1</span><span class="p">,</span> <span class="n">checkbox_1</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Collect individual field values.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">number_input_1</span><span class="si">}</span><span class="s2"> | </span><span class="si">{</span><span class="n">number_input_2</span><span class="si">}</span><span class="s2"> | </span><span class="si">{</span><span class="n">select_1</span><span class="si">}</span><span class="s2"> | </span><span class="si">{</span><span class="n">checkbox_1</span><span class="si">}</span><span class="s2">&quot;</span>
+
+
+</pre></div>
+</div>
+<p>The resulting output for a sample input might look like this:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>[7 | 10 |3 | True]
+</pre></div>
+</div>
+</section>
+<section id="retrieve-all-fields-of-a-specific-type-using-pattern-matching">
+<h4>Retrieve all fields of a specific type using pattern matching<a class="headerlink" href="#retrieve-all-fields-of-a-specific-type-using-pattern-matching" title="Link to this heading">#</a></h4>
+<p>Use the <code class="docutils literal notranslate"><span class="pre">ALL</span></code> wildcard from <code class="docutils literal notranslate"><span class="pre">dash_extensions.enrich</span></code> to collect all fields of a particular
+type across the entire form in a single callback:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">dash_extensions.enrich</span><span class="w"> </span><span class="kn">import</span> <span class="n">ALL</span>
+
+
+<span class="nd">@callback</span><span class="p">(</span>
+    <span class="n">Output</span><span class="p">(</span><span class="s2">&quot;output_submit&quot;</span><span class="p">,</span> <span class="s2">&quot;children&quot;</span><span class="p">),</span>
+    <span class="n">Input</span><span class="p">(</span><span class="s2">&quot;submit-button&quot;</span><span class="p">,</span> <span class="s2">&quot;n_clicks&quot;</span><span class="p">),</span>
+    <span class="n">State</span><span class="p">(</span>
+        <span class="n">InputForm</span><span class="o">.</span><span class="n">ids</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">&quot;full-form&quot;</span><span class="p">,</span> <span class="s2">&quot;NumberInput&quot;</span><span class="p">,</span> <span class="n">field_id</span><span class="o">=</span><span class="n">ALL</span><span class="p">,</span> <span class="n">row_index</span><span class="o">=</span><span class="n">ALL</span><span class="p">),</span>
+        <span class="s2">&quot;value&quot;</span><span class="p">,</span>
+    <span class="p">),</span>
+    <span class="n">prevent_initial_call</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_all_number_inputs</span><span class="p">(</span><span class="n">n_clicks</span><span class="p">,</span> <span class="n">values</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get all NumberInput values from the form.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Number Inputs: </span><span class="si">{</span><span class="n">values</span><span class="si">}</span><span class="s2">&quot;</span>
+
+
+</pre></div>
+</div>
+<p>This retrieves all <code class="docutils literal notranslate"><span class="pre">NumberInput</span></code> fields from the form with <code class="docutils literal notranslate"><span class="pre">aio_id=&quot;full-form&quot;</span></code> as a
+flat list in row order.</p>
+<p>The resulting output for a sample input might look like this:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>Number Inputs: [2, 53]
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Using <code class="docutils literal notranslate"><span class="pre">ALL</span></code> for <code class="docutils literal notranslate"><span class="pre">field_type</span></code> mixes fields that use <code class="docutils literal notranslate"><span class="pre">&quot;value&quot;</span></code> (<code class="docutils literal notranslate"><span class="pre">NumberInput</span></code>,
+<code class="docutils literal notranslate"><span class="pre">TextInput</span></code>, <code class="docutils literal notranslate"><span class="pre">Select</span></code>, <code class="docutils literal notranslate"><span class="pre">MultiSelect</span></code>, <code class="docutils literal notranslate"><span class="pre">Slider</span></code>) and fields that use <code class="docutils literal notranslate"><span class="pre">&quot;checked&quot;</span></code>
+(<code class="docutils literal notranslate"><span class="pre">Checkbox</span></code>, <code class="docutils literal notranslate"><span class="pre">Switch</span></code>) in the same callback. If your form contains both types, use separate
+callbacks targeting different field types.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Always import <code class="docutils literal notranslate"><span class="pre">ALL</span></code>, <code class="docutils literal notranslate"><span class="pre">MATCH</span></code>, and other pattern-matching wildcards from
+<code class="docutils literal notranslate"><span class="pre">dash_extensions.enrich</span></code>, not from <code class="docutils literal notranslate"><span class="pre">dash</span></code>. Because the Super Components require
+<code class="docutils literal notranslate"><span class="pre">DashProxy</span></code>, the enriched callback pipeline from <code class="docutils literal notranslate"><span class="pre">dash_extensions.enrich</span></code> must be used
+throughout your application.</p>
+</div>
+</section>
+<section id="updating-row-level-subcomponents-from-callbacks">
+<h4>Updating row-level subcomponents from callbacks<a class="headerlink" href="#updating-row-level-subcomponents-from-callbacks" title="Link to this heading">#</a></h4>
+<p>Row-level subcomponents—<code class="docutils literal notranslate"><span class="pre">label</span></code>, <code class="docutils literal notranslate"><span class="pre">unit</span></code>, and <code class="docutils literal notranslate"><span class="pre">description</span></code>—are identified by
+<code class="docutils literal notranslate"><span class="pre">aio_id</span></code> and <code class="docutils literal notranslate"><span class="pre">row_index</span></code> and can also be updated from callbacks. Using <code class="docutils literal notranslate"><span class="pre">MATCH</span></code> for the
+<code class="docutils literal notranslate"><span class="pre">row_index</span></code> allows you to target different subcomponents (row-level subcomponents and fields)
+within the same callback, as shown in the following example.
+This example colors the label and unit of a row depending on whether the <code class="docutils literal notranslate"><span class="pre">NumberInput</span></code> value
+falls close to the edges of the valid range (note that “c” is the property for text color in Dash
+Mantine Components):</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">dash_extensions.enrich</span><span class="w"> </span><span class="kn">import</span> <span class="n">MATCH</span>
+
+
+<span class="nd">@callback</span><span class="p">(</span>
+    <span class="n">Output</span><span class="p">(</span><span class="n">InputForm</span><span class="o">.</span><span class="n">ids</span><span class="o">.</span><span class="n">label</span><span class="p">(</span><span class="n">aio_id</span><span class="o">=</span><span class="s2">&quot;full-form&quot;</span><span class="p">,</span> <span class="n">row_index</span><span class="o">=</span><span class="n">MATCH</span><span class="p">),</span> <span class="s2">&quot;c&quot;</span><span class="p">),</span>
+    <span class="n">Output</span><span class="p">(</span><span class="n">InputForm</span><span class="o">.</span><span class="n">ids</span><span class="o">.</span><span class="n">unit</span><span class="p">(</span><span class="n">aio_id</span><span class="o">=</span><span class="s2">&quot;full-form&quot;</span><span class="p">,</span> <span class="n">row_index</span><span class="o">=</span><span class="n">MATCH</span><span class="p">),</span> <span class="s2">&quot;c&quot;</span><span class="p">),</span>
+    <span class="n">Input</span><span class="p">(</span>
+        <span class="n">InputForm</span><span class="o">.</span><span class="n">ids</span><span class="o">.</span><span class="n">field</span><span class="p">(</span>
+            <span class="n">aio_id</span><span class="o">=</span><span class="s2">&quot;full-form&quot;</span><span class="p">,</span> <span class="n">field_type</span><span class="o">=</span><span class="s2">&quot;NumberInput&quot;</span><span class="p">,</span> <span class="n">field_id</span><span class="o">=</span><span class="s2">&quot;number-input-1&quot;</span><span class="p">,</span> <span class="n">row_index</span><span class="o">=</span><span class="n">MATCH</span>
+        <span class="p">),</span>
+        <span class="s2">&quot;value&quot;</span><span class="p">,</span>
+    <span class="p">),</span>
+    <span class="n">Input</span><span class="p">(</span>
+        <span class="n">InputForm</span><span class="o">.</span><span class="n">ids</span><span class="o">.</span><span class="n">field</span><span class="p">(</span>
+            <span class="n">aio_id</span><span class="o">=</span><span class="s2">&quot;full-form&quot;</span><span class="p">,</span> <span class="n">field_type</span><span class="o">=</span><span class="s2">&quot;NumberInput&quot;</span><span class="p">,</span> <span class="n">field_id</span><span class="o">=</span><span class="s2">&quot;number-input-1&quot;</span><span class="p">,</span> <span class="n">row_index</span><span class="o">=</span><span class="n">MATCH</span>
+        <span class="p">),</span>
+        <span class="s2">&quot;min&quot;</span><span class="p">,</span>
+    <span class="p">),</span>
+    <span class="n">Input</span><span class="p">(</span>
+        <span class="n">InputForm</span><span class="o">.</span><span class="n">ids</span><span class="o">.</span><span class="n">field</span><span class="p">(</span>
+            <span class="n">aio_id</span><span class="o">=</span><span class="s2">&quot;full-form&quot;</span><span class="p">,</span> <span class="n">field_type</span><span class="o">=</span><span class="s2">&quot;NumberInput&quot;</span><span class="p">,</span> <span class="n">field_id</span><span class="o">=</span><span class="s2">&quot;number-input-1&quot;</span><span class="p">,</span> <span class="n">row_index</span><span class="o">=</span><span class="n">MATCH</span>
+        <span class="p">),</span>
+        <span class="s2">&quot;max&quot;</span><span class="p">,</span>
+    <span class="p">),</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">color_row_by_value</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">min_value</span><span class="p">,</span> <span class="n">max_value</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Color label and unit based on value relative to the valid range.&quot;&quot;&quot;</span>
+    <span class="n">value_range</span> <span class="o">=</span> <span class="n">max_value</span> <span class="o">-</span> <span class="n">min_value</span>
+    <span class="k">if</span> <span class="n">value</span> <span class="o">&lt;</span> <span class="n">min_value</span> <span class="o">+</span> <span class="mf">0.2</span> <span class="o">*</span> <span class="n">value_range</span> <span class="ow">or</span> <span class="n">value</span> <span class="o">&gt;</span> <span class="n">min_value</span> <span class="o">+</span> <span class="mf">0.8</span> <span class="o">*</span> <span class="n">value_range</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;orange&quot;</span><span class="p">,</span> <span class="s2">&quot;orange&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;var(--mantine-color-text)&quot;</span><span class="p">,</span> <span class="s2">&quot;var(--mantine-color-text)&quot;</span>
+
+
+</pre></div>
+</div>
+<p>The resulting output for a sample input might look like this:</p>
+<a class="reference internal image-reference" href="../../../../../_images/advanced_configuration_colored.png"><img alt="Input Form advanced configuration with colored labels" src="../../../../../_images/advanced_configuration_colored.png" style="width: 80%;" />
+</a>
+</section>
+<section id="using-match-for-cross-form-callbacks">
+<h4>Using MATCH for cross-form callbacks<a class="headerlink" href="#using-match-for-cross-form-callbacks" title="Link to this heading">#</a></h4>
+<p><code class="docutils literal notranslate"><span class="pre">MATCH</span></code> allows a single callback to respond to the same field across multiple <code class="docutils literal notranslate"><span class="pre">InputForm</span></code>
+instances. This is useful for composed layouts that embed several independent forms of the same
+structure. The following example shows how to turn off certain parameters when a “Use defaults”
+checkbox is toggled in either form (for example, front, and rear wheels in a configuration panel):</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@callback</span><span class="p">(</span>
+    <span class="n">Output</span><span class="p">(</span>
+        <span class="n">InputForm</span><span class="o">.</span><span class="n">ids</span><span class="o">.</span><span class="n">field</span><span class="p">(</span>
+            <span class="n">aio_id</span><span class="o">=</span><span class="n">MATCH</span><span class="p">,</span> <span class="n">field_type</span><span class="o">=</span><span class="s2">&quot;NumberInput&quot;</span><span class="p">,</span> <span class="n">field_id</span><span class="o">=</span><span class="s2">&quot;diameter&quot;</span><span class="p">,</span> <span class="n">row_index</span><span class="o">=</span><span class="n">ALL</span>
+        <span class="p">),</span>
+        <span class="s2">&quot;disabled&quot;</span><span class="p">,</span>
+    <span class="p">),</span>
+    <span class="n">Output</span><span class="p">(</span>
+        <span class="n">InputForm</span><span class="o">.</span><span class="n">ids</span><span class="o">.</span><span class="n">field</span><span class="p">(</span>
+            <span class="n">aio_id</span><span class="o">=</span><span class="n">MATCH</span><span class="p">,</span> <span class="n">field_type</span><span class="o">=</span><span class="s2">&quot;Select&quot;</span><span class="p">,</span> <span class="n">field_id</span><span class="o">=</span><span class="s2">&quot;wheel_material&quot;</span><span class="p">,</span> <span class="n">row_index</span><span class="o">=</span><span class="n">ALL</span>
+        <span class="p">),</span>
+        <span class="s2">&quot;disabled&quot;</span><span class="p">,</span>
+    <span class="p">),</span>
+    <span class="n">Input</span><span class="p">(</span>
+        <span class="n">InputForm</span><span class="o">.</span><span class="n">ids</span><span class="o">.</span><span class="n">field</span><span class="p">(</span>
+            <span class="n">aio_id</span><span class="o">=</span><span class="n">MATCH</span><span class="p">,</span> <span class="n">field_type</span><span class="o">=</span><span class="s2">&quot;Checkbox&quot;</span><span class="p">,</span> <span class="n">field_id</span><span class="o">=</span><span class="s2">&quot;use_defaults&quot;</span><span class="p">,</span> <span class="n">row_index</span><span class="o">=</span><span class="n">ALL</span>
+        <span class="p">),</span>
+        <span class="s2">&quot;checked&quot;</span><span class="p">,</span>
+    <span class="p">),</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">enable_disable_wheel_parameters</span><span class="p">(</span><span class="n">use_defaults</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Disable or enable wheel fields when &#39;Use defaults&#39; is toggled.&quot;&quot;&quot;</span>
+    <span class="n">disabled</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">use_defaults</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">disabled</span><span class="p">],</span> <span class="p">[</span><span class="n">disabled</span><span class="p">]</span>
+
+
+</pre></div>
+</div>
+<p>This callback fires independently for each form instance (for example, for “Front Wheels” and
+“Rear Wheels”) whenever the checkbox changes in either form.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Using <code class="docutils literal notranslate"><span class="pre">ALL</span></code> for <code class="docutils literal notranslate"><span class="pre">row_index</span></code> allows to target all rows in the form without having to specify
+the row index explicitly, but it means that the callback receives lists of values for all
+rows, even if only one row contains the targeted field, and that the outputs must also be lists.</p>
+<p>The preceding example assumes that only one row contains the <code class="docutils literal notranslate"><span class="pre">use_defaults</span></code> checkbox, so
+the first element of the list in the callback is taken. It also assumes that only one row with a
+<code class="docutils literal notranslate"><span class="pre">diameter</span></code> and one row with a <code class="docutils literal notranslate"><span class="pre">wheel_material</span></code> field exist, so a single
+boolean value in lists is returned for the outputs.</p>
+<p>To avoid this, you can specify the row index explicitly instead of using <code class="docutils literal notranslate"><span class="pre">ALL</span></code> for more
+precise targeting. In this case, it is advisable to set the row index using the <code class="docutils literal notranslate"><span class="pre">&quot;id&quot;</span></code> key in
+the row definition to ensure it is unique and easily identifiable.</p>
+</div>
+</section>
+</section>
+<section id="value-persistence">
+<h3>Value persistence<a class="headerlink" href="#value-persistence" title="Link to this heading">#</a></h3>
+<p>By default, UI-side persistence is <strong>disabled</strong> (<code class="docutils literal notranslate"><span class="pre">persistence=False</span></code>) for all fields.
+To enable it globally, set the <code class="docutils literal notranslate"><span class="pre">persistence</span></code> parameter on the <code class="docutils literal notranslate"><span class="pre">InputForm</span></code> constructor.
+You can also configure the storage type via <code class="docutils literal notranslate"><span class="pre">persistence_type</span></code> (<code class="docutils literal notranslate"><span class="pre">&quot;memory&quot;</span></code>,
+<code class="docutils literal notranslate"><span class="pre">&quot;session&quot;</span></code>, or <code class="docutils literal notranslate"><span class="pre">&quot;local&quot;</span></code>, default is <code class="docutils literal notranslate"><span class="pre">&quot;memory&quot;</span></code>).</p>
+<p>Individual fields can override the global setting by including a <code class="docutils literal notranslate"><span class="pre">&quot;persistence&quot;</span></code> key in
+their field definition. This allows, for example, enabling persistence for most fields
+while preventing sensitive values (such as passwords or tokens) from being stored in the
+browser.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">control_persistence_layout</span><span class="p">():</span>
+    <span class="n">input_form</span> <span class="o">=</span> <span class="n">InputForm</span><span class="p">(</span>
+        <span class="p">[</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="s2">&quot;Some input field&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;fields&quot;</span><span class="p">:</span> <span class="p">[</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;TextInput&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;some-input-field&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;placeholder&quot;</span><span class="p">:</span> <span class="s2">&quot;Enter some text here&quot;</span><span class="p">,</span>
+                    <span class="p">}</span>
+                <span class="p">],</span>
+                <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;This value is retained in the browser due to global persistence &quot;</span>
+                <span class="s2">&quot;settings.&quot;</span><span class="p">,</span>
+            <span class="p">},</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="s2">&quot;API Token&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;fields&quot;</span><span class="p">:</span> <span class="p">[</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;PasswordInput&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;api-token&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;placeholder&quot;</span><span class="p">:</span> <span class="s2">&quot;Paste your token here&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;persistence&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>  <span class="c1"># always reset to the server-provided value</span>
+                    <span class="p">}</span>
+                <span class="p">],</span>
+                <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;Token is never retained in the browser.&quot;</span><span class="p">,</span>
+            <span class="p">},</span>
+        <span class="p">],</span>
+        <span class="n">aio_id</span><span class="o">=</span><span class="s2">&quot;persistence-control-form&quot;</span><span class="p">,</span>
+        <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">,</span> <span class="s2">&quot;fields&quot;</span><span class="p">,</span> <span class="s2">&quot;description&quot;</span><span class="p">],</span>
+        <span class="n">persistence</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="c1"># enables persistence for the form</span>
+        <span class="n">persistence_type</span><span class="o">=</span><span class="s2">&quot;session&quot;</span><span class="p">,</span>  <span class="c1"># values are stored in sessionStorage</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">html</span><span class="o">.</span><span class="n">Div</span><span class="p">(</span><span class="n">input_form</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;width&quot;</span><span class="p">:</span> <span class="s2">&quot;900px&quot;</span><span class="p">})</span>
+
+
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>UI-side persistence only stores values in the browser. To durably persist form
+values on the server (per project and across reloads), use a callback that writes the
+form values to your solution model, for example, when the user clicks a <strong>Save</strong> or <strong>Apply</strong>
+button (shown here for a SAF-based solution, but the same principle applies to any Dash app):</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@callback</span><span class="p">(</span>
+    <span class="n">Input</span><span class="p">(</span><span class="s2">&quot;save-input-form-btn&quot;</span><span class="p">,</span> <span class="s2">&quot;n_clicks&quot;</span><span class="p">),</span>
+    <span class="n">State</span><span class="p">(</span>
+        <span class="n">InputForm</span><span class="o">.</span><span class="n">ids</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">&quot;backend-form&quot;</span><span class="p">,</span> <span class="s2">&quot;TextInput&quot;</span><span class="p">,</span> <span class="s2">&quot;project-name&quot;</span><span class="p">,</span> <span class="s2">&quot;project-row&quot;</span><span class="p">),</span>
+        <span class="s2">&quot;value&quot;</span><span class="p">,</span>
+    <span class="p">),</span>
+    <span class="n">State</span><span class="p">(</span>
+        <span class="n">InputForm</span><span class="o">.</span><span class="n">ids</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">&quot;backend-form&quot;</span><span class="p">,</span> <span class="s2">&quot;NumberInput&quot;</span><span class="p">,</span> <span class="s2">&quot;max-iterations&quot;</span><span class="p">,</span> <span class="s2">&quot;iterations-row&quot;</span><span class="p">),</span>
+        <span class="s2">&quot;value&quot;</span><span class="p">,</span>
+    <span class="p">),</span>
+    <span class="n">State</span><span class="p">(</span><span class="s2">&quot;url&quot;</span><span class="p">,</span> <span class="s2">&quot;pathname&quot;</span><span class="p">),</span>
+    <span class="n">prevent_initial_call</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">save_input_form</span><span class="p">(</span>
+    <span class="n">n_clicks</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">project_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">max_iterations</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">project</span><span class="p">:</span> <span class="n">SuperComponentsWithSAFSolution</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Write InputForm values to the backend solution model.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">n_clicks</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">PreventUpdate</span>
+    <span class="n">step</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">steps</span><span class="o">.</span><span class="n">my_step</span>
+    <span class="n">step</span><span class="o">.</span><span class="n">project_name</span> <span class="o">=</span> <span class="n">project_name</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span>
+    <span class="n">step</span><span class="o">.</span><span class="n">max_iterations</span> <span class="o">=</span> <span class="n">max_iterations</span> <span class="ow">or</span> <span class="mi">100</span>
+
+
+</pre></div>
+</div>
+<p>When the layout function initialises each field with a value from the backend
+(for example, <code class="docutils literal notranslate"><span class="pre">&quot;value&quot;:</span> <span class="pre">step.project_name</span></code>), the first page load always reflects
+the last saved state. Subsequent navigations within the same browser tab then show the
+user’s in-progress edits thanks to UI-side persistence, until the next save or
+reload.</p>
+</div>
+</section>
+<section id="toggling-hidden-fields-using-callbacks">
+<h3>Toggling hidden fields using callbacks<a class="headerlink" href="#toggling-hidden-fields-using-callbacks" title="Link to this heading">#</a></h3>
+<p>Fields can be hidden on initialization by setting <code class="docutils literal notranslate"><span class="pre">&quot;hidden&quot;:</span> <span class="pre">True</span></code> in the field definition.
+Hidden fields are wrapped in an <code class="docutils literal notranslate"><span class="pre">html.Div</span></code> with <code class="docutils literal notranslate"><span class="pre">style={&quot;display&quot;:</span> <span class="pre">&quot;none&quot;}</span></code>, so they are
+invisible in the UI but still present in the component tree.</p>
+<p>To toggle field visibility dynamically, use <code class="docutils literal notranslate"><span class="pre">InputForm.ids.field_div()</span></code>—which targets the
+wrapping <code class="docutils literal notranslate"><span class="pre">html.Div</span></code>—as the callback <code class="docutils literal notranslate"><span class="pre">Output</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@callback</span><span class="p">(</span>
+    <span class="n">Output</span><span class="p">(</span>
+        <span class="n">InputForm</span><span class="o">.</span><span class="n">ids</span><span class="o">.</span><span class="n">field_div</span><span class="p">(</span><span class="s2">&quot;full-form&quot;</span><span class="p">,</span> <span class="s2">&quot;Slider&quot;</span><span class="p">,</span> <span class="s2">&quot;slider-1&quot;</span><span class="p">,</span> <span class="n">row_index</span><span class="o">=</span><span class="s2">&quot;slider-row&quot;</span><span class="p">),</span>
+        <span class="s2">&quot;style&quot;</span><span class="p">,</span>
+    <span class="p">),</span>
+    <span class="n">Input</span><span class="p">(</span>
+        <span class="n">InputForm</span><span class="o">.</span><span class="n">ids</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">&quot;full-form&quot;</span><span class="p">,</span> <span class="s2">&quot;Checkbox&quot;</span><span class="p">,</span> <span class="s2">&quot;checkbox-1&quot;</span><span class="p">,</span> <span class="n">row_index</span><span class="o">=</span><span class="s2">&quot;checkbox-row&quot;</span><span class="p">),</span>
+        <span class="s2">&quot;checked&quot;</span><span class="p">,</span>
+    <span class="p">),</span>
+    <span class="n">State</span><span class="p">(</span>
+        <span class="n">InputForm</span><span class="o">.</span><span class="n">ids</span><span class="o">.</span><span class="n">field_div</span><span class="p">(</span><span class="s2">&quot;full-form&quot;</span><span class="p">,</span> <span class="s2">&quot;Slider&quot;</span><span class="p">,</span> <span class="s2">&quot;slider-1&quot;</span><span class="p">,</span> <span class="n">row_index</span><span class="o">=</span><span class="s2">&quot;slider-row&quot;</span><span class="p">),</span>
+        <span class="s2">&quot;style&quot;</span><span class="p">,</span>
+    <span class="p">),</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">toggle_parameter_visibility</span><span class="p">(</span><span class="n">checked</span><span class="p">,</span> <span class="n">style_slider</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Toggle slider visibility based on checkbox state.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">checked</span><span class="p">:</span>
+        <span class="n">style_slider</span><span class="p">[</span><span class="s2">&quot;display&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;block&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">style_slider</span><span class="p">[</span><span class="s2">&quot;display&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;none&quot;</span>
+    <span class="k">return</span> <span class="n">style_slider</span>
+
+
+</pre></div>
+</div>
+<p>The resulting output with the checkbox checked might look like this:</p>
+<a class="reference internal image-reference" href="../../../../../_images/advanced_configuration_slider_enabled.png"><img alt="Input Form advanced configuration with slider enabled" src="../../../../../_images/advanced_configuration_slider_enabled.png" style="width: 80%;" />
+</a>
+</section>
+</section>
+<section id="properties">
+<h2>Properties<a class="headerlink" href="#properties" title="Link to this heading">#</a></h2>
+<section id="item-keys">
+<h3>Item keys<a class="headerlink" href="#item-keys" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Key</p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Required</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>label</p></td>
+<td><p>A string that describes the input.</p></td>
+<td><p>string</p></td>
+<td><p>No</p></td>
+</tr>
+<tr class="row-odd"><td><p>fields</p></td>
+<td><p>A list of dictionaries, each defining
+an input field.</p></td>
+<td><p>list</p></td>
+<td><p>Yes</p></td>
+</tr>
+<tr class="row-even"><td><p>help</p></td>
+<td><p>A list of or a singular Dash component,
+string, or number to indicate to the user
+how to use or where to get the information
+for the input. Displayed in a modal when
+the help icon is clicked.</p></td>
+<td><p>any</p></td>
+<td><p>No</p></td>
+</tr>
+<tr class="row-odd"><td><p>unit</p></td>
+<td><p>A LaTeX string that describes the unit of
+the input. Rendered with MathJax.</p></td>
+<td><p>string</p></td>
+<td><p>No</p></td>
+</tr>
+<tr class="row-even"><td><p>description</p></td>
+<td><p>A sentence that describes the input.</p></td>
+<td><p>string</p></td>
+<td><p>No</p></td>
+</tr>
+<tr class="row-odd"><td><p>id</p></td>
+<td><p>A unique identifier for the row. Used as
+the <code class="docutils literal notranslate"><span class="pre">row_index</span></code> in all component IDs for
+this row. If not set, the zero-based
+position of the row is used instead.</p></td>
+<td><p>string</p></td>
+<td><p>No</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="field-keys">
+<h3>Field keys<a class="headerlink" href="#field-keys" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Key</p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Required</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>type</p></td>
+<td><p>The input field type: <code class="docutils literal notranslate"><span class="pre">&quot;NumberInput&quot;</span></code>,
+<code class="docutils literal notranslate"><span class="pre">&quot;TextInput&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;PasswordInput&quot;</span></code>,
+<code class="docutils literal notranslate"><span class="pre">&quot;Checkbox&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;Select&quot;</span></code>,
+<code class="docutils literal notranslate"><span class="pre">&quot;MultiSelect&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;Slider&quot;</span></code>,
+or <code class="docutils literal notranslate"><span class="pre">&quot;Switch&quot;</span></code>.</p></td>
+<td><p>string</p></td>
+<td><p>Yes</p></td>
+</tr>
+<tr class="row-odd"><td><p>id</p></td>
+<td><p>A unique identifier for the field. Used as
+the <code class="docutils literal notranslate"><span class="pre">field_id</span></code> in all component IDs for
+this field.</p></td>
+<td><p>string</p></td>
+<td><p>Yes</p></td>
+</tr>
+<tr class="row-even"><td><p>hidden</p></td>
+<td><p>If <code class="docutils literal notranslate"><span class="pre">True</span></code>, the field is not displayed
+(that is, <code class="docutils literal notranslate"><span class="pre">display:</span> <span class="pre">none</span></code>). The field can
+be shown dynamically using callbacks via
+<code class="docutils literal notranslate"><span class="pre">InputForm.ids.field_div()</span></code>.
+Default: <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></td>
+<td><p>boolean</p></td>
+<td><p>No</p></td>
+</tr>
+<tr class="row-odd"><td><p>persistence</p></td>
+<td><p>Controls whether the field value is persisted
+in the browser. When <code class="docutils literal notranslate"><span class="pre">True</span></code>, the value
+survives page navigation within the same tab.
+When <code class="docutils literal notranslate"><span class="pre">False</span></code>, the value resets to the
+initial <code class="docutils literal notranslate"><span class="pre">value</span></code> on every render.
+Default: the global <code class="docutils literal notranslate"><span class="pre">persistence</span></code> setting
+of the <code class="docutils literal notranslate"><span class="pre">InputForm</span></code> (<code class="docutils literal notranslate"><span class="pre">False</span></code> if not set).</p></td>
+<td><p>boolean</p></td>
+<td><p>No</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>In addition, each field dictionary accepts any property supported by the corresponding
+Dash Mantine component: <code class="docutils literal notranslate"><span class="pre">NumberInput</span></code>, <code class="docutils literal notranslate"><span class="pre">TextInput</span></code>, <code class="docutils literal notranslate"><span class="pre">PasswordInput</span></code>, <code class="docutils literal notranslate"><span class="pre">Checkbox</span></code>,
+<code class="docutils literal notranslate"><span class="pre">Select</span></code>, <code class="docutils literal notranslate"><span class="pre">MultiSelect</span></code>, <code class="docutils literal notranslate"><span class="pre">Slider</span></code>, or <code class="docutils literal notranslate"><span class="pre">Switch</span></code>.</p>
+</section>
+<section id="constructor-parameters">
+<h3>Constructor parameters<a class="headerlink" href="#constructor-parameters" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Required</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>items</p></td>
+<td><p>A list of dictionaries, each defining a row of the input form.</p></td>
+<td><p>list</p></td>
+<td><p>Yes</p></td>
+</tr>
+<tr class="row-odd"><td><p>title</p></td>
+<td><p>The title displayed at the top of the form card.</p></td>
+<td><p>string</p></td>
+<td><p>No</p></td>
+</tr>
+<tr class="row-even"><td><p>with_card</p></td>
+<td><p>If <code class="docutils literal notranslate"><span class="pre">True</span></code>, wraps the form in a <code class="docutils literal notranslate"><span class="pre">dmc.Card</span></code>.
+Default: <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></td>
+<td><p>boolean</p></td>
+<td><p>No</p></td>
+</tr>
+<tr class="row-odd"><td><p>card_props</p></td>
+<td><p>Properties for the <code class="docutils literal notranslate"><span class="pre">dmc.Card</span></code> wrapping the form.
+Default:
+<code class="docutils literal notranslate"><span class="pre">{&quot;withBorder&quot;:</span> <span class="pre">True,</span> <span class="pre">&quot;shadow&quot;:</span> <span class="pre">&quot;sm&quot;,</span> <span class="pre">&quot;radius&quot;:</span> <span class="pre">&quot;md&quot;}</span></code>.</p></td>
+<td><p>dict</p></td>
+<td><p>No</p></td>
+</tr>
+<tr class="row-even"><td><p>title_props</p></td>
+<td><p>Properties for the title <code class="docutils literal notranslate"><span class="pre">dmc.Text</span></code> component.
+Default:
+<code class="docutils literal notranslate"><span class="pre">{&quot;style&quot;:</span> <span class="pre">{&quot;fontSize&quot;:</span> <span class="pre">&quot;18px&quot;,</span> <span class="pre">&quot;fontWeight&quot;:</span> <span class="pre">&quot;bold&quot;}}</span></code>.</p></td>
+<td><p>dict</p></td>
+<td><p>No</p></td>
+</tr>
+<tr class="row-odd"><td><p>columns</p></td>
+<td><p>List of column types to display, in order. Accepted values:
+<code class="docutils literal notranslate"><span class="pre">&quot;label&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;fields&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;unit&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;help&quot;</span></code>,
+<code class="docutils literal notranslate"><span class="pre">&quot;description&quot;</span></code>.
+Default: <code class="docutils literal notranslate"><span class="pre">[&quot;label&quot;,</span> <span class="pre">&quot;fields&quot;,</span> <span class="pre">&quot;unit&quot;,</span> <span class="pre">&quot;description&quot;,</span> <span class="pre">&quot;help&quot;]</span></code>.</p></td>
+<td><p>list</p></td>
+<td><p>No</p></td>
+</tr>
+<tr class="row-even"><td><p>column_widths</p></td>
+<td><p>Dictionary mapping column names to integer widths (Mantine
+grid <code class="docutils literal notranslate"><span class="pre">span</span></code> units). Unspecified columns use built-in defaults.
+Default:
+<code class="docutils literal notranslate"><span class="pre">{&quot;label&quot;:</span> <span class="pre">2,</span> <span class="pre">&quot;fields&quot;:</span> <span class="pre">5,</span> <span class="pre">&quot;unit&quot;:</span> <span class="pre">1,</span> <span class="pre">&quot;description&quot;:</span> <span class="pre">3,</span> <span class="pre">&quot;help&quot;:</span> <span class="pre">1}</span></code>.</p></td>
+<td><p>dict</p></td>
+<td><p>No</p></td>
+</tr>
+<tr class="row-odd"><td><p>column_names</p></td>
+<td><p>List of strings to use as column header labels, in the same
+order as <code class="docutils literal notranslate"><span class="pre">columns</span></code>. If provided, a header row is added.</p></td>
+<td><p>list</p></td>
+<td><p>No</p></td>
+</tr>
+<tr class="row-even"><td><p>aio_id</p></td>
+<td><p>A unique identifier for the component instance.
+If not provided, a UUID is generated.</p></td>
+<td><p>string</p></td>
+<td><p>No</p></td>
+</tr>
+<tr class="row-odd"><td><p>persistence</p></td>
+<td><p>Whether to enable UI-side persistence for all form fields.
+When <code class="docutils literal notranslate"><span class="pre">True</span></code>, user-entered values survive page navigation
+within the same browser tab. Individual fields can override
+this global setting via <code class="docutils literal notranslate"><span class="pre">&quot;persistence&quot;</span></code> in the field dict.
+Default: <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></td>
+<td><p>boolean</p></td>
+<td><p>No</p></td>
+</tr>
+<tr class="row-even"><td><p>persistence_type</p></td>
+<td><p>The Dash persistence storage type. Accepted values:
+<code class="docutils literal notranslate"><span class="pre">&quot;memory&quot;</span></code> (cleared on page reload), <code class="docutils literal notranslate"><span class="pre">&quot;session&quot;</span></code>
+(cleared when the browser tab is closed), <code class="docutils literal notranslate"><span class="pre">&quot;local&quot;</span></code>
+(persists across reloads and browser restarts). Only
+relevant when <code class="docutils literal notranslate"><span class="pre">persistence</span></code> is <code class="docutils literal notranslate"><span class="pre">True</span></code>.
+Default: <code class="docutils literal notranslate"><span class="pre">&quot;memory&quot;</span></code>.</p></td>
+<td><p>string</p></td>
+<td><p>No</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="component-ids">
+<h3>Component IDs<a class="headerlink" href="#component-ids" title="Link to this heading">#</a></h3>
+<p>The component exposes the following IDs for use in callbacks:</p>
+<section id="row-level-subcomponents">
+<h4>Row-level subcomponents<a class="headerlink" href="#row-level-subcomponents" title="Link to this heading">#</a></h4>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">InputForm.ids.label(aio_id,</span> <span class="pre">row_index)</span></code>: The <code class="docutils literal notranslate"><span class="pre">dmc.Text</span></code> label component of a row.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">InputForm.ids.unit(aio_id,</span> <span class="pre">row_index)</span></code>: The <code class="docutils literal notranslate"><span class="pre">dmc.Text</span></code> unit component of a row.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">InputForm.ids.description(aio_id,</span> <span class="pre">row_index)</span></code>: The <code class="docutils literal notranslate"><span class="pre">dmc.Text</span></code> description component of
+a row.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">InputForm.ids.help(aio_id,</span> <span class="pre">row_index)</span></code>: The <code class="docutils literal notranslate"><span class="pre">dmc.ActionIcon</span></code> help button of a row.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">InputForm.ids.modal(aio_id,</span> <span class="pre">row_index)</span></code>: The <code class="docutils literal notranslate"><span class="pre">dmc.Modal</span></code> help modal of a row.</p></li>
+</ul>
+<p>These IDs are indexed by <code class="docutils literal notranslate"><span class="pre">aio_id</span></code> and <code class="docutils literal notranslate"><span class="pre">row_index</span></code>. The <code class="docutils literal notranslate"><span class="pre">row_index</span></code> is the value of the
+<code class="docutils literal notranslate"><span class="pre">&quot;id&quot;</span></code> key in the row definition (<code class="docutils literal notranslate"><span class="pre">item[&quot;id&quot;]</span></code>), or the zero-based integer position of the row
+if no <code class="docutils literal notranslate"><span class="pre">&quot;id&quot;</span></code> key is set.</p>
+</section>
+<section id="field-level-subcomponents">
+<h4>Field-level subcomponents<a class="headerlink" href="#field-level-subcomponents" title="Link to this heading">#</a></h4>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">InputForm.ids.field(aio_id,</span> <span class="pre">field_type,</span> <span class="pre">field_id,</span> <span class="pre">row_index)</span></code>: The input field component
+itself (for example, a <code class="docutils literal notranslate"><span class="pre">dmc.NumberInput</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">InputForm.ids.field_div(aio_id,</span> <span class="pre">field_type,</span> <span class="pre">field_id,</span> <span class="pre">row_index)</span></code>: The <code class="docutils literal notranslate"><span class="pre">html.Div</span></code>
+wrapping the input field. Use this ID to toggle field visibility dynamically.</p></li>
+</ul>
+<p>These IDs are indexed by <code class="docutils literal notranslate"><span class="pre">aio_id</span></code>, <code class="docutils literal notranslate"><span class="pre">field_type</span></code> (<code class="docutils literal notranslate"><span class="pre">field[&quot;type&quot;]</span></code>), <code class="docutils literal notranslate"><span class="pre">field_id</span></code>
+(<code class="docutils literal notranslate"><span class="pre">field[&quot;id&quot;]</span></code>), and <code class="docutils literal notranslate"><span class="pre">row_index</span></code>.</p>
+</section>
+</section>
+</section>
+<section id="full-example">
+<span id="ref-input-form-full-example"></span><h2>Full example<a class="headerlink" href="#full-example" title="Link to this heading">#</a></h2>
+<p>Check out this <a class="reference external" href="https://github.com/ansys/saf/blob/main/packages/dash-super-components/examples/showcase_all/src/ansys/solutions/showcase_dash_super_components/ui/pages/input_form_page.py" rel="noopener noreferrer" target="_blank">example</a>
+to learn how to use <code class="docutils literal notranslate"><span class="pre">InputForm</span></code>.</p>
+<p>The example demonstrates:</p>
+<ul>
+<li><p>A minimal form using the default column layout with labels embedded in the field
+definitions</p></li>
+<li><p>A form with all supported field types (<code class="docutils literal notranslate"><span class="pre">TextInput</span></code>, <code class="docutils literal notranslate"><span class="pre">Select</span></code>, <code class="docutils literal notranslate"><span class="pre">MultiSelect</span></code>,
+<code class="docutils literal notranslate"><span class="pre">NumberInput</span></code>, <code class="docutils literal notranslate"><span class="pre">Checkbox</span></code>, <code class="docutils literal notranslate"><span class="pre">Switch</span></code>, <code class="docutils literal notranslate"><span class="pre">Slider</span></code>, <code class="docutils literal notranslate"><span class="pre">PasswordInput</span></code>) in a
+four-column configuration with named row IDs</p></li>
+<li><p>Retrieving field values using specific <code class="docutils literal notranslate"><span class="pre">ids.field()</span></code> IDs, reading a single named field,
+and collecting all fields of a given type with <code class="docutils literal notranslate"><span class="pre">ALL</span></code> wildcards</p></li>
+<li><p>A form using all five columns (<code class="docutils literal notranslate"><span class="pre">label</span></code>, <code class="docutils literal notranslate"><span class="pre">fields</span></code>, <code class="docutils literal notranslate"><span class="pre">unit</span></code>, <code class="docutils literal notranslate"><span class="pre">description</span></code>, <code class="docutils literal notranslate"><span class="pre">help</span></code>)
+with images in the help column and custom title and card appearance</p></li>
+<li><p>Toggling the visibility of individual fields within a row using a checkbox</p></li>
+<li><p>Two <code class="docutils literal notranslate"><span class="pre">InputForm</span></code> instances without a card wrapper composed inside a shared card, with
+<code class="docutils literal notranslate"><span class="pre">MATCH</span></code> callbacks that turn off fields and update label and unit colors based on the
+entered value</p></li>
+</ul>
+<p>For a minimal self-contained runnable example, see the
+<a class="reference internal" href="../../../../../examples/dash_super_components_examples/general/example_input_form.html#sphx-glr-examples-dash-super-components-examples-general-example-input-form-py"><span class="std std-ref">Input Form</span></a> page in the Examples gallery.</p>
+</section>
+<section id="source-code">
+<h2>Source code<a class="headerlink" href="#source-code" title="Link to this heading">#</a></h2>
+<p>For the full API reference of <code class="docutils literal notranslate"><span class="pre">InputForm</span></code>, see
+<code class="xref py py-class docutils literal notranslate"><span class="pre">InputForm</span></code>.</p>
+<p>Check out the <a class="reference external" href="https://github.com/ansys/saf/blob/main/packages/dash-super-components/src/ansys/solutions/dash_super_components/input_form.py" rel="noopener noreferrer" target="_blank">component source code</a>
+to discover the underlying logic. Contributions are welcomed. You can extend the component
+functionalities by raising a pull request in the
+<a class="reference external" href="https://github.com/ansys/saf/tree/main/packages/dash-super-components" rel="noopener noreferrer" target="_blank">dash-super-components</a> package.</p>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#usage">Usage</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#basic-usage">Basic usage</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#advanced-usage">Advanced usage</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#column-layout">Column layout</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#retrieving-field-values-in-callbacks">Retrieving field values in callbacks</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#retrieve-a-specific-field">Retrieve a specific field</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#retrieve-all-fields-of-a-specific-type-using-pattern-matching">Retrieve all fields of a specific type using pattern matching</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#updating-row-level-subcomponents-from-callbacks">Updating row-level subcomponents from callbacks</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#using-match-for-cross-form-callbacks">Using MATCH for cross-form callbacks</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#value-persistence">Value persistence</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#toggling-hidden-fields-using-callbacks">Toggling hidden fields using callbacks</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#properties">Properties</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#item-keys">Item keys</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#field-keys">Field keys</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#constructor-parameters">Constructor parameters</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#component-ids">Component IDs</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#row-level-subcomponents">Row-level subcomponents</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#field-level-subcomponents">Field-level subcomponents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#full-example">Full example</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#source-code">Source code</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085"></script>
+<script defer src="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085"></script>
+
+
+  <!-- Include desired assets -->
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.7/require.min.js"></script>
+
+<script>
+// Passing the search options to the search.js file
+const SEARCH_OPTIONS = JSON.parse('{"keys": ["title", "text", "objectID"], "limit": 10, "threshold": 0.2}');
+const SEARCH_FILE = "../../../../../_static/search.json";
+const ADVANCE_SEARCH_PATH = "../../../../../search.html";
+const EXTRA_SOURCES = JSON.parse('""');
+</script>
+
+
+<script src="../../../../../_static/js/search.js"></script>
+
+  
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<footer class="bd-footer">
+  <div class="bd-footer__inner bd-page-width">
+    <div class="footer-items__start">
+      <div class="footer-item">
+        <div class="footer-items__start">
+          <div class="footer-item">
+            <img src="https://docs.pyansys.com/version/dev/_static/ansys_logo_transparent_white.png" alt="Ansys Logo" class="footer-ansys-logo">
+          </div>
+          <div class="footer-item"><br>
+            <p>2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-items__center">
+      <div class="footer-item">
+        <div class="footer-items__start">
+          <div class="connect-with-ansys">
+            <p>Latest documentation</p> <br>
+            <a href="https://www.ansys.com/" class="external-link" target="_blank" rel="noopener noreferrer">
+              <span class="link-text">Ansys.com</span>
+              <i class="fas fa-up-right-from-square"></i>
+            </a><br>
+            <a href="https://www.ansys.com/services/ansys-learning-hub" class="external-link" target="_blank" rel="noopener noreferrer">
+              <span class="link-text">Ansys Learning</span>
+              <i class="fas fa-up-right-from-square"></i>
+            </a><br>
+            <a href="https://www.ansys.com/support" class="external-link" target="_blank" rel="noopener noreferrer">
+              <span class="link-text">Ansys Support</span>
+              <i class="fas fa-up-right-from-square"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-items__end">
+      <div class="footer-item">
+        <div class="footer-right">
+          <span>Connect with Ansys</span>
+          <div class="social-icons">
+            <a href="https://www.youtube.com/user/ansysinc" target="_blank" rel="noopener" class="icon icon-youtube" aria-label="Youtube"><span class="sr-only">Youtube</span></a>
+            <a href="https://www.facebook.com/ansys" target="_blank" rel="noopener" class="icon icon-facebook" aria-label="Facebook"><span class="sr-only">Facebook</span></a>
+            <a href="https://www.linkedin.com/company/ansys-inc" target="_blank" rel="noopener" class="icon icon-linkedin" aria-label="Linkedin"><span class="sr-only">Linkedin</span></a>
+            <a href="https://github.com/ansys" target="_blank" rel="noopener" class="icon icon-github" aria-label="GitHub"><i class="fab fa-github"></i><span class="sr-only">GitHub</span></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+  </body>
+</html>

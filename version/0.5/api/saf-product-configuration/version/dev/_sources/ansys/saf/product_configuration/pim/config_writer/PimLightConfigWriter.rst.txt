@@ -1,0 +1,109 @@
+
+
+
+
+
+
+:class:`PimLightConfigWriter`
+=============================
+
+
+.. py:class:: ansys.saf.product_configuration.pim.config_writer.PimLightConfigWriter
+
+   
+   A utility class for writing PIM Light Server configuration files.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:currentmodule:: PimLightConfigWriter
+
+Overview
+--------
+
+.. tab-set::
+
+
+   .. tab-item:: Constructors
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~write_config`
+            - Writes the PIM configuration to a YAML file in the specified configurations directory.
+
+
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.saf.product_configuration.pim.config_writer import PimLightConfigWriter
+
+
+
+Method detail
+-------------
+
+.. py:method:: write_config(configurations_dir: pathlib.Path, instance_configuration: ansys.saf.product_configuration.interfaces.IProductInstanceConfiguration)
+   :classmethod:
+
+
+   
+   Writes the PIM configuration to a YAML file in the specified configurations directory.
+
+
+   :Parameters:
+
+       **configurations_dir** : Path
+           The path to the directory where the configuration YAML file will be written.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   .. rubric:: Examples
+
+   You can write the configuration to a directory called ``my_solution/product_instance_configs`` like this:
+
+   >>> config.write_config(Path("my_solution/product_instance_configs"))
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

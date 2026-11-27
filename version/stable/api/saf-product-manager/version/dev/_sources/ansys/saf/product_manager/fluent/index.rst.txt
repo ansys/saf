@@ -1,0 +1,108 @@
+
+
+
+
+
+
+The ``fluent`` package
+==========================
+
+.. py:module:: ansys.saf.product_manager.fluent
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: fluent
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.saf.product_manager.fluent.Fluent2DDPSolverInternalManager`
+            - Private class to manage a Fluent Solver 2DDP instance using secure gRPC connections.
+
+
+          * - :py:obj:`~ansys.saf.product_manager.fluent.Fluent2DDPSolverManager`
+            - A manager of a `Fluent <https://www.ansys.com/en-gb/products/fluids/ansys-fluent>`_ product instance
+
+
+          * - :py:obj:`~ansys.saf.product_manager.fluent.Fluent3DDPMeshingInternalManager`
+            - Private class to manage a Fluent Meshing 3DDP instance using secure gRPC connections.
+
+
+          * - :py:obj:`~ansys.saf.product_manager.fluent.Fluent3DDPMeshingManager`
+            - A manager of a `Fluent <https://www.ansys.com/en-gb/products/fluids/ansys-fluent>`_ product instance
+
+
+          * - :py:obj:`~ansys.saf.product_manager.fluent.Fluent3DDPSolverInternalManager`
+            - Private class to manage a Fluent Solver 3DDP instance using secure gRPC connections.
+
+
+          * - :py:obj:`~ansys.saf.product_manager.fluent.Fluent3DDPSolverManager`
+            - A manager of a `Fluent <https://www.ansys.com/en-gb/products/fluids/ansys-fluent>`_ product instance
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> Fluent2DDPSolverInternalManager</ansys/saf/product_manager/fluent/Fluent2DDPSolverInternalManager>
+    <span class="nf nf-cod-symbol_class"></span> Fluent2DDPSolverManager</ansys/saf/product_manager/fluent/Fluent2DDPSolverManager>
+    <span class="nf nf-cod-symbol_class"></span> Fluent3DDPMeshingInternalManager</ansys/saf/product_manager/fluent/Fluent3DDPMeshingInternalManager>
+    <span class="nf nf-cod-symbol_class"></span> Fluent3DDPMeshingManager</ansys/saf/product_manager/fluent/Fluent3DDPMeshingManager>
+    <span class="nf nf-cod-symbol_class"></span> Fluent3DDPSolverInternalManager</ansys/saf/product_manager/fluent/Fluent3DDPSolverInternalManager>
+    <span class="nf nf-cod-symbol_class"></span> Fluent3DDPSolverManager</ansys/saf/product_manager/fluent/Fluent3DDPSolverManager>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

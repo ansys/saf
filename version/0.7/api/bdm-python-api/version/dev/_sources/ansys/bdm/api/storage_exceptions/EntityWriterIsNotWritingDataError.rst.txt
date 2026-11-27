@@ -1,0 +1,50 @@
+
+
+
+
+
+
+:class:`EntityWriterIsNotWritingDataError`
+==========================================
+
+
+.. py:exception:: ansys.bdm.api.storage_exceptions.EntityWriterIsNotWritingDataError
+
+   Bases: :py:obj:`Exception`
+
+
+   
+   Exception raised when attempting to access stream from EntityWriter
+   after the writing context is closed or before it is opened.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.bdm.api.storage_exceptions import EntityWriterIsNotWritingDataError
+
+
+
+
+

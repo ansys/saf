@@ -1,0 +1,190 @@
+
+
+
+
+
+
+The ``client`` package
+==========================
+
+.. py:module:: ansys.saf.glow.client
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: client
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.saf.glow.client.Client`
+            - Client for enabling access to a remote GLOW Solution.
+
+
+          * - :py:obj:`~ansys.saf.glow.client.DashClient`
+            - Client for use in the Dash UI framework that enables access to remote GLOW Solution.
+
+
+          * - :py:obj:`~ansys.saf.glow.client.callback`
+            - A decorator of `Dash callback functions <https://dash.plotly.com/basic-callbacks>`_ that replaces the
+
+
+          * - :py:obj:`~ansys.saf.glow.client.LongRunning`
+            - An object that monitors the execution of a call to a long-running transaction method.
+
+
+          * - :py:obj:`~ansys.saf.glow.client.AnalysisResultModel`
+            - Represents the result of a solution analysis.
+
+
+          * - :py:obj:`~ansys.saf.glow.client.AbstractStoragePath`
+            - A base class for representing paths to folders, directories, files or blobs in a
+
+
+          * - :py:obj:`~ansys.saf.glow.client.OperatingSystemPath`
+            - A path to a directory or file in a OS Filesystem which may or may not actually exist.
+
+
+          * - :py:obj:`~ansys.saf.glow.client.OperatingSystemStorage`
+            - A factory for :py:class:`~ansys.saf.glow.client.OperatingSystemPath` objects.
+
+
+
+    .. tab-item:: Enums
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.saf.glow.client.Deployment`
+            - Categories of deployments for the GLOW server.
+
+
+
+    .. tab-item:: Exceptions
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.saf.glow.client.BadRequestException`
+            - Exception raised when the GLOW client API is used incorrectly.
+
+
+          * - :py:obj:`~ansys.saf.glow.client.ConflictException`
+            - Exception raised when the GLOW client API is invoked making a request
+
+
+          * - :py:obj:`~ansys.saf.glow.client.InternalSolutionException`
+            - Exception raised when the solution experienced a problem server-side.
+
+
+          * - :py:obj:`~ansys.saf.glow.client.NotFoundException`
+            - Exception raised when the GLOW client API is invoked to access an
+
+
+          * - :py:obj:`~ansys.saf.glow.client.PermissionException`
+            - Exception raised when the GLOW client API is invoked to trigger an
+
+
+          * - :py:obj:`~ansys.saf.glow.client.UnauthorizedException`
+            - Exception raised when the GLOW client API is invoked to trigger an
+
+
+          * - :py:obj:`~ansys.saf.glow.client.SolutionLoadException`
+            - Exception raised when errors are detected during
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> Client</ansys/saf/glow/client/Client>
+    <span class="nf nf-cod-symbol_class"></span> DashClient</ansys/saf/glow/client/DashClient>
+    <span class="nf nf-cod-symbol_class"></span> callback</ansys/saf/glow/client/callback>
+    <span class="nf nf-cod-symbol_class"></span> LongRunning</ansys/saf/glow/client/LongRunning>
+    <span class="nf nf-cod-symbol_class"></span> AnalysisResultModel</ansys/saf/glow/client/AnalysisResultModel>
+    <span class="nf nf-cod-symbol_class"></span> AbstractStoragePath</ansys/saf/glow/client/AbstractStoragePath>
+    <span class="nf nf-cod-symbol_class"></span> OperatingSystemPath</ansys/saf/glow/client/OperatingSystemPath>
+    <span class="nf nf-cod-symbol_class"></span> OperatingSystemStorage</ansys/saf/glow/client/OperatingSystemStorage>
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_enum"></span> Deployment</ansys/saf/glow/client/Deployment>
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-md-lightning_bolt"></span> BadRequestException</ansys/saf/glow/client/BadRequestException>
+    <span class="nf nf-md-lightning_bolt"></span> ConflictException</ansys/saf/glow/client/ConflictException>
+    <span class="nf nf-md-lightning_bolt"></span> InternalSolutionException</ansys/saf/glow/client/InternalSolutionException>
+    <span class="nf nf-md-lightning_bolt"></span> NotFoundException</ansys/saf/glow/client/NotFoundException>
+    <span class="nf nf-md-lightning_bolt"></span> PermissionException</ansys/saf/glow/client/PermissionException>
+    <span class="nf nf-md-lightning_bolt"></span> UnauthorizedException</ansys/saf/glow/client/UnauthorizedException>
+    <span class="nf nf-md-lightning_bolt"></span> SolutionLoadException</ansys/saf/glow/client/SolutionLoadException>
+
+
+
+
+
+
+
+
+
+
+
+
+
+

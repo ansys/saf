@@ -1,0 +1,1339 @@
+<!--
+Copyright (C) 2026 ANSYS, Inc. and/or its affiliates.
+SPDX-License-Identifier: Apache-2.0
+
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+ <!-- ©2026, ANSYS Inc. Unauthorized use, distribution or duplication is prohibited. -->
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" data-theme="dark">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Supported product instance managers &#8212; SAF Doc</title>
+  
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "dark";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "dark";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/ansys-sphinx-theme.css?v=5ffe81b6" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=fd6457a4" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/ansys-sphinx-theme.css?v=5ffe81b6" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://www.nerdfonts.com/assets/css/webfont.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/code-tabs.css?v=1bc26e2f" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=c999ad29" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/carousel.css?v=272b576a" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/landing_page_banner.css?v=57c45261" />
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../../_static/scripts/fontawesome.js?digest=0790524f97105ba85085"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085" />
+
+
+  <!-- Include desired assets -->
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  
+
+  
+    <link href="../../../_static/css/breadcrumbs.css" rel="stylesheet" />
+  
+    <script src="../../../_static/documentation_options.js?v=8a448e45"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=49e1bf35"></script>
+    <script src="../../../_static/sg-tags.js?v=d80f6fa4"></script>
+    <script src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
+    <script src="../../../_static/code-tabs.js?v=c983d12e"></script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'user_guide/backend/instance_management/supported_products';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.18.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://saf.ansys.com/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.2';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <script src="../../../_static/js/sidebar-always-expanded.js?v=6b23dfe7"></script>
+    <script src="../../../_static/js/sdI_button_ref_tooltips.js?v=091f9e4c"></script>
+    <script src="../../../_static/js/primary-sidebar-sticky-offset.js?v=7ecdf44c"></script>
+    <link rel="icon" href="../../../_static/ansys-favicon.png"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="gRPC transport modes" href="grpc_transport_modes.html" />
+    <link rel="prev" title="Usage" href="usage.html" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.2.0" />
+  
+    
+    <script src="../../../_static/searchtools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <script src="../../../searchindex.js"></script>
+  
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+
+  <link rel="canonical" href="https://saf.ansys.com/version/stable/user_guide/backend/instance_management/supported_products.html" />
+  </head>
+  <body data-default-mode="dark">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+  
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+    
+    <img src="../../../_static/endorsed-ansys-logos-gold-white-rgb.svg" class="logo__image only-dark" alt="SAF Doc - Home"/>
+    <img src="../../../_static/endorsed-ansys-logos-gold-black-rgb.svg" class="logo__image only-light pst-js-only" alt="SAF Doc - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../index.html" title="SAF Doc home">Home</a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../overview/index.html">
+    Overview
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../getting_started/index.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../index.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api/index.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../contribute/index.html">
+    Contribute
+  </a>
+</li>
+
+  </ul>
+</nav>
+</div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+      
+        <div class="navbar-item">
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../../../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+  
+</div></div>
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/saf" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+  
+    
+<!--
+  Announcement Version Loader
+  Dynamically loads the announcement.html content into the announcement_msg div.
+-->
+<div id="announcement_msg" aria-live="polite"></div>
+<script>
+  // Fetch and inject the announcement HTML content
+  fetch("announcement.html")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error: ${response.status} Announcement.html file not found, Please ignore this, if you are in dev/stable documentation`);
+      }
+      return response.text();
+    })
+    .then((text) => {
+      var msgDiv = document.getElementById("announcement_msg");
+      if (msgDiv) {
+        msgDiv.innerHTML = text;
+      }
+    })
+    .catch((error) => {
+      // Log only unexpected fetch errors
+      if (!(error.message && error.message.startsWith("HTTP error: 404"))) {
+        console.error(`Fetch problem: ${error.message} Announcement.html could not be loaded.`);
+      }
+    });
+</script>
+  
+
+  <div class="header-nav-banner d-print-none">
+    <div class="header-nav-banner__inner">
+      <div class="header-nav-banner__crumbs">
+        
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+     
+    <li class="breadcrumb-item breadcrumb-home">
+      <a
+        href="../../../index.html"
+        class="nav-link"
+        aria-label="Home"
+      >
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="../../index.html" class="nav-link">User guide</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="../index.html" class="nav-link">Backend development</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="index.html" class="nav-link">Instance management</a>
+    </li>
+      
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Supported product instance managers</span></li>
+    
+  </ul>
+</nav>
+
+      </div>
+    </div>
+  </div>
+
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../index.html" title="SAF Doc home">Home</a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../overview/index.html">
+    Overview
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../getting_started/index.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../index.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api/index.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../contribute/index.html">
+    Contribute
+  </a>
+</li>
+
+  </ul>
+</nav>
+</div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../../../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+  
+</div></div>
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/saf" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item pst-sidebar-collapse"><button id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar"><svg class="pst-icon svg-inline--fa" role="img" aria-hidden="true" focusable="false" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="M3 15.5C2.36232 15.5 1.74874 15.2564 1.28478 14.8189C0.820828 14.3815 0.541576 13.7832 0.504167 13.1467L0.5 13L0.5 3C0.499965 2.36232 0.743605 1.74874 1.18107 1.28478C1.61854 0.820828 2.21676 0.541576 2.85333 0.504167L3 0.5L13 0.5C13.6377 0.499965 14.2513 0.743605 14.7152 1.18107C15.1792 1.61854 15.4584 2.21676 15.4958 2.85333L15.5 3L15.5 13C15.5 13.6377 15.2564 14.2513 14.8189 14.7152C14.3815 15.1792 13.7832 15.4584 13.1467 15.4958L13 15.5L3 15.5ZM3 13.8333L10.5 13.8333L10.5 2.16667L3 2.16667C2.79589 2.16669 2.59889 2.24163 2.44636 2.37726C2.29383 2.5129 2.19638 2.69979 2.1725 2.9025L2.16667 3L2.16667 13C2.16669 13.2041 2.24163 13.4011 2.37726 13.5536C2.5129 13.7062 2.69979 13.8036 2.9025 13.8275L3 13.8333ZM6.65583 10.325L6.5775 10.2558L4.91083 8.58917C4.76735 8.44567 4.68116 8.25476 4.66843 8.05223C4.65569 7.84971 4.71729 7.6495 4.84167 7.48917L4.91083 7.41083L6.5775 5.74417C6.72747 5.59471 6.9287 5.50794 7.14032 5.50148C7.35194 5.49502 7.55809 5.56935 7.7169 5.70937C7.8757 5.8494 7.97525 6.04463 7.99533 6.25539C8.01541 6.46616 7.95451 6.67667 7.825 6.84417L7.75583 6.9225L6.67917 8L7.75583 9.0775C7.89931 9.22099 7.98551 9.41191 7.99824 9.61443C8.01097 9.81695 7.94938 10.0172 7.825 10.1775L7.75583 10.2558C7.61234 10.3993 7.42142 10.4855 7.2189 10.4982C7.01638 10.511 6.81617 10.4494 6.65583 10.325Z"/>
+  </svg>
+  <span class="pst-collapse-sidebar-label">Collapse Sidebar</span>
+  <span class="pst-expand-sidebar-label">Expand Sidebar</span>
+</button></div>
+        <div class="sidebar-primary-item">
+
+
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../scaffold.html">Scaffold</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../run_locally/index.html">Run locally</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../projects.html">Manage projects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../debug/index.html">Debug</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../test/index.html">Test</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../add_step.html">Add steps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../package/index.html">Package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../deploy/index.html">Deploy</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../index.html">Backend development</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../workflow_definition/index.html">Workflow definition</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../blob_management/index.html">Blob Data Management (BDM)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../ip_protection.html">IP protection</a></li>
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="index.html">Instance management</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="configuration.html">Configuration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="usage.html">Usage</a></li>
+<li class="toctree-l3 current active"><a class="current reference internal" href="#">Supported product instance managers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="grpc_transport_modes.html">gRPC transport modes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modify_builtin_products.html">Modify built-in product configurations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="custom_instance_managers.html">Create custom product managers and configurations</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../job_submission/index.html">Job submission</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_management/index.html">Data management</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../authn_authz/index.html">Authentication and authorization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../apis/index.html">APIs</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../frontend/index.html">Frontend development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../environment_variables.html">Environment variables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../solution_servers.html">Solution servers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../script.html">Script a solution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../supported_software.html">Supported software</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../components.html">SAF components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../best_practices/index.html">Best practices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../migration/index.html">Migration guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting/index.html">Troubleshooting guide</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+     
+    <li class="breadcrumb-item breadcrumb-home">
+      <a
+        href="../../../index.html"
+        class="nav-link"
+        aria-label="Home"
+      >
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="../../index.html" class="nav-link">User guide</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="../index.html" class="nav-link">Backend development</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="index.html" class="nav-link">Instance management</a>
+    </li>
+      
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Supported product instance managers</span></li>
+    
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="supported-product-instance-managers">
+<span id="instance-management-supported-products"></span><h1>Supported product instance managers<a class="headerlink" href="#supported-product-instance-managers" title="Link to this heading">#</a></h1>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Link to this heading">#</a></h2>
+<p>By default, SAF GLOW Engine  includes product instance managers for the following products:</p>
+<table class="pim-summary-table">
+  <thead>
+    <tr>
+      <th>Product</th>
+      <th>Supported versions</th>
+      <th>Manager classes</th>
+      <th>PyAnsys SDK</th>
+      <th>Secure transport modes</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>AEDT</strong></td>
+      <td>
+        <span class="pim-badge">2025 R1 SP4</span>
+        <span class="pim-badge">2025 R2 SP4</span>
+      </td>
+      <td>
+        <code>HfssManager</code><br>
+        <code>IcepakManager</code><br>
+        <code>Maxwell2DManager</code><br>
+        <code>Maxwell3DManager</code>
+      </td>
+      <td><code>pyaedt</code> <span class="pim-badge">1.0.1</span></td>
+      <td><span class="pim-secure-yes">WNUA, UDS, mTLS, insecure</span></td>
+    </tr>
+    <tr>
+      <td><strong>Fluent</strong></td>
+      <td>
+        <span class="pim-badge">2025 R1 SP4</span>
+        <span class="pim-badge">2025 R2 SP4</span>
+      </td>
+      <td>
+        <code>Fluent3DDPSolverSecureManager</code><br>
+        <code>Fluent2DDPSolverSecureManager</code><br>
+        <code>Fluent3DDPMeshingSecureManager</code>
+      </td>
+      <td><code>ansys-fluent-core</code> <span class="pim-badge">0.37.0</span></td>
+      <td><span class="pim-secure-yes">WNUA, UDS, mTLS, insecure</span></td>
+    </tr>
+    <tr>
+      <td><strong>Geometry</strong></td>
+      <td>
+        <span class="pim-badge">2025 R1 SP4</span>
+        <span class="pim-badge">2025 R2 SP4</span>
+      </td>
+      <td><code>GeometrySecureManager</code></td>
+      <td><code>ansys-geometry-core</code> <span class="pim-badge">0.14.2</span></td>
+      <td><span class="pim-secure-yes">WNUA, UDS, mTLS, insecure</span></td>
+    </tr>
+    <tr>
+      <td><strong>MAPDL</strong></td>
+      <td>
+        <span class="pim-badge">2025 R1 SP4</span>
+        <span class="pim-badge">2025 R2 SP4</span>
+      </td>
+      <td><code>MapdlSecureManager</code></td>
+      <td><code>ansys-mapdl-core</code> <span class="pim-badge">0.73.0</span></td>
+      <td><span class="pim-secure-yes">WNUA, UDS, mTLS, insecure</span></td>
+    </tr>
+    <tr>
+      <td><strong>Mechanical</strong></td>
+      <td>
+        <span class="pim-badge">2025 R1 SP4</span>
+        <span class="pim-badge">2025 R2 SP4</span>
+      </td>
+      <td><code>MechanicalSecureManager</code></td>
+      <td><code>ansys-mechanical-core</code> <span class="pim-badge">0.12.0</span></td>
+      <td><span class="pim-secure-yes">WNUA, mTLS, insecure</span></td>
+    </tr>
+    <tr>
+      <td><strong>optiSLang</strong></td>
+      <td>
+        <span class="pim-badge">2024 R1</span>
+        <span class="pim-badge">2024 R2</span>
+      </td>
+      <td><code>OptislangManager</code></td>
+      <td><code>ansys-optislang-core</code> <span class="pim-badge">0.9.4</span></td>
+      <td><span class="pim-secure-na">N/A (insecure only)</span></td>
+    </tr>
+    <tr>
+      <td><strong>Visor</strong></td>
+      <td>
+        <span class="pim-badge">0</span>
+      </td>
+      <td><code>VisorManager</code></td>
+      <td><code>ansys-visor-viewer</code> <span class="pim-badge">0.2.5b0</span></td>
+      <td><span class="pim-secure-na">N/A (insecure only)</span></td>
+    </tr>
+  </tbody>
+</table><div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>gRPC secure transport is available only for product instance managers and configurations that explicitly state secure support (for example, <code class="docutils literal notranslate"><span class="pre">GeometrySecureManager</span></code>).
+Product instance managers that are not explicitly marked as secure STILL BYPASS the requirements when interacting with the product instances, relying on insecure connections affected by the gRPC vulnerabilities recently disclosed by Ansys.</p>
+</div>
+</section>
+<section id="ansys-electronics-desktop">
+<h2>Ansys Electronics Desktop<a class="headerlink" href="#ansys-electronics-desktop" title="Link to this heading">#</a></h2>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">HfssManager</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">IcepakManager</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Maxwell2DManager</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Maxwell3DManager</span></code></p></li>
+</ul>
+<p>To be imported from <code class="docutils literal notranslate"><span class="pre">ansys.saf.product_manager.aedt</span></code>.</p>
+<section id="supported-versions">
+<h3>Supported versions<a class="headerlink" href="#supported-versions" title="Link to this heading">#</a></h3>
+<ul>
+<li><p>AEDT versions <span class="sd-sphinx-override sd-badge sd-bg-primary sd-bg-text-primary">2025 R1 SP4</span> and <span class="sd-sphinx-override sd-badge sd-bg-primary sd-bg-text-primary">2025 R2 SP4</span>.</p></li>
+</ul>
+</section>
+<section id="known-limitations">
+<h3>Known limitations<a class="headerlink" href="#known-limitations" title="Link to this heading">#</a></h3>
+<ul>
+<li><p>Only tested with <code class="docutils literal notranslate"><span class="pre">pyaedt</span></code> <span class="sd-sphinx-override sd-badge sd-bg-primary sd-bg-text-primary">1.0.1</span>. Using other versions may lead to unexpected behaviors.</p></li>
+<li><p>There should be an environment variable <span class="target" id="index-0"></span><code class="xref std std-envvar docutils literal notranslate"><span class="pre">ANSYSEM_ROOTXXX</span></code> pointing to the AEDT installation directory.</p>
+<div class="sd-tab-set docutils">
+<input checked="checked" id="sd-tab-item-0" name="sd-tab-set-0" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-0">
+Windows</label><div class="sd-tab-content docutils">
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$Env:ANSYSEM_ROOT251</span><span class="p">=</span><span class="s2">&quot;C:\Program Files\ANSYS Inc\v251\AnsysEM&quot;</span>
+<span class="nv">$Env:ANSYSEM_ROOT252</span><span class="p">=</span><span class="s2">&quot;C:\Program Files\ANSYS Inc\v252\AnsysEM&quot;</span>
+</pre></div>
+</div>
+</div>
+<input id="sd-tab-item-1" name="sd-tab-set-0" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-1">
+Linux</label><div class="sd-tab-content docutils">
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">ANSYSEM_ROOT251</span><span class="o">=</span><span class="s2">&quot;/ansys_inc/v251/AnsysEM/&quot;</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">ANSYSEM_ROOT252</span><span class="o">=</span><span class="s2">&quot;/ansys_inc/v252/AnsysEM/&quot;</span>
+</pre></div>
+</div>
+</div>
+</div>
+</li>
+<li><p>PyAEDT does not work for solutions that are deployed in a containerized manner.</p></li>
+<li><p>When connecting to a remote AEDT instance because AEDT is running in another server, PyAEDT requires to have AEDT installed locally in the client side. The license is not required.</p></li>
+<li><p>To use AEDT with HPS it is required to install the Python package <code class="docutils literal notranslate"><span class="pre">ansys-saf-product-configuration[aedt]</span></code> in the HPS scaler environment, and to include in the HPS scaler configuration both AEDT and its wrapper as available applications. For example, adding this snippet to the <code class="docutils literal notranslate"><span class="pre">scaling_config.json</span></code>:</p></li>
+</ul>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Ansys Electronics Desktop&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2025 R2&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;install_path&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/ansys_inc/v252/AnsysEM/&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;executable&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/ansys_inc/v252/AnsysEM/ansysedt&quot;</span><span class="p">,</span>
+<span class="p">},</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Ansys SAF Product Wrapper [AEDT]&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2.0&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;install_path&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;path-to-parent-dir-of-python-executable&gt;&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;executable&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;path-to-python-executable&gt;&quot;</span><span class="p">,</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Note that the executable in the wrapper points to the Python that has the <code class="docutils literal notranslate"><span class="pre">ansys-saf-product-configuration[aedt]</span></code> package installed in its environment.</p>
+</section>
+<section id="example">
+<h3>Example<a class="headerlink" href="#example" title="Link to this heading">#</a></h3>
+<p>For a complete example using AEDT product managers, see the <a class="reference external" href="https://saf.ansys.com/version/stable/examples/product_instance_managers_examples/saf_ex_aedt_product_instance.html" rel="noopener noreferrer" target="_blank">AEDT solution example</a>.</p>
+</section>
+</section>
+<section id="fluent">
+<h2>Fluent<a class="headerlink" href="#fluent" title="Link to this heading">#</a></h2>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">Fluent3DDPSolverSecureManager</span></code>: supports secure gRPC connections.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Fluent2DDPSolverSecureManager</span></code>: supports secure gRPC connections.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Fluent3DDPMeshingSecureManager</span></code>: supports secure gRPC connections.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Fluent3DDPSolverManager</span></code>: deprecated, use <code class="docutils literal notranslate"><span class="pre">Fluent3DDPSolverSecureManager</span></code> instead.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Fluent2DDPSolverManager</span></code>: deprecated, use <code class="docutils literal notranslate"><span class="pre">Fluent2DDPSolverSecureManager</span></code> instead.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Fluent3DDPMeshingManager</span></code>: deprecated, use <code class="docutils literal notranslate"><span class="pre">Fluent3DDPMeshingSecureManager</span></code> instead.</p></li>
+</ul>
+<p>To be imported from <code class="docutils literal notranslate"><span class="pre">ansys.saf.product_manager.fluent</span></code>.</p>
+<section id="id1">
+<h3>Supported versions<a class="headerlink" href="#id1" title="Link to this heading">#</a></h3>
+<ul>
+<li><p>Fluent versions <span class="sd-sphinx-override sd-badge sd-bg-primary sd-bg-text-primary">2025 R1 SP4</span> and <span class="sd-sphinx-override sd-badge sd-bg-primary sd-bg-text-primary">2025 R2 SP4</span>.</p></li>
+</ul>
+</section>
+<section id="id2">
+<h3>Known limitations<a class="headerlink" href="#id2" title="Link to this heading">#</a></h3>
+<ul>
+<li><p>Only tested with <code class="docutils literal notranslate"><span class="pre">ansys-fluent-core</span></code> <span class="sd-sphinx-override sd-badge sd-bg-primary sd-bg-text-primary">0.37.0</span>. Using other versions may lead to unexpected behaviors.</p></li>
+<li><p>When the instance is re-initialized, the internal state of the fluent interpreter is not restored. Only files are restored.</p></li>
+<li><p>To use Fluent with HPS it is required to install the Python package <code class="docutils literal notranslate"><span class="pre">ansys-saf-product-configuration[fluent]</span></code> in the HPS scaler environment, and to include in the HPS scaler configuration both Fluent and its wrapper as available applications. For example, adding this snippet to the <code class="docutils literal notranslate"><span class="pre">scaling_config.json</span></code>:</p>
+<blockquote>
+<div><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Ansys Fluent&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2025 R2&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;install_path&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/ansys_inc/v252/&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;executable&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/ansys_inc/v252/fluent/bin/fluent&quot;</span><span class="p">,</span>
+<span class="p">},</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Ansys SAF Product Wrapper [Fluent]&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;4.0&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;install_path&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;path-to-parent-dir-of-python-executable&gt;&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;executable&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;path-to-python-executable&gt;&quot;</span><span class="p">,</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Note that the executable in the wrapper points to the Python that has the <code class="docutils literal notranslate"><span class="pre">ansys-saf-product-configuration[fluent]</span></code> package installed in its environment.</p>
+</div></blockquote>
+</li>
+<li><p>The secure managers support all gRPC transport modes described in <a class="reference internal" href="grpc_transport_modes.html#instance-management-grpc-transport-modes"><span class="std std-ref">gRPC transport modes</span></a>. However, <code class="docutils literal notranslate"><span class="pre">ansys-fluent-core</span></code> enforces secure gRPC connections for local instances and does not permit insecure connections. This has two main implications:</p>
+<blockquote>
+<div><ul>
+<li><p><strong>When using HPS</strong>: To use insecure local connections, configure <span class="target" id="index-1"></span><code class="xref std std-envvar docutils literal notranslate"><span class="pre">GLOW_PRODUCT_HOST</span></code> with your local IP address instead of localhost.</p></li>
+<li><p><strong>When using PIM Light Server</strong>: The only supported secure mode by PIM Light Server (<code class="docutils literal notranslate"><span class="pre">WNUA</span></code>) does not work. Because SAF GLOW Engine  cannot reliably know if <code class="docutils literal notranslate"><span class="pre">WNUA</span></code> or <code class="docutils literal notranslate"><span class="pre">insecure</span></code> mode is being used when using PIM Light Server (see <a class="reference internal" href="grpc_transport_modes.html#instance-management-grpc-transport-modes"><span class="std std-ref">gRPC transport modes</span></a>), it falls back to insecure connections, which <code class="docutils literal notranslate"><span class="pre">ansys-fluent-core</span></code> rejects. As a workaround, configure <span class="target" id="index-2"></span><code class="xref std std-envvar docutils literal notranslate"><span class="pre">GLOW_PRODUCT_HOST</span></code> with your local IP address instead of localhost to establish a connection.</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section id="id3">
+<h3>Example<a class="headerlink" href="#id3" title="Link to this heading">#</a></h3>
+<p>For a complete example using Fluent product managers, see the <a class="reference external" href="https://saf.ansys.com/version/stable/examples/product_instance_managers_examples/saf_ex_fluent_product_instance.html" rel="noopener noreferrer" target="_blank">Fluent solution example</a>.</p>
+</section>
+</section>
+<section id="geometry">
+<h2>Geometry<a class="headerlink" href="#geometry" title="Link to this heading">#</a></h2>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">GeometrySecureManager</span></code>: supports secure gRPC connections.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">GeometryManager</span></code>: deprecated, use <code class="docutils literal notranslate"><span class="pre">GeometrySecureManager</span></code> instead.</p></li>
+</ul>
+<p>To be imported from <code class="docutils literal notranslate"><span class="pre">ansys.saf.product_manager.geometry</span></code>.</p>
+<section id="id4">
+<h3>Supported versions<a class="headerlink" href="#id4" title="Link to this heading">#</a></h3>
+<ul>
+<li><p>Windows: Geometry versions <span class="sd-sphinx-override sd-badge sd-bg-primary sd-bg-text-primary">2025 R1 SP4</span> and <span class="sd-sphinx-override sd-badge sd-bg-primary sd-bg-text-primary">2025 R2 SP4</span>.</p></li>
+<li><p>Linux: Geometry version <span class="sd-sphinx-override sd-badge sd-bg-primary sd-bg-text-primary">2025 R2 SP4</span>.</p></li>
+</ul>
+</section>
+<section id="configuration">
+<h3>Configuration<a class="headerlink" href="#configuration" title="Link to this heading">#</a></h3>
+<ul>
+<li><p>Install the Geometry service, following the steps proposed in the <a class="reference external" href="https://github.com/ansys/pyansys-geometry/discussions/1374" rel="noopener noreferrer" target="_blank">GitHub issue</a>:</p>
+<ul>
+<li><p>Download <strong>only the first ISO image</strong> of the Ansys official Release:</p>
+<figure class="align-default">
+<img alt="../../../_images/install_geometry_1.png" src="../../../_images/install_geometry_1.png" />
+</figure>
+</li>
+<li><p>Mount it and look in its content for the <code class="docutils literal notranslate"><span class="pre">geometryservice/WINX64.7z</span></code> file on Windows, or <code class="docutils literal notranslate"><span class="pre">geometryservice/LINX64.TGZ</span></code> on Linux. This compressed file contains the <code class="docutils literal notranslate"><span class="pre">GeometryService</span></code> directory that we want to install. Extract the <code class="docutils literal notranslate"><span class="pre">WINX64.7z</span></code> or <code class="docutils literal notranslate"><span class="pre">LINX64.TGZ</span></code> file, for example into: <code class="docutils literal notranslate"><span class="pre">C:\Program</span> <span class="pre">Files\ANSYS</span> <span class="pre">Inc\v252\GeometryService</span></code> or <code class="docutils literal notranslate"><span class="pre">/ansys_inc/v252/GeometryService/</span></code>.</p>
+<figure class="align-default">
+<img alt="../../../_images/install_geometry_2.png" src="../../../_images/install_geometry_2.png" />
+</figure>
+</li>
+</ul>
+</li>
+<li><p>Upgrade to the latest service pack:</p>
+<ul>
+<li><p>In the same page where you downloaded the first ISO image, download the latest service pack ISO image. You can find it at the bottom of the page.</p>
+<figure class="align-default">
+<img alt="../../../_images/install_geometry_3.png" src="../../../_images/install_geometry_3.png" />
+</figure>
+</li>
+<li><p>Locate and apply the service pack contents:</p>
+<ul>
+<li><p>Extract the service pack ISO image.</p></li>
+<li><p>Look for all directories that follow the format <code class="docutils literal notranslate"><span class="pre">xxxxx_geometryservice</span></code>. There can be multiple ones if several service packs have been released.</p></li>
+</ul>
+<figure class="align-default">
+<img alt="../../../_images/install_geometry_4.png" src="../../../_images/install_geometry_4.png" />
+</figure>
+<ul>
+<li><p>Within each of these directories, locate the <code class="docutils literal notranslate"><span class="pre">WINX64.7z</span></code> or <code class="docutils literal notranslate"><span class="pre">LINX64.TGZ</span></code> file and extract it, overwriting the existing <code class="docutils literal notranslate"><span class="pre">GeometryService</span></code> directory.</p></li>
+<li><p>If there are multiple service packs, apply them sequentially, starting from the oldest to the newest.</p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>On Linux, make sure the <code class="docutils literal notranslate"><span class="pre">licensingclient</span></code> of the binaries has the right permissions:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>chmod<span class="w"> </span>+x<span class="w"> </span>/ansys_inc/v252/GeometryService/licensingclient/linx64/ansyscl
+</pre></div>
+</div>
+</li>
+<li><p>Requires configuring the environment variable <span class="target" id="index-3"></span><code class="xref std std-envvar docutils literal notranslate"><span class="pre">GEOMETRY_ROOTXXX</span></code> to point to the <code class="docutils literal notranslate"><span class="pre">GeometryService</span></code> directory:</p>
+<div class="sd-tab-set docutils">
+<input checked="checked" id="sd-tab-item-2" name="sd-tab-set-1" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-2">
+Windows</label><div class="sd-tab-content docutils">
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">$Env</span>:GEOMETRY_ROOT251<span class="o">=</span><span class="s2">&quot;C:\Program Files\ANSYS Inc\v251\GeometryService&quot;</span>
+<span class="nv">$Env</span>:GEOMETRY_ROOT252<span class="o">=</span><span class="s2">&quot;C:\Program Files\ANSYS Inc\v252\GeometryService&quot;</span>
+</pre></div>
+</div>
+</div>
+<input id="sd-tab-item-3" name="sd-tab-set-1" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-3">
+Linux</label><div class="sd-tab-content docutils">
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">GEOMETRY_ROOT252</span><span class="o">=</span><span class="s2">&quot;/ansys_inc/v252/GeometryService/&quot;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>This environment variable must be set in the Solution API process, even when HPS and Geometry are running in another environment. The value must be the valid one in the environment where Geometry is expected to run. For example, if Geometry is running on Windows and the Solution is running on Linux, the environment variable in the solution process would be: <code class="docutils literal notranslate"><span class="pre">C:\Program</span> <span class="pre">Files\ANSYS</span> <span class="pre">Inc\v251\GeometryService</span></code></p>
+</li>
+<li><p>Requires configuring the environment variable <span class="target" id="index-4"></span><code class="xref std std-envvar docutils literal notranslate"><span class="pre">ANSYSLMD_LICENSE_FILE</span></code> to point to a license server in the environment where Geometry is expected to run.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">ANSYSLMD_LICENSE_FILE</span><span class="o">=</span><span class="s2">&quot;1055@my-host&quot;</span><span class="sb">`</span>
+</pre></div>
+</div>
+</li>
+<li><p>Requires <a class="reference external" href="https://dotnet.microsoft.com/en-us/download/dotnet/8.0" rel="noopener noreferrer" target="_blank">.NET 8.0</a> or greater to be installed on the system, and to be added to the <code class="docutils literal notranslate"><span class="pre">PATH</span></code> environment variable. Using <a class="reference external" href="https://dotnet.microsoft.com/en-us/download/dotnet/scripts" rel="noopener noreferrer" target="_blank">dotnet-install scripts</a> is highly recommended.</p></li>
+<li><p>Requires modifying the HPS scaler configuration to add it as an available application <code class="docutils literal notranslate"><span class="pre">scaling_config.json</span></code>:</p>
+<div class="sd-tab-set docutils">
+<input checked="checked" id="sd-tab-item-4" name="sd-tab-set-2" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-4">
+Windows</label><div class="sd-tab-content docutils">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Ansys Geometry&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2025 R1&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;install_path&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;path-to-geometry-service-directory&gt;&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;executable&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;path-to-geometry-service-directory&gt;/Presentation.ApiServerDMS.exe&quot;</span><span class="p">,</span>
+<span class="p">},</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Ansys Geometry&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2025 R2&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;install_path&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;path-to-geometry-service-directory&gt;&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;executable&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;path-to-geometry-service-directory&gt;/Presentation.ApiServerCoreService.exe&quot;</span><span class="p">,</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<input id="sd-tab-item-5" name="sd-tab-set-2" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-5">
+Linux</label><div class="sd-tab-content docutils">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Ansys Geometry&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2025 R2&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;install_path&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;path-to-parent-dir-of-dotnet-executable&gt;&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;executable&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;path-to-dotnet-executable&gt;&quot;</span><span class="p">,</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">GeometrySecureManager</span></code> supports all gRPC transport modes described in <a class="reference internal" href="grpc_transport_modes.html#instance-management-grpc-transport-modes"><span class="std std-ref">gRPC transport modes</span></a>.</p></li>
+</ul>
+</section>
+<section id="id5">
+<h3>Known limitations<a class="headerlink" href="#id5" title="Link to this heading">#</a></h3>
+<ul>
+<li><p>Only tested with <code class="docutils literal notranslate"><span class="pre">ansys-geometry-core</span></code> <span class="sd-sphinx-override sd-badge sd-bg-primary sd-bg-text-primary">0.14.2</span>. Using other versions may lead to unexpected behaviors.</p></li>
+</ul>
+</section>
+<section id="id6">
+<h3>Example<a class="headerlink" href="#id6" title="Link to this heading">#</a></h3>
+<p>For a complete example using Geometry product manager, see the <a class="reference external" href="https://saf.ansys.com/version/stable/examples/product_instance_managers_examples/saf_ex_geometry_product_instance.html" rel="noopener noreferrer" target="_blank">Geometry solution example</a>.</p>
+</section>
+</section>
+<section id="mapdl">
+<h2>MAPDL<a class="headerlink" href="#mapdl" title="Link to this heading">#</a></h2>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">MapdlSecureManager</span></code>: supports secure gRPC connections.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">MapdlManager</span></code>: deprecated, use <code class="docutils literal notranslate"><span class="pre">MapdlSecureManager</span></code> instead.</p></li>
+</ul>
+<p>To be imported from <code class="docutils literal notranslate"><span class="pre">ansys.saf.product_manager.mapdl</span></code>.</p>
+<section id="id7">
+<h3>Supported versions<a class="headerlink" href="#id7" title="Link to this heading">#</a></h3>
+<ul>
+<li><p>MAPDL versions <span class="sd-sphinx-override sd-badge sd-bg-primary sd-bg-text-primary">2025 R1 SP4</span> and <span class="sd-sphinx-override sd-badge sd-bg-primary sd-bg-text-primary">2025 R2 SP4</span>.</p></li>
+</ul>
+</section>
+<section id="id8">
+<h3>Known limitations<a class="headerlink" href="#id8" title="Link to this heading">#</a></h3>
+<ul>
+<li><p>Only tested with <code class="docutils literal notranslate"><span class="pre">ansys-mapdl-core</span></code> <span class="sd-sphinx-override sd-badge sd-bg-primary sd-bg-text-primary">0.73.0</span>. Using other versions may lead to unexpected behaviors.</p></li>
+<li><p>Each MAPDL client created when interacting with the instance within a transaction spawns a new logger and adds it to the global logger.
+When the transaction ends, loggers are not cleaned up and keep accumulating. Hence, messages are duplicated except in the GLOW logger where they only appear once.</p></li>
+<li><p>MAPDL <span class="sd-sphinx-override sd-badge sd-bg-primary sd-bg-text-primary">2025 R1 SP4</span> and <span class="sd-sphinx-override sd-badge sd-bg-primary sd-bg-text-primary">2025 R2 SP4</span> are incompatible with the Database module of <code class="docutils literal notranslate"><span class="pre">ansys-mapdl-core</span></code> <code class="docutils literal notranslate"><span class="pre">0.72.0</span></code>.</p></li>
+<li><p>MAPDL spawns a console window in the background when used in Windows.</p></li>
+<li><p>Concurrent instances of MAPDL in Windows are only supported using HPS.</p></li>
+<li><p>The secure manager supports all gRPC transport modes described in <a class="reference internal" href="grpc_transport_modes.html#instance-management-grpc-transport-modes"><span class="std std-ref">gRPC transport modes</span></a>.</p></li>
+</ul>
+</section>
+<section id="id9">
+<h3>Example<a class="headerlink" href="#id9" title="Link to this heading">#</a></h3>
+<p>For a complete example using MAPDL product manager, see the <a class="reference external" href="https://saf.ansys.com/version/stable/examples/product_instance_managers_examples/saf_ex_mapdl_product_instance.html" rel="noopener noreferrer" target="_blank">MAPDL solution example</a>.</p>
+</section>
+</section>
+<section id="mechanical">
+<h2>Mechanical<a class="headerlink" href="#mechanical" title="Link to this heading">#</a></h2>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">MechanicalSecureManager</span></code>: supports secure gRPC connections.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">MechanicalManager</span></code>: deprecated, use <code class="docutils literal notranslate"><span class="pre">MechanicalSecureManager</span></code> instead.</p></li>
+</ul>
+<p>To be imported from <code class="docutils literal notranslate"><span class="pre">ansys.saf.product_manager.mechanical</span></code>.</p>
+<section id="id10">
+<h3>Supported versions<a class="headerlink" href="#id10" title="Link to this heading">#</a></h3>
+<ul>
+<li><p>Mechanical versions <span class="sd-sphinx-override sd-badge sd-bg-primary sd-bg-text-primary">2025 R1 SP4</span> and <span class="sd-sphinx-override sd-badge sd-bg-primary sd-bg-text-primary">2025 R2 SP4</span>.</p></li>
+</ul>
+</section>
+<section id="id11">
+<h3>Known limitations<a class="headerlink" href="#id11" title="Link to this heading">#</a></h3>
+<ul>
+<li><p>Only tested with <code class="docutils literal notranslate"><span class="pre">ansys-mechanical-core</span></code> <span class="sd-sphinx-override sd-badge sd-bg-primary sd-bg-text-primary">0.12.0</span>. Using other versions may lead to unexpected behaviors.</p></li>
+<li><p>When the instance is re-initialized, the internal state of the mechanical interpreter is not restored. Only files are restored.</p></li>
+<li><p>HPS does not provide an official application finder. It requires a custom configuration to recognize Mechanical as an available application. For example, adding this snippet to the <code class="docutils literal notranslate"><span class="pre">scaling_config.json</span></code>:</p></li>
+<li><p>The secure manager supports all gRPC transport modes described in <a class="reference internal" href="grpc_transport_modes.html#instance-management-grpc-transport-modes"><span class="std std-ref">gRPC transport modes</span></a>, except <code class="docutils literal notranslate"><span class="pre">UDS</span></code>.
+This means that for Linux, the only working secure mode is <code class="docutils literal notranslate"><span class="pre">mTLS</span></code>.</p></li>
+</ul>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Ansys Mechanical&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2025 R1&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;install_path&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/ansys_inc/v251/aisol/&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;executable&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/ansys_inc/v251/aisol/.workbench&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="id12">
+<h3>Example<a class="headerlink" href="#id12" title="Link to this heading">#</a></h3>
+<p>For a complete example using Mechanical product manager, see the <a class="reference external" href="https://saf.ansys.com/version/stable/examples/product_instance_managers_examples/saf_ex_mechanical_product_instance.html" rel="noopener noreferrer" target="_blank">Mechanical solution example</a>.</p>
+</section>
+</section>
+<section id="optislang">
+<h2>optiSLang<a class="headerlink" href="#optislang" title="Link to this heading">#</a></h2>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">OptislangManager</span></code></p></li>
+</ul>
+<p>To be imported from <code class="docutils literal notranslate"><span class="pre">ansys.saf.product_manager.optislang</span></code>.</p>
+<section id="id13">
+<h3>Supported versions<a class="headerlink" href="#id13" title="Link to this heading">#</a></h3>
+<ul>
+<li><p>optiSLang versions <span class="sd-sphinx-override sd-badge sd-bg-primary sd-bg-text-primary">2024 R1</span> and <span class="sd-sphinx-override sd-badge sd-bg-primary sd-bg-text-primary">2024 R2</span>.</p></li>
+</ul>
+</section>
+<section id="id14">
+<h3>Known limitations<a class="headerlink" href="#id14" title="Link to this heading">#</a></h3>
+<ul>
+<li><p>Only tested with <code class="docutils literal notranslate"><span class="pre">ansys-optislang-core</span></code> <span class="sd-sphinx-override sd-badge sd-bg-primary sd-bg-text-primary">0.9.4</span>. Using other versions may lead to unexpected behaviors.</p></li>
+<li><p>For <span class="sd-sphinx-override sd-badge sd-bg-primary sd-bg-text-primary">2024 R1</span>, it is not possible to import a project properties file. This should be fixed in <span class="sd-sphinx-override sd-badge sd-bg-primary sd-bg-text-primary">2024 R2</span>.</p></li>
+<li><p>It’s recommended to use the same Python version as the one included in the optiSLang installation. Example: Python 3.11 for <span class="sd-sphinx-override sd-badge sd-bg-primary sd-bg-text-primary">2024 R1</span>.</p></li>
+</ul>
+</section>
+<section id="id15">
+<h3>Example<a class="headerlink" href="#id15" title="Link to this heading">#</a></h3>
+<p>For a complete example using optiSLang product manager, see the <a class="reference external" href="https://saf.ansys.com/version/stable/examples/product_instance_managers_examples/saf_ex_optislang_product_instance.html" rel="noopener noreferrer" target="_blank">optiSLang solution example</a>.</p>
+</section>
+</section>
+<section id="visor">
+<h2>Visor<a class="headerlink" href="#visor" title="Link to this heading">#</a></h2>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">VisorManager</span></code></p></li>
+</ul>
+<p>To be imported from <code class="docutils literal notranslate"><span class="pre">ansys.saf.product_manager.visor</span></code>.</p>
+<section id="id16">
+<h3>Supported versions<a class="headerlink" href="#id16" title="Link to this heading">#</a></h3>
+<ul>
+<li><p>Due to Visor’s different nature than other flagship products and since it’s still in development, SAF GLOW Engine  has <span class="sd-sphinx-override sd-badge sd-bg-primary sd-bg-text-primary">0</span> as the only supported version. This is meant to cover <code class="docutils literal notranslate"><span class="pre">ansys-visor-viewer</span> <span class="pre">=</span> <span class="pre">&quot;&gt;=0.2.5b0,</span> <span class="pre">&lt;1.0&quot;</span></code>.</p></li>
+</ul>
+</section>
+<section id="id17">
+<h3>Known limitations<a class="headerlink" href="#id17" title="Link to this heading">#</a></h3>
+<ul>
+<li><p>Only tested with <code class="docutils literal notranslate"><span class="pre">ansys-visor-viewer</span></code> <span class="sd-sphinx-override sd-badge sd-bg-primary sd-bg-text-primary">0.2.5b0</span>. Using other versions may lead to unexpected behaviors.</p></li>
+<li><p>HPS does not provide an official application finder. It requires a custom configuration to recognize Visor as an available application. For example, adding this snippet to the <code class="docutils literal notranslate"><span class="pre">scaling_config.json</span></code>:</p></li>
+</ul>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Visor Viewer&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;0&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;install_path&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;path-to-parent-dir-of-python-executable&gt;&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;executable&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;path-to-python-executable&gt;&quot;</span><span class="p">,</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Note that the executable points to the Python that has the <code class="docutils literal notranslate"><span class="pre">ansys-visor-viewer</span></code> package installed in its environment.</p>
+<section id="how-to-use-in-your-solution-definition">
+<h4>How to use in your solution definition<a class="headerlink" href="#how-to-use-in-your-solution-definition" title="Link to this heading">#</a></h4>
+<p>See <a class="reference internal" href="usage.html#instance-management-usage"><span class="std std-ref">Usage</span></a>.</p>
+</section>
+<section id="how-to-extend-for-more-products">
+<h4>How to extend for more products<a class="headerlink" href="#how-to-extend-for-more-products" title="Link to this heading">#</a></h4>
+<p>For more information, see <a class="reference internal" href="custom_instance_managers.html#instance-management-custom"><span class="std std-ref">Create custom product managers and configurations</span></a>.</p>
+</section>
+</section>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#overview">Overview</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys-electronics-desktop">Ansys Electronics Desktop</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#supported-versions">Supported versions</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#known-limitations">Known limitations</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#example">Example</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#fluent">Fluent</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Supported versions</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">Known limitations</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">Example</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#geometry">Geometry</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">Supported versions</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#configuration">Configuration</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">Known limitations</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">Example</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mapdl">MAPDL</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">Supported versions</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">Known limitations</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">Example</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mechanical">Mechanical</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">Supported versions</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id11">Known limitations</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id12">Example</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#optislang">optiSLang</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id13">Supported versions</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id14">Known limitations</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id15">Example</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#visor">Visor</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id16">Supported versions</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id17">Known limitations</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#how-to-use-in-your-solution-definition">How to use in your solution definition</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#how-to-extend-for-more-products">How to extend for more products</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085"></script>
+
+
+  <!-- Include desired assets -->
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.7/require.min.js"></script>
+
+<script>
+// Passing the search options to the search.js file
+const SEARCH_OPTIONS = JSON.parse('{"keys": ["title", "text", "objectID"], "limit": 10, "threshold": 0.2}');
+const SEARCH_FILE = "../../../_static/search.json";
+const ADVANCE_SEARCH_PATH = "../../../search.html";
+const EXTRA_SOURCES = JSON.parse('""');
+</script>
+
+
+<script src="../../../_static/js/search.js"></script>
+
+  
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<footer class="bd-footer">
+  <div class="bd-footer__inner bd-page-width">
+    <div class="footer-items__start">
+      <div class="footer-item">
+        <div class="footer-items__start">
+          <div class="footer-item">
+            <img src="https://docs.pyansys.com/version/dev/_static/ansys_logo_transparent_white.png" alt="Ansys Logo" class="footer-ansys-logo">
+          </div>
+          <div class="footer-item"><br>
+            <p>2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-items__center">
+      <div class="footer-item">
+        <div class="footer-items__start">
+          <div class="connect-with-ansys">
+            <p>Latest documentation</p> <br>
+            <a href="https://www.ansys.com/" class="external-link" target="_blank" rel="noopener noreferrer">
+              <span class="link-text">Ansys.com</span>
+              <i class="fas fa-up-right-from-square"></i>
+            </a><br>
+            <a href="https://www.ansys.com/services/ansys-learning-hub" class="external-link" target="_blank" rel="noopener noreferrer">
+              <span class="link-text">Ansys Learning</span>
+              <i class="fas fa-up-right-from-square"></i>
+            </a><br>
+            <a href="https://www.ansys.com/support" class="external-link" target="_blank" rel="noopener noreferrer">
+              <span class="link-text">Ansys Support</span>
+              <i class="fas fa-up-right-from-square"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-items__end">
+      <div class="footer-item">
+        <div class="footer-right">
+          <span>Connect with Ansys</span>
+          <div class="social-icons">
+            <a href="https://www.youtube.com/user/ansysinc" target="_blank" rel="noopener" class="icon icon-youtube" aria-label="Youtube"><span class="sr-only">Youtube</span></a>
+            <a href="https://www.facebook.com/ansys" target="_blank" rel="noopener" class="icon icon-facebook" aria-label="Facebook"><span class="sr-only">Facebook</span></a>
+            <a href="https://www.linkedin.com/company/ansys-inc" target="_blank" rel="noopener" class="icon icon-linkedin" aria-label="Linkedin"><span class="sr-only">Linkedin</span></a>
+            <a href="https://github.com/ansys" target="_blank" rel="noopener" class="icon icon-github" aria-label="GitHub"><i class="fab fa-github"></i><span class="sr-only">GitHub</span></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+  </body>
+</html>

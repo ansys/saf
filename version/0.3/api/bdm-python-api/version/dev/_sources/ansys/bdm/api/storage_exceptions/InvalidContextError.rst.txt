@@ -1,0 +1,49 @@
+
+
+
+
+
+
+:class:`InvalidContextError`
+============================
+
+
+.. py:exception:: ansys.bdm.api.storage_exceptions.InvalidContextError
+
+   Bases: :py:obj:`Exception`
+
+
+   
+   Exception raised when unknown context when creating a scope.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.bdm.api.storage_exceptions import InvalidContextError
+
+
+
+
+

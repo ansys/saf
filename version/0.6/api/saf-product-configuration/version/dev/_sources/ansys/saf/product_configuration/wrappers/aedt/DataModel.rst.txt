@@ -1,0 +1,56 @@
+
+
+
+
+
+
+:class:`DataModel`
+==================
+
+
+.. py:class:: ansys.saf.product_configuration.wrappers.aedt.DataModel
+
+
+.. py:currentmodule:: DataModel
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~state`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.saf.product_configuration.wrappers.aedt import DataModel
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: state
+   :type:  State
+
+
+
+
+

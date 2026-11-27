@@ -1,0 +1,148 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="760" viewBox="0 0 1500 760" role="img" aria-labelledby="title description">
+  <title id="title">How pyproject.toml changes from Poetry to UV</title>
+  <desc id="description">A sketch-style diagram of selected sections moving from a Poetry pyproject.toml to a UV pyproject.toml.</desc>
+  <defs>
+    <marker id="arrowhead" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth">
+      <path d="M1 1 Q5 5 1 10 M2 1 L10 6 L2 11" fill="none" stroke="#546577" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+    <filter id="sketchy-stroke" x="-2%" y="-8%" width="104%" height="116%">
+      <feTurbulence type="fractalNoise" baseFrequency=".018" numOctaves="1" seed="8" result="grain"/>
+      <feDisplacementMap in="SourceGraphic" in2="grain" scale="2.1" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    <style>
+      .title { font: 700 30px "Segoe UI", Arial, sans-serif; fill: #283c4a; }
+      .subtitle { font: 16px "Segoe UI", Arial, sans-serif; fill: #52616c; }
+      .panel { fill: #fffdf7; stroke: #667887; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+      .panel-echo { fill: none; stroke: #667887; stroke-width: 1.25; opacity: .58; stroke-linecap: round; stroke-linejoin: round; }
+      .panel-title { font: 700 20px "Segoe UI", Arial, sans-serif; fill: #304757; }
+      .card-left { fill: #fff0dc; stroke: #c97b38; }
+      .card-right { fill: #e8f4e9; stroke: #4a8960; }
+      .card-line { stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+      .card-echo { fill: none; stroke-width: 1.35; opacity: .58; stroke-linecap: round; stroke-linejoin: round; }
+      .code { font: 16px Consolas, "Courier New", monospace; fill: #263b4b; }
+      .detail { font: 14px "Segoe UI", Arial, sans-serif; fill: #596671; }
+      .arrow { fill: none; stroke: #546577; stroke-width: 2.7; stroke-linecap: round; stroke-linejoin: round; marker-end: url(#arrowhead); }
+      .arrow-echo { fill: none; stroke: #778897; stroke-width: 1.1; opacity: .55; stroke-linecap: round; stroke-linejoin: round; }
+      .note { font: 14px "Segoe UI", Arial, sans-serif; fill: #52616c; }
+      .panel, .panel-echo, .card-line, .card-echo { filter: url(#sketchy-stroke); }
+    </style>
+  </defs>
+
+  <rect width="1500" height="760" fill="#f7f3e9"/>
+  <path d="M130 87 Q395 80 690 87 M812 88 Q1092 80 1370 88" fill="none" stroke="#d7cdb9" stroke-width="1.4" stroke-linecap="round"/>
+  <text x="750" y="46" text-anchor="middle" class="title">How pyproject.toml changes: Poetry to UV</text>
+  <text x="750" y="72" text-anchor="middle" class="subtitle">Selected sections move from one pyproject.toml to the other; arrows show common destinations.</text>
+
+  <path class="panel" d="M43 123 Q206 117 363 122 Q470 120 555 126 L552 681 Q399 687 258 681 Q139 686 43 679 Z"/>
+  <path class="panel-echo" d="M48 128 Q220 122 365 127 Q478 124 549 132 L547 675 Q392 681 260 676 Q144 680 48 674 Z"/>
+  <path class="panel" d="M946 126 Q1117 120 1264 125 Q1371 121 1457 129 L1454 680 Q1297 685 1143 679 Q1035 685 947 676 Z"/>
+  <path class="panel-echo" d="M952 131 Q1118 125 1265 130 Q1367 126 1451 135 L1448 674 Q1291 679 1142 674 Q1038 679 952 671 Z"/>
+  <text x="300" y="151" text-anchor="middle" class="panel-title">Poetry pyproject.toml</text>
+  <text x="1200" y="153" text-anchor="middle" class="panel-title">UV pyproject.toml</text>
+
+  <g aria-hidden="true">
+    <path class="arrow-echo" d="M540 204 C663 191 825 215 961 204"/>
+    <path class="arrow" d="M540 200 C677 187 822 211 961 200"/>
+
+    <path class="arrow-echo" d="M540 286 C669 268 820 302 961 287"/>
+    <path class="arrow" d="M540 282 C680 264 817 298 961 283"/>
+
+    <path class="arrow-echo" d="M540 368 C668 386 829 351 961 368"/>
+    <path class="arrow" d="M540 364 C677 382 826 347 961 364"/>
+
+    <path class="arrow-echo" d="M540 450 C676 428 819 470 961 450"/>
+    <path class="arrow" d="M540 446 C682 424 817 466 961 446"/>
+
+    <path class="arrow-echo" d="M540 532 C674 549 828 514 961 532"/>
+    <path class="arrow" d="M540 528 C680 545 825 510 961 528"/>
+
+    <path class="arrow-echo" d="M540 614 C674 592 828 634 961 614"/>
+    <path class="arrow" d="M540 610 C680 588 825 630 961 610"/>
+  </g>
+
+  <g transform="translate(82 170)">
+    <path class="card-left card-line" d="M3 7 Q4 1 13 2 L426 0 Q433 2 432 9 L430 55 Q429 62 420 60 L10 62 Q2 61 1 54 Z"/>
+    <path class="card-echo" d="M7 10 Q7 5 16 6 L421 4 Q428 6 427 12 L425 52 Q424 57 417 56 L14 58 Q7 57 6 51 Z"/>
+    <text x="19" y="27" class="code">[build-system]</text>
+    <text x="19" y="49" class="detail">Poetry build backend and requirements</text>
+  </g>
+
+  <g transform="translate(82 252)">
+    <path class="card-left card-line" d="M3 7 Q4 1 13 2 L426 0 Q433 2 432 9 L430 55 Q429 62 420 60 L10 62 Q2 61 1 54 Z"/>
+    <path class="card-echo" d="M7 10 Q7 5 16 6 L421 4 Q428 6 427 12 L425 52 Q424 57 417 56 L14 58 Q7 57 6 51 Z"/>
+    <text x="19" y="27" class="code">[tool.poetry]</text>
+    <text x="19" y="49" class="detail">Metadata, authors, and scripts</text>
+  </g>
+
+  <g transform="translate(82 334)">
+    <path class="card-left card-line" d="M2 8 Q3 2 12 2 L427 1 Q434 3 432 10 L431 56 Q428 63 420 61 L9 62 Q2 60 1 53 Z"/>
+    <path class="card-echo" d="M7 11 Q8 6 16 6 L421 5 Q428 7 427 13 L426 52 Q423 58 416 57 L14 58 Q7 56 6 50 Z"/>
+    <text x="19" y="27" class="code">[tool.poetry.dependencies]</text>
+    <text x="19" y="49" class="detail">Python constraint and runtime dependencies</text>
+  </g>
+
+  <g transform="translate(82 416)">
+    <path class="card-left card-line" d="M3 7 Q5 1 13 2 L426 0 Q433 2 432 9 L430 55 Q428 62 420 61 L10 62 Q2 60 1 53 Z"/>
+    <path class="card-echo" d="M7 10 Q8 5 16 6 L421 4 Q428 6 427 12 L425 51 Q424 57 416 57 L14 58 Q7 56 6 50 Z"/>
+    <text x="19" y="27" class="code">[tool.poetry.group.*]</text>
+    <text x="19" y="49" class="detail">Named groups, including optional groups</text>
+  </g>
+
+  <g transform="translate(82 498)">
+    <path class="card-left card-line" d="M2 8 Q3 2 12 2 L427 1 Q434 3 432 10 L431 56 Q428 63 420 61 L9 62 Q2 60 1 53 Z"/>
+    <path class="card-echo" d="M7 11 Q8 6 16 6 L421 5 Q428 7 427 13 L426 52 Q423 58 416 57 L14 58 Q7 56 6 50 Z"/>
+    <text x="19" y="27" class="code">[tool.poetry.extras]</text>
+    <text x="19" y="49" class="detail">Optional package features</text>
+  </g>
+
+  <g transform="translate(82 580)">
+    <path class="card-left card-line" d="M2 8 Q3 2 12 2 L427 1 Q434 3 432 10 L431 56 Q428 63 420 61 L9 62 Q2 60 1 53 Z"/>
+    <path class="card-echo" d="M7 11 Q8 6 16 6 L421 5 Q428 7 427 13 L426 52 Q423 58 416 57 L14 58 Q7 56 6 50 Z"/>
+    <text x="19" y="27" class="code">[[tool.poetry.source]] + dependency source</text>
+    <text x="19" y="49" class="detail">Repositories and package-specific routing</text>
+  </g>
+
+  <g transform="translate(972 170)">
+    <path class="card-right card-line" d="M3 7 Q5 1 13 2 L426 0 Q433 2 432 9 L430 55 Q428 62 420 61 L10 62 Q2 60 1 53 Z"/>
+    <path class="card-echo" d="M7 10 Q8 5 16 6 L421 4 Q428 6 427 12 L425 51 Q424 57 416 57 L14 58 Q7 56 6 50 Z"/>
+    <text x="19" y="27" class="code">[build-system]</text>
+    <text x="19" y="49" class="detail">Replacement build backend and requirements</text>
+  </g>
+
+  <g transform="translate(972 252)">
+    <path class="card-right card-line" d="M3 7 Q5 1 13 2 L426 0 Q433 2 432 9 L430 55 Q428 62 420 61 L10 62 Q2 60 1 53 Z"/>
+    <path class="card-echo" d="M7 10 Q8 5 16 6 L421 4 Q428 6 427 12 L425 51 Q424 57 416 57 L14 58 Q7 56 6 50 Z"/>
+    <text x="19" y="27" class="code">[project] + [project.scripts]</text>
+    <text x="19" y="49" class="detail">Standard metadata and entry points</text>
+  </g>
+
+  <g transform="translate(972 334)">
+    <path class="card-right card-line" d="M2 8 Q3 2 12 2 L427 1 Q434 3 432 10 L431 56 Q428 63 420 61 L9 62 Q2 60 1 53 Z"/>
+    <path class="card-echo" d="M7 11 Q8 6 16 6 L421 5 Q428 7 427 13 L426 52 Q423 58 416 57 L14 58 Q7 56 6 50 Z"/>
+    <text x="19" y="27" class="code">[project]</text>
+    <text x="19" y="49" class="detail">requires-python and runtime dependencies</text>
+  </g>
+
+  <g transform="translate(972 416)">
+    <path class="card-right card-line" d="M3 7 Q5 1 13 2 L426 0 Q433 2 432 9 L430 55 Q428 62 420 61 L10 62 Q2 60 1 53 Z"/>
+    <path class="card-echo" d="M7 10 Q8 5 16 6 L421 4 Q428 6 427 12 L425 51 Q424 57 416 57 L14 58 Q7 56 6 50 Z"/>
+    <text x="19" y="27" class="code">[dependency-groups]</text>
+    <text x="19" y="49" class="detail">Select optional groups explicitly when needed</text>
+  </g>
+
+  <g transform="translate(972 498)">
+    <path class="card-right card-line" d="M2 8 Q3 2 12 2 L427 1 Q434 3 432 10 L431 56 Q428 63 420 61 L9 62 Q2 60 1 53 Z"/>
+    <path class="card-echo" d="M7 11 Q8 6 16 6 L421 5 Q428 7 427 13 L426 52 Q423 58 416 57 L14 58 Q7 56 6 50 Z"/>
+    <text x="19" y="27" class="code">[project.optional-dependencies]</text>
+    <text x="19" y="49" class="detail">Installable extras, not dependency groups</text>
+  </g>
+
+  <g transform="translate(972 580)">
+    <path class="card-right card-line" d="M3 7 Q5 1 13 2 L426 0 Q433 2 432 9 L430 55 Q428 62 420 61 L10 62 Q2 60 1 53 Z"/>
+    <path class="card-echo" d="M7 10 Q8 5 16 6 L421 4 Q428 6 427 12 L425 51 Q424 57 416 57 L14 58 Q7 56 6 50 Z"/>
+    <text x="19" y="27" class="code">[[tool.uv.index]] / [tool.uv.sources]</text>
+    <text x="19" y="49" class="detail">Indexes and per-package mappings, as needed</text>
+  </g>
+
+  <text x="750" y="721" text-anchor="middle" class="note">[tool.uv] holds UV-specific settings as needed; it is not a one-to-one replacement for a Poetry table.</text>
+</svg>

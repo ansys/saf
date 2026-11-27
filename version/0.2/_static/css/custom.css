@@ -1,0 +1,1621 @@
+/*
+ * Copyright (C) 2026 ANSYS, Inc. and/or its affiliates.
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/* Primary sidebar level 1: match the secondary sidebar's TOC entry size/weight
+   and vertical rhythm (theme's own 0.25rem top/bottom padding already matches
+   the secondary sidebar's per-entry spacing, so no extra margin is needed) */
+#pst-primary-sidebar .toctree-l1 > a {
+    font-size: var(--pst-sidebar-font-size) !important;
+    font-weight: 400 !important;
+    margin-top: 0 !important;
+}
+/* Add vertical spacing between cards on the landing page only */
+body.page-index .highlight-card {
+    margin-bottom: 3rem !important;
+}
+/* Add vertical spacing between cards on the landing page only
+body.page-index .highlight-card {
+    margin-bottom: 3rem !important; */
+/* Allow long section titles to wrap instead of being clipped, since the
+   secondary sidebar uses the theme's default width (matches pyansys-dev-guide). */
+
+/* Make the "On this page" heading the same size as the TOC entries */
+.page-toc .onthispage {
+    font-size: var(--pst-sidebar-font-size);
+}
+
+/* Allow long TOC titles to wrap instead of being clipped */
+#pst-secondary-sidebar .toc-entry a.nav-link {
+    padding-right: 0 !important;
+    margin-right: 0 !important;
+    white-space: normal !important;
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
+}
+
+/* Hover: grey highlight only, no text color change (matches primary sidebar) */
+#pst-secondary-sidebar .toc-entry a.nav-link:hover,
+#pst-secondary-sidebar .toc-entry a.nav-link:active {
+    background-color: rgba(128, 128, 128, 0.10) !important;
+    color: var(--pst-color-text-muted) !important;
+}
+
+/* Current/active entry*/
+/* Use primary sidebar purple for active secondary sidebar links; crisp 1px bar matches the primary sidebar */
+#pst-secondary-sidebar .toc-entry a.nav-link.active,
+#pst-secondary-sidebar .toc-entry a.nav-link[aria-current="true"],
+#pst-secondary-sidebar .toc-entry a.nav-link.active:focus-visible,
+#pst-secondary-sidebar .toc-entry a.nav-link[aria-current="true"]:focus-visible {
+    color: #8a58b6 !important;
+    box-shadow: none !important;
+    border-left: 1px solid #8a58b6 !important;
+}
+
+/* Active + hover: keep the active color/bar, add the same grey highlight as a plain hover */
+#pst-secondary-sidebar .toc-entry a.nav-link.active:hover,
+#pst-secondary-sidebar .toc-entry a.nav-link[aria-current="true"]:hover {
+    background-color: rgba(128, 128, 128, 0.10) !important;
+    color: #8a58b6 !important;
+}
+/* =========================================== COLORS =========================================== */
+
+/* -------------- Synopsys colors -------------- */
+
+/* Synopsys primary colors */
+
+.black {
+    color: black;
+}
+
+.white {
+    color: white;
+}
+
+
+.dark-gray {
+    color: #646E81;
+}
+
+.light-gray {
+    color:#B3B4B3;
+}
+
+.synopsys-purple {
+    color: #5a2a82;
+}
+
+.syn-light-purple {
+    color: #7E45AF;
+}
+
+/* Synopsys accent colors */
+
+
+.gold {
+    color: #FDB71A;
+}
+
+
+.blue {
+    color: #0081FE;
+}
+
+
+.teal {
+    color: #00A5A8;
+}
+
+/* -------------- Ansys colors -------------- */
+
+.ansys-lead {
+    color: #373A36;
+}
+
+.ansys-steel {
+    color: #898A8D;
+}
+
+.ansys-silver {
+    color: #D9D8D6;
+}
+
+.ansys-gold {
+    color: #FFB71B;
+}
+
+.ansys-dark-gold {
+    color: #DFA21E;
+}
+
+/* -------------- Standard colors -------------- */
+
+.red {
+    color: red;
+}
+
+.green {
+    color: green;
+}
+
+.blue {
+    color: blue;
+}
+
+/* -------------- For review purposes -------------- */
+
+
+.review {
+    color: #FF0000;
+}
+
+
+/* =========================================== FONTS =========================================== */
+
+
+/* -------------- Font sizes and styles -------------- */
+
+.bold {
+    font-weight: bold;
+}
+
+.small {
+    font-size: small;
+}
+
+.italic {
+    font-style: italic;
+}
+
+.medium {
+    font-size: medium;
+}
+
+.medium-bold {
+    font-size: medium;
+    font-weight: bold
+}
+
+.medium-bold {
+    font-size: medium;
+    font-weight: bold
+}
+
+.medium-bold-italic {
+    font-size: medium;
+    font-weight: bold;
+    font-style: italic;
+}
+
+.medium-gold {
+    font-size: medium;
+    color: #7E45AF;
+}
+
+.large {
+    font-size: large;
+}
+
+.large-bold {
+    font-size: 1.25em;
+    font-weight: bold
+}
+
+.large-ital {
+    font-size: large;
+    font-style: italic
+}
+
+.large-bold-ital {
+    font-size: large;
+    font-weight: bold;
+    font-style: italic
+}
+
+
+
+/* --------------- combined styles with color --------------- */
+
+.bold-gold {
+    color: #7E45AF;
+    font-weight: bold;
+}
+
+.medium-bold-gold {
+    color: #7E45AF;
+    font-size: medium;
+    font-weight: bold;
+}
+
+.large-bold-gold {
+    color: #7E45AF;
+    font-size: large;
+    font-weight: bold;
+}
+
+.card-asterisk {
+    color: #FDB71A;
+    font-size: medium;
+    font-weight: bold;
+}
+
+/* =========================================== CARDS =========================================== */
+
+/* --------------- grid-item-card rounded corners --------------- */
+
+/* Remove rounded corners from all cards */
+.sd-card,
+.sd-card .sd-card-header,
+.sd-card .sd-card-body,
+.sd-card .sd-card-footer,
+.highlight-card,
+.onboarding-cards .highlight-card {
+    border-radius: 0 !important;
+}
+
+/* Light mode: give cards the same visible edge/shadow/background presence dark mode gets for free. */
+html[data-theme="light"] .bd-content .sd-card,
+html:not([data-theme="dark"]) .bd-content .sd-card {
+    border: 1px solid rgba(195, 187, 205, 0.6) !important;
+    border-top-color: rgba(195, 188, 203, 0.85) !important;
+    box-shadow:
+        0 1px 2px 0 rgba(60, 50, 70, 0.2),
+        1px 4px 10px 1px rgba(60, 50, 70, 0.24) !important;
+}
+
+/* Background carries a barely-there purple cast so it reads as a surface, not plain white. */
+html[data-theme="light"] .bd-content .sd-card,
+html[data-theme="light"] .bd-content .sd-card .sd-card-heade
+r,
+html[data-theme="light"] .bd-content .sd-card .sd-card-body,
+html[data-theme="light"] .bd-content .sd-card .sd-card-footer,
+html[data-theme="light"] .bd-content .sd-card .sd-card-title,
+html:not([data-theme="dark"]) .bd-content .sd-card,
+html:not([data-theme="dark"]) .bd-content .sd-card .sd-card-header,
+html:not([data-theme="dark"]) .bd-content .sd-card .sd-card-body,
+html:not([data-theme="dark"]) .bd-content .sd-card .sd-card-footer,
+html:not([data-theme="dark"]) .bd-content .sd-card .sd-card-title {
+    background-color: hsl(270, 1%, 96%) !important;
+}
+
+/* Increase shadow for all Sphinx Design card shadow variants — spread on all sides */
+.sd-shadow-sm {
+    box-shadow:
+        inset 0 2px 0 0 rgba(138, 88, 182, 0.45),
+        0 0 20px 8px rgba(138, 88, 182, 0.60),
+        4px 8px 18px 0 rgba(37, 37, 37, 0.45),
+        0 4px 14px 0 rgba(37, 37, 37, 0.35) !important;
+}
+
+.sd-shadow-md {
+    box-shadow:
+        inset 0 2px 0 0 rgba(138, 88, 182, 0.55),
+        0 0 28px 12px rgba(138, 88, 182, 0.65),
+        6px 12px 28px 0 rgba(37, 37, 37, 0.50),
+        0 8px 24px 0 rgba(37, 37, 37, 0.40) !important;
+}
+
+.sd-shadow-lg {
+    box-shadow:
+        inset 0 3px 0 0 rgba(138, 88, 182, 0.65),
+        0 0 40px 16px rgba(138, 88, 182, 0.70),
+        8px 16px 40px 0 rgba(37, 37, 37, 0.55),
+        0 12px 36px 0 rgba(37, 37, 37, 0.45),
+        0 4px 12px 0 rgba(37, 37, 37, 0.30) !important;
+}
+
+/* Apply shadow to all highlight-card elements — spread on all sides */
+.highlight-card,
+.onboarding-cards .highlight-card {
+    box-shadow:
+        inset 8px 8px 8px 12px rgba(138, 88, 182, 0.75),
+        0 0 40px 16px rgba(138, 88, 182, 0.70),
+        8px 16px 40px 0 rgba(37, 37, 37, 0.55),
+        0 12px 36px 0 rgba(37, 37, 37, 0.45),
+        0 4px 12px 0 rgba(37, 37, 37, 0.30);
+    /* Even more defined, multi-layered shadow for strong depth */
+    padding-top: .5rem !important;
+    /* controls inner space */
+    padding-bottom: 0rem !important;
+    /* controls inner space */
+    margin-bottom: 0.5rem !important;
+    /* controls space below */
+    margin-top: 0.5rem !important;
+    /* controls space below */
+    row-gap: 0.5rem !important;
+    overflow: visible !important;
+}
+
+.onboarding-cards .highlight-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.onboarding-cards .highlight-card .sd-card-body {
+    /* Ensure card body does not override parent border-radius */
+    /* border-radius: 0 0 0.5rem 0.5rem !important; */
+    overflow: visible !important;
+    flex-grow: 1 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    justify-content: flex-start !important;
+    text-align: left !important;
+    padding-bottom: 0.25rem !important;
+}
+
+/* Reduce empty space at the bottom of grid-item-card objects */
+.sd-card.sd-w-100.highlight-card .sd-card-body {
+    padding-bottom: 0rem !important;
+}
+
+.sd-card.sd-w-100.highlight-card {
+    padding-bottom: 0 !important;
+    margin-bottom: 0 !important;
+}
+
+/* Default (non-landing pages): keep highlight card body text left-aligned */
+.highlight-card .sd-card-body {
+    text-align: left !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    justify-content: flex-start !important;
+}
+
+
+/* Center contents in selected grid-item cards */
+.bd-content .sd-card.centered-card,
+.bd-content .sd-card.centered-card .sd-card-body,
+.bd-content .sd-card.centered-card .sd-card-title {
+    background-color: #D9D8D6 !important;
+}
+
+[data-theme="dark"] .bd-content .sd-card.centered-card,
+[data-theme="dark"] .bd-content .sd-card.centered-card .sd-card-body,
+[data-theme="dark"] .bd-content .sd-card.centered-card .sd-card-title {
+    background-color: #373A36 !important;
+}
+
+.centered-card .sd-card-body {
+    display: flex !important;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    text-align: left;
+}
+
+.centered-card .sd-card-title {
+    text-align: left;
+    justify-content: flex-start;
+    display: flex;
+    width: 100%;
+}
+
+/* Landing page only: padding for top-level .. card:: objects only (not grid-item-card) */
+/* Top-level cards have sd-mb-3; grid-item-cards have sd-w-100 */
+/* body.page-index .sd-card.sd-mb-3.highlight-card,
+body.page-index .sd-card.sd-mb-3.centered-card {
+    padding-left: 3rem !important;
+    padding-right: 3rem !important;
+} */
+
+
+/* Landing page only: padding + centering for direct body of top-level .. card:: only */
+/* body.page-index .sd-card.sd-mb-3.highlight-card:not(.sd-w-100) > .sd-card-body,
+body.page-index .sd-card.sd-mb-3.centered-card:not(.sd-w-100) > .sd-card-body {
+    padding-left: 2rem !important;
+    padding-right: 2rem !important;
+    text-align: center !important;
+    align-items: center !important;
+} */
+
+
+/* Left-justify direct body of all grid-item-card objects on the landing page */
+/* body.page-index .sd-card.sd-w-100.highlight-card > .sd-card-body {
+    text-align: left !important;
+    align-items: flex-start !important;
+} */
+
+/* Landing page only: center titles for all grid-item-card objects */
+/* body.page-index .sd-card.sd-w-100 .sd-card-title {
+    text-align: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    display: block !important;
+} */
+
+
+
+/* .nav-card-title {
+    font-size: 1.5em;
+    font-weight: 400;
+    color: #7E45AF;
+} */
+
+/* --------------- subtitles and card titles --------------- */
+
+.onboarding-cards .highlight-card .sd-card-title,
+.onboarding-cards .highlight-card .sd-card-title > a,
+.onboarding-cards .highlight-card .sd-card-title .std,
+.onboarding-cards .highlight-card .sd-card-title .std-ref,
+.onboarding-cards .highlight-card .sd-card-title span {
+    color: #7E45AF !important;
+    font-size: 1rem !important;
+    font-weight: 600 !important;
+    line-height: 1.15 !important;
+    text-decoration: none !important;
+}
+
+
+/* .onboarding-cards .highlight-card .sd-card-title {
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.5em;
+} */
+
+/* .onboarding-cards .highlight-card .sd-card-title svg.sd-material-icon {
+    width: 1.25em !important;
+    height: 1.25em !important;
+    flex: 0 0 auto;
+} */
+
+/* Center images and all objects in landing page cards */
+.onboarding-cards .highlight-card img,
+.onboarding-cards .highlight-card .project-thumbnail {
+    display: block !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+
+/* Keep title icons (e.g. |ico-emag-gold|) inline, to the left of the title text */
+/* Theme's global `img { padding: 1em 0 }` + border-box would otherwise consume the whole icon height */
+.onboarding-cards .highlight-card .sd-card-title img {
+    display: inline-block !important;
+    width: 1.25em !important;
+    height: 1.25em !important;
+    padding: 0 !important;
+    margin: 0 0.35em 0 0 !important;
+    vertical-align: middle !important;
+}
+
+/* Center all text inside the highlight-card for the landing page */
+.landing-page-title {
+    text-align: center !important;
+    font-weight: 900;
+    font-size: 2.5rem;
+    line-height: 1;
+    margin-top: .5rem !important;
+    margin-bottom: .5rem !important;
+    width: 100%;
+    display: block !important;
+}
+/*
+.gold-card-title {
+    font-weight: bold;
+    font-size: 1.25em;
+    color: #7E45AF;
+    line-height: 1.25;
+    margin-bottom: .25rem !important;
+    padding-bottom: 0 !important;
+    padding-top: 0.1em;
+    display: block;
+} */
+/*
+.large-centered-card {
+    font-size: 18px !important;
+    text-align: center;
+    line-height: 1.75 !important;
+    border: 2px solid #dfa21e !important;
+    border-radius: 10px !important;
+    width: 100% !important;
+    margin: 0 auto;
+}
+
+
+/* =========================================== ADMONITIONS =========================================== */
+
+/* ---- Enterprise capability badge ---- */
+.enterprise-badge {
+    display: inline-block;
+    background-color: #5A2D83;
+    color: #ffffff !important;
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 0.25em 0.8em;
+    border-radius: 3px;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    line-height: 1.5;
+    text-decoration: none !important;
+}
+
+/* IP Protection commercial admonition */
+.admonition.enterprise {
+    --pst-color-admonition-enterprise: #5A2D83;
+    border-color: #5A2D83 !important;
+}
+
+
+.admonition.enterprise > .admonition-title::before {
+    color: #5A2D83 !important;
+}
+
+.custom-admonition {
+    border-left: 4px solid;
+    padding: 10px;
+    margin: 1em 0;
+    border-radius: 5px;
+    box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* ---- Objective topic blocks (tutorial "In this module" lists) ---- */
+
+/* Title of a `.. topic::` block, e.g. "Objective" */
+.bd-article .topic > .topic-title,
+.bd-article div.topic > p.topic-title {
+    color: #5A2D83 !important;
+    font-weight: 700;
+}
+
+[data-theme="dark"] .bd-article .topic > .topic-title,
+[data-theme="dark"] .bd-article div.topic > p.topic-title {
+    color: #a97ccd !important;
+}
+
+/* Material icons used as bullet markers in objective lists.
+   sphinx-design renders them as inline <svg fill="currentColor">, so `color` works. */
+.saf-objective-icon,
+svg.saf-objective-icon {
+    color: #5A2D83 !important;
+    fill: currentColor !important;
+    vertical-align: -0.2em;
+    margin-right: 0.35em;
+}
+
+[data-theme="dark"] .saf-objective-icon,
+[data-theme="dark"] svg.saf-objective-icon {
+    color: #a97ccd !important;
+}
+
+
+/* ---- Concept cards (non-clickable overview cards, e.g. "SAF concepts you will meet") ---- */
+
+.concept-cards .concept-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    border-radius: 0 !important;
+    border-left: 3px solid #5A2D83 !important;
+    box-shadow: 0 1px 2px 0 rgba(60, 50, 70, 0.18),
+        0 3px 8px 0 rgba(60, 50, 70, 0.14) !important;
+}
+
+[data-theme="dark"] .concept-cards .concept-card {
+    border-left-color: #a97ccd !important;
+}
+
+.concept-cards .concept-card .sd-card-body {
+    flex-grow: 1;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    justify-content: flex-start !important;
+    text-align: left !important;
+    padding: 0.9rem 1rem !important;
+}
+
+.concept-cards .concept-card .sd-card-title {
+    color: #5A2D83 !important;
+    font-size: 0.95rem !important;
+    font-weight: 600 !important;
+    line-height: 1.2 !important;
+    margin-bottom: 0.5rem !important;
+}
+
+[data-theme="dark"] .concept-cards .concept-card .sd-card-title {
+    color: #a97ccd !important;
+}
+
+.concept-cards .concept-card .sd-card-body > p:last-child {
+    margin-bottom: 0 !important;
+    font-size: 0.875rem;
+    line-height: 1.45;
+}
+
+.saf-concept-icon,
+svg.saf-concept-icon {
+    color: #5A2D83 !important;
+    fill: currentColor !important;
+    vertical-align: -0.25em;
+    margin-right: 0.4em;
+}
+
+[data-theme="dark"] .saf-concept-icon,
+[data-theme="dark"] svg.saf-concept-icon {
+    color: #a97ccd !important;
+}
+
+/* ---- Custom admonitions built from a generic `nodes.admonition` (see conf.py) ----
+   These carry no theme-known type, so the theme falls back to its default "note" styling.
+   Every visual token has to be restated explicitly: border, title background, title text
+   and the ::after icon glyph. */
+
+/* Key concept admonition — SAF purple, with a lightbulb icon instead of the default bell */
+.admonition.key-concept {
+    border-color: #5A2D83 !important;
+}
+
+.admonition.key-concept > .admonition-title {
+    background-color: transparent !important;
+    color: #5A2D83 !important;
+}
+
+.admonition.key-concept > .admonition-title::after {
+    color: #5A2D83 !important;
+    content: "\f0eb" !important;
+}
+
+[data-theme="dark"] .admonition.key-concept {
+    border-color: #a97ccd !important;
+}
+
+[data-theme="dark"] .admonition.key-concept > .admonition-title {
+    background-color: transparent !important;
+    color: #a97ccd !important;
+}
+
+[data-theme="dark"] .admonition.key-concept > .admonition-title::after {
+    color: #a97ccd !important;
+}
+
+/* Best practice admonition — cyan, with a check-circle icon instead of the default bell */
+.admonition.best-practice {
+    border-color: #00838F !important;
+}
+
+.admonition.best-practice > .admonition-title {
+    background-color: transparent !important;
+    color: #00838F !important;
+}
+
+.admonition.best-practice > .admonition-title::after {
+    color: #00838F !important;
+    content: "\f058" !important;
+}
+
+[data-theme="dark"] .admonition.best-practice {
+    border-color: #4DD0E1 !important;
+}
+
+[data-theme="dark"] .admonition.best-practice > .admonition-title {
+    background-color: transparent !important;
+    color: #4DD0E1 !important;
+}
+
+[data-theme="dark"] .admonition.best-practice > .admonition-title::after {
+    color: #4DD0E1 !important;
+}
+
+/* Practice admonition — pink, with a keyboard icon instead of the default bell */
+.admonition.practice {
+    border-color: #D81B60 !important;
+}
+
+.admonition.practice > .admonition-title {
+    background-color: transparent !important;
+    color: #D81B60 !important;
+}
+
+.admonition.practice > .admonition-title::after {
+    color: #D81B60 !important;
+    content: "\f11c" !important;
+}
+
+[data-theme="dark"] .admonition.practice {
+    border-color: #F06292 !important;
+}
+
+[data-theme="dark"] .admonition.practice > .admonition-title {
+    background-color: transparent !important;
+    color: #F06292 !important;
+}
+
+[data-theme="dark"] .admonition.practice > .admonition-title::after {
+    color: #F06292 !important;
+}
+
+
+/* Sphinx warning admonition — dark orange border and icon */
+.admonition.warning    {
+    --ast-admonition-warning-icon: #ff8c00;
+    --ast-admonition-warning-border: #ff8c00;
+ border-color: #e47e02 !important;
+}
+
+.admonition.warning > .admonition-title::after {
+    color: #ff8c00 !important;
+}
+
+/* Sphinx seealso admonition — Synopsys tea border and icon */
+
+.admonition.seealso    {
+    --ast-admonition-seealso-icon: #038589;
+    --ast-admonition-seealso-border: #038589;
+ border-color: #038589 !important;
+}
+.admonition.seealso > .admonition-title::after {
+    color: #038589 !important;
+}
+
+/* =========================================== TABS =========================================== */
+
+/* Tab panels: the theme fills every .sd-tab-content with a dark slab. Where a panel
+   directly wraps a code block or a nested tab-set, that slab becomes a redundant box
+   around the code block's own bordered styling. Make only those panels transparent;
+   panels that hold prose or lists keep the slab. */
+
+/* Outer panel wrapping a nested tab-set: also drop the padding so the inner tabs line
+   up with the outer ones. */
+.sd-tab-content:has(> .sd-tab-set) {
+    background-color: transparent !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+}
+
+/* Code-block panels: keep the theme's default padding so the gap between the tab
+   underline and the code block matches non-admonition tab sets. */
+.sd-tab-content:has(> div[class^="highlight-"]) {
+    background-color: transparent !important;
+    border-radius: 0 !important;
+}
+
+/* =========================================== DROPDOWNS =========================================== */
+
+/* Left-justify images inside dropdowns */
+details.sd-dropdown img,
+details.sd-card img {
+    display: block !important;
+    margin-left: 0 !important;
+    margin-right: auto !important;
+}
+
+/* Force all Sphinx Design dropdowns (details.sd-dropdown) to fill their container */
+details.sd-dropdown,
+.sd-tab-content details.sd-dropdown,
+.sd-tab-content details.sd-card {
+    width: 100% !important;
+    max-width: none !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+    display: block !important;
+}
+
+.dropdown-content {
+    width: 100% !important;
+    max-width: none !important;
+    min-width: 0 !important;
+    display: block !important;
+    box-sizing: border-box !important;
+}
+
+/* Custom dropdown class: kf-dropdown-wide - Makes dropdowns full-width */
+.kf-dropdown-wide {
+    width: 100% !important;
+    max-width: none !important;
+    min-width: 0 !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    display: block !important;
+    box-sizing: border-box !important;
+}
+
+/* Match every dropdown header to its full-width body */
+details.sd-dropdown > summary.sd-summary-title {
+    width: 100% !important;
+    max-width: none !important;
+    box-sizing: border-box !important;
+    display: flex !important;
+}
+
+/* Keep the expand/collapse arrow against the far edge of the header */
+details.sd-dropdown > summary.sd-summary-title .sd-summary-state-marker {
+    margin-left: auto !important;
+    flex: 0 0 auto;
+}
+
+
+/* =========================================== SIDEBARS =========================================== */
+
+/* Thinner scrollbars (page and primary sidebar) for a cleaner look */
+html {
+    scrollbar-width: thin;
+}
+
+html::-webkit-scrollbar {
+    width: 8px;
+}
+
+#pst-primary-sidebar {
+    scrollbar-width: thin;
+}
+
+#pst-primary-sidebar::-webkit-scrollbar {
+    width: 8px;
+}
+
+/* Pulled up over the breadcrumb banner (see primary-sidebar-sticky-offset.js); render
+   above it so the sidebar's own content (e.g. the collapse button) stays visible. Safe
+   since the two share the same background color, so the overlap is seamless. */
+#pst-primary-sidebar {
+    z-index: 21;
+}
+
+/* Remove padding from every wrapping layer down to the nav items */
+#pst-primary-sidebar .sidebar-primary-items__start,
+#pst-primary-sidebar .sidebar-primary__section,
+#pst-primary-sidebar .sidebar-primary-item {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
+#pst-primary-sidebar nav.bd-docs-nav,
+#pst-primary-sidebar nav.bd-links {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding-left: 0 !important;
+}
+
+/* Toctree captions (category headers inside the nav tree) stay hidden */
+#pst-primary-sidebar p.caption {
+    padding-left: 0 !important;
+    margin-left: 0 !important;
+    display: none !important;
+}
+
+/* Hide the theme's default "Section Navigation" title from the primary sidebar. */
+#pst-primary-sidebar .bd-links__title {
+    display: none !important;
+}
+
+/* "Collapse sidebar" control: left in the theme's default flow position, at
+   the top of the sidebar's own box (matches pyansys-dev-guide). */
+
+/* Hide the "Collapse sidebar" text (shown as a hover/focus tooltip instead, see
+   primary-sidebar-sticky-offset.js), the same way the theme already hides its
+   "Expand sidebar" text while the sidebar is expanded. */
+#pst-primary-sidebar #pst-collapse-sidebar-button .pst-collapse-sidebar-label {
+    position: absolute !important;
+    height: 1px !important;
+    width: 1px !important;
+    margin: -1px !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+}
+
+/* Nav link items themselves - reduce left padding */
+#pst-primary-sidebar nav.bd-links li>a {
+    padding-left: 0.25rem !important;
+}
+
+
+/* --------------- Sphinx left sidebar styling --------------- */
+
+/* Hover: semi-transparent neutral grey highlight */
+#pst-primary-sidebar .bd-links li > a:hover,
+#pst-primary-sidebar .bd-links li > a:focus,
+#pst-primary-sidebar .bd-links li > a:focus-visible {
+    background-color: rgba(128, 128, 128, 0.10) !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+/* Remove all li-level backgrounds — apply background only to <a> so siblings are unaffected */
+#pst-primary-sidebar li.current,
+#pst-primary-sidebar li.active,
+#pst-primary-sidebar li.current.active {
+    background: none !important;
+    background-color: transparent !important;
+    border: none !important;
+    border-left: none !important;
+    box-shadow: none !important;
+}
+
+/* Parent path: semi-transparent neutral grey on the anchor link itself; highlighted
+   but not bold (bold is reserved for the active page itself) */
+#pst-primary-sidebar li.current:has(li.current) > a,
+#pst-primary-sidebar li.current:has(li.current) > a.reference {
+    background-color: rgba(128, 128, 128, 0.12) !important;
+    border: none !important;
+    box-shadow: none !important;
+    font-weight: 400 !important;
+}
+
+/* Deepest selected item: colored + bold text, left accent bar sits at the link's
+   own edge with a little more breathing room before the text (like the border-left
+   gutter used for the active entry in the secondary sidebar) */
+#pst-primary-sidebar li.current:not(:has(li.current)) > a.current.reference {
+    color: #8a58b6 !important;
+    font-weight: bold !important;
+    background: none !important;
+    background-color: transparent !important;
+    box-shadow: inset 1px 0 0 #8a58b6 !important;
+    padding-left: 0.6rem !important;
+    border-radius: 0 !important;
+}
+
+/* Ensure all other <a> links inside li.current (siblings in the path's children) stay transparent */
+#pst-primary-sidebar li.current > a.current.reference,
+#pst-primary-sidebar li.active > a.current.reference {
+    background: none !important;
+    background-color: transparent !important;
+}
+
+
+/* increase indent / decrease font size for nested sidebar items */
+#pst-primary-sidebar .toctree-l2,
+#pst-primary-sidebar .toctree-l3 {
+    line-height: 1em !important;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+}
+
+#pst-primary-sidebar .toctree-l2>a {
+    font-size: var(--pst-sidebar-font-size) !important;
+    font-weight: 400 !important;
+    margin-left: 0 !important;
+    padding-left: 0.5em !important;
+    padding-top: 0.1em !important;
+    padding-bottom: 0.1em !important;
+}
+
+#pst-primary-sidebar .toctree-l3>a {
+    font-size: var(--pst-sidebar-font-size) !important;
+    font-weight: 400 !important;
+    margin-left: 0 !important;
+    padding-left: 1em !important;
+    padding-top: 0.1em !important;
+    padding-bottom: 0.1em !important;
+}
+
+
+/* --------------- right sidebar styling --------------- */
+
+/* Right sidebar visibility is controlled per-page via _templates/layout.html
+   using the RIGHT_SIDEBAR_EXCLUDE set defined in conf.py (internal build only). */
+/* =========================================== OTHER CUSTOM STYLES =========================================== */
+
+/* Hide the right sidebar (TOC) on the landing page */
+.page-index #pst-secondary-sidebar {
+    display: none;
+}
+
+/* --------------- limit code block width --------------- */
+
+.limited-code {
+    max-width: 100vh;
+}
+
+
+/* --------------- footer --------------- */
+
+.bd-footer {
+    margin-top: 2rem !important;
+    border-top: 0.2rem solid #8a58b6;
+    width: 100%;
+    color: #fff;
+    background-color: #000;
+}
+
+.bd-footer a {
+    color: #fff;
+}
+
+.footer-ansys-logo {
+    width: 6.34375rem;
+    object-fit: contain;
+}
+
+.external-link {
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+    gap: 0.5rem;
+}
+
+.external-link .link-text {
+    display: inline-block;
+    width: 7.5rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.external-link i {
+    font-size: 0.85rem;
+}
+
+.footer-right {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    justify-content: flex-end;
+    width: 100%;
+}
+
+.footer-right .social-icons {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.footer-right .social-icons .icon {
+    display: inline-block;
+    width: 1.25rem;
+    height: 1.5rem;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    transition: background-image 0.2s;
+}
+
+.footer-right .social-icons .icon-youtube {
+    background-image: url(https://www.ansys.com/etc.clientlibs/ansysincprogram/clientlibs/clientlib-site/resources/images/icon-youtube-white.png);
+    width: 1.8125rem;
+}
+
+.footer-right .social-icons .icon-youtube:hover {
+    background-image: url(https://www.ansys.com/etc.clientlibs/ansysincprogram/clientlibs/clientlib-site/resources/images/icon-youtube-color.png);
+}
+
+.footer-right .social-icons .icon-facebook {
+    background-image: url(https://www.ansys.com/etc.clientlibs/ansysincprogram/clientlibs/clientlib-site/resources/images/icon-facebook-white.png);
+}
+
+.footer-right .social-icons .icon-facebook:hover {
+    background-image: url(https://www.ansys.com/etc.clientlibs/ansysincprogram/clientlibs/clientlib-site/resources/images/icon-facebook-color.png);
+}
+
+.footer-right .social-icons .icon-linkedin {
+    background-image: url(https://www.ansys.com/etc.clientlibs/ansysincprogram/clientlibs/clientlib-site/resources/images/icon-linkedin-white.png);
+}
+
+.footer-right .social-icons .icon-linkedin:hover {
+    background-image: url(https://www.ansys.com/etc.clientlibs/ansysincprogram/clientlibs/clientlib-site/resources/images/icon-linkedin-color.png);
+}
+
+.footer-right .social-icons .icon-github {
+    background: none;
+    font-size: 1.375rem;
+    color: #fff;
+}
+
+.footer-right .social-icons .icon-github:hover {
+    color: #000;
+}
+
+
+/* Center the cards in grids with center-grid class */
+.center-grid .sd-row {
+    justify-content: center;
+}
+
+.onboarding-cards .sd-card {
+    align-self: stretch !important;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ===================== call to action styling ====================== */
+
+/* Light mode - use the same styling as PyAnsys */
+.sd-bg-muted {
+    background-color: var(--ast-sidebar-hover-background) !important;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    line-height: 1rem;
+}
+
+
+.ext-link-icon {
+    color: #DFA21E;
+}
+
+/* ===================== custom styling for buttons ===================== */
+
+
+/* ===================== custom tooltip styling for buttons ===================== */
+
+/* Tooltip wrapper */
+.sd-btn-tooltip {
+    position: relative;
+    display: block;
+    /* works well in your 1-column grid */
+}
+
+.sd-btn-tooltip:hover::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    left: 75%;
+    transform: translateX(-50%);
+    bottom: calc(100% + 8px);
+    z-index: 9999;
+    text-decoration: none;
+
+    /* Material Design: use base font, not monospace */
+    font-family: var(--pst-font-family-base, inherit);
+
+    /* Single-line tooltip: no wrapping */
+    white-space: nowrap;
+    max-width: none;
+    font-size: 15px;
+    font-weight: 400;
+    line-height: 20px;
+
+    /* Material Design: dark background, white text, 4px radius, subtle shadow */
+    padding: 8px 16px;
+    background: #616161;
+    color: #ffffff;
+    border-radius: 4px;
+    box-shadow: 0px 1px 5px rgba(60, 60, 60, 0.2);
+    pointer-events: none;
+}
+
+/* Tooltip arrow */
+.sd-btn-tooltip:hover::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: calc(100% + 2px);
+    z-index: 9999;
+    border-width: 3px 3px 0 3px;
+    border-style: solid;
+    border-color: #616161 transparent transparent transparent;
+    pointer-events: none;
+}
+
+.onboarding-cards .sd-card,
+.onboarding-cards .sd-card-body,
+.onboarding-cards .sd-card-footer,
+.onboarding-cards .sd-btn-group {
+    overflow: visible !important;
+}
+
+.onboarding-cards .sd-btn-tooltip {
+    position: relative;
+    z-index: 50;
+}
+
+.onboarding-cards .sd-btn-tooltip:hover {
+    z-index: 9999;
+}
+
+
+
+
+/* ====================================== TABLE STYLING ====================================== */
+
+/* Collapse borders and set a uniform thin border on all four sides */
+.bd-article table.table {
+    border-collapse: collapse !important;
+    border: 1px solid #b0b0b0 !important;
+}
+
+.bd-article table.table td,
+.bd-article table.table th {
+    border: 1px solid #b0b0b0 !important;
+    padding-top: 0.8rem !important;
+    padding-bottom: 0.8rem !important;
+}
+
+/* Remove the extra border-bottom the theme places on thead/tr elements */
+.bd-article table.table thead,
+.bd-article table.table tr {
+    border-bottom: none !important;
+}
+
+/* Dark mode: subtle borders */
+[data-theme="dark"] .bd-article table.table {
+    border: 1px solid #3e3e3e !important;
+}
+
+[data-theme="dark"] .bd-article table.table td,
+[data-theme="dark"] .bd-article table.table th {
+    border: 1px solid #3e3e3e !important;
+}
+
+[data-theme="dark"] .bd-article table.table thead,
+[data-theme="dark"] .bd-article table.table tr {
+    border-bottom: none !important;
+}
+
+/* ====================================== SECTION INDEX REDIRECT PAGES ====================================== */
+
+/*
+ * Suppresses the flash-of-blank-content on section index pages that immediately
+ * redirect visitors to the first real child page.
+ *
+ * How it works
+ * ------------
+ * 1. A ``.. raw:: html`` block near the top of the section index.rst adds the
+ *    ``saf-redirect-page`` class to ``<html>`` via an inline ``<script>`` tag and
+ *    then calls ``window.location.replace()``.
+ * 2. Because this stylesheet is loaded in ``<head>``, the rule below is already
+ *    active when the script executes, so the article is hidden before the browser
+ *    paints it.
+ * 3. A ``<noscript>`` block in the same raw directive provides a
+ *    ``<meta http-equiv="refresh">`` fallback for browsers with JavaScript disabled.
+ *
+ * Reuse pattern
+ * -------------
+ * To apply this pattern to another section index.rst, paste the following block
+ * directly after the page title and anchor (before the toctree directive):
+ *
+ *   .. raw:: html
+ *
+ *      <script>
+ *        document.documentElement.classList.add('saf-redirect-page');
+ *        window.location.replace("first_child_page.html");
+ *      </script>
+ *      <noscript>
+ *        <meta http-equiv="refresh" content="0; url=first_child_page.html" />
+ *      </noscript>
+ *
+ * Replace ``first_child_page.html`` with the filename of the first entry in the
+ * hidden toctree for that section.
+ */
+html.saf-redirect-page article.bd-article,
+html.saf-redirect-page div.bd-article-container {
+    visibility: hidden !important;
+}
+
+
+
+
+/* ====================================== HEADER NAV ROW: BREADCRUMBS ====================================== */
+
+/* Hide the theme's in-article breadcrumbs; rendered in the header nav row instead */
+body:not(.page-index) .bd-header-article {
+    display: none !important;
+}
+
+/* Full-width row sitting between the header bar and the page grid. Sticky so it
+   stays visible while scrolling; "top" is set by JS (primary-sidebar-sticky-offset.js)
+   to the header's real height. */
+.header-nav-banner {
+    position: sticky;
+    top: 0;
+    width: 100%;
+    background: var(--pst-color-background);
+    box-sizing: border-box;
+    z-index: 20;
+}
+
+/* Full-width inner; breadcrumbs are left-aligned in the header row */
+.header-nav-banner__inner {
+    display: flex;
+    width: 100%;
+    padding: 0.5rem 0 0.75rem 0;
+    box-sizing: border-box;
+    justify-content: flex-start;
+}
+
+/* Breadcrumbs left-aligned in the header row; left margin is set by JS
+   (primary-sidebar-sticky-offset.js) to line up with the article's left edge */
+.header-nav-banner__crumbs {
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    margin-left: 10px;
+}
+
+/* Breadcrumbs: not bold, aligned left */
+.header-nav-banner .bd-breadcrumbs li.breadcrumb-item {
+    font-weight: 400;
+    font-size: 0.8rem;
+}
+
+/* Current page in the breadcrumb trail is purple */
+.header-nav-banner .bd-breadcrumbs li.breadcrumb-item.active,
+.header-nav-banner .bd-breadcrumbs li.breadcrumb-item.active .ellipsis {
+    color: #8a58b6;
+}
+
+/* Override the theme CSS variable for sidebar hover background */
+#pst-primary-sidebar {
+    --ast-sidebar-hover-background: rgba(128, 128, 128, 0.15);
+    --pst-sidebar-active-bg: transparent;
+    --pst-color-on-surface: transparent;
+}
+
+
+/* ---- SAF Hero ---- */
+.saf-hero {
+  background: linear-gradient(135deg, #010009 0%, #493260 100%);
+  margin-left: calc(-50vw + 50%);
+  margin-right: calc(-50vw + 50%);
+  padding: 8rem calc(50vw - 50%);
+  margin-bottom: 0;
+  color: #fff;
+  text-align: center;
+}
+.saf-hero__title {
+  font-size: 3.5rem;
+  font-weight: 900;
+  color: #fff !important;
+}
+
+/* ---- Alternating full-bleed landing sections ---- */
+.saf-section-primary,
+.saf-section-secondary {
+  margin-left: calc(-50vw + 50%);
+  margin-right: calc(-50vw + 50%);
+  padding: 4rem calc(50vw - 50%);
+  margin-bottom: 0;
+  color: #fff;
+  min-height: 60vh;
+  box-sizing: border-box;
+}
+.saf-section-primary {
+  background: linear-gradient(135deg, #1a1a1a 0%, #252530 100%);
+  text-align: left;
+}
+.saf-section-secondary {
+  background: linear-gradient(135deg, #1e1e1e 0%, #2a2a35 100%);
+  text-align: right;
+}
+/* Light mode overrides */
+[data-theme="light"] .saf-section-primary,
+html:not([data-theme="dark"]) .saf-section-primary {
+  background: linear-gradient(135deg, #f5f5f7 0%, #eaeaf0 100%);
+  color: #1a1a1a;
+}
+[data-theme="light"] .saf-section-secondary,
+html:not([data-theme="dark"]) .saf-section-secondary {
+  background: linear-gradient(135deg, #ffffff 0%, #f0f0f5 100%);
+  color: #1a1a1a;
+}
+[data-theme="light"] .saf-section-primary h1,
+[data-theme="light"] .saf-section-primary h2,
+[data-theme="light"] .saf-section-primary h3,
+[data-theme="light"] .saf-section-secondary h1,
+[data-theme="light"] .saf-section-secondary h2,
+[data-theme="light"] .saf-section-secondary h3,
+html:not([data-theme="dark"]) .saf-section-primary h1,
+html:not([data-theme="dark"]) .saf-section-primary h2,
+html:not([data-theme="dark"]) .saf-section-primary h3,
+html:not([data-theme="dark"]) .saf-section-secondary h1,
+html:not([data-theme="dark"]) .saf-section-secondary h2,
+html:not([data-theme="dark"]) .saf-section-secondary h3 {
+  color: #1a1a1a !important;
+}
+/* Section titles: top-left/right, controlled size */
+.saf-section-primary h1,
+.saf-section-primary h2,
+.saf-section-primary h3,
+.saf-section-secondary h1,
+.saf-section-secondary h2,
+.saf-section-secondary h3 {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+  font-size: 1.4rem !important;
+  font-weight: 700 !important;
+  color: #fff !important;
+}
+/* Rounded corners for cards inside landing sections */
+.saf-section-primary .sd-card,
+.saf-section-secondary .sd-card {
+  border-radius: 12px !important;
+  overflow: hidden;
+}
+/* Compact cards: limit icon height and reduce internal padding */
+.saf-section-primary .sd-card .sd-card-img-top,
+.saf-section-secondary .sd-card .sd-card-img-top {
+  max-height: 180px !important;
+  width: auto !important;
+  object-fit: contain !important;
+  padding: 0.75rem 1rem 0 !important;
+}
+/* Dark mode: invert dark SVG icons to white.
+   Scoped to _static/icons/ on purpose -- the illustrations in
+   _static/images/ are already theme-neutral and this filter would
+   flatten them to a white silhouette. */
+[data-theme="dark"] .saf-section-primary .sd-card .sd-card-img-top[src*="/icons/"],
+[data-theme="dark"] .saf-section-secondary .sd-card .sd-card-img-top[src*="/icons/"] {
+  filter: brightness(0) invert(1) !important;
+}
+/* Light mode: keep icons dark */
+[data-theme="light"] .saf-section-primary .sd-card .sd-card-img-top,
+[data-theme="light"] .saf-section-secondary .sd-card .sd-card-img-top,
+html:not([data-theme="dark"]) .saf-section-primary .sd-card .sd-card-img-top,
+html:not([data-theme="dark"]) .saf-section-secondary .sd-card .sd-card-img-top {
+  filter: none !important;
+}
+/* Illustrations span the full card width, edge to edge, like a thumbnail */
+.saf-section-primary .sd-card .sd-card-img-top[src*="/images/"],
+.saf-section-secondary .sd-card .sd-card-img-top[src*="/images/"] {
+  max-height: none !important;
+  width: 100% !important;
+  height: auto !important;
+  object-fit: cover !important;
+  padding: 0 !important;
+}
+.saf-section-primary .sd-card .sd-card-body,
+.saf-section-secondary .sd-card .sd-card-body {
+  padding: 0.75rem 1rem !important;
+}
+
+
+
+.saf-cta {
+  display: inline-block;
+  padding: 0.6rem 1.4rem;
+  border-radius: 4px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+a.saf-cta--primary {
+  background: #3D0F63;
+  color: #ffffff !important;
+}
+a.saf-cta--secondary {
+  border: 2px solid #fff;
+  color: #fff !important;
+}
+.saf-cta:hover {
+  opacity: 0.85;
+}
+
+/* ---- Product Instance Managers Summary Table ---- */
+.pim-summary-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  margin: 1.5rem 0;
+}
+
+.pim-summary-table th {
+  background: #5A2D83;
+  color: #ffffff;
+  font-weight: 600;
+  padding: 0.6rem 0.75rem;
+  text-align: left;
+  border: 1px solid #5a3a72;
+}
+
+.pim-summary-table td {
+  padding: 0.55rem 0.75rem;
+  border: 1px solid rgba(128, 128, 128, 0.25);
+  vertical-align: top;
+}
+
+/* Alternating rows - light mode */
+.pim-summary-table tr:nth-child(even) td {
+  background-color: rgba(73, 50, 96, 0.06);
+}
+
+.pim-summary-table tr:nth-child(odd) td {
+  background-color: transparent;
+}
+
+/* Alternating rows - dark mode */
+[data-theme="dark"] .pim-summary-table tr:nth-child(even) td {
+  background-color: rgba(138, 88, 182, 0.10);
+}
+
+[data-theme="dark"] .pim-summary-table tr:nth-child(odd) td {
+  background-color: rgba(255, 255, 255, 0.03);
+}
+
+[data-theme="dark"] .pim-summary-table td {
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+/* Version badges */
+.pim-badge {
+  display: inline-block;
+  background-color: #5A2D83;
+  color: #ffffff;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.2em 0.6em;
+  border-radius: 3px;
+  margin: 0.1em 0.15em;
+  white-space: nowrap;
+}
+
+/* Monospace for manager class names */
+.pim-summary-table code {
+  font-size: 0.8rem;
+  background: rgba(73, 50, 96, 0.08);
+  padding: 0.1em 0.3em;
+  border-radius: 2px;
+}
+
+[data-theme="dark"] .pim-summary-table code {
+  background: rgba(138, 88, 182, 0.15);
+}
+
+/* Secure badge */
+.pim-secure-yes {
+  color: #22863a;
+  font-weight: 600;
+}
+
+[data-theme="dark"] .pim-secure-yes {
+  color: #56d364;
+}
+
+.pim-secure-na {
+  color: #898A8D;
+  font-style: italic;
+}
+
+/* =========================================== MERMAID =========================================== */
+
+/* Mermaid bakes its palette into the SVG at render time, so the `%%{init: ...}%%` block in the
+   directive can only cover one theme. Those values target light mode; restate the lighter
+   purples here for dark mode, where the dark strokes and labels would otherwise disappear. */
+
+[data-theme="dark"] .mermaid .actor {
+  fill: #3A2450 !important;
+  stroke: #a97ccd !important;
+}
+
+[data-theme="dark"] .mermaid text.actor > tspan,
+[data-theme="dark"] .mermaid .messageText,
+[data-theme="dark"] .mermaid .loopText,
+[data-theme="dark"] .mermaid .loopText > tspan,
+[data-theme="dark"] .mermaid .noteText > tspan {
+  fill: #d6bdf0 !important;
+}
+
+[data-theme="dark"] .mermaid .actor-line {
+  stroke: #7E4FB0 !important;
+}
+
+[data-theme="dark"] .mermaid .messageLine0,
+[data-theme="dark"] .mermaid .messageLine1,
+[data-theme="dark"] .mermaid .loopLine {
+  stroke: #a97ccd !important;
+}
+
+[data-theme="dark"] .mermaid #arrowhead path,
+[data-theme="dark"] .mermaid marker path {
+  fill: #a97ccd !important;
+  stroke: #a97ccd !important;
+}
+
+[data-theme="dark"] .mermaid .labelBox {
+  fill: #a97ccd !important;
+  stroke: #a97ccd !important;
+}
+
+[data-theme="dark"] .mermaid .labelText,
+[data-theme="dark"] .mermaid .labelText > tspan {
+  fill: #1D1B20 !important;
+}
+
+[data-theme="dark"] .mermaid .note {
+  fill: #3A2450 !important;
+  stroke: #a97ccd !important;
+}

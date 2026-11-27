@@ -574,7 +574,7 @@ the template folders ``ui/assets/icons/light`` and ``ui/assets/icons/dark``:
         theme = "dark" if switch_on else "light"
 
         back_to_projects_link = _get_back_to_projects_link()
-        if back_to_projects_link is None:
+        if back_to_projects_link is None or _match_non_solution_page(pathname) is not None:
             return []
         href, popover_text = back_to_projects_link
 

@@ -10,10 +10,13 @@
 - The transaction runner carries the initiating user on its internal API-key callbacks.
 - Name ↔ id lookups live only in the Dash UI server, behind a pluggable `UserDirectory`. Keycloak is implemented; the other adapters are placeholders.
 - Everything is off unless `GLOW_PROJECT_ACCESS_CONTROL_ENABLED=True`.
+- Revision 2026-11-27 (Tasks 12-14): memberships move behind a `ProjectMembershipStore` interface, injected through FastAPI. `AccessCrud` stops reading or writing member rows itself. The lock, requests, version counter and audit log stay in the GLOW database. The `database` store is the default; `openfga` is a placeholder that fails at startup.
+
+**Status:** Tasks 1-11 are implemented on branch `000/bfall/project-access-control`. Tasks 12-14 implement spec section 2.10.
 
 **Tech Stack:** Python 3.11+, FastAPI, SQLAlchemy async (SQLite + PostgreSQL), Ariadne GraphQL, Flask/Dash, dash-extensions, dmc, React 19 + TypeScript + Jest (saf-projects-dashboard), pytest.
 
-**Spec:** `docs/superpowers/specs/2026-10-20-project-access-control-design.md`
+**Spec:** `docs/specs/2026-10-20-project-access-control-design.md`
 
 ## Global Constraints
 
@@ -569,3 +572,187 @@ def test_request_approve_flow(client, as_user):
 - [ ] **Step 3:** Update the templates and docs. Build the docs with `moon run glow-engine:build-doc` (or the repo's doc task). Expected: no new warnings.
 - [ ] **Step 4:** Run the full glow-engine suite: `GLOW_PYTEST tests/unit`. Expected: PASS.
 - [ ] **Step 5:** Commit: `docs: project access control; feat(saf-templates): access banner in step templates`.
+
+---
+
+## Part 2 — Pluggable membership backend (spec 2.10, revision 2026-11-27)
+
+### Additional Global Constraints
+
+- `GLOW_PROJECT_ACCESS_BACKEND`: `database` (default) or `openfga`. It is read only when `GLOW_PROJECT_ACCESS_CONTROL_ENABLED` is `True`.
+- Selecting `openfga` fails at startup with `NotImplementedError("OpenFGA project access backend is not implemented yet")`. The `[openfga]` extra is **not** declared in `pyproject.toml`; it is documented as reserved.
+- No behaviour change: every status code, response body and route of Tasks 1-11 stays the same. Existing tests keep passing, except where noted below for renamed repository methods and the member order.
+- Only `_access/membership.py` (the selection module) may read `glow_project_access_backend`. Only `_repository/relational_models.py`, `_repository/relational_access.py`, `_repository/sqlite.py` and `_repository/postgresql.py` may reference the `ProjectMember` model.
+- Memberships are ids only (`sub`), on every backend.
+- The access API is a public contract (App Portal consumes it with the user's token). No path, field or status code is removed or renamed.
+- No App Portal, deployment-file or Helm changes.
+
+### Review Focus (membership backend)
+
+1. **Store ids that GLOW doesn't have.** An external store can list ids of deleted or never-imported projects. `GET /projects` must count and page only projects that exist in GLOW (Task 13, `test_list_ignores_store_ids_of_missing_projects`).
+2. **A member of nothing.** A user whose store entry is empty gets an empty first page with `total_projects == 0`, not a 400 "Invalid page number" (Task 13, `test_list_member_without_projects_is_empty`).
+3. **Many projects per user.** The project ids from the store are passed to SQL. A plain `IN (...)` hits SQLite's bound-variable limit (32766). Pass them as one bound parameter instead (Task 13, `test_list_projects_scope_with_many_ids`, 40 000 ids).
+4. **Backend failure half-way.** A store call that raises must never leave two owners, or a removed member still holding the lock with access (Task 13, the `test_*_store_failure_*` tests).
+5. **Live stream on membership changes.** Share, unshare, transfer and assign must still bump the lock row `version`, now done by the rules rather than by the repository (Task 13, `test_membership_change_bumps_version`).
+
+---
+
+### Task 12: Membership store interface, database backend, selection and injection
+
+**Files:**
+- Create: `packages/glow-engine/src/ansys/saf/glow/_access/membership.py` (interface, factory, startup check)
+- Create: `packages/glow-engine/src/ansys/saf/glow/_access/membership_database.py` (`DatabaseMembershipStore`)
+- Create: `packages/glow-engine/src/ansys/saf/glow/_access/membership_openfga.py` (`OpenFgaMembershipStore` placeholder)
+- Modify: `packages/glow-engine/src/ansys/saf/glow/_config/settings.py` (new field after `glow_project_access_control_enabled`)
+- Modify: `packages/glow-engine/src/ansys/saf/glow/_repository/abstract_repository.py` and `_repository/relational_access.py` (membership session methods below)
+- Modify: `packages/glow-engine/src/ansys/saf/glow/_server/dependencies.py` (`get_membership_store`, `MembershipStoreDep`, `WSMembershipStoreDep`)
+- Modify: `packages/glow-engine/src/ansys/saf/glow/_server/server.py` (call the startup check next to the auth guard at L81)
+- Create: `packages/glow-engine/tests/unit/access/membership_contract.py` (backend-agnostic contract, not collected by itself)
+- Create: `packages/glow-engine/tests/unit/access/fakes.py` (`InMemoryMembershipStore`, `FailingMembershipStore`)
+- Test: `packages/glow-engine/tests/unit/access/test_membership_store.py`, `tests/unit/access/test_settings_guard.py`
+
+**Interfaces:**
+- Settings: `glow_project_access_backend: Literal["database", "openfga"] = "database"`, description `"Where project memberships (owner and viewers) are stored, when project access control is enabled."`
+- `class ProjectMembershipStore(ABC)` in `_access/membership.py`. All methods are `async`. Member lists are ordered **owner first, then viewers by `user_id`**, on every backend.
+  - `get_members(project_id: str) -> list[ProjectMemberInfo]`
+  - `get_members_of_projects(project_ids: Sequence[str]) -> dict[str, list[ProjectMemberInfo]]`: every requested id is a key (empty list when it has no members).
+  - `set_member(project_id: str, user_id: str, role: ProjectRole) -> None`: insert or change the role; idempotent.
+  - `remove_member(project_id: str, user_id: str) -> None`: no-op when absent.
+  - `remove_project(project_id: str) -> None`: removes every membership of the project; no-op when none.
+  - `project_ids_of_member(user_id: str) -> set[str]`
+  - `owned_project_ids() -> set[str]`: the projects that have an owner.
+  - Docstring states the contract: stores never bump the version counter, never enforce rules, and may hold ids of projects GLOW doesn't have.
+- `def create_membership_store(settings: Settings, session_factory: AbstractRepositorySessionFactory) -> ProjectMembershipStore`: `database` → `DatabaseMembershipStore(session_factory)`, `openfga` → `OpenFgaMembershipStore(settings)`. When access control is disabled it returns `DatabaseMembershipStore(session_factory)` whatever the backend, because the dependency runs on every request and the rules never call the store then.
+- `def check_membership_backend(settings: Settings) -> None`: no-op when access control is disabled; otherwise raises what `create_membership_store` would raise for the selected backend, without needing a repository.
+- `class OpenFgaMembershipStore(ProjectMembershipStore)`: `__init__(self, settings: Settings)` raises `NotImplementedError("OpenFGA project access backend is not implemented yet")`.
+- `class DatabaseMembershipStore(ProjectMembershipStore)`: `__init__(self, session_factory)`. Each method opens `session_factory.get_session()` (with `modification=True` for writes), which joins the rules' open session, so memberships and lock changes share one transaction as today. It delegates to these new session methods (abstract + `RelationalAccessMixin`), none of which bump `version`:
+  - `get_members(project_id)`, `get_members_of_projects(project_ids)`, `project_ids_of_member(user_id)`, `owned_project_ids()`, `delete_members(project_id)`
+  - The existing `upsert_member` / `delete_member` stay, but in Task 13 they stop bumping `version`.
+- Dependencies: `get_membership_store(repository: Depends(get_repository), settings) -> ProjectMembershipStore` returns `create_membership_store(settings, repository)`; the WebSocket variant uses `get_repository_for_websocket`. Tests override it with `app.dependency_overrides[get_membership_store]`.
+- `tests/unit/access/membership_contract.py`: `class MembershipStoreContract` with pytest test methods that use two fixtures the subclass provides: `store: ProjectMembershipStore` and `project_ids: list[str]` (three existing projects).
+- `tests/unit/access/fakes.py`:
+  - `InMemoryMembershipStore(ProjectMembershipStore)`: a dict-of-dicts store, used to prove the rules don't depend on SQL tables.
+  - `FailingMembershipStore(InMemoryMembershipStore)`: `__init__(self, fail_on: str, after_calls: int = 0)`; the named method raises `RuntimeError("membership backend unavailable")` once it has been called `after_calls` times.
+
+- [ ] **Step 1: Write the failing contract** in `membership_contract.py`, one test per method:
+  - `test_set_and_get_members_owner_first`: set viewer `u2`, then owner `u1`, then viewer `u0` → `[("u1", owner), ("u0", viewer), ("u2", viewer)]`.
+  - `test_set_member_changes_role_single_entry`
+  - `test_remove_member_is_idempotent`
+  - `test_get_members_of_projects_has_every_key`: a project without members maps to `[]`.
+  - `test_project_ids_of_member`: `u1` in projects 0 and 2 → `{p0, p2}`; unknown user → `set()`.
+  - `test_owned_project_ids`: only projects with an owner.
+  - `test_remove_project_removes_all_and_only_its_members`
+
+  Then in `test_membership_store.py`:
+  - `class TestDatabaseMembershipStore(MembershipStoreContract)`, with fixtures building a SQLite repository and three projects like `test_repository.py` does.
+  - `class TestInMemoryMembershipStore(MembershipStoreContract)`, so the fake used in Task 13 obeys the same contract.
+  - `test_database_store_joins_open_session`: inside `repository.get_session(modification=True)`, `set_member` then raise; afterwards `get_members` is `[]` (rolled back with the outer session).
+  - `test_create_membership_store_selects_database`
+  - `test_create_membership_store_ignores_backend_when_disabled`: backend `openfga` with access control off → a `DatabaseMembershipStore`, no error.
+  - `test_openfga_backend_not_implemented`: `create_membership_store` raises `NotImplementedError` matching `"OpenFGA project access backend is not implemented yet"`.
+
+  And in `test_settings_guard.py`:
+  - `test_openfga_backend_fails_at_startup`: access control on, auth on, backend `openfga` → `build_mock_app(settings)` raises `NotImplementedError` with that message.
+  - `test_openfga_backend_ignored_when_access_control_disabled`: backend `openfga`, access control off → the app builds.
+- [ ] **Step 2:** Run `GLOW_PYTEST tests/unit/access/test_membership_store.py tests/unit/access/test_settings_guard.py`. Expected: FAIL (ImportError).
+- [ ] **Step 3:** Implement the setting, interface, both stores, the session methods, the dependency and the startup call. `DatabaseMembershipStore` orders with `ORDER BY (role != 'owner'), user_id`.
+- [ ] **Step 4:** Run Step 2 again, then `GLOW_PYTEST tests/unit/access`. Expected: all PASS (nothing uses the store yet).
+- [ ] **Step 5:** Commit: `feat(glow-engine): project membership store interface with database backend and OpenFGA placeholder`.
+
+---
+
+### Task 13: Rules and listing on the membership store
+
+**Files:**
+- Modify: `packages/glow-engine/src/ansys/saf/glow/_access/access_crud.py`
+- Modify: `packages/glow-engine/src/ansys/saf/glow/_access/schemas.py` (`ProjectLockState`, `ProjectLockSummary`, `ProjectListScope`)
+- Modify: `packages/glow-engine/src/ansys/saf/glow/_repository/abstract_repository.py`, `relational_access.py`, `relational.py` (`list_projects` at L154), `sqlite.py`, `postgresql.py`
+- Modify: `packages/glow-engine/src/ansys/saf/glow/_crud/crud.py` (`list_projects` L173, `upgrade_project` L310-319)
+- Modify: `packages/glow-engine/src/ansys/saf/glow/_server/dependencies.py` (`get_access_crud*` L302-315)
+- Modify: `packages/glow-engine/src/ansys/saf/glow/_server/routers/projects.py` (`list_projects` L180, `delete_project`)
+- Modify tests: `tests/unit/access/test_repository.py`, `test_access_crud.py`, `test_enforcement.py`, `conftest.py`
+- Test: those files
+
+**Interfaces:**
+- Consumes from Task 12: `ProjectMembershipStore`, `MembershipStoreDep`, `InMemoryMembershipStore`, `FailingMembershipStore`, `get_membership_store`.
+- `_access/schemas.py`:
+  - `ProjectLockState(project_id: str, holder_id: str | None, acquired_at: datetime | None, last_write_at: datetime | None, version: int, requests: list[WriteRequestInfo])`
+  - `ProjectLockSummary(holder_id: str | None, pending_request_count: int)`
+  - `@dataclass(frozen=True) class ProjectListScope: include_ids: frozenset[str] | None = None; exclude_ids: frozenset[str] = frozenset()`
+  - `ProjectAccessRecord` is unchanged. It remains the rules' combined view, and the raw snapshot used by `:upgrade`.
+- Session methods (abstract + relational):
+  - New `get_lock_state(project_id) -> ProjectLockState`: lock row and requests, no members.
+  - New `get_lock_summaries(project_ids) -> dict[str, ProjectLockSummary]`: replaces `get_access_summaries`, which is removed.
+  - New `bump_access_version(project_id) -> None`: the former `_bump_lock` with no values.
+  - Rename `get_access_record` → `snapshot_access_rows` and `restore_access_record` → `restore_access_rows`. They still cover every GLOW access table, including member rows; only `Crud.upgrade_project` calls them. With an external store the member rows are simply empty, and its memberships are untouched by the rebuild because they are keyed by project id.
+  - `upsert_member` / `delete_member` no longer bump `version`.
+  - `list_projects(page_size, page, order_by=None, filters=None, scope: ProjectListScope | None = None)` replaces `member_id` / `orphans_only` (same change on `Crud.list_projects`). `include_ids` and `exclude_ids` are each passed as **one** bound parameter: SQLite `Project.id IN (SELECT value FROM json_each(:ids))`, PostgreSQL `Project.id = ANY(CAST(:ids AS TEXT[]))`. Each dialect's repository provides `_ids_in(ids: frozenset[str]) -> ColumnElement[bool]`. An empty `include_ids` returns the empty first page without querying.
+- `AccessCrud(session_factory, memberships: ProjectMembershipStore, settings, now=_utc_now)`:
+  - `_record(session, project_id) -> ProjectAccessRecord` combines `memberships.get_members` with `session.get_lock_state`. It replaces every `session.get_access_record` call in the rules.
+  - `async def list_scope(principal, orphans_only: bool) -> ProjectListScope | None` replaces the sync version. It returns `None` for super admins, internals and when disabled; with `orphans_only`, it returns `exclude_ids=owned_project_ids()`. Members get `include_ids=project_ids_of_member(user_id)`. Unidentified callers still get 403.
+  - `fill_access_summaries` builds `ProjectAccessSummary` from `get_members_of_projects` and `get_lock_summaries`. The fields and values are unchanged.
+  - `async def on_project_deleting(project_id, principal) -> None` replaces `record_deletion`: it audits super-admin deletions (as before), then calls `memberships.remove_project`. The router calls it **before** `crud.remove_project`. No-op when disabled.
+  - Every membership change (`on_project_created`, `share`, `unshare`, `transfer_ownership`, `assign_owner`) calls `session.bump_access_version(project_id)` once.
+- **Ordering contract** (write it in the `AccessCrud` class docstring). Within one modifying session:
+  1. Apply the GLOW-database changes first: lock release, request denials, audit, version bump.
+  2. Call the store last.
+  3. Demote before promoting: transfer and assign first set the old owner to viewer, then the new one to owner.
+  4. For deletion, memberships are removed before the project.
+
+  A store failure then rolls back the database changes, and a commit failure after a store revocation leaves less access, never more.
+- `get_access_crud(repository, settings, memberships: MembershipStoreDep)` → `AccessCrud(repository, memberships, settings)`, and the same for the WebSocket variant.
+
+- [ ] **Step 1: Write failing tests.**
+  - `conftest.py`: add a fixture `membership_backend`, parametrized `["database", "memory"]`. For `memory`, it installs `app.dependency_overrides[get_membership_store] = lambda: store` with one `InMemoryMembershipStore` per test, and the `AccessCrud` fixture of `test_access_crud.py` uses it. Every existing test in `test_access_crud.py` and `test_enforcement.py` then runs on both backends.
+  - `test_access_crud.py`:
+    - `test_membership_change_bumps_version`: for each of share, unshare, transfer, assign, `get_access(...).version` increases by exactly 1.
+    - `test_unshare_holder_store_failure_keeps_state`: `FailingMembershipStore("remove_member")`; bob holds the lock. Unsharing bob raises `RuntimeError`. Afterwards bob is still a viewer and still the holder, and his pending request is still pending.
+    - `test_transfer_store_failure_never_two_owners`: `FailingMembershipStore("set_member", after_calls=1)` (the demotion succeeds, the promotion fails) → `RuntimeError`. The members contain no more than one owner.
+    - `test_assign_owner_store_failure_never_two_owners`: the same setup on `assign_owner`.
+    - `test_delete_store_failure_keeps_project`: `FailingMembershipStore("remove_project")` → `on_project_deleting` raises, the project still exists, and its members are unchanged.
+    - `test_list_scope_member_and_orphans`: for alice, `include_ids == {her projects}`; for the super admin with `orphans_only`, `exclude_ids == owned ids`; for the super admin without it, `None`.
+  - `test_enforcement.py`:
+    - `test_list_ignores_store_ids_of_missing_projects`: the memory store lists alice in `"ghost"` plus 2 real projects → `total_projects == 2`.
+    - `test_list_member_without_projects_is_empty`: carol → 200, `projects == []`, `total_projects == 0`, `current_page == 1`.
+    - `test_upgrade_keeps_members`: an old-schema project shared with bob, upgraded by alice → bob is still a viewer and alice is still owner and holder.
+    - `test_delete_removes_memberships`: after deleting, `store.project_ids_of_member("bob")` doesn't contain it.
+  - `test_repository.py`:
+    - `test_list_projects_scope_with_many_ids`: `include_ids` = 40 000 random ids plus 3 real → `total_projects == 3`.
+    - `test_list_projects_exclude_ids`
+    - `test_lock_summaries`
+    - Switch the summary and member assertions to `get_lock_summaries` and the store. `test_remove_project_deletes_access_rows` stays.
+- [ ] **Step 2:** Run `GLOW_PYTEST tests/unit/access`. Expected: FAIL (new names missing; `memory` variants fail on listing because `list_projects` still filters `project_members`).
+- [ ] **Step 3:** Implement. Remove the `ProjectMember` / `ProjectRole` imports from `relational.py`. In existing tests, update member-order assertions that relied on insertion order to the owner-first order.
+- [ ] **Step 4:** Run `GLOW_PYTEST tests/unit/access tests/unit/routes tests/unit/test_auth_validation.py`. Expected: all PASS on both backends.
+- [ ] **Step 5:** Commit: `refactor(glow-engine): project access rules use the injected membership store`.
+
+---
+
+### Task 14: Architecture guard, public API contract, docs
+
+**Files:**
+- Create: `packages/glow-engine/tests/unit/access/test_architecture.py`
+- Modify: `doc/source/user_guide/backend/authn_authz/project_access_control.rst`, `doc/source/user_guide/deploy/on_premise.rst`
+- Test: `tests/unit/access/test_architecture.py`
+
+**Interfaces:**
+- Consumes the constraint lists in "Additional Global Constraints" above and the routes of Task 6.
+
+- [ ] **Step 1: Write failing tests** in `test_architecture.py` (they scan `src/ansys/saf/glow` with `pathlib` and `ast`, not regexes over comments):
+  - `test_only_selection_module_reads_backend_setting`: `glow_project_access_backend` is referenced only in `_config/settings.py` and `_access/membership.py`.
+  - `test_project_member_model_confined_to_repository`: `ProjectMember` is imported only by the four repository files listed in the constraints.
+  - `test_access_crud_does_not_import_repository_models`: `_access/access_crud.py` imports nothing from `_repository.relational*`.
+  - `test_access_api_is_additive`: with access control on, the app's OpenAPI contains at least these paths and methods: the routes listed in Task 6, plus `GET /projects` and `GET /projects/{project_id}`. `ProjectAccess` and `ProjectAccessSummary` contain at least their current field names (`member_ids` included). Pin the lists in the test.
+- [ ] **Step 2:** Run `GLOW_PYTEST tests/unit/access/test_architecture.py`. Expected: PASS, given Task 13. If any test fails, fix the offending import rather than the test.
+- [ ] **Step 3: Docs.**
+  - In `project_access_control.rst`, add a "Where permissions are stored" section that covers:
+    - GLOW is the authority on project permissions and needs no App Portal.
+    - Other services (App Portal) read and change permissions through the access API with the end user's token, exactly like the projects dashboard; the API changes only additively.
+    - `GLOW_PROJECT_ACCESS_BACKEND` (`database` default; `openfga` reserved and failing at startup with the exact message).
+    - The lock, requests and audit always stay in the GLOW database.
+    - Permissions that existed only in App Portal's OpenFGA show up as orphans for a super admin to reassign.
+    - The reserved `ansys-saf-glow-engine[openfga]` extra.
+  - In `on_premise.rst`, add the env var to the settings table.
+  - Build the docs as in Task 11 Step 3. Expected: no new warnings.
+- [ ] **Step 4:** Run the full suite: `GLOW_PYTEST tests/unit`. Expected: PASS.
+- [ ] **Step 5:** Commit: `docs: project access membership backends; test(glow-engine): access architecture guards`.

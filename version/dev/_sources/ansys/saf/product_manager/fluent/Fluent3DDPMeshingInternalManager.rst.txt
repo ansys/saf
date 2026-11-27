@@ -1,0 +1,120 @@
+
+
+
+
+
+
+:class:`Fluent3DDPMeshingInternalManager`
+=========================================
+
+
+.. py:class:: ansys.saf.product_manager.fluent.Fluent3DDPMeshingInternalManager(**kwargs: Any)
+
+   Bases: :py:obj:`AbstractFluentInternalManager`\ [\ :py:obj:`ansys.fluent.core.session_meshing.Meshing`\ ]
+
+
+   
+   Private class to manage a Fluent Meshing 3DDP instance using secure gRPC connections.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:currentmodule:: Fluent3DDPMeshingInternalManager
+
+Overview
+--------
+
+.. tab-set::
+
+
+   .. tab-item:: Constructors
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~get_product_name_implement`
+            - Return the name of Fluent Meshing 3DDP in the PIM environment.
+
+
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~PRODUCT_NAME`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.saf.product_manager.fluent import Fluent3DDPMeshingInternalManager
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: PRODUCT_NAME
+   :value: 'fluent-3ddp-meshing-secure'
+
+
+
+
+Method detail
+-------------
+
+.. py:method:: get_product_name_implement() -> str
+   :classmethod:
+
+
+   
+   Return the name of Fluent Meshing 3DDP in the PIM environment.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

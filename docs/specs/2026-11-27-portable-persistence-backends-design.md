@@ -1,7 +1,7 @@
 # Portable Persistence Backends for SAF/GLOW
 
 **Date:** 2026-11-27  
-**Status:** Draft — awaiting user review  
+**Status:** Awaiting SAF Team review  
 **Approach:** Dual Provider SPI + entry-point plugins (hybrid first-party + third-party)
 
 ## 1. Intent

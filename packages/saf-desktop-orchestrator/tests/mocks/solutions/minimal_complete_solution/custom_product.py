@@ -16,12 +16,14 @@
 
 import os
 from pathlib import Path
+import tempfile
 
 import click
 from fastapi import FastAPI, HTTPException
 import psutil
 
 DEFAULT_PROPERTY_VALUE = "blue"
+SAFE_ROOT = Path(os.environ.get("SAF_MOCK_PRODUCT_ALLOWED_ROOT", tempfile.gettempdir())).resolve()
 
 app = FastAPI()
 
@@ -56,12 +58,20 @@ def set_property(data: dict[str, str]):
 
 @app.post("/property:store")
 def store_given_absolute_path(data: dict[str, str]):
-    Path(data["value"]).write_text(app.session["property"])  # type: ignore
+    safe_path = os.path.realpath(data["value"])
+    safe_root = os.path.realpath(SAFE_ROOT)
+    if not os.path.normcase(safe_path).startswith(os.path.normcase(safe_root + os.sep)):
+        raise HTTPException(status_code=400, detail="Invalid path")
+    Path(safe_path).write_text(app.session["property"])  # type: ignore
 
 
 @app.post("/property:restore")
 def restore_given_absolute_path(data: dict[str, str]):
-    app.session["property"] = Path(data["value"]).read_text()  # type: ignore
+    safe_path = os.path.realpath(data["value"])
+    safe_root = os.path.realpath(SAFE_ROOT)
+    if not os.path.normcase(safe_path).startswith(os.path.normcase(safe_root + os.sep)):
+        raise HTTPException(status_code=400, detail="Invalid path")
+    app.session["property"] = Path(safe_path).read_text()  # type: ignore
 
 
 @app.get("/version", response_model=dict[str, str])

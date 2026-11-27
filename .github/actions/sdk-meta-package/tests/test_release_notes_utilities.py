@@ -71,6 +71,10 @@ def test_generate_release_notes_writes_report_and_summary() -> None:
         report = (root / "release_notes.md").read_text(encoding="utf-8")
         assert "| `ansys-bdm-api` | `1.2.3` |" in report
         assert "| `ansys-saf-pim-light-server` | `0.1.0` |" in report
+        assert "We recommend using Python 3.11.5 or later." in report
+        assert "SoupSieve 4.x" in report
+        assert "https://github.com/advisories/GHSA-mmhr-3c5m-f64f" in report
+        assert "https://github.com/advisories/GHSA-6655-6qjp-jx7x" in report
         assert "---#" not in report
         assert "# ansys-bdm-api 1.2.3\n\n- Added feature" in report
         assert "# ansys-bdm-shared-volume 1.2.3\n\nNo changes" not in report
@@ -81,6 +85,10 @@ def test_generate_release_notes_writes_report_and_summary() -> None:
         rst_report = (release_notes_dir / "0.1.0.rst").read_text(encoding="utf-8")
         assert "`0.1.0 <https://github.com/ansys/saf/releases/tag/v0.1.0-saf-sdk>`_" in rst_report
         assert "Installing ``ansys-saf-sdk`` requires pip 26.0 or higher." in rst_report
+        assert "We recommend using Python 3.11.5 or later." in rst_report
+        assert "SoupSieve 4.x" in rst_report
+        assert "https://github.com/advisories/GHSA-mmhr-3c5m-f64f" in rst_report
+        assert "https://github.com/advisories/GHSA-6655-6qjp-jx7x" in rst_report
         assert ".. dropdown:: ansys-bdm-api 1.2.3" in rst_report
         assert f".. dropdown:: {release_utils.PACKAGES[-1]} 1.2.3" in rst_report
         assert ".. dropdown:: ansys-bdm-shared-volume 1.2.3" in rst_report

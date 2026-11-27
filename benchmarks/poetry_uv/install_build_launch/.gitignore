@@ -1,0 +1,4 @@
+results/
+.work/
+config.local.json
+__pycache__/

@@ -246,8 +246,9 @@ release_notes.md
 # =============================================================================
 # AI / Specific Skills Dev documentation
 # =============================================================================
-docs/
-docs/superpowers/*
+docs/*
+!docs/specs/
+!docs/specs/**
 
 # Assets of saf-desktop-installer tests
 packages/saf-desktop-installer/report/report.html

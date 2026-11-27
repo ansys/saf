@@ -249,6 +249,8 @@ release_notes.md
 docs/*
 !docs/specs/
 !docs/specs/**
+!docs/plans/
+!docs/plans/**
 
 # Assets of saf-desktop-installer tests
 packages/saf-desktop-installer/report/report.html

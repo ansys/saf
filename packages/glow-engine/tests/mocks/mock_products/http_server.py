@@ -91,8 +91,12 @@ def _validated_path(value: str) -> Path:
     if not path.is_absolute():
         raise HTTPException(status_code=400, detail="Path must be absolute.")
 
-    # Resolve the path to handle symlinks and normalize it
-    resolved_path = path.resolve()
+    # Canonicalize user input (normalize path segments and resolve symlinks where possible)
+    # without requiring the final path to already exist.
+    resolved_path = path.resolve(strict=False)
+    if not resolved_path.is_absolute():
+        raise HTTPException(status_code=400, detail="Path must be absolute.")
+
     allowed_roots = _get_allowed_roots()
 
     if not _is_path_within_allowed_roots(resolved_path, allowed_roots):

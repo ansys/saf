@@ -59,8 +59,9 @@ def set_property(data: dict[str, str]):
 @app.post("/property:store")
 def store_given_absolute_path(data: dict[str, str]):
     safe_path = os.path.realpath(data["value"])
-    safe_root = os.path.realpath(SAFE_ROOT)
-    if not os.path.normcase(safe_path).startswith(os.path.normcase(safe_root + os.sep)):
+    if not safe_path.startswith(str(SAFE_ROOT)):
+        raise HTTPException(status_code=400, detail="Invalid path")
+    if not os.path.normcase(safe_path).startswith(os.path.normcase(str(SAFE_ROOT) + os.sep)):
         raise HTTPException(status_code=400, detail="Invalid path")
     Path(safe_path).write_text(app.session["property"])  # type: ignore
 
@@ -68,8 +69,9 @@ def store_given_absolute_path(data: dict[str, str]):
 @app.post("/property:restore")
 def restore_given_absolute_path(data: dict[str, str]):
     safe_path = os.path.realpath(data["value"])
-    safe_root = os.path.realpath(SAFE_ROOT)
-    if not os.path.normcase(safe_path).startswith(os.path.normcase(safe_root + os.sep)):
+    if not safe_path.startswith(str(SAFE_ROOT)):
+        raise HTTPException(status_code=400, detail="Invalid path")
+    if not os.path.normcase(safe_path).startswith(os.path.normcase(str(SAFE_ROOT) + os.sep)):
         raise HTTPException(status_code=400, detail="Invalid path")
     app.session["property"] = Path(safe_path).read_text()  # type: ignore
 

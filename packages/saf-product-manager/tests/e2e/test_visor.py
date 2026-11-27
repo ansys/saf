@@ -49,7 +49,7 @@ def wait_for_text_in_page_source(webdriver: WebDriver, text: str) -> None:
     [pytest.param("PIM", marks=pytest.mark.use_pim), pytest.param("HPS", marks=pytest.mark.use_hps)],
     indirect=True,
 )
-@pytest.mark.parametrize("deployment_type", ["Desktop", "DockerCompose"], indirect=True)
+@pytest.mark.parametrize("deployment_type", ["Desktop", "MultiContainer"], indirect=True)
 class TestVisorUI:
     def _open_visor_page(
         self,

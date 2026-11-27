@@ -39,7 +39,7 @@ PRODUCT_CONFIGS_DIR = Path("tests") / "mocks" / "solution_end_to_end" / "product
     [pytest.param("PIM", marks=pytest.mark.use_pim), pytest.param("HPS", marks=pytest.mark.use_hps)],
     indirect=True,
 )
-@pytest.mark.parametrize("deployment_type", ["Desktop", "DockerCompose"], indirect=True)
+@pytest.mark.parametrize("deployment_type", ["Desktop", "MultiContainer"], indirect=True)
 @pytest.mark.parametrize("product_configs_dir", [PRODUCT_CONFIGS_DIR], indirect=True)
 class TestCustomFluent:
     def test_fluent_custom_args(

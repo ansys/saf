@@ -14,6 +14,7 @@
 # limitations under the License.
 
 import logging
+from enum import Enum
 from pathlib import Path
 import subprocess
 
@@ -25,7 +26,6 @@ from ansys.saf.testing._hps.scripts.hps_installer import (
     get_hps_external_name,
 )
 from ansys.saf.testing._pytest.platform_specific import is_ci_run
-from ansys.saf.testing._solution.const import TestDeployment
 
 logger = logging.getLogger(__name__)
 
@@ -34,7 +34,7 @@ class HpsDeploymentProcess:
     compose_file: Path = HPS_DEPLOYMENTS_DIRECTORY / "docker-compose.yaml"
 
     @classmethod
-    def run(cls, deployment_type: TestDeployment) -> None:
+    def run(cls, deployment_type: Enum) -> None:
         configuring_hps_deployment(get_hps_external_name(deployment_type.name))
         cmd = ["docker", "compose", "-f", cls.compose_file.as_posix(), "up", "-d", "--wait-timeout", "200"]
         if is_ci_run():
@@ -67,6 +67,6 @@ class HpsDeploymentProcess:
             raise
 
     @classmethod
-    def restart(cls, deployment_type: TestDeployment) -> None:
+    def restart(cls, deployment_type: Enum) -> None:
         cls.stop()
         cls.run(deployment_type)

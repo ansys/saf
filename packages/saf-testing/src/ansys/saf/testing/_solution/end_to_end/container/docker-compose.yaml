@@ -28,7 +28,7 @@ services:
       - my-solution-external
       - my-solution-internal
     environment:
-      - GLOW_DEPLOYMENT=DockerCompose
+      - GLOW_DEPLOYMENT=MultiContainer
       - GLOW_PROJECT_FILES_DIRECTORY=/projects
       - GLOW_METHOD_EXECUTION_DIRECTORY=/transactions
       - GLOW_API_HOST=0.0.0.0
@@ -63,7 +63,7 @@ services:
     networks:
       - my-solution-external
     environment:
-      - GLOW_DEPLOYMENT=DockerCompose
+      - GLOW_DEPLOYMENT=MultiContainer
       - GLOW_UI_PROJECT_FILES_DIRECTORY=/projects
       - GLOW_UI_HOST=0.0.0.0
       - GLOW_UI_PORT=50001

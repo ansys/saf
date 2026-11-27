@@ -31,7 +31,7 @@ pytestmark = [
     pytest.mark.parametrize("solution_type", [EndToEndSolution], indirect=True),
     pytest.mark.parametrize(
         "deployment_type",
-        ["Desktop", pytest.param("DockerCompose", marks=pytest.mark.use_containerized)],
+        ["Desktop", pytest.param("MultiContainer", marks=pytest.mark.use_containerized)],
         indirect=True,
     ),
 ]

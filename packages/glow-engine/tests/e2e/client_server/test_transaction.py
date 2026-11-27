@@ -21,9 +21,8 @@ import time
 import httpx2
 import pytest
 
-from ansys.saf.glow.client import BadRequestException, InternalSolutionException
+from ansys.saf.glow.client import BadRequestException, Deployment, InternalSolutionException
 from ansys.saf.glow.solution import MethodStatus
-from ansys.saf.testing.solution.const import TestDeployment
 from ansys.saf.testing.solution.end_to_end import (
     DefaultDebug,
     EnvVarDebug,
@@ -79,7 +78,7 @@ def no_child_cleanup(session_glow: GlowBaseProcess[EndToEndSolution]):
 
 @pytest.mark.parametrize(
     "deployment_type",
-    ["Desktop", pytest.param("DockerCompose", marks=pytest.mark.use_containerized)],
+    ["Desktop", pytest.param("MultiContainer", marks=pytest.mark.use_containerized)],
     indirect=True,
 )
 class TestTransactions:
@@ -290,7 +289,7 @@ class TestTransactions:
         function_project: ProjectFixture[EndToEndSolution],
         session_glow: GlowBaseProcess[EndToEndSolution],
         debug: bool,
-        deployment_type: TestDeployment,
+        deployment_type: Deployment,
     ):
         """Test that a subprocess spawn by a long running transaction is not terminated after the transaction
         finishes when child cleanup is disabled, instead it's logged as a warning. Launching other transactions
@@ -351,7 +350,7 @@ class TestTransactions:
         # Restart glow and check that the process is still alive
         session_glow.restart()
         step.check_child_process_is_running()
-        if deployment_type == TestDeployment.DockerCompose:
+        if deployment_type == Deployment.MultiContainer:
             # when containerized, the process ends because the whole container is restarted.
             assert not step.child_process_is_running
         else:

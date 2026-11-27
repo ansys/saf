@@ -97,7 +97,7 @@ def project_with_osl_inputs(
     ("deployment_type", "product_host", "product_binding_host"),
     [
         ("Desktop", None, None),
-        ("DockerCompose", "host.docker.internal", DOCKER_GATEWAY_IP),
+        ("MultiContainer", "host.docker.internal", DOCKER_GATEWAY_IP),
     ],
     ids=[
         "desktop_secure",
@@ -126,8 +126,8 @@ class TestOptislang:
     [
         ("Desktop", None, None, False),  # product_binding_host defaults to localhost in secure products
         ("Desktop", get_local_ip(), get_local_ip(), False),
-        ("DockerCompose", "host.docker.internal", DOCKER_GATEWAY_IP, False),
-        ("DockerCompose", "host.docker.internal", "0.0.0.0", True),
+        ("MultiContainer", "host.docker.internal", DOCKER_GATEWAY_IP, False),
+        ("MultiContainer", "host.docker.internal", "0.0.0.0", True),
     ],
     ids=[
         "desktop_local_secure_mode",
@@ -184,7 +184,7 @@ def test_optislang_wrapper_on_hps(
     [
         ("Desktop", None, None),  # product_binding_host defaults to localhost in secure products
         ("Desktop", None, "0.0.0.0"),
-        ("DockerCompose", "host.docker.internal", "0.0.0.0"),
+        ("MultiContainer", "host.docker.internal", "0.0.0.0"),
     ],
     ids=["desktop_wnua_or_insecure", "desktop_insecure", "dockercompose_insecure"],
     indirect=True,

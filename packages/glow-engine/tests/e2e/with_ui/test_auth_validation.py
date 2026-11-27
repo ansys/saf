@@ -23,6 +23,7 @@ import pytest
 from selenium.webdriver.chrome.webdriver import WebDriver
 from selenium.webdriver.common.by import By
 
+from ansys.saf.glow.client import Deployment
 from ansys.saf.glow.solution import Solution
 from ansys.saf.testing.common import YieldFixture
 from ansys.saf.testing.platform_specific import is_ci_run
@@ -34,7 +35,6 @@ from ansys.saf.testing.selenium import (
     wait_for_partial_text,
     wait_for_text,
 )
-from ansys.saf.testing.solution.const import TestDeployment
 from ansys.saf.testing.solution.end_to_end import (
     BaseGlowConfiguration,
     DisableAuthValidationConfiguration,
@@ -64,9 +64,9 @@ def authenticated_solution(
     request: pytest.FixtureRequest,
     session_glow: GlowBaseProcess[EndToEndSolution],
     session_idp_mock_server: str,
-    deployment_type: TestDeployment,
+    deployment_type: Deployment,
 ) -> BaseGlowConfiguration:
-    if deployment_type == TestDeployment.DockerCompose:
+    if deployment_type == Deployment.MultiContainer:
         session_idp_mock_server = session_idp_mock_server.replace("localhost", "host.docker.internal")
     return session_glow.change_configuration(request.param, idp_server=session_idp_mock_server)
 
@@ -113,7 +113,7 @@ def project_ui_url(session_glow: GlowBaseProcess[EndToEndSolution], existing_pro
 )
 @pytest.mark.parametrize(
     "deployment_type",
-    ["Desktop", pytest.param("DockerCompose", marks=pytest.mark.use_containerized)],
+    ["Desktop", pytest.param("MultiContainer", marks=pytest.mark.use_containerized)],
     indirect=True,
 )
 @pytest.mark.parametrize("auth_token_type", ["no_token", "invalid_token", "valid_token"], indirect=True)
@@ -191,7 +191,7 @@ class TestAuthenticatedSolution:
         project_ui_url: str,
         auth_validation_enabled: bool,
         existing_project: Solution,
-        deployment_type: TestDeployment,
+        deployment_type: Deployment,
         request: pytest.FixtureRequest,
     ):
         """
@@ -208,7 +208,7 @@ class TestAuthenticatedSolution:
             self._assert_error_page(session_glow, session_selenium_webdriver, auth_token_type)
         else:
             # page loads project info, step fields can be set and transactions work as expected.
-            if deployment_type == TestDeployment.Desktop:
+            if deployment_type == Deployment.Desktop:
                 request.node.add_marker(  # type: ignore
                     pytest.mark.xfail(
                         condition=platform.system() == "Windows" and is_ci_run(),

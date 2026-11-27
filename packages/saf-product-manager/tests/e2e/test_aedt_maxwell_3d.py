@@ -52,7 +52,7 @@ def launch_maxwell3d(class_project: ProjectFixture[EndToEndSolution], ansys_rele
 )
 @pytest.mark.parametrize(
     "deployment_type",
-    ["Desktop", pytest.param("DockerCompose", marks=pytest.mark.xfail(reason="pyaedt rpyc not working with docker"))],
+    ["Desktop", pytest.param("MultiContainer", marks=pytest.mark.xfail(reason="pyaedt rpyc not working with docker"))],
     indirect=True,
 )
 @pytest.mark.parametrize("ansys_release", [LATEST_VERSION, PREVIOUS_VERSION], indirect=True)

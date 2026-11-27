@@ -18,9 +18,14 @@ import httpx2
 import pytest
 
 from ansys.iam.oidc import UserInfo
-from ansys.saf.glow.client import Client, InternalSolutionException, PermissionException, UnauthorizedException
+from ansys.saf.glow.client import (
+    Client,
+    Deployment,
+    InternalSolutionException,
+    PermissionException,
+    UnauthorizedException,
+)
 from ansys.saf.testing.common import YieldFixture
-from ansys.saf.testing.solution.const import TestDeployment
 from ansys.saf.testing.solution.end_to_end import (
     DefaultSolutionAuthConfiguration,
     DisableAuthValidationConfiguration,
@@ -37,7 +42,7 @@ pytestmark = [
     pytest.mark.parametrize("solution_type", [EndToEndSolution], indirect=True),
     pytest.mark.parametrize(
         "deployment_type",
-        ["Desktop", pytest.param("DockerCompose", marks=pytest.mark.use_containerized)],
+        ["Desktop", pytest.param("MultiContainer", marks=pytest.mark.use_containerized)],
         indirect=True,
     ),
 ]
@@ -73,12 +78,12 @@ def configure_auth(
     user: str,
     auth_config: type[SolutionAuthConfiguration],
     api_key_config: type[GlowApiKeyConfiguration],
-    deployment_type: TestDeployment,
+    deployment_type: Deployment,
     session_glow: GlowBaseProcess[EndToEndSolution],
     session_idp_mock_server: str,
 ) -> None:
     idp_server_url = session_idp_mock_server
-    if deployment_type == TestDeployment.DockerCompose:
+    if deployment_type == Deployment.MultiContainer:
         idp_server_url = idp_server_url.replace("localhost", "host.docker.internal")
     session_glow.change_configuration(auth_config, idp_server=idp_server_url, restart=False)
     session_glow.change_configuration(api_key_config, api_key="my-mock-api-key")

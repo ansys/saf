@@ -55,7 +55,7 @@ def module_setup_and_teardown(session_glow: GlowBaseProcess[EndToEndSolution]) -
 @pytest.mark.parametrize("tracing_configuration", [OTELconsole], indirect=True)
 @pytest.mark.parametrize(
     "deployment_type",
-    ["Desktop", pytest.param("DockerCompose", marks=pytest.mark.use_containerized)],
+    ["Desktop", pytest.param("MultiContainer", marks=pytest.mark.use_containerized)],
     indirect=True,
 )
 class TestOtlpGlow:

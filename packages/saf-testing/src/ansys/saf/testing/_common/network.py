@@ -13,6 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from enum import Enum
 from pathlib import Path
 import platform
 import socket
@@ -28,7 +29,6 @@ from ansys.saf.testing._common.grpc_certificates import (
     save_certificate,
     save_private_key,
 )
-from ansys.saf.testing._solution.const import TestDeployment
 
 
 def get_random_free_port() -> int:
@@ -58,8 +58,10 @@ def get_docker_gateway_ip() -> str:
 
 
 @pytest.fixture(scope="session")
-def docker_gateway_ip(deployment_type: TestDeployment) -> str:
-    if deployment_type == TestDeployment.DockerCompose and platform.system() == "Linux":
+def docker_gateway_ip(deployment_type: Enum) -> str:
+    from ansys.saf.glow.client import Deployment  # pyright: ignore[reportMissingImports]
+
+    if deployment_type == Deployment.MultiContainer and platform.system() == "Linux":
         return get_docker_gateway_ip()
     else:
         return "127.0.0.1"

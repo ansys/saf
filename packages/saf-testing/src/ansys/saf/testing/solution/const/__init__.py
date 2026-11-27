@@ -13,6 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from ansys.saf.testing._solution.const import TestDeployment, TestProductInstanceSystemType
+from ansys.saf.testing._solution.const import TestProductInstanceSystemType
 
-__all__ = ["TestDeployment", "TestProductInstanceSystemType"]
+__all__ = ["TestProductInstanceSystemType"]

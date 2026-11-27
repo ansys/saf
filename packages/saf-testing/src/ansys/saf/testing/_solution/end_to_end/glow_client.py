@@ -24,7 +24,7 @@ import httpx2
 import pytest
 
 from ansys.saf.testing._common.common import YieldFixture
-from ansys.saf.testing._solution.const import TestDeployment
+from ansys.saf.glow.client import Deployment  # pyright: ignore[reportMissingImports]
 from ansys.saf.testing._solution.end_to_end._typing import ClientProtocol, SolutionProtocol
 from ansys.saf.testing._solution.end_to_end.glow_execution_configurations import HpsTokenPassThroughAuth
 from ansys.saf.testing._solution.end_to_end.glow_process import GlowBaseProcess
@@ -51,19 +51,19 @@ def function_client(
 
 @pytest.fixture(scope="session")
 def get_glow_client(
-    deployment_type: TestDeployment,
+    deployment_type: Deployment,
 ) -> YieldFixture[GlowClientFactory]:
     """The python client to access the glow API from the given solution."""
     mp = pytest.MonkeyPatch()  # default fixture is function-scoped.
 
     def _glow_client(glow_proc: GlowBaseProcess[T], access_token: str | None = None) -> ClientProtocol[T]:
-        # Careful! even if the deployment_type is DockerCompose, the client used here is initialized
+        # Careful! even if the deployment_type is MultiContainer, the client used here is initialized
         # in the pytest session. It's not a client within a container, such as what we do in test_dash_ui.
         # We are testing an external client communicating with a containerized API server.
         # Thus, we need to configure the deployment_type for this environment if we want something
         # beyond the default settings (e.g., Desktop).
-        if deployment_type == TestDeployment.DockerCompose:
-            mp.setenv("GLOW_DEPLOYMENT", TestDeployment.DockerCompose.value)
+        if deployment_type == Deployment.MultiContainer:
+            mp.setenv("GLOW_DEPLOYMENT", Deployment.MultiContainer.value)
             mp.setenv("GLOW_UI_PROJECT_FILES_DIRECTORY", str(glow_proc.project_files_directory))
             mp.setenv("GLOW_PROJECT_FILES_DIRECTORY", f"{glow_proc.project_files_directory}")
             hps_auth_configuration = glow_proc.applied_configurations["hps_auth_configuration"]

@@ -44,7 +44,7 @@ AEDT_FILE_WITH_ANALYSIS_READY = Path(
 )
 @pytest.mark.parametrize(
     "deployment_type",
-    ["Desktop", pytest.param("DockerCompose", marks=pytest.mark.xfail(reason="pyaedt rpyc not working with docker"))],
+    ["Desktop", pytest.param("MultiContainer", marks=pytest.mark.xfail(reason="pyaedt rpyc not working with docker"))],
     indirect=True,
 )
 @pytest.mark.parametrize("ansys_release", [LATEST_VERSION, PREVIOUS_VERSION], indirect=True)

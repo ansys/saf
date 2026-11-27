@@ -13,11 +13,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from enum import Enum
 import platform
 
 import pytest
 
-from ansys.saf.testing._solution.const import TestDeployment, TestProductInstanceSystemType
+from ansys.saf.testing._solution.const import TestProductInstanceSystemType
 
 
 @pytest.fixture(scope="session")
@@ -25,14 +26,16 @@ def deployment_type(
     is_docker_requested: bool,
     is_docker_installed: bool,
     request: pytest.FixtureRequest,
-) -> TestDeployment:
+) -> Enum:
+    from ansys.saf.glow.client import Deployment  # pyright: ignore[reportMissingImports]
+
     deployment = request.param if hasattr(request, "param") else "Desktop"
-    if deployment == "DockerCompose":
+    if deployment != "Desktop":
         if not is_docker_requested:
-            pytest.skip("Use --docker to enable DockerCompose test.")
+            pytest.skip(f"Use --docker to enable {deployment} test.")
         if not is_docker_installed:
-            pytest.fail("Install docker to enable DockerCompose test.")
-    return TestDeployment[deployment]
+            pytest.fail(f"Install docker to enable {deployment} test.")
+    return Deployment[deployment]
 
 
 @pytest.fixture(scope="session")

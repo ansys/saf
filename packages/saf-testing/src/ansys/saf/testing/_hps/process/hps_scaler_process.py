@@ -14,6 +14,7 @@
 # limitations under the License.
 
 import os
+from enum import Enum
 from pathlib import Path
 import platform
 
@@ -24,7 +25,6 @@ from ansys.saf.testing._hps.scripts.hps_installer import (
     configuring_scalar,
     get_hps_external_name,
 )
-from ansys.saf.testing._solution.const import TestDeployment
 from ansys.saf.testing._system.process import Process
 
 
@@ -43,7 +43,7 @@ class HpsScalerProcess(Process):
 
     def __init__(
         self,
-        deployment_type: TestDeployment,
+        deployment_type: Enum,
         python_in_saf_product_environment: None | Path = None,
         saf_product_environment: None | Path = None,
         product_host: str | None = None,
@@ -56,9 +56,11 @@ class HpsScalerProcess(Process):
         #   Use IP Address of Windows host (e.g., 172.23.80.1). Find it with `ipconfig` in Windows.
         # - Solution running in Linux/WSL Desktop + HPS Scaler running in same environment: localhost
         # - Solution running in Linux/WSL containerized + HPS Scaler running in Linux/WSL host: host.docker.internal
+        from ansys.saf.glow.client import Deployment  # pyright: ignore[reportMissingImports]
+
         self.product_host = product_host or (
             "localhost"
-            if deployment_type == TestDeployment.Desktop or platform.system() == "Windows"
+            if deployment_type == Deployment.Desktop or platform.system() == "Windows"
             else "host.docker.internal"
         )
         self.product_binding_host = product_binding_host

@@ -21,7 +21,7 @@ import uuid
 
 import httpx2
 
-from ansys.saf.testing._solution.const import TestDeployment
+from ansys.saf.glow.client import Deployment  # pyright: ignore[reportMissingImports]
 from ansys.saf.testing._solution.end_to_end._typing import ClientProtocol, SolutionProtocol
 from ansys.saf.testing._solution.end_to_end.glow_process import GlowBaseProcess
 
@@ -111,7 +111,7 @@ class ProjectFixture(Generic[T]):
         return self._solution_proc.base_ui_url
 
     def _get_local_path(self, glow_system_path: str) -> Path:
-        if self._solution_proc.deployment_type == TestDeployment.DockerCompose:
+        if self._solution_proc.deployment_type == Deployment.MultiContainer:
             return self.project_files_dir / glow_system_path.replace(f"/projects/{self.project_id}/", "")
         else:
             return Path(glow_system_path)

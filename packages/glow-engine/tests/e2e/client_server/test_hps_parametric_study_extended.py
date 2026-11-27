@@ -45,7 +45,7 @@ def wait_for_hps_parametric_study_to_finish(parametric_step: ParametricStudiesSt
 )
 @pytest.mark.parametrize(
     "deployment_type",
-    ["Desktop", pytest.param("DockerCompose", marks=pytest.mark.use_containerized)],
+    ["Desktop", pytest.param("MultiContainer", marks=pytest.mark.use_containerized)],
     indirect=True,
 )
 class TestHpsParametricStudy:

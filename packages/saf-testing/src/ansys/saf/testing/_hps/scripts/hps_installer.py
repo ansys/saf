@@ -25,7 +25,6 @@ import subprocess
 import sys
 import tarfile
 import tempfile
-from typing import Literal
 
 import click
 import httpx2
@@ -237,8 +236,8 @@ def configuring_keycloak():  # noqa: C901
         json.dump(keycloak_config_data, f, indent=4)
 
 
-def get_hps_external_name(deployment_type: Literal["Desktop", "DockerCompose", "Unknown"]) -> str:
-    if deployment_type == "DockerCompose":
+def get_hps_external_name(deployment_type: str) -> str:
+    if deployment_type == "MultiContainer":
         # When the solution is containerized, we cannot use "localhost" as it refers to the container itself.
         # However, we cannot use host.docker.internal neither as it's not resolvable outside the container
         # (HPS Web UI, HPS Scaling Service...).

@@ -18,8 +18,8 @@ import pytest
 from selenium.webdriver.chrome.webdriver import WebDriver
 from selenium.webdriver.common.by import By
 
+from ansys.saf.glow.client import Deployment
 from ansys.saf.testing.selenium import wait_for_element, wait_for_element_and_click, wait_for_text
-from ansys.saf.testing.solution.const import TestDeployment
 from ansys.saf.testing.solution.end_to_end import ProjectFixture
 from tests.mocks.solution_end_to_end.flagship_const import LATEST_VERSION, PREVIOUS_VERSION
 from tests.mocks.solution_end_to_end.solution.definition import EndToEndSolution
@@ -35,7 +35,7 @@ pytestmark = [
 def upload_project_file_to_ui(
     function_project: ProjectFixture[EndToEndSolution],
     session_selenium_webdriver: WebDriver,
-    deployment_type: TestDeployment,
+    deployment_type: Deployment,
 ) -> None:
     assert INPUT_AEDT_FILE.is_file()
 
@@ -61,7 +61,7 @@ def upload_project_file_to_ui(
     "deployment_type",
     [
         "Desktop",
-        pytest.param("DockerCompose", marks=pytest.mark.xfail(reason="pyaedt not working with docker")),
+        pytest.param("MultiContainer", marks=pytest.mark.xfail(reason="pyaedt not working with docker")),
     ],
     indirect=True,
 )

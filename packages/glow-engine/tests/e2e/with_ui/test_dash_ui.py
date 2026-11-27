@@ -22,6 +22,7 @@ from selenium.webdriver.remote.webelement import WebElement
 from tenacity import TryAgain, retry, stop_after_attempt, wait_fixed
 
 from ansys.bdm.api import NO_ENTITY
+from ansys.saf.glow.client import Deployment
 from ansys.saf.glow.solution import MethodStatus
 from ansys.saf.testing.platform_specific import xfail_for_ci
 from ansys.saf.testing.selenium import (
@@ -33,7 +34,6 @@ from ansys.saf.testing.selenium import (
     wait_for_text,
     wait_for_text_to_be_different,
 )
-from ansys.saf.testing.solution.const import TestDeployment
 from ansys.saf.testing.solution.end_to_end import GlowBaseProcess, ProjectFixture
 from tests.conftest import MOCKS_DIR
 from tests.mocks.solution_end_to_end.solution.definition import EndToEndSolution
@@ -47,7 +47,7 @@ pytestmark = [
     pytest.mark.parametrize("ui_enabled", [True], indirect=True),
     pytest.mark.parametrize(
         "deployment_type",
-        ["Desktop", pytest.param("DockerCompose", marks=pytest.mark.use_containerized)],
+        ["Desktop", pytest.param("MultiContainer", marks=pytest.mark.use_containerized)],
         indirect=True,
     ),
 ]
@@ -67,7 +67,7 @@ def wait_for_img_to_be_loaded(image: WebElement) -> None:
 class TestDashUI:
     def test_solution_ui(
         self,
-        deployment_type: TestDeployment,
+        deployment_type: Deployment,
         session_selenium_webdriver: WebDriver,
         function_project: ProjectFixture[EndToEndSolution],
         session_glow: GlowBaseProcess[EndToEndSolution],
@@ -130,7 +130,7 @@ class TestDashUI:
             element_type=By.XPATH,
         )
 
-        expected_text = "Back to Projects" if deployment_type == TestDeployment.Desktop else "Back to Portal"
+        expected_text = "Back to Projects" if deployment_type == Deployment.Desktop else "Back to Portal"
         return_button = wait_for_element(
             session_selenium_webdriver,
             f"//*[contains(text(), '{expected_text}')]",
@@ -402,13 +402,13 @@ class TestDashUI:
         self,
         session_selenium_webdriver: WebDriver,
         function_project: ProjectFixture[EndToEndSolution],
-        deployment_type: TestDeployment,
+        deployment_type: Deployment,
     ):
         """
         Test that the BDM system can handle workflows in which a file cached from the UI can properly reach the API.
         """
         step = function_project.project.steps.transaction_verification_step
-        if deployment_type == TestDeployment.Desktop:
+        if deployment_type == Deployment.Desktop:
             source_path = str(MOCKS_DIR / "solution_end_to_end" / "method_assets" / "logo.png")
         else:
             source_path = "/app/src/ansys/solutions/solution_end_to_end/method_assets/logo.png"

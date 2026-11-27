@@ -156,7 +156,7 @@ def setup_deployment(
         subprocess.run(["docker", "compose", "-f", str(compose_file), "down", "-v"], check=True, cwd=compose_dir)
 
 
-@pytest.mark.parametrize("deployment_type", ["DockerCompose"], indirect=True)
+@pytest.mark.parametrize("deployment_type", ["MultiContainer"], indirect=True)
 @pytest.mark.usefixtures("deployment_type")
 @pytest.mark.parametrize("setup_deployment", ["standalone"], indirect=True)
 def test_solution_standalone_deployment(
@@ -182,7 +182,7 @@ def test_solution_standalone_deployment(
     check_otel(selenium_webdriver)
 
 
-@pytest.mark.parametrize("deployment_type", ["DockerCompose"], indirect=True)
+@pytest.mark.parametrize("deployment_type", ["MultiContainer"], indirect=True)
 @pytest.mark.usefixtures("deployment_type")
 def test_uv_solution_compose_variants_build_and_start(
     new_solution: NewSolution,
@@ -297,7 +297,7 @@ def test_uv_solution_compose_variants_build_and_start(
                 _run_docker_command(["docker", "network", "rm", external_network], deployment_dir)
 
 
-@pytest.mark.parametrize("deployment_type", ["DockerCompose"], indirect=True)
+@pytest.mark.parametrize("deployment_type", ["MultiContainer"], indirect=True)
 @pytest.mark.usefixtures("deployment_type")
 @pytest.mark.parametrize("deployment_ui_path_prefix", ["/my-solution/"], indirect=True)
 @pytest.mark.parametrize("setup_deployment", ["standalone"], indirect=True)
@@ -338,7 +338,7 @@ def test_solution_standalone_deployment_with_ui_path_prefix(
     assert selenium_webdriver.current_url == f"{project_ui_url}/first-step"
 
 
-@pytest.mark.parametrize("deployment_type", ["DockerCompose"], indirect=True)
+@pytest.mark.parametrize("deployment_type", ["MultiContainer"], indirect=True)
 @pytest.mark.usefixtures("deployment_type")
 @pytest.mark.parametrize("instance_system_type", [pytest.param("HPS", marks=pytest.mark.use_hps)], indirect=True)
 @pytest.mark.parametrize("setup_deployment", ["standalone-with-hps"], indirect=True)
@@ -357,7 +357,7 @@ def test_solution_standalone_deployment_with_hps(
     check_otel(selenium_webdriver)
 
 
-@pytest.mark.parametrize("deployment_type", ["DockerCompose"], indirect=True)
+@pytest.mark.parametrize("deployment_type", ["MultiContainer"], indirect=True)
 @pytest.mark.usefixtures("deployment_type")
 @pytest.mark.parametrize(
     "setup_deployment",
@@ -377,7 +377,7 @@ def test_solution_standalone_deployment_using_get_data_with_url_substitution(
     )
 
 
-@pytest.mark.parametrize("deployment_type", ["DockerCompose"], indirect=True)
+@pytest.mark.parametrize("deployment_type", ["MultiContainer"], indirect=True)
 @pytest.mark.usefixtures("deployment_type")
 @pytest.mark.parametrize("instance_system_type", [pytest.param("HPS", marks=pytest.mark.use_hps)], indirect=True)
 @pytest.mark.usefixtures("instance_system_type")

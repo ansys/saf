@@ -20,12 +20,11 @@ import uuid
 
 import pytest
 
-from ansys.saf.glow.client import Client, InternalSolutionException
+from ansys.saf.glow.client import Client, Deployment, InternalSolutionException
 from ansys.saf.product_manager._utilities.const import LOCALHOSTS
 from ansys.saf.testing.common import YieldFixture
 from ansys.saf.testing.network import get_local_ip
 from ansys.saf.testing.pim.process import PimProcess
-from ansys.saf.testing.solution.const import TestDeployment
 from ansys.saf.testing.solution.end_to_end import GlowBaseProcess, ProjectFixture
 from tests.e2e.conftest import DOCKER_GATEWAY_IP, kill_mechanical
 from tests.mocks.solution_end_to_end.flagship_const import LATEST_VERSION, PREVIOUS_VERSION
@@ -73,7 +72,7 @@ def launch_mechanical(
     ("deployment_type", "product_host", "product_binding_host"),
     [
         ("Desktop", None, None),
-        ("DockerCompose", "host.docker.internal", DOCKER_GATEWAY_IP),
+        ("MultiContainer", "host.docker.internal", DOCKER_GATEWAY_IP),
     ],
     ids=[
         "desktop_secure",
@@ -274,8 +273,8 @@ class TestMechanical:
         ("Desktop", None, None, False),  # product_binding_host defaults to localhost in secure products
         ("Desktop", get_local_ip(), get_local_ip(), False),
         ("Desktop", None, "0.0.0.0", True),
-        ("DockerCompose", "host.docker.internal", DOCKER_GATEWAY_IP, False),
-        ("DockerCompose", "host.docker.internal", "0.0.0.0", True),
+        ("MultiContainer", "host.docker.internal", DOCKER_GATEWAY_IP, False),
+        ("MultiContainer", "host.docker.internal", "0.0.0.0", True),
     ],
     ids=[
         "desktop_wnua_or_mtls",
@@ -290,7 +289,7 @@ def test_secure_mechanical_on_hps(
     ansys_release: str,
     session_glow: GlowBaseProcess[EndToEndSolution],
     function_project: ProjectFixture[EndToEndSolution],
-    deployment_type: TestDeployment,
+    deployment_type: Deployment,
     product_binding_host: str | None,
     enable_insecure_product: bool,
     certificates_directory: Path,
@@ -330,7 +329,7 @@ def test_secure_mechanical_on_hps(
             # Initialize() started
             # Initialize() done
             # Info: Started the grpc server at port : 48703 (Mtls:172.30.61.216:/tmp/pytest-of-pierre/pytest-3/certs-0)
-            certs_dir = "/certs" if deployment_type == TestDeployment.DockerCompose else certificates_directory
+            certs_dir = "/certs" if deployment_type == Deployment.MultiContainer else certificates_directory
             assert session_glow.text_in_output(
                 [
                     "INFO",
@@ -345,7 +344,7 @@ def test_secure_mechanical_on_hps(
         # Initialize() started
         # Initialize() done
         # Info: Started the grpc server at port : 48703 (Mtls:localhost:/tmp/pytest-of-pierre/pytest-3/certs-0)
-        certs_dir = "/certs" if deployment_type == TestDeployment.DockerCompose else certificates_directory
+        certs_dir = "/certs" if deployment_type == Deployment.MultiContainer else certificates_directory
         assert session_glow.text_in_output(
             [
                 "INFO",
@@ -372,7 +371,7 @@ def test_secure_mechanical_on_hps(
     [
         ("Desktop", None, None),  # product_binding_host defaults to localhost in secure products
         ("Desktop", None, "0.0.0.0"),
-        ("DockerCompose", "host.docker.internal", "0.0.0.0"),
+        ("MultiContainer", "host.docker.internal", "0.0.0.0"),
     ],
     ids=["desktop_wnua_or_insecure", "desktop_insecure", "dockercompose_insecure"],
     indirect=True,

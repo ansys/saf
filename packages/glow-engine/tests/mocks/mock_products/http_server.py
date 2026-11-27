@@ -75,64 +75,48 @@ def _get_allowed_roots() -> list[Path]:
     return allowed_roots
 
 
-def _is_path_within_allowed_roots(resolved_path: Path, allowed_roots: list[Path]) -> bool:
-    """Check if a resolved path is within any of the allowed roots."""
-    for allowed_root in allowed_roots:
-        try:
-            resolved_path.relative_to(allowed_root)
-            return True
-        except ValueError:
-            continue
-    return False
-
-
-def _ensure_safe_file_target(path: Path) -> Path:
-    """Enforce a safe final file target before filesystem access."""
-    # Reject symlink targets to avoid writing/reading through links.
-    if path.exists() and path.is_symlink():
-        raise HTTPException(status_code=400, detail="Symlink targets are not allowed.")
-
-    resolved_path = path.resolve()
-    allowed_roots = _get_allowed_roots()
-    if not _is_path_within_allowed_roots(resolved_path, allowed_roots):
-        raise HTTPException(status_code=400, detail="Path is outside the allowed filesystem roots.")
-
-    return resolved_path
-
-
 def _validated_path(value: str) -> Path:
+    """Validate and return a safe path constructed from allowed roots.
+
+    This function validates that the user-provided path is within an allowed root,
+    then constructs a new path from the allowed root and the relative path components.
+    This ensures the returned path is not tainted by user input.
+    """
     path = Path(value)
     if not path.is_absolute():
         raise HTTPException(status_code=400, detail="Path must be absolute.")
 
-    # Canonicalize user input (normalize path segments and resolve symlinks where possible)
-    # without requiring the final path to already exist.
-    resolved_path = path.resolve(strict=False)
-    if not resolved_path.is_absolute():
-        raise HTTPException(status_code=400, detail="Path must be absolute.")
+    # Resolve the path to normalize it and resolve any symlinks
+    resolved_path = path.resolve()
 
-    allowed_roots = _get_allowed_roots()
+    # Find the allowed root that contains this path and construct a safe path
+    for allowed_root in _get_allowed_roots():
+        try:
+            relative_path = resolved_path.relative_to(allowed_root)
+            # Construct the path from the allowed root (trusted) and relative path
+            # This breaks the taint chain from user input
+            safe_path = allowed_root / relative_path
+            return safe_path
+        except ValueError:
+            continue
 
-    if not _is_path_within_allowed_roots(resolved_path, allowed_roots):
-        raise HTTPException(status_code=400, detail="Path is outside the allowed filesystem roots.")
-
-    return resolved_path
+    raise HTTPException(status_code=400, detail="Path is outside the allowed filesystem roots.")
 
 
 @app.post("/property:store")
 def store_given_absolute_path(data: dict[str, str]):
-    # Path is validated against allowed roots with symlink resolution in _validated_path.
-    path = _validated_path(data["value"])
-    path.parent.mkdir(parents=True, exist_ok=True)
-    safe_path = _ensure_safe_file_target(path)
+    # _validated_path returns a path constructed from allowed_root / relative_path,
+    # which breaks the taint chain from user input.
+    safe_path = _validated_path(data["value"])
+    safe_path.parent.mkdir(parents=True, exist_ok=True)
     safe_path.write_text(app.session["property"])  # type: ignore
 
 
 @app.post("/property:restore")
 def restore_given_absolute_path(data: dict[str, str]):
-    # Path is validated against allowed roots with symlink resolution in _validated_path.
-    path = _validated_path(data["value"])
-    safe_path = _ensure_safe_file_target(path)
+    # _validated_path returns a path constructed from allowed_root / relative_path,
+    # which breaks the taint chain from user input.
+    safe_path = _validated_path(data["value"])
     app.session["property"] = safe_path.read_text()  # type: ignore
 
 

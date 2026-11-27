@@ -16,7 +16,6 @@
 
 from collections.abc import Iterator
 from dataclasses import dataclass
-import os
 import sys
 from time import sleep
 
@@ -51,16 +50,10 @@ class ProductServerInfo:
 @pytest.fixture(scope="package")
 def product_server_info(
     request: pytest.FixtureRequest,
-    tmp_path_factory: pytest.TempPathFactory,
 ) -> Iterator[ProductServerInfo]:
     service_type, product_client_type = request.param
-    env: dict[str, str] | None = None
-    if service_type == "http":
-        env = os.environ.copy()
-        env["GLOW_PROJECT_FILES_DIRECTORY"] = str(tmp_path_factory.getbasetemp())
     process = MockProductProcess(
         [sys.executable, "-m", f"tests.mocks.mock_products.{service_type}_server"],
-        env=env,
     )
     process.start()
 

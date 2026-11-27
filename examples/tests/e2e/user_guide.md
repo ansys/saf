@@ -18,6 +18,8 @@ The reference implementation is in this directory:
   desktop shortcut and startup.
 - [`test_solution_ui.py`](./test_solution_ui.py) checks the browser UI and
   discovers pages dynamically.
+- [`test_projects_dashboard.py`](./test_projects_dashboard.py) checks the
+  projects dashboard opened in portal mode.
 
 The guide describes the behavior of the reference tests. It does not assume
 that every solution has the same page names, routes, installer name, API, or
@@ -64,8 +66,9 @@ The acceptance criteria are intentionally split into small tests:
 | Shortcut launches the solution | `test_shortcut_launches_solution_and_validates_splash_image` | A launchable shortcut and, on Windows, the expected splash PNG being reported and validated |
 | Initial UI loads | `test_solution_ui_is_accessible_in_browser` | A reachable UI and a rendered page-content container |
 | All pages render | `test_discovered_pages_render_without_browser_failures` | A rendered navigation tree and a page-content container |
+| Projects dashboard works | `test_portal_mode_opens_projects_dashboard_and_returns_from_a_project` | `ansys-saf-projects-dashboard` in the lock file, so the shortcut starts in portal mode, and a back-to-projects button |
 
-The last row is one pytest item, but it loops over every page discovered at
+The "All pages render" row is one pytest item, but it loops over every page discovered at
 runtime. A solution with 5 pages and a solution with 50 pages use the same test
 code.
 
@@ -587,6 +590,7 @@ The reference test modules are intentionally small:
 | `test_execute_installer.py` | The artifact has to deploy files | Deployment marker |
 | `test_execute_shortcut.py` | Users launch through a desktop shortcut | Shortcut name, platform launch, splash signal, expected PNG asset |
 | `test_solution_ui.py` | The solution has a browser UI | Project setup and layout selectors |
+| `test_projects_dashboard.py` | The shortcut starts the solution in portal mode with the projects dashboard | Dashboard and back-to-projects selectors |
 
 Keep setup in `conftest.py` and assertions in test modules. A helper belongs in
 `conftest.py` when multiple tests need the same behavior; a one-off business
@@ -617,6 +621,7 @@ Run the browser smoke test after the lifecycle is working:
 
 ```text
 saf execute "pytest -q tests/e2e/test_solution_ui.py"
+saf execute "pytest -q tests/e2e/test_projects_dashboard.py"
 ```
 
 Run the whole suite with diagnostics visible:
@@ -804,3 +809,4 @@ requests it; ordinary helper functions do not run automatically.
 | `_assert_no_browser_failures` | [`test_solution_ui.py`](./test_solution_ui.py) | Converts browser diagnostics into a readable assertion. |
 | `test_solution_ui_is_accessible_in_browser` | [`test_solution_ui.py`](./test_solution_ui.py) | Verifies the initial project page renders without browser failures. |
 | `test_discovered_pages_render_without_browser_failures` | [`test_solution_ui.py`](./test_solution_ui.py) | Visits every discovered page and checks rendering and diagnostics. |
+| `test_portal_mode_opens_projects_dashboard_and_returns_from_a_project` | [`test_projects_dashboard.py`](./test_projects_dashboard.py) | Opens the projects dashboard, opens the test project from its card, and returns with the back-to-projects button. |

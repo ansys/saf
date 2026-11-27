@@ -42,6 +42,7 @@ def _undecorated(callback):
 
 
 mount_termination_listeners = _undecorated(toasts.mount_termination_listeners)
+unmount_termination_listeners = _undecorated(toasts.unmount_termination_listeners)
 on_build_case_terminated = _undecorated(toasts.on_build_case_terminated)
 on_run_simulation_terminated = _undecorated(toasts.on_run_simulation_terminated)
 
@@ -56,12 +57,13 @@ def _step(scene_method: str, scene_status: MethodStatus = MethodStatus.Completed
     return step
 
 
-def _project(scene_status: MethodStatus = MethodStatus.Completed) -> SimpleNamespace:
+def _project(scene_status: MethodStatus = MethodStatus.Completed, project_id: str = "p1") -> SimpleNamespace:
     return SimpleNamespace(
+        project_id=project_id,
         steps=SimpleNamespace(
             pump_model_setup_step=_step("prepare_scene", scene_status),
             pump_solve_step=_step("prepare_solved_scene", scene_status),
-        )
+        ),
     )
 
 
@@ -89,11 +91,11 @@ def test_shell_listeners_do_not_share_identifiers_with_the_pages():
 
 def test_listeners_are_not_remounted_while_navigating_within_a_project():
     with pytest.raises(PreventUpdate):
-        mount_termination_listeners("p1", "p1", _project())
+        mount_termination_listeners(1, "p1", _project(project_id="p1"))
 
 
 def test_listeners_are_removed_when_no_project_is_open():
-    assert mount_termination_listeners(None, "p1", _project()) == ([], None)
+    assert unmount_termination_listeners(None) == ([], None)
 
 
 def test_listeners_are_mounted_for_a_newly_opened_project(monkeypatch):
@@ -103,7 +105,7 @@ def test_listeners_are_mounted_for_a_newly_opened_project(monkeypatch):
         "create_event_listener",
         lambda step, stream_name, id: created.append(id) or id,
     )
-    listeners, mounted = mount_termination_listeners("p2", "p1", _project())
+    listeners, mounted = mount_termination_listeners(1, "p1", _project(project_id="p2"))
     assert mounted == "p2"
     assert listeners == created
     assert set(created) == {

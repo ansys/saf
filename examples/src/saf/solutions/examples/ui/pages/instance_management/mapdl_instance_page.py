@@ -266,9 +266,11 @@ def layout(project: ExamplesSolution) -> html.Div:
 
 @callback(
     Output("mapdl-instance-event-listeners-container", "children"),
-    Input("url", "pathname"),
+    Input("project-layout-generation", "data"),
+    State("project-scoped-pathname", "data"),
+    prevent_initial_call=True,
 )
-def mount_event_listeners(project: ExamplesSolution) -> list:
+def mount_event_listeners(_generation: int, project: ExamplesSolution) -> list:
     """Mount MAPDL instance event listeners in the persistent main layout."""
     logger.info("Mounting MAPDL instance management event listeners")
     step = project.steps.mapdl_step

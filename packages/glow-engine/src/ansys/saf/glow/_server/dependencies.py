@@ -93,8 +93,8 @@ _hps_auth_info: dict[str, HpsAuthInfo] = {}
 # but this is the price to pay to get openapi "authorize" button on the /docs page.
 oidc_issuer_url = os.environ.get(GLOW_AUTH_ISSUER_URL)
 audience = os.environ.get(GLOW_AUTH_CLIENT_ID)
-# Aftersaf-portal is fixed, enable auth validation by default for
-# DockerCompose deployments. Leave it disabled for Desktop ones, though.
+# After saf-portal is fixed, enable auth validation by default for
+# containerized (MultiContainer, SingleContainer) deployments. Leave it disabled for Desktop ones, though.
 disable_auth = auth_disabled_from_environment()
 required_roles = parse_required_roles(os.environ.get(GLOW_AUTH_REQUIRED_ROLES))
 bypass_roles = parse_required_roles(os.environ.get(GLOW_AUTH_BYPASS_ROLES))

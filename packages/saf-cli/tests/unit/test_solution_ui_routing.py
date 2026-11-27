@@ -334,7 +334,11 @@ def _get_back_button(children: list[Any]) -> tuple[str, str] | None:
 
 @pytest.mark.parametrize(
     ("deployment", "expected_text"),
-    [("Desktop", "Back to Projects"), ("DockerCompose", "Back to Portal")],
+    [
+        ("Desktop", "Back to Projects"),
+        ("MultiContainer", "Back to Portal"),
+        ("SingleContainer", "Back to Portal"),
+    ],
 )
 def test_return_to_portal_uses_portal_url(
     solution_ui_page: ModuleType,

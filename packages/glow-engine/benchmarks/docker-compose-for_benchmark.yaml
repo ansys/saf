@@ -26,7 +26,7 @@ services:
       - external
       - internal
     environment:
-      - GLOW_DEPLOYMENT=Desktop # was DockerCompose
+      - GLOW_DEPLOYMENT=Desktop # was MultiContainer (formerly DockerCompose)
       - GLOW_API_HOST=0.0.0.0
       - GLOW_API_PORT=50000
       - GLOW_DATABASE_TYPE=postgresql

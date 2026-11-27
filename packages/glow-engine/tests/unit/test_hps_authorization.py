@@ -748,7 +748,7 @@ def test_create_hps_authenticator_container_deployment(monkeypatch: pytest.Monke
         glow_hps_password="test-pass",
     )
 
-    # WHEN: creating authenticator for docker-compose deployment
+    # WHEN: creating authenticator for a containerized deployment
     authenticator = create_hps_authenticator(settings, access_token="test-token")
 
     # THEN: should return OnPremHpsAuthenticator
@@ -757,19 +757,19 @@ def test_create_hps_authenticator_container_deployment(monkeypatch: pytest.Monke
     assert authenticator.auth_type == HpsAuthenticationType.TOKEN_EXCHANGE
 
 
-def test_create_hps_authenticator_docker_compose_deployment_with_configured_service_account(
+def test_create_hps_authenticator_containerized_deployment_with_configured_service_account(
     monkeypatch: pytest.MonkeyPatch,
 ):
     monkeypatch.setenv("GLOW_SOLUTION_DEFINITION", "TEST")
     settings = Settings(
-        glow_deployment=Deployment.DockerCompose,
+        glow_deployment=Deployment.MultiContainer,
         glow_hps_username="test-user",
         glow_hps_password="test-pass",
         glow_auth_service_account_client_id="action-token-client",
         glow_auth_service_account_client_secret="action-token-secret",
     )
 
-    # WHEN: creating authenticator for docker-compose deployment with action token client credentials configured
+    # WHEN: creating authenticator for a containerized deployment with action token client credentials configured
     authenticator = create_hps_authenticator(settings, access_token="test-token")
 
     # THEN: should return OnPremHpsAuthenticator wired with the action token client credentials
@@ -781,10 +781,10 @@ def test_create_hps_authenticator_docker_compose_deployment_with_configured_serv
     )
 
 
-def test_create_hps_authenticator_docker_compose_no_token(monkeypatch: pytest.MonkeyPatch):
+def test_create_hps_authenticator_containerized_no_token(monkeypatch: pytest.MonkeyPatch):
     monkeypatch.setenv("GLOW_SOLUTION_DEFINITION", "TEST")
     settings = Settings(
-        glow_deployment=Deployment.DockerCompose,
+        glow_deployment=Deployment.MultiContainer,
         glow_hps_username="test-user",
         glow_hps_password="test-pass",
     )

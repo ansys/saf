@@ -168,7 +168,7 @@ def create_app(settings: Settings) -> Any:
     oidc_issuer_url = os.environ.get(GLOW_AUTH_ISSUER_URL)
     audience = os.environ.get(GLOW_AUTH_CLIENT_ID)
     # After saf-portal is fixed, enable auth validation by default for
-    # DockerCompose deployments. Leave it disabled for Desktop ones, though.
+    # containerized (MultiContainer, SingleContainer) deployments. Leave it disabled for Desktop ones, though.
     disable_auth = settings.glow_auth_disabled
     required_roles = parse_required_roles(os.environ.get(GLOW_AUTH_REQUIRED_ROLES))
     bypass_roles = parse_required_roles(os.environ.get(GLOW_AUTH_BYPASS_ROLES))

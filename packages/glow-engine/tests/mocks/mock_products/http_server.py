@@ -86,6 +86,20 @@ def _is_path_within_allowed_roots(resolved_path: Path, allowed_roots: list[Path]
     return False
 
 
+def _ensure_safe_file_target(path: Path) -> Path:
+    """Enforce a safe final file target before filesystem access."""
+    # Reject symlink targets to avoid writing/reading through links.
+    if path.exists() and path.is_symlink():
+        raise HTTPException(status_code=400, detail="Symlink targets are not allowed.")
+
+    resolved_path = path.resolve()
+    allowed_roots = _get_allowed_roots()
+    if not _is_path_within_allowed_roots(resolved_path, allowed_roots):
+        raise HTTPException(status_code=400, detail="Path is outside the allowed filesystem roots.")
+
+    return resolved_path
+
+
 def _validated_path(value: str) -> Path:
     path = Path(value)
     if not path.is_absolute():
@@ -110,14 +124,16 @@ def store_given_absolute_path(data: dict[str, str]):
     # Path is validated against allowed roots with symlink resolution in _validated_path.
     path = _validated_path(data["value"])
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(app.session["property"])  # type: ignore
+    safe_path = _ensure_safe_file_target(path)
+    safe_path.write_text(app.session["property"])  # type: ignore
 
 
 @app.post("/property:restore")
 def restore_given_absolute_path(data: dict[str, str]):
     # Path is validated against allowed roots with symlink resolution in _validated_path.
     path = _validated_path(data["value"])
-    app.session["property"] = path.read_text()  # type: ignore
+    safe_path = _ensure_safe_file_target(path)
+    app.session["property"] = safe_path.read_text()  # type: ignore
 
 
 @app.get("/version", response_model=dict[str, str])

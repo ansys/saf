@@ -17,6 +17,8 @@ tasks:
       - "tests"
       - "--group"
       - "tests-saf-desktop-orchestrator"
+      - "--with-editable"
+      - "$workspaceRoot/packages/saf-testing"
       - "python"
       - "-m"
       - "pytest"

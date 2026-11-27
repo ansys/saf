@@ -29,9 +29,9 @@ from tests.mocks.mock_products.client import (
 
 
 class MockProductProcess(Process):
-    def __init__(self, args: list[str], env: dict[str, str] | None = None) -> None:
+    def __init__(self, args: list[str]) -> None:
         self._port = get_random_free_port()
-        super().__init__(args + [str(self._port)], env=env, bg=True)
+        super().__init__(args + [str(self._port)], bg=True)
 
     @property
     def port(self) -> int:
@@ -48,13 +48,9 @@ class ProductServerInfo:
 
 
 @pytest.fixture(scope="package")
-def product_server_info(
-    request: pytest.FixtureRequest,
-) -> Iterator[ProductServerInfo]:
+def product_server_info(request: pytest.FixtureRequest) -> Iterator[ProductServerInfo]:
     service_type, product_client_type = request.param
-    process = MockProductProcess(
-        [sys.executable, "-m", f"tests.mocks.mock_products.{service_type}_server"],
-    )
+    process = MockProductProcess([sys.executable, "-m", f"tests.mocks.mock_products.{service_type}_server"])
     process.start()
 
     tries = 0

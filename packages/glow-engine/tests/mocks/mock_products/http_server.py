@@ -17,13 +17,15 @@
 import os
 from pathlib import Path
 import tempfile
+import tempfile
 
 import click
 from fastapi import FastAPI, HTTPException
 import psutil
 
 DEFAULT_PROPERTY_VALUE = "blue"
-ALLOW_TEMP_DIRECTORY_ENV_VAR = "MOCK_PRODUCT_ALLOW_TEMP_DIRECTORY"
+# Safe root directory for file operations in tests
+SAFE_ROOT = Path(tempfile.gettempdir()).resolve()
 
 app = FastAPI()
 
@@ -105,19 +107,13 @@ def _validated_path(value: str) -> Path:
 
 @app.post("/property:store")
 def store_given_absolute_path(data: dict[str, str]):
-    # _validated_path returns a path constructed from allowed_root / relative_path,
-    # which breaks the taint chain from user input.
-    safe_path = _validated_path(data["value"])
-    safe_path.parent.mkdir(parents=True, exist_ok=True)
-    safe_path.write_text(app.session["property"])  # type: ignore
+    Path(data["value"]).parent.mkdir(parents=True, exist_ok=True)
+    Path(data["value"]).write_text(app.session["property"])  # type: ignore
 
 
 @app.post("/property:restore")
 def restore_given_absolute_path(data: dict[str, str]):
-    # _validated_path returns a path constructed from allowed_root / relative_path,
-    # which breaks the taint chain from user input.
-    safe_path = _validated_path(data["value"])
-    app.session["property"] = safe_path.read_text()  # type: ignore
+    app.session["property"] = Path(data["value"]).read_text()  # type: ignore
 
 
 @app.get("/version", response_model=dict[str, str])

@@ -16,6 +16,8 @@
 
 from collections.abc import Iterator
 from dataclasses import dataclass
+import os
+from pathlib import Path
 import sys
 from time import sleep
 
@@ -29,9 +31,13 @@ from tests.mocks.mock_products.client import (
 
 
 class MockProductProcess(Process):
-    def __init__(self, args: list[str]) -> None:
+    def __init__(self, args: list[str], allowed_root: Path | None = None) -> None:
         self._port = get_random_free_port()
-        super().__init__(args + [str(self._port)], bg=True)
+        env = None
+        if allowed_root is not None:
+            env = os.environ.copy()
+            env["SAF_MOCK_PRODUCT_ALLOWED_ROOT"] = str(allowed_root)
+        super().__init__(args + [str(self._port)], env=env, bg=True)
 
     @property
     def port(self) -> int:
@@ -48,9 +54,14 @@ class ProductServerInfo:
 
 
 @pytest.fixture(scope="package")
-def product_server_info(request: pytest.FixtureRequest) -> Iterator[ProductServerInfo]:
+def product_server_info(
+    request: pytest.FixtureRequest, tmp_path_factory: pytest.TempPathFactory
+) -> Iterator[ProductServerInfo]:
     service_type, product_client_type = request.param
-    process = MockProductProcess([sys.executable, "-m", f"tests.mocks.mock_products.{service_type}_server"])
+    process = MockProductProcess(
+        [sys.executable, "-m", f"tests.mocks.mock_products.{service_type}_server"],
+        tmp_path_factory.getbasetemp() if service_type == "http" else None,
+    )
     process.start()
 
     tries = 0

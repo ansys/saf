@@ -14,6 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
 import sys
 
 from ansys.saf.glow.solution.products.config import (
@@ -43,7 +44,8 @@ class MockHTTPInstanceVersionConfiguration(IProductInstanceVersionConfiguration)
 
     @property
     def environment(self) -> dict[str, str]:
-        return {}
+        root = os.environ.get("APPDATA" if sys.platform == "win32" else "XDG_DATA_HOME")
+        return {"SAF_MOCK_PRODUCT_ALLOWED_ROOT": root} if root else {}
 
     @property
     def software_requirements(self) -> list[ISoftware]:

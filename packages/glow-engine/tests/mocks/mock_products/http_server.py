@@ -17,7 +17,6 @@
 import os
 from pathlib import Path
 import tempfile
-import tempfile
 
 import click
 from fastapi import FastAPI, HTTPException
@@ -58,62 +57,23 @@ def set_property(data: dict[str, str]):
     app.session["property"] = data["value"]  # type: ignore
 
 
-def _get_allowed_roots() -> list[Path]:
-    """Return the list of allowed filesystem roots as resolved absolute paths."""
-    allowed_roots: list[Path] = []
-    if root := os.environ.get("GLOW_PROJECT_FILES_DIRECTORY"):
-        allowed_roots.append(Path(root).resolve())
-
-    for env_var in ("APPDATA", "XDG_DATA_HOME"):
-        if root := os.environ.get(env_var):
-            allowed_roots.append((Path(root) / "ansys" / "glow").resolve())
-    if os.name != "nt" and not os.environ.get("XDG_DATA_HOME"):
-        allowed_roots.append((Path.home() / ".local" / "share" / "ansys" / "glow").resolve())
-    # The project files directory of end-to-end tests is only known to the test session, whereas the product
-    # environment is fixed when the product is registered. Tests opt in to the temporary directory instead.
-    if os.environ.get(ALLOW_TEMP_DIRECTORY_ENV_VAR) == "1":
-        allowed_roots.append(Path(tempfile.gettempdir()).resolve())
-
-    return allowed_roots
-
-
-def _validated_path(value: str) -> Path:
-    """Validate and return a safe path constructed from allowed roots.
-
-    This function validates that the user-provided path is within an allowed root,
-    then constructs a new path from the allowed root and the relative path components.
-    This ensures the returned path is not tainted by user input.
-    """
-    path = Path(value)
-    if not path.is_absolute():
-        raise HTTPException(status_code=400, detail="Path must be absolute.")
-
-    # Resolve the path to normalize it and resolve any symlinks
-    resolved_path = path.resolve()
-
-    # Find the allowed root that contains this path and construct a safe path
-    for allowed_root in _get_allowed_roots():
-        try:
-            relative_path = resolved_path.relative_to(allowed_root)
-            # Construct the path from the allowed root (trusted) and relative path
-            # This breaks the taint chain from user input
-            safe_path = allowed_root / relative_path
-            return safe_path
-        except ValueError:
-            continue
-
-    raise HTTPException(status_code=400, detail="Path is outside the allowed filesystem roots.")
-
-
 @app.post("/property:store")
 def store_given_absolute_path(data: dict[str, str]):
-    Path(data["value"]).parent.mkdir(parents=True, exist_ok=True)
-    Path(data["value"]).write_text(app.session["property"])  # type: ignore
+    # Normalize path using os.path.realpath to remove ".." and follow symlinks
+    safe_path = os.path.realpath(data["value"])
+    if not safe_path.startswith(str(SAFE_ROOT)):
+        raise HTTPException(status_code=400, detail="Invalid path")
+    Path(safe_path).parent.mkdir(parents=True, exist_ok=True)
+    Path(safe_path).write_text(app.session["property"])  # type: ignore
 
 
 @app.post("/property:restore")
 def restore_given_absolute_path(data: dict[str, str]):
-    app.session["property"] = Path(data["value"]).read_text()  # type: ignore
+    # Normalize path using os.path.realpath to remove ".." and follow symlinks
+    safe_path = os.path.realpath(data["value"])
+    if not safe_path.startswith(str(SAFE_ROOT)):
+        raise HTTPException(status_code=400, detail="Invalid path")
+    app.session["property"] = Path(safe_path).read_text()  # type: ignore
 
 
 @app.get("/version", response_model=dict[str, str])

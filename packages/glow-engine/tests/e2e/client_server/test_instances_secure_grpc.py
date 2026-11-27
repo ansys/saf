@@ -22,12 +22,11 @@ import re
 import pytest
 
 from ansys.saf.glow._config.const import LOCALHOST_HOSTS
-from ansys.saf.glow.client import InternalSolutionException
+from ansys.saf.glow.client import Deployment, InternalSolutionException
 from ansys.saf.testing.common import YieldFixture
 from ansys.saf.testing.hps import GetHpsJobIdsType
 from ansys.saf.testing.network import get_docker_gateway_ip, get_local_ip
 from ansys.saf.testing.pim.process import PimProcess
-from ansys.saf.testing.solution.const import TestDeployment
 from ansys.saf.testing.solution.end_to_end import GlowBaseProcess, NoGrpcCertificates, ProjectFixture
 from tests.mocks.solution_end_to_end.solution.definition import EndToEndSolution
 
@@ -71,19 +70,19 @@ EXPECTED_SECURE_FLAGS = {
         ("Desktop", get_local_ip(), get_local_ip(), False),
         ("Desktop", None, "0.0.0.0", True),
         pytest.param(
-            "DockerCompose",
+            "MultiContainer",
             "host.docker.internal",
             DOCKER_GATEWAY_IP,
             False,
             marks=pytest.mark.use_containerized,
         ),
-        pytest.param("DockerCompose", "host.docker.internal", "0.0.0.0", True, marks=pytest.mark.use_containerized),
+        pytest.param("MultiContainer", "host.docker.internal", "0.0.0.0", True, marks=pytest.mark.use_containerized),
     ],
     ids=["desktop_wnua_or_uds", "desktop_mtls", "desktop_insecure", "dockercompose_mtls", "dockercompose_insecure"],
     indirect=True,
 )
 def test_grpc_product_with_secure_channel_hps(
-    deployment_type: TestDeployment,
+    deployment_type: Deployment,
     function_project: ProjectFixture[EndToEndSolution],
     session_glow: GlowBaseProcess[EndToEndSolution],
     product_host: str | None,
@@ -97,7 +96,7 @@ def test_grpc_product_with_secure_channel_hps(
     """When using HPS as instance management system, secure gRPC channels between GLOW and the product can be
     established for any OS and binding host."""
     product_host = product_host or "localhost"
-    certs_dir = certificates_directory if deployment_type == TestDeployment.Desktop else "/certs"
+    certs_dir = certificates_directory if deployment_type == Deployment.Desktop else "/certs"
 
     job_name = f"{custom_product.replace('_', '-')}-1-GLOW-Instance"
     old_job_ids = get_hps_job_ids(job_name, "all", [])
@@ -171,7 +170,7 @@ class TestGrpcMtlsFallback:
         [
             ("Desktop", get_local_ip(), get_local_ip()),
             pytest.param(
-                "DockerCompose",
+                "MultiContainer",
                 "host.docker.internal",
                 DOCKER_GATEWAY_IP,
                 marks=pytest.mark.use_containerized,
@@ -204,7 +203,7 @@ class TestGrpcMtlsFallback:
             ("Desktop", None, None),  # product_binding_host defaults to localhost in secure products
             ("Desktop", get_local_ip(), get_local_ip()),
             pytest.param(
-                "DockerCompose",
+                "MultiContainer",
                 "host.docker.internal",
                 DOCKER_GATEWAY_IP,
                 marks=pytest.mark.use_containerized,
@@ -261,7 +260,7 @@ class TestGrpcMtlsFallback:
     [
         ("Desktop", None, None),  # product_binding_host defaults to localhost in secure products
         ("Desktop", None, "0.0.0.0"),
-        pytest.param("DockerCompose", "host.docker.internal", "0.0.0.0", marks=pytest.mark.use_containerized),
+        pytest.param("MultiContainer", "host.docker.internal", "0.0.0.0", marks=pytest.mark.use_containerized),
     ],
     ids=["desktop_wnua_or_insecure", "desktop_insecure", "dockercompose_insecure"],
     indirect=True,

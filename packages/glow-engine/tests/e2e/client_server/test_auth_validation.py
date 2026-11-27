@@ -193,7 +193,7 @@ class TestAuthenticatedSolution:
         message = {"message": "test"}
 
         # WHEN: we try to connect to the websocket without authentication
-        # THEN: it raises a handshake error only if deployment is DockerCompose and Auth Validation is enabled
+        # THEN: it raises a handshake error only if deployment is MultiContainer and Auth Validation is enabled
         if auth_validation_enabled:
             with pytest.raises(aiohttp.WSServerHandshakeError):
                 async with aiohttp_session.ws_connect(ws_url):
@@ -204,7 +204,7 @@ class TestAuthenticatedSolution:
                 assert message == await send_and_receive_event(ws, step_url, transaction_url, access_token, message)
 
         # WHEN: we try to connect to the websocket with invalid token
-        # THEN: it raises a handshake error only if deployment is DockerCompose and Auth Validation is enabled
+        # THEN: it raises a handshake error only if deployment is MultiContainer and Auth Validation is enabled
         encoded_token = encode_base64_token("my-mock-token")
         if auth_validation_enabled:
             with pytest.raises(aiohttp.WSServerHandshakeError):
@@ -222,7 +222,7 @@ class TestAuthenticatedSolution:
                 assert message == await send_and_receive_event(ws, step_url, transaction_url, access_token, message)
 
         # WHEN: we try to connect to the websocket with valid token but wrong protocol prefix
-        # THEN: it raises a handshake error only if deployment is DockerCompose and Auth Validation is enabled
+        # THEN: it raises a handshake error only if deployment is MultiContainer and Auth Validation is enabled
         encoded_token = encode_base64_token(access_token)
         if auth_validation_enabled:
             with pytest.raises(aiohttp.WSServerHandshakeError):

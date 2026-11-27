@@ -24,11 +24,11 @@ import httpx2
 import pytest
 from tenacity import TryAgain, retry, stop_after_attempt, wait_fixed
 
-from ansys.saf.glow.client import Client, InternalSolutionException
+from ansys.saf.glow.client import Client, Deployment, InternalSolutionException
 from ansys.saf.testing.hps import GetHpsJobIdsType
 from ansys.saf.testing.network import get_docker_gateway_ip
 from ansys.saf.testing.pim.process import PimProcess
-from ansys.saf.testing.solution.const import TestDeployment, TestProductInstanceSystemType
+from ansys.saf.testing.solution.const import TestProductInstanceSystemType
 from ansys.saf.testing.solution.end_to_end import GlowBaseProcess, ProjectFixture
 from tests.e2e.conftest import PACKAGE_ROOT
 from tests.mocks.solution_end_to_end.solution.definition import EndToEndSolution
@@ -47,7 +47,7 @@ DOCKER_GATEWAY_IP = get_docker_gateway_ip() if platform.system() == "Linux" else
 )
 @pytest.mark.parametrize(
     "deployment_type",
-    ["Desktop", pytest.param("DockerCompose", marks=pytest.mark.use_containerized)],
+    ["Desktop", pytest.param("MultiContainer", marks=pytest.mark.use_containerized)],
     indirect=True,
 )
 class TestCustomProductInstances:
@@ -104,7 +104,7 @@ class TestCustomProductInstances:
         function_project: ProjectFixture[EndToEndSolution],
         session_glow: GlowBaseProcess[EndToEndSolution],
         pim_port: int | None,
-        deployment_type: TestDeployment,
+        deployment_type: Deployment,
         session_pim: PimProcess | None,
     ):
         """Test that a custom product can be launched via a custom configuration and that the same instance
@@ -128,7 +128,7 @@ class TestCustomProductInstances:
 
         product_host = (
             "host.docker.internal"
-            if deployment_type == TestDeployment.DockerCompose
+            if deployment_type == Deployment.MultiContainer
             else "127.0.0.1"
             if instance_system_type == TestProductInstanceSystemType.PIM
             else "localhost"
@@ -144,7 +144,7 @@ class TestCustomProductInstances:
             )
 
         if instance_system_type == TestProductInstanceSystemType.PIM:
-            if deployment_type == TestDeployment.DockerCompose:
+            if deployment_type == Deployment.MultiContainer:
                 assert session_glow.text_in_output(
                     f"Connecting to PIM Light Server via {product_host}:{pim_port} with credentials from /certs.",
                     "api",
@@ -915,8 +915,8 @@ def test_custom_product_instance_on_hps_with_compiled_glow(
     [
         ("Desktop", None, None),
         ("Desktop", None, "127.0.0.1"),
-        pytest.param("DockerCompose", "host.docker.internal", None, marks=pytest.mark.use_containerized),
-        pytest.param("DockerCompose", "host.docker.internal", DOCKER_GATEWAY_IP, marks=pytest.mark.use_containerized),
+        pytest.param("MultiContainer", "host.docker.internal", None, marks=pytest.mark.use_containerized),
+        pytest.param("MultiContainer", "host.docker.internal", DOCKER_GATEWAY_IP, marks=pytest.mark.use_containerized),
     ],
     ids=["desktop_insecure", "desktop_custom_host", "dockercompose_insecure", "dockercompose_custom_host"],
     indirect=True,

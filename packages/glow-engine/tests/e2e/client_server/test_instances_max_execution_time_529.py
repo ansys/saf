@@ -38,7 +38,7 @@ STEP_NAME = "custom-http-shared-instance-step"
 @pytest.mark.parametrize("instance_system_type", [pytest.param("HPS", marks=pytest.mark.use_hps)], indirect=True)
 @pytest.mark.parametrize(
     "deployment_type",
-    ["Desktop", pytest.param("DockerCompose", marks=pytest.mark.use_containerized)],
+    ["Desktop", pytest.param("MultiContainer", marks=pytest.mark.use_containerized)],
     indirect=True,
 )
 class TestHpsMaxExecutionTime:

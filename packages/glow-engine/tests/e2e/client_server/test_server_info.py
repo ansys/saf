@@ -19,8 +19,8 @@ import importlib.metadata
 import httpx2
 import pytest
 
+from ansys.saf.glow.client import Deployment
 from ansys.saf.testing.common import YieldFixture
-from ansys.saf.testing.solution.const import TestDeployment
 from ansys.saf.testing.solution.end_to_end import GlowBaseProcess
 from tests.e2e.conftest import SetExternalApiUrlConfiguration
 from tests.mocks.solution_end_to_end.solution.definition import EndToEndSolution
@@ -29,7 +29,7 @@ pytestmark = [
     pytest.mark.parametrize("solution_type", [EndToEndSolution], indirect=True),
     pytest.mark.parametrize(
         "deployment_type",
-        ["Desktop", pytest.param("DockerCompose", marks=pytest.mark.use_containerized)],
+        ["Desktop", pytest.param("MultiContainer", marks=pytest.mark.use_containerized)],
         indirect=True,
     ),
 ]
@@ -37,7 +37,7 @@ pytestmark = [
 
 def test_root_route_returns_server_info(
     session_glow: GlowBaseProcess[EndToEndSolution],
-    deployment_type: TestDeployment,
+    deployment_type: Deployment,
 ):
     """Test that the root route returns basic server info, including external_api_url."""
     response = httpx2.get(f"{session_glow.base_api_url}/")
@@ -48,7 +48,7 @@ def test_root_route_returns_server_info(
     assert server_info["solution"]["schema_version"] == 1
     assert server_info["glow_version"] == importlib.metadata.version("ansys-saf-glow-engine")
     assert server_info["external_api_url"] == (  # when unconfigured, defaults to glow_api_host+glow_api_port
-        session_glow.base_api_url if deployment_type == TestDeployment.Desktop else "http://0.0.0.0:50000"
+        session_glow.base_api_url if deployment_type == Deployment.Desktop else "http://0.0.0.0:50000"
     )
 
 

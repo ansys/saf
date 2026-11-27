@@ -29,13 +29,12 @@ from selenium.webdriver.chrome.webdriver import WebDriver
 from selenium.webdriver.common.by import By
 from tenacity import TryAgain, retry, stop_after_attempt, wait_fixed
 
-from ansys.saf.glow.client import Client
+from ansys.saf.glow.client import Client, Deployment
 from ansys.saf.glow.solution import Solution
 from ansys.saf.testing.common import YieldFixture
 from ansys.saf.testing.hps import GetHpsJobIdsType
 from ansys.saf.testing.hps.scripts.hps_installer import HPS_DEPLOYMENTS_DIRECTORY
 from ansys.saf.testing.selenium import wait_for_element_and_click, wait_for_text
-from ansys.saf.testing.solution.const import TestDeployment
 from ansys.saf.testing.solution.end_to_end import (
     CustomHPSClientTTLConfiguration,
     DefaultHPSClientTTLConfiguration,
@@ -88,7 +87,7 @@ def setup_environment(
     session_glow: GlowBaseProcess[EndToEndSolution],
     hps_auth_configuration_type: type[HpsAuthConfiguration],
     hps_host: str,
-    deployment_type: TestDeployment,
+    deployment_type: Deployment,
     hps_client_cache_ttl: float | None,
 ):
     with pytest.MonkeyPatch().context() as mp:
@@ -165,7 +164,7 @@ def token_to_obtain_hps_access_and_refresh_tokens(
     hps_auth_configuration_type: type[HpsAuthConfiguration],
 ):
     # Create the token using keycloak with the "rep-impersonation" client.
-    if deployment_type == TestDeployment.DockerCompose and hps_auth_configuration_type is HpsTokenPassThroughAuth:
+    if deployment_type == Deployment.MultiContainer and hps_auth_configuration_type is HpsTokenPassThroughAuth:
         # The values of client_id and client_secret are included by default in the HPS deployment v1.2.217. They can be
         # found in the file hps_deployment/v1.2.217/docker-compose-customer/config/keycloak/realm.json as the last item
         # of the list under the "clients" key.
@@ -224,8 +223,8 @@ def authenticated_project(
         ("Desktop", HpsUserPswdAuth, None),
         ("Desktop", HpsKeyCloakAuth, None),
         ("Desktop", HpsMissingAuth, None),
-        pytest.param("DockerCompose", HpsUserPswdAuth, None, marks=pytest.mark.use_containerized),
-        pytest.param("DockerCompose", HpsTokenPassThroughAuth, None, marks=pytest.mark.use_containerized),
+        pytest.param("MultiContainer", HpsUserPswdAuth, None, marks=pytest.mark.use_containerized),
+        pytest.param("MultiContainer", HpsTokenPassThroughAuth, None, marks=pytest.mark.use_containerized),
     ],
     scope="session",
     indirect=["deployment_type"],

@@ -77,7 +77,7 @@ def hps_env_vars_config(monkeypatch: pytest.MonkeyPatch):
     monkeypatch.setenv("GLOW_HPS_PASSWORD", "repadmin")
 
 
-@pytest.mark.parametrize("deployment_type", ["DockerCompose"], indirect=True)
+@pytest.mark.parametrize("deployment_type", ["MultiContainer"], indirect=True)
 @pytest.mark.parametrize("instance_system_type", [pytest.param("HPS", marks=pytest.mark.use_hps)], indirect=True)
 def test_hps_job_submission(
     hps_scaler: None,

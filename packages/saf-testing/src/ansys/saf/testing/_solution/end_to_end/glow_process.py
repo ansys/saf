@@ -34,7 +34,8 @@ from pydantic import PostgresDsn
 
 from ansys.saf.testing._common.network import get_random_free_port
 from ansys.saf.testing._database.psql_container_manager import PostgresqlServerInfo
-from ansys.saf.testing._solution.const import TestDeployment, TestProductInstanceSystemType
+from ansys.saf.glow.client import Deployment  # pyright: ignore[reportMissingImports]
+from ansys.saf.testing._solution.const import TestProductInstanceSystemType
 from ansys.saf.testing._solution.end_to_end._typing import SolutionProtocol
 from ansys.saf.testing._solution.end_to_end.glow_execution_configurations import (
     BaseGlowConfiguration,
@@ -119,7 +120,7 @@ class GlowBaseProcess(ABC, Generic[T]):
 
     @property
     @abstractmethod
-    def deployment_type(self) -> TestDeployment:
+    def deployment_type(self) -> Deployment:
         raise NotImplementedError()
 
     @property
@@ -687,8 +688,8 @@ class GlowDesktopProcess(GlowBaseProcess[T]):
         self._initialize_instances(solution_api_port, solution_ui_port)
 
     @property
-    def deployment_type(self) -> TestDeployment:
-        return TestDeployment.Desktop
+    def deployment_type(self) -> Deployment:
+        return Deployment.Desktop
 
     @property
     def solution_name(self) -> str:
@@ -1224,8 +1225,8 @@ class GlowDockerProcess(GlowBaseProcess[T]):
             self._containers["ui"] = GlowDockerInstance(self.ui_port, "ui", self.docker_compose_file)
 
     @property
-    def deployment_type(self) -> TestDeployment:
-        return TestDeployment.DockerCompose
+    def deployment_type(self) -> Deployment:
+        return Deployment.MultiContainer
 
     @property
     def is_product_system_configured(self) -> bool:

@@ -26,7 +26,7 @@ from pydantic import PostgresDsn
 import yaml
 
 from ansys.saf.testing._common.network import get_random_free_port
-from ansys.saf.testing._solution.const import TestDeployment
+from ansys.saf.glow.client import Deployment  # pyright: ignore[reportMissingImports]
 
 
 @dataclass
@@ -50,8 +50,8 @@ class Volumes:
 class BaseGlowConfiguration:
     config_type: str = "base_glow_configuration"
 
-    def __init__(self, deployment_type: TestDeployment) -> None:
-        self._deployment_type: TestDeployment = deployment_type
+    def __init__(self, deployment_type: Deployment) -> None:
+        self._deployment_type: Deployment = deployment_type
         self._override_file: Path | None = None
         self._backup_envs: dict[str, str] = {}
 
@@ -68,10 +68,10 @@ class BaseGlowConfiguration:
         return Ports()
 
     def setup(self, env: dict[str, str] | None = None, compose_override_file: Path | None = None) -> None:
-        if self._deployment_type == TestDeployment.Desktop:
+        if self._deployment_type == Deployment.Desktop:
             assert env is not None
             self._desktop_setup(env)
-        elif self._deployment_type == TestDeployment.DockerCompose:
+        elif self._deployment_type == Deployment.MultiContainer:
             assert compose_override_file
             self._docker_setup(compose_override_file)
         else:
@@ -113,10 +113,10 @@ class BaseGlowConfiguration:
         write_docker_compose_file(compose_override_content, compose_override_file)
 
     def teardown(self, env: dict[str, str] | None = None) -> None:
-        if self._deployment_type == TestDeployment.Desktop:
+        if self._deployment_type == Deployment.Desktop:
             assert env is not None
             self._desktop_teardown(env)
-        elif self._deployment_type == TestDeployment.DockerCompose:
+        elif self._deployment_type == Deployment.MultiContainer:
             self._docker_teardown()
         else:
             raise NotImplementedError("Deployment not implemented")
@@ -157,7 +157,7 @@ class LoggingConfiguration(BaseGlowConfiguration):
 
     config_type = "logging_configuration"
 
-    def __init__(self, deployment_type: TestDeployment, tag: str = ""):
+    def __init__(self, deployment_type: Deployment, tag: str = ""):
         super().__init__(deployment_type)
         self._glow_logging_config_files_folder: Path = Path("tests") / "mocks" / "logging_configs"
         assert self._glow_logging_config_files_folder.is_dir()
@@ -166,9 +166,7 @@ class LoggingConfiguration(BaseGlowConfiguration):
         self._temp_config_folder = Path(tempfile.gettempdir()) / f"glow_logs_{uuid.uuid4()}"
         self._temp_config_folder.mkdir(parents=True, exist_ok=True)
         self._configs_dir = (
-            self._temp_config_folder.resolve()
-            if self._deployment_type == TestDeployment.Desktop
-            else Path("/tmp_configs")
+            self._temp_config_folder.resolve() if self._deployment_type == Deployment.Desktop else Path("/tmp_configs")
         )
 
     def teardown(self, env: dict[str, str] | None = None) -> None:
@@ -190,7 +188,7 @@ class DefaultLoggingConfig(LoggingConfiguration):
 
 
 class EnvVarLoggingConfig(LoggingConfiguration):
-    def __init__(self, deployment_type: TestDeployment):
+    def __init__(self, deployment_type: Deployment):
         super().__init__(deployment_type, tag=" [ENV VAR CONFIG USED]")
         for file in self._glow_logging_config_files_folder.glob("*.yaml"):
             if file.name.endswith("_to_file.yaml") or file.name.endswith("_old.yaml"):
@@ -217,7 +215,7 @@ class EnvVarLoggingConfig(LoggingConfiguration):
 
 
 class EnvVarLoggingToFileConfig(LoggingConfiguration):
-    def __init__(self, deployment_type: TestDeployment):
+    def __init__(self, deployment_type: Deployment):
         super().__init__(deployment_type, tag=" [ENV VAR CONFIG TO FILE USED]")
         for file in self._glow_logging_config_files_folder.glob("*.yaml"):
             if not file.name.endswith("_to_file.yaml"):
@@ -262,7 +260,7 @@ class DesktopDeploymentConfiguration(DeploymentConfiguration):
 class DockerDeploymentConfiguration(DeploymentConfiguration):
     @property
     def env_vars_to_configure(self) -> EnvVars:
-        return EnvVars(env_vars={"GLOW_DEPLOYMENT": "DockerCompose"})
+        return EnvVars(env_vars={"GLOW_DEPLOYMENT": Deployment.MultiContainer.value})
 
 
 # ==================================================== [DEBUG] ==================================================== #
@@ -278,7 +276,7 @@ class DebugConfiguration(BaseGlowConfiguration):
 
     def __init__(
         self,
-        deployment_type: TestDeployment,
+        deployment_type: Deployment,
         keep_transaction_files: bool | None = None,
         debug_port: int | None = -1,
     ):
@@ -294,7 +292,7 @@ class DefaultDebug(DebugConfiguration): ...
 class EnvVarDebug(DebugConfiguration):
     def __init__(
         self,
-        deployment_type: TestDeployment,
+        deployment_type: Deployment,
         keep_transaction_files: bool | None = None,
         debug_port: int | None = -1,
     ):
@@ -339,7 +337,7 @@ class ApiHotReloadConfiguration(BaseGlowConfiguration):
 
     config_type = "api_hot_reload_configuration"
 
-    def __init__(self, deployment_type: TestDeployment, hot_reload_monitoring_dir: Path | None = None) -> None:
+    def __init__(self, deployment_type: Deployment, hot_reload_monitoring_dir: Path | None = None) -> None:
         super().__init__(deployment_type)
         self._hot_reload_monitoring_dir = hot_reload_monitoring_dir
 
@@ -383,14 +381,14 @@ class UIDebugConfiguration(BaseGlowConfiguration):
 
     config_type = "ui_debug_configuration"
 
-    def __init__(self, deployment_type: TestDeployment, debug_port: int | None = -1) -> None:
+    def __init__(self, deployment_type: Deployment, debug_port: int | None = -1) -> None:
         # Default debug_port to -1 since debugpy causes many issues in CI runners
         super().__init__(deployment_type)
         self.debug_port = debug_port
 
 
 class EnvVarUIDebug(UIDebugConfiguration):
-    def __init__(self, deployment_type: TestDeployment, debug_port: int | None = -1) -> None:
+    def __init__(self, deployment_type: Deployment, debug_port: int | None = -1) -> None:
         super().__init__(deployment_type, debug_port or get_random_free_port())
 
     @property
@@ -436,14 +434,14 @@ class LogLevelConfiguration(BaseGlowConfiguration):
 
     config_type = "log_level_configuration"
 
-    def __init__(self, deployment_type: TestDeployment) -> None:
+    def __init__(self, deployment_type: Deployment) -> None:
         super().__init__(deployment_type)
         self.log_level: str
         self.debug: bool
 
 
 class DefaultLogLevel(LogLevelConfiguration):
-    def __init__(self, deployment_type: TestDeployment) -> None:
+    def __init__(self, deployment_type: Deployment) -> None:
         super().__init__(deployment_type)
         self.log_level = "INFO"
         self.debug = False
@@ -454,7 +452,7 @@ class DefaultLogLevel(LogLevelConfiguration):
 
 
 class EnvVarDebugLogLevel(LogLevelConfiguration):
-    def __init__(self, deployment_type: TestDeployment) -> None:
+    def __init__(self, deployment_type: Deployment) -> None:
         super().__init__(deployment_type)
         self.log_level = "DEBUG"
         self.debug = False
@@ -465,7 +463,7 @@ class EnvVarDebugLogLevel(LogLevelConfiguration):
 
 
 class EnvVarErrorLogLevelWithDebugMode(LogLevelConfiguration):
-    def __init__(self, deployment_type: TestDeployment) -> None:
+    def __init__(self, deployment_type: Deployment) -> None:
         super().__init__(deployment_type)
         self.log_level = "ERROR"
         self.debug = True
@@ -548,7 +546,7 @@ class HpsKeyCloakAuth(HpsAuthConfiguration):
 
 
 class HpsTokenPassThroughAuth(HpsAuthConfiguration):
-    def __init__(self, deployment_type: TestDeployment, hps_host: str | None = None):
+    def __init__(self, deployment_type: Deployment, hps_host: str | None = None):
         super().__init__(deployment_type)
         self._hps_host = hps_host or "localhost"
 
@@ -579,7 +577,7 @@ class MethodExecutionDirConfiguration(BaseGlowConfiguration):
 
     config_type = "method_dir_configuration"
 
-    def __init__(self, deployment_type: TestDeployment, method_custom_dir: Path | None = None):
+    def __init__(self, deployment_type: Deployment, method_custom_dir: Path | None = None):
         super().__init__(deployment_type)
         self.method_custom_dir = method_custom_dir
 
@@ -591,7 +589,7 @@ class MethodExecutionDirConfiguration(BaseGlowConfiguration):
 
 
 class CustomMethodExecutionDirectory(MethodExecutionDirConfiguration):
-    def __init__(self, deployment_type: TestDeployment, tmp_path: Path):
+    def __init__(self, deployment_type: Deployment, tmp_path: Path):
         method_custom_dir = tmp_path / str(uuid.uuid4())
         method_custom_dir.mkdir(parents=True, exist_ok=True)
         super().__init__(deployment_type, method_custom_dir)
@@ -602,7 +600,7 @@ class CustomMethodExecutionDirectory(MethodExecutionDirConfiguration):
 
 
 class DefaultMethodExecutionDirectory(MethodExecutionDirConfiguration):
-    def __init__(self, deployment_type: TestDeployment, tmp_path: Path | None = None):
+    def __init__(self, deployment_type: Deployment, tmp_path: Path | None = None):
         super().__init__(deployment_type)
 
     @property
@@ -620,7 +618,7 @@ class InstanceSystemEnvVarConfig(BaseGlowConfiguration):
 
     def __init__(
         self,
-        deployment_type: TestDeployment,
+        deployment_type: Deployment,
         pim_port: int | None = None,
         pim_socket_path: Path | None = None,
         pim_host: str = "localhost",
@@ -824,7 +822,7 @@ class DatabaseConfiguration(BaseGlowConfiguration):
 
     config_type = "db_configuration"
 
-    def __init__(self, deployment_type: TestDeployment, db_location: Path | PostgresDsn | None = None) -> None:
+    def __init__(self, deployment_type: Deployment, db_location: Path | PostgresDsn | None = None) -> None:
         super().__init__(deployment_type)
         self._db_location = db_location
 
@@ -842,7 +840,7 @@ class DefaultDBConfig(DatabaseConfiguration):
 
 
 class SQLiteConfig(DatabaseConfiguration):
-    def __init__(self, deployment_type: TestDeployment, db_location: Path | None = None) -> None:
+    def __init__(self, deployment_type: Deployment, db_location: Path | None = None) -> None:
         super().__init__(deployment_type, db_location)
 
     @property
@@ -857,12 +855,12 @@ class SQLiteConfig(DatabaseConfiguration):
 
 
 class PostgreSQLConfig(DatabaseConfiguration):
-    def __init__(self, deployment_type: TestDeployment, db_location: PostgresDsn | None = None) -> None:
+    def __init__(self, deployment_type: Deployment, db_location: PostgresDsn | None = None) -> None:
         super().__init__(deployment_type, db_location)
 
     @property
     def env_vars_to_configure(self) -> EnvVars:
-        if not self._db_location and self._deployment_type == TestDeployment.Desktop:
+        if not self._db_location and self._deployment_type == Deployment.Desktop:
             raise RuntimeError("In desktop, if postgresql is used, location is mandatory to be specified.")
         return EnvVars(
             env_vars={
@@ -884,7 +882,7 @@ class ProjectFilesConfiguration(BaseGlowConfiguration):
 
     def __init__(
         self,
-        deployment_type: TestDeployment,
+        deployment_type: Deployment,
         project_files_dir: Path | None = None,
         container_project_files_dir: Path | None = None,
         is_product_system_different_platform: bool = False,
@@ -900,7 +898,7 @@ class DefaultProjectFilesConfig(ProjectFilesConfiguration):
 
     @property
     def env_vars_to_configure(self) -> EnvVars:
-        if self._deployment_type == TestDeployment.Desktop:
+        if self._deployment_type == Deployment.Desktop:
             return EnvVars(
                 env_vars={
                     "GLOW_PROJECT_FILES_DIRECTORY": None,
@@ -934,7 +932,7 @@ class CustomProjectFilesConfig(ProjectFilesConfiguration):
     @property
     def env_vars_to_configure(self) -> EnvVars:
         assert self.project_files_dir
-        if self._deployment_type == TestDeployment.Desktop:
+        if self._deployment_type == Deployment.Desktop:
             return EnvVars(
                 env_vars={
                     "GLOW_PROJECT_FILES_DIRECTORY": self.project_files_dir.as_posix(),
@@ -976,7 +974,7 @@ class DataRepositoryConfiguration(BaseGlowConfiguration):
 
     def __init__(
         self,
-        deployment_type: TestDeployment,
+        deployment_type: Deployment,
         temp_upload_root: str | None = None,
         minerva_settings: dict[str, str] | None = None,
     ) -> None:
@@ -1005,10 +1003,10 @@ class FileSystemDataRepoConfiguration(DataRepositoryConfiguration):
         )
 
     def _docker_setup(self, compose_override_file: Path) -> None:
-        raise ValueError("DataRepository not supported for DockerCompose deployment.")
+        raise ValueError("DataRepository not supported for MultiContainer deployment.")
 
     def _docker_teardown(self) -> None:
-        raise ValueError("DataRepository not supported for DockerCompose deployment.")
+        raise ValueError("DataRepository not supported for MultiContainer deployment.")
 
 
 class MinervaDataRepoConfiguration(DataRepositoryConfiguration):
@@ -1028,10 +1026,10 @@ class MinervaDataRepoConfiguration(DataRepositoryConfiguration):
         return env_vars
 
     def _docker_setup(self, compose_override_file: Path) -> None:
-        raise ValueError("DataRepository not supported for DockerCompose deployment.")
+        raise ValueError("DataRepository not supported for MultiContainer deployment.")
 
     def _docker_teardown(self) -> None:
-        raise ValueError("DataRepository not supported for DockerCompose deployment.")
+        raise ValueError("DataRepository not supported for MultiContainer deployment.")
 
 
 # ================================================ [BDM GC] ================================================ #
@@ -1084,7 +1082,7 @@ class SolutionAuthConfiguration(BaseGlowConfiguration):
 
     def __init__(
         self,
-        deployment_type: TestDeployment,
+        deployment_type: Deployment,
         idp_server: str | None = None,
     ) -> None:
         super().__init__(deployment_type)
@@ -1165,7 +1163,7 @@ class DisableAutomaticProjectMigrationConfig(AutomaticProjectMigrationConfig):
 class HPSClientTTLConfiguration(BaseGlowConfiguration):
     config_type = "hps_client_cache_ttl_configuration"
 
-    def __init__(self, deployment_type: TestDeployment, cache_ttl_seconds: float | None = None) -> None:
+    def __init__(self, deployment_type: Deployment, cache_ttl_seconds: float | None = None) -> None:
         super().__init__(deployment_type)
         self._cache_ttl_seconds = cache_ttl_seconds
 
@@ -1189,7 +1187,7 @@ class CustomHPSClientTTLConfiguration(HPSClientTTLConfiguration):
 class GrpcCertificatesConfig(BaseGlowConfiguration):
     config_type = "grpc_certificates_configuration"
 
-    def __init__(self, deployment_type: TestDeployment, certs_dir: Path | None = None) -> None:
+    def __init__(self, deployment_type: Deployment, certs_dir: Path | None = None) -> None:
         super().__init__(deployment_type)
         self._certs_dir = certs_dir
 
@@ -1198,7 +1196,7 @@ class WithGrpcCertificates(GrpcCertificatesConfig):
     @property
     def env_vars_to_configure(self) -> EnvVars:
         assert self._certs_dir
-        certs_dir = self._certs_dir.as_posix() if self._deployment_type == TestDeployment.Desktop else "/certs"
+        certs_dir = self._certs_dir.as_posix() if self._deployment_type == Deployment.Desktop else "/certs"
         return EnvVars(
             env_vars={"ANSYS_GRPC_CERTIFICATES": certs_dir},
             only_api=["ANSYS_GRPC_CERTIFICATES"],
@@ -1227,7 +1225,7 @@ class AEDTConfiguration(BaseGlowConfiguration):
 
     config_type = "aedt_configuration"
 
-    def __init__(self, deployment_type: TestDeployment, version: str = "") -> None:
+    def __init__(self, deployment_type: Deployment, version: str = "") -> None:
         super().__init__(deployment_type)
         self._version = version
 
@@ -1238,7 +1236,7 @@ class NoAEDTConfiguration(AEDTConfiguration): ...
 class AEDTVersionConfiguration(AEDTConfiguration):
     @property
     def env_vars_to_configure(self) -> EnvVars:
-        if self._deployment_type == TestDeployment.Desktop:
+        if self._deployment_type == Deployment.Desktop:
             return EnvVars()
         else:
             aedt_local_dir = os.environ[f"ANSYSEM_ROOT{self._version}"]
@@ -1264,7 +1262,7 @@ class GeometryConfiguration(BaseGlowConfiguration):
 
     config_type = "geometry_configuration"
 
-    def __init__(self, deployment_type: TestDeployment, version: str = "") -> None:
+    def __init__(self, deployment_type: Deployment, version: str = "") -> None:
         super().__init__(deployment_type)
         self._version = version
 
@@ -1275,7 +1273,7 @@ class NoGeometryConfiguration(GeometryConfiguration): ...
 class GeometryVersionConfiguration(GeometryConfiguration):
     @property
     def env_vars_to_configure(self) -> EnvVars:
-        if self._deployment_type == TestDeployment.Desktop:
+        if self._deployment_type == Deployment.Desktop:
             return EnvVars()
         else:
             geometry_local_dir = os.environ.get(f"GEOMETRY_ROOT{self._version}", "")
@@ -1296,7 +1294,7 @@ class GeometryVersionConfiguration(GeometryConfiguration):
 class ProductHostConfig(BaseGlowConfiguration):
     config_type = "product_host_configuration"
 
-    def __init__(self, deployment_type: TestDeployment, product_host: str | None = None) -> None:
+    def __init__(self, deployment_type: Deployment, product_host: str | None = None) -> None:
         super().__init__(deployment_type)
         self._product_host = product_host
 

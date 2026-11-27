@@ -22,8 +22,8 @@ from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.chrome.webdriver import WebDriver
 from selenium.webdriver.common.by import By
 
+from ansys.saf.glow.client import Deployment
 from ansys.saf.testing.selenium import wait_for_element
-from ansys.saf.testing.solution.const import TestDeployment
 from ansys.saf.testing.solution.end_to_end import (
     BaseGlowConfiguration,
     DebugConfiguration,
@@ -42,7 +42,7 @@ pytestmark = [
     pytest.mark.parametrize("ui_enabled", [True], indirect=True),
     pytest.mark.parametrize(
         "deployment_type",
-        ["Desktop", pytest.param("DockerCompose", marks=pytest.mark.use_containerized)],
+        ["Desktop", pytest.param("MultiContainer", marks=pytest.mark.use_containerized)],
         indirect=True,
     ),
 ]
@@ -80,7 +80,7 @@ def test_dash_debug_tools_present(
     debug_mode: DebugConfiguration,
     function_project: ProjectFixture[EndToEndSolution],
     session_selenium_webdriver: WebDriver,
-    deployment_type: TestDeployment,
+    deployment_type: Deployment,
 ):
     """
     Test dash debug tools are only present in debug mode (with UI debug disabled).
@@ -88,7 +88,7 @@ def test_dash_debug_tools_present(
     assert "ui_debug_configuration" not in session_glow.applied_configurations
 
     session_selenium_webdriver.get(function_project.ui_url)
-    if isinstance(debug_mode, DefaultDebug | EnvVarNoDebug) or deployment_type == TestDeployment.DockerCompose:
+    if isinstance(debug_mode, DefaultDebug | EnvVarNoDebug) or deployment_type == Deployment.MultiContainer:
         with pytest.raises(TimeoutException):
             wait_for_element(
                 session_selenium_webdriver,

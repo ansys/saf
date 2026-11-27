@@ -21,7 +21,6 @@ import click
 from ansys.saf.testing._hps.process.hps_deployment_process import HpsDeploymentProcess
 from ansys.saf.testing._hps.process.hps_scaler_process import HpsScalerProcess
 from ansys.saf.testing._hps.scripts.hps_installer import get_hps_external_name
-from ansys.saf.testing._solution.const import TestDeployment
 
 
 @click.command()
@@ -29,7 +28,9 @@ from ansys.saf.testing._solution.const import TestDeployment
 @click.option("--no-scaling", is_flag=True, default=False, help="Do not start the HPS Scaling Service.")
 @click.option("--product-host", type=str, default="", help="Host of the product, reachable from the Solution API.")
 def main(deployment: str, no_scaling: bool, product_host: str) -> None:
-    deployment_type = TestDeployment.Desktop if deployment.lower() == "desktop" else TestDeployment.DockerCompose
+    from ansys.saf.glow.client import Deployment  # pyright: ignore[reportMissingImports]
+
+    deployment_type = Deployment.Desktop if deployment.lower() == "desktop" else Deployment.MultiContainer
     hps_scaling = HpsScalerProcess(deployment_type, product_host=product_host) if not no_scaling else None
     try:
         if platform.system() == "Linux":
@@ -38,7 +39,7 @@ def main(deployment: str, no_scaling: bool, product_host: str) -> None:
         else:
             print(
                 "Assuming HPS Deployment is already running on WSL and exposed on "
-                f"https://{get_hps_external_name(deployment)}:8443/hps...",  # pyright: ignore[reportArgumentType]
+                f"https://{get_hps_external_name(deployment_type.name)}:8443/hps...",
             )
 
         if hps_scaling:

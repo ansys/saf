@@ -34,14 +34,13 @@ from selenium.webdriver.chrome.webdriver import WebDriver
 from selenium.webdriver.common.by import By
 from tenacity import TryAgain, retry, stop_after_attempt, wait_fixed
 
-from ansys.saf.glow.client import Client
+from ansys.saf.glow.client import Client, Deployment
 from ansys.saf.glow.solution import Solution
 from ansys.saf.testing._solution.end_to_end.glow_execution_configurations import EnvVars, Volumes
 from ansys.saf.testing.common import YieldFixture
 from ansys.saf.testing.network import get_random_free_port
 from ansys.saf.testing.process import Process
 from ansys.saf.testing.selenium import wait_for_element, wait_for_element_and_click, wait_for_element_and_send_text
-from ansys.saf.testing.solution.const import TestDeployment
 from ansys.saf.testing.solution.end_to_end import BaseGlowConfiguration, GlowBaseProcess, ProjectFixture
 from tests.conftest import IGNORE_PYC_FILES, MOCKS_DIR, PACKAGE_ROOT, SOLUTIONS_MOCKS_DIR
 from tests.mocks.solution_end_to_end.solution.definition import EndToEndSolution
@@ -297,17 +296,17 @@ def session_idp_mock_server() -> Generator[str, None, None]:
 
 def _get_access_token(
     session_idp_mock_server: str,
-    deployment_type: TestDeployment,
+    deployment_type: Deployment,
     expiration_seconds: int | None = None,
 ) -> str:
     # Issuer is part of the token and it is part of its validation. The issuer is typically extracted from the
     # request URL, either when contacting the IDP mock server or when configuring the auth dependency in GLOW.
-    # When in DockerCompose, we are creating the token from the pytest process (access through "localhost") and
+    # When in MultiContainer, we are creating the token from the pytest process (access through "localhost") and
     # validating it from the Solution API process (access through "host.docker.internal"), thus resulting in an
     # issuer conflict. In order to bypass this, we are telling the IDP mock server to return a token with the
     # issuer name set to whatever value we pass in the request.
     issuer_name = session_idp_mock_server
-    if deployment_type == TestDeployment.DockerCompose:
+    if deployment_type == Deployment.MultiContainer:
         issuer_name = issuer_name.replace("localhost", "host.docker.internal")
     return str(
         httpx2.post(
@@ -318,12 +317,12 @@ def _get_access_token(
 
 
 @pytest.fixture
-def access_token(session_idp_mock_server: str, deployment_type: TestDeployment) -> str:
+def access_token(session_idp_mock_server: str, deployment_type: Deployment) -> str:
     return _get_access_token(session_idp_mock_server, deployment_type)
 
 
 @pytest.fixture
-def get_access_token(session_idp_mock_server: str, deployment_type: TestDeployment) -> Callable[[int | None], str]:
+def get_access_token(session_idp_mock_server: str, deployment_type: Deployment) -> Callable[[int | None], str]:
     def _internal_get_access_token(expiration_seconds: int | None = None) -> str:
         return _get_access_token(session_idp_mock_server, deployment_type, expiration_seconds)
 
@@ -376,7 +375,7 @@ def existing_project(
 class GlowApiKeyConfiguration(BaseGlowConfiguration):
     config_type = "api_key"
 
-    def __init__(self, deployment_type: TestDeployment, api_key: str | None = None, api_key_file: Path | None = None):
+    def __init__(self, deployment_type: Deployment, api_key: str | None = None, api_key_file: Path | None = None):
         super().__init__(deployment_type)
         self._api_key = api_key
         self._api_key_file = api_key_file
@@ -534,7 +533,7 @@ def minerva_settings():
 class ExternalApiUrlConfiguration(BaseGlowConfiguration):
     config_type = "external_api_url"
 
-    def __init__(self, deployment_type: TestDeployment, external_api_url: str | None = None):
+    def __init__(self, deployment_type: Deployment, external_api_url: str | None = None):
         super().__init__(deployment_type)
         self._external_api_url = external_api_url
 

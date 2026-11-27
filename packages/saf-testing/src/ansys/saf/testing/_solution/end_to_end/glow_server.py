@@ -27,7 +27,8 @@ import yaml
 from ansys.saf.testing._common.common import YieldFixture
 from ansys.saf.testing._common.network import get_random_free_port
 from ansys.saf.testing._pim.process.pim_process import PimProcess
-from ansys.saf.testing._solution.const import TestDeployment, TestProductInstanceSystemType
+from ansys.saf.glow.client import Deployment  # pyright: ignore[reportMissingImports]
+from ansys.saf.testing._solution.const import TestProductInstanceSystemType
 from ansys.saf.testing._solution.end_to_end._typing import SolutionProtocol
 from ansys.saf.testing._solution.end_to_end.glow_process import (
     GlowBaseProcess,
@@ -139,7 +140,7 @@ def session_glow(
     # start of custom fixtures
     solution_type: tuple[type[T], Path] | None,  # entrypoint, to be defined and parametrized by the user
     session_log_manager: LogContainerManager,
-    deployment_type: TestDeployment,
+    deployment_type: Deployment,
     instance_system_type: TestProductInstanceSystemType | None,
     hps_port: int | None,
     session_pim: PimProcess | None,
@@ -224,7 +225,7 @@ def run_glow(
     worker_id: str,
     # start of custom fixtures
     session_log_manager: LogContainerManager,
-    deployment_type: TestDeployment,
+    deployment_type: Deployment,
     instance_system_type: TestProductInstanceSystemType | None,
     hps_port: int | None,
     session_pim: PimProcess | None,
@@ -327,7 +328,7 @@ def _run_glow(
     hps_port: int | None,
     pim_port: int | None,
     pim_socket_path: Path | None,
-    deployment_type: TestDeployment,
+    deployment_type: Deployment,
     session_unique_id: str,
     worker_id: str,
     ui_enabled: bool,
@@ -347,7 +348,7 @@ def _run_glow(
     shutdown_api_server_first: bool | None = None,
 ) -> GlowBaseProcess[T]:
     solution_api_port = solution_api_port if solution_api_port else get_random_free_port()
-    if deployment_type == TestDeployment.Desktop:
+    if deployment_type == Deployment.Desktop:
         glow_server_process = _get_glow_desktop_process(
             instance_system_type=instance_system_type,
             hps_port=hps_port,
@@ -367,7 +368,7 @@ def _run_glow(
             certificates_directory=certificates_directory,
             shutdown_api_server_first=shutdown_api_server_first,
         )
-    elif deployment_type == TestDeployment.DockerCompose:
+    elif deployment_type == Deployment.MultiContainer:
         if obfuscated_glow_pythonpath:
             pytest.fail(reason="GLOW src obfuscation not supported for DockerDeployment.")
         if shutdown_api_server_first is not None:
@@ -641,7 +642,7 @@ def run_glow_production(
     worker_id: str,
     # start of custom fixtures
     session_log_manager: LogContainerManager,
-    deployment_type: TestDeployment,
+    deployment_type: Deployment,
     instance_system_type: TestProductInstanceSystemType | None,
     hps_port: int | None,
     session_pim: PimProcess | None,
@@ -677,7 +678,7 @@ def run_glow_production(
 
         session_unique_id = str(getattr(request.config, "session_unique_id", ""))  # type: ignore
 
-        if deployment_type == TestDeployment.Desktop:
+        if deployment_type == Deployment.Desktop:
             glow_server_process = GlowProductionProcess(
                 solution_name,
                 solution_dir,
@@ -693,7 +694,7 @@ def run_glow_production(
                 cwd=cwd,
                 certificates_directory=certificates_directory,
             )
-        elif deployment_type == TestDeployment.DockerCompose:
+        elif deployment_type == Deployment.MultiContainer:
             solution_api_port = solution_api_port if solution_api_port else get_random_free_port()
             glow_server_process = _get_glow_docker_process(
                 tmp_path_factory=tmp_path_factory,

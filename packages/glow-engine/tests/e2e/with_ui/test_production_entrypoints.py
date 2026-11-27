@@ -49,7 +49,7 @@ def env_file(tmp_path: Path) -> Path:
 class TestProductionEntrypoints:
     @pytest.mark.parametrize(
         "deployment_type",
-        ["Desktop", pytest.param("DockerCompose", marks=pytest.mark.use_containerized)],
+        ["Desktop", pytest.param("MultiContainer", marks=pytest.mark.use_containerized)],
         indirect=True,
     )
     def test_api_and_ui(

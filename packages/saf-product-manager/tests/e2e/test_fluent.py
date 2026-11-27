@@ -21,13 +21,12 @@ import tempfile
 
 import pytest
 
-from ansys.saf.glow.client import InternalSolutionException
+from ansys.saf.glow.client import Deployment, InternalSolutionException
 from ansys.saf.product_manager._utilities.const import LOCALHOSTS
 from ansys.saf.testing.common import YieldFixture
 from ansys.saf.testing.hps import GetHpsJobIdsType
 from ansys.saf.testing.network import get_local_ip
 from ansys.saf.testing.pim.process import PimProcess
-from ansys.saf.testing.solution.const import TestDeployment
 from ansys.saf.testing.solution.end_to_end import (
     CustomProjectFilesConfig,
     GlowBaseProcess,
@@ -97,7 +96,7 @@ def step_with_launched_2ddp_solver(
     ("deployment_type", "product_host", "product_binding_host"),
     [
         ("Desktop", get_local_ip(), "0.0.0.0"),  # insecure to cover PIM/HPS. We have tests for secure connection.
-        ("DockerCompose", "host.docker.internal", DOCKER_GATEWAY_IP),
+        ("MultiContainer", "host.docker.internal", DOCKER_GATEWAY_IP),
     ],
     ids=["desktop_insecure", "dockercompose_mtls"],
     indirect=True,
@@ -106,7 +105,7 @@ class TestFluent2DDPSolver:
     def test_fluent_solver(self, function_class_project: ProjectFixture[EndToEndSolution]):
         """
         Test that a solution can use a Fluent product instance via the manager classes Fluent2DDPSolverManager with
-        any Product Instance System (PIM, HPS) and in any Deployment (Desktop, DockerCompose).
+        any Product Instance System (PIM, HPS) and in any Deployment (Desktop, MultiContainer).
         """
         # GIVEN: launched Fluent instance
         step = function_class_project.project.steps.fluent_instance_step
@@ -145,7 +144,7 @@ def step_with_launched_3ddp_solver(
     ("deployment_type", "product_host", "product_binding_host"),
     [
         ("Desktop", get_local_ip(), "0.0.0.0"),  # insecure to cover PIM/HPS. We have tests for secure connection.
-        ("DockerCompose", "host.docker.internal", DOCKER_GATEWAY_IP),
+        ("MultiContainer", "host.docker.internal", DOCKER_GATEWAY_IP),
     ],
     ids=["desktop_insecure", "dockercompose_mtls"],
     indirect=True,
@@ -154,11 +153,11 @@ class TestFluent3DDPSolver:
     def test_fluent_solver_workflow(
         self,
         function_class_project: ProjectFixture[EndToEndSolution],
-        deployment_type: TestDeployment,
+        deployment_type: Deployment,
     ):
         """
         Test that a solution can use a Fluent product instance via the manager classes Fluent3DDPSolverManager with
-        any Product Instance System (PIM, HPS) and in any Deployment (Desktop, DockerCompose).
+        any Product Instance System (PIM, HPS) and in any Deployment (Desktop, MultiContainer).
         """
         # GIVEN: launched Fluent instance
         step = function_class_project.project.steps.fluent_instance_step
@@ -168,7 +167,7 @@ class TestFluent3DDPSolver:
         # WHEN: running an example from fluent documentation that is split between multiple transactions.
         step.import_mesh()
         output = step.run_simulation().wait()
-        if deployment_type == TestDeployment.Desktop:
+        if deployment_type == Deployment.Desktop:
             simulation_output_abs_path = output["simulation_output"]
             max_temperature_file_abs_path = output["max_temperature_file"]
         else:
@@ -255,7 +254,7 @@ def step_with_launched_3ddp_meshing(
     ("deployment_type", "product_host", "product_binding_host"),
     [
         ("Desktop", get_local_ip(), "0.0.0.0"),  # insecure to cover PIM/HPS. We have tests for secure connection.
-        ("DockerCompose", "host.docker.internal", DOCKER_GATEWAY_IP),
+        ("MultiContainer", "host.docker.internal", DOCKER_GATEWAY_IP),
     ],
     ids=["desktop_insecure", "dockercompose_mtls"],
     indirect=True,
@@ -267,7 +266,7 @@ class TestFluent3DDPMeshing:
     ):
         """
         Test that a solution can use a Fluent product instance via the manager classes Fluent3DDPMeshingManager with
-        any Product Instance System (PIM, HPS) and in any Deployment (Desktop, DockerCompose).
+        any Product Instance System (PIM, HPS) and in any Deployment (Desktop, MultiContainer).
         """
         # GIVEN: launched Fluent instance
         step = function_class_project.project.steps.fluent_instance_step
@@ -294,8 +293,8 @@ class TestFluent3DDPMeshing:
         ("Desktop", get_local_ip(), get_local_ip(), False),
         ("Desktop", None, "0.0.0.0", True),
         ("Desktop", get_local_ip(), "0.0.0.0", True),
-        ("DockerCompose", "host.docker.internal", DOCKER_GATEWAY_IP, False),
-        ("DockerCompose", "host.docker.internal", "0.0.0.0", True),
+        ("MultiContainer", "host.docker.internal", DOCKER_GATEWAY_IP, False),
+        ("MultiContainer", "host.docker.internal", "0.0.0.0", True),
     ],
     ids=[
         "desktop_wnua_or_uds",
@@ -312,7 +311,7 @@ def test_secure_fluent_on_hps(
     ansys_release: str,
     session_glow: GlowBaseProcess[EndToEndSolution],
     function_project: ProjectFixture[EndToEndSolution],
-    deployment_type: TestDeployment,
+    deployment_type: Deployment,
     product_host: str | None,
     product_binding_host: str | None,
     enable_insecure_product: bool,
@@ -329,7 +328,7 @@ def test_secure_fluent_on_hps(
     step.version = ansys_release
 
     method = getattr(step, f"launch_fluent_{fluent_mode}")()
-    if not product_host and enable_insecure_product and deployment_type == TestDeployment.Desktop:
+    if not product_host and enable_insecure_product and deployment_type == Deployment.Desktop:
         with pytest.raises(InternalSolutionException):
             method.wait()
         assert session_glow.text_in_output("Insecure gRPC mode is not allowed when connecting to localhost.", "api")
@@ -360,7 +359,7 @@ def test_secure_fluent_on_hps(
                 in job_output
             )
             assert FLUENT_INSECURE_GRPC_WARNING not in job_output
-            certs_dir = "/certs" if deployment_type == TestDeployment.DockerCompose else certificates_directory
+            certs_dir = "/certs" if deployment_type == Deployment.MultiContainer else certificates_directory
             assert session_glow.text_in_output(
                 [
                     "INFO",
@@ -397,7 +396,7 @@ def test_secure_fluent_on_hps(
         ("Desktop", None, None),  # product_binding_host defaults to localhost in secure products
         ("Desktop", None, "0.0.0.0"),
         ("Desktop", get_local_ip(), "0.0.0.0"),
-        ("DockerCompose", "host.docker.internal", "0.0.0.0"),
+        ("MultiContainer", "host.docker.internal", "0.0.0.0"),
     ],
     ids=["desktop_wnua_or_insecure", "desktop_localhost_insecure", "desktop_insecure", "dockercompose_insecure"],
     indirect=True,

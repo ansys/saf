@@ -16,14 +16,6 @@
 from enum import Enum
 
 
-class TestDeployment(Enum):
-    __test__ = False  # Tell pytest this is not a test class
-
-    Desktop = "Desktop"
-    DockerCompose = "DockerCompose"
-    Unknown = "Unknown"
-
-
 class TestProductInstanceSystemType(Enum):
     __test__ = False  # Tell pytest this is not a test class
 

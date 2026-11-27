@@ -61,7 +61,7 @@ def exit_module(session_glow: GlowBaseProcess[EndToEndSolution]) -> Generator[No
 )
 @pytest.mark.parametrize(
     "deployment_type",
-    ["Desktop", pytest.param("DockerCompose", marks=pytest.mark.use_containerized)],
+    ["Desktop", pytest.param("MultiContainer", marks=pytest.mark.use_containerized)],
     indirect=True,
 )
 class TestLogLevel:

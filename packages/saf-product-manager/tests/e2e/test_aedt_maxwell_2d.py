@@ -20,12 +20,11 @@ import platform
 
 import pytest
 
-from ansys.saf.glow.client import Client
+from ansys.saf.glow.client import Client, Deployment
 from ansys.saf.product_manager._utilities.const import INSECURE_GRPC_MSG, LOCALHOSTS
 from ansys.saf.testing.hps import GetHpsJobIdsType
 from ansys.saf.testing.network import get_local_ip
 from ansys.saf.testing.pim.process import PimProcess
-from ansys.saf.testing.solution.const import TestDeployment
 from ansys.saf.testing.solution.end_to_end import (
     GlowBaseProcess,
     ProjectFixture,
@@ -106,7 +105,7 @@ def launch_maxwell2d(class_project: ProjectFixture[EndToEndSolution], ansys_rele
     [
         "Desktop",
         pytest.param(
-            "DockerCompose",
+            "MultiContainer",
             marks=pytest.mark.xfail(reason="pyaedt rpyc not working with docker"),
         ),
     ],
@@ -247,14 +246,14 @@ class TestMaxwell2D:
         ("Desktop", None, "0.0.0.0", True),
         ("Desktop", get_local_ip(), "0.0.0.0", True),
         pytest.param(
-            "DockerCompose",
+            "MultiContainer",
             "host.docker.internal",
             DOCKER_GATEWAY_IP,
             False,
             marks=pytest.mark.xfail(reason="pyaedt rpyc not working with docker"),
         ),
         pytest.param(
-            "DockerCompose",
+            "MultiContainer",
             "host.docker.internal",
             "0.0.0.0",
             True,
@@ -277,7 +276,7 @@ class TestMaxwell2DSecureHPS:
         ansys_release: str,
         session_glow: GlowBaseProcess[EndToEndSolution],
         function_project: ProjectFixture[EndToEndSolution],
-        deployment_type: TestDeployment,
+        deployment_type: Deployment,
         product_host: str | None,
         product_binding_host: str | None,
         enable_insecure_product: bool,
@@ -315,7 +314,7 @@ class TestMaxwell2DSecureHPS:
                     f"Secure flags found for remote: secure_flags='--transport-mode=MTLS --certs-dir={certificates_directory}'"  # noqa: E501
                     in job_output
                 )
-                certs_dir = "/certs" if deployment_type == TestDeployment.DockerCompose else certificates_directory
+                certs_dir = "/certs" if deployment_type == Deployment.MultiContainer else certificates_directory
                 assert session_glow.text_in_output(
                     [
                         "INFO",
@@ -352,7 +351,7 @@ class TestMaxwell2DSecureHPS:
         ("Desktop", None, "0.0.0.0"),
         ("Desktop", get_local_ip(), "0.0.0.0"),
         pytest.param(
-            "DockerCompose",
+            "MultiContainer",
             "host.docker.internal",
             "0.0.0.0",
             marks=pytest.mark.xfail(reason="pyaedt rpyc not working with docker"),

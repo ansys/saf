@@ -18,8 +18,8 @@ import pytest
 from selenium.webdriver.chrome.webdriver import WebDriver
 from selenium.webdriver.common.by import By
 
+from ansys.saf.glow.client import Deployment
 from ansys.saf.testing.selenium import wait_for_element, wait_for_element_and_click, wait_for_text
-from ansys.saf.testing.solution.const import TestDeployment
 from ansys.saf.testing.solution.end_to_end import ProjectFixture
 from tests.mocks.solution_end_to_end.solution.definition import EndToEndSolution
 from tests.mocks.solution_end_to_end.solution.transaction_verification_step import INPUT_PRODUCT_FILE
@@ -31,7 +31,7 @@ pytestmark = [
     pytest.mark.parametrize("ui_enabled", [True], indirect=True),
     pytest.mark.parametrize(
         "deployment_type",
-        ["Desktop", pytest.param("DockerCompose", marks=pytest.mark.use_containerized)],
+        ["Desktop", pytest.param("MultiContainer", marks=pytest.mark.use_containerized)],
         indirect=True,
     ),
 ]
@@ -41,7 +41,7 @@ pytestmark = [
 def upload_project_file_to_ui(
     function_project: ProjectFixture[EndToEndSolution],
     session_selenium_webdriver: WebDriver,
-    deployment_type: TestDeployment,
+    deployment_type: Deployment,
 ) -> None:
     assert INPUT_PRODUCT_FILE.is_file()
 

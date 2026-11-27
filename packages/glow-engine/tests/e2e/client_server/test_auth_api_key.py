@@ -19,9 +19,8 @@ from pathlib import Path
 
 import pytest
 
-from ansys.saf.glow.client import Client, PermissionException, UnauthorizedException
+from ansys.saf.glow.client import Client, Deployment, PermissionException, UnauthorizedException
 from ansys.saf.testing.common import YieldFixture
-from ansys.saf.testing.solution.const import TestDeployment
 from ansys.saf.testing.solution.end_to_end import (
     EnableAuthValidationConfiguration,
     GlowBaseProcess,
@@ -33,7 +32,7 @@ pytestmark = [
     pytest.mark.parametrize("solution_type", [EndToEndSolution], indirect=True),
     pytest.mark.parametrize(
         "deployment_type",
-        ["Desktop", pytest.param("DockerCompose", marks=pytest.mark.use_containerized)],
+        ["Desktop", pytest.param("MultiContainer", marks=pytest.mark.use_containerized)],
         indirect=True,
     ),
 ]
@@ -43,10 +42,10 @@ pytestmark = [
 def authenticated_solution(
     session_glow: GlowBaseProcess[EndToEndSolution],
     session_idp_mock_server: str,
-    deployment_type: TestDeployment,
+    deployment_type: Deployment,
 ) -> YieldFixture[None]:
     idp_server_url = session_idp_mock_server
-    if deployment_type == TestDeployment.DockerCompose:
+    if deployment_type == Deployment.MultiContainer:
         idp_server_url = idp_server_url.replace("localhost", "host.docker.internal")
     session_glow.change_configuration(EnableAuthValidationConfiguration, idp_server=idp_server_url)
     yield
@@ -55,7 +54,7 @@ def authenticated_solution(
 
 @pytest.mark.parametrize("from_file", [False, True], ids=["api_key_from_env_var", "api_key_from_file_env_var"])
 def test_glow_client_using_api_key(
-    deployment_type: TestDeployment,
+    deployment_type: Deployment,
     session_glow: GlowBaseProcess[EndToEndSolution],
     get_glow_client: Callable[[GlowBaseProcess[EndToEndSolution], str | None], Client[EndToEndSolution]],
     existing_project: EndToEndSolution,
@@ -100,7 +99,7 @@ def test_glow_client_using_api_key(
             _ = unauthenticated_client.get_project(existing_project.project_name).project_display_name
 
     with Client(session_glow.solution_type, session_glow.base_api_url, api_key=api_key) as client_with_api_key:
-        if deployment_type == TestDeployment.DockerCompose:
+        if deployment_type == Deployment.MultiContainer:
             with pytest.raises((PermissionException, UnauthorizedException), match="Not authenticated"):
                 _ = client_with_api_key.get_project(existing_project.project_name).project_display_name
         else:

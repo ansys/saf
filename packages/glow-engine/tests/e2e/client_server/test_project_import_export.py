@@ -37,7 +37,7 @@ TOLERANCE = 1e-3
 
 @pytest.mark.parametrize(
     "deployment_type",
-    ["Desktop", pytest.param("DockerCompose", marks=pytest.mark.use_containerized)],
+    ["Desktop", pytest.param("MultiContainer", marks=pytest.mark.use_containerized)],
     indirect=True,
 )
 class TestExportImportProjects:

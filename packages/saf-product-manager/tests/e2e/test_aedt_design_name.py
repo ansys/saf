@@ -44,7 +44,7 @@ pytestmark = [
     [
         "Desktop",
         pytest.param(
-            "DockerCompose",
+            "MultiContainer",
             marks=pytest.mark.xfail(reason="pyaedt rpyc not working with docker"),
         ),
     ],

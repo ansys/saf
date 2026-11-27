@@ -15,6 +15,7 @@
 
 from collections.abc import Generator
 import json
+from enum import Enum
 from pathlib import Path
 import platform
 import shutil
@@ -26,7 +27,7 @@ from ansys.saf.testing._hps.process.hps_deployment_process import HpsDeploymentP
 from ansys.saf.testing._hps.process.hps_scaler_process import HpsScalerProcess
 from ansys.saf.testing._hps.scripts.hps_installer import HPS_DEPLOYMENTS_DIRECTORY, get_hps_external_name
 from ansys.saf.testing._pytest.pytest import is_marker_within_collected_tests
-from ansys.saf.testing._solution.const import TestDeployment, TestProductInstanceSystemType
+from ansys.saf.testing._solution.const import TestProductInstanceSystemType
 
 KEYCLOAK_CONFIG_FILE = HPS_DEPLOYMENTS_DIRECTORY / "config" / "keycloak" / "realm.json"
 KEYCLOAK_CONFIG_BACKUP_FILE = KEYCLOAK_CONFIG_FILE.with_suffix(".bak")
@@ -121,7 +122,7 @@ def configure_hps_deployment_traefik_tls_setup(request: pytest.FixtureRequest) -
 
 
 @pytest.fixture(scope="class")
-def restore_default_hps_deployment(deployment_type: TestDeployment) -> Generator[None, None, None]:
+def restore_default_hps_deployment(deployment_type: Enum) -> Generator[None, None, None]:
     # Needed because fixtures such as configure_hps_deployment_keycloak are not undone unless they are reparameterized
     # by another test.
     yield
@@ -139,7 +140,7 @@ def restore_default_hps_deployment(deployment_type: TestDeployment) -> Generator
 @pytest.fixture(scope="session")
 def hps_deployment(
     is_hps_enabled: bool,
-    deployment_type: TestDeployment,
+    deployment_type: Enum,
     external_hps_deployment: bool,
     configure_hps_deployment_keycloak: dict[str, Any],
     configure_hps_deployment_traefik_tls_setup: str,
@@ -163,7 +164,7 @@ def hps_scaler(
     is_hps_enabled: bool,
     hps_deployment: None,
     instance_system_type: TestProductInstanceSystemType | None,
-    deployment_type: TestDeployment,
+    deployment_type: Enum,
     external_hps_scaler: bool,
     product_host: str | None,
     product_binding_host: str | None,
@@ -222,5 +223,5 @@ def hps_port(
 
 
 @pytest.fixture(scope="session")
-def hps_host(deployment_type: TestDeployment) -> str:
+def hps_host(deployment_type: Enum) -> str:
     return get_hps_external_name(deployment_type.value)

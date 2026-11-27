@@ -50,7 +50,7 @@ def wait_for_method(method_name: str, state_retrieval_func: Callable[[str], Meth
 
 @pytest.mark.parametrize(
     "deployment_type",
-    ["Desktop", pytest.param("DockerCompose", marks=pytest.mark.use_containerized)],
+    ["Desktop", pytest.param("MultiContainer", marks=pytest.mark.use_containerized)],
     indirect=True,
 )
 class TestClientAPI:

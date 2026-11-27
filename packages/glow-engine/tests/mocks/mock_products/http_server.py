@@ -56,37 +56,54 @@ def set_property(data: dict[str, str]):
     app.session["property"] = data["value"]  # type: ignore
 
 
+def _get_allowed_roots() -> list[Path]:
+    """Return the list of allowed filesystem roots as resolved absolute paths."""
+    allowed_roots: list[Path] = []
+    if root := os.environ.get("GLOW_PROJECT_FILES_DIRECTORY"):
+        allowed_roots.append(Path(root).resolve())
+
+    for env_var in ("APPDATA", "XDG_DATA_HOME"):
+        if root := os.environ.get(env_var):
+            allowed_roots.append((Path(root) / "ansys" / "glow").resolve())
+    if os.name != "nt" and not os.environ.get("XDG_DATA_HOME"):
+        allowed_roots.append((Path.home() / ".local" / "share" / "ansys" / "glow").resolve())
+    # The project files directory of end-to-end tests is only known to the test session, whereas the product
+    # environment is fixed when the product is registered. Tests opt in to the temporary directory instead.
+    if os.environ.get(ALLOW_TEMP_DIRECTORY_ENV_VAR) == "1":
+        allowed_roots.append(Path(tempfile.gettempdir()).resolve())
+
+    return allowed_roots
+
+
+def _is_path_within_allowed_roots(resolved_path: Path, allowed_roots: list[Path]) -> bool:
+    """Check if a resolved path is within any of the allowed roots."""
+    for allowed_root in allowed_roots:
+        try:
+            resolved_path.relative_to(allowed_root)
+            return True
+        except ValueError:
+            continue
+    return False
+
+
 def _validated_path(value: str) -> Path:
     path = Path(value)
     if not path.is_absolute():
         raise HTTPException(status_code=400, detail="Path must be absolute.")
 
-    normalized_path = os.path.realpath(value)
-    allowed_roots: list[Path] = []
-    if root := os.environ.get("GLOW_PROJECT_FILES_DIRECTORY"):
-        allowed_roots.append(Path(root))
+    # Resolve the path to handle symlinks and normalize it
+    resolved_path = path.resolve()
+    allowed_roots = _get_allowed_roots()
 
-    for env_var in ("APPDATA", "XDG_DATA_HOME"):
-        if root := os.environ.get(env_var):
-            allowed_roots.append(Path(root) / "ansys" / "glow")
-    if os.name != "nt" and not os.environ.get("XDG_DATA_HOME"):
-        allowed_roots.append(Path.home() / ".local" / "share" / "ansys" / "glow")
-    # The project files directory of end-to-end tests is only known to the test session, whereas the product
-    # environment is fixed when the product is registered. Tests opt in to the temporary directory instead.
-    if os.environ.get(ALLOW_TEMP_DIRECTORY_ENV_VAR) == "1":
-        allowed_roots.append(Path(tempfile.gettempdir()))
+    if not _is_path_within_allowed_roots(resolved_path, allowed_roots):
+        raise HTTPException(status_code=400, detail="Path is outside the allowed filesystem roots.")
 
-    for root in allowed_roots:
-        normalized_root = os.path.realpath(root)
-        root_prefix = os.path.normcase(normalized_root.rstrip(os.sep) + os.sep)
-        if os.path.normcase(normalized_path).startswith(root_prefix):
-            return Path(normalized_path)
-
-    raise HTTPException(status_code=400, detail="Path is outside the allowed filesystem roots.")
+    return resolved_path
 
 
 @app.post("/property:store")
 def store_given_absolute_path(data: dict[str, str]):
+    # Path is validated against allowed roots with symlink resolution in _validated_path.
     path = _validated_path(data["value"])
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(app.session["property"])  # type: ignore
@@ -94,6 +111,7 @@ def store_given_absolute_path(data: dict[str, str]):
 
 @app.post("/property:restore")
 def restore_given_absolute_path(data: dict[str, str]):
+    # Path is validated against allowed roots with symlink resolution in _validated_path.
     path = _validated_path(data["value"])
     app.session["property"] = path.read_text()  # type: ignore
 

@@ -18,9 +18,47 @@
 
 from dataclasses import dataclass
 from enum import StrEnum
+import os
 from pathlib import Path
+import re
+import sys
 import tomllib
 from typing import Any, cast
+import warnings
+
+POETRY_DEPRECATION_MESSAGE = (
+    "Poetry-based solutions are deprecated. Support will end on May 31st, 2027.\n"
+    "Please migrate your solution to UV following the migration guide: "
+    "https://saf.ansys.com/version/stable/user_guide/migration/poetry-to-uv.html."
+)
+
+
+class SolutionBackendDeprecationWarning(DeprecationWarning):
+    """Deprecation of a solution's dependency backend, displayed without Python's ``file:line:`` prefix."""
+
+
+_default_formatwarning = warnings.formatwarning
+
+
+def _format_warning(message: Warning | str, category: type[Warning], *args: Any, **kwargs: Any) -> str:
+    if not issubclass(category, SolutionBackendDeprecationWarning):
+        return _default_formatwarning(message, category, *args, **kwargs)
+    text = f"DeprecationWarning: {message}"
+    # Color only interactive terminals so CI logs and redirected output stay plain.
+    if sys.stderr is not None and sys.stderr.isatty() and not os.getenv("NO_COLOR"):
+        text = f"\x1b[33m{text}\x1b[0m"
+    return f"{text}\n"
+
+
+def enable_backend_deprecation_warnings() -> None:
+    """Show backend deprecation warnings to users, without the internal ``file:line:`` prefix."""
+    warnings.formatwarning = _format_warning
+    warnings.filterwarnings("default", category=SolutionBackendDeprecationWarning)
+
+
+def uv_index_slug(index_name: str) -> str:
+    """Return the name UV uses for an index in ``UV_INDEX_<NAME>_*`` environment variables."""
+    return re.sub(r"[^A-Za-z0-9]", "_", index_name).upper()
 
 
 class SolutionBackend(StrEnum):

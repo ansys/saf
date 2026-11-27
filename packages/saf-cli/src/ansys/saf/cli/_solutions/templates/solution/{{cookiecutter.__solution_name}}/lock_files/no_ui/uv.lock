@@ -9,7 +9,7 @@ resolution-markers = [
 ]
 
 [manifest]
-overrides = [{ name = "ansys-saf-desktop-installer", specifier = "==1.20.dev0" }]
+overrides = [{ name = "ansys-saf-desktop-installer", specifier = "==1.20.0" }]
 
 [[package]]
 name = "accessible-pygments"
@@ -156,7 +156,7 @@ wheels = [
 
 [[package]]
 name = "ansys-saf-desktop-installer"
-version = "1.20.dev0"
+version = "1.20.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "click" },
@@ -166,9 +166,9 @@ dependencies = [
     { name = "requests" },
     { name = "tomlkit" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/13/de/b856a59232bc4b0d393c8adff0bf025e83c1f860c2426c1854174debdb7b/ansys_saf_desktop_installer-1.20.dev0.tar.gz", hash = "sha256:123076dad8447225bb8604262a6d8a2508fc5385ae0364dc073dada729eb800e", size = 146466, upload-time = "2026-11-18T09:23:46.662Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/92/e2/8172d36c03804e4b16fc62dde3ace74b47d236185b36a93b06964e154604/ansys_saf_desktop_installer-1.20.0.tar.gz", hash = "sha256:0c880198f6b9782ee1ce85f625c3e34f777e0b2d3915207c295882d9eeff5363", size = 146442, upload-time = "2026-11-23T15:47:41.192Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/10/e3/28463889d937582de76fb10781f89dc8c724a9fb975a3b0f74ac0890fb4b/ansys_saf_desktop_installer-1.20.dev0-py3-none-any.whl", hash = "sha256:d4a796bf7c30677329d23947a63b38f5dc9b7295b4fdcf1ffbe15282ab45ecc0", size = 157353, upload-time = "2026-11-18T09:23:45.376Z" },
+    { url = "https://files.pythonhosted.org/packages/84/53/a9485dc182ac75c2b1f0d9c0c94e11d49e12f80d386efc52e9ac36ab77b3/ansys_saf_desktop_installer-1.20.0-py3-none-any.whl", hash = "sha256:c57adae519bf3681e59f2517587ccc1966d3df75604522a380ffa30bcb6ce115", size = 157311, upload-time = "2026-11-23T15:47:39.914Z" },
 ]
 
 [[package]]

@@ -39,10 +39,13 @@ from ansys.saf.cli._config.const import (
     WORKSPACE_CLEAR_OPTIONS,
 )
 from ansys.saf.cli._solutions.backend_detection import (
+    POETRY_DEPRECATION_MESSAGE,
     SolutionBackend,
+    SolutionBackendDeprecationWarning,
     SolutionBackendError,
     SolutionBackendInfo,
     parse_solution_backend,
+    uv_index_slug,
 )
 from ansys.saf.cli._utilities.solution_modules import get_exec_from_solution_venv
 
@@ -345,7 +348,7 @@ def _check_credentials_consistent_with_netrc(source: dict[str, Any], username: s
     netrc_path, hostname, netrc_username, netrc_password = credentials
     if netrc_username != username or netrc_password != password:
         raise InstallError(
-            f"Error: Credentials in poetry environment variables for {hostname} do not match those in {netrc_path}.",
+            f"Error: Credentials in environment variables for {hostname} do not match those in {netrc_path}.",
         )
 
     return True
@@ -443,19 +446,47 @@ def _can_use_credentials_from_environment_variables_or_netrc(
             else:
                 raise InstallError(
                     f"Unable to access private PyPI source {source_name_formatted}. "
-                    "Poetry credential environment variables are not set "
+                    "Credential environment variables are not set "
                     f"and invalid credentials appear in {netrc_path}",
                 )
 
     return False
 
 
-def _check_poetry_private_sources(configuration: dict[str, Any]) -> None:
-    """Check and interactively manage credentials and certificates for Poetry's private PyPI sources."""
-    private_sources = configuration.get("tool", {}).get("poetry", {}).get("source", [])
+def _get_private_sources(
+    configuration: dict[str, Any],
+    backend: SolutionBackend,
+) -> list[tuple[dict[str, Any], str, str, str]]:
+    """Return each private source with its username, password and certificate environment variables."""
+    if backend is SolutionBackend.POETRY:
+        sources = configuration.get("tool", {}).get("poetry", {}).get("source", [])
+        result: list[tuple[dict[str, Any], str, str, str]] = []
+        for source in sources:
+            slug = source["name"].upper().replace("-", "_")
+            result.append(
+                (
+                    source,
+                    f"POETRY_HTTP_BASIC_{slug}_USERNAME",
+                    f"POETRY_HTTP_BASIC_{slug}_PASSWORD",
+                    f"POETRY_CERTIFICATES_{slug}_CERT",
+                ),
+            )
+        return result
+
+    # UV: UV has no per-index certificate setting; SSL_CERT_FILE is its global equivalent.
+    sources = configuration.get("tool", {}).get("uv", {}).get("index", [])
+    result = []
+    for source in sources:
+        slug = uv_index_slug(source["name"])
+        result.append((source, f"UV_INDEX_{slug}_USERNAME", f"UV_INDEX_{slug}_PASSWORD", "SSL_CERT_FILE"))
+    return result
+
+
+def _check_private_sources(configuration: dict[str, Any], backend: SolutionBackend) -> None:
+    """Check and interactively manage credentials and certificates for the solution's private PyPI sources."""
     credentials_updated, certificate_updated = False, False
 
-    for source in private_sources:
+    for source, username_var, password_var, certificate_var in _get_private_sources(configuration, backend):
         if source["name"].lower() == "pypi":
             source["url"] = "https://pypi.org/simple"
 
@@ -463,17 +494,11 @@ def _check_poetry_private_sources(configuration: dict[str, Any]) -> None:
             f"Checking access to {_get_source_name_formatted(source)}...",
         )
 
-        source_name_slug = source["name"].upper().replace("-", "_")
-        certificate_var = f"POETRY_CERTIFICATES_{source_name_slug}_CERT"
-
         certificate_updated = _prompt_validate_and_set_certificates(source, certificate_var) or certificate_updated
 
         if source["name"].lower() == "pypi":
             click.echo()
             continue
-
-        username_var = f"POETRY_HTTP_BASIC_{source_name_slug}_USERNAME"
-        password_var = f"POETRY_HTTP_BASIC_{source_name_slug}_PASSWORD"
 
         if not _can_use_credentials_from_environment_variables_or_netrc(
             source,
@@ -1018,37 +1043,12 @@ def _check_project_python_version(backend_info: SolutionBackendInfo) -> None:
         raise InstallError(f"Python {platform.python_version()} does not satisfy {backend_info.requires_python}.")
 
 
-def _copy_legacy_poetry_credentials_to_uv(
-    configuration: dict[str, Any],
-    environment: dict[str, str],
-) -> None:
-    """Use matching legacy Poetry credentials when named UV index credentials are unset."""
-    indexes = configuration.get("tool", {}).get("uv", {}).get("index", [])
-    if not isinstance(indexes, list):
-        return
-
-    for index in indexes:
-        if not isinstance(index, dict) or not isinstance(index.get("name"), str):
-            continue
-        index_slug = re.sub(r"[^A-Za-z0-9]", "_", index["name"]).upper()
-        for credential in ("USERNAME", "PASSWORD"):
-            uv_variable = f"UV_INDEX_{index_slug}_{credential}"
-            poetry_variable = f"POETRY_HTTP_BASIC_{index_slug}_{credential}"
-            if not environment.get(uv_variable) and environment.get(poetry_variable):
-                environment[uv_variable] = environment[poetry_variable]
-
-
-def _install_uv_dependencies(
-    uv_exec: str,
-    dependency_groups: list[str],
-    configuration: dict[str, Any],
-) -> None:
+def _install_uv_dependencies(uv_exec: str, dependency_groups: list[str]) -> None:
     """Install the solution and its main dependencies plus selected dependency groups using UV."""
     environment = os.environ.copy()
     environment.pop("VIRTUAL_ENV", None)
     # UV sync creates the solution's .venv if needed; no separate creation step is required.
     environment["UV_PROJECT_ENVIRONMENT"] = str(VENV_DIR.resolve())
-    _copy_legacy_poetry_credentials_to_uv(configuration, environment)
     command = [
         uv_exec,
         "sync",
@@ -1165,9 +1165,10 @@ def setup_environment(
             uv_exec = shutil.which("uv")
             if uv_exec is None:
                 raise InstallError("UV executable not found. Install UV and ensure it is available on PATH.")
+            _check_private_sources(configuration, SolutionBackend.UV)
             build_system_version = subprocess.check_output([uv_exec, "--version"], text=True).strip()
         else:
-            _check_poetry_private_sources(configuration)
+            _check_private_sources(configuration, SolutionBackend.POETRY)
             _check_poetry_python_version(configuration)
             build_system_version = _get_poetry_version(configuration)
 
@@ -1178,22 +1179,7 @@ def setup_environment(
         _print_main_header("Setup Environment")
 
         if backend_info.uses_deprecated_backend:
-            if sys.stderr.isatty() and not os.getenv("NO_COLOR"):
-                message = click.style(
-                    "Poetry-based solutions are deprecated. Support will end on May 31st.\n"
-                    "Please migrate your solution to UV following the migration guide: "
-                    "https://saf.ansys.com/version/stable/user_guide/migration/poetry-to-uv.html.",
-                    fg="yellow",
-                )
-                warnings.warn(message, DeprecationWarning, stacklevel=2)
-            else:
-                warnings.warn(
-                    "Poetry-based solutions are deprecated. Support will end on May 31st.\n"
-                    "Please migrate your solution to UV following the migration guide: "
-                    "https://saf.ansys.com/version/stable/user_guide/migration/poetry-to-uv.html.",
-                    DeprecationWarning,
-                    stacklevel=2,
-                )
+            warnings.warn(POETRY_DEPRECATION_MESSAGE, SolutionBackendDeprecationWarning, stacklevel=2)
         _print_inputs_summary(
             selected_dependency_groups,
             build_system_version,
@@ -1234,7 +1220,7 @@ def setup_environment(
         _print_section_header("Install dependencies", max_length=100)
 
         if uv_exec is not None:
-            _install_uv_dependencies(uv_exec, selected_dependency_groups, configuration)
+            _install_uv_dependencies(uv_exec, selected_dependency_groups)
         else:
             _install_poetry_dependencies(selected_dependency_groups)
 

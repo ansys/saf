@@ -72,7 +72,7 @@ def test_poetry_packaging_warns_and_checks_plugin_only_offline(
     install_plugin = mocker.patch("ansys.saf.desktop.installer.__main__.subprocess.check_output")
 
     with pytest.warns(
-        DeprecationWarning, match=r"Poetry-based solutions are deprecated\. Support will end on May 31st\."
+        DeprecationWarning, match=r"Poetry-based solutions are deprecated\. Support will end on May 31st, 2027\."
     ) as caught:
         package_solution(
             SolutionInfo(solution_root_dir),

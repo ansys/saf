@@ -388,7 +388,7 @@ def test_method_assigning_the_wrong_type_to_a_field_results_in_a_helpful_excepti
 @pytest.mark.parametrize(
     "settings",
     [
-        {"glow_deployment": Deployment.DockerCompose},
+        {"glow_deployment": Deployment.MultiContainer},
         {"glow_deployment": Deployment.Desktop},
         {"glow_deployment": Deployment.Unknown},
     ],
@@ -981,7 +981,7 @@ class TestOnPremBearerToken:
         "settings",
         [
             {
-                "glow_deployment": Deployment.DockerCompose,
+                "glow_deployment": Deployment.MultiContainer,
                 "glow_product_instance_system": ProductInstanceSystemType.HPS,
                 "glow_product_instance_system_host": "localhost",
                 "glow_product_instance_system_port": 8888,
@@ -1027,7 +1027,7 @@ class TestOnPremBearerToken:
         "settings",
         [
             {
-                "glow_deployment": Deployment.DockerCompose,
+                "glow_deployment": Deployment.MultiContainer,
                 "glow_debug": "True",
                 "glow_hps_client_id": "some_client_id",
                 "glow_auth_issuer_url": "some_issuer_url",
@@ -1069,7 +1069,7 @@ class TestOnPremBearerToken:
         "settings",
         [
             {
-                "glow_deployment": Deployment.DockerCompose,
+                "glow_deployment": Deployment.MultiContainer,
                 "glow_debug": "True",
             },
         ],

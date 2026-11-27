@@ -274,7 +274,7 @@ def test_get_entity_url_uses_external_url(external_url: str | None):
     assert step.get_entity_url("file_entity") == expected_entity_url
 
 
-@pytest.mark.parametrize("deployment", [None, "Desktop", "DockerCompose"])
+@pytest.mark.parametrize("deployment", [None, "Desktop", "MultiContainer", "SingleContainer", "DockerCompose"])
 def test_hps_authentication_calls_endpoint_only_in_desktop(
     deployment: str | None,
     monkeypatch: pytest.MonkeyPatch,
@@ -296,7 +296,7 @@ def test_hps_authentication_calls_endpoint_only_in_desktop(
         ),
     )
     project.authenticate_hps()
-    if deployment == "DockerCompose":
+    if deployment in ("MultiContainer", "SingleContainer", "DockerCompose"):
         mocked_auth_get_request.assert_not_called()
     else:
         mocked_auth_get_request.assert_called_once_with(

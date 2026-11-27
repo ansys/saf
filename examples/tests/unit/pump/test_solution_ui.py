@@ -147,9 +147,10 @@ def test_processor_count_limit_stays_inside_the_declared_range(monkeypatch):
     assert model_setup_page.processor_count_limit() == PROCESSOR_COUNT_RANGE[0]
 
 
-def test_processor_count_limit_keeps_the_full_range_off_the_desktop(monkeypatch):
+@pytest.mark.parametrize("deployment", ["MultiContainer", "SingleContainer"])
+def test_processor_count_limit_keeps_the_full_range_off_the_desktop(monkeypatch, deployment):
     # Any other deployment solves elsewhere, where the local core count means nothing.
-    monkeypatch.setenv("GLOW_DEPLOYMENT", "DockerCompose")
+    monkeypatch.setenv("GLOW_DEPLOYMENT", deployment)
     monkeypatch.setattr(model_setup_page.os, "cpu_count", lambda: 2)
     assert model_setup_page.processor_count_limit() == PROCESSOR_COUNT_RANGE[1]
 

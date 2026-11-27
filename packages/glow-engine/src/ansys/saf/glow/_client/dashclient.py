@@ -29,13 +29,13 @@ from ansys.iam.oidc import DEFAULT_SUBPROTOCOL_PREFIX, encode_base64_token
 from ansys.saf.glow._client.client import Client
 from ansys.saf.glow._config.const import (
     GLOW_API_URL,
-    GLOW_DEPLOYMENT,
     GLOW_EXTERNAL_API_URL,
     GLOW_PORTAL_URL,
     GLOW_SOLUTION_DEFINITION,
     GLOW_WS_EVENTS_ADDR,
     Deployment,
 )
+from ansys.saf.glow._config.settings import Settings
 from ansys.saf.glow._core.solution import Solution
 from ansys.saf.glow._core.step_model import StepModel
 from ansys.saf.glow._utilities.conversion import python_identifier_to_url_part
@@ -100,7 +100,7 @@ class DashClient(Generic[T]):
             which corresponds to how the server in which the client is running is deployed.
             Normally this will be the UI server of the solution.
         """
-        return Deployment(os.environ.get(GLOW_DEPLOYMENT, Deployment.Desktop.value))
+        return Settings().glow_deployment
 
     @staticmethod
     def create_event_listener(  # pyright: ignore[reportUnknownParameterType]

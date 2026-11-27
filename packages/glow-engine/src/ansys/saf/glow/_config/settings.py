@@ -570,6 +570,13 @@ class Settings(BaseSettings):
                 raise ValueError(f"Project files directory should be an absolute path: {project_path}.")
         return self
 
+    @field_validator("glow_deployment", mode="before")
+    @classmethod
+    def normalize_legacy_deployment(cls, value: object) -> object:
+        if value == "DockerCompose":
+            return "MultiContainer"
+        return value
+
     @field_validator(
         "glow_project_files_directory",
         "glow_ui_project_files_directory",

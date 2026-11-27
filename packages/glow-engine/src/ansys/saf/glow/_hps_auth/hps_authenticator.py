@@ -434,7 +434,7 @@ def create_hps_authenticator(settings: Settings, access_token: str | None = None
             glow_hps_username=settings.glow_hps_username,
             glow_hps_password=settings.glow_hps_password,
         )
-    elif settings.glow_deployment == Deployment.DockerCompose:
+    elif settings.glow_deployment in (Deployment.MultiContainer, Deployment.SingleContainer):
         hps_authenticator = OnPremHpsAuthenticator(
             token=access_token,
             client_id=settings.glow_hps_client_id,
